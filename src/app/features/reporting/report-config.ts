@@ -23,8 +23,16 @@ class ReportConfig extends Entity {
    */
   @DatabaseField() mode?: string;
 
+  /**
+   * (sql only) list of arguments needed for the sql query. Placeholder "?" will be replaced.
+   */
+  @DatabaseField() neededArgs?: string[] = [];
+
   /** the definitions to calculate the report's aggregations */
   @DatabaseField() aggregationDefinitions: any[] = [];
+
+  /** (sql only) the definition to calculate the report */
+  @DatabaseField() aggregationDefinition: string | undefined = undefined;
 }
 
 /**
@@ -62,7 +70,12 @@ export interface ExportingReport extends ReportConfig {
 export interface SqlReport extends ReportConfig {
   mode: "sql";
   /**
-   * Array of valid SQL SELECT statements
+   * a valid SQL SELECT statements, can contain "?" placeholder for arguments
    */
-  aggregationDefinitions: string[];
+  aggregationDefinition: string;
+
+  /**
+   * a list of arguments, passed into the sql statement
+   */
+  neededArgs: string[];
 }

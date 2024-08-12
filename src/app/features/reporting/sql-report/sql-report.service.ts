@@ -23,7 +23,7 @@ export interface ReportCalculation {
   };
   startDate: string | null;
   endDate: string | null;
-  args: Map<String, String>;
+  args: { [key: string]: string };
   status: "PENDING" | "RUNNING" | "FINISHED_SUCCESS" | "FINISHED_ERROR";
   outcome: {
     result_hash: string;
@@ -98,6 +98,14 @@ export class SqlReportService {
     from: Date,
     to: Date,
   ): Observable<ReportData> {
+    let params = {};
+    if (from && to) {
+      params = {
+        from: moment(from).format("YYYY-MM-DD"),
+        to: moment(to).format("YYYY-MM-DD"),
+      };
+    }
+
     return this.http
       .post<{
         id: string;
@@ -105,10 +113,7 @@ export class SqlReportService {
         `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${reportId}`,
         {},
         {
-          params: {
-            from: moment(from).format("YYYY-MM-DD"),
-            to: moment(to).format("YYYY-MM-DD"),
-          },
+          params: params,
         },
       )
       .pipe(
@@ -166,8 +171,8 @@ export class SqlReportService {
     from: Date,
     to: Date,
   ): boolean {
-    let argFrom = value.args.get("from");
-    let argTo = value.args.get("to");
+    let argFrom = value.args["from"];
+    let argTo = value.args["to"];
 
     if (!argFrom || !argTo) {
       return false;

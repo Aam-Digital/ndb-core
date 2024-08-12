@@ -44,10 +44,7 @@ describe("ReportingComponent", () => {
     status: "FINISHED_SUCCESS",
     startDate: "2024-06-07T09:26:56.414",
     endDate: "2024-06-09T09:26:57.431",
-    args: new Map<String, String>([
-      ["from", "2024-01-01T00:00:00.000"],
-      ["to", "2024-01-01T23:59:59.999"],
-    ]),
+    args: { from: "2024-01-01T00:00:00.000", to: "2024-01-01T23:59:59.999" },
     outcome: {
       result_hash: "000",
     },

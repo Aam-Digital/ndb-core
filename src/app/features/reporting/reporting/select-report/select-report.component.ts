@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { NgForOf, NgIf } from "@angular/common";
+import { JsonPipe, NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -36,6 +36,7 @@ import { ReportEntity } from "../../report-config";
     FontAwesomeModule,
     MatProgressBarModule,
     MatTooltipModule,
+    JsonPipe,
   ],
   standalone: true,
 })
@@ -49,21 +50,48 @@ export class SelectReportComponent implements OnChanges {
   selectedReport: ReportEntity;
   fromDate: Date;
   toDate: Date;
+  /** whether the currently selected report includes filter parameters for a "from" - "to" date range */
+  isDateRangeReport: boolean;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("reports")) {
       if (this.reports?.length === 1) {
         this.selectedReport = this.reports[0];
+        this.checkDateRangeReport();
       }
     }
   }
 
+  calculate(): void {
+    if (!this.isDateRangeReport) {
+      this.fromDate = undefined;
+      this.toDate = undefined;
+    }
+
+    this.calculateClick.emit({
+      report: this.selectedReport,
+      from: this.fromDate,
+      to: this.toDate,
+    });
+  }
+
   reportChange() {
     this.dataChanged.emit();
+    this.checkDateRangeReport();
   }
 
   dateChange() {
     this.dataChanged.emit();
+  }
+
+  private checkDateRangeReport(): void {
+    if (this.selectedReport.mode !== "sql") {
+      this.isDateRangeReport = true;
+    } else {
+      this.isDateRangeReport =
+        this.selectedReport.neededArgs.indexOf("from") !== -1 ||
+        this.selectedReport.neededArgs.indexOf("to") !== -1;
+    }
   }
 }
 

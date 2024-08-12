@@ -10,7 +10,7 @@ import { EntitySchema } from "./schema/entity-schema";
  * @param propertySchema (optional) SchemaField definition that configures additional options regarding this field
  */
 export function DatabaseField(propertySchema: EntitySchemaField = {}) {
-  return (target, propertyName: string) => {
+  return (target: any, propertyName: string) => {
     // Retrieve datatype from TypeScript type definition
     if (propertySchema.dataType === undefined) {
       const type = Reflect.getMetadata("design:type", target, propertyName);
