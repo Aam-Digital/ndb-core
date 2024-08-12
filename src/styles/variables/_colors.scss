@@ -26,6 +26,7 @@ $muted-background: mat.get-color-from-palette(mat.$grey-palette);
 $disabled: rgba(0, 0, 0, 0.38);
 $disabled-transparent: $grey-transparent;
 $border-color: $grey-darker;
+
 /* color for inactive or archived elements */
 $inactive: grey;
 
@@ -74,11 +75,16 @@ $w-levels: (
 
 /* Levels that are used when describing attendance values */
 $attendance-levels: (
+  /* Present */
   P: #c8e6c9,
-  /* Present */ H: #cfd8dc,
-  /* ? */ L: #ffecb3,
-  /* Late */ E: #d7ccc8,
-  /* Excused */ A: #ff8a65,
-  /* Absent */ U: #dddddd,
+  /* Holiday */
+  H: #cfd8dc,
+  /* Late */
+  L: #ffecb3,
+  /* Excused */
+  E: #d7ccc8,
+  /* Absent */
+  A: #ff8a65,
   /* Unknown */
+  U: #dddddd,
 );
