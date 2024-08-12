@@ -180,4 +180,12 @@ describe("AdminEntityFormComponent", () => {
       jasmine.arrayContaining(removedFields),
     );
   }));
+
+  it("should hide a single field", fakeAsync(() => {
+    const field = "subject";
+    const group = component.config.fieldGroups[0];
+    component.hideField(field, group);
+
+    expect(component.config.fieldGroups[0].fields).not.toContain(field);
+  }));
 });

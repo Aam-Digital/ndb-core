@@ -1,8 +1,14 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  Inject,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { LoggingService } from "../../../core/logging/logging.service";
+import { Logging } from "../../../core/logging/logging.service";
 import { FileService } from "../file.service";
 import { distinctUntilChanged, filter } from "rxjs/operators";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -14,6 +20,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
+import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * This component should be used as a `editComponent` when a property should store files.
@@ -46,8 +54,8 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   constructor(
     protected fileService: FileService,
     private alertService: AlertService,
-    private logger: LoggingService,
     private entityMapper: EntityMapperService,
+    @Inject(NAVIGATOR_TOKEN) protected navigator: Navigator,
   ) {
     super();
   }
@@ -66,7 +74,11 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
           this.selectedFile.name === this.formControl.value
         ) {
           this.saveNewFile(this.selectedFile);
-        } else if (this.removeClicked && !this.formControl.value) {
+        } else if (
+          this.removeClicked &&
+          !this.formControl.value &&
+          !!this.initialValue
+        ) {
           this.deleteExistingFile();
         } else {
           this.resetFile();
@@ -83,7 +95,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   protected saveNewFile(file: File) {
-    // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
+    // The maximum file size is set to 5 MB
     this.fileService
       .uploadFile(file, this.entity, this.formControlName)
       .subscribe({
@@ -96,12 +108,34 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   private handleError(err) {
-    this.logger.error("Failed uploading file: " + JSON.stringify(err));
-    this.alertService.addDanger("Could not upload file, please try again.");
+    let errorMessage: string;
+    if (err?.status === 413) {
+      errorMessage = $localize`:File Upload Error Message:File too large. Usually files up to 5 MB are supported.`;
+    } else if (err instanceof NotAvailableOfflineError) {
+      errorMessage = $localize`:File Upload Error Message:Changes to file attachments are not available offline.`;
+    } else {
+      Logging.error("Failed to update file: " + JSON.stringify(err));
+      errorMessage = $localize`:File Upload Error Message:Failed to update file attachment. Please try again.`;
+    }
+    this.alertService.addDanger(errorMessage);
+
+    return this.revertEntityChanges();
+  }
+
+  private async revertEntityChanges() {
+    // ensure we have latest _rev of entity
+    this.entity = await this.entityMapper.load(
+      this.entity.getConstructor(),
+      this.entity.getId(),
+    );
+
     // Reset entity to how it was before
     this.entity[this.formControlName] = this.initialValue;
     this.formControl.setValue(this.initialValue);
-    return this.entityMapper.save(this.entity);
+
+    await this.entityMapper.save(this.entity);
+
+    this.resetFile();
   }
 
   formClicked() {
@@ -120,22 +154,23 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
 
   delete() {
     this.formControl.markAsDirty();
-    this.formControl.setValue(null);
+    this.formControl.setValue(undefined);
     this.selectedFile = undefined;
     // remove is only necessary if an initial value was set
-    this.removeClicked = !!this.initialValue;
+    this.removeClicked = true;
   }
 
   protected deleteExistingFile() {
-    this.fileService
-      .removeFile(this.entity, this.formControlName)
-      .subscribe(() => {
+    this.fileService.removeFile(this.entity, this.formControlName).subscribe({
+      error: (err) => this.handleError(err),
+      complete: () => {
         this.alertService.addInfo(
           $localize`:Message for user:File "${this.initialValue}" deleted`,
         );
         this.initialValue = undefined;
         this.removeClicked = false;
-      });
+      },
+    });
   }
 
   protected resetFile() {

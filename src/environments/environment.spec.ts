@@ -1,5 +1,8 @@
 import { SessionType } from "../app/core/session/session-type";
 
+/**
+ * see environment.ts for explanations
+ */
 export const environment = {
   production: false,
   appVersion: "test",
@@ -9,4 +12,6 @@ export const environment = {
   session_type: SessionType.mock,
   account_url: "https://accounts.aam-digital.net",
   email: undefined,
+  DB_PROXY_PREFIX: "/db",
+  DB_NAME: "app",
 };

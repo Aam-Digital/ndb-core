@@ -7,20 +7,18 @@ import {
   faFileAlt,
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { faAddressBook } from "@fortawesome/free-regular-svg-icons";
 
 describe("FaDynamicIconComponent", () => {
   let component: FaDynamicIconComponent;
   let fixture: ComponentFixture<FaDynamicIconComponent>;
   let mockIconLibrary: jasmine.SpyObj<FaIconLibrary>;
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(async () => {
     mockIconLibrary = jasmine.createSpyObj<FaIconLibrary>([
       "getIconDefinition",
     ]);
-    mockLoggingService = jasmine.createSpyObj(["warn"]);
     mockIconLibrary.getIconDefinition.and.callFake((prefix, icon) => {
       if (icon === "coffee") {
         return faCoffee;
@@ -30,10 +28,7 @@ describe("FaDynamicIconComponent", () => {
     });
     await TestBed.configureTestingModule({
       imports: [FaDynamicIconComponent],
-      providers: [
-        { provide: FaIconLibrary, useValue: mockIconLibrary },
-        { provide: LoggingService, useValue: mockLoggingService },
-      ],
+      providers: [{ provide: FaIconLibrary, useValue: mockIconLibrary }],
     }).compileComponents();
   });
 
@@ -59,9 +54,10 @@ describe("FaDynamicIconComponent", () => {
   });
 
   it("should show the fallback icon and warn when it is neither in the map nor exists as icon definition", () => {
+    spyOn(Logging, "warn");
     component.icon = "I do not exist";
     expect(component._icon).toEqual(FaDynamicIconComponent.fallbackIcon);
-    expect(mockLoggingService.warn).toHaveBeenCalled();
+    expect(Logging.warn).toHaveBeenCalled();
   });
 
   it("should set an icon if a different prefix is specified", () => {

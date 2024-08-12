@@ -6,3 +6,10 @@
     $max-screen-width: 414px
   );
 }
+
+.grid-layout-wide {
+  @include grid-layout.adaptive(
+    $min-block-width: 450px,
+    $max-screen-width: 500px
+  );
+}

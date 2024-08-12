@@ -1,0 +1,41 @@
+<div class="flex-row">
+  <textarea
+    #inputElement
+    matInput
+    [title]="placeholder"
+    [disabled]="_disabled"
+    readonly
+    [value]="_value?.locationString ?? _value?.geoLookup?.display_name"
+    rows="2"
+  ></textarea>
+
+  @if (_value?.geoLookup) {
+    <button
+      (click)="openMap(); $event.stopPropagation()"
+      mat-icon-button
+      matIconSuffix
+      type="button"
+      class="input-suffix-button"
+      matTooltip="Show the location marked on the map."
+      i18n-matTooltip
+    >
+      <fa-icon icon="map-location-dot"></fa-icon>
+    </button>
+  } @else {
+    <div
+      matTooltip="No location marked yet. Edit and search a location on the map here."
+      i18n-matTooltip
+    >
+      <button
+        (click)="openMap(); $event.stopPropagation()"
+        mat-icon-button
+        matIconSuffix
+        type="button"
+        class="input-suffix-button"
+        [disabled]="_disabled"
+      >
+        <fa-icon icon="magnifying-glass-location"></fa-icon>
+      </button>
+    </div>
+  }
+</div>

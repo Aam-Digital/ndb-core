@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -7,19 +7,26 @@ import { EditFileComponent } from "../edit-file/edit-file.component";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../file.service";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { MatButtonModule } from "@angular/material/button";
 import { resizeImage } from "../file-utils";
 import { MatDialog } from "@angular/material/dialog";
 import { ImagePopupComponent } from "./image-popup/image-popup.component";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { MatHint } from "@angular/material/form-field";
 
 @DynamicComponent("EditPhoto")
 @Component({
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",
   styleUrls: ["./edit-photo.component.scss"],
-  imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule, NgIf],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    NgIf,
+    MatHint,
+  ],
   standalone: true,
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
@@ -31,11 +38,11 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
   constructor(
     fileService: FileService,
     alertService: AlertService,
-    logger: LoggingService,
     entityMapper: EntityMapperService,
     private dialog: MatDialog,
+    @Inject(NAVIGATOR_TOKEN) protected navigator: Navigator,
   ) {
-    super(fileService, alertService, logger, entityMapper);
+    super(fileService, alertService, entityMapper, navigator);
   }
 
   async onFileSelected(file: File): Promise<void> {

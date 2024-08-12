@@ -19,7 +19,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import moment from "moment";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Datatype for the EntitySchemaService transforming values to Date instances.
@@ -43,10 +43,6 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
   viewComponent = "DisplayDate";
   editComponent = "EditDate";
 
-  constructor(protected loggingService?: LoggingService) {
-    super();
-  }
-
   transformToDatabaseFormat(value: Date) {
     return value as any;
   }
@@ -54,7 +50,7 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
   transformToObjectFormat(value, schemaField: EntitySchemaField, parent: any) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
-      this.loggingService.warn(
+      Logging.warn(
         `failed to convert data '${value}' to Date object for ${parent?._id}`,
       );
       return undefined;

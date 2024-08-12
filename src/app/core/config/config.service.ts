@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Config } from "./config";
-import { LoggingService } from "../logging/logging.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
 import {
@@ -26,8 +25,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
-  constructor(entityMapper: EntityMapperService, logger: LoggingService) {
-    super(Config, Config.CONFIG_KEY, entityMapper, logger);
+  constructor(entityMapper: EntityMapperService) {
+    super(Config, Config.CONFIG_KEY, entityMapper);
     super.startLoading();
     this.entityUpdated.subscribe(async (config) => {
       this.currentConfig = this.applyMigrations(config);

@@ -56,7 +56,7 @@ $error-palette: (
   contrast: map-get(mat.$red-palette, contrast),
 );
 
-// Define the applications theme.
+/* Define the applications theme. */
 $primary: mat.define-palette($primary-palette);
 $accent: mat.define-palette($secondary-palette, A200, A100, A400);
 $warn: mat.define-palette($error-palette);
@@ -65,7 +65,7 @@ $typography: mat.define-typography-config(
   $font-family: var(--font-family, sans-serif),
 );
 
-// Create the theme object (a Sass map containing all of the palettes).
+/* Create the theme object (a Sass map containing all of the palettes). */
 $theme: mat.define-light-theme(
   (
     color: (

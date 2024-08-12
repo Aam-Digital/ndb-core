@@ -31,7 +31,6 @@ import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { Database } from "../../database/database";
 import { Router } from "@angular/router";
-import { AppSettings } from "../../app-settings";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -48,8 +47,8 @@ describe("SessionManagerService", () => {
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator: { onLine: boolean };
   let dbUser: SessionInfo;
-  const userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
-  const deprecatedDBName = AppSettings.DB_NAME;
+  const userDBName = `${TEST_USER}-${environment.DB_NAME}`;
+  const deprecatedDBName = environment.DB_NAME;
   let initInMemorySpy: jasmine.Spy;
   let initIndexedSpy: jasmine.Spy;
 
@@ -102,7 +101,7 @@ describe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    const tmpDB = new PouchDatabase(undefined);
+    const tmpDB = new PouchDatabase();
     await tmpDB.initInMemoryDB(userDBName).destroy();
     await tmpDB.initInMemoryDB(deprecatedDBName).destroy();
   });
@@ -242,11 +241,11 @@ describe("SessionManagerService", () => {
     await service.remoteLogin();
 
     expect(initInMemorySpy).toHaveBeenCalledWith(
-      TEST_USER + "-" + AppSettings.DB_NAME,
+      TEST_USER + "-" + environment.DB_NAME,
     );
   });
 
-  it("should create the database according to the session type in the AppSettings", async () => {
+  it("should create the database according to the session type in the environment", async () => {
     async function testDatabaseCreation(
       sessionType: SessionType,
       expectedDB: "inMemory" | "indexed",
@@ -313,7 +312,7 @@ describe("SessionManagerService", () => {
     if (reserved) {
       window.localStorage.setItem(service.DEPRECATED_DB_KEY, reserved);
     }
-    const tmpDB = new PouchDatabase(undefined);
+    const tmpDB = new PouchDatabase();
     if (initUserDB) {
       await tmpDB.initInMemoryDB(userDBName).put({ _id: "someDoc" });
     }

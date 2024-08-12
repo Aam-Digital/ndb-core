@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import { environment } from "../../../../../environments/environment";
 import { SessionInfo } from "../session-info";
 import { KeycloakEventType, KeycloakService } from "keycloak-angular";
-import { LoggingService } from "../../../logging/logging.service";
+import { Logging } from "../../../logging/logging.service";
 import { Entity } from "../../../entity/model/entity";
 import { User } from "../../../user/user";
 import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
@@ -26,7 +26,6 @@ export class KeycloakAuthService {
   constructor(
     private httpClient: HttpClient,
     private keycloak: KeycloakService,
-    private logger: LoggingService,
   ) {}
 
   /**
@@ -68,7 +67,7 @@ export class KeycloakAuthService {
         // this is actually an expected scenario, user's internet is slow or not available
         err = new RemoteLoginNotAvailableError();
       } else {
-        this.logger.error("Keycloak init failed", err);
+        Logging.error("Keycloak init failed", err);
       }
 
       this.keycloakInitialised = false;
@@ -79,7 +78,7 @@ export class KeycloakAuthService {
     this.keycloak.keycloakEvents$.subscribe((event) => {
       if (event.type == KeycloakEventType.OnTokenExpired) {
         this.login().catch((err) =>
-          this.logger.debug("automatic token refresh failed", err),
+          Logging.debug("automatic token refresh failed", err),
         );
       }
     });
@@ -106,7 +105,7 @@ export class KeycloakAuthService {
         ? parsedToken.username
         : Entity.createPrefixedId(User.ENTITY_TYPE, parsedToken.username);
     } else {
-      this.logger.debug(
+      Logging.debug(
         `User not linked with an entity (userId: ${sessionInfo.name})`,
       );
     }

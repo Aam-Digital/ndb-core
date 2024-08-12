@@ -28,6 +28,7 @@ import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
+import { FieldGroup } from "app/core/entity-details/form/field-group";
 
 @UntilDestroy()
 @Component({
@@ -285,6 +286,12 @@ export class AdminEntityFormComponent implements OnChanges {
 
   removeGroup(i: number) {
     const [removedFieldGroup] = this.config.fieldGroups.splice(i, 1);
+    this.initAvailableFields();
+  }
+
+  hideField(field: ColumnConfig, group: FieldGroup) {
+    const fieldIndex = group.fields.indexOf(field);
+    group.fields.splice(fieldIndex, 1);
     this.initAvailableFields();
   }
 }

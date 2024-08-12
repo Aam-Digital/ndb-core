@@ -1,7 +1,7 @@
 @use "variables/colors";
 
 :host ::ng-deep .mat-mdc-tab {
-  // adjust tab header height to properly display mat-form-field for editing tab label
+  /* adjust tab header height to properly display mat-form-field for editing tab label */
   height: 60px !important;
 }
 app-admin-section-header {

@@ -1,7 +1,11 @@
-import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
-import * as Sentry from "@sentry/browser";
+import * as Sentry from "@sentry/angular";
 import { environment } from "../../../environments/environment";
+import { APP_INITIALIZER, ErrorHandler, Provider } from "@angular/core";
+import { Router } from "@angular/router";
+import { LoginState } from "../session/session-states/login-state.enum";
+import { LoginStateSubject } from "../session/session-type";
+import { SessionSubject } from "../session/auth/session-info";
 
 /* eslint-disable no-console */
 
@@ -12,17 +16,16 @@ import { environment } from "../../../environments/environment";
  * Logging to the remote monitoring server is set only for warnings and errors.
  *
  * To allow remote logging, call Sentry.init during bootstrap in your AppModule or somewhere early on during startup.
+ *
+ * Import the constant `Logging` to use this from anywhere (without Angular DI).
  */
-@Injectable({
-  providedIn: "root",
-})
 export class LoggingService {
   /**
    * Initialize the remote logging module with the given options.
    * If set up this will be used to send errors to a remote endpoint for analysis.
    * @param options
    */
-  static initRemoteLogging(options: Sentry.BrowserOptions) {
+  initRemoteLogging(options: Sentry.BrowserOptions) {
     if (!options.dsn) {
       // abort if no target url is set
       return;
@@ -37,13 +40,63 @@ export class LoggingService {
   }
 
   /**
+   * Register any additional logging context integrations that need Angular services.
+   * @param loginState
+   * @param sessionInfo
+   */
+  initAngularLogging(
+    loginState: LoginStateSubject,
+    sessionInfo: SessionSubject,
+  ) {
+    return () =>
+      loginState.subscribe((newState) => {
+        if (newState === LoginState.LOGGED_IN) {
+          const username = sessionInfo.value.name;
+          Logging.setLoggingContextUser(username);
+        } else {
+          Logging.setLoggingContextUser(undefined);
+        }
+      });
+  }
+
+  /**
+   * Get the Angular providers to set up additional logging and tracing,
+   * that should be added to the providers array of the AppModule.
+   */
+  getAngularTracingProviders(): Provider[] {
+    return [
+      /* Sentry setup */
+      {
+        provide: ErrorHandler,
+        useValue: Sentry.createErrorHandler(),
+      },
+      {
+        provide: Sentry.TraceService,
+        deps: [Router],
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: () => () => {},
+        deps: [Sentry.TraceService],
+        multi: true,
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: Logging.initAngularLogging,
+        deps: [LoginStateSubject, SessionSubject],
+        multi: true,
+      },
+    ];
+  }
+
+  /**
    * Update a piece of context information that will be attached to all log messages for easier debugging,
    * especially in remote logging.
    * @param key Identifier of the key-value pair
    * @param value Value of the key-value pair
    * @param asTag If this should be added as indexed tag rather than simple context (see https://docs.sentry.io/platforms/javascript/enriching-events/tags/)
    */
-  static addContext(key: string, value: any, asTag: boolean = false) {
+  addContext(key: string, value: any, asTag: boolean = false) {
     if (asTag) {
       Sentry.setTag(key, value);
     } else {
@@ -59,7 +112,7 @@ export class LoggingService {
    * especially in remote logging.
    * @param username
    */
-  static setLoggingContextUser(username: string) {
+  setLoggingContextUser(username: string) {
     Sentry.setUser({ username: username });
   }
 
@@ -204,3 +257,5 @@ interface SentryBreadcrumbHint {
   request?: any;
   xhr?: XMLHttpRequest;
 }
+
+export const Logging = new LoggingService();

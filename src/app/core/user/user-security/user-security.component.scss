@@ -7,3 +7,22 @@
 .field-warning {
   color: #f44336;
 }
+
+@keyframes buttonPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.invite-button {
+  margin: 0 12px;
+}
+.invite-button-animate {
+  animation: buttonPulse 1s forwards;
+}

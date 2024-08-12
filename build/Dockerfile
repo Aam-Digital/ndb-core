@@ -3,7 +3,7 @@
 # Run the following commands from the root folder to build, run and kill the application
 # >> docker build -f build/Dockerfile -t aam-digital .
 # >> docker run -p=80:80 aam-digital
-FROM node:18.16.1-alpine3.18 AS builder
+FROM node:18.20.4-alpine3.20 AS builder
 WORKDIR /app
 
 COPY package*.json ./

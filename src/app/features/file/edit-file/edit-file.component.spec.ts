@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { EditFileComponent } from "./edit-file.component";
 import { AlertService } from "../../../core/alerts/alert.service";
@@ -10,6 +15,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FileService } from "../file.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
@@ -27,7 +33,7 @@ describe("EditFileComponent", () => {
       "removeFile",
     ]);
     mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockEntityMapper = jasmine.createSpyObj(["save", "load"]);
     await TestBed.configureTestingModule({
       imports: [
         EditFileComponent,
@@ -39,6 +45,7 @@ describe("EditFileComponent", () => {
         { provide: AlertService, useValue: mockAlertService },
         { provide: FileService, useValue: mockFileService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
       ],
     }).compileComponents();
 
@@ -125,7 +132,7 @@ describe("EditFileComponent", () => {
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl).toHaveValue(undefined);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
@@ -158,7 +165,7 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.delete();
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl).toHaveValue(undefined);
 
     cancelForm();
 
@@ -187,11 +194,11 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.delete();
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl).toHaveValue(undefined);
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl).toHaveValue(undefined);
     expect(mockFileService.removeFile).toHaveBeenCalledWith(
       component.entity,
       component.formControlName,
@@ -218,8 +225,14 @@ describe("EditFileComponent", () => {
     );
   });
 
-  it("should show upload errors as an alert and reset entity", () => {
+  it("should show upload errors as an alert and reset entity", fakeAsync(() => {
     setupComponent("old.file");
+    mockEntityMapper.load.and.resolveTo(
+      Object.assign(new Entity(component.entity.getId()), {
+        _rev: "2",
+        testProp: "new.file",
+      }),
+    );
     const subject = new Subject();
     mockFileService.uploadFile.and.returnValue(subject);
     component.formControl.enable();
@@ -233,12 +246,19 @@ describe("EditFileComponent", () => {
     expect(component.entity[component.formControlName]).toBe(file.name);
 
     subject.error(new Error());
+    tick();
 
     expect(mockAlertService.addDanger).toHaveBeenCalled();
     expect(component.formControl).toHaveValue("old.file");
     expect(component.entity[component.formControlName]).toBe("old.file");
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(component.entity);
-  });
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        _id: component.entity["_id"],
+        _rev: "2",
+        testProp: "old.file",
+      }),
+    );
+  }));
 
   it("should show a file when clicking on the form element", () => {
     setupComponent("existing.file");

@@ -26,12 +26,12 @@
   font-weight: 900;
   color: colors.$disabled;
 
-  // Add a whitespace before the separator
+  /* Add a whitespace before the separator */
   &::before {
     content: " ";
   }
 
-  // Add a whitespace before the separator
+  /* Add a whitespace before the separator */
   &::after {
     content: " ";
   }

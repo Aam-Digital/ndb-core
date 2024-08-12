@@ -6,27 +6,40 @@ import { Database } from "./database";
 import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
-import { HttpStatusCode } from "@angular/common/http";
-import PouchDB from "pouchdb-browser";
+import { Subject } from "rxjs";
+import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 
 describe("SyncService", () => {
   let service: SyncService;
   let loginState: LoginStateSubject;
   let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockNavigator;
 
   beforeEach(() => {
     mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
+    mockNavigator = { onLine: true };
+
     TestBed.configureTestingModule({
       providers: [
         { provide: KeycloakAuthService, useValue: mockAuthService },
         { provide: Database, useClass: PouchDatabase },
         LoginStateSubject,
         SyncStateSubject,
+        { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
       ],
     });
     service = TestBed.inject(SyncService);
     loginState = TestBed.inject(LoginStateSubject);
   });
+
+  /**
+   * ensure the interval for sync is stopped at end of test to avoid errors.
+   * Somehow this does not work in afterEach().
+   */
+  function stopPeriodicTimer() {
+    service.liveSyncEnabled = false;
+    tick(SyncService.SYNC_INTERVAL + 500);
+  }
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -59,49 +72,51 @@ describe("SyncService", () => {
     tick(SyncService.SYNC_INTERVAL);
     expect(mockLocalDb.sync).toHaveBeenCalled();
 
-    service.liveSyncEnabled = false;
-    tick(SyncService.SYNC_INTERVAL);
+    stopPeriodicTimer();
   }));
 
-  it("should try auto-login if fetch fails and fetch again", fakeAsync(() => {
-    // Make sync call pass
-    spyOn(
-      TestBed.inject(Database) as PouchDatabase,
-      "getPouchDB",
-    ).and.returnValues({ sync: () => Promise.resolve() } as any);
-    spyOn(PouchDB, "fetch").and.returnValues(
-      Promise.resolve({
-        status: HttpStatusCode.Unauthorized,
-        ok: false,
-      } as Response),
-      Promise.resolve({ status: HttpStatusCode.Ok, ok: true } as Response),
-    );
-    // providing "valid" token on second call
-    let calls = 0;
-    mockAuthService.addAuthHeader.and.callFake((headers) => {
-      headers.Authorization = calls++ === 1 ? "valid" : "invalid";
-    });
-    mockAuthService.login.and.resolveTo();
-    const initSpy = spyOn(service["remoteDatabase"], "initRemoteDB");
+  it("should sync immediately when local db has changes", fakeAsync(() => {
+    const mockLocalDb = jasmine.createSpyObj(["sync"]);
+    const db = TestBed.inject(Database) as PouchDatabase;
+    spyOn(db, "getPouchDB").and.returnValue(mockLocalDb);
+    const mockChanges = new Subject();
+    spyOn(db, "changes").and.returnValue(mockChanges);
+
+    loginState.next(LoginState.LOGGED_IN);
+
     service.startSync();
-    tick();
-    // taking fetch function from init call
-    const fetch = initSpy.calls.mostRecent().args[1];
 
-    const url = "/db/_changes";
-    const opts = { headers: {} };
-    let fetchResult;
-    fetch(url, opts).then((res) => (fetchResult = res));
-    tick();
-    expect(fetchResult).toBeDefined();
+    mockLocalDb.sync.and.resolveTo({});
+    tick(1000);
+    expect(mockLocalDb.sync).toHaveBeenCalled();
+    mockLocalDb.sync.calls.reset();
+    expect(mockLocalDb.sync).not.toHaveBeenCalled();
 
-    expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
-    expect(PouchDB.fetch).toHaveBeenCalledWith(url, opts);
-    expect(opts.headers).toEqual({ Authorization: "valid" });
-    expect(mockAuthService.login).toHaveBeenCalled();
-    expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
+    // simulate local doc written
+    mockChanges.next({});
+    tick(500); // sync has a short debounce time
+    expect(mockLocalDb.sync).toHaveBeenCalled();
 
-    service.liveSyncEnabled = false;
+    stopPeriodicTimer();
+  }));
+
+  it("should skip sync calls when offline", fakeAsync(() => {
+    const mockLocalDb = jasmine.createSpyObj(["sync"]);
+    mockLocalDb.sync.and.resolveTo({});
+    const db = TestBed.inject(Database) as PouchDatabase;
+    spyOn(db, "getPouchDB").and.returnValue(mockLocalDb);
+
+    mockNavigator.onLine = false;
+
+    service.startSync();
+
+    tick(1000);
+    expect(mockLocalDb.sync).not.toHaveBeenCalled();
+
+    mockNavigator.onLine = true;
     tick(SyncService.SYNC_INTERVAL);
+    expect(mockLocalDb.sync).toHaveBeenCalled();
+
+    stopPeriodicTimer();
   }));
 });

@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
-import * as Sentry from "@sentry/browser";
+import * as Sentry from "@sentry/angular";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";

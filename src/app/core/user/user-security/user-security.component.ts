@@ -13,7 +13,6 @@ import {
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
-import { AppSettings } from "../../app-settings";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -24,6 +23,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
 import { catchError } from "rxjs/operators";
+import { environment } from "../../../../environments/environment";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")
@@ -48,7 +48,7 @@ export class UserSecurityComponent implements OnInit {
   form = this.fb.group({
     username: [{ value: "", disabled: true }],
     email: ["", [Validators.required, Validators.email]],
-    roles: new FormControl<Role[]>([]),
+    roles: new FormControl<Role[]>([], Validators.required),
   });
   availableRoles: Role[] = [];
   user: KeycloakUser;
@@ -211,7 +211,7 @@ export class UserSecurityComponent implements OnInit {
   private triggerSyncReset() {
     this.http
       .post(
-        `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}/clear_local`,
+        `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}/clear_local`,
         undefined,
       )
       .subscribe({

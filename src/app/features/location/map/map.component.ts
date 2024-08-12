@@ -24,6 +24,7 @@ import {
   LocationProperties,
   MapPropertiesPopupComponent,
 } from "./map-properties-popup/map-properties-popup.component";
+import { GeoResult } from "../geo.service";
 
 @Component({
   selector: "app-map",
@@ -49,7 +50,6 @@ export class MapComponent implements AfterViewInit {
     this.showMarkersOnMap(this.markers);
     this._marked.next(coordinates);
   }
-
   private _marked = new BehaviorSubject<Coordinates[]>([]);
 
   @Input() set entities(entities: Entity[]) {
@@ -159,9 +159,10 @@ export class MapComponent implements AfterViewInit {
       .filter((entity) => !!entity)
       .forEach((entity) => {
         this.getMapProperties(entity)
-          .filter((prop) => !!entity[prop])
-          .forEach((prop) => {
-            const marker = L.marker([entity[prop].lat, entity[prop].lon]);
+          .map((prop) => entity[prop]?.geoLookup)
+          .filter((loc: GeoResult) => !!loc)
+          .forEach((loc: GeoResult) => {
+            const marker = L.marker([loc.lat, loc.lon]);
             marker.bindTooltip(entity.toString());
             marker.on("click", () => this.entityClick.emit(entity));
             marker["entity"] = entity;
@@ -211,11 +212,10 @@ export class MapComponent implements AfterViewInit {
     // Breaking circular dependency by using async import
     const mapComponent = await import("../map-popup/map-popup.component");
     const data: MapPopupConfig = {
-      marked: this._marked,
+      marked: this._marked.value,
       entities: this._entities,
       highlightedEntities: this._highlightedEntities,
       entityClick: this.entityClick,
-      mapClick: this.clickStream,
       displayedProperties: this._displayedProperties,
     };
     this.dialog
