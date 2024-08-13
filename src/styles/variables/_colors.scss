@@ -27,6 +27,9 @@ $disabled: rgba(0, 0, 0, 0.38);
 $disabled-transparent: $grey-transparent;
 $border-color: $grey-darker;
 
+/* color for inactive or archived elements */
+$inactive: grey;
+
 /* background for the main view */
 $background: white;
 /* background for the sidebar */
@@ -72,16 +75,16 @@ $w-levels: (
 
 /* Levels that are used when describing attendance values */
 $attendance-levels: (
-  P: #c8e6c9,
   /* Present */
+  P: #c8e6c9,
+  /* Holiday */
   H: #cfd8dc,
-  /* ? */
-  L: #ffecb3,
   /* Late */
-  E: #d7ccc8,
+  L: #ffecb3,
   /* Excused */
-  A: #ff8a65,
+  E: #d7ccc8,
   /* Absent */
-  U: #dddddd,
+  A: #ff8a65,
   /* Unknown */
+  U: #dddddd,
 );
