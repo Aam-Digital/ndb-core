@@ -86,6 +86,7 @@
     <tr
       mat-row
       *matRowDef="let row; columns: _columnsToDisplay"
+      [class.inactive-row]="!row.record.isActive"
       [style.background-color]="getBackgroundColor?.(row.record)"
       class="table-row"
       (mousedown)="onRowMouseDown($event, row)"
