@@ -1,6 +1,5 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { UserSecurityComponent } from "./user-security.component";
-import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { User } from "../user";
 import { importProvidersFrom } from "@angular/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -34,6 +33,7 @@ export default {
           useValue: new BehaviorSubject<SessionInfo>({
             roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
             name: "tester",
+            id: "tester",
           }),
         },
       ],

@@ -95,10 +95,11 @@ export class KeycloakAuthService {
     this.logSuccessfulAuth();
     const parsedToken: ParsedJWT = parseJwt(this.accessToken);
 
-    // TODO: adjust Keycloak to somehow include email/username in the token (currently missing)
     const sessionInfo: SessionInfo = {
       name: parsedToken.username ?? parsedToken.sub,
+      id: parsedToken.sub,
       roles: parsedToken["_couchdb.roles"],
+      email: parsedToken.email,
     };
 
     if (parsedToken.username) {
@@ -107,7 +108,7 @@ export class KeycloakAuthService {
         : Entity.createPrefixedId(User.ENTITY_TYPE, parsedToken.username);
     } else {
       Logging.debug(
-        `User not linked with an entity (userId: ${sessionInfo.name})`,
+        `User not linked with an entity (userId: ${sessionInfo.id} | ${sessionInfo.name})`,
       );
     }
 

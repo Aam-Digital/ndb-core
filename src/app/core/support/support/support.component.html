@@ -15,11 +15,21 @@
   <tbody class="support-table--body">
     <tr>
       <td>Session</td>
-      <td>{{ sessionInfo?.name ?? "-" }}</td>
+      <td>{{ sessionInfo?.id ?? "-" }}</td>
     </tr>
     <tr>
       <td>Username</td>
-      <td>{{ currentUser?.toString() ?? "-" }}</td>
+      <td>{{ sessionInfo?.email ?? "?" }}</td>
+    </tr>
+    <tr>
+      <td>User Profile</td>
+      <td>
+        @if (currentUser) {
+          {{ sessionInfo?.entityId }} ({{ currentUser?.toString() }})
+        } @else {
+          -
+        }
+      </td>
     </tr>
     <tr>
       <td>App version</td>

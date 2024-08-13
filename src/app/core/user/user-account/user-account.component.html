@@ -1,16 +1,25 @@
 <mat-tab-group appTabStateMemo>
   <mat-tab i18n-label="User-Account label" label="User Account">
-    <div class="min-width-1-3 margin-top-large" [matTooltip]="tooltipText">
+    <div
+      class="min-width-1-3 margin-top-large flex-column gap-regular"
+      [matTooltip]="tooltipText"
+    >
       <mat-form-field class="full-width">
+        <mat-label i18n>Username</mat-label>
+
         <input
           i18n-placeholder="Username placeholder"
           placeholder="Username"
           matInput="text"
           id="username"
           type="text"
-          [value]="(sessionInfo | async)?.name"
+          [value]="(sessionInfo | async)?.email"
           disabled
         />
+
+        <mat-hint>
+          {{ (sessionInfo | async)?.name }}
+        </mat-hint>
       </mat-form-field>
 
       <app-account-page [disabled]="passwordChangeDisabled"></app-account-page>
