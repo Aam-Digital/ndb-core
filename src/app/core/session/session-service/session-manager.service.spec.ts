@@ -35,10 +35,10 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
-import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Config } from "../../config/config";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -124,8 +124,8 @@ describe("SessionManagerService", () => {
 
   it("should initialize current user as the entity to which a login is connected", async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
-    const loggedInUser = new User(TEST_USER);
-    const otherUser = new User("other_user");
+    const loggedInUser = new TestEntity(TEST_USER);
+    const otherUser = new TestEntity("other_user");
     await entityMapper.saveAll([loggedInUser, otherUser]);
     const currentUser = TestBed.inject(CurrentUserSubject);
 
@@ -142,7 +142,7 @@ describe("SessionManagerService", () => {
     await service.logout();
     expect(currentUser.value).toBeUndefined();
 
-    const adminUser = new User("admin-user");
+    const adminUser = new TestEntity("admin-user");
     // login, user entity not available yet
     mockKeycloak.login.and.resolveTo({
       name: "admin-user",

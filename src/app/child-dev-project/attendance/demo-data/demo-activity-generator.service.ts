@@ -5,8 +5,8 @@ import { Child } from "../../children/model/child";
 import { faker } from "../../../core/demo-data/faker";
 import { RecurringActivity } from "../model/recurring-activity";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
-import { User } from "../../../core/user/user";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { Entity } from "../../../core/entity/model/entity";
 
 /**
  * Generate RecurringActivity entities
@@ -26,7 +26,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
    */
   static generateActivityForChildren(
     children: Child[],
-    assignedUser?: User,
+    assignedUser?: Entity,
   ): RecurringActivity {
     const activity = RecurringActivity.create();
     const type = faker.helpers.arrayElement(this.ACTIVITY_TYPES);

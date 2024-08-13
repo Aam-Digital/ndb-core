@@ -30,7 +30,6 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
-import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { School } from "../../schools/model/school";
@@ -120,7 +119,7 @@ export class Note extends Entity {
     label: $localize`:Label for the social worker(s) who created the note:SW`,
     dataType: "entity",
     isArray: true,
-    additional: User.ENTITY_TYPE,
+    additional: "User",
     defaultValue: {
       mode: "dynamic",
       value: PLACEHOLDERS.CURRENT_USER,

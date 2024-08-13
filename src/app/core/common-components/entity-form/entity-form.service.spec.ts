@@ -23,13 +23,13 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./FormConfig";
-import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import moment from "moment";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -283,12 +283,16 @@ describe("EntityFormService", () => {
       value: PLACEHOLDERS.CURRENT_USER,
     };
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue(`${User.ENTITY_TYPE}:${TEST_USER}`);
+    expect(form.get("test")).toHaveValue(
+      `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
+    );
 
     schema.dataType = EntityDatatype.dataType;
     schema.isArray = true;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
+    expect(form.get("test")).toHaveValue([
+      `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
+    ]);
 
     Entity.schema.delete("test");
   });

@@ -10,7 +10,6 @@ import {
   EntitySelectComponent,
 } from "./entity-select.component";
 import { Entity } from "../../entity/model/entity";
-import { User } from "../../user/user";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -20,6 +19,7 @@ import { FormControl } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { of } from "rxjs";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any, any>;
@@ -32,9 +32,7 @@ describe("EntitySelectComponent", () => {
     formControl = new FormControl();
 
     testUsers = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
-      const user = new User();
-      user.name = s;
-      return user;
+      return new TestEntity(s);
     });
     testChildren = [new Child(), new Child()];
     const otherEntities: Entity[] = [new School()];
@@ -63,21 +61,21 @@ describe("EntitySelectComponent", () => {
   });
 
   it("eventually loads all entities of the given type when the entity-type is set", fakeAsync(() => {
-    component.entityType = User.ENTITY_TYPE;
+    component.entityType = TestEntity.ENTITY_TYPE;
     fixture.detectChanges();
     tick();
     expect(component.allEntities.length).toBe(testUsers.length);
   }));
 
   it("should not be in loading-state when all data is received", fakeAsync(() => {
-    component.entityType = User.ENTITY_TYPE;
+    component.entityType = TestEntity.ENTITY_TYPE;
     expect(component.loading.value).toBe(true);
     tick();
     expect(component.loading.value).toBe(false);
   }));
 
   it("should suggest all entities after an initial load", fakeAsync(() => {
-    component.entityType = User.ENTITY_TYPE;
+    component.entityType = TestEntity.ENTITY_TYPE;
     tick();
     fixture.detectChanges();
     expect(component.availableOptions.value).toEqual(
@@ -86,7 +84,7 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("suggests all entities of multiple different types if configured", fakeAsync(() => {
-    component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
+    component.entityType = [TestEntity.ENTITY_TYPE, Child.ENTITY_TYPE];
     tick();
     fixture.detectChanges();
 
@@ -104,7 +102,7 @@ describe("EntitySelectComponent", () => {
 
   it("should not fail if selected entity (value) is not found", fakeAsync(() => {
     const warnSpy = spyOn(Logging, "warn");
-    component.entityType = User.ENTITY_TYPE;
+    component.entityType = TestEntity.ENTITY_TYPE;
     component.label = "test label";
     component.form.setValue([testUsers[0].getId(), "missing_user"]);
     tick();
@@ -122,7 +120,7 @@ describe("EntitySelectComponent", () => {
   it("shows inactive entities according to the includeInactive state", fakeAsync(() => {
     testUsers[0].isActive = false;
     testUsers[2].isActive = false;
-    component.entityType = User.ENTITY_TYPE;
+    component.entityType = TestEntity.ENTITY_TYPE;
     tick();
 
     expect(component.availableOptions.value.length).toEqual(
@@ -159,7 +157,7 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("should show selected entities of type that is not configured", fakeAsync(() => {
-    component.entityType = [User.ENTITY_TYPE];
+    component.entityType = [TestEntity.ENTITY_TYPE];
     component.form.setValue([testUsers[0].getId(), testChildren[0].getId()]);
     tick();
     fixture.detectChanges();

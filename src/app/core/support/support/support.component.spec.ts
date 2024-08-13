@@ -21,7 +21,7 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
-import { User } from "../../user/user";
+import { Entity } from "../../entity/model/entity";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
@@ -37,7 +37,7 @@ describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
   const testUser = { name: TEST_USER, roles: [] };
-  const userEntity = new User(TEST_USER);
+  const userEntity = new Entity(TEST_USER);
   const mockSW = { isEnabled: false };
   let mockDB: jasmine.SpyObj<PouchDatabase>;
   const mockWindow = {

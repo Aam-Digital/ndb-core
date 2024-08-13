@@ -6,7 +6,6 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
-import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
 import { asArray } from "../../../utils/utils";
@@ -86,7 +85,7 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
     dataType: "entity",
     isArray: true,
-    additional: User.ENTITY_TYPE,
+    additional: "User",
   })
   assignedTo: string[] = [];
 

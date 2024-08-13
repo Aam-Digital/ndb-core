@@ -18,7 +18,6 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { User } from "../../../core/user/user";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
@@ -71,7 +70,7 @@ export class Todo extends Entity {
     label: $localize`:Label:Assigned to`,
     dataType: "entity",
     isArray: true,
-    additional: User.ENTITY_TYPE,
+    additional: "User",
     showInDetailsView: true,
     defaultValue: {
       mode: "dynamic",

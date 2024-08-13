@@ -874,6 +874,12 @@ export const defaultJsonConfig = {
     }
   },
   "entity:User": {
+    "toStringAttributes": ["name"],
+    "icon": "user",
+    "label": $localize`:label for entity:User`,
+    "labelPlural": $localize`:label (plural) for entity:Users`,
+    "hasPII": true,
+
     "attributes": {
       "phone": {
         "dataType": "string",

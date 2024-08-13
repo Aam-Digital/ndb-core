@@ -4,7 +4,7 @@ import { RecurringActivity } from "../model/recurring-activity";
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { Child } from "../../children/model/child";
-import { User } from "../../../core/user/user";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 describe("DemoActivityGenerator", () => {
   let service: DemoDataGenerator<RecurringActivity>;
@@ -15,7 +15,7 @@ describe("DemoActivityGenerator", () => {
     } as DemoChildGenerator;
 
     const mockUserGenerator = {
-      entities: [new User("test-user")],
+      entities: [createEntityOfType("User", "test-user")],
     } as DemoUserGeneratorService;
 
     service = new DemoActivityGeneratorService(

@@ -7,7 +7,6 @@ import moment, { Moment } from "moment";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { Entity } from "../../core/entity/model/entity";
 import { School } from "../schools/model/school";
-import { User } from "../../core/user/user";
 import { groupBy } from "../../utils/utils";
 
 @Injectable({ providedIn: "root" })
@@ -132,13 +131,14 @@ export class ChildrenService {
   }
 
   private inferNoteLinkPropertyFromEntityType(entityId: string): string {
+    // TODO: rework this to check the entity schema and find the relevant field?
     const entityType = Entity.extractTypeFromId(entityId);
     switch (entityType) {
       case Child.ENTITY_TYPE:
         return "children";
       case School.ENTITY_TYPE:
         return "schools";
-      case User.ENTITY_TYPE:
+      case "User":
         return "authors";
     }
   }

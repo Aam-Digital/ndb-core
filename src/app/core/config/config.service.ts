@@ -11,6 +11,7 @@ import { FieldGroup } from "../entity-details/form/field-group";
 import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { migrateAddMissingEntityAttributes } from "./migrate-add-entity-attributes";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -66,6 +67,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityArrayDatatype,
       migrateEntitySchemaDefaultValue,
     ];
+
+    config = migrateAddMissingEntityAttributes(config);
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
       let configPart = rawValue;

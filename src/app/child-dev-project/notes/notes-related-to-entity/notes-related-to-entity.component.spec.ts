@@ -7,8 +7,8 @@ import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { User } from "../../../core/user/user";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -69,7 +69,7 @@ describe("NotesRelatedToEntityComponent", () => {
     note = component.createNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
 
-    entity = new User();
+    entity = createEntityOfType("User");
     component.entity = entity;
     component.filter = undefined;
     component.property = undefined;

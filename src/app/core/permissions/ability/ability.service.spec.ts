@@ -6,7 +6,6 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
-import { User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
@@ -19,7 +18,8 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { EventAttendanceMapDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
 import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
-import { Entity } from "../../entity/model/entity";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -50,8 +50,15 @@ describe("AbilityService", () => {
           useValue: new BehaviorSubject({
             name: TEST_USER,
             roles: ["user_app"],
-            entityId: Entity.createPrefixedId(User.ENTITY_TYPE, TEST_USER),
+            entityId: TestEntity.createPrefixedId(
+              TestEntity.ENTITY_TYPE,
+              TEST_USER,
+            ),
           }),
+        },
+        {
+          provide: CurrentUserSubject,
+          useValue: new BehaviorSubject(new TestEntity(TEST_USER)),
         },
         {
           provide: DefaultDatatype,
@@ -220,23 +227,18 @@ describe("AbilityService", () => {
       const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
         user_app: [
           {
-            subject: "User",
+            subject: "TestEntity",
             action: "manage",
-            conditions: { name: placeholder },
+            conditions: { _id: placeholder },
           },
         ],
       });
       entityUpdates.next({ entity: config, type: "update" });
       tick();
 
-      const userEntity = new User();
-      userEntity.name = Entity.createPrefixedId(User.ENTITY_TYPE, TEST_USER);
+      const userEntity = new TestEntity(TEST_USER);
       expect(ability.can("manage", userEntity)).toBeTrue();
-      const anotherUser = new User();
-      anotherUser.name = Entity.createPrefixedId(
-        User.ENTITY_TYPE,
-        "another user",
-      );
+      const anotherUser = new TestEntity();
       expect(ability.cannot("manage", anotherUser)).toBeTrue();
     }
 
