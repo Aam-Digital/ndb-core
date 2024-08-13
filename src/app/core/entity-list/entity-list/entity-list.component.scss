@@ -13,6 +13,12 @@
     max-width: 412px;
   }
 }
+.mobile-only {
+  @media screen and (max-width: 768px) {
+    /*Hides the desktop content*/
+    display: none;
+  }
+}
 
 .bulk-action-button {
   position: fixed;
