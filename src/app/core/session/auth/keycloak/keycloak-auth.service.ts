@@ -153,9 +153,9 @@ export class KeycloakAuthService {
     });
   }
 
-  async getUserinfo(): Promise<KeycloakUser> {
+  async getUserinfo(): Promise<KeycloakUserDto> {
     const user = await this.keycloak.getKeycloakInstance().loadUserInfo();
-    return user as KeycloakUser;
+    return user as KeycloakUserDto;
   }
 
   setEmail(email: string): Observable<any> {
@@ -164,19 +164,19 @@ export class KeycloakAuthService {
     });
   }
 
-  createUser(user: Partial<KeycloakUser>): Observable<any> {
+  createUser(user: Partial<KeycloakUserDto>): Observable<any> {
     return this.httpClient.post(`${environment.account_url}/account`, user);
   }
 
-  updateUser(userId: string, user: Partial<KeycloakUser>): Observable<any> {
+  updateUser(userId: string, user: Partial<KeycloakUserDto>): Observable<any> {
     return this.httpClient.put(
       `${environment.account_url}/account/${userId}`,
       user,
     );
   }
 
-  getUser(username: string): Observable<KeycloakUser> {
-    return this.httpClient.get<KeycloakUser>(
+  getUser(username: string): Observable<KeycloakUserDto> {
+    return this.httpClient.get<KeycloakUserDto>(
       `${environment.account_url}/account/${username}`,
     );
   }
@@ -212,11 +212,12 @@ export interface Role {
 }
 
 /**
- * Extract of Keycloak user object.
+ * Extract of Keycloak user object as provided by the external Keycloak Service.
  * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_userrepresentation}
+ *
+ * These fields overlap with our internal `SessionInfo` interface that is seen as abstracted from Keycloak.
  */
-export interface KeycloakUser {
-  // TODO: this seems to overlap with SessionInfo. Do we still need this?
+export interface KeycloakUserDto {
   id: string;
   username: string;
   email: string;
