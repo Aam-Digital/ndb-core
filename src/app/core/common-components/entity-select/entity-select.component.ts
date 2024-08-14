@@ -20,11 +20,13 @@ import { asArray } from "../../../utils/utils";
 import { Logging } from "../../logging/logging.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-
 @Component({
   selector: "app-entity-select",
   templateUrl: "./entity-select.component.html",
-  styleUrls: ["./entity-select.component.scss"],
+  styleUrls: [
+    "./entity-select.component.scss",
+    "../../basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.scss",
+  ],
   imports: [
     MatFormFieldModule,
     NgIf,
