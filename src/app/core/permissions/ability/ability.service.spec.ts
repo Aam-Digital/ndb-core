@@ -144,6 +144,7 @@ describe("AbilityService", () => {
     spyOn(ability, "update");
     TestBed.inject(SessionSubject).next({
       name: "testAdmin",
+      id: "1",
       roles: ["user_app", "admin_app"],
     });
 
@@ -179,6 +180,7 @@ describe("AbilityService", () => {
 
     TestBed.inject(SessionSubject).next({
       name: "testAdmin",
+      id: "1",
       roles: ["user_app", "admin_app"],
     });
 
@@ -278,6 +280,7 @@ describe("AbilityService", () => {
 
     TestBed.inject(SessionSubject).next({
       name: "new-user",
+      id: "1",
       roles: ["invalid_role"],
     });
     const warnSpy = spyOn(Logging, "warn");
@@ -309,6 +312,7 @@ describe("AbilityService", () => {
 
     TestBed.inject(SessionSubject).next({
       name: "admin",
+      id: "1",
       roles: ["user_app", "admin_app"],
     });
 

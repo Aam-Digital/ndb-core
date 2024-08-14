@@ -11,7 +11,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import {
   KeycloakAuthService,
-  KeycloakUser,
+  KeycloakUserDto,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { BehaviorSubject, of, throwError } from "rxjs";
@@ -34,7 +34,7 @@ describe("UserSecurityComponent", () => {
     description: "this role is not assigned to the user",
   };
   const user = Object.assign(new Entity(), { username: "test-user" });
-  let keycloakUser: KeycloakUser;
+  let keycloakUser: KeycloakUserDto;
 
   beforeEach(async () => {
     keycloakUser = {

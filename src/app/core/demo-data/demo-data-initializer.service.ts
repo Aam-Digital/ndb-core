@@ -28,11 +28,13 @@ export class DemoDataInitializerService {
   private pouchDatabase: PouchDatabase;
   private readonly normalUser: SessionInfo = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
+    id: DemoUserGeneratorService.DEFAULT_USERNAME,
     roles: ["user_app"],
     entityId: `User:${DemoUserGeneratorService.DEFAULT_USERNAME}`,
   };
   private readonly adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
+    id: DemoUserGeneratorService.ADMIN_USERNAME,
     roles: ["user_app", "admin_app"],
     entityId: `User:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };

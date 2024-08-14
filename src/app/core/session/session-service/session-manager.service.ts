@@ -113,8 +113,8 @@ export class SessionManagerService {
     const entityType = Entity.extractTypeFromId(entityId);
     this.entityMapper
       .load(entityType, entityId)
-      .then((res) => this.currentUser.next(res))
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .then((res) => this.currentUser.next(res));
     this.updateSubscription = this.entityMapper
       .receiveUpdates(entityType)
       .pipe(
