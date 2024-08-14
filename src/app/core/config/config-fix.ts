@@ -3,6 +3,7 @@ import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { EducationalMaterial } from "../../child-dev-project/children/educational-material/model/educational-material";
+import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -913,22 +914,5 @@ export const defaultJsonConfig = {
     }
   },
 
-  "entity:Todo": {
-    "attributes": {}
-  },
-  "view:todo": {
-    "component": "TodoList",
-    "config": {
-      "entityType": "Todo",
-      "columns": ["deadline", "subject", "assignedTo", "startDate", "relatedEntities"],
-      "filters": [
-        {"id": "assignedTo"},
-
-        {
-          "id": "due-status",
-          "type": "prebuilt"
-        }
-      ]
-    }
-  }
+  ...todoDefaultConfigs,
 };

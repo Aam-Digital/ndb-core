@@ -6,7 +6,7 @@ export function migrateAddMissingEntityAttributes(config: Config): Config {
     .filter(([id, value]) => id.startsWith("entity:"))
     .map(([id, value]) => value);
 
-  for (let entityType of ["User"]) {
+  for (let entityType of ["User", "Todo"]) {
     // TODO: just blindly save all hard-coded fields into the entity config? or scan which ones are actually used?!
     if (!JSON.stringify(config).includes(`"${entityType}"`)) {
       // don't add config if the entity is never explicitly used or referenced
@@ -60,6 +60,80 @@ const DEFAULT_ENTITIES = {
       phone: {
         dataType: "string",
         label: "Contact",
+      },
+    },
+  },
+  Todo: {
+    toStringAttributes: ["subject"],
+    icon: "check",
+    label: "Task",
+    labelPlural: "Tasks",
+    hasPII: true,
+    attributes: {
+      subject: {
+        dataType: "string",
+        label: "Subject",
+        showInDetailsView: true,
+      },
+      description: {
+        dataType: "long-text",
+        showInDetailsView: true,
+        label: "Description",
+      },
+      deadline: {
+        dataType: "date-only",
+        showInDetailsView: true,
+        anonymize: "retain",
+        label: "Deadline",
+      },
+      startDate: {
+        dataType: "date-only",
+        description:
+          "When you are planning to start work so that you keep enough time before the actual hard deadline.",
+        showInDetailsView: true,
+        anonymize: "retain",
+        label: "Start Date",
+      },
+      assignedTo: {
+        label: "Assigned to",
+        dataType: "entity",
+        isArray: true,
+        additional: "User",
+        showInDetailsView: true,
+        defaultValue: {
+          mode: "dynamic",
+          value: "$current_user",
+        },
+        anonymize: "retain",
+      },
+      relatedEntities: {
+        dataType: "entity",
+        isArray: true,
+        label: "Related Records",
+        additional: ["Child", "School", "RecurringActivity"],
+        entityReferenceRole: "composite",
+        showInDetailsView: true,
+        anonymize: "retain",
+      },
+      repetitionInterval: {
+        label: "repeats",
+        additional: [
+          {
+            label: "every week",
+            interval: { amount: 1, unit: "week" },
+          },
+          {
+            label: "every month",
+            interval: { amount: 1, unit: "month" },
+          },
+        ],
+        showInDetailsView: true,
+        anonymize: "retain",
+      },
+      completed: {
+        label: "completed",
+        viewComponent: "DisplayTodoCompletion",
+        anonymize: "retain",
       },
     },
   },

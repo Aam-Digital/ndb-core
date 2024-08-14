@@ -26,6 +26,7 @@ export class EntityConfigService {
   /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";
 
+  // TODO remove this?
   /** original initial entity schemas without overrides from config */
   private coreEntitySchemas = new Map<string, EntitySchema>();
 
