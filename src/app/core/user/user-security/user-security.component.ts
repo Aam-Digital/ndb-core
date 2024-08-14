@@ -8,7 +8,7 @@ import {
 } from "@angular/forms";
 import {
   KeycloakAuthService,
-  KeycloakUser,
+  KeycloakUserDto,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { AlertService } from "../../alerts/alert.service";
@@ -51,7 +51,7 @@ export class UserSecurityComponent implements OnInit {
     roles: new FormControl<Role[]>([], Validators.required),
   });
   availableRoles: Role[] = [];
-  user: KeycloakUser;
+  user: KeycloakUserDto;
   editing = true;
   userIsPermitted = false;
 
@@ -107,7 +107,7 @@ export class UserSecurityComponent implements OnInit {
       });
   }
 
-  private assignUser(user: KeycloakUser) {
+  private assignUser(user: KeycloakUserDto) {
     this.user = user;
     this.initializeForm();
     if (this.user) {
@@ -162,7 +162,7 @@ export class UserSecurityComponent implements OnInit {
               this.form.get("email").value
             }`,
           );
-          this.user = user as KeycloakUser;
+          this.user = user as KeycloakUserDto;
           this.disableForm();
         },
         error: ({ error }) => this.form.setErrors({ failed: error.message }),
@@ -184,7 +184,10 @@ export class UserSecurityComponent implements OnInit {
     }
   }
 
-  private updateKeycloakUser(update: Partial<KeycloakUser>, message: string) {
+  private updateKeycloakUser(
+    update: Partial<KeycloakUserDto>,
+    message: string,
+  ) {
     this.authService.updateUser(this.user.id, update).subscribe({
       next: () => {
         this.alertService.addInfo(message);
@@ -199,7 +202,7 @@ export class UserSecurityComponent implements OnInit {
     });
   }
 
-  getFormValues(): Partial<KeycloakUser> {
+  getFormValues(): Partial<KeycloakUserDto> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
