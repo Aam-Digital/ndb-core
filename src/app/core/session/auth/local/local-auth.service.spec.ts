@@ -18,6 +18,7 @@ describe("LocalAuthService", () => {
     localStorage.clear();
     testUser = {
       name: TEST_USER,
+      id: "101",
       roles: ["user_app"],
     };
     service.saveUser(testUser);

@@ -51,7 +51,7 @@ export class LoggingService {
     return () =>
       loginState.subscribe((newState) => {
         if (newState === LoginState.LOGGED_IN) {
-          const username = sessionInfo.value.name;
+          const username = sessionInfo.value?.id;
           Logging.setLoggingContextUser(username);
         } else {
           Logging.setLoggingContextUser(undefined);

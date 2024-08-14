@@ -16,12 +16,14 @@ import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("DemoDataInitializerService", () => {
   const normalUser: SessionInfo = {
-    name: "demo",
+    name: DemoUserGeneratorService.DEFAULT_USERNAME,
+    id: DemoUserGeneratorService.DEFAULT_USERNAME,
     entityId: "User:demo",
     roles: ["user_app"],
   };
   const adminUser: SessionInfo = {
-    name: "demo-admin",
+    name: DemoUserGeneratorService.ADMIN_USERNAME,
+    id: DemoUserGeneratorService.ADMIN_USERNAME,
     entityId: "User:demo-admin",
     roles: ["user_app", "admin_app"],
   };
@@ -114,7 +116,8 @@ describe("DemoDataInitializerService", () => {
     tick();
 
     TestBed.inject(SessionSubject).next({
-      name: DemoUserGeneratorService.ADMIN_USERNAME,
+      name: adminUser.name,
+      id: adminUser.id,
       roles: [],
     });
     database.initInMemoryDB(adminDBName);
@@ -145,7 +148,8 @@ describe("DemoDataInitializerService", () => {
 
     const database = TestBed.inject(Database) as PouchDatabase;
     TestBed.inject(SessionSubject).next({
-      name: DemoUserGeneratorService.ADMIN_USERNAME,
+      name: adminUser.name,
+      id: adminUser.id,
       roles: [],
     });
     database.initInMemoryDB(adminDBName);

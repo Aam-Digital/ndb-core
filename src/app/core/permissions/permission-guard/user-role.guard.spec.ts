@@ -10,10 +10,12 @@ describe("UserRoleGuard", () => {
   let sessionInfo: SessionSubject;
   const normalUser: SessionInfo = {
     name: "normalUser",
+    id: "1",
     roles: ["user_app"],
   };
   const adminUser: SessionInfo = {
     name: "admin",
+    id: "2",
     roles: ["admin", "user_app"],
   };
 
