@@ -1,19 +1,9 @@
-.mat-form-field {
-    width: 100%; // Ensure the form field takes up the full width
-    position: relative;
-  }
-  
-  .mat-autocomplete {
-    width: 100% !important; // Force the autocomplete dropdown to take full width
-  }
+.autocomplete-container {
+  position: relative;
+}
 
-  .autocomplete-container {
-    position: relative !important;
-  }
-
-  .icon-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-  
+.icon-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
