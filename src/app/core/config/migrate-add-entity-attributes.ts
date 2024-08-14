@@ -6,7 +6,7 @@ export function migrateAddMissingEntityAttributes(config: Config): Config {
     .filter(([id, value]) => id.startsWith("entity:"))
     .map(([id, value]) => value);
 
-  for (let entityType of ["User", "Todo"]) {
+  for (let entityType of Object.keys(DEFAULT_ENTITIES)) {
     // TODO: just blindly save all hard-coded fields into the entity config? or scan which ones are actually used?!
     if (!JSON.stringify(config).includes(`"${entityType}"`)) {
       // don't add config if the entity is never explicitly used or referenced
@@ -60,6 +60,46 @@ const DEFAULT_ENTITIES = {
       phone: {
         dataType: "string",
         label: "Contact",
+      },
+    },
+  },
+  EducationalMaterial: {
+    attributes: {
+      child: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+      },
+      date: {
+        dataType: "date",
+        label: "Date",
+        defaultValue: {
+          mode: "dynamic",
+          value: "$now",
+        },
+      },
+      materialType: {
+        label: "Material",
+        dataType: "configurable-enum",
+        additional: "materials",
+        validators: {
+          required: true,
+        },
+      },
+      materialAmount: {
+        dataType: "number",
+        label: "Amount",
+        defaultValue: {
+          mode: "static",
+          value: 1,
+        },
+        validators: {
+          required: true,
+        },
+      },
+      description: {
+        dataType: "string",
+        label: "Description",
       },
     },
   },

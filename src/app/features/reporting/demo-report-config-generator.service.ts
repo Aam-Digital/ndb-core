@@ -5,7 +5,6 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import { EducationalMaterial } from "../../child-dev-project/children/educational-material/model/educational-material";
 
 @Injectable()
 export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportEntity> {
@@ -137,7 +136,7 @@ const demoReports: Partial<ReportEntity>[] = [
     mode: "exporting",
     aggregationDefinitions: [
       {
-        query: `${EducationalMaterial.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
+        query: `EducationalMaterial:toArray[*date >= ? & date <= ?]`,
         groupBy: { label: "Type", property: "materialType" },
         subQueries: [
           {

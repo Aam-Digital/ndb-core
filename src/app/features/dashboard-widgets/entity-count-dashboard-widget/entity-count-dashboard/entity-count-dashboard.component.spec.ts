@@ -20,8 +20,9 @@ import {
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
-import { EducationalMaterial } from "../../../../child-dev-project/children/educational-material/model/educational-material";
 import { Note } from "../../../../child-dev-project/notes/model/note";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { Entity } from "../../../../core/entity/model/entity";
 
 describe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;
@@ -119,20 +120,20 @@ describe("EntityCountDashboardComponent", () => {
   });
 
   it("should groupBy entity references and display an entity-block", async () => {
-    const testGroupBy = "child";
+    const testGroupBy = "ref";
     component.groupBy = testGroupBy;
-    component.entityType = EducationalMaterial.ENTITY_TYPE;
+    component.entityType = TestEntity.ENTITY_TYPE;
 
-    const c1 = new Child();
-    const x0 = new EducationalMaterial();
-    const x1 = new EducationalMaterial();
+    const c1 = new Entity("ref-1");
+    const x0 = new TestEntity();
+    const x1 = new TestEntity();
 
     x1[testGroupBy] = c1.getId();
     entityMapper.addAll([x0, x1, c1]);
 
     await component.ngOnInit();
 
-    expect(component.groupedByEntity).toBe(Child.ENTITY_TYPE);
+    expect(component.groupedByEntity).toBe(Entity.ENTITY_TYPE);
     expect(component.entityGroupCounts).toHaveSize(2);
     expect(component.entityGroupCounts).toContain({
       label: "",

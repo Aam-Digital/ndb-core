@@ -1,6 +1,7 @@
 import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
+import { EntityDatatype } from "../../core/basic-datatypes/entity/entity.datatype";
 
 /**
  * Basic Entity type for unit tests, so that we don't have to create custom entity classes for every test.
@@ -16,4 +17,11 @@ export class TestEntity extends Entity {
     label: "Name",
   })
   name: string;
+
+  @DatabaseField({
+    label: "Reference",
+    dataType: EntityDatatype.dataType,
+    additional: TestEntity.ENTITY_TYPE,
+  })
+  ref: string;
 }

@@ -1,5 +1,5 @@
 import { genders } from "../../../child-dev-project/children/model/genders";
-import { materials } from "../../../child-dev-project/children/educational-material/model/materials";
+import { materials } from "../../../child-dev-project/children/demo-data-generators/educational-material/materials";
 import {
   mathLevels,
   readingLevels,

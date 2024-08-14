@@ -2,8 +2,9 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
-import { EducationalMaterial } from "../../child-dev-project/children/educational-material/model/educational-material";
 import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
+import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -656,7 +657,7 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "RelatedEntitiesWithSummary",
               "config": {
-                "entityType": EducationalMaterial.ENTITY_TYPE,
+                "entityType": "EducationalMaterial",
                 "property": "child",
                 "columns": [
                   { "id": "date", "visibleFrom": "xs" },
@@ -710,6 +711,46 @@ export const defaultJsonConfig = {
           ]
         }
       ]
+    }
+  },
+  "entity:EducationMaterial": {
+    attributes: {
+      child: {
+        dataType: EntityDatatype.dataType,
+        additional: Child.ENTITY_TYPE,
+        entityReferenceRole: "composite",
+      },
+      date: {
+        dataType: "date",
+        label: $localize`:Date on which the material has been borrowed:Date`,
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+      },
+      materialType: {
+        label: $localize`:The material which has been borrowed:Material`,
+        dataType: "configurable-enum",
+        additional: "materials",
+        validators: {
+          required: true,
+        },
+      },
+      materialAmount: {
+        dataType: "number",
+        label: $localize`:The amount of the material which has been borrowed:Amount`,
+        defaultValue: {
+          mode: "static",
+          value: 1,
+        },
+        validators: {
+          required: true,
+        },
+      },
+      description: {
+        dataType: "string",
+        label: $localize`:An additional description for the borrowed material:Description`,
+      }
     }
   },
   "view:attendance/recurring-activity": {

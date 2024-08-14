@@ -1,10 +1,11 @@
-import { DemoChildGenerator } from "../demo-data-generators/demo-child-generator.service";
-import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
+import { DemoChildGenerator } from "../demo-child-generator.service";
+import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../model/child";
-import { faker } from "../../../core/demo-data/faker";
-import { EducationalMaterial } from "./model/educational-material";
-import { materials } from "./model/materials";
+import { Child } from "../../model/child";
+import { faker } from "../../../../core/demo-data/faker";
+import { materials } from "./materials";
+import { Entity } from "../../../../core/entity/model/entity";
+import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
 
 export class DemoEducationMaterialConfig {
   minCount: number;
@@ -16,7 +17,7 @@ export class DemoEducationMaterialConfig {
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<EducationalMaterial> {
+export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<Entity> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoEducationalMaterialGeneratorService.provider()]`
@@ -38,7 +39,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     super();
   }
 
-  public generateEntities(): EducationalMaterial[] {
+  public generateEntities(): Entity[] {
     const data = [];
 
     for (const child of this.demoChildren.entities) {
@@ -53,7 +54,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
       const specialMaterial = this.generateEducationalMaterialEntity(child);
       specialMaterial.materialType = faker.helpers.arrayElement(
         materials.filter((material) => material.hasOwnProperty("color")),
-      );
+      ).id;
       specialMaterial.materialAmount = 1;
       data.push(specialMaterial);
     }
@@ -61,8 +62,10 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     return data;
   }
 
-  private generateEducationalMaterialEntity(child: Child): EducationalMaterial {
-    const entity = new EducationalMaterial();
+  private generateEducationalMaterialEntity(
+    child: Child,
+  ): Entity & { [key: string]: any } {
+    const entity = createEntityOfType("EducationalMaterial");
 
     entity.child = child.getId();
     entity.date = faker.date.between({
@@ -70,7 +73,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
       to: faker.getEarlierDateOrToday(child.dropoutDate),
     });
     entity.materialAmount = faker.helpers.arrayElement([1, 1, 1, 2, 3]);
-    entity.materialType = faker.helpers.arrayElement(materials);
+    entity.materialType = faker.helpers.arrayElement(materials).id;
 
     return entity;
   }
