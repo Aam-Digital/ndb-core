@@ -13,22 +13,10 @@
     max-width: 412px;
   }
 }
-.mobile-only {
-  @media screen and (max-width: 768px) {
-    /*Hides the desktop content*/
-    display: none;
-  }
-}
 
 .bulk-action-button {
-  position: fixed;
   right: sizes.$large;
-  z-index: 999;
 
   padding: sizes.$regular;
   background-color: colors.$background;
-}
-
-.bulk-action-spacing {
-  margin-bottom: 100px;
 }

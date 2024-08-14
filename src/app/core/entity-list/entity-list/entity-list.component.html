@@ -6,9 +6,7 @@
   </app-view-title>
 
   <app-view-actions>
-    <div class="flex-row gap-regular mobile-only">
-      <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
-
+    <div class="flex-row gap-regular">
       <app-entity-create-button
         [entityType]="entityConstructor"
         (entityCreate)="addNew()"
@@ -35,6 +33,12 @@
     ></app-filter>
   </div>
 
+  <!-- Bulk Actions -->
+
+  <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+
+  <!-- Tab Groups-->
+
   <div class="mat-elevation-z1">
     <div *ngIf="groups.length > 1">
       <mat-tab-group
@@ -57,15 +61,20 @@
 
 <!-- Mobile Version -->
 <div *ngIf="!isDesktop">
-  <h2>{{ title }}</h2>
+  <app-view-title [disableBackButton]="true">
+    <h2>{{ title }}</h2>
+  </app-view-title>
 
-  <div class="flex-row">
-    <div *ngTemplateOutlet="filterDialog"></div>
+  <app-view-actions>
+    <div class="flex-row full-width">
+      <div *ngTemplateOutlet="filterDialog"></div>
 
-    <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
-      <fa-icon icon="ellipsis-v"></fa-icon>
-    </button>
-  </div>
+      <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
+        <fa-icon icon="ellipsis-v"></fa-icon>
+      </button>
+    </div>
+  </app-view-actions>
+
   <div *ngIf="selectedRows" class="bulk-action-spacing">
     <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
   </div>
