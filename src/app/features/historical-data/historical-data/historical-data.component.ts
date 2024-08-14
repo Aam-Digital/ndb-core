@@ -49,6 +49,7 @@ export class HistoricalDataComponent
   }
 
   override getData() {
+    // TODO: add config option to related-entities.component to use an index when available and then remove this component
     return this.historicalDataService.getHistoricalDataFor(this.entity.getId());
   }
 }

@@ -68,6 +68,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntitySchemaDefaultValue,
     ];
 
+    // TODO: execute this on server via ndb-admin
     config = migrateAddMissingEntityAttributes(config);
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
