@@ -1,18 +1,20 @@
-import { DemoChildGenerator } from "../demo-data-generators/demo-child-generator.service";
-import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
+import { DemoChildGenerator } from "../demo-child-generator.service";
+import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../model/child";
-import { faker } from "../../../core/demo-data/faker";
-import { Aser } from "./model/aser";
-import { mathLevels, readingLevels } from "./model/skill-levels";
-import { WarningLevel } from "../../warning-level";
+import { Child } from "../../model/child";
+import { faker } from "../../../../core/demo-data/faker";
+import { mathLevels, readingLevels } from "./skill-levels";
+import { WarningLevel } from "../../../warning-level";
+import { Entity } from "../../../../core/entity/model/entity";
+import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
+import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 
 /**
  * Generate ASER results every 12 months for each Child until passing.
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
+export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoAserGeneratorService.provider()]`
@@ -27,7 +29,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
     super();
   }
 
-  public generateEntities(): Aser[] {
+  public generateEntities(): Entity[] {
     const data = [];
 
     for (const child of this.demoChildren.entities) {
@@ -37,28 +39,28 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
     return data;
   }
 
-  private generateAserResultsForChild(child: Child): Aser[] {
+  private generateAserResultsForChild(child: Child): Entity[] {
     const data = [];
 
     let date = new Date(child.admissionDate.getTime());
-    let previousResult = new Aser("");
+    let previousResult = createEntityOfType("Aser");
     const firstLanguage = child["motherTongue"].toLowerCase();
     do {
-      const aserResult = new Aser();
+      const aserResult = createEntityOfType("Aser");
       aserResult.child = child.getId();
       aserResult.date = date;
       aserResult.math = this.selectNextSkillLevel(
         mathLevels.slice(1),
         previousResult.math,
-      );
+      ).id;
       aserResult.english = this.selectNextSkillLevel(
         readingLevels.slice(1),
         previousResult.english,
-      );
+      ).id;
       aserResult[firstLanguage] = this.selectNextSkillLevel(
         readingLevels.slice(1),
         previousResult[firstLanguage],
-      );
+      ).id;
 
       data.push(aserResult);
 
@@ -77,7 +79,10 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
    * @param skillRange The array of skill levels for the desired subject (mathLevels or readingLevels)
    * @param previousSkillLevel The string indicating the level from the previous test for this subject
    */
-  private selectNextSkillLevel<T>(skillRange: T[], previousSkillLevel: T): T {
+  private selectNextSkillLevel<T extends ConfigurableEnumValue>(
+    skillRange: T[],
+    previousSkillLevel: T,
+  ): T {
     const previousSkillLevelIndex = skillRange.indexOf(previousSkillLevel);
 
     let nextSkillLevelIndex;

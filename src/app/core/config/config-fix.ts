@@ -941,10 +941,10 @@ export const defaultJsonConfig = {
     "config": {
       "rightSide": {
         "entityType": "School",
-        "prefilter": { "privateSchool": true },
+        "prefilter": {"privateSchool": true},
         "availableFilters": [{"id": "language"}],
       },
-      "leftSide": { "entityType": Child.ENTITY_TYPE },
+      "leftSide": {"entityType": Child.ENTITY_TYPE},
     }
   },
   "appConfig:matching-entities": {
@@ -959,6 +959,52 @@ export const defaultJsonConfig = {
       "newEntityMatchPropertyLeft": "childId",
       "newEntityMatchPropertyRight": "schoolId",
       "columnsToReview": ["start", "end", "result", "childId", "schoolId"]
+    }
+  },
+  "entity:Aser": {
+    hasPII: true,
+    attributes: {
+      child: {
+        dataType: "entity",
+        additional: Child.ENTITY_TYPE,
+        entityReferenceRole: "composite",
+      },
+
+      date: {
+        dataType: "date",
+        label: $localize`:Label for date of the ASER results:Date`,
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+        anonymize: "retain-anonymized",
+      },
+
+      hindi: {
+        label: $localize`:Label of the Hindi ASER result:Hindi`,
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      bengali: {
+        label: $localize`:Label of the Bengali ASER result:Bengali`,
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      english: {
+        label: $localize`:Label of the English ASER result:English`,
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      math: {
+        label: $localize`:Label of the Math ASER result:Math`,
+        dataType: "configurable-enum",
+        additional: "math-levels",
+      },
+
+      remarks: {
+        dataType: "string",
+        label: $localize`:Label for the remarks of a ASER result:Remarks`,
+      },
     }
   },
 

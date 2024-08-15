@@ -1,5 +1,6 @@
 import { Config } from "./config";
 import { EntityConfig } from "../entity/entity-config";
+import { Child } from "../../child-dev-project/children/model/child";
 
 export function migrateAddMissingEntityAttributes(config: Config): Config {
   const entities: EntityConfig[] = Object.entries(config.data)
@@ -190,6 +191,49 @@ const DEFAULT_ENTITIES = {
         validators: {
           required: true,
         },
+      },
+    },
+  },
+  Aser: {
+    hasPII: true,
+    attributes: {
+      child: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+      },
+      date: {
+        dataType: "date",
+        label: "Date",
+        defaultValue: {
+          mode: "dynamic",
+          value: "$now",
+        },
+        anonymize: "retain-anonymized",
+      },
+      hindi: {
+        label: "Hindi",
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      bengali: {
+        label: "Bengali",
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      english: {
+        label: "English",
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      math: {
+        label: "Math",
+        dataType: "configurable-enum",
+        additional: "math-levels",
+      },
+      remarks: {
+        dataType: "string",
+        label: "Remarks",
       },
     },
   },

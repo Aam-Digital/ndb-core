@@ -3,7 +3,7 @@ import { materials } from "../../../child-dev-project/children/demo-data-generat
 import {
   mathLevels,
   readingLevels,
-} from "../../../child-dev-project/children/aser/model/skill-levels";
+} from "../../../child-dev-project/children/demo-data-generators/aser/skill-levels";
 import { ConfigurableEnum } from "./configurable-enum";
 import { ConfigurableEnumService } from "./configurable-enum.service";
 import { NEVER } from "rxjs";
