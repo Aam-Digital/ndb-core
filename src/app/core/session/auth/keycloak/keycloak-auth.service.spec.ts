@@ -55,8 +55,10 @@ describe("KeycloakAuthService", () => {
   it("should return user object after successful login check", () => {
     return expectAsync(service.login()).toBeResolvedTo({
       name: "test",
+      id: "881ba191-0d27-4dff-9bc4-2c9e561ac900",
       roles: ["user_app"],
       entityId: "User:test",
+      email: undefined,
     });
   });
 
@@ -66,7 +68,9 @@ describe("KeycloakAuthService", () => {
     mockKeycloak.getToken.and.resolveTo(tokenWithoutUsername);
     return expectAsync(service.login()).toBeResolvedTo({
       name: "8440add0-97a9-43ed-af0b-116c0fab7e90",
+      id: "8440add0-97a9-43ed-af0b-116c0fab7e90",
       roles: ["user_app"],
+      email: undefined,
     });
   });
 

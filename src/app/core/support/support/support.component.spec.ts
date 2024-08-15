@@ -23,7 +23,7 @@ import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.s
 import { SyncStateSubject } from "../../session/session-type";
 import { User } from "../../user/user";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { SessionSubject } from "../../session/auth/session-info";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 
 class MockDeleteRequest {
@@ -36,7 +36,7 @@ class MockDeleteRequest {
 describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
-  const testUser = { name: TEST_USER, roles: [] };
+  const testUser: SessionInfo = { name: TEST_USER, id: TEST_USER, roles: [] };
   const userEntity = new User(TEST_USER);
   const mockSW = { isEnabled: false };
   let mockDB: jasmine.SpyObj<PouchDatabase>;
