@@ -9,12 +9,12 @@ import { defaultInteractionTypes } from "../../core/config/default-config/defaul
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
-import { School } from "../schools/model/school";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { Entity } from "../../core/entity/model/entity";
+import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -282,7 +282,7 @@ describe("AttendanceService", () => {
 
   it("should include children from a linked school for event from activity", async () => {
     const activity = new RecurringActivity();
-    const linkedSchool = new School();
+    const linkedSchool = createEntityOfType("School");
     activity.linkedGroups.push(linkedSchool.getId());
 
     const childAttendingSchool = new ChildSchoolRelation();
@@ -306,7 +306,7 @@ describe("AttendanceService", () => {
 
   it("should not include duplicate children for event from activity", async () => {
     const activity = new RecurringActivity();
-    const linkedSchool = new School();
+    const linkedSchool = createEntityOfType("School");
     activity.linkedGroups.push(linkedSchool.getId());
 
     const duplicateChild = new Child();

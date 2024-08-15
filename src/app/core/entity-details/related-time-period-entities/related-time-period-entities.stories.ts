@@ -4,12 +4,12 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 
 const child = new Child("testChild");
-const school1 = new School("1");
+const school1 = createEntityOfType("School", "1");
 school1.name = "School 1";
-const school2 = new School("2");
+const school2 = createEntityOfType("School", "2");
 school2.name = "School 2";
 const rel1 = new ChildSchoolRelation("1");
 rel1.childId = child.getId();

@@ -24,4 +24,8 @@ export class TestEntity extends Entity {
     additional: TestEntity.ENTITY_TYPE,
   })
   ref: string;
+
+  static create(data: Partial<TestEntity>): TestEntity {
+    return Object.assign(new TestEntity(), data);
+  }
 }

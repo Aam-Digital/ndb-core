@@ -1,11 +1,11 @@
 import { DemoChildGenerator } from "./demo-child-generator.service";
-import { DemoSchoolGenerator } from "../../schools/demo-school-generator.service";
+import { DemoSchoolGenerator } from "./demo-school-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../model/child";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { faker } from "../../../core/demo-data/faker";
-import { School } from "../../schools/model/school";
+import { Entity } from "../../../core/entity/model/entity";
 
 /**
  * Generate ChildSchoolRelation entities linking a child to a school for a specific year.
@@ -55,7 +55,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
       finalYear = child.dropoutDate.getFullYear();
     }
 
-    let currentSchool: School = undefined;
+    let currentSchool: Entity = undefined;
     let offset = 0;
     while (firstYear + offset <= finalYear && offset <= 12) {
       currentSchool = this.selectNextSchool(currentSchool);
@@ -82,7 +82,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     child: Child,
     year,
     schoolClass: number,
-    school: School,
+    school: Entity,
   ): ChildSchoolRelation {
     const schoolRelation = new ChildSchoolRelation();
     schoolRelation.childId = child.getId();
@@ -98,7 +98,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
    * Select a different school randomly in a certain percentages of cases keeping the currentSchool otherwise.
    * @param currentSchool
    */
-  private selectNextSchool(currentSchool: School) {
+  private selectNextSchool(currentSchool: Entity) {
     if (!currentSchool) {
       return faker.helpers.arrayElement(this.demoSchools.entities);
     }

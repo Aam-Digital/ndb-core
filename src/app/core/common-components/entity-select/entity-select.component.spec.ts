@@ -11,7 +11,6 @@ import {
 } from "./entity-select.component";
 import { Entity } from "../../entity/model/entity";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { Logging } from "../../logging/logging.service";
@@ -20,6 +19,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { of } from "rxjs";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any, any>;
@@ -35,7 +35,7 @@ describe("EntitySelectComponent", () => {
       return new TestEntity(s);
     });
     testChildren = [new Child(), new Child()];
-    const otherEntities: Entity[] = [new School()];
+    const otherEntities: Entity[] = [createEntityOfType("School")];
 
     TestBed.configureTestingModule({
       imports: [

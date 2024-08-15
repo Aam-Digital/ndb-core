@@ -2,11 +2,11 @@ import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { EntitySelectComponent } from "./entity-select.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { componentRegistry } from "../../../dynamic-components";
 import { ChildBlockComponent } from "../../../child-dev-project/children/child-block/child-block.component";
 import { importProvidersFrom } from "@angular/core";
 import { FormControl } from "@angular/forms";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -30,7 +30,7 @@ export default {
             child1,
             child2,
             child3,
-            School.create({ name: "School ABC" }),
+            TestEntity.create({ name: "School ABC" }),
           ]),
         ),
       ],
@@ -71,7 +71,7 @@ Active.args = {
 
 export const MultipleTypes = Template.bind({});
 MultipleTypes.args = {
-  entityType: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
+  entityType: [Child.ENTITY_TYPE, TestEntity.ENTITY_TYPE],
   label: "Related Records",
   placeholder: "Select records",
   form: new FormControl(),

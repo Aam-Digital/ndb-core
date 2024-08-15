@@ -6,7 +6,6 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { AbilityService } from "../ability/ability.service";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { Subject } from "rxjs";
@@ -15,6 +14,7 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -110,11 +110,11 @@ describe("PermissionEnforcerService", () => {
 
   it("should not reset page if only entities with read permission exist", fakeAsync(() => {
     entityMapper.save(new Child());
-    entityMapper.save(new School());
+    entityMapper.save(new TestEntity());
     tick();
 
     updateRulesAndTriggerEnforcer([
-      { subject: "School", action: ["read", "update"] },
+      { subject: TestEntity.ENTITY_TYPE, action: ["read", "update"] },
       { subject: "all", action: "delete", inverted: true },
       { subject: ["Note", "Child"], action: "read" },
     ]);
@@ -139,7 +139,7 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset if roles changed since last check and entities without permissions exist", fakeAsync(() => {
-    entityMapper.save(new School());
+    entityMapper.save(new TestEntity());
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
@@ -149,7 +149,7 @@ describe("PermissionEnforcerService", () => {
     expect(mockLocation.reload).not.toHaveBeenCalled();
 
     const extendedRules = userRules.concat({
-      subject: "School",
+      subject: TestEntity.ENTITY_TYPE,
       action: "manage",
       inverted: true,
     });

@@ -7,7 +7,6 @@ import {
 } from "./query.service";
 import { Child } from "../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
@@ -23,10 +22,14 @@ import { AttendanceStatusType } from "../../child-dev-project/attendance/model/a
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
+import { Entity, EntityConstructor } from "../entity/model/entity";
+import { entityRegistry } from "../entity/database-entity.decorator";
 
 describe("QueryService", () => {
   let service: QueryService;
   let entityMapper: EntityMapperService;
+
+  let School: EntityConstructor;
 
   const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
     (status) => status.countAs === "PRESENT",
@@ -48,6 +51,8 @@ describe("QueryService", () => {
     });
     service = TestBed.inject(QueryService);
     entityMapper = TestBed.inject(EntityMapperService);
+
+    School = entityRegistry.get("School");
   }));
 
   afterEach(() => TestBed.inject(Database).destroy());
@@ -88,7 +93,7 @@ describe("QueryService", () => {
     await createSchool([maleChildNormal, femaleChildNormal]);
 
     const maleChildrenOnPrivateSchoolsQuery = `
-      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      School:toArray[*privateSchool=true]
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       [*isActive=true].childId:unique:toEntities(${Child.ENTITY_TYPE})
       :filterByObjectAttribute(gender, id, M)`;
@@ -99,7 +104,7 @@ describe("QueryService", () => {
     expectEntitiesToMatch(maleChildrenOnPrivateSchools, [maleChildPrivate]);
 
     const childrenVisitingAnySchoolQuery = `
-      ${School.ENTITY_TYPE}:toArray
+      School:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       [*isActive=true].childId:unique:toEntities(${Child.ENTITY_TYPE})`;
     const childrenVisitingAnySchool = await queryData(
@@ -215,7 +220,7 @@ describe("QueryService", () => {
     );
 
     const femaleParticipantsPrivateSchoolQuery = `
-      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      School:toArray[*privateSchool=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):unique
@@ -228,7 +233,7 @@ describe("QueryService", () => {
     ]);
 
     const participantsNotPrivateSchoolQuery = `
-      ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
+      School:toArray[*privateSchool!=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):unique
@@ -326,7 +331,7 @@ describe("QueryService", () => {
 
     query = "Child:toArray:getRelated(ChildSchoolRelation, childId)";
     await expectAsync(queryData(query)).toBeResolvedTo([]);
-    expect(loadSpy).not.toHaveBeenCalledWith(School);
+    expect(loadSpy).not.toHaveBeenCalledWith("School");
     expect(loadSpy).not.toHaveBeenCalledWith(ChildSchoolRelation);
     expect(loadSpy).toHaveBeenCalledWith(Child);
   });
@@ -661,7 +666,7 @@ describe("QueryService", () => {
   async function createSchool(
     children: Child[] = [],
     privateSchool?: boolean,
-  ): Promise<School> {
+  ): Promise<Entity> {
     const school = new School();
     school["privateSchool"] = privateSchool;
     await entityMapper.save(school);
@@ -695,7 +700,7 @@ describe("QueryService", () => {
   }
 
   async function createActivity(
-    schools: School[],
+    schools: Entity[],
     category = schoolClass,
   ): Promise<RecurringActivity> {
     const activity = new RecurringActivity();

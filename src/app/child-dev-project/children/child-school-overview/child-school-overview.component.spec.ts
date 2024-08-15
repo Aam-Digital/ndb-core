@@ -9,10 +9,10 @@ import {
 import { ChildSchoolOverviewComponent } from "./child-school-overview.component";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { School } from "../model/school";
-import { ChildrenService } from "../../children/children.service";
-import { Child } from "../../children/model/child";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { ChildrenService } from "../children.service";
+import { Child } from "../model/child";
+import { ChildSchoolRelation } from "../model/childSchoolRelation";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 describe("ChildSchoolOverviewComponent", () => {
   let component: ChildSchoolOverviewComponent;
@@ -50,7 +50,7 @@ describe("ChildSchoolOverviewComponent", () => {
   }));
 
   it("it detects mode and uses correct index to load data ", fakeAsync(() => {
-    const testSchool = new School();
+    const testSchool = createEntityOfType("School");
 
     component.entity = testSchool;
     fixture.detectChanges();
@@ -85,7 +85,8 @@ describe("ChildSchoolOverviewComponent", () => {
   }));
 
   it("should create a relation with the school ID", fakeAsync(() => {
-    component.entity = new School("testID");
+    component.entity = createEntityOfType("School", "testID");
+    //component.entity.getSchema().get;
     fixture.detectChanges();
     tick();
 
@@ -105,7 +106,7 @@ describe("ChildSchoolOverviewComponent", () => {
   }));
 
   it("should not show archived children in 'school' mode", fakeAsync(() => {
-    component.entity = new School();
+    component.entity = createEntityOfType("School");
 
     fixture.detectChanges();
     tick();

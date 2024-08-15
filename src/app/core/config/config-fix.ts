@@ -1,5 +1,4 @@
 import { Child } from "../../child-dev-project/children/model/child";
-import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
@@ -384,7 +383,7 @@ export const defaultJsonConfig = {
           "viewComponent": "DisplayEntity",
           "label": $localize`:Column label for school which child attends:School`,
           "id": "schoolId",
-          "additional": `${School.ENTITY_TYPE}`,
+          "additional": "School",
           "noSorting": true
         },
         {
@@ -582,7 +581,7 @@ export const defaultJsonConfig = {
               "component": "MatchingEntities",
               "config": {
                 "rightSide": {
-                  "entityType": School.ENTITY_TYPE,
+                  "entityType": "School",
                   "availableFilters": [{"id": "language"}],
                 },
               }
@@ -850,10 +849,18 @@ export const defaultJsonConfig = {
     },
   },
   "entity:School": {
+    "toStringAttributes": ["name"],
+    "icon": "university",
+    "label": $localize`:label for entity:School`,
+    "labelPlural": $localize`:label (plural) for entity:Schools`,
+    "color": "#9E9D24",
     "attributes": {
       "name": {
         "dataType": "string",
-        "label": $localize`:Label for the name of a school:Name`
+        "label": $localize`:Label for the name of a school:Name`,
+        "validators": {
+          required: true,
+        },
       },
       "privateSchool": {
         "dataType": "boolean",
@@ -933,7 +940,7 @@ export const defaultJsonConfig = {
     "component": "MatchingEntities",
     "config": {
       "rightSide": {
-        "entityType": School.ENTITY_TYPE,
+        "entityType": "School",
         "prefilter": { "privateSchool": true },
         "availableFilters": [{"id": "language"}],
       },

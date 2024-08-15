@@ -1,6 +1,5 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { School } from "../../schools/model/school";
 import { Child } from "./child";
 import { TimePeriod } from "../../../core/entity-details/related-time-period-entities/time-period";
 
@@ -26,7 +25,7 @@ export class ChildSchoolRelation extends TimePeriod {
   @DatabaseField({
     label: $localize`:Label for the school of a relation:School`,
     dataType: "entity",
-    additional: School.ENTITY_TYPE,
+    additional: "School",
     entityReferenceRole: "aggregate",
     validators: {
       required: true,

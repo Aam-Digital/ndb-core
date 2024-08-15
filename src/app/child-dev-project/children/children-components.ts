@@ -30,4 +30,33 @@ export const childrenComponents: ComponentTuple[] = [
         (c) => c.ChildBlockComponent,
       ),
   ],
+
+  [
+    "PreviousSchools",
+    () =>
+      import("./child-school-overview/child-school-overview.component").then(
+        (c) => c.ChildSchoolOverviewComponent,
+      ),
+  ],
+  [
+    "ChildrenOverview",
+    () =>
+      import("./child-school-overview/child-school-overview.component").then(
+        (c) => c.ChildSchoolOverviewComponent,
+      ),
+  ],
+  [
+    "ChildSchoolOverview",
+    () =>
+      import("./child-school-overview/child-school-overview.component").then(
+        (c) => c.ChildSchoolOverviewComponent,
+      ),
+  ],
+  [
+    "DisplayParticipantsCount",
+    () =>
+      import(
+        "./display-participants-count/display-participants-count.component"
+      ).then((c) => c.DisplayParticipantsCountComponent),
+  ],
 ];

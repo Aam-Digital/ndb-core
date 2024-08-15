@@ -2,7 +2,6 @@ import { ChildrenService } from "./children.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { Child } from "./model/child";
-import { School } from "../schools/model/school";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
@@ -14,6 +13,8 @@ import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { DateWithAge } from "../../core/basic-datatypes/date-with-age/dateWithAge";
 import { AttendanceModule } from "../attendance/attendance.module";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
+import { Entity } from "../../core/entity/model/entity";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -107,7 +108,7 @@ describe("ChildrenService", () => {
   });
 
   it("should calculate days since last note for other entity types", async () => {
-    const schools = await entityMapper.loadType(School);
+    const schools = await entityMapper.loadType("School");
     const s1 = schools[0];
     const s2 = schools[1];
     const n1 = new Note();
@@ -119,9 +120,8 @@ describe("ChildrenService", () => {
     n2.schools.push(s1.getId());
     await entityMapper.saveAll([n1, n2]);
 
-    const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
-      School.ENTITY_TYPE,
-    );
+    const recentNotesMap =
+      await service.getDaysSinceLastNoteOfEachEntity("School");
 
     expect(recentNotesMap.get(s1.getId())).toBe(2);
     expect(recentNotesMap.get(s2.getId())).toBe(10);
@@ -232,8 +232,8 @@ describe("ChildrenService", () => {
   it("should return related notes", async () => {
     const c1 = new Child("c1");
     const c2 = new Child("c2");
-    const s1 = new School("s1");
-    const s2 = new School("s2");
+    const s1 = createEntityOfType("School", "s1");
+    const s2 = createEntityOfType("School", "s2");
     const n1 = new Note("n1");
     n1.addChild(c1);
     n1.addChild(c2);
@@ -256,7 +256,7 @@ describe("ChildrenService", () => {
 
   it("should include related notes through children and schools links (legacy)", async () => {
     const c1 = new Child("c1");
-    const s1 = new School("s1");
+    const s1 = createEntityOfType("School", "s1");
     const n1 = new Note("n1");
     n1.children.push(c1.getId());
     n1.relatedEntities.push(c1.getId());
@@ -323,14 +323,14 @@ function generateChildEntities(): Child[] {
   return data;
 }
 
-function generateSchoolEntities(): School[] {
+function generateSchoolEntities(): Entity[] {
   const data = [];
 
-  const s1 = new School("1");
+  const s1 = createEntityOfType("School", "1");
   s1.name = "People's Primary";
   data.push(s1);
 
-  const s2 = new School("2");
+  const s2 = createEntityOfType("School", "2");
   s2.name = "Hope High School";
   data.push(s2);
 

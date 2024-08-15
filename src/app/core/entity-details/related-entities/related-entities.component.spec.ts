@@ -15,9 +15,9 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<ChildSchoolRelation>;
@@ -126,7 +126,7 @@ describe("RelatedEntitiesComponent", () => {
       @DatabaseField({
         dataType: EntityDatatype.dataType,
         isArray: true,
-        additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
+        additional: [Child.ENTITY_TYPE, TestEntity.ENTITY_TYPE],
       })
       multiEntities: string;
     }
@@ -176,9 +176,9 @@ describe("RelatedEntitiesComponent", () => {
     PropTest.schema.set("arrayRelation", {
       dataType: EntityDatatype.dataType,
       isArray: true,
-      additional: School.ENTITY_TYPE,
+      additional: TestEntity.ENTITY_TYPE,
     });
-    component.entity = new School();
+    component.entity = new TestEntity();
     component.filter = undefined;
     component.property = undefined;
     await component.ngOnInit();

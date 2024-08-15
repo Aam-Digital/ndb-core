@@ -32,7 +32,6 @@ import {
 } from "../../attendance/model/attendance-status";
 import { Child } from "../../children/model/child";
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
-import { School } from "../../schools/model/school";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
@@ -173,7 +172,7 @@ export class Note extends Entity {
     label: $localize`:label for the linked schools:Groups`,
     dataType: "entity",
     isArray: true,
-    additional: School.ENTITY_TYPE,
+    additional: "School",
     entityReferenceRole: "composite",
     anonymize: "retain",
   })
@@ -242,7 +241,7 @@ export class Note extends Entity {
    * adds a new school to this note
    * @param school The school or its id to be added to the note
    */
-  addSchool(school: School | string) {
+  addSchool(school: Entity | string) {
     const schoolId = typeof school === "string" ? school : school.getId();
     if (this.schools.includes(schoolId)) {
       return;

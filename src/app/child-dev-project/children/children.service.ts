@@ -6,7 +6,6 @@ import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import moment, { Moment } from "moment";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { Entity } from "../../core/entity/model/entity";
-import { School } from "../schools/model/school";
 import { groupBy } from "../../utils/utils";
 
 @Injectable({ providedIn: "root" })
@@ -136,7 +135,7 @@ export class ChildrenService {
     switch (entityType) {
       case Child.ENTITY_TYPE:
         return "children";
-      case School.ENTITY_TYPE:
+      case "School":
         return "schools";
       case "User":
         return "authors";

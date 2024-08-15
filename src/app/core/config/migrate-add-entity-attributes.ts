@@ -177,4 +177,20 @@ const DEFAULT_ENTITIES = {
       },
     },
   },
+  School: {
+    toStringAttributes: ["name"],
+    icon: "university",
+    label: "School",
+    labelPlural: "Schools",
+    color: "#9E9D24",
+    attributes: {
+      name: {
+        dataType: "string",
+        label: "Name",
+        validators: {
+          required: true,
+        },
+      },
+    },
+  },
 };

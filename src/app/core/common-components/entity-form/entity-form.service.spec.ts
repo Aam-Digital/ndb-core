@@ -7,7 +7,6 @@ import {
   UntypedFormGroup,
 } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
@@ -92,13 +91,13 @@ describe("EntityFormService", () => {
     TestBed.inject(EntityAbility).update([
       { subject: "all", action: "manage" },
       {
-        subject: "School",
+        subject: TestEntity.ENTITY_TYPE,
         action: "create",
         inverted: true,
-        conditions: { name: "un-permitted school" },
+        conditions: { name: "un-permitted entity" },
       },
     ]);
-    const school = new School();
+    const school = new TestEntity();
 
     const formGroup = new UntypedFormGroup({
       name: new UntypedFormControl("normal school"),
@@ -106,7 +105,7 @@ describe("EntityFormService", () => {
     await service.saveChanges(formGroup, school);
     expect(school.name).toBe("normal school");
 
-    formGroup.patchValue({ name: "un-permitted school" });
+    formGroup.patchValue({ name: "un-permitted entity" });
     const result = service.saveChanges(formGroup, school);
     await expectAsync(result).toBeRejected();
     expect(school.name).toBe("normal school");

@@ -4,11 +4,11 @@ import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Entity } from "../../../core/entity/model/entity";
-import { School } from "../../schools/model/school";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -61,7 +61,7 @@ describe("NotesRelatedToEntityComponent", () => {
     let note = component.createNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
 
-    entity = new School();
+    entity = createEntityOfType("School");
     component.entity = entity;
     component.filter = undefined;
     component.property = undefined;
@@ -113,7 +113,7 @@ describe("NotesRelatedToEntityComponent", () => {
       @DatabaseField({
         dataType: "entity",
         isArray: true,
-        additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
+        additional: [Child.ENTITY_TYPE, TestEntity.ENTITY_TYPE],
       })
       links;
 
@@ -126,7 +126,7 @@ describe("NotesRelatedToEntityComponent", () => {
     const customEntity = new EntityWithRelations();
     customEntity.links = [
       `${Child.ENTITY_TYPE}:1`,
-      `${School.ENTITY_TYPE}:not-a-type-for-note.relatedEntities`,
+      `${TestEntity.ENTITY_TYPE}:not-a-type-for-note.relatedEntities`,
     ];
     customEntity.childrenLink = `${Child.ENTITY_TYPE}:child-without-prefix`;
 

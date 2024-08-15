@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayParticipantsCountComponent } from "./display-participants-count.component";
-import { ChildrenService } from "../../children/children.service";
-import { School } from "../model/school";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { ChildrenService } from "../children.service";
+import { ChildSchoolRelation } from "../model/childSchoolRelation";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 describe("DisplayParticipantsCountComponent", () => {
   let component: DisplayParticipantsCountComponent;
@@ -30,7 +30,7 @@ describe("DisplayParticipantsCountComponent", () => {
 
     fixture = TestBed.createComponent(DisplayParticipantsCountComponent);
     component = fixture.componentInstance;
-    component.entity = new School("s-1");
+    component.entity = createEntityOfType("School", "s-1");
     fixture.detectChanges();
   });
 

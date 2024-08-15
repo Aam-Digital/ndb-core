@@ -23,7 +23,7 @@ import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generatin
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
 import { DemoConfigGeneratorService } from "../config/demo-config-generator.service";
 import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { DemoSchoolGenerator } from "../../child-dev-project/schools/demo-school-generator.service";
+import { DemoSchoolGenerator } from "../../child-dev-project/children/demo-data-generators/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
 import { DemoActivityGeneratorService } from "../../child-dev-project/attendance/demo-data/demo-activity-generator.service";
 import { DemoActivityEventsGeneratorService } from "../../child-dev-project/attendance/demo-data/demo-activity-events-generator.service";

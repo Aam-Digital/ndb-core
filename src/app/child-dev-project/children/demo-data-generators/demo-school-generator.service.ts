@@ -1,14 +1,15 @@
-import { faker } from "../../core/demo-data/faker";
-import { School } from "./model/school";
+import { faker } from "../../../core/demo-data/faker";
 import { Injectable } from "@angular/core";
-import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
+import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
+import { Entity } from "../../../core/entity/model/entity";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 export class DemoSchoolConfig {
   count: number;
 }
 
 @Injectable()
-export class DemoSchoolGenerator extends DemoDataGenerator<School> {
+export class DemoSchoolGenerator extends DemoDataGenerator<Entity> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoSchoolGenerator.provider({count: 10})]`
@@ -28,11 +29,11 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
     super();
   }
 
-  generateEntities(): School[] {
+  generateEntities(): Entity[] {
     const data = [];
 
     for (let i = 1; i <= this.config.count; i++) {
-      const school = new School(String(i));
+      const school = createEntityOfType("School", String(i));
       school["language"] = faker.helpers.arrayElement([
         $localize`:Language of a school:Hindi`,
         $localize`:Language of a school:English`,
@@ -43,7 +44,7 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
       )}`;
       const schoolNameWithLanguage = $localize`${faker.person.firstName()} ${
         school["language"]
-      } Language`;
+      } Medium`;
       school.name = faker.helpers.arrayElement([
         schoolNameWithType,
         schoolNameWithLanguage,

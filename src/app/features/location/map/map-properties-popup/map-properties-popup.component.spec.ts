@@ -11,8 +11,8 @@ import {
   EntityRegistry,
 } from "../../../../core/entity/database-entity.decorator";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { School } from "../../../../child-dev-project/schools/model/school";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("MapPropertiesPopupComponent", () => {
   let component: MapPropertiesPopupComponent;
@@ -30,11 +30,11 @@ describe("MapPropertiesPopupComponent", () => {
       dataType: "location",
     });
     properties[Child.ENTITY_TYPE] = ["address"];
-    School.schema.set("address", {
+    TestEntity.schema.set("address", {
       label: "School address",
       dataType: "location",
     });
-    properties[School.ENTITY_TYPE] = ["address"];
+    properties[TestEntity.ENTITY_TYPE] = ["address"];
     mockDialogRef = jasmine.createSpyObj(["close"]);
     await TestBed.configureTestingModule({
       imports: [
@@ -57,7 +57,7 @@ describe("MapPropertiesPopupComponent", () => {
   afterEach(() => {
     Child.schema.delete("address");
     Child.schema.delete("otherAddress");
-    School.schema.delete("address");
+    TestEntity.schema.delete("address");
   });
 
   it("should create", () => {
@@ -75,7 +75,7 @@ describe("MapPropertiesPopupComponent", () => {
         selected: ["address"],
       },
       {
-        entity: School,
+        entity: TestEntity,
         properties: [{ name: "address", label: "School address" }],
         selected: ["address"],
       },
@@ -90,7 +90,7 @@ describe("MapPropertiesPopupComponent", () => {
 
     expect(mockDialogRef.close).toHaveBeenCalledWith({
       [Child.ENTITY_TYPE]: ["otherAddress"],
-      [School.ENTITY_TYPE]: ["address"],
+      [TestEntity.ENTITY_TYPE]: ["address"],
     });
   });
 });

@@ -20,10 +20,10 @@ import { BehaviorSubject, NEVER, Subject } from "rxjs";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { GeoLocation } from "../../location/location.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -58,7 +58,10 @@ describe("MatchingEntitiesComponent", () => {
     });
 
     TestBed.configureTestingModule({
-      imports: [MatchingEntitiesComponent, MockedTestingModule.withState()],
+      imports: [
+        MatchingEntitiesComponent,
+        MockedTestingModule.withState(null, []),
+      ],
       providers: [
         { provide: ActivatedRoute, useValue: { data: routeData } },
         { provide: FormDialogService, useValue: null },
@@ -342,13 +345,13 @@ describe("MatchingEntitiesComponent", () => {
     Object.assign(component, testConfig);
     Child.schema.set("address", { dataType: "location" });
     Child.schema.set("otherAddress", { dataType: "location" });
-    School.schema.set("address", { dataType: "location" });
+    TestEntity.schema.set("address", { dataType: "location" });
     const leftEntity = new Child();
     leftEntity["address"] = LOCATION_1;
     leftEntity["otherAddress"] = LOCATION_2;
-    const rightEntity1 = new School();
+    const rightEntity1 = new TestEntity();
     rightEntity1["address"] = LOCATION_1;
-    const rightEntity2 = new School();
+    const rightEntity2 = new TestEntity();
     rightEntity2["address"] = LOCATION_2;
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo([
       rightEntity1,
@@ -361,7 +364,7 @@ describe("MatchingEntitiesComponent", () => {
     };
     component.rightSide = {
       columns: ["distance"],
-      entityType: "School",
+      entityType: TestEntity.ENTITY_TYPE,
     };
     fixture.detectChanges();
     tick();
@@ -423,7 +426,7 @@ describe("MatchingEntitiesComponent", () => {
 
     Child.schema.delete("otherAddress");
     Child.schema.delete("address");
-    School.schema.delete("address");
+    TestEntity.schema.delete("address");
     flush();
   }));
 
@@ -435,7 +438,7 @@ describe("MatchingEntitiesComponent", () => {
     c2.dropoutDate = new Date();
     const c3 = new Child();
     c3.status = "inactive";
-    const other = new School();
+    const other = new TestEntity();
     TestBed.inject(EntityMapperService).saveAll([c1, c2, c3, other]);
     tick();
     component.leftSide = {
@@ -444,7 +447,7 @@ describe("MatchingEntitiesComponent", () => {
       columns: ["status"],
     };
     component.rightSide = {
-      entityType: "School",
+      entityType: TestEntity.ENTITY_TYPE,
       columns: ["_id"],
     };
     component.onMatch = testConfig.onMatch;
@@ -500,12 +503,15 @@ describe("MatchingEntitiesComponent", () => {
         ["name", "name"],
         ["projectNumber", "distance"],
       ],
-      rightSide: { entityType: "School", columns: ["name", "distance"] },
+      rightSide: {
+        entityType: TestEntity.ENTITY_TYPE,
+        columns: ["name", "distance"],
+      },
       leftSide: { entityType: "Child", columns: ["name", "distance"] },
       onMatch: testConfig.onMatch,
     };
     Child.schema.set("address", { dataType: "location" });
-    School.schema.set("address", { dataType: "location" });
+    TestEntity.schema.set("address", { dataType: "location" });
 
     const configCopy = JSON.parse(JSON.stringify(config));
     routeData.next({ config: configCopy });
@@ -516,7 +522,7 @@ describe("MatchingEntitiesComponent", () => {
     expect(configCopy).toEqual(config);
 
     Child.schema.delete("address");
-    School.schema.delete("address");
+    TestEntity.schema.delete("address");
   }));
 
   it("should infer multiSelect mode from onMatch's entity schema", fakeAsync(() => {

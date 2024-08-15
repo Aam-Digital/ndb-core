@@ -1,9 +1,9 @@
 import { Component, OnChanges, signal, WritableSignal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ChildrenService } from "../../children/children.service";
+import { ChildrenService } from "../children.service";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { Logging } from "../../../core/logging/logging.service";
 
 @DynamicComponent("DisplayParticipantsCount")

@@ -5,13 +5,13 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { Database } from "../../database/database";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("DataTransformationService", () => {
   let service: DataTransformationService;
@@ -56,12 +56,12 @@ describe("DataTransformationService", () => {
   it("should load fields from related entity for joint export", async () => {
     const child1 = await createChildInDB("John");
     const child2 = await createChildInDB("Jane");
-    const school1 = await createSchoolInDB("School with student", [child1]);
-    const school2 = await createSchoolInDB("School without student", []);
-    const school3 = await createSchoolInDB("School with multiple students", [
-      child1,
-      child2,
-    ]);
+    const school1 = await createTestEntityInDB("School with student", [child1]);
+    const school2 = await createTestEntityInDB("School without student", []);
+    const school3 = await createTestEntityInDB(
+      "School with multiple students",
+      [child1, child2],
+    );
 
     const query1 =
       ":getRelated(ChildSchoolRelation, schoolId).childId:toEntities(Child).name";
@@ -170,7 +170,7 @@ describe("DataTransformationService", () => {
   it("should not omit rows where the subQueries are run on an empty array", async () => {
     const childWithoutSchool = await createChildInDB("child without school");
     const childWithSchool = await createChildInDB("child with school");
-    const school = await createSchoolInDB("test school", [childWithSchool]);
+    const school = await createTestEntityInDB("test school", [childWithSchool]);
     const note = await createNoteInDB(
       "Note",
       [childWithoutSchool, childWithSchool],
@@ -188,7 +188,7 @@ describe("DataTransformationService", () => {
             query: ".participant:toEntities(Child).name",
           },
           {
-            query: ".school:toEntities(School)",
+            query: ".school:toEntities(TestEntity)",
             subQueries: [
               { label: "Name", query: "name" },
               { label: "school_id", query: "entityId" },
@@ -330,13 +330,13 @@ describe("DataTransformationService", () => {
   });
 
   it("should allow to group results", async () => {
-    await createSchoolInDB("sameName");
-    await createSchoolInDB("sameName");
-    await createSchoolInDB("otherName");
+    await createTestEntityInDB("sameName");
+    await createTestEntityInDB("sameName");
+    await createTestEntityInDB("otherName");
 
     const result = await service.queryAndTransformData([
       {
-        query: `${School.ENTITY_TYPE}:toArray`,
+        query: `${TestEntity.ENTITY_TYPE}:toArray`,
         groupBy: { label: "Name", property: "name" },
         subQueries: [{ query: ":count", label: "Amount" }],
       },
@@ -405,11 +405,11 @@ describe("DataTransformationService", () => {
     return note;
   }
 
-  async function createSchoolInDB(
+  async function createTestEntityInDB(
     schoolName: string,
     students: Child[] = [],
-  ): Promise<School> {
-    const school = new School();
+  ): Promise<TestEntity> {
+    const school = new TestEntity();
     school.name = schoolName;
     await entityMapper.save(school);
 
@@ -427,7 +427,7 @@ describe("DataTransformationService", () => {
   async function createActivityInDB(
     activityTitle: string,
     participants: Child[] = [],
-    groups: School[] = [],
+    groups: TestEntity[] = [],
   ): Promise<RecurringActivity> {
     const activity = new RecurringActivity();
     activity.title = activityTitle;

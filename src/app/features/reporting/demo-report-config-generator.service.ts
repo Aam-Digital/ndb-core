@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
 import { ReportEntity } from "./report-config";
 import { Child } from "../../child-dev-project/children/model/child";
-import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 
@@ -34,7 +33,7 @@ const demoReports: Partial<ReportEntity>[] = [
         groupBy: ["gender"],
       },
       {
-        query: `${School.ENTITY_TYPE}:toArray`,
+        query: `School:toArray`,
         label: $localize`:Label for report query:All schools`,
         aggregations: [
           {

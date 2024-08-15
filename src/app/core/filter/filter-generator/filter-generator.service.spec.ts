@@ -6,7 +6,6 @@ import {
   BooleanFilterConfig,
   PrebuiltFilterConfig,
 } from "../../entity-list/EntityListConfig";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
@@ -21,6 +20,8 @@ import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -40,26 +41,30 @@ describe("FilterGeneratorService", () => {
 
   it("should create a boolean filter", async () => {
     const filterConfig: BooleanFilterConfig = {
-      id: "privateSchool",
-      true: "Private",
-      false: "Government",
+      id: "test",
+      true: "On",
+      false: "Off",
       type: "boolean",
     };
-    const schema = School.schema.get("privateSchool");
+    const fieldSchema: EntitySchemaField = {
+      dataType: "boolean",
+      label: "test Property",
+    };
+    TestEntity.schema.set("test", fieldSchema);
 
     const filter = (
-      await service.generate([filterConfig], School, [])
-    )[0] as BooleanFilter<School>;
+      await service.generate([filterConfig], TestEntity, [])
+    )[0] as BooleanFilter<TestEntity>;
 
-    expect(filter.label).toEqual(schema.label);
-    expect(filter.name).toEqual("privateSchool");
+    expect(filter.label).toEqual(fieldSchema.label);
+    expect(filter.name).toEqual("test");
     expect(
       filter.options.map((option) => {
         return { key: option.key, label: option.label };
       }),
     ).toEqual([
-      { key: "true", label: "Private" },
-      { key: "false", label: "Government" },
+      { key: "true", label: "On" },
+      { key: "false", label: "Off" },
     ]);
   });
 
@@ -134,9 +139,9 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create an entity filter", async () => {
-    const school1 = new School();
+    const school1 = new TestEntity();
     school1.name = "First School";
-    const school2 = new School();
+    const school2 = new TestEntity();
     school2.name = "Second School";
     await TestBed.inject(EntityMapperService).saveAll([school1, school2]);
     const csr1 = new ChildSchoolRelation();
@@ -148,6 +153,8 @@ describe("FilterGeneratorService", () => {
     const csr4 = new ChildSchoolRelation();
     csr4.schoolId = school1.getId();
     const schema = ChildSchoolRelation.schema.get("schoolId");
+    const originalSchemaAdditional = schema.additional;
+    schema.additional = TestEntity.ENTITY_TYPE;
 
     const filterOptions = (
       await service.generate([{ id: "schoolId" }], ChildSchoolRelation, [])
@@ -164,6 +171,8 @@ describe("FilterGeneratorService", () => {
       filterOptions.options.find((opt) => opt.key === school2.getId());
     expect(school2Filter.label).toEqual(school2.name);
     expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
+
+    schema.additional = originalSchemaAdditional;
   });
 
   it("should create filters with all possible options on default", async () => {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { ChildrenService } from "../../children/children.service";
+import { ChildSchoolRelation } from "../model/childSchoolRelation";
+import { ChildrenService } from "../children.service";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";

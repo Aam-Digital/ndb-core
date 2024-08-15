@@ -8,12 +8,12 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { QueryService } from "../../core/export/query.service";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
-import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { centersUnique } from "../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { mockEntityMapper } from "../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { entityRegistry } from "../../core/entity/database-entity.decorator";
+import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 
 describe("DataAggregationService", () => {
   let service: DataAggregationService;
@@ -41,11 +41,11 @@ describe("DataAggregationService", () => {
         { label: "muslims", query: muslimsQuery },
       ],
     };
-    const baseData = [new School()];
+    const baseData = [createEntityOfType("School")];
     mockQueryService.queryData.and.returnValues(
       baseData,
-      [new School()],
-      [new School(), new School()],
+      [createEntityOfType("School")],
+      [createEntityOfType("School"), createEntityOfType("School")],
     );
 
     const report = await service.calculateReport([childDisaggregation]);
@@ -81,7 +81,7 @@ describe("DataAggregationService", () => {
   });
 
   it("should create queries for nested aggregations", async () => {
-    const baseQuery = `${School.ENTITY_TYPE}:toArray`;
+    const baseQuery = `School:toArray`;
     const nestedBaseQuery = `[*private=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId):getActive`;
     const firstNestedAggregation = `[*schoolClass>3]`;
     const secondNestedAggregation = `[*schoolClass<=3]`;
@@ -107,7 +107,10 @@ describe("DataAggregationService", () => {
       ],
     };
 
-    const baseData = [new School(), new School()];
+    const baseData = [
+      createEntityOfType("School"),
+      createEntityOfType("School"),
+    ];
     const nestedData = [new ChildSchoolRelation()];
     mockQueryService.queryData.and.callFake((query) => {
       switch (query) {
@@ -116,7 +119,7 @@ describe("DataAggregationService", () => {
         case nestedBaseQuery:
           return nestedData;
         default:
-          return [new School()];
+          return [createEntityOfType("School")];
       }
     });
     const result = await service.calculateReport([aggregation]);

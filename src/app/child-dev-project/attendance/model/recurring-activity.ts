@@ -7,7 +7,6 @@ import {
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
 import { Child } from "../../children/model/child";
-import { School } from "../../schools/model/school";
 import { asArray } from "../../../utils/utils";
 
 @DatabaseEntity("RecurringActivity")
@@ -67,7 +66,7 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for the linked schools of a recurring activity:Groups`,
     dataType: "entity",
     isArray: true,
-    additional: School.ENTITY_TYPE,
+    additional: "School",
   })
   linkedGroups: string[] = [];
 

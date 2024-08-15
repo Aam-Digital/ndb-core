@@ -23,6 +23,7 @@ export function createEntityOfType(
     new Map<string, EntitySchemaField>(
       Object.keys(entity).map((key) => [key, {}]),
     );
+  entity.getType = () => type;
 
   return entity;
 }
