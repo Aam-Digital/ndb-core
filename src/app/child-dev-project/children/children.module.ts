@@ -18,13 +18,12 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { childrenComponents } from "./children-components";
-import { HealthCheck } from "./health-checkup/model/health-check";
 import { Child } from "./model/child";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 
 @NgModule({})
 export class ChildrenModule {
-  static databaseEntities = [HealthCheck, Child, ChildSchoolRelation];
+  static databaseEntities = [Child, ChildSchoolRelation];
 
   constructor(components: ComponentRegistry) {
     components.addAll(childrenComponents);

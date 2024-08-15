@@ -237,4 +237,37 @@ const DEFAULT_ENTITIES = {
       },
     },
   },
+  // TODO: the "bmi" column in view configs needs to be adapted manually (this is only used at a single client, however)
+  HealthCheck: {
+    hasPII: true,
+    attributes: {
+      child: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+        anonymize: "retain",
+      },
+      date: {
+        dataType: "date",
+        label: "Date",
+        defaultValue: {
+          mode: "dynamic",
+          value: "$now",
+        },
+        anonymize: "retain-anonymized",
+      },
+      height: {
+        dataType: "number",
+        label: "Height [cm]",
+        viewComponent: "DisplayUnit",
+        additional: "cm",
+      },
+      weight: {
+        dataType: "number",
+        label: "Weight [kg]",
+        viewComponent: "DisplayUnit",
+        additional: "kg",
+      },
+    },
+  },
 };

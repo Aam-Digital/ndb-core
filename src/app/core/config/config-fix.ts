@@ -641,8 +641,13 @@ export const defaultJsonConfig = {
                   {
                     "id": "bmi",
                     "label": $localize`:Table header, Short for Body Mass Index:BMI`,
-                    "viewComponent": "DisplayText",
                     "description": $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
+                    "viewComponent": "DisplayCalculatedValue",
+                    "additional": {
+                      "calculation": "bmi",
+                      "valueFields": ["weight", "height"],
+                      "decimalPlaces": 1
+                    }
                   }
                 ]
               }
@@ -1004,6 +1009,38 @@ export const defaultJsonConfig = {
       remarks: {
         dataType: "string",
         label: $localize`:Label for the remarks of a ASER result:Remarks`,
+      },
+    }
+  },
+  "entity:HealthCheck": {
+    hasPII: true,
+    attributes: {
+      child: {
+        dataType: "entity",
+        additional: Child.ENTITY_TYPE,
+        entityReferenceRole: "composite",
+        anonymize: "retain",
+      },
+      date: {
+        dataType: "date",
+        label: $localize`:Label for date of a health check:Date`,
+        anonymize: "retain-anonymized",
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+      },
+      height: {
+        dataType: "number",
+        label: $localize`:Label for height in cm of a health check:Height [cm]`,
+        viewComponent: "DisplayUnit",
+        additional: "cm",
+      },
+      weight: {
+        dataType: "number",
+        label: $localize`:Label for weight in kg of a health check:Weight [kg]`,
+        viewComponent: "DisplayUnit",
+        additional: "kg",
       },
     }
   },

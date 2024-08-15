@@ -1,17 +1,18 @@
-import { DemoChildGenerator } from "../../demo-data-generators/demo-child-generator.service";
+import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
 import { Child } from "../../model/child";
 import { faker } from "../../../../core/demo-data/faker";
-import { HealthCheck } from "../model/health-check";
 import { heightRangeForAge, weightRangeForAge } from "./height-weight";
+import { Entity } from "../../../../core/entity/model/entity";
+import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
 
 /**
  * Generate HealthCheck records every 6 months for children up to the age of 12.
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
-export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthCheck> {
+export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoHealthCheckGeneratorService.provider()]`
@@ -29,7 +30,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
     super();
   }
 
-  public generateEntities(): HealthCheck[] {
+  public generateEntities(): Entity[] {
     const data = [];
 
     for (const child of this.demoChildren.entities) {
@@ -39,15 +40,15 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
     return data;
   }
 
-  private generateHealthCheckHistoryForChild(child: Child): HealthCheck[] {
+  private generateHealthCheckHistoryForChild(child: Child): Entity[] {
     const data = [];
 
     let date = new Date(child.admissionDate.getTime());
-    let previousRecord = new HealthCheck("");
+    let previousRecord = createEntityOfType("HealthCheck");
     previousRecord.height = 0;
     previousRecord.weight = 0;
     do {
-      const record = new HealthCheck();
+      const record = createEntityOfType("HealthCheck");
       record.child = child.getId();
       record.date = date;
       this.setNextHeightAndWeight(
@@ -77,11 +78,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
     return timeDiff / (1000 * 60 * 60 * 24 * 365);
   }
 
-  private setNextHeightAndWeight(
-    record: HealthCheck,
-    previousRecord: HealthCheck,
-    age: number,
-  ) {
+  private setNextHeightAndWeight(record, previousRecord, age: number) {
     const ageRoundedToHalfYear = Math.round(2 * age) / 2;
 
     const randomHeight = faker.number.int(
