@@ -9,6 +9,7 @@ import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { CascadingActionResult } from "./cascading-entity-action";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -25,6 +26,7 @@ export class EntityActionsService {
     private entityMapper: EntityMapperService,
     private entityDelete: EntityDeleteService,
     private entityAnonymize: EntityAnonymizeService,
+    private keycloakAuthService: KeycloakAuthService,
   ) {}
 
   showSnackbarConfirmationWithUndo(
@@ -102,9 +104,24 @@ export class EntityActionsService {
       $localize`:Entity action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
+
     for (let entity of entities) {
+      if ("User" === entity.getType()) {
+        this.keycloakAuthService.deleteUser(entity.getId()).subscribe({
+          next: () => {
+            console.log("keycloak user deleted.");
+          },
+          error: async () =>
+            await this.confirmationDialog.getConfirmation(
+              $localize`:delete account in keycloak related error title:Keycloak User could not be deleted`,
+              $localize`:delete account in keycloak related error dialog:User Account could not be deleted in Keycloak. Please delete user manually in Keycloak.`,
+              OkButton,
+            ),
+        });
+      }
       result.mergeResults(await this.entityDelete.deleteEntity(entity));
     }
+
     progressDialogRef.close();
 
     if (result.potentiallyRetainingPII.length > 0) {

@@ -14,6 +14,7 @@ import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 
 describe("EntityActionsService", () => {
   let service: EntityActionsService;
@@ -24,6 +25,7 @@ describe("EntityActionsService", () => {
   let mockRouter;
   let mockedEntityDeleteService: jasmine.SpyObj<EntityDeleteService>;
   let mockedEntityAnonymizeService: jasmine.SpyObj<EntityAnonymizeService>;
+  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
 
   let singleTestEntity: Entity;
   let severalTestEntities: Entity[] = [];
@@ -62,6 +64,7 @@ describe("EntityActionsService", () => {
       imports: [CoreTestingModule],
       providers: [
         EntityActionsService,
+        { provide: KeycloakAuthService, useValue: mockAuthService },
         { provide: EntityDeleteService, useValue: mockedEntityDeleteService },
         {
           provide: EntityAnonymizeService,
