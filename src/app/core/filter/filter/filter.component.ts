@@ -113,11 +113,51 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   private updateUrl(key: string, value: string) {
     const params = {};
     params[key] = value;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: params,
-      queryParamsHandling: "merge",
-    });
+
+    let potentialUrl = this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: { ...this.route.snapshot.queryParams, ...params },
+        queryParamsHandling: "merge",
+      })
+      .toString();
+
+    if (potentialUrl.length <= 2000) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: params,
+        queryParamsHandling: "merge",
+      });
+    } else {
+      let longestKey: string | null = null;
+      let maxLength = 0;
+
+      Object.keys(params).forEach((key) => {
+        if (params[key].length > maxLength) {
+          longestKey = key;
+          maxLength = params[key].length;
+        }
+      });
+
+      if (longestKey) {
+        delete params[longestKey];
+        potentialUrl = this.router
+          .createUrlTree([], {
+            relativeTo: this.route,
+            queryParams: { ...this.route.snapshot.queryParams, ...params },
+            queryParamsHandling: "merge",
+          })
+          .toString();
+
+        if (potentialUrl.length <= 2000) {
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: params,
+            queryParamsHandling: "merge",
+          });
+        }
+      }
+    }
   }
 
   private loadUrlParams() {
