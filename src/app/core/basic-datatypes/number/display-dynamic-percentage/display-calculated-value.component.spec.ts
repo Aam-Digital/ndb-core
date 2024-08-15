@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DisplayDynamicPercentageComponent } from "./display-dynamic-percentage.component";
+import { DisplayCalculatedValueComponent } from "./display-calculated-value.component";
 import { Entity } from "app/core/entity/model/entity";
 
-describe("DisplayDynamicPercentageComponent", () => {
-  let component: DisplayDynamicPercentageComponent;
+describe("DisplayCalculatedValueComponent", () => {
+  let component: DisplayCalculatedValueComponent;
 
-  let fixture: ComponentFixture<DisplayDynamicPercentageComponent>;
+  let fixture: ComponentFixture<DisplayCalculatedValueComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DisplayDynamicPercentageComponent],
+      imports: [DisplayCalculatedValueComponent],
     }).compileComponents();
   });
 
   beforeEach(async () => {
-    fixture = TestBed.createComponent(DisplayDynamicPercentageComponent);
+    fixture = TestBed.createComponent(DisplayCalculatedValueComponent);
     component = fixture.componentInstance;
     component.config = {
       total: "totalValue",

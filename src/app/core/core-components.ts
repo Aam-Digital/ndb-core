@@ -152,8 +152,15 @@ export const coreComponents: ComponentTuple[] = [
     "DisplayDynamicPercentage",
     () =>
       import(
-        "./basic-datatypes/number/display-dynamic-percentage/display-dynamic-percentage.component"
-      ).then((c) => c.DisplayDynamicPercentageComponent),
+        "./basic-datatypes/number/display-dynamic-percentage/display-calculated-value.component"
+      ).then((c) => c.DisplayCalculatedValueComponent),
+  ],
+  [
+    "DisplayCalculatedValue",
+    () =>
+      import(
+        "./basic-datatypes/number/display-dynamic-percentage/display-calculated-value.component"
+      ).then((c) => c.DisplayCalculatedValueComponent),
   ],
   [
     "DisplayUnit",

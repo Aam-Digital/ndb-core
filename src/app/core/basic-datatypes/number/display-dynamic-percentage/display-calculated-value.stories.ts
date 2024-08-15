@@ -1,11 +1,11 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
-import { DisplayDynamicPercentageComponent } from "./display-dynamic-percentage.component";
+import { DisplayCalculatedValueComponent } from "./display-calculated-value.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Properties/number/DisplayDynamicPercentage",
-  component: DisplayDynamicPercentageComponent,
+  title: "Core/Entities/Properties/number/DisplayCalculatedValue",
+  component: DisplayCalculatedValueComponent,
   decorators: [
     applicationConfig({
       providers: [importProvidersFrom(StorybookBaseModule)],
@@ -13,8 +13,8 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayDynamicPercentageComponent> = (
-  args: DisplayDynamicPercentageComponent,
+const Template: StoryFn<DisplayCalculatedValueComponent> = (
+  args: DisplayCalculatedValueComponent,
 ) => ({
   props: args,
 });
