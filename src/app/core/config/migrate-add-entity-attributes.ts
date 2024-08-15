@@ -270,4 +270,55 @@ const DEFAULT_ENTITIES = {
       },
     },
   },
+  ChildSchoolRelation: {
+    hasPII: true,
+    attributes: {
+      childId: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+        validators: {
+          required: true,
+        },
+        anonymize: "retain",
+        label: "Child",
+      },
+      schoolId: {
+        dataType: "entity",
+        additional: "School",
+        entityReferenceRole: "aggregate",
+        validators: {
+          required: true,
+        },
+        anonymize: "retain",
+        label: "School",
+      },
+      schoolClass: {
+        dataType: "string",
+        label: "Class",
+      },
+      start: {
+        dataType: "date-only",
+        label: "Start date",
+        description: "The date a child joins a school",
+        anonymize: "retain",
+      },
+      end: {
+        dataType: "date-only",
+        label: "End date",
+        description: "The date of a child leaving the school",
+        anonymize: "retain",
+      },
+      result: {
+        dataType: "number",
+        label: "Result",
+        viewComponent: "DisplayPercentage",
+        editComponent: "EditNumber",
+        validators: {
+          min: 0,
+          max: 100,
+        },
+      },
+    },
+  },
 };

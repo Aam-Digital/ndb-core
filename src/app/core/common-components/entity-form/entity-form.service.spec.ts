@@ -112,19 +112,24 @@ describe("EntityFormService", () => {
   });
 
   it("should create forms with the validators included", () => {
-    const formFields = [{ id: "schoolId" }, { id: "result" }];
-    const formGroup = service.createFormGroup(
-      formFields,
-      new ChildSchoolRelation(),
-    );
+    TestEntity.schema.set("result", {
+      validators: { min: 0, max: 100, required: true },
+    });
 
-    expect(formGroup.invalid).toBeTrue();
-    formGroup.patchValue({ schoolId: "someSchool" });
-    expect(formGroup.valid).toBeTrue();
-    formGroup.patchValue({ result: 101 });
-    expect(formGroup.invalid).toBeTrue();
+    const formFields = [{ id: "name" }, { id: "result" }];
+    const formGroup = service.createFormGroup(formFields, new TestEntity());
+
+    expect(formGroup.valid).toBeFalse();
+
+    // @ts-ignore "result" field was temporarily added for this test
     formGroup.patchValue({ result: 100 });
     expect(formGroup.valid).toBeTrue();
+
+    // @ts-ignore "result" field was temporarily added for this test
+    formGroup.patchValue({ result: 101 });
+    expect(formGroup.valid).toBeFalse();
+
+    TestEntity.schema.delete("result");
   });
 
   it("should use create permissions to disable fields when creating a new entity", () => {

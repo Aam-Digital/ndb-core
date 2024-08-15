@@ -1044,6 +1044,58 @@ export const defaultJsonConfig = {
       },
     }
   },
+  "entity:ChildSchoolRelation": {
+    hasPII: true,
+    attributes: {
+      childId: {
+        dataType: "entity",
+        additional: Child.ENTITY_TYPE,
+        entityReferenceRole: "composite",
+        validators: {
+          required: true,
+        },
+        anonymize: "retain",
+        label: $localize`:Label for the child of a relation:Child`,
+      },
+      schoolId: {
+        dataType: "entity",
+        additional: "School",
+        entityReferenceRole: "aggregate",
+        validators: {
+          required: true,
+        },
+        anonymize: "retain",
+        label: $localize`:Label for the school of a relation:School`,
+      },
+      schoolClass: {
+        dataType: "string",
+        label: $localize`:Label for the class of a relation:Class`,
+        anonymize: "retain",
+      },
+      start: {
+        dataType: "date-only",
+        label: $localize`:Label for the start date of a relation:Start date`,
+        description: $localize`:Description of the start date of a relation:The date a child joins a school`,
+        anonymize: "retain",
+      },
+      end: {
+        dataType: "date-only",
+        label: $localize`:Label for the end date of a relation:End date`,
+        description: $localize`:Description of the end date of a relation:The date of a child leaving the school`,
+        anonymize: "retain",
+      },
+      result: {
+        dataType: "number",
+        label: $localize`:Label for the percentage result of a relation:Result`,
+        viewComponent: "DisplayPercentage",
+        editComponent: "EditNumber",
+        validators: {
+          min: 0,
+          max: 100,
+        },
+      },
+    }
+  },
 
   ...todoDefaultConfigs,
 };

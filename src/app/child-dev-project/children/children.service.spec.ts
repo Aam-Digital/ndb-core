@@ -143,7 +143,7 @@ describe("ChildrenService", () => {
     newRelation.childId = child1.getId();
     newRelation.start = new Date();
     newRelation.schoolId = "School:2";
-    newRelation.schoolClass = "3";
+    newRelation["schoolClass"] = "3";
     await entityMapper.save(newRelation);
     child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("3");
@@ -153,7 +153,7 @@ describe("ChildrenService", () => {
     const noStartDate = new ChildSchoolRelation();
     noStartDate.childId = child1.getId();
     noStartDate.schoolId = "School:2";
-    noStartDate.schoolClass = "4";
+    noStartDate["schoolClass"] = "4";
     await entityMapper.save(noStartDate);
     child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("4");
@@ -343,7 +343,7 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
   rel1.childId = "Child:1";
   rel1.schoolId = "School:1";
   rel1.start = new Date("2016-10-01");
-  rel1.schoolClass = "2";
+  rel1["schoolClass"] = "2";
   data.push(rel1);
 
   const rel4: ChildSchoolRelation = new ChildSchoolRelation("2");
@@ -351,7 +351,7 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
   rel4.schoolId = "School:2";
   rel4.start = new Date("2001-01-01");
   rel4.end = new Date("2002-01-01");
-  rel4.schoolClass = "1";
+  rel4["schoolClass"] = "1";
   data.push(rel4);
 
   const rel2: ChildSchoolRelation = new ChildSchoolRelation("3");
@@ -359,14 +359,14 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
   rel2.schoolId = "School:2";
   rel2.start = new Date("2018-05-07");
   rel2.end = new Date("2018-05-09");
-  rel2.schoolClass = "3";
+  rel2["schoolClass"] = "3";
   data.push(rel2);
 
   const rel3: ChildSchoolRelation = new ChildSchoolRelation("4");
   rel3.childId = "Child:3";
   rel3.schoolId = "School:1";
   rel3.start = new Date("2010-01-01");
-  rel3.schoolClass = "2";
+  rel3["schoolClass"] = "2";
   data.push(rel3);
 
   return data;

@@ -55,7 +55,7 @@ export class ChildrenService {
     const active = relations.filter((r) => r.isActive);
     child.schoolId = active.map((r) => r.schoolId);
     if (active.length > 0) {
-      child.schoolClass = active[0].schoolClass;
+      child.schoolClass = active[0]["schoolClass"];
     }
   }
 

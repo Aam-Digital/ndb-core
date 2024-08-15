@@ -5,13 +5,15 @@ import { TimePeriod } from "../../../core/entity-details/related-time-period-ent
 
 /**
  * Record of a school year that a Child attended a certain class in a School.
+ *
+ * This class remains as a stub and in the future will be further refactored
+ * TODO: refactor into generic time-period based relationship entity --> #2512
  */
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends TimePeriod {
   static override hasPII = true;
 
   @DatabaseField({
-    label: $localize`:Label for the child of a relation:Child`,
     dataType: "entity",
     additional: Child.ENTITY_TYPE,
     entityReferenceRole: "composite",
@@ -23,7 +25,6 @@ export class ChildSchoolRelation extends TimePeriod {
   childId: string;
 
   @DatabaseField({
-    label: $localize`:Label for the school of a relation:School`,
     dataType: "entity",
     additional: "School",
     entityReferenceRole: "aggregate",
@@ -33,9 +34,6 @@ export class ChildSchoolRelation extends TimePeriod {
     anonymize: "retain",
   })
   schoolId: string;
-
-  @DatabaseField({ label: $localize`:Label for the class of a relation:Class` })
-  schoolClass: string = "";
 
   @DatabaseField({
     dataType: "date-only",
@@ -52,16 +50,4 @@ export class ChildSchoolRelation extends TimePeriod {
     anonymize: "retain",
   })
   end: Date;
-
-  /** percentage achieved in the final school exams of that year */
-  @DatabaseField({
-    label: $localize`:Label for the percentage result of a relation:Result`,
-    viewComponent: "DisplayPercentage",
-    editComponent: "EditNumber",
-    validators: {
-      min: 0,
-      max: 100,
-    },
-  })
-  result: number;
 }
