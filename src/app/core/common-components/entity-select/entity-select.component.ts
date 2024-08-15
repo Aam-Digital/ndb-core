@@ -25,7 +25,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   templateUrl: "./entity-select.component.html",
   styleUrls: [
     "./entity-select.component.scss",
-    "../../basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.scss",
+    "../../common-components/basic-autocomplete/basic-autocomplete-dropdown.component.scss",
   ],
   imports: [
     MatFormFieldModule,
