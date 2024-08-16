@@ -108,9 +108,7 @@ export class EntityActionsService {
     for (let entity of entities) {
       if ("User" === entity.getType()) {
         this.keycloakAuthService.deleteUser(entity.getId()).subscribe({
-          next: () => {
-            console.log("keycloak user deleted.");
-          },
+          next: () => {},
           error: async () =>
             await this.confirmationDialog.getConfirmation(
               $localize`:delete account in keycloak related error title:Keycloak User could not be deleted`,
