@@ -54,7 +54,7 @@ export class NotesRelatedToEntityComponent
     screenWidthObserver: ScreenWidthObserver,
     filterService: FilterService,
   ) {
-    super(entityMapper, entities, screenWidthObserver, filterService);
+    super(entityMapper, entities, screenWidthObserver, filterService, null);
   }
 
   override ngOnInit() {

@@ -1,12 +1,19 @@
 import { Injectable } from "@angular/core";
-import { HistoricalEntityData } from "./model/historical-entity-data";
-import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
+import { DatabaseIndexingService } from "../../database-indexing/database-indexing.service";
+import { Entity } from "../../model/entity";
+import { EntityRegistry } from "../../database-entity.decorator";
 
+/**
+ * @deprecated Will be replaced by generic index generation (#262)
+ */
 @Injectable({
   providedIn: "root",
 })
 export class HistoricalDataService {
-  constructor(private dbIndexingService: DatabaseIndexingService) {
+  constructor(
+    private dbIndexingService: DatabaseIndexingService,
+    private entityRegistry: EntityRegistry,
+  ) {
     this.createHistoricalDataIndex();
   }
 
@@ -16,7 +23,7 @@ export class HistoricalDataService {
       views: {
         by_entity: {
           map: `(doc) => {
-            if (doc._id.startsWith("${HistoricalEntityData.ENTITY_TYPE}")) {
+            if (doc._id.startsWith("HistoricalEntityData")) {
               emit([doc.relatedEntity, new Date(doc.date).getTime()]);
             }
           }`,
@@ -26,9 +33,9 @@ export class HistoricalDataService {
     return this.dbIndexingService.createIndex(designDoc);
   }
 
-  getHistoricalDataFor(entityId: string): Promise<HistoricalEntityData[]> {
+  getHistoricalDataFor(entityId: string): Promise<Entity[]> {
     return this.dbIndexingService.queryIndexDocs(
-      HistoricalEntityData,
+      this.entityRegistry.get("HistoricalEntityData"),
       "historicalData_index/by_entity",
       {
         startkey: [entityId, "\uffff"],

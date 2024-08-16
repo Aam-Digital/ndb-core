@@ -1,4 +1,4 @@
-import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 
 export const ratingAnswers = Ordering.imposeTotalOrdering([
   {

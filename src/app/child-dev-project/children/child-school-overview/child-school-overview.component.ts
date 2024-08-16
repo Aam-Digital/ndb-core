@@ -51,7 +51,13 @@ export class ChildSchoolOverviewComponent
     screenWidthObserver: ScreenWidthObserver,
     filterService: FilterService,
   ) {
-    super(entityMapper, entityRegistry, screenWidthObserver, filterService);
+    super(
+      entityMapper,
+      entityRegistry,
+      screenWidthObserver,
+      filterService,
+      null,
+    );
 
     this.columns = [
       { id: "childId" }, // schoolId/childId replaced dynamically during init

@@ -1097,7 +1097,23 @@ export const defaultJsonConfig = {
     },
   },
   "entity:HistoricalEntityData": {
+    hasPII: true,
     "attributes": {
+      date: {
+        dataType: "date",
+        label: $localize`:Label for date of historical data:Date`,
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+        anonymize: "retain-anonymized",
+      },
+      relatedEntity: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+        anonymize: "retain",
+      },
       "isMotivatedDuringClass": {
         "dataType": "configurable-enum",
         "additional": "rating-answer",

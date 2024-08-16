@@ -67,7 +67,6 @@ import {
 } from "./utils/di-tokens";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { NotesModule } from "./child-dev-project/notes/notes.module";
-import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
@@ -119,7 +118,6 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
     ImportModule,
     FileModule,
     MarkdownPageModule,
-    HistoricalDataModule,
     LocationModule,
     MatchingEntitiesModule,
     ProgressDashboardWidgetModule,

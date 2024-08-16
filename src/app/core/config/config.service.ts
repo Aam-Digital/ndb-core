@@ -12,6 +12,7 @@ import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { migrateAddMissingEntityAttributes } from "./migrate-add-entity-attributes";
+import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -67,6 +68,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityArrayDatatype,
       migrateEntitySchemaDefaultValue,
       migrateChildrenListConfig,
+      migrateHistoricalDataComponent,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -299,6 +301,26 @@ const migrateChildrenListConfig: ConfigMigration = (key, configPart) => {
   configPart["config"] = configPart["config"] ?? {};
   configPart["config"]["entityType"] = "Child";
   configPart["config"]["loaderMethod"] = "ChildrenService";
+
+  return configPart;
+};
+
+const migrateHistoricalDataComponent: ConfigMigration = (key, configPart) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.["component"] !== "HistoricalDataComponent"
+  ) {
+    return configPart;
+  }
+
+  configPart["component"] = "RelatedEntities";
+
+  configPart["config"] = configPart["config"] ?? {};
+  if (Array.isArray(configPart["config"])) {
+    configPart["config"] = { columns: configPart["config"] };
+  }
+  configPart["config"]["entityType"] = "HistoricalEntityData";
+  configPart["config"]["loaderMethod"] = LoaderMethod.HistoricalDataService;
 
   return configPart;
 };

@@ -523,4 +523,14 @@ const DEFAULT_ENTITIES = {
       },
     },
   },
+  // entity HistoricalEntityData is only used in very few clients
+  /* --> manually check & migrate instead of bloating up the config everywhere:
+    "123-kimue": "matching",
+    "ashayen": "matching",
+    "demo2": "matching",
+    "demo-health": "matching",
+    "helgo": "matching",
+    "sambodh": "matching",
+    "yojak-gsp": "matching"
+   */
 };

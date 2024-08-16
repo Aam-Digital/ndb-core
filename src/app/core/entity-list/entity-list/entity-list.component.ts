@@ -236,11 +236,9 @@ export class EntityListComponent<T extends Entity>
    * Template method that can be overwritten to change the loading logic.
    * @protected
    */
-  protected async getEntities(): Promise<T[]> {
-    if (this.loaderMethod) {
-      return this.entitySpecialLoader.loadData(this.loaderMethod) as Promise<
-        T[]
-      >;
+  protected getEntities(): Promise<T[]> {
+    if (this.loaderMethod && this.entitySpecialLoader) {
+      return this.entitySpecialLoader.loadData(this.loaderMethod);
     }
 
     return this.entityMapperService.loadType(this.entityConstructor);

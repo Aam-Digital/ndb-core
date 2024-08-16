@@ -1,12 +1,13 @@
-import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
-import { HistoricalEntityData } from "./model/historical-entity-data";
+import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { faker } from "../../core/demo-data/faker";
-import { ratingAnswers } from "./model/rating-answers";
-import { EntityConfigService } from "../../core/entity/entity-config.service";
-import { DemoConfigGeneratorService } from "../../core/config/demo-config-generator.service";
-import { EntityConfig } from "../../core/entity/entity-config";
+import { DemoChildGenerator } from "../demo-child-generator.service";
+import { faker } from "../../../../core/demo-data/faker";
+import { ratingAnswers } from "./rating-answers";
+import { EntityConfigService } from "../../../../core/entity/entity-config.service";
+import { DemoConfigGeneratorService } from "../../../../core/config/demo-config-generator.service";
+import { EntityConfig } from "../../../../core/entity/entity-config";
+import { Entity } from "../../../../core/entity/model/entity";
+import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
 
 export class DemoHistoricalDataConfig {
   minCountAttributes: number;
@@ -14,7 +15,7 @@ export class DemoHistoricalDataConfig {
 }
 
 @Injectable()
-export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEntityData> {
+export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
   static provider(config: DemoHistoricalDataConfig) {
     return [
       {
@@ -33,28 +34,28 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
     super();
   }
 
-  protected generateEntities(): HistoricalEntityData[] {
+  protected generateEntities(): Entity[] {
     const config = this.configGenerator.entities[0];
     const attributes: any[] = Object.keys(
       (
         config.data[
-          EntityConfigService.PREFIX_ENTITY_CONFIG +
-            HistoricalEntityData.ENTITY_TYPE
+          EntityConfigService.PREFIX_ENTITY_CONFIG + "HistoricalEntityData"
         ] as EntityConfig
       ).attributes,
     );
 
-    const entities: HistoricalEntityData[] = [];
+    const entities: Entity[] = [];
     for (const child of this.childrenGenerator.entities) {
       const countOfData =
         faker.number.int(this.config.maxCountAttributes) +
         this.config.minCountAttributes;
       const historicalDataOfChild = [...Array(countOfData)].map(() => {
-        const historicalData = new HistoricalEntityData();
+        const historicalData = createEntityOfType("HistoricalEntityData");
         historicalData.date = faker.date.past();
         historicalData.relatedEntity = child.getId();
         for (const attribute of attributes) {
-          historicalData[attribute] = faker.helpers.arrayElement(ratingAnswers);
+          historicalData[attribute] =
+            faker.helpers.arrayElement(ratingAnswers).id;
         }
         return historicalData;
       });
