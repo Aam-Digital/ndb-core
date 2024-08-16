@@ -98,6 +98,23 @@ describe("FilterComponent", () => {
     expect(component.filterSelections[0].selectedOptionValues[1]).toBe("bar");
   });
 
+  it("should fail if the URL length exceeds the safe limit", async () => {
+    component.entityType = Note;
+    component.useUrlQueryParams = true;
+    component.filterConfig = [{ id: "category" }];
+
+    activatedRouteMock.snapshot = {
+      queryParams: {
+        category: "category1,category2,category3,category4,category5",
+      },
+    };
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    const currentUrl = component.getCurrentUrl();
+    expect(currentUrl.length).toBeLessThanOrEqual(2000);
+  });
+
   it("should load url params and set no filter value when empty", async () => {
     component.entityType = Note;
     component.useUrlQueryParams = true;

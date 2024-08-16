@@ -159,6 +159,22 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
       }
     }
   }
+  getCurrentUrl(): string {
+    const params = this.filterSelections.reduce((acc, filter) => {
+      if (filter.selectedOptionValues.length > 0) {
+        acc[filter.name] = filter.selectedOptionValues.join(",");
+      }
+      return acc;
+    }, {});
+
+    return this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams: { ...this.route.snapshot.queryParams, ...params },
+        queryParamsHandling: "merge",
+      })
+      .toString();
+  }
 
   private loadUrlParams() {
     if (!this.useUrlQueryParams) {
