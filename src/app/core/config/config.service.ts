@@ -66,6 +66,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityDetailsInputEntityType,
       migrateEntityArrayDatatype,
       migrateEntitySchemaDefaultValue,
+      migrateChildrenListConfig,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -283,4 +284,21 @@ const migrateEntitySchemaDefaultValue: ConfigMigration = (
     mode: "static",
     value: configPart,
   } as DefaultValueConfig;
+};
+
+const migrateChildrenListConfig: ConfigMigration = (key, configPart) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.["component"] !== "ChildrenList"
+  ) {
+    return configPart;
+  }
+
+  configPart["component"] = "EntityList";
+
+  configPart["config"] = configPart["config"] ?? {};
+  configPart["config"]["entityType"] = "Child";
+  configPart["config"]["loaderMethod"] = "ChildrenService";
+
+  return configPart;
 };

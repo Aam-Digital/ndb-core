@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
-import { Child } from "../../model/child";
-import { AttendanceService } from "../../../attendance/attendance.service";
-import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
-import { RecurringActivity } from "../../../attendance/model/recurring-activity";
-import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
-import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
+import { Child } from "../../children/model/child";
+import { AttendanceService } from "../attendance.service";
+import { ActivityAttendance } from "../model/activity-attendance";
+import { RecurringActivity } from "../model/recurring-activity";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { WINDOW_TOKEN } from "../../../utils/di-tokens";
 
 describe("RecentAttendanceBlocksComponent", () => {
   let component: RecentAttendanceBlocksComponent;

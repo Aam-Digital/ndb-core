@@ -1,16 +1,16 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { Child } from "../../model/child";
-import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
-import { AttendanceService } from "../../../attendance/attendance.service";
+import { Child } from "../../children/model/child";
+import { ActivityAttendance } from "../model/activity-attendance";
+import { AttendanceService } from "../attendance.service";
 import moment from "moment";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import {
   ScreenSize,
   ScreenWidthObserver,
-} from "../../../../utils/media/screen-size-observer.service";
+} from "../../../utils/media/screen-size-observer.service";
 import { NgForOf, SlicePipe } from "@angular/common";
-import { AttendanceBlockComponent } from "../../../attendance/attendance-block/attendance-block.component";
+import { AttendanceBlockComponent } from "../attendance-block/attendance-block.component";
 
 /**
  * This component lists attendance blocks for a child for recent months filtered by institutions.

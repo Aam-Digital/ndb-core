@@ -2,14 +2,6 @@ import { ComponentTuple } from "../../dynamic-components";
 
 export const childrenComponents: ComponentTuple[] = [
   [
-    "ChildrenList",
-    () =>
-      import("./children-list/children-list.component").then(
-        (c) => c.ChildrenListComponent,
-      ),
-  ],
-
-  [
     "GroupedChildAttendance",
     () =>
       import(
@@ -20,7 +12,7 @@ export const childrenComponents: ComponentTuple[] = [
     "RecentAttendanceBlocks",
     () =>
       import(
-        "./children-list/recent-attendance-blocks/recent-attendance-blocks.component"
+        "../attendance/recent-attendance-blocks/recent-attendance-blocks.component"
       ).then((c) => c.RecentAttendanceBlocksComponent),
   ],
   [

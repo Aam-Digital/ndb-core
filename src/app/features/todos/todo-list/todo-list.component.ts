@@ -122,6 +122,7 @@ export class TodoListComponent
       dialog,
       duplicateRecord,
       entityActionsService,
+      null,
     );
   }
 
