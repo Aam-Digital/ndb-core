@@ -8,14 +8,12 @@ import {
 } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "../model/entity";
-import { NEVER, of, Subject, throwError } from "rxjs";
+import { NEVER, of, Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
-import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
-import { User } from "../../user/user";
 
 describe("EntityActionsService", () => {
   let service: EntityActionsService;
@@ -26,7 +24,6 @@ describe("EntityActionsService", () => {
   let mockRouter;
   let mockedEntityDeleteService: jasmine.SpyObj<EntityDeleteService>;
   let mockedEntityAnonymizeService: jasmine.SpyObj<EntityAnonymizeService>;
-  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
 
   let singleTestEntity: Entity;
   let severalTestEntities: Entity[] = [];
@@ -36,13 +33,6 @@ describe("EntityActionsService", () => {
     severalTestEntities[0] = new Entity();
     severalTestEntities[1] = new Entity();
     severalTestEntities[2] = new Entity();
-
-    mockAuthService = jasmine.createSpyObj(["deleteUser"]);
-    mockAuthService.deleteUser.and.returnValue(
-      throwError(() => {
-        new Error();
-      }),
-    );
 
     mockedEntityDeleteService = jasmine.createSpyObj(["deleteEntity"]);
     mockedEntityDeleteService.deleteEntity.and.resolveTo(
@@ -72,7 +62,6 @@ describe("EntityActionsService", () => {
       imports: [CoreTestingModule],
       providers: [
         EntityActionsService,
-        { provide: KeycloakAuthService, useValue: mockAuthService },
         { provide: EntityDeleteService, useValue: mockedEntityDeleteService },
         {
           provide: EntityAnonymizeService,
@@ -114,6 +103,7 @@ describe("EntityActionsService", () => {
     expect(snackBarSpy.open).toHaveBeenCalled();
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       singleTestEntity,
+      true,
     );
     expect(mockRouter.navigate).toHaveBeenCalled();
   });
@@ -130,29 +120,16 @@ describe("EntityActionsService", () => {
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledTimes(3);
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       severalTestEntities[0],
+      true,
     );
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       severalTestEntities[1],
+      true,
     );
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       severalTestEntities[2],
+      true,
     );
-  });
-
-  it("should delete several entities and show dialog if keycloak deletion fails", async () => {
-    mockSnackBarRef.onAction.and.returnValues(NEVER);
-    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
-
-    let userEntity = new User();
-    const result = await service.delete(userEntity);
-
-    expect(result).toBe(true);
-    expect(snackBarSpy.open).toHaveBeenCalled();
-    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledTimes(1);
-    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
-      userEntity,
-    );
-    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledTimes(2);
   });
 
   it("should undo the deletion of several entities", fakeAsync(async () => {
