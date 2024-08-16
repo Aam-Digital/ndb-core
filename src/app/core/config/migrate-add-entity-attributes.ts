@@ -391,4 +391,49 @@ const DEFAULT_ENTITIES = {
       },
     },
   },
+  RecurringActivity: {
+    toStringAttributes: ["title"],
+    label: "Recurring Activity",
+    labelPlural: "Recurring Activities",
+    color: "#00838F",
+    route: "attendance/recurring-activity",
+    attributes: {
+      title: {
+        dataType: "string",
+        label: "Title",
+        validators: {
+          required: true,
+        },
+      },
+      type: {
+        label: "Type",
+        dataType: "configurable-enum",
+        additional: "interaction-type",
+      },
+      participants: {
+        label: "Participants",
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+      },
+      linkedGroups: {
+        label: "Groups",
+        dataType: "entity",
+        isArray: true,
+        additional: "School",
+      },
+      excludedParticipants: {
+        label: "Excluded Participants",
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+      },
+      assignedTo: {
+        label: "Assigned user(s)",
+        dataType: "entity",
+        isArray: true,
+        additional: "User",
+      },
+    },
+  },
 };

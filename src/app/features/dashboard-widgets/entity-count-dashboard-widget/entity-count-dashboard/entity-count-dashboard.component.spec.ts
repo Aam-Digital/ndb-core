@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityCountDashboardComponent } from "./entity-count-dashboard.component";
 import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
@@ -14,8 +8,6 @@ import {
   MockEntityMapperService,
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
-import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
 import { Note } from "../../../../child-dev-project/notes/model/note";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -31,15 +23,13 @@ describe("EntityCountDashboardComponent", () => {
     return child;
   }
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     entityMapper = mockEntityMapper();
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       imports: [EntityCountDashboardComponent, MockedTestingModule.withState()],
       providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(EntityCountDashboardComponent);
     component = fixture.componentInstance;
 
@@ -184,31 +174,4 @@ describe("EntityCountDashboardComponent", () => {
       id: "link-2",
     });
   });
-
-  it("should also work with other entities", fakeAsync(() => {
-    spyOn(entityMapper, "loadType").and.callThrough();
-    const type1 = defaultInteractionTypes[1];
-    const type2 = defaultInteractionTypes[2];
-    const ra1 = new RecurringActivity();
-    ra1.type = type1;
-    const ra2 = new RecurringActivity();
-    ra2.type = type1;
-    const ra3 = new RecurringActivity();
-    ra3.type = type2;
-    const entity = RecurringActivity;
-    entityMapper.addAll([ra1, ra2, ra3]);
-
-    component.entityType = RecurringActivity.ENTITY_TYPE;
-    component.groupBy = "type";
-    component.ngOnInit();
-
-    expect(entityMapper.loadType).toHaveBeenCalledWith(entity);
-    tick();
-    expect(component.totalEntities).toBe(3);
-    expect(component.entityGroupCounts).toEqual([
-      { label: type1.label, id: type1.id, value: 2 },
-      { label: type2.label, id: type2.id, value: 1 },
-    ]);
-    expect(component.label).toBe(RecurringActivity.labelPlural);
-  }));
 });

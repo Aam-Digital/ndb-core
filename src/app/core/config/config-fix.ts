@@ -3,6 +3,7 @@ import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/da
 import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
+import { INTERACTION_TYPE_CONFIG_ID } from "../../child-dev-project/notes/model/interaction-type.interface";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -753,6 +754,51 @@ export const defaultJsonConfig = {
       description: {
         dataType: "string",
         label: $localize`:An additional description for the borrowed material:Description`,
+      }
+    }
+  },
+  "entity:RecurringActivity": {
+    toStringAttributes: ["title"],
+    label: $localize`:label for entity:Recurring Activity`,
+    labelPlural: $localize`:label (plural) for entity:Recurring Activities`,
+    color: "#00838F",
+    route: "attendance/recurring-activity",
+    attributes: {
+      title: {
+        dataType: "string",
+        label: $localize`:Label for the title of a recurring activity:Title`,
+        validators: {
+          required: true,
+        },
+      },
+      type: {
+        label: $localize`:Label for the interaction type of a recurring activity:Type`,
+        dataType: "configurable-enum",
+        additional: INTERACTION_TYPE_CONFIG_ID,
+      },
+      participants: {
+        label: $localize`:Label for the participants of a recurring activity:Participants`,
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+      },
+      linkedGroups: {
+        label: $localize`:Label for the linked schools of a recurring activity:Groups`,
+        dataType: "entity",
+        isArray: true,
+        additional: "School",
+      },
+      excludedParticipants: {
+        label: $localize`:Label for excluded participants of a recurring activity:Excluded Participants`,
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+      },
+      assignedTo: {
+        label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
+        dataType: "entity",
+        isArray: true,
+        additional: "User",
       }
     }
   },

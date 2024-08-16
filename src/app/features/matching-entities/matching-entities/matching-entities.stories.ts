@@ -1,13 +1,13 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { importProvidersFrom } from "@angular/core";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 const addressSchema: EntitySchemaField = {
   label: "Address",
@@ -15,17 +15,17 @@ const addressSchema: EntitySchemaField = {
 };
 
 const entitiesA = [
-  Object.assign(RecurringActivity.create("A"), {
+  Object.assign(createEntityOfType("RecurringActivity", "A"), {
     type: defaultInteractionTypes[1],
     center: centersUnique[0],
     address: { lat: 52.4750412, lon: 13.4319106 },
   }),
-  Object.assign(RecurringActivity.create("B"), {
+  Object.assign(createEntityOfType("RecurringActivity", "B"), {
     type: defaultInteractionTypes[2],
     center: centersUnique[0],
     address: { lat: 52.4740412, lon: 13.4319106 },
   }),
-  Object.assign(RecurringActivity.create("ABC"), {
+  Object.assign(createEntityOfType("RecurringActivity", "ABC"), {
     type: defaultInteractionTypes[1],
     center: centersUnique[2],
     address: { lat: 52.4730412, lon: 13.4319106 },
