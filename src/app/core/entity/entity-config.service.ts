@@ -128,7 +128,7 @@ export class EntityConfigService {
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
     for (const [key, value] of Object.entries(entityConfig?.attributes ?? {})) {
-      value._isCustomizedField = true;
+      delete value["_isCustomizedField"]; // clean up previous flag that is not deprecated
       addPropertySchema(entityType.prototype, key, value);
     }
 
