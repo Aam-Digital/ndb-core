@@ -1,7 +1,6 @@
 import { ChildrenService } from "./children.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
-import { Child } from "./model/child";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
@@ -44,18 +43,17 @@ describe("ChildrenService", () => {
 
   it("should list newly saved children", async () => {
     const childrenBefore = await service.getChildren();
-    const child = new Child("10");
+    const child = createEntityOfType("Child", "10");
     await entityMapper.save(child);
     const childrenAfter = await service.getChildren();
 
-    expect(childrenBefore).not.toContain(child);
-
-    expect(childrenAfter).toContain(child);
-    expect(childrenBefore).toHaveSize(childrenAfter.length - 1);
+    expect(childrenBefore.some((x) => x.getId() === child.getId())).toBeFalse();
+    expect(childrenAfter.some((x) => x.getId() === child.getId())).toBeTrue();
+    expect(childrenAfter).toHaveSize(childrenBefore.length + 1);
   });
 
   it("should find a newly saved child", async () => {
-    const child = new Child("10");
+    const child = createEntityOfType("Child", "10");
     try {
       await service.getChild(child.getId());
       fail("Child should not be found");
@@ -65,13 +63,13 @@ describe("ChildrenService", () => {
 
     await entityMapper.save(child);
     const childAfter = await service.getChild(child.getId());
-    expect(childAfter).toEqual(child);
+    expect(childAfter.getId()).toEqual(child.getId());
   });
 
   // TODO: test getAttendances
 
   it("calculates days since last note for children", async () => {
-    const allChildren = await entityMapper.loadType(Child);
+    const allChildren = await entityMapper.loadType("Child");
 
     const c0 = allChildren[0].getId();
     await entityMapper.save(
@@ -92,7 +90,7 @@ describe("ChildrenService", () => {
   });
 
   it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
-    const allChildren = await entityMapper.loadType(Child);
+    const allChildren = await entityMapper.loadType("Child");
 
     const c0 = allChildren[0].getId();
     await entityMapper.save(
@@ -100,7 +98,7 @@ describe("ChildrenService", () => {
     );
 
     const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
-      Child.ENTITY_TYPE,
+      "Child",
       49,
     );
 
@@ -130,47 +128,47 @@ describe("ChildrenService", () => {
   it("should load a single child and add school info", async () => {
     // no active relation
     const child2 = await service.getChild("Child:2");
-    expect(child2.schoolClass).toBeUndefined();
-    expect(child2.schoolId).toBeEmpty();
+    expect(child2["schoolClass"]).toBeUndefined();
+    expect(child2["schoolId"]).toBeEmpty();
 
     // one active relation
     let child1 = await service.getChild("Child:1");
-    expect(child1.schoolClass).toBe("2");
-    expect(child1.schoolId).toEqual(["School:1"]);
+    expect(child1["schoolClass"]).toBe("2");
+    expect(child1["schoolId"]).toEqual(["School:1"]);
 
     // multiple active relations
     const newRelation = new ChildSchoolRelation();
     newRelation.childId = child1.getId();
     newRelation.start = new Date();
-    newRelation.schoolId = "School:2";
+    newRelation["schoolId"] = "School:2";
     newRelation["schoolClass"] = "3";
     await entityMapper.save(newRelation);
     child1 = await service.getChild(child1.getId());
-    expect(child1.schoolClass).toBe("3");
-    expect(child1.schoolId).toEqual(["School:2", "School:1"]);
+    expect(child1["schoolClass"]).toBe("3");
+    expect(child1["schoolId"]).toEqual(["School:2", "School:1"]);
 
     // multiple active, no start date on one
     const noStartDate = new ChildSchoolRelation();
     noStartDate.childId = child1.getId();
-    noStartDate.schoolId = "School:2";
+    noStartDate["schoolId"] = "School:2";
     noStartDate["schoolClass"] = "4";
     await entityMapper.save(noStartDate);
     child1 = await service.getChild(child1.getId());
-    expect(child1.schoolClass).toBe("4");
-    expect(child1.schoolId).toEqual(["School:2", "School:2", "School:1"]);
+    expect(child1["schoolClass"]).toBe("4");
+    expect(child1["schoolId"]).toEqual(["School:2", "School:2", "School:1"]);
   });
 
   it("should load all children with school info", async () => {
     const children = await service.getChildren();
     const child1 = children.find((child) => child.getId() === "Child:1");
-    expect(child1.schoolClass).toBe("2");
-    expect(child1.schoolId).toEqual(["School:1"]);
+    expect(child1["schoolClass"]).toBe("2");
+    expect(child1["schoolId"]).toEqual(["School:1"]);
     const child2 = children.find((child) => child.getId() === "Child:2");
-    expect(child2.schoolClass).toBeUndefined();
-    expect(child2.schoolId).toBeEmpty();
+    expect(child2["schoolClass"]).toBeUndefined();
+    expect(child2["schoolId"]).toBeEmpty();
     const child3 = children.find((child) => child.getId() === "Child:3");
-    expect(child3.schoolClass).toBe("2");
-    expect(child3.schoolId).toEqual(["School:1"]);
+    expect(child3["schoolClass"]).toBe("2");
+    expect(child3["schoolId"]).toEqual(["School:1"]);
   });
 
   it("should get the relations for a child in sorted order", async () => {
@@ -198,7 +196,7 @@ describe("ChildrenService", () => {
 
   it("should get a active relation which starts today", async () => {
     const todayRelation = new ChildSchoolRelation("today");
-    todayRelation.schoolId = "School:3";
+    todayRelation["schoolId"] = "School:3";
     todayRelation.start = new Date();
     await entityMapper.save(todayRelation);
     const relations = await service.queryActiveRelationsOf("School:3");
@@ -230,8 +228,8 @@ describe("ChildrenService", () => {
   });
 
   it("should return related notes", async () => {
-    const c1 = new Child("c1");
-    const c2 = new Child("c2");
+    const c1 = createEntityOfType("Child", "c1");
+    const c2 = createEntityOfType("Child", "c2");
     const s1 = createEntityOfType("School", "s1");
     const s2 = createEntityOfType("School", "s2");
     const n1 = new Note("n1");
@@ -255,7 +253,7 @@ describe("ChildrenService", () => {
   });
 
   it("should include related notes through children and schools links (legacy)", async () => {
-    const c1 = new Child("c1");
+    const c1 = createEntityOfType("Child", "c1");
     const s1 = createEntityOfType("School", "s1");
     const n1 = new Note("n1");
     n1.children.push(c1.getId());
@@ -287,10 +285,10 @@ describe("ChildrenService", () => {
   });
 });
 
-function generateChildEntities(): Child[] {
+function generateChildEntities(): Entity[] {
   const data = [];
 
-  const a1 = new Child("1");
+  const a1 = createEntityOfType("Child", "1");
   a1.name = "Arjun A.";
   a1.projectNumber = "1";
   a1["religion"] = "Hindu";
@@ -300,7 +298,7 @@ function generateChildEntities(): Child[] {
   a1.center = { id: "delhi", label: "Delhi" };
   data.push(a1);
 
-  const a2 = new Child("2");
+  const a2 = createEntityOfType("Child", "2");
   a2.name = "Bandana B.";
   a2.projectNumber = "2";
   a2["religion"] = "Hindu";
@@ -310,7 +308,7 @@ function generateChildEntities(): Child[] {
   a2.center = { id: "kolkata", label: "Kolkata" };
   data.push(a2);
 
-  const a3 = new Child("3");
+  const a3 = createEntityOfType("Child", "3");
   a3.name = "Chandan C.";
   a3.projectNumber = "3";
   a3["religion"] = "Hindu";
@@ -341,14 +339,14 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
   const data: ChildSchoolRelation[] = [];
   const rel1: ChildSchoolRelation = new ChildSchoolRelation("1");
   rel1.childId = "Child:1";
-  rel1.schoolId = "School:1";
+  rel1["schoolId"] = "School:1";
   rel1.start = new Date("2016-10-01");
   rel1["schoolClass"] = "2";
   data.push(rel1);
 
   const rel4: ChildSchoolRelation = new ChildSchoolRelation("2");
   rel4.childId = "Child:3";
-  rel4.schoolId = "School:2";
+  rel4["schoolId"] = "School:2";
   rel4.start = new Date("2001-01-01");
   rel4.end = new Date("2002-01-01");
   rel4["schoolClass"] = "1";
@@ -356,7 +354,7 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
 
   const rel2: ChildSchoolRelation = new ChildSchoolRelation("3");
   rel2.childId = "Child:2";
-  rel2.schoolId = "School:2";
+  rel2["schoolId"] = "School:2";
   rel2.start = new Date("2018-05-07");
   rel2.end = new Date("2018-05-09");
   rel2["schoolClass"] = "3";
@@ -364,7 +362,7 @@ function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
 
   const rel3: ChildSchoolRelation = new ChildSchoolRelation("4");
   rel3.childId = "Child:3";
-  rel3.schoolId = "School:1";
+  rel3["schoolId"] = "School:1";
   rel3.start = new Date("2010-01-01");
   rel3["schoolClass"] = "2";
   data.push(rel3);

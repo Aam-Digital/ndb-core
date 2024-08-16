@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../notes/model/note";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
@@ -25,8 +24,8 @@ export class ChildrenService {
   /**
    * returns a list of children with additional school info
    */
-  async getChildren(): Promise<Child[]> {
-    const children = await this.entityMapper.loadType(Child);
+  async getChildren(): Promise<Entity[]> {
+    const children = await this.entityMapper.loadType("Child");
     const relations = await this.entityMapper.loadType(ChildSchoolRelation);
     groupBy(relations, "childId").forEach(([id, rels]) => {
       const child = children.find((c) => c.getId() === id);
@@ -41,21 +40,21 @@ export class ChildrenService {
    * returns a child with additional school info
    * @param id id of child
    */
-  async getChild(id: string): Promise<Child> {
-    const child = await this.entityMapper.load(Child, id);
+  async getChild(id: string): Promise<Entity> {
+    const child = await this.entityMapper.load("Child", id);
     const relations = await this.queryRelations(id);
     this.extendChildWithSchoolInfo(child, relations);
     return child;
   }
 
   private extendChildWithSchoolInfo(
-    child: Child,
+    child: Entity,
     relations: ChildSchoolRelation[],
   ) {
     const active = relations.filter((r) => r.isActive);
-    child.schoolId = active.map((r) => r.schoolId);
+    child["schoolId"] = active.map((r) => r.schoolId);
     if (active.length > 0) {
-      child.schoolClass = active[0]["schoolClass"];
+      child["schoolClass"] = active[0]["schoolClass"];
     }
   }
 
@@ -133,7 +132,7 @@ export class ChildrenService {
     // TODO: rework this to check the entity schema and find the relevant field?
     const entityType = Entity.extractTypeFromId(entityId);
     switch (entityType) {
-      case Child.ENTITY_TYPE:
+      case "Child":
         return "children";
       case "School":
         return "schools";
@@ -153,7 +152,7 @@ export class ChildrenService {
    *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
    */
   public async getDaysSinceLastNoteOfEachEntity(
-    entityType = Child.ENTITY_TYPE,
+    entityType = "Child",
     forLastNDays: number = 30,
   ): Promise<Map<string, number>> {
     const startDay = moment().subtract(forLastNDays, "days");

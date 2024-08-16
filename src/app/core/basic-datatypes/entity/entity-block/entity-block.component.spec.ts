@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityBlockComponent } from "./entity-block.component";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import {
   EntityRegistry,
   entityRegistry,
@@ -60,26 +59,26 @@ describe("DisplayEntityComponent", () => {
   });
 
   it("should use the block component when available", async () => {
-    const entity = new Child();
+    const entity = new TestEntity();
     entityMapper.add(entity);
 
     component.entityToDisplay = entity;
     await component.ngOnInit();
 
-    expect(component.entityBlockComponent).toEqual(Child.getBlockComponent());
+    expect(component.entityBlockComponent).toEqual(TestEntity.blockComponent);
   });
 
   it("should navigate to the details page of the entity", () => {
-    component.entityToDisplay = new Child("1");
+    component.entityToDisplay = new TestEntity("1");
 
     component.showDetailsPage();
 
-    expect(mockRouter.navigate).toHaveBeenCalledWith(["/child", "1"]);
+    expect(mockRouter.navigate).toHaveBeenCalledWith([TestEntity.route, "1"]);
   });
 
   it("should log a warning if entity cannot be loaded", async () => {
     const logSpy = spyOn(Logging, "debug");
-    const child = new Child("not_existing");
+    const child = new TestEntity("not_existing");
     component.entityId = child.getId();
 
     await component.ngOnInit();

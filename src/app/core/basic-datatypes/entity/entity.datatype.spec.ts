@@ -18,35 +18,34 @@
 import { testDatatype } from "../../entity/schema/entity-schema.service.spec";
 import { EntityDatatype } from "./entity.datatype";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("Schema data type: entity", () => {
   testDatatype(new EntityDatatype(null, null), "1", "1", "User");
 
   it("should map to the referenced entity", async () => {
-    const c1 = Child.create("first");
-    const c2 = new Child();
-    c2.projectNumber = "123";
+    const c1 = TestEntity.create("first");
+    const c2 = new TestEntity();
+    c2.other = "123";
     const entityMapper = mockEntityMapper([c1, c2]);
     const dataType = new EntityDatatype(entityMapper, null);
-    const schema = ChildSchoolRelation.schema.get("childId");
+    const schema = TestEntity.schema.get("ref");
 
     await expectAsync(
       dataType.importMapFunction("first", schema, "name"),
     ).toBeResolvedTo(c1.getId());
     await expectAsync(
-      dataType.importMapFunction("123", schema, "projectNumber"),
+      dataType.importMapFunction("123", schema, "other"),
     ).toBeResolvedTo(c2.getId());
     await expectAsync(
-      dataType.importMapFunction("345", schema, "projectNumber"),
+      dataType.importMapFunction("345", schema, "other"),
     ).toBeResolvedTo(undefined);
   });
 
   it("should anonymize entity recursively", async () => {
-    const referencedEntity = new Child("ref-1");
+    const referencedEntity = new TestEntity("ref-1");
     referencedEntity.name = "test";
 
     const entityMapper = mockEntityMapper([referencedEntity]);
@@ -57,7 +56,7 @@ describe("Schema data type: entity", () => {
 
     const testValue = referencedEntity.getId();
     const testSchemaField: EntitySchemaField = {
-      additional: "Child",
+      additional: TestEntity.ENTITY_TYPE,
       dataType: "entity",
     };
 

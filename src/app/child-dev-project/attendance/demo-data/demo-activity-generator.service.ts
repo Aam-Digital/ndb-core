@@ -1,7 +1,6 @@
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../../children/model/child";
 import { faker } from "../../../core/demo-data/faker";
 import { RecurringActivity } from "../model/recurring-activity";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
@@ -25,7 +24,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
    * @param assignedUser (Optional) user to be assigned as responsible for the activity
    */
   static generateActivityForChildren(
-    children: Child[],
+    children: Entity[],
     assignedUser?: Entity,
   ): RecurringActivity {
     const activity = RecurringActivity.create();

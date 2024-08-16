@@ -6,7 +6,7 @@ import moment from "moment";
 import { HistoricalDataService } from "../historical-data.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { Child } from "../../../child-dev-project/children/model/child";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
@@ -30,7 +30,7 @@ describe("HistoricalDataComponent", () => {
     fixture = TestBed.createComponent(HistoricalDataComponent);
     component = fixture.componentInstance;
 
-    component.entity = new Child();
+    component.entity = createEntityOfType("Child");
     fixture.detectChanges();
   }));
 

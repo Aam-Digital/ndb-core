@@ -2,7 +2,6 @@ import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { AbilityService } from "./ability.service";
 import { BehaviorSubject, Subject } from "rxjs";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
@@ -28,8 +27,8 @@ describe("AbilityService", () => {
   let entityMapper: jasmine.SpyObj<EntityMapperService>;
   const rules: DatabaseRules = {
     user_app: [
-      { subject: "Child", action: "read" },
-      { subject: "Note", action: "manage", inverted: true },
+      { subject: TestEntity.ENTITY_TYPE, action: "read" },
+      { subject: Note.ENTITY_TYPE, action: "manage", inverted: true },
     ],
     admin_app: [{ subject: "all", action: "manage" }],
   };
@@ -169,11 +168,11 @@ describe("AbilityService", () => {
     });
     tick();
 
-    expect(ability.can("read", Child)).toBeTrue();
-    expect(ability.can("create", Child)).toBeFalse();
-    expect(ability.can("manage", Child)).toBeFalse();
-    expect(ability.can("read", new Child())).toBeTrue();
-    expect(ability.can("create", new Child())).toBeFalse();
+    expect(ability.can("read", TestEntity)).toBeTrue();
+    expect(ability.can("create", TestEntity)).toBeFalse();
+    expect(ability.can("manage", TestEntity)).toBeFalse();
+    expect(ability.can("read", new TestEntity())).toBeTrue();
+    expect(ability.can("create", new TestEntity())).toBeFalse();
     expect(ability.can("manage", Note)).toBeFalse();
     expect(ability.can("manage", new Note())).toBeFalse();
     expect(ability.can("create", new Note())).toBeFalse();
@@ -189,8 +188,8 @@ describe("AbilityService", () => {
     entityUpdates.next({ entity: updatedConfig, type: "update" });
     tick();
 
-    expect(ability.can("manage", Child)).toBeTrue();
-    expect(ability.can("manage", new Child())).toBeTrue();
+    expect(ability.can("manage", TestEntity)).toBeTrue();
+    expect(ability.can("manage", new TestEntity())).toBeTrue();
     expect(ability.can("manage", Note)).toBeTrue();
     expect(ability.can("manage", new Note())).toBeTrue();
   }));

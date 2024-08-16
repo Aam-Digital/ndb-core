@@ -18,7 +18,6 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./FormConfig";
@@ -135,12 +134,20 @@ describe("EntityFormService", () => {
   it("should use create permissions to disable fields when creating a new entity", () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
-      { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
-      { subject: "Child", action: "update", fields: ["name"] },
-      { subject: "Child", action: "create", fields: ["dateOfBirth"] },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "read",
+        fields: ["name", "dateOfBirth"],
+      },
+      { subject: TestEntity.ENTITY_TYPE, action: "update", fields: ["name"] },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "create",
+        fields: ["dateOfBirth"],
+      },
     ]);
 
-    const formGroup = service.createFormGroup(formFields, new Child());
+    const formGroup = service.createFormGroup(formFields, new TestEntity());
 
     expect(formGroup.get("name").disabled).toBeTrue();
     expect(formGroup.get("dateOfBirth").enabled).toBeTrue();
@@ -149,11 +156,15 @@ describe("EntityFormService", () => {
   it("should always keep properties disabled if user does not have 'update' permissions for them", () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
-      { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
-      { subject: "Child", action: "update", fields: ["name"] },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "read",
+        fields: ["name", "dateOfBirth"],
+      },
+      { subject: TestEntity.ENTITY_TYPE, action: "update", fields: ["name"] },
     ]);
 
-    const child = new Child();
+    const child = new TestEntity();
     child._rev = "foo"; // "not new" state
 
     const formGroup = service.createFormGroup(formFields, child);
@@ -375,7 +386,7 @@ describe("EntityFormService", () => {
   });
 
   it("should add column definitions from property schema", () => {
-    class Test extends Child {
+    class Test extends Entity {
       @DatabaseField({
         description: "Property description",
         additional: "someAdditional",

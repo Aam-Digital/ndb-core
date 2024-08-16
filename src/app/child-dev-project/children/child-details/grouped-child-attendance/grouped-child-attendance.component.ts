@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
-import { Child } from "../../model/child";
+import { Entity } from "../../../../core/entity/model/entity";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -26,7 +26,7 @@ import { ActivityAttendanceSectionComponent } from "../../../attendance/activity
   standalone: true,
 })
 export class GroupedChildAttendanceComponent implements OnInit {
-  @Input() entity: Child = new Child("");
+  @Input() entity: Entity;
 
   loading: boolean = true;
   activities: RecurringActivity[] = [];

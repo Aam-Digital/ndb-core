@@ -1,6 +1,5 @@
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { Child } from "./child";
 import { TimePeriod } from "../../../core/entity-details/related-time-period-entities/time-period";
 
 /**
@@ -15,7 +14,7 @@ export class ChildSchoolRelation extends TimePeriod {
 
   @DatabaseField({
     dataType: "entity",
-    additional: Child.ENTITY_TYPE,
+    additional: "Child",
     entityReferenceRole: "composite",
     validators: {
       required: true,

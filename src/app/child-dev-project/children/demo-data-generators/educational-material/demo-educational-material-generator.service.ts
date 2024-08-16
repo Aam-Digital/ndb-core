@@ -1,7 +1,6 @@
 import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../../model/child";
 import { faker } from "../../../../core/demo-data/faker";
 import { materials } from "./materials";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -63,14 +62,14 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
   }
 
   private generateEducationalMaterialEntity(
-    child: Child,
+    child: Entity,
   ): Entity & { [key: string]: any } {
     const entity = createEntityOfType("EducationalMaterial");
 
     entity.child = child.getId();
     entity.date = faker.date.between({
-      from: child.admissionDate,
-      to: faker.getEarlierDateOrToday(child.dropoutDate),
+      from: child["admissionDate"],
+      to: faker.getEarlierDateOrToday(child["dropoutDate"]),
     });
     entity.materialAmount = faker.helpers.arrayElement([1, 1, 1, 2, 3]);
     entity.materialType = faker.helpers.arrayElement(materials).id;

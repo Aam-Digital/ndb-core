@@ -10,7 +10,6 @@ import {
   EntitySelectComponent,
 } from "./entity-select.component";
 import { Entity } from "../../entity/model/entity";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { Logging } from "../../logging/logging.service";
@@ -34,7 +33,7 @@ describe("EntitySelectComponent", () => {
     testUsers = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
       return new TestEntity(s);
     });
-    testChildren = [new Child(), new Child()];
+    testChildren = [createEntityOfType("Child"), createEntityOfType("Child")];
     const otherEntities: Entity[] = [createEntityOfType("School")];
 
     TestBed.configureTestingModule({
@@ -84,7 +83,7 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("suggests all entities of multiple different types if configured", fakeAsync(() => {
-    component.entityType = [TestEntity.ENTITY_TYPE, Child.ENTITY_TYPE];
+    component.entityType = [TestEntity.ENTITY_TYPE, "Child"];
     tick();
     fixture.detectChanges();
 
@@ -139,16 +138,16 @@ describe("EntitySelectComponent", () => {
 
   it("should update matchingInactive count when autocomplete filter changes", fakeAsync(() => {
     const testEntities = [
-      Child.create("AB"),
-      Child.create("AC"),
-      Child.create("X"),
+      TestEntity.create("AB"),
+      TestEntity.create("AC"),
+      TestEntity.create("X"),
     ];
     testEntities.forEach((e) => (e.inactive = true));
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
       testEntities,
     );
 
-    component.entityType = Child.ENTITY_TYPE;
+    component.entityType = TestEntity.ENTITY_TYPE;
     tick();
     expect(component.currentlyMatchingInactive).toBe(testEntities.length);
 
@@ -177,12 +176,12 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("should create a new entity when user selects 'add new' and apply input text", async () => {
-    component.entityType = [Child.ENTITY_TYPE];
+    component.entityType = [TestEntity.ENTITY_TYPE];
     const formDialogSpy = spyOn(
       TestBed.inject(FormDialogService),
       "openFormPopup",
     );
-    const savedEntity = new Child("123");
+    const savedEntity = new TestEntity("123");
 
     formDialogSpy.and.returnValue({ afterClosed: () => of(undefined) } as any);
     const resultCancel = await component.createNewEntity("my new record");

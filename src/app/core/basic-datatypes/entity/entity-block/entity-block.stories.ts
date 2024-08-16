@@ -1,9 +1,9 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { EntityBlockComponent } from "./entity-block.component";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
+import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
 
 export default {
   title: "Core/Entities/EntityBlock",
@@ -22,7 +22,7 @@ const Template: StoryFn<EntityBlockComponent> = (
   props: args,
 });
 
-const testChild = new Child();
+const testChild = createEntityOfType("Child");
 testChild.name = "Test Name";
 testChild.projectNumber = "10";
 export const ChildComponent = Template.bind({});

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { Child } from "../../children/model/child";
+import { Entity } from "../../../core/entity/model/entity";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceService } from "../attendance.service";
 import moment from "moment";
@@ -35,7 +35,7 @@ export class RecentAttendanceBlocksComponent implements OnInit {
   attendanceList: ActivityAttendance[] = [];
   maxAttendanceBlocks: number = 3;
 
-  @Input() entity: Child;
+  @Input() entity: Entity;
   @Input() config: { filterByActivityType: string };
 
   constructor(

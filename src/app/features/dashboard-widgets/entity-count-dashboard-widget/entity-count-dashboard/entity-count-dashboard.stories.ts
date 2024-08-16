@@ -2,8 +2,8 @@ import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { EntityCountDashboardComponent } from "./entity-count-dashboard.component";
-import { Child } from "../../../../child-dev-project/children/model/child";
-import { centersUnique } from "../../../../child-dev-project/children/demo-data-generators/fixtures/centers";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { genders } from "../../../../child-dev-project/children/model/genders";
 
 export default {
   title: "Features/Dashboard Widgets/Entity Count Dashboard",
@@ -13,11 +13,11 @@ export default {
       providers: [
         importProvidersFrom(
           StorybookBaseModule.withData([
-            Object.assign(new Child(), { center: centersUnique[0] }),
-            Object.assign(new Child(), { center: centersUnique[1] }),
-            Object.assign(new Child(), { center: centersUnique[1] }),
-            Object.assign(new Child(), { center: centersUnique[1] }),
-            Object.assign(new Child(), { center: centersUnique[2] }),
+            TestEntity.create({ category: genders[0] }),
+            TestEntity.create({ category: genders[1] }),
+            TestEntity.create({ category: genders[1] }),
+            TestEntity.create({ category: genders[1] }),
+            TestEntity.create({ category: genders[2] }),
           ]),
         ),
       ],

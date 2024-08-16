@@ -1,7 +1,6 @@
 import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../../model/child";
 import { faker } from "../../../../core/demo-data/faker";
 import { mathLevels, readingLevels } from "./skill-levels";
 import { WarningLevel } from "../../../warning-level";
@@ -39,10 +38,10 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
     return data;
   }
 
-  private generateAserResultsForChild(child: Child): Entity[] {
+  private generateAserResultsForChild(child: Entity): Entity[] {
     const data = [];
 
-    let date = new Date(child.admissionDate.getTime());
+    let date = new Date(child["admissionDate"].getTime());
     let previousResult = createEntityOfType("Aser");
     const firstLanguage = child["motherTongue"].toLowerCase();
     do {
@@ -67,7 +66,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
       date = new Date(date.getFullYear() + 1, 2, 1);
       previousResult = aserResult;
     } while (
-      date < faker.getEarlierDateOrToday(child.dropoutDate) &&
+      date < faker.getEarlierDateOrToday(child["dropoutDate"]) &&
       previousResult.getWarningLevel() !== WarningLevel.OK
     );
 

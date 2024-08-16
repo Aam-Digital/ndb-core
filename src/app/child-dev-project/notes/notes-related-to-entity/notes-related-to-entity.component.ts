@@ -5,7 +5,6 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { FilterService } from "../../../core/filter/filter.service";
-import { Child } from "../../children/model/child";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { asArray } from "../../../utils/utils";
@@ -59,7 +58,7 @@ export class NotesRelatedToEntityComponent
   }
 
   override ngOnInit() {
-    if (this.entity.getType() === Child.ENTITY_TYPE) {
+    if (this.entity.getType() === "Child") {
       // When displaying notes for a child, use attendance color highlighting
       this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
     }

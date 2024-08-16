@@ -4,7 +4,6 @@ import { DataTransformationService } from "./data-transformation.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
@@ -12,6 +11,8 @@ import moment from "moment";
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { Entity } from "../../entity/model/entity";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 
 describe("DataTransformationService", () => {
   let service: DataTransformationService;
@@ -308,8 +309,8 @@ describe("DataTransformationService", () => {
   });
 
   it("should work when using the count function", async () => {
-    await createNoteInDB("first", [new Child(), new Child()]);
-    await createNoteInDB("second", [new Child()]);
+    await createNoteInDB("first", [new TestEntity(), new TestEntity()]);
+    await createNoteInDB("second", [new TestEntity()]);
 
     const result = await service.queryAndTransformData([
       {
@@ -361,11 +362,11 @@ describe("DataTransformationService", () => {
         label: "Group",
       },
       {
-        query: `${Child.ENTITY_TYPE}:toArray:count`,
+        query: `Child:toArray:count`,
         label: "Count",
       },
       {
-        query: `${Child.ENTITY_TYPE}:toArray`,
+        query: `Child:toArray`,
         groupBy: { label: "Group", property: "name" },
         subQueries: [{ query: ":count", label: "Count" }],
       },
@@ -380,8 +381,8 @@ describe("DataTransformationService", () => {
     );
   });
 
-  async function createChildInDB(name: string): Promise<Child> {
-    const child = new Child();
+  async function createChildInDB(name: string): Promise<Entity> {
+    const child = createEntityOfType("Child");
     child.name = name;
     await entityMapper.save(child);
     return child;
@@ -389,7 +390,7 @@ describe("DataTransformationService", () => {
 
   async function createNoteInDB(
     subject: string,
-    children: Child[] = [],
+    children: Entity[] = [],
     attendanceStatus: string[] = [],
   ): Promise<Note> {
     const note = new Note();
@@ -407,7 +408,7 @@ describe("DataTransformationService", () => {
 
   async function createTestEntityInDB(
     schoolName: string,
-    students: Child[] = [],
+    students: Entity[] = [],
   ): Promise<TestEntity> {
     const school = new TestEntity();
     school.name = schoolName;
@@ -426,7 +427,7 @@ describe("DataTransformationService", () => {
 
   async function createActivityInDB(
     activityTitle: string,
-    participants: Child[] = [],
+    participants: Entity[] = [],
     groups: TestEntity[] = [],
   ): Promise<RecurringActivity> {
     const activity = new RecurringActivity();

@@ -72,7 +72,7 @@ import { TestEntity } from "./test-utils/TestEntity";
 export class MockedTestingModule {
   static withState(
     loginState = LoginState.LOGGED_IN,
-    data: Entity[] = [createEntityOfType(TestEntity.ENTITY_TYPE, TEST_USER)],
+    data: Entity[] = [createEntityOfType("User", TEST_USER)],
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([...data]);

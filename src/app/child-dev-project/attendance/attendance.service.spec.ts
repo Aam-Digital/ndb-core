@@ -10,11 +10,11 @@ import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
 import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
-import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { Entity } from "../../core/entity/model/entity";
 import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
+import { TestEntity } from "../../utils/test-utils/TestEntity";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -292,7 +292,7 @@ describe("AttendanceService", () => {
       "queryActiveRelationsOf",
     ).and.resolveTo([childAttendingSchool]);
 
-    const directlyAddedChild = new Child();
+    const directlyAddedChild = new TestEntity();
     activity.participants.push(directlyAddedChild.getId());
     const date = new Date();
 
@@ -309,19 +309,19 @@ describe("AttendanceService", () => {
     const linkedSchool = createEntityOfType("School");
     activity.linkedGroups.push(linkedSchool.getId());
 
-    const duplicateChild = new Child();
+    const duplicateChild = new TestEntity();
     const duplicateChildRelation = new ChildSchoolRelation();
     duplicateChildRelation.childId = duplicateChild.getId();
     duplicateChildRelation.schoolId = linkedSchool.getId();
     const anotherRelation = new ChildSchoolRelation();
     anotherRelation.childId = Entity.createPrefixedId(
-      Child.ENTITY_TYPE,
+      TestEntity.ENTITY_TYPE,
       "another_child_id",
     );
     anotherRelation.schoolId = linkedSchool.getId();
     await entityMapper.saveAll([duplicateChildRelation, anotherRelation]);
 
-    const directlyAddedChild = new Child();
+    const directlyAddedChild = new TestEntity();
     activity.participants.push(
       directlyAddedChild.getId(),
       duplicateChild.getId(),

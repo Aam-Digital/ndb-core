@@ -7,10 +7,6 @@ import {
 } from "@angular/core/testing";
 
 import { EntityCountDashboardComponent } from "./entity-count-dashboard.component";
-import {
-  Center,
-  Child,
-} from "../../../../child-dev-project/children/model/child";
 import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
@@ -29,9 +25,9 @@ describe("EntityCountDashboardComponent", () => {
   let fixture: ComponentFixture<EntityCountDashboardComponent>;
   let entityMapper: MockEntityMapperService;
 
-  function createChild(center: Center) {
-    const child = new Child();
-    child.center = center;
+  function createChild(c: ConfigurableEnumValue) {
+    const child = new TestEntity();
+    child.category = c;
     return child;
   }
 
@@ -46,6 +42,10 @@ describe("EntityCountDashboardComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityCountDashboardComponent);
     component = fixture.componentInstance;
+
+    component.entityType = TestEntity.ENTITY_TYPE;
+    component.groupBy = "category";
+
     fixture.detectChanges();
   });
 
@@ -91,10 +91,15 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy enum values and display label", async () => {
     const testGroupBy = "test";
-    Child.schema.set(testGroupBy, { dataType: "configurable-enum" });
+    TestEntity.schema.set(testGroupBy, { dataType: "configurable-enum" });
     component.groupBy = testGroupBy;
 
-    const children = [new Child(), new Child(), new Child(), new Child()];
+    const children = [
+      new TestEntity(),
+      new TestEntity(),
+      new TestEntity(),
+      new TestEntity(),
+    ];
     const c1: ConfigurableEnumValue = { label: "foo", id: "01" };
     const c2: ConfigurableEnumValue = { label: "bar", id: "02" };
     children[0][testGroupBy] = c1;
@@ -116,7 +121,7 @@ describe("EntityCountDashboardComponent", () => {
       id: c2.id,
     });
 
-    Child.schema.delete(testGroupBy);
+    TestEntity.schema.delete(testGroupBy);
   });
 
   it("should groupBy entity references and display an entity-block", async () => {
@@ -133,7 +138,7 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.groupedByEntity).toBe(Entity.ENTITY_TYPE);
+    expect(component.groupedByEntity).toBe(TestEntity.ENTITY_TYPE);
     expect(component.entityGroupCounts).toHaveSize(2);
     expect(component.entityGroupCounts).toContain({
       label: "",

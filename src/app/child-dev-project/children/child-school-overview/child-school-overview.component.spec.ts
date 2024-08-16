@@ -10,7 +10,6 @@ import { ChildSchoolOverviewComponent } from "./child-school-overview.component"
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ChildrenService } from "../children.service";
-import { Child } from "../model/child";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
@@ -39,7 +38,7 @@ describe("ChildSchoolOverviewComponent", () => {
   });
 
   it("it calls children service with id from passed child", fakeAsync(() => {
-    component.entity = new Child();
+    component.entity = createEntityOfType("Child");
 
     fixture.detectChanges();
     tick();
@@ -63,7 +62,7 @@ describe("ChildSchoolOverviewComponent", () => {
   }));
 
   it("should create a relation with the child ID", fakeAsync(() => {
-    const child = new Child();
+    const child = createEntityOfType("Child");
     const existingRelation = new ChildSchoolRelation();
     existingRelation.childId = child.getId();
     existingRelation.start = moment().subtract(1, "year").toDate();
@@ -97,7 +96,7 @@ describe("ChildSchoolOverviewComponent", () => {
   }));
 
   it("should show archived school in 'child' mode", fakeAsync(() => {
-    component.entity = new Child();
+    component.entity = createEntityOfType("Child");
 
     fixture.detectChanges();
     tick();

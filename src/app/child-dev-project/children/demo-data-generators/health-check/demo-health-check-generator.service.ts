@@ -1,7 +1,6 @@
 import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../../model/child";
 import { faker } from "../../../../core/demo-data/faker";
 import { heightRangeForAge, weightRangeForAge } from "./height-weight";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -40,10 +39,10 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
     return data;
   }
 
-  private generateHealthCheckHistoryForChild(child: Child): Entity[] {
+  private generateHealthCheckHistoryForChild(child: Entity): Entity[] {
     const data = [];
 
-    let date = new Date(child.admissionDate.getTime());
+    let date = new Date(child["admissionDate"].getTime());
     let previousRecord = createEntityOfType("HealthCheck");
     previousRecord.height = 0;
     previousRecord.weight = 0;
@@ -66,15 +65,15 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
       }
       previousRecord = record;
     } while (
-      date < faker.getEarlierDateOrToday(child.dropoutDate) &&
+      date < faker.getEarlierDateOrToday(child["dropoutDate"]) &&
       this.getAgeAtDate(child, date) < 11
     );
 
     return data;
   }
 
-  private getAgeAtDate(child: Child, date: Date): number {
-    const timeDiff = date.getTime() - child.dateOfBirth.getTime();
+  private getAgeAtDate(child: Entity, date: Date): number {
+    const timeDiff = date.getTime() - child["dateOfBirth"].getTime();
     return timeDiff / (1000 * 60 * 60 * 24 * 365);
   }
 

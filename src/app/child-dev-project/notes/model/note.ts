@@ -30,7 +30,6 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
-import { Child } from "../../children/model/child";
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
@@ -78,7 +77,7 @@ export class Note extends Entity {
     label: $localize`:Label for the children of a note:Children`,
     dataType: "entity",
     isArray: true,
-    additional: Child.ENTITY_TYPE,
+    additional: "Child",
     entityReferenceRole: "composite",
     editComponent: "EditAttendance",
     anonymize: "retain",
@@ -228,7 +227,7 @@ export class Note extends Entity {
    * adds a new child to this note
    * @param child The child or the id of the child to add to the notes
    */
-  addChild(child: Child | string) {
+  addChild(child: Entity | string) {
     const childId = typeof child === "string" ? child : child?.getId();
     if (!childId || this.children.includes(childId)) {
       return;
@@ -258,7 +257,7 @@ export class Note extends Entity {
    *
    * @param child: The child or the id of the child to look for
    */
-  getAttendance(child: string | Child): EventAttendance {
+  getAttendance(child: string | Entity): EventAttendance {
     const childId = typeof child === "string" ? child : child.getId();
     if (!this.children.includes(childId)) {
       return undefined;

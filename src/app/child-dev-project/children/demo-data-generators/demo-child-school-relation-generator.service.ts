@@ -2,7 +2,6 @@ import { DemoChildGenerator } from "./demo-child-generator.service";
 import { DemoSchoolGenerator } from "./demo-school-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../model/child";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { faker } from "../../../core/demo-data/faker";
 import { Entity } from "../../../core/entity/model/entity";
@@ -46,13 +45,13 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     return data;
   }
 
-  private generateChildSchoolRecordsForChild(child: Child): Entity[] {
+  private generateChildSchoolRecordsForChild(child: Entity): Entity[] {
     const data: ChildSchoolRelation[] = [];
 
-    const firstYear = child.admissionDate.getFullYear();
+    const firstYear = child["admissionDate"].getFullYear();
     let finalYear = new Date().getFullYear();
-    if (child.dropoutDate) {
-      finalYear = child.dropoutDate.getFullYear();
+    if (child["dropoutDate"]) {
+      finalYear = child["dropoutDate"].getFullYear();
     }
 
     let currentSchool: Entity = undefined;
@@ -79,7 +78,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   }
 
   private generateRecord(
-    child: Child,
+    child: Entity,
     year,
     schoolClass: number,
     school: Entity,

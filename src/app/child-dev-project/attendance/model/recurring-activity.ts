@@ -6,7 +6,6 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
-import { Child } from "../../children/model/child";
 import { asArray } from "../../../utils/utils";
 
 @DatabaseEntity("RecurringActivity")
@@ -57,7 +56,7 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for the participants of a recurring activity:Participants`,
     dataType: "entity",
     isArray: true,
-    additional: Child.ENTITY_TYPE,
+    additional: "Child",
   })
   participants: string[] = [];
 
@@ -75,7 +74,7 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for excluded participants of a recurring activity:Excluded Participants`,
     dataType: "entity",
     isArray: true,
-    additional: Child.ENTITY_TYPE,
+    additional: "Child",
   })
   excludedParticipants: string[] = [];
 

@@ -1,12 +1,7 @@
 import { Config } from "./config";
 import { EntityConfig } from "../entity/entity-config";
-import { Child } from "../../child-dev-project/children/model/child";
 
 export function migrateAddMissingEntityAttributes(config: Config): Config {
-  const entities: EntityConfig[] = Object.entries(config.data)
-    .filter(([id, value]) => id.startsWith("entity:"))
-    .map(([id, value]) => value);
-
   for (let entityType of Object.keys(DEFAULT_ENTITIES)) {
     // TODO: just blindly save all hard-coded fields into the entity config? or scan which ones are actually used?!
     if (!JSON.stringify(config).includes(`"${entityType}"`)) {
@@ -318,6 +313,81 @@ const DEFAULT_ENTITIES = {
           min: 0,
           max: 100,
         },
+      },
+    },
+  },
+  Child: {
+    label: "Participant",
+    labelPlural: "Participants",
+    toStringAttributes: ["name"],
+    icon: "child",
+    color: "#1565C0",
+    blockComponent: "ChildBlock",
+    hasPII: true,
+    attributes: {
+      name: {
+        dataType: "string",
+        label: "Name",
+        validators: {
+          required: true,
+        },
+      },
+      projectNumber: {
+        dataType: "string",
+        label: "Project Number",
+        labelShort: "PN",
+        searchable: true,
+        anonymize: "retain",
+      },
+      dateOfBirth: {
+        dataType: "date-with-age",
+        label: "Date of birth",
+        labelShort: "DoB",
+        anonymize: "retain-anonymized",
+      },
+      center: {
+        dataType: "configurable-enum",
+        additional: "center",
+        label: "Center",
+        anonymize: "retain",
+      },
+      gender: {
+        dataType: "configurable-enum",
+        label: "Gender",
+        additional: "genders",
+        anonymize: "retain",
+      },
+      admissionDate: {
+        dataType: "date-only",
+        label: "Admission",
+        anonymize: "retain-anonymized",
+      },
+      status: {
+        dataType: "string",
+        label: "Status",
+      },
+      dropoutDate: {
+        dataType: "date-only",
+        label: "Dropout Date",
+        anonymize: "retain-anonymized",
+      },
+      dropoutType: {
+        dataType: "string",
+        label: "Dropout Type",
+        anonymize: "retain",
+      },
+      dropoutRemarks: {
+        dataType: "string",
+        label: "Dropout remarks",
+      },
+      photo: {
+        dataType: "file",
+        label: "Photo",
+        editComponent: "EditPhoto",
+      },
+      phone: {
+        dataType: "string",
+        label: "Phone Number",
       },
     },
   },

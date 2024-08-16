@@ -10,7 +10,6 @@ import {
   expectEntitiesToMatch,
 } from "../../utils/expect-entity-data.spec";
 import moment from "moment";
-import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
@@ -18,6 +17,8 @@ import { CoreTestingModule } from "../../utils/core-testing.module";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { createEntityOfType } from "../demo-data/create-entity-of-type";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -70,10 +71,10 @@ describe("ImportService", () => {
     }
     spyOn(TestBed.inject(EntityRegistry), "get").and.callFake(
       (entityType: string) =>
-        entityType === "ImportTestTarget" ? ImportTestTarget : Child,
+        entityType === "ImportTestTarget" ? ImportTestTarget : TestEntity,
     );
 
-    const child = Child.create("Child Name");
+    const child = TestEntity.create("Child Name");
     await TestBed.inject(EntityMapperService).save(child);
 
     const rawData: any[] = [
@@ -133,7 +134,10 @@ describe("ImportService", () => {
   });
 
   it("should link imported data to other entities", async () => {
-    const testEntities: Entity[] = [new Child("1"), new Child("2")];
+    const testEntities: Entity[] = [
+      createEntityOfType("Child", "1"),
+      createEntityOfType("Child", "2"),
+    ];
     const activity = new RecurringActivity("3");
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.save(activity);
@@ -177,7 +181,9 @@ describe("ImportService", () => {
     ].map((e) => Object.assign(new ChildSchoolRelation(), e));
     const activity = new RecurringActivity("3");
     activity.participants = ["3", "2", "1"];
-    const children = ["1", "2", "3"].map((id) => new Child(id));
+    const children = ["1", "2", "3"].map((id) =>
+      createEntityOfType("Child", id),
+    );
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([
       ...children,
@@ -198,9 +204,15 @@ describe("ImportService", () => {
 
   it("should not fail undo if some entities have already been removed", async () => {
     const importMeta = new ImportMetadata();
-    importMeta.config = { entityType: "Child", columnMapping: undefined };
-    importMeta.ids = ["Child:1", "Child:2"];
-    const children = ["1", "2", "3"].map((id) => new Child(id));
+    importMeta.config = {
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: undefined,
+    };
+    importMeta.ids = [
+      TestEntity.ENTITY_TYPE + ":1",
+      TestEntity.ENTITY_TYPE + ":2",
+    ];
+    const children = ["1", "2", "3"].map((id) => new TestEntity(id));
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([...children, importMeta]);
 

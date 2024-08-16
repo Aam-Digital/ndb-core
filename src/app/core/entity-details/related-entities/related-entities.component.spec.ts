@@ -8,8 +8,6 @@ import {
 import { RelatedEntitiesComponent } from "./related-entities.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
@@ -20,17 +18,15 @@ import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("RelatedEntitiesComponent", () => {
-  let component: RelatedEntitiesComponent<ChildSchoolRelation>;
-  let fixture: ComponentFixture<RelatedEntitiesComponent<ChildSchoolRelation>>;
+  let component: RelatedEntitiesComponent<TestEntity>;
+  let fixture: ComponentFixture<RelatedEntitiesComponent<TestEntity>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RelatedEntitiesComponent, MockedTestingModule.withState()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(
-      RelatedEntitiesComponent<ChildSchoolRelation>,
-    );
+    fixture = TestBed.createComponent(RelatedEntitiesComponent<TestEntity>);
     component = fixture.componentInstance;
   });
 
@@ -39,59 +35,59 @@ describe("RelatedEntitiesComponent", () => {
   });
 
   it("should create a filter for the passed entity", fakeAsync(() => {
-    const child = new Child();
-    const columns = ["start", "end", "schoolId"];
-    component.entity = child;
-    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    const entity = new TestEntity();
+    const columns = ["name"];
+    component.entity = entity;
+    component.entityType = TestEntity.ENTITY_TYPE;
     component.columns = columns;
-    fixture.detectChanges();
+    component.ngOnInit();
     tick();
 
-    expect(component.filter).toEqual({ childId: child.getId() });
+    expect(component.filter).toEqual({ ref: entity.getId() });
   }));
 
   it("should also include the provided filter", fakeAsync(() => {
-    const child = new Child();
+    const entity = new TestEntity();
     const filter = { start: { $exists: true } };
 
-    component.entity = child;
-    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    component.entity = entity;
+    component.entityType = TestEntity.ENTITY_TYPE;
     component.filter = { ...filter };
     fixture.detectChanges();
     tick();
 
     expect(component.filter).toEqual({
       ...filter,
-      childId: child.getId(),
+      ref: entity.getId(),
       // added by table
       isActive: true,
     });
   }));
 
   it("should create a new entity that references the related one", fakeAsync(() => {
-    const related = new Child();
+    const related = new TestEntity();
     component.entity = related;
-    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    component.entityType = TestEntity.ENTITY_TYPE;
     component.columns = [];
     fixture.detectChanges();
     tick();
 
     const newEntity = component.createNewRecordFactory()();
 
-    expect(newEntity instanceof ChildSchoolRelation).toBeTrue();
-    expect(newEntity["childId"]).toBe(related.getId());
+    expect(newEntity instanceof TestEntity).toBeTrue();
+    expect(newEntity["ref"]).toBe(related.getId());
   }));
 
   it("should add a new entity that was created after the initial loading to the table", fakeAsync(() => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
-    component.entity = new Child();
-    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    component.entity = new TestEntity();
+    component.entityType = TestEntity.ENTITY_TYPE;
     fixture.detectChanges();
     tick();
 
-    const entity = new ChildSchoolRelation();
+    const entity = new TestEntity();
     entityUpdates.next({ entity: entity, type: "new" });
     tick();
 
@@ -102,8 +98,9 @@ describe("RelatedEntitiesComponent", () => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
-    const entity = new ChildSchoolRelation();
-    component.entity = new Child();
+
+    const entity = new TestEntity();
+    component.entity = new TestEntity();
     component.entityType = entity.getType();
     component.data = [entity];
     fixture.detectChanges();
@@ -120,19 +117,20 @@ describe("RelatedEntitiesComponent", () => {
     class MultiPropTest extends Entity {
       @DatabaseField({
         dataType: EntityDatatype.dataType,
-        additional: Child.ENTITY_TYPE,
+        additional: TestEntity.ENTITY_TYPE,
       })
       singleChild: string;
+
       @DatabaseField({
         dataType: EntityDatatype.dataType,
         isArray: true,
-        additional: [Child.ENTITY_TYPE, TestEntity.ENTITY_TYPE],
+        additional: [TestEntity.ENTITY_TYPE, "OtherType"],
       })
       multiEntities: string;
     }
 
-    const child = new Child();
-    component.entity = child;
+    const entity = new TestEntity();
+    component.entity = entity;
     component.entityType = MultiPropTest.ENTITY_TYPE;
     component.filter = {};
 
@@ -142,8 +140,8 @@ describe("RelatedEntitiesComponent", () => {
     // filter matching relations at any of the available props
     expect(component.filter).toEqual({
       $or: [
-        { singleChild: child.getId() },
-        { multiEntities: { $elemMatch: { $eq: child.getId() } } },
+        { singleChild: entity.getId() },
+        { multiEntities: { $elemMatch: { $eq: entity.getId() } } },
       ],
       // is added inside table
       isActive: true,
@@ -163,9 +161,9 @@ describe("RelatedEntitiesComponent", () => {
 
     PropTest.schema.set("singleRelation", {
       dataType: EntityDatatype.dataType,
-      additional: Child.ENTITY_TYPE,
+      additional: TestEntity.ENTITY_TYPE,
     });
-    component.entity = new Child();
+    component.entity = new TestEntity();
     component.filter = undefined;
     component.property = undefined;
     await component.ngOnInit();
@@ -183,15 +181,18 @@ describe("RelatedEntitiesComponent", () => {
     component.property = undefined;
     await component.ngOnInit();
     expect(component.filter).toEqual({
-      arrayRelation: { $elemMatch: { $eq: component.entity.getId() } },
+      $or: [
+        { singleRelation: component.entity.getId() },
+        { arrayRelation: { $elemMatch: { $eq: component.entity.getId() } } },
+      ],
     });
 
     PropTest.schema.set("multiTypeRelation", {
       dataType: EntityDatatype.dataType,
       isArray: true,
-      additional: [ChildSchoolRelation.ENTITY_TYPE, Child.ENTITY_TYPE],
+      additional: [Entity.ENTITY_TYPE, TestEntity.ENTITY_TYPE],
     });
-    component.entity = new ChildSchoolRelation();
+    component.entity = new Entity();
     component.filter = undefined;
     component.property = undefined;
     await component.ngOnInit();
@@ -200,13 +201,14 @@ describe("RelatedEntitiesComponent", () => {
     });
 
     // Now with 2 relations ("singleRelation" and "multiTypeRelation")
-    component.entity = new Child();
+    component.entity = new TestEntity();
     component.filter = undefined;
     component.property = undefined;
     await component.ngOnInit();
     expect(component.filter).toEqual({
       $or: [
         { singleRelation: component.entity.getId() },
+        { arrayRelation: { $elemMatch: { $eq: component.entity.getId() } } },
         {
           multiTypeRelation: { $elemMatch: { $eq: component.entity.getId() } },
         },
@@ -214,7 +216,7 @@ describe("RelatedEntitiesComponent", () => {
     });
 
     // preselected property should not be changed
-    component.entity = new Child();
+    component.entity = new TestEntity();
     component.filter = undefined;
     component.property = "singleRelation";
     await component.ngOnInit();

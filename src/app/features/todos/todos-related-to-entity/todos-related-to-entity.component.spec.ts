@@ -2,12 +2,12 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { TodosRelatedToEntityComponent } from "./todos-related-to-entity.component";
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Todo } from "../model/todo";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../../core/database/database";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 describe("TodosRelatedToEntityComponent", () => {
   let component: TodosRelatedToEntityComponent;
@@ -35,11 +35,11 @@ describe("TodosRelatedToEntityComponent", () => {
   });
 
   it("should load data from index when having a single relation", async () => {
-    const child = new Child();
+    const child = createEntityOfType("Child");
     const relatedTodo = new Todo();
     relatedTodo.relatedEntities = [child.getId(), new TestEntity().getId()];
     const unrelatedTodo = new Todo();
-    unrelatedTodo.relatedEntities = [new Child().getId()];
+    unrelatedTodo.relatedEntities = [new TestEntity().getId()];
     await TestBed.inject(EntityMapperService).saveAll([
       relatedTodo,
       unrelatedTodo,

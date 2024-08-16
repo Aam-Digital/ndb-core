@@ -11,13 +11,13 @@ import {
   MockEntityMapperService,
 } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../../entity/database-entity.decorator";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("ConfigureEnumPopupComponent", () => {
   let component: ConfigureEnumPopupComponent;
@@ -54,13 +54,13 @@ describe("ConfigureEnumPopupComponent", () => {
     component.enumEntity.values = genders;
     const male = genders.find((g) => g.id === "M");
     const female = genders.find((g) => g.id === "F");
-    const m1 = new Child();
-    m1.gender = male;
-    const m2 = new Child();
-    m2.gender = male;
-    const f1 = new Child();
-    f1.gender = female;
-    const other = new Child();
+    const m1 = new TestEntity();
+    m1.category = male;
+    const m2 = new TestEntity();
+    m2.category = male;
+    const f1 = new TestEntity();
+    f1.category = female;
+    const other = new TestEntity();
     entityMapper.addAll([m1, m2, f1, other]);
     const confirmationSpy = spyOn(
       TestBed.inject(ConfirmationDialogService),
@@ -72,7 +72,7 @@ describe("ConfigureEnumPopupComponent", () => {
     expect(confirmationSpy).toHaveBeenCalledWith(
       "Delete option",
       jasmine.stringContaining(
-        `The option is still used in 2 ${Child.label} records.`,
+        `The option is still used in 2 ${TestEntity.label} records.`,
       ),
     );
 

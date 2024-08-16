@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayImgComponent } from "./display-img.component";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { of } from "rxjs";
 import { FileService } from "../file.service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("DisplayImgComponent", () => {
   let component: DisplayImgComponent;
@@ -27,8 +27,8 @@ describe("DisplayImgComponent", () => {
   });
 
   it("should reset picture if child has none", () => {
-    const withPicture = new Child();
-    withPicture.photo = "some-picture";
+    const withPicture = new TestEntity();
+    withPicture["photo"] = "some-picture";
     component.entity = withPicture;
     component.imgProperty = "photo";
 
@@ -39,7 +39,7 @@ describe("DisplayImgComponent", () => {
 
     mockFileService.loadFile.calls.reset();
     // without picture
-    component.entity = new Child();
+    component.entity = new TestEntity();
 
     component.ngOnChanges({ entity: undefined });
 

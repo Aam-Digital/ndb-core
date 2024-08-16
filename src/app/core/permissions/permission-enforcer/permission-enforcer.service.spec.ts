@@ -5,7 +5,6 @@ import { DatabaseRule } from "../permission-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { AbilityService } from "../ability/ability.service";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { Subject } from "rxjs";
@@ -15,12 +14,13 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
   const userRules: DatabaseRule[] = [
     { subject: "all", action: "manage" },
-    { subject: "Child", action: "read", inverted: true },
+    { subject: TestEntity.ENTITY_TYPE, action: "read", inverted: true },
   ];
   let entityUpdates: Subject<UpdatedEntity<Config>>;
   let entityMapper: EntityMapperService;
@@ -68,7 +68,7 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset page if entity with write restriction exists (inverted)", fakeAsync(() => {
-    entityMapper.save(new Child());
+    entityMapper.save(new TestEntity());
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
@@ -79,7 +79,7 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset page if entity without read permission exists (non-inverted)", fakeAsync(() => {
-    entityMapper.save(new Child());
+    entityMapper.save(new TestEntity());
     tick();
 
     updateRulesAndTriggerEnforcer([{ subject: "School", action: "manage" }]);
@@ -90,13 +90,13 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset page if entity exists for which relevant rule is a read restriction ", fakeAsync(() => {
-    entityMapper.save(new Child());
+    entityMapper.save(new TestEntity());
     tick();
 
     updateRulesAndTriggerEnforcer([
       { subject: "all", action: "manage" },
       {
-        subject: ["Child", "School"],
+        subject: [TestEntity.ENTITY_TYPE, "School"],
         action: ["read", "update"],
         inverted: true,
       },
@@ -109,14 +109,14 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should not reset page if only entities with read permission exist", fakeAsync(() => {
-    entityMapper.save(new Child());
+    entityMapper.save(new TestEntity());
     entityMapper.save(new TestEntity());
     tick();
 
     updateRulesAndTriggerEnforcer([
       { subject: TestEntity.ENTITY_TYPE, action: ["read", "update"] },
       { subject: "all", action: "delete", inverted: true },
-      { subject: ["Note", "Child"], action: "read" },
+      { subject: ["Note"], action: "read" },
     ]);
     tick();
 
@@ -128,7 +128,7 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
 
-    entityMapper.save(new Child());
+    entityMapper.save(new TestEntity());
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
@@ -139,7 +139,8 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset if roles changed since last check and entities without permissions exist", fakeAsync(() => {
-    entityMapper.save(new TestEntity());
+    const entityCurrentlyAccessible = createEntityOfType("School");
+    entityMapper.save(entityCurrentlyAccessible);
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
@@ -149,7 +150,7 @@ describe("PermissionEnforcerService", () => {
     expect(mockLocation.reload).not.toHaveBeenCalled();
 
     const extendedRules = userRules.concat({
-      subject: TestEntity.ENTITY_TYPE,
+      subject: entityCurrentlyAccessible.getType(),
       action: "manage",
       inverted: true,
     });
@@ -162,11 +163,15 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should reset if read rule with condition is added", fakeAsync(() => {
-    entityMapper.save(Child.create("permitted"));
-    entityMapper.save(Child.create("not-permitted"));
+    entityMapper.save(TestEntity.create("permitted"));
+    entityMapper.save(TestEntity.create("not-permitted"));
 
     updateRulesAndTriggerEnforcer([
-      { subject: "Child", action: "read", conditions: { name: "permitted" } },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "read",
+        conditions: { name: "permitted" },
+      },
     ]);
     tick();
 
@@ -175,7 +180,7 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should track a migration event in analytics service when destroying the local db", fakeAsync(() => {
-    entityMapper.save(new Child());
+    entityMapper.save(new TestEntity());
     tick();
 
     updateRulesAndTriggerEnforcer(userRules);
@@ -191,7 +196,7 @@ describe("PermissionEnforcerService", () => {
 
   it("should not fail if a non-entity rule exists", fakeAsync(() => {
     const rules: DatabaseRule[] = [
-      { subject: "Child", action: "manage" },
+      { subject: TestEntity.ENTITY_TYPE, action: "manage" },
       { subject: "org.couchdb.user", action: "read", inverted: true },
     ];
     updateRulesAndTriggerEnforcer(rules);

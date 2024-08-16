@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
-import { Child } from "../../children/model/child";
 import { AttendanceService } from "../attendance.service";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { RecurringActivity } from "../model/recurring-activity";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("RecentAttendanceBlocksComponent", () => {
   let component: RecentAttendanceBlocksComponent;
@@ -40,7 +40,7 @@ describe("RecentAttendanceBlocksComponent", () => {
   });
 
   it("should display blocks for all activities of the filtered activity type", async () => {
-    const testChild = new Child("testID");
+    const testChild = new TestEntity("testID");
     const testActivity1 = RecurringActivity.create("test 1");
     testActivity1.type = defaultInteractionTypes[1];
     const testActivity2 = RecurringActivity.create("test 2");

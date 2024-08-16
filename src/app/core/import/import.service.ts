@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { Entity } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
@@ -25,7 +24,7 @@ export class ImportService {
     };
   } = {
     // TODO: generalize this somehow by analyzing schemas?
-    [Child.ENTITY_TYPE]: {
+    ["Child"]: {
       [RecurringActivity.ENTITY_TYPE]: {
         create: this.linkToActivity.bind(this),
         undo: this.undoActivityLink.bind(this),

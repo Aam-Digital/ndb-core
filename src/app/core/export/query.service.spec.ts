@@ -5,7 +5,6 @@ import {
   AttendanceReport,
   QueryService,
 } from "./query.service";
-import { Child } from "../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
@@ -30,6 +29,7 @@ describe("QueryService", () => {
   let entityMapper: EntityMapperService;
 
   let School: EntityConstructor;
+  let Child: EntityConstructor;
 
   const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
     (status) => status.countAs === "PRESENT",
@@ -53,6 +53,7 @@ describe("QueryService", () => {
     entityMapper = TestBed.inject(EntityMapperService);
 
     School = entityRegistry.get("School");
+    Child = entityRegistry.get("Child");
   }));
 
   afterEach(() => TestBed.inject(Database).destroy());
@@ -409,7 +410,7 @@ describe("QueryService", () => {
 
     await expectAsync(queryData(query)).toBeResolvedTo(["M"]);
 
-    child.gender = genders.find(({ id }) => id === "F");
+    child["gender"] = genders.find(({ id }) => id === "F");
     await entityMapper.save(child);
 
     await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
@@ -582,7 +583,7 @@ describe("QueryService", () => {
       `${EventNote.ENTITY_TYPE}:toArray:getIds(children):toEntities(${Child.ENTITY_TYPE}).gender`,
     );
 
-    expect(result).toEqual([maleChild.gender]);
+    expect(result).toEqual([maleChild["gender"]]);
   });
 
   it("does not throw an error if no query is provided", () => {
@@ -655,16 +656,16 @@ describe("QueryService", () => {
   async function createChild(
     gender: "M" | "F" | string = "F",
     religion?: "muslim" | "christian",
-  ): Promise<Child> {
+  ): Promise<Entity> {
     const child = new Child();
-    child.gender = genders.find((g) => g.id === gender);
+    child["gender"] = genders.find((g) => g.id === gender);
     child["religion"] = religion;
     await entityMapper.save(child);
     return child;
   }
 
   async function createSchool(
-    children: Child[] = [],
+    children: Entity[] = [],
     privateSchool?: boolean,
   ): Promise<Entity> {
     const school = new School();
@@ -682,7 +683,7 @@ describe("QueryService", () => {
 
   async function createNote(
     date: Date,
-    children: { child: Child; status: AttendanceStatusType }[] = [],
+    children: { child: Entity; status: AttendanceStatusType }[] = [],
     activity?: RecurringActivity,
   ): Promise<EventNote> {
     const event = new EventNote();

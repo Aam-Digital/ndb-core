@@ -1,4 +1,3 @@
-import { Child } from "../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
@@ -721,7 +720,7 @@ export const defaultJsonConfig = {
     attributes: {
       child: {
         dataType: EntityDatatype.dataType,
-        additional: Child.ENTITY_TYPE,
+        additional: "Child",
         entityReferenceRole: "composite",
       },
       date: {
@@ -824,8 +823,77 @@ export const defaultJsonConfig = {
   "entity:Child": {
     "label": $localize`:Label for child:Child`,
     "labelPlural": $localize`:Plural label for child:Children`,
+    "toStringAttributes": ["name"],
+    "icon": "child",
+    "color": "#1565C0",
+    "blockComponent": "ChildBlock",
+    "hasPII": true,
 
     "attributes": {
+      name: {
+        dataType: "string",
+        label: $localize`:Label for the name of a child:Name`,
+        validators: {
+          required: true,
+        },
+      },
+      projectNumber: {
+        dataType: "string",
+        label: $localize`:Label for the project number of a child:Project Number`,
+        labelShort: $localize`:Short label for the project number:PN`,
+        searchable: true,
+        anonymize: "retain",
+      },
+      dateOfBirth: {
+        dataType: "date-with-age",
+        label: $localize`:Label for the date of birth of a child:Date of birth`,
+        labelShort: $localize`:Short label for the date of birth:DoB`,
+        anonymize: "retain-anonymized",
+      },
+      center: {
+        dataType: "configurable-enum",
+        additional: "center",
+        label: $localize`:Label for the center of a child:Center`,
+        anonymize: "retain",
+      },
+      gender: {
+        dataType: "configurable-enum",
+        label: $localize`:Label for the gender of a child:Gender`,
+        additional: "genders",
+        anonymize: "retain",
+      },
+      admissionDate: {
+        dataType: "date-only",
+        label: $localize`:Label for the admission date of a child:Admission`,
+        anonymize: "retain-anonymized",
+      },
+      status: {
+        dataType: "string",
+        label: $localize`:Label for the status of a child:Status`,
+      },
+      dropoutDate: {
+        dataType: "date-only",
+        label: $localize`:Label for the dropout date of a child:Dropout Date`,
+        anonymize: "retain-anonymized",
+      },
+      dropoutType: {
+        dataType: "string",
+        label: $localize`:Label for the type of dropout of a child:Dropout Type`,
+        anonymize: "retain",
+      },
+      dropoutRemarks: {
+        dataType: "string",
+        label: $localize`:Label for the remarks about a dropout of a child:Dropout remarks`,
+      },
+      photo: {
+        dataType: "file",
+        label: $localize`:Label for the file field of a photo of a child:Photo`,
+        editComponent: "EditPhoto",
+      },
+      phone: {
+        dataType: "string",
+        label: $localize`:Label for the phone number of a child:Phone Number`,
+      },
       "address": {
         "dataType": "location",
         "label": $localize`:Label for the address of a child:Address`
@@ -949,7 +1017,7 @@ export const defaultJsonConfig = {
         "prefilter": {"privateSchool": true},
         "availableFilters": [{"id": "language"}],
       },
-      "leftSide": {"entityType": Child.ENTITY_TYPE},
+      "leftSide": {"entityType": "Child"},
     }
   },
   "appConfig:matching-entities": {
@@ -971,7 +1039,7 @@ export const defaultJsonConfig = {
     attributes: {
       child: {
         dataType: "entity",
-        additional: Child.ENTITY_TYPE,
+        additional: "Child",
         entityReferenceRole: "composite",
       },
 
@@ -1017,7 +1085,7 @@ export const defaultJsonConfig = {
     attributes: {
       child: {
         dataType: "entity",
-        additional: Child.ENTITY_TYPE,
+        additional: "Child",
         entityReferenceRole: "composite",
         anonymize: "retain",
       },
@@ -1049,7 +1117,7 @@ export const defaultJsonConfig = {
     attributes: {
       childId: {
         dataType: "entity",
-        additional: Child.ENTITY_TYPE,
+        additional: "Child",
         entityReferenceRole: "composite",
         validators: {
           required: true,

@@ -9,7 +9,6 @@ import {
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
-import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FilterService } from "../filter.service";
@@ -158,7 +157,7 @@ describe("FilterGeneratorService", () => {
 
     const filterOptions = (
       await service.generate([{ id: "schoolId" }], ChildSchoolRelation, [])
-    )[0] as EntityFilter<Child>;
+    )[0] as EntityFilter<TestEntity>;
 
     expect(filterOptions.label).toEqual(schema.label);
     expect(filterOptions.name).toEqual("schoolId");
@@ -176,24 +175,24 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create filters with all possible options on default", async () => {
-    const child1 = new Child();
-    child1["religion"] = "muslim";
-    const child2 = new Child();
-    child2["religion"] = "christian";
-    const child3 = new Child();
-    child3["religion"] = "muslim";
-    const schema = Child.schema.get("religion");
+    const child1 = new TestEntity();
+    child1["other"] = "muslim";
+    const child2 = new TestEntity();
+    child2["other"] = "christian";
+    const child3 = new TestEntity();
+    child3["other"] = "muslim";
+    const schema = TestEntity.schema.get("other");
 
     const filter = (
-      await service.generate([{ id: "religion" }], Child, [
+      await service.generate([{ id: "other" }], TestEntity, [
         child1,
         child2,
         child3,
       ])
-    )[0] as SelectableFilter<Child>;
+    )[0] as SelectableFilter<TestEntity>;
 
     expect(filter.label).toEqual(schema.label);
-    expect(filter.name).toEqual("religion");
+    expect(filter.name).toEqual("other");
     const comparableOptions = filter.options.map((option) => {
       return { key: option.key, label: option.label };
     });

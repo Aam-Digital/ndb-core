@@ -3,10 +3,10 @@ import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entiti
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 
-const child = new Child("testChild");
+const child = createEntityOfType("Child", "testChild");
+child.name = "Test Child";
 const school1 = createEntityOfType("School", "1");
 school1.name = "School 1";
 const school2 = createEntityOfType("School", "2");

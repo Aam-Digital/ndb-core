@@ -7,7 +7,6 @@ import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/c
 import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { Child } from "app/child-dev-project/children/model/child";
 import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
@@ -17,7 +16,7 @@ describe("DownloadService", () => {
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
   let mockedEntityMapper;
   const testSchool = TestEntity.create({ name: "Test School" });
-  const testChild = Child.create("Test Child");
+  const testChild = TestEntity.create("Test Child");
 
   beforeEach(() => {
     mockDataTransformationService = jasmine.createSpyObj([

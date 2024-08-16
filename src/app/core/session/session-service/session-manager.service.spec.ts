@@ -36,7 +36,6 @@ import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../user/demo-user-generator.service";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Config } from "../../config/config";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
@@ -176,7 +175,7 @@ describe("SessionManagerService", () => {
   });
 
   it("should allow other entities to log in", async () => {
-    const loggedInChild = new Child("123");
+    const loggedInChild = new TestEntity("123");
     const childSession: SessionInfo = {
       name: loggedInChild.getId(),
       id: "101",
@@ -184,7 +183,7 @@ describe("SessionManagerService", () => {
       entityId: loggedInChild.getId(),
     };
     mockKeycloak.login.and.resolveTo(childSession);
-    const otherChild = new Child("456");
+    const otherChild = new TestEntity("456");
     await TestBed.inject(EntityMapperService).saveAll([
       loggedInChild,
       otherChild,

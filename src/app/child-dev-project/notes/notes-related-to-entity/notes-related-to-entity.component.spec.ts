@@ -1,7 +1,6 @@
 import { NotesRelatedToEntityComponent } from "./notes-related-to-entity.component";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { Note } from "../model/note";
-import { Child } from "../../children/model/child";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
@@ -43,7 +42,7 @@ describe("NotesRelatedToEntityComponent", () => {
   it("should use the attendance color function when passing a child", () => {
     const note = new Note();
     spyOn(note, "getColorForId");
-    const entity = new Child();
+    const entity = createEntityOfType("Child");
     component.entity = entity;
     component.ngOnInit();
 
@@ -53,7 +52,7 @@ describe("NotesRelatedToEntityComponent", () => {
   });
 
   it("should create a new note and fill it with the appropriate initial value", async () => {
-    let entity: Entity = new Child();
+    let entity: Entity = createEntityOfType("Child");
     component.entity = entity;
     component.filter = undefined;
     component.property = undefined;
@@ -78,16 +77,16 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(note.relatedEntities).toEqual([entity.getId()]);
 
     entity = new ChildSchoolRelation();
-    entity["childId"] = `${Child.ENTITY_TYPE}:someChild`;
-    entity["schoolId"] = `${Child.ENTITY_TYPE}:someSchool`;
+    entity["childId"] = `Child:someChild`;
+    entity["schoolId"] = `School:someSchool`;
     component.entity = entity;
     component.filter = undefined;
     component.property = undefined;
     await component.ngOnInit();
     note = component.createNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId()]);
-    expect(note.children).toEqual([`${Child.ENTITY_TYPE}:someChild`]);
-    expect(note.schools).toEqual([`${Child.ENTITY_TYPE}:someSchool`]);
+    expect(note.children).toEqual([`Child:someChild`]);
+    expect(note.schools).toEqual([`School:someSchool`]);
   });
 
   it("should handle ChildSchoolRelation links also if they are arrays", async () => {
@@ -113,26 +112,26 @@ describe("NotesRelatedToEntityComponent", () => {
       @DatabaseField({
         dataType: "entity",
         isArray: true,
-        additional: [Child.ENTITY_TYPE, TestEntity.ENTITY_TYPE],
+        additional: ["Child", TestEntity.ENTITY_TYPE],
       })
       links;
 
       @DatabaseField({
         dataType: "entity",
-        additional: Child.ENTITY_TYPE,
+        additional: "Child",
       })
       childrenLink;
     }
     const customEntity = new EntityWithRelations();
     customEntity.links = [
-      `${Child.ENTITY_TYPE}:1`,
+      `Child:1`,
       `${TestEntity.ENTITY_TYPE}:not-a-type-for-note.relatedEntities`,
     ];
-    customEntity.childrenLink = `${Child.ENTITY_TYPE}:child-without-prefix`;
+    customEntity.childrenLink = `Child:child-without-prefix`;
 
     const schemaBefore = Note.schema.get("relatedEntities").additional;
     Note.schema.get("relatedEntities").additional = [
-      Child.ENTITY_TYPE,
+      "Child",
       EntityWithRelations.ENTITY_TYPE,
     ];
     component.entity = customEntity;
@@ -144,7 +143,7 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(newNote.relatedEntities).toContain(customEntity.links[0]);
     expect(newNote.relatedEntities).not.toContain(customEntity.links[1]);
     expect(newNote.relatedEntities).toContain(
-      Entity.createPrefixedId(Child.ENTITY_TYPE, customEntity.childrenLink),
+      Entity.createPrefixedId("Child", customEntity.childrenLink),
     );
 
     Note.schema.get("relatedEntities").additional = schemaBefore;
