@@ -1,5 +1,6 @@
 import { Config } from "./config";
 import { EntityConfig } from "../entity/entity-config";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 
 export function migrateAddMissingEntityAttributes(config: Config): Config {
   for (let entityType of Object.keys(DEFAULT_ENTITIES)) {
@@ -433,6 +434,92 @@ const DEFAULT_ENTITIES = {
         dataType: "entity",
         isArray: true,
         additional: "User",
+      },
+    },
+  },
+  Note: {
+    toStringAttributes: ["subject"],
+    label: "Note",
+    labelPlural: "Notes",
+    hasPII: true,
+    attributes: {
+      children: {
+        label: "Children",
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+        entityReferenceRole: "composite",
+        editComponent: "EditAttendance",
+        anonymize: "retain",
+      },
+      childrenAttendance: {
+        dataType: "event-attendance-map",
+        anonymize: "retain",
+      },
+      date: {
+        label: "Date",
+        dataType: "date-only",
+        defaultValue: {
+          mode: "dynamic",
+          value: "$now",
+        },
+        anonymize: "retain",
+      },
+      subject: {
+        dataType: "string",
+        label: "Subject",
+      },
+      text: {
+        dataType: "long-text",
+        label: "Notes",
+      },
+      authors: {
+        label: "SW",
+        dataType: "entity",
+        isArray: true,
+        additional: "User",
+        defaultValue: {
+          mode: "dynamic",
+          value: "$current_user",
+        },
+        anonymize: "retain",
+      },
+      category: {
+        label: "Category",
+        dataType: "configurable-enum",
+        additional: "interaction-type",
+        anonymize: "retain",
+      },
+      attachment: {
+        label: "Attachment",
+        dataType: "file",
+      },
+      relatesTo: {
+        dataType: "entity",
+        additional: "RecurringActivity",
+        anonymize: "retain",
+      },
+      relatedEntities: {
+        label: "Related Records",
+        dataType: "entity",
+        isArray: true,
+        // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
+        additional: undefined,
+        anonymize: "retain",
+      },
+      schools: {
+        label: "Groups",
+        dataType: "entity",
+        isArray: true,
+        additional: "School",
+        entityReferenceRole: "composite",
+        anonymize: "retain",
+      },
+      warningLevel: {
+        label: "Status",
+        dataType: "configurable-enum",
+        additional: "warning-levels",
+        anonymize: "retain",
       },
     },
   },

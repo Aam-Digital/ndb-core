@@ -4,6 +4,9 @@ import { todoDefaultConfigs } from "../../features/todos/model/todo-default-conf
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
 import { INTERACTION_TYPE_CONFIG_ID } from "../../child-dev-project/notes/model/interaction-type.interface";
+import { EventAttendanceMap } from "../../child-dev-project/attendance/model/event-attendance";
+import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -157,6 +160,92 @@ export const defaultJsonConfig = {
           "component": "BirthdayDashboard"
         },
       ]
+    }
+  },
+  "entity:Note": {
+    toStringAttributes: ["subject"],
+    label: $localize`:label for entity:Note`,
+    labelPlural: $localize`:label (plural) for entity:Notes`,
+    hasPII: true,
+    attributes: {
+      children: {
+        label: $localize`:Label for the children of a note:Children`,
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+        entityReferenceRole: "composite",
+        editComponent: "EditAttendance",
+        anonymize: "retain",
+      },
+      childrenAttendance: {
+        dataType: EventAttendanceMap.DATA_TYPE,
+        anonymize: "retain"
+      },
+      date: {
+        label: $localize`:Label for the date of a note:Date`,
+        dataType: "date-only",
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+        anonymize: "retain",
+      },
+      subject: {
+        dataType: "string",
+        label: $localize`:Label for the subject of a note:Subject`
+      },
+      text: {
+        dataType: LongTextDatatype.dataType,
+        label: $localize`:Label for the actual notes of a note:Notes`,
+      },
+      authors: {
+        label: $localize`:Label for the social worker(s) who created the note:SW`,
+        dataType: "entity",
+        isArray: true,
+        additional: "User",
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.CURRENT_USER,
+        },
+        anonymize: "retain",
+      },
+      category: {
+        label: $localize`:Label for the category of a note:Category`,
+        dataType: "configurable-enum",
+        additional: INTERACTION_TYPE_CONFIG_ID,
+        anonymize: "retain",
+      },
+      attachment: {
+        label: $localize`Attachment`,
+        dataType: "file",
+      },
+      relatesTo: {
+        dataType: "entity",
+        additional: RecurringActivity.ENTITY_TYPE,
+        anonymize: "retain",
+      },
+      relatedEntities: {
+        label: $localize`:label for the related Entities:Related Records`,
+        dataType: "entity",
+        isArray: true,
+        // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
+        additional: undefined,
+        anonymize: "retain",
+      },
+      schools: {
+        label: $localize`:label for the linked schools:Groups`,
+        dataType: "entity",
+        isArray: true,
+        additional: "School",
+        entityReferenceRole: "composite",
+        anonymize: "retain",
+      },
+      warningLevel: {
+        label: $localize`:Status of a note:Status`,
+        dataType: "configurable-enum",
+        additional: "warning-levels",
+        anonymize: "retain",
+      },
     }
   },
   "view:note": {
