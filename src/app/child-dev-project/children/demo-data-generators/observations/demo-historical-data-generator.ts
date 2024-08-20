@@ -51,12 +51,12 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
         this.config.minCountAttributes;
       const historicalDataOfChild = [...Array(countOfData)].map(() => {
         const historicalData = createEntityOfType("HistoricalEntityData");
-        historicalData.date = faker.date.past();
-        historicalData.relatedEntity = child.getId();
         for (const attribute of attributes) {
           historicalData[attribute] =
             faker.helpers.arrayElement(ratingAnswers).id;
         }
+        historicalData.date = faker.date.past();
+        historicalData.relatedEntity = child.getId();
         return historicalData;
       });
       entities.push(...historicalDataOfChild);
