@@ -9,6 +9,7 @@ import { Entity } from "../../../entity/model/entity";
 import { User } from "../../../user/user";
 import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
+import { switchMap } from "rxjs/operators";
 
 /**
  * Handles the remote session with keycloak
@@ -166,6 +167,16 @@ export class KeycloakAuthService {
 
   createUser(user: Partial<KeycloakUserDto>): Observable<any> {
     return this.httpClient.post(`${environment.account_url}/account`, user);
+  }
+
+  deleteUser(username: string): Observable<any> {
+    return this.getUser(username).pipe(
+      switchMap((value) =>
+        this.httpClient.delete(
+          `${environment.account_url}/account/${value.id}`,
+        ),
+      ),
+    );
   }
 
   updateUser(userId: string, user: Partial<KeycloakUserDto>): Observable<any> {

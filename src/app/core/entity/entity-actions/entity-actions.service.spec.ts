@@ -103,6 +103,7 @@ describe("EntityActionsService", () => {
     expect(snackBarSpy.open).toHaveBeenCalled();
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       singleTestEntity,
+      true,
     );
     expect(mockRouter.navigate).toHaveBeenCalled();
   });
@@ -119,12 +120,15 @@ describe("EntityActionsService", () => {
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledTimes(3);
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       severalTestEntities[0],
+      true,
     );
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       severalTestEntities[1],
+      true,
     );
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       severalTestEntities[2],
+      true,
     );
   });
 

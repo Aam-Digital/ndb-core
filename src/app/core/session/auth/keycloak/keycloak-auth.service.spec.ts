@@ -3,7 +3,7 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { KeycloakAuthService } from "./keycloak-auth.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakEventType, KeycloakService } from "keycloak-angular";
-import { Subject } from "rxjs";
+import { of, Subject } from "rxjs";
 
 /**
  * Check {@link https://jwt.io} to decode the token.
@@ -29,7 +29,7 @@ describe("KeycloakAuthService", () => {
   let mockKeycloak: jasmine.SpyObj<KeycloakService>;
 
   beforeEach(() => {
-    mockHttpClient = jasmine.createSpyObj(["post"]);
+    mockHttpClient = jasmine.createSpyObj(["get", "post", "delete"]);
     mockKeycloak = jasmine.createSpyObj(
       ["updateToken", "getToken", "login", "init"],
       { keycloakEvents$: new Subject() },
@@ -81,6 +81,28 @@ describe("KeycloakAuthService", () => {
       jasmine.objectContaining({ action: "UPDATE_PASSWORD" }),
     );
   });
+
+  it("should delete user by username", fakeAsync(() => {
+    // given
+    mockHttpClient.get.and.returnValue(
+      of({
+        id: "user-id",
+      }),
+    );
+
+    mockHttpClient.delete.and.returnValue(of(""));
+
+    // when
+    service.deleteUser("foo-user").subscribe(() => {
+      // then
+      expect(mockHttpClient.get).toHaveBeenCalledWith(
+        "https://accounts.aam-digital.net/account/foo-user",
+      );
+      expect(mockHttpClient.delete).toHaveBeenCalledWith(
+        "https://accounts.aam-digital.net/account/user-id",
+      );
+    });
+  }));
 
   it("should add the Bearer token to a request", async () => {
     await service.login();

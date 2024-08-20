@@ -102,9 +102,11 @@ export class EntityActionsService {
       $localize`:Entity action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
+
     for (let entity of entities) {
-      result.mergeResults(await this.entityDelete.deleteEntity(entity));
+      result.mergeResults(await this.entityDelete.deleteEntity(entity, true));
     }
+
     progressDialogRef.close();
 
     if (result.potentiallyRetainingPII.length > 0) {
