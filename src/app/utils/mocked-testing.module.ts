@@ -11,7 +11,7 @@ import { DatabaseIndexingService } from "../core/entity/database-indexing/databa
 import { ConfigService } from "../core/config/config.service";
 import { environment } from "../../environments/environment";
 import { createTestingConfigService } from "../core/config/testing-config-service";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
@@ -27,6 +27,7 @@ import { EntitySchemaService } from "../core/entity/schema/entity-schema.service
 import { entityAbilityFactory } from "app/core/permissions/ability/testing-entity-ability-factory";
 import { createEntityOfType } from "../core/demo-data/create-entity-of-type";
 import { TestEntity } from "./test-utils/TestEntity";
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -41,34 +42,30 @@ import { TestEntity } from "./test-utils/TestEntity";
  *
  * If you need a REAL database (e.g. for indices/views) then use the {@link DatabaseTestingModule} instead.
  */
-@NgModule({
-  imports: [
-    AppModule,
-    NoopAnimationsModule,
-    RouterTestingModule,
-    HttpClientTestingModule,
-    ReactiveFormsModule,
-  ],
-  providers: [
-    { provide: SwRegistrationOptions, useValue: { enabled: false } },
-    {
-      provide: AnalyticsService,
-      useValue: {
-        eventTrack: () => undefined,
-        setUser: () => undefined,
-        init: () => undefined,
-      },
-    },
-    {
-      provide: DatabaseIndexingService,
-      useValue: {
-        createIndex: () => {},
-        queryIndexDocsRange: () => Promise.resolve([]),
-        queryIndexDocs: () => Promise.resolve([]),
-      },
-    },
-  ],
-})
+@NgModule({ imports: [AppModule,
+        NoopAnimationsModule,
+        RouterTestingModule,
+        ReactiveFormsModule], providers: [
+        { provide: SwRegistrationOptions, useValue: { enabled: false } },
+        {
+            provide: AnalyticsService,
+            useValue: {
+                eventTrack: () => undefined,
+                setUser: () => undefined,
+                init: () => undefined,
+            },
+        },
+        {
+            provide: DatabaseIndexingService,
+            useValue: {
+                createIndex: () => { },
+                queryIndexDocsRange: () => Promise.resolve([]),
+                queryIndexDocs: () => Promise.resolve([]),
+            },
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+    ] })
 export class MockedTestingModule {
   static withState(
     loginState = LoginState.LOGGED_IN,

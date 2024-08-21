@@ -18,7 +18,7 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { LOCALE_ID, NgModule } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
@@ -90,82 +90,75 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
  * Imports required modules and does basic setup.
  * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
  */
-@NgModule({
-  declarations: [AppComponent],
-  imports: [
-    // Global Angular modules
-    ServiceWorkerModule.register("ngsw-worker.js"),
-    Angulartics2Module.forRoot({
-      developerMode: !environment.production,
-    }),
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    RouterModule.forRoot(allRoutes),
-    // Core modules
-    CoreModule,
-    ConfigurableEnumModule,
-    DatabaseModule,
-    LanguageModule,
-    LatestChangesModule,
-    PermissionsModule,
-    SessionModule,
-    // child-dev modules
-    AttendanceModule,
-    ChildrenModule,
-    NotesModule,
-    // feature module
-    ImportModule,
-    FileModule,
-    MarkdownPageModule,
-    LocationModule,
-    MatchingEntitiesModule,
-    ProgressDashboardWidgetModule,
-    ShortcutDashboardWidgetModule,
-    EntityCountDashboardWidgetModule,
-    BirthdayDashboardWidgetModule,
-    ReportingModule,
-    TodosModule,
-    AdminModule,
-    // top level component
-    UiComponent,
-    // Global Angular Material modules
-    MatSnackBarModule,
-    MatDialogModule,
-  ],
-  providers: [
-    ...Logging.getAngularTracingProviders(),
-    { provide: ComponentRegistry, useValue: componentRegistry },
-    { provide: EntityRegistry, useValue: entityRegistry },
-    { provide: WINDOW_TOKEN, useValue: window },
-    { provide: LOCATION_TOKEN, useValue: window.location },
-    { provide: NAVIGATOR_TOKEN, useValue: navigator },
-    {
-      provide: LOCALE_ID,
-      useValue:
-        localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE,
-    },
-    AnalyticsService,
-    Angulartics2Matomo,
-    { provide: DateAdapter, useClass: DateAdapterWithFormatting },
-    {
-      provide: MAT_DATE_FORMATS,
-      useValue: DATE_FORMATS,
-    },
-    {
-      provide: SwRegistrationOptions,
-      useFactory: (loginState: LoginStateSubject) => ({
-        enabled: environment.production,
-        registrationStrategy: () =>
-          loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
-      }),
-      deps: [LoginStateSubject],
-    },
-    APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
-    APP_INITIALIZER_DEMO_DATA,
-  ],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [AppComponent],
+    bootstrap: [AppComponent], imports: [
+        // Global Angular modules
+        ServiceWorkerModule.register("ngsw-worker.js"),
+        Angulartics2Module.forRoot({
+            developerMode: !environment.production,
+        }),
+        BrowserModule,
+        BrowserAnimationsModule,
+        RouterModule.forRoot(allRoutes),
+        // Core modules
+        CoreModule,
+        ConfigurableEnumModule,
+        DatabaseModule,
+        LanguageModule,
+        LatestChangesModule,
+        PermissionsModule,
+        SessionModule,
+        // child-dev modules
+        AttendanceModule,
+        ChildrenModule,
+        NotesModule,
+        // feature module
+        ImportModule,
+        FileModule,
+        MarkdownPageModule,
+        LocationModule,
+        MatchingEntitiesModule,
+        ProgressDashboardWidgetModule,
+        ShortcutDashboardWidgetModule,
+        EntityCountDashboardWidgetModule,
+        BirthdayDashboardWidgetModule,
+        ReportingModule,
+        TodosModule,
+        AdminModule,
+        // top level component
+        UiComponent,
+        // Global Angular Material modules
+        MatSnackBarModule,
+        MatDialogModule], providers: [
+        ...Logging.getAngularTracingProviders(),
+        { provide: ComponentRegistry, useValue: componentRegistry },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: WINDOW_TOKEN, useValue: window },
+        { provide: LOCATION_TOKEN, useValue: window.location },
+        { provide: NAVIGATOR_TOKEN, useValue: navigator },
+        {
+            provide: LOCALE_ID,
+            useValue: localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE,
+        },
+        AnalyticsService,
+        Angulartics2Matomo,
+        { provide: DateAdapter, useClass: DateAdapterWithFormatting },
+        {
+            provide: MAT_DATE_FORMATS,
+            useValue: DATE_FORMATS,
+        },
+        {
+            provide: SwRegistrationOptions,
+            useFactory: (loginState: LoginStateSubject) => ({
+                enabled: environment.production,
+                registrationStrategy: () => loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
+            }),
+            deps: [LoginStateSubject],
+        },
+        APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
+        APP_INITIALIZER_DEMO_DATA,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule {
   constructor(icons: FaIconLibrary) {
     icons.addIconPacks(fas, far);
