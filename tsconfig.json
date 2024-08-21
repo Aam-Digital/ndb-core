@@ -1,44 +1,54 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "module": "es2020",
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
+    "strict": false, // todo enable this!
+//    "noImplicitOverride": true,
+//    "noPropertyAccessFromIndexSignature": true,
+//    "noImplicitReturns": true,
+//    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+//    "isolatedModules": true,
+    "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "ES2022",
     "downlevelIteration": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "useDefineForClassFields": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "bundler",
+    "importHelpers": true,
     "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false, // todo enable this!
+    "target": "ES2022",
+    "module": "ES2022",
     "resolveJsonModule": true,
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
     "types": [
       "jasmine"
     ],
-    "lib": [
-      "es2018",
-      "dom"
-    ],
     "paths": {
       "stream": [
-        "../node_modules/stream-browserify"
+        "./node_modules/stream-browserify"
+      ],
+      "process": [
+        "./node_modules/process"
       ],
       "util": [
-        "../node_modules/util"
+        "./node_modules/util"
       ],
       "assert": [
-        "../node_modules/assert"
+        "./node_modules/assert"
       ]
     }
   },
   "angularCompilerOptions": {
+//    "enableI18nLegacyMessageIdFormat": false,
+//    "strictInjectionParameters": true,
+//    "strictInputAccessModifiers": true,
     "strictTemplates": true
-  },
-  "include": [
-    "src"
-  ]
+  }
 }

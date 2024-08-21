@@ -71,7 +71,7 @@ export class NoteDetailsComponent
   extends AbstractEntityDetailsComponent
   implements OnChanges
 {
-  @Input() entity: Note;
+  @Input() declare entity: Note;
   entityConstructor = Note;
 
   /** export format for notes to be used for downloading the individual details */

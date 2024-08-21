@@ -40,7 +40,7 @@ export class ChildSchoolRelation extends TimePeriod {
     description: $localize`:Description of the start date of a relation:The date a child joins a school`,
     anonymize: "retain",
   })
-  start: Date;
+  declare start: Date;
 
   @DatabaseField({
     dataType: "date-only",
@@ -48,5 +48,5 @@ export class ChildSchoolRelation extends TimePeriod {
     description: $localize`:Description of the end date of a relation:The date of a child leaving the school`,
     anonymize: "retain",
   })
-  end: Date;
+  declare end: Date;
 }

@@ -12,13 +12,16 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "tsConfig": "src/tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "i18nMissingTranslation": "warning",
             "assets": [
               "src/assets",
@@ -41,12 +44,11 @@
                 "src/styles"
               ]
             },
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -67,16 +69,13 @@
               "outputHashing": "all",
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {}
           },
@@ -109,7 +108,7 @@
               "src/polyfills.ts",
               "zone.js/testing"
             ],
-            "tsConfig": "src/tsconfig.spec.json",
+            "tsConfig": "tsconfig.spec.json",
             "styles": [
               "src/styles/styles.scss",
               "src/styles/themes/ndb-theme.scss"
@@ -198,7 +197,9 @@
     }
   },
   "cli": {
-    "analytics": "0bd2cce5-bfb0-4375-af96-a8222d782810",
+    "cache": {
+      "enabled": true
+    },
     "schematicCollections": [
       "@angular-eslint/schematics"
     ]

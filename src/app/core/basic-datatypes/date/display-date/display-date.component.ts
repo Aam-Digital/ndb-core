@@ -22,5 +22,5 @@ export class DisplayDateComponent extends ViewDirective<Date, string> {
   @Input() displayAsAnonymized: boolean;
 
   /** formatting string for date pipe */
-  @Input() config: string;
+  @Input() declare config: string;
 }

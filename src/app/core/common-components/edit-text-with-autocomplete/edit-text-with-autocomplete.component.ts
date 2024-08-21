@@ -63,7 +63,7 @@ export class EditTextWithAutocompleteComponent
   /**
    * Config passed using component
    */
-  additional: {
+  declare additional: {
     /**
      * The entity type for which autofill should be created.
      * This should be the same type as for which the form was created.

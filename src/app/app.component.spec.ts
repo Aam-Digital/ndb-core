@@ -21,7 +21,10 @@ import { AppModule } from "./app.module";
 import { environment } from "../environments/environment";
 import { Database } from "./core/database/database";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
-import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -32,9 +35,12 @@ describe("AppComponent", () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     environment.demo_mode = true;
     TestBed.configureTestingModule({
-    imports: [AppModule],
-    providers: [provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting()]
-}).compileComponents();
+      imports: [AppModule],
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents();
   }));
 
   beforeEach(waitForAsync(() => {

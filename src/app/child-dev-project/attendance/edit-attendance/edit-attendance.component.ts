@@ -44,7 +44,7 @@ export class EditAttendanceComponent
 {
   showAttendance = false;
   mobile = false;
-  @Input() entity: Note;
+  @Input() declare entity: Note;
   attendanceForm: FormControl<Map<string, EventAttendance>>;
 
   constructor(screenWithObserver: ScreenWidthObserver) {
