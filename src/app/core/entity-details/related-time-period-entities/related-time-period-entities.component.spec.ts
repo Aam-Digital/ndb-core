@@ -9,9 +9,10 @@ import {
 import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entities.component";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { entityRegistry } from "../../entity/database-entity.decorator";
 
 describe("RelatedTimePeriodEntitiesComponent", () => {
   let component: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>;
@@ -21,13 +22,17 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
 
   let entityMapper: EntityMapperService;
 
-  let mainEntity: Child;
+  let mainEntity: TestEntity;
   const entityType = "ChildSchoolRelation";
 
   let active1, active2, inactive: ChildSchoolRelation;
 
   beforeEach(waitForAsync(() => {
-    mainEntity = new Child("22");
+    entityRegistry
+      .get(ChildSchoolRelation.ENTITY_TYPE)
+      .schema.get("childId").additional = TestEntity.ENTITY_TYPE;
+
+    mainEntity = new TestEntity("22");
     active1 = new ChildSchoolRelation("a1");
     active1.childId = mainEntity.getId();
     active2 = new ChildSchoolRelation("a2");
@@ -44,9 +49,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     }).compileComponents();
 
     entityMapper = TestBed.inject(EntityMapperService);
-  }));
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(
       RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>,
     );
@@ -56,6 +59,12 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     component.entityType = entityType;
 
     fixture.detectChanges();
+  }));
+
+  afterEach(() => {
+    entityRegistry
+      .get(ChildSchoolRelation.ENTITY_TYPE)
+      .schema.get("childId").additional = "Child";
   });
 
   it("should create", () => {
@@ -63,7 +72,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   });
 
   it("should change columns to be displayed via config", async () => {
-    component.entity = new Child();
+    component.entity = new TestEntity();
     component.single = true;
     component.columns = [
       { id: "schoolId", label: "Team", viewComponent: "school" },
@@ -93,7 +102,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   });
 
   it("should create a new entity with the main entity's id linked", async () => {
-    const child = new Child();
+    const child = new TestEntity();
     component.entity = child;
     await component.ngOnInit();
 
@@ -103,7 +112,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   });
 
   it("should create a new entity with the start date inferred from previous relations", async () => {
-    const child = new Child();
+    const child = new TestEntity();
     const existingRelation = new ChildSchoolRelation();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();

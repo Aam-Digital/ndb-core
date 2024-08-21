@@ -126,7 +126,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     newAnonymizationValue,
   ) {
     fieldSchema.anonymize = newAnonymizationValue;
-    fieldSchema._isCustomizedField = true;
 
     this.adminEntityService.updateSchemaField(
       this.entityConstructor,

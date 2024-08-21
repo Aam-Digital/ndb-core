@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ViewDistanceComponent } from "./view-distance.component";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Subject } from "rxjs";
 import { Coordinates } from "../coordinates";
 import { GeoLocation } from "../location.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("ViewDistanceComponent", () => {
   let component: ViewDistanceComponent;
   let fixture: ComponentFixture<ViewDistanceComponent>;
   let compareCoordinates: Subject<Coordinates[]>;
-  let entity: Child;
+  let entity: TestEntity;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -17,7 +17,7 @@ describe("ViewDistanceComponent", () => {
     }).compileComponents();
     fixture = TestBed.createComponent(ViewDistanceComponent);
 
-    entity = new Child();
+    entity = new TestEntity();
     entity["address"] = { geoLookup: { lat: 52, lon: 13 } } as GeoLocation;
     compareCoordinates = new Subject();
     component = fixture.componentInstance;

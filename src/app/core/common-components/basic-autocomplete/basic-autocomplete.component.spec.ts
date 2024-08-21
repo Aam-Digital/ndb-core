@@ -7,8 +7,6 @@ import {
 } from "@angular/core/testing";
 
 import { BasicAutocompleteComponent } from "./basic-autocomplete.component";
-import { School } from "../../../child-dev-project/schools/model/school";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Entity } from "../../entity/model/entity";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -24,6 +22,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { genders } from "../../../child-dev-project/children/model/genders";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("BasicAutocompleteComponent", () => {
   let component: BasicAutocompleteComponent<any, any>;
@@ -65,11 +64,11 @@ describe("BasicAutocompleteComponent", () => {
   });
 
   it("should correctly show the autocomplete values", async () => {
-    const school1 = School.create({ name: "Aaa" });
-    const school2 = School.create({ name: "aab" });
-    const school3 = School.create({ name: "cde" });
+    const school1 = TestEntity.create({ name: "Aaa" });
+    const school2 = TestEntity.create({ name: "aab" });
+    const school3 = TestEntity.create({ name: "cde" });
     component.options = [school1, school2, school3];
-    let currentAutocompleteSuggestions: School[];
+    let currentAutocompleteSuggestions: TestEntity[];
     component.autocompleteSuggestedOptions.subscribe(
       (value) => (currentAutocompleteSuggestions = value.map((o) => o.asValue)),
     );
@@ -83,8 +82,8 @@ describe("BasicAutocompleteComponent", () => {
   });
 
   it("should show name of the selected entity", async () => {
-    const child1 = Child.create("First Child");
-    const child2 = Child.create("Second Child");
+    const child1 = TestEntity.create("First Child");
+    const child2 = TestEntity.create("Second Child");
     component.value = child1.getId();
     component.options = [child1, child2];
     component.valueMapper = entityToId;
@@ -96,8 +95,8 @@ describe("BasicAutocompleteComponent", () => {
   });
 
   it("should have the correct entity selected when it's name is entered", () => {
-    const child1 = Child.create("First Child");
-    const child2 = Child.create("Second Child");
+    const child1 = TestEntity.create("First Child");
+    const child2 = TestEntity.create("Second Child");
     component.options = [child1, child2];
     component.valueMapper = entityToId;
 
@@ -107,8 +106,8 @@ describe("BasicAutocompleteComponent", () => {
   });
 
   it("should reset if leaving empty autocomplete", fakeAsync(() => {
-    const first = Child.create("First");
-    const second = Child.create("Second");
+    const first = TestEntity.create("First");
+    const second = TestEntity.create("Second");
     component.options = [first, second];
     component.valueMapper = entityToId;
 

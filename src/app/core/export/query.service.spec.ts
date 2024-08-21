@@ -5,9 +5,7 @@ import {
   AttendanceReport,
   QueryService,
 } from "./query.service";
-import { Child } from "../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
@@ -23,10 +21,15 @@ import { AttendanceStatusType } from "../../child-dev-project/attendance/model/a
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
+import { Entity, EntityConstructor } from "../entity/model/entity";
+import { entityRegistry } from "../entity/database-entity.decorator";
 
 describe("QueryService", () => {
   let service: QueryService;
   let entityMapper: EntityMapperService;
+
+  let School: EntityConstructor;
+  let Child: EntityConstructor;
 
   const presentAttendanceStatus = defaultAttendanceStatusTypes.find(
     (status) => status.countAs === "PRESENT",
@@ -48,6 +51,9 @@ describe("QueryService", () => {
     });
     service = TestBed.inject(QueryService);
     entityMapper = TestBed.inject(EntityMapperService);
+
+    School = entityRegistry.get("School");
+    Child = entityRegistry.get("Child");
   }));
 
   afterEach(() => TestBed.inject(Database).destroy());
@@ -88,7 +94,7 @@ describe("QueryService", () => {
     await createSchool([maleChildNormal, femaleChildNormal]);
 
     const maleChildrenOnPrivateSchoolsQuery = `
-      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      School:toArray[*privateSchool=true]
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       [*isActive=true].childId:unique:toEntities(${Child.ENTITY_TYPE})
       :filterByObjectAttribute(gender, id, M)`;
@@ -99,7 +105,7 @@ describe("QueryService", () => {
     expectEntitiesToMatch(maleChildrenOnPrivateSchools, [maleChildPrivate]);
 
     const childrenVisitingAnySchoolQuery = `
-      ${School.ENTITY_TYPE}:toArray
+      School:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       [*isActive=true].childId:unique:toEntities(${Child.ENTITY_TYPE})`;
     const childrenVisitingAnySchool = await queryData(
@@ -215,7 +221,7 @@ describe("QueryService", () => {
     );
 
     const femaleParticipantsPrivateSchoolQuery = `
-      ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
+      School:toArray[*privateSchool=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):unique
@@ -228,7 +234,7 @@ describe("QueryService", () => {
     ]);
 
     const participantsNotPrivateSchoolQuery = `
-      ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
+      School:toArray[*privateSchool!=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):unique
@@ -326,7 +332,7 @@ describe("QueryService", () => {
 
     query = "Child:toArray:getRelated(ChildSchoolRelation, childId)";
     await expectAsync(queryData(query)).toBeResolvedTo([]);
-    expect(loadSpy).not.toHaveBeenCalledWith(School);
+    expect(loadSpy).not.toHaveBeenCalledWith("School");
     expect(loadSpy).not.toHaveBeenCalledWith(ChildSchoolRelation);
     expect(loadSpy).toHaveBeenCalledWith(Child);
   });
@@ -404,7 +410,7 @@ describe("QueryService", () => {
 
     await expectAsync(queryData(query)).toBeResolvedTo(["M"]);
 
-    child.gender = genders.find(({ id }) => id === "F");
+    child["gender"] = genders.find(({ id }) => id === "F");
     await entityMapper.save(child);
 
     await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
@@ -577,7 +583,7 @@ describe("QueryService", () => {
       `${EventNote.ENTITY_TYPE}:toArray:getIds(children):toEntities(${Child.ENTITY_TYPE}).gender`,
     );
 
-    expect(result).toEqual([maleChild.gender]);
+    expect(result).toEqual([maleChild["gender"]]);
   });
 
   it("does not throw an error if no query is provided", () => {
@@ -650,18 +656,18 @@ describe("QueryService", () => {
   async function createChild(
     gender: "M" | "F" | string = "F",
     religion?: "muslim" | "christian",
-  ): Promise<Child> {
+  ): Promise<Entity> {
     const child = new Child();
-    child.gender = genders.find((g) => g.id === gender);
+    child["gender"] = genders.find((g) => g.id === gender);
     child["religion"] = religion;
     await entityMapper.save(child);
     return child;
   }
 
   async function createSchool(
-    children: Child[] = [],
+    children: Entity[] = [],
     privateSchool?: boolean,
-  ): Promise<School> {
+  ): Promise<Entity> {
     const school = new School();
     school["privateSchool"] = privateSchool;
     await entityMapper.save(school);
@@ -677,7 +683,7 @@ describe("QueryService", () => {
 
   async function createNote(
     date: Date,
-    children: { child: Child; status: AttendanceStatusType }[] = [],
+    children: { child: Entity; status: AttendanceStatusType }[] = [],
     activity?: RecurringActivity,
   ): Promise<EventNote> {
     const event = new EventNote();
@@ -695,7 +701,7 @@ describe("QueryService", () => {
   }
 
   async function createActivity(
-    schools: School[],
+    schools: Entity[],
     category = schoolClass,
   ): Promise<RecurringActivity> {
     const activity = new RecurringActivity();

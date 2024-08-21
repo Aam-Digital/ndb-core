@@ -1,14 +1,14 @@
 import { genders } from "../../../child-dev-project/children/model/genders";
-import { materials } from "../../../child-dev-project/children/educational-material/model/materials";
+import { materials } from "../../../child-dev-project/children/demo-data-generators/educational-material/materials";
 import {
   mathLevels,
   readingLevels,
-} from "../../../child-dev-project/children/aser/model/skill-levels";
+} from "../../../child-dev-project/children/demo-data-generators/aser/skill-levels";
 import { ConfigurableEnum } from "./configurable-enum";
 import { ConfigurableEnumService } from "./configurable-enum.service";
 import { NEVER } from "rxjs";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
-import { ratingAnswers } from "../../../features/historical-data/model/rating-answers";
+import { ratingAnswers } from "../../../child-dev-project/children/demo-data-generators/observations/rating-answers";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import { warningLevels } from "../../../child-dev-project/warning-level";

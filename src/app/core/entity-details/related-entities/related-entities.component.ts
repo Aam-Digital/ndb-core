@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, Optional } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -18,6 +18,10 @@ import {
 import { DataFilter } from "../../filter/filters/filters";
 import { FilterService } from "../../filter/filter.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import {
+  EntitySpecialLoaderService,
+  LoaderMethod,
+} from "../../entity/entity-special-loader/entity-special-loader.service";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -50,6 +54,11 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
    * you can set `property = "supervisors"` to only list those projects where the current User is supervisors, not participant.
    */
   @Input() property: string | string[];
+
+  /**
+   * The special service or method to load data via an index or other special method.
+   */
+  @Input() loaderMethod: LoaderMethod;
 
   /**
    * Columns to be displayed in the table
@@ -89,6 +98,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     private entityRegistry: EntityRegistry,
     private screenWidthObserver: ScreenWidthObserver,
     protected filterService: FilterService,
+    @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
   ) {
     this.screenWidthObserver
       .shared()
@@ -110,6 +120,13 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   protected getData(): Promise<E[]> {
+    if (this.loaderMethod && this.entitySpecialLoader) {
+      return this.entitySpecialLoader.loadDataFor(
+        this.loaderMethod,
+        this.entity,
+      );
+    }
+
     return this.entityMapper.loadType(this.entityCtr);
   }
 

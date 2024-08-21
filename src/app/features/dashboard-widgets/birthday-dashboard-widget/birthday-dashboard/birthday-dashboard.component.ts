@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { MatTableModule } from "@angular/material/table";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -34,7 +33,7 @@ export class BirthdayDashboardComponent
   implements BirthdayDashboardConfig, OnInit
 {
   static getRequiredEntities(config: BirthdayDashboardConfig) {
-    return config?.entities ? Object.keys(config.entities) : Child.ENTITY_TYPE;
+    return config?.entities ? Object.keys(config.entities) : "Child";
   }
 
   private readonly today: Date;
@@ -46,7 +45,7 @@ export class BirthdayDashboardComponent
    * "entities": { "Child": "dateOfBirth" }
    * ```
    */
-  @Input() entities: EntityPropertyMap = { [Child.ENTITY_TYPE]: "dateOfBirth" };
+  @Input() entities: EntityPropertyMap = { ["Child"]: "dateOfBirth" };
 
   /**
    * Birthdays that are less than "threshold" days away are shown.

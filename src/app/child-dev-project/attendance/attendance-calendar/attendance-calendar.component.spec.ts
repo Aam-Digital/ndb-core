@@ -6,7 +6,6 @@ import { generateEventWithAttendance } from "../model/activity-attendance";
 import { SimpleChange } from "@angular/core";
 import moment from "moment";
 import { Note } from "../../notes/model/note";
-import { Child } from "../../children/model/child";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EventNote } from "../model/event-note";
@@ -15,6 +14,7 @@ import { AnalyticsService } from "../../../core/analytics/analytics.service";
 import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { MatNativeDateModule } from "@angular/material/core";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
@@ -78,9 +78,9 @@ describe("AttendanceCalendarComponent", () => {
   });
 
   it("should correctly compute the average attendance", () => {
-    const attendedChild = new Child("attendedChild");
-    const absentChild = new Child("absentChild");
-    const childWithoutAttendance = new Child("childWithoutAttendance");
+    const attendedChild = new TestEntity("attendedChild");
+    const absentChild = new TestEntity("absentChild");
+    const childWithoutAttendance = new TestEntity("childWithoutAttendance");
     const note = new Note();
     note.date = new Date();
     note.addChild(attendedChild);
@@ -105,7 +105,7 @@ describe("AttendanceCalendarComponent", () => {
 
   it("should add focused participant on the fly if not part of event already", () => {
     const testDate = new Date();
-    const excludedChild = new Child("excluded_child");
+    const excludedChild = new TestEntity("excluded_child");
     const note = new Note();
     note.date = testDate;
     component.records = [note];

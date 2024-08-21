@@ -1,4 +1,3 @@
-import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
 import { Entity } from "../../entity/model/entity";
@@ -6,6 +5,7 @@ import { ColumnMapping } from "../column-mapping";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ImportMetadata } from "../import-metadata";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 
 /**
  * Sample raw data that can be used in Storybook and tests.
@@ -38,8 +38,8 @@ Object.assign(
 );
 
 export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
-  School.create({ name: "Sample School" }),
-  School.create({ name: "ABCD School" }),
+  Object.assign(createEntityOfType("School"), { name: "Sample School" }),
+  Object.assign(createEntityOfType("School"), { name: "ABCD School" }),
   RecurringActivity.create("Activity X"),
   RecurringActivity.create("Activity Y"),
 ];

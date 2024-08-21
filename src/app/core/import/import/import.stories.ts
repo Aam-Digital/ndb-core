@@ -8,9 +8,9 @@ import {
   IMPORT_SAMPLE_PREVIOUS_IMPORTS,
   IMPORT_SAMPLE_RAW_DATA,
 } from "./import-sample-raw-data";
-import { User } from "../../user/user";
 import { importProvidersFrom } from "@angular/core";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { Entity } from "../../entity/model/entity";
 
 export default {
   title: "Features/Import/> Overall Module",
@@ -22,7 +22,7 @@ export default {
           StorybookBaseModule.withData([
             ...IMPORT_SAMPLE_LINKABLE_DATA,
             ...IMPORT_SAMPLE_PREVIOUS_IMPORTS,
-            Object.assign(new User(TEST_USER), { name: TEST_USER }),
+            Object.assign(new Entity(TEST_USER), { name: TEST_USER }),
           ]),
         ),
       ],

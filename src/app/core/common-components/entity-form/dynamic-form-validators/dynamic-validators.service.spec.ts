@@ -11,7 +11,7 @@ import {
   ValidatorFn,
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { User } from "../../../user/user";
+import { Entity } from "../../../entity/model/entity";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -107,12 +107,12 @@ describe("DynamicValidatorsService", () => {
 
   it("should build uniqueId async validator", async () => {
     const config: FormValidatorConfig = {
-      uniqueId: "User",
+      uniqueId: "Entity",
     };
-    mockedEntityMapper.loadType.and.resolveTo([new User("existing id")]);
+    mockedEntityMapper.loadType.and.resolveTo([new Entity("existing id")]);
 
     const validators = service.buildValidators(config).asyncValidators;
-    await testValidator(validators[0], "User:new id", "User:existing id");
+    await testValidator(validators[0], "Entity:new id", "Entity:existing id");
   });
 });
 
