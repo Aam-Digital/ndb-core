@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AdminEntityComponent } from "./admin-entity.component";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
@@ -28,9 +23,9 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 describe("AdminEntityComponent", () => {
   let component: AdminEntityComponent;
@@ -132,7 +127,7 @@ describe("AdminEntityComponent", () => {
     AdminTestEntity.schema.delete("testCancelField");
   });
 
-  it("should save schema and view config", fakeAsync(() => {
+  it("should save schema and view config", waitForAsync(async () => {
     const newSchemaField: EntitySchemaField = {
       label: "New field",
     };
@@ -144,39 +139,39 @@ describe("AdminEntityComponent", () => {
     };
     component.configDetailsView.panels.push(newPanel);
 
-    component.save();
-    fixture.whenStable().then(() => {
-      const expectedViewConfig = {
-        entityType: AdminTestEntity.ENTITY_TYPE,
-        panels: [{ title: "Tab 1", components: [] }, newPanel],
-      };
-      const expectedEntityConfig = {
-        label: "AdminTest",
-        labelPlural: "AdminTest",
-        icon: "child",
-        toStringAttributes: ["entityId"],
-        attributes: jasmine.objectContaining({
-          testSaveField: newSchemaField,
-        }),
-      };
+    await component.save();
 
-      const actual: Config = entityMapper.get(
-        Config.ENTITY_TYPE,
-        Config.CONFIG_KEY,
-      ) as Config;
-      expect(actual.data[viewConfigId]).toEqual({
-        component: "EntityDetails",
-        config: expectedViewConfig,
-      });
-      expect(actual.data[entityConfigId]).toEqual(expectedEntityConfig);
-      // TODO: this expectation is not useful yet:
-      expect(component.configEntitySettings).toEqual(
-        component.entityConstructor,
-      );
+    await fixture.whenStable();
 
-      // cleanup:
-      AdminTestEntity.schema.delete("testSaveField");
+    const expectedViewConfig = {
+      entityType: AdminTestEntity.ENTITY_TYPE,
+      panels: [{ title: "Tab 1", components: [] }, newPanel],
+    };
+
+    const expectedEntityConfig = {
+      label: "Admin Test",
+      labelPlural: "Admin Test",
+      icon: undefined,
+      toStringAttributes: ["entityId"],
+      hasPII: false,
+      attributes: jasmine.objectContaining({
+        testSaveField: newSchemaField,
+      }),
+    };
+
+    const actual: Config = entityMapper.get(
+      Config.ENTITY_TYPE,
+      Config.CONFIG_KEY,
+    ) as Config;
+    expect(actual.data[viewConfigId]).toEqual({
+      component: "EntityDetails",
+      config: expectedViewConfig,
     });
-    tick();
+    expect(actual.data[entityConfigId]).toEqual(expectedEntityConfig);
+    // TODO: this expectation is not useful yet:
+    expect(component.configEntitySettings).toEqual(component.entityConstructor);
+
+    // cleanup:
+    AdminTestEntity.schema.delete("testSaveField");
   }));
 });
