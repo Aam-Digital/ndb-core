@@ -1,7 +1,5 @@
-name: "Upload SARIF"
+name: "Security Scan"
 
-# Run workflow each time code is pushed to your repository and on a schedule.
-# The scheduled workflow runs every Thursday at 15:45 UTC.
 on:
   push:
     branches:
@@ -11,13 +9,11 @@ on:
     - cron: '30 6 * * 2'
 
 jobs:
-  build:
+  security-scan:
     runs-on: ubuntu-latest
     permissions:
-      # required for all workflows
       security-events: write
     steps:
-      # This step checks out a copy of your repository.
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -32,5 +28,4 @@ jobs:
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
         with:
-          # Path to SARIF file relative to the root of the repository
           sarif_file: results.sarif
