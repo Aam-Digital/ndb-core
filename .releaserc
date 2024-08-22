@@ -3,7 +3,7 @@
   "branches": [
     "official-release",
     {"name": "master", "prerelease": true},
-    {"name": "tw/ci/improve-build-times", "prerelease": true}
+    {"name": "tw*", "prerelease": true}
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
