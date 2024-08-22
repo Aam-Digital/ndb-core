@@ -13,7 +13,7 @@ jobs:
       matrix:
         platform:
           - linux/amd64
-          - linux/arm64
+          # - linux/arm64 todo use arm64 chrome
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -35,6 +35,7 @@ jobs:
       - name: Run tests in Docker image
         uses: docker/build-push-action@v6
         with:
+          platforms: ${{ matrix.platform }}
           context: ./
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
@@ -57,7 +58,7 @@ jobs:
       matrix:
         platform:
           - linux/amd64
-          - linux/arm64
+          # - linux/arm64 todo use arm64 chrome
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -79,6 +80,7 @@ jobs:
       - name: Run tests with timezone
         uses: docker/build-push-action@v6
         with:
+          platforms: ${{ matrix.platform }}
           context: ./
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
@@ -91,13 +93,21 @@ jobs:
             BUILD=${{ false }}
 
   build:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         platform:
           - linux/amd64
           - linux/arm64
+        os:
+          - ubuntu-latest
+          - [self-hosted, Linux, ARM64]
+        exclude:
+          - platform: linux/arm64
+            os: ubuntu-latest
+          - platform: linux/amd64
+            os: [self-hosted, Linux, ARM64]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -129,6 +139,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
+          platforms: ${{ matrix.platform }}
           context: ./
           file: ./build/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}

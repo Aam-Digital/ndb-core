@@ -1,7 +1,7 @@
 name: Pull Request - Clean Up
 
 on:
-  pull_request_target:
+  pull_request:
     types: [closed]
 
 env:
@@ -39,6 +39,8 @@ jobs:
         run: |
           echo ${{ github.event.pull_request.head.ref }}
           echo ${{ github.event.pull_request.base.ref }}
+          echo ${{ github.head_ref }}
+          echo ${{ github.base_ref }}
           echo ${{ github.ref }}
           echo ${{ github.ref_name }}
           echo ${GITHUB_REF}
