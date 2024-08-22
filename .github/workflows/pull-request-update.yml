@@ -112,6 +112,9 @@ jobs:
       - name: Checkout repository files
         uses: actions/checkout@v4
 
+      - name: Extract tag
+        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
       - name: Prepare Platform
         run: |
           platform=${{ matrix.platform }}
