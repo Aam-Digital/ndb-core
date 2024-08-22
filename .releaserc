@@ -2,7 +2,8 @@
   "tagFormat": "${version}",
   "branches": [
     "official-release",
-    {"name": "master", "prerelease": true}
+    {"name": "master", "prerelease": true},
+    {"name": "tw/ci/improve-build-times", "prerelease": true}
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
