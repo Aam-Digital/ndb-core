@@ -41,8 +41,6 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           tags: test-image
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
           build-args: |
             UPLOAD_COVERAGE=${{ true }}
             GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
@@ -85,8 +83,6 @@ jobs:
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
           build-args: |
             RUN_TESTS=${{ true }}
             TZ=America/Detroit
@@ -111,6 +107,9 @@ jobs:
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
+
+      - name: Extract tag
+        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Prepare Platform
         run: |
@@ -143,9 +142,10 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+        env:
+          SOURCE_DATE_EPOCH: 0
 
       - name: Export digest
         run: |

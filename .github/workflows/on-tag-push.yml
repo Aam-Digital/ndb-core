@@ -8,13 +8,21 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         platform:
           - linux/amd64
           - linux/arm64
+        os:
+          - ubuntu-latest
+          - [ self-hosted, Linux, ARM64 ]
+        exclude:
+          - platform: linux/arm64
+            os: ubuntu-latest
+          - platform: linux/amd64
+            os: [ self-hosted, Linux, ARM64 ]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -49,15 +57,19 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
+          platforms: ${{ matrix.platform }}
           context: ./
           file: ./build/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           build-args: |
             APP_VERSION=${{ env.TAG }}
 #            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }} // todo: this is not good.
 #            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
 #            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+        env:
+          SOURCE_DATE_EPOCH: 0
 
       - name: Export digest
         run: |
