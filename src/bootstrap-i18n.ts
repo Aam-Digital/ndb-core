@@ -5,9 +5,6 @@ import {
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
 import parseXliffToJson from "./app/utils/parse-xliff-to-js";
-import localeDe from "@angular/common/locales/de";
-import localeFr from "@angular/common/locales/fr";
-import localeIt from "@angular/common/locales/it";
 
 /**
  * Load translation files and apply them to angular localize system.
@@ -33,9 +30,11 @@ export async function initLanguage(locale?: string): Promise<void> {
 
   loadTranslations(json);
   $localize.locale = locale;
-
-  // TODO lacy load local modules again
-  registerLocaleData(localeDe);
-  registerLocaleData(localeFr);
-  registerLocaleData(localeIt);
+  // This is needed for locale-aware components & pipes to work.
+  // Add the required locales to `webpackInclude` to keep the bundle size small
+  const localeModule = await import(
+    /* webpackInclude: /(fr|de|it)\.mjs/ */
+    `../node_modules/@angular/common/locales/${locale}`
+    );
+  registerLocaleData(localeModule.default);
 }
