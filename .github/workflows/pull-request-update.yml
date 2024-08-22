@@ -41,7 +41,7 @@ jobs:
           target: builder
           tags: test-image
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
           build-args: |
             UPLOAD_COVERAGE=${{ true }}
             GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
@@ -84,7 +84,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
           build-args: |
             RUN_TESTS=${{ true }}
             TZ=America/Detroit
@@ -134,7 +134,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
 
       - name: Export digest
         run: |
