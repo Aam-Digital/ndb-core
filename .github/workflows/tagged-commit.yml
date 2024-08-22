@@ -3,6 +3,8 @@ on:
   push:
     tags:
       - "*"
+env:
+  REGISTRY_IMAGE: aamdigital/ndb-server
 
 jobs:
   build:
