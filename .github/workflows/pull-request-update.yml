@@ -6,6 +6,7 @@ env:
   REGISTRY_IMAGE: aamdigital/ndb-server
 
 jobs:
+  # todo multi arch testing
   test:
     runs-on: ubuntu-latest
     steps:

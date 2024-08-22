@@ -11,7 +11,9 @@ jobs:
   create-deployment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+
       - name: Prepare server deployment
         uses: appleboy/ssh-action@master
         with:
@@ -22,6 +24,7 @@ jobs:
             cd /var/docker
             cp -r x-pr pr-${{ github.event.number }}
             sed -i "s/<PR_NUMBER>/${{ github.event.number }}/g" pr-${{ github.event.number }}/docker-compose.yml
+
       - name: Post comment on PR
         run: |
           curl -X POST \

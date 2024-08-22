@@ -4,28 +4,33 @@ on:
     branches:
       - master
       - official-release
+      - tw/ci/improve-build-times # todo remove me
 
 jobs:
   run-semantic-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository files
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
+          # todo remove me
       # Only required temporary: https://github.com/cycjimmy/semantic-release-action/issues/159
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14
+      - name: Set up node
+        uses: actions/setup-node@v4
+#        with: # todo remove me
+#          node-version: 14
 
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v3
+        uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
+          # todo remove me
           # Latest release-replace plugin fails https://github.com/jpoehnelt/semantic-release-replace-plugin/issues/223
           extra_plugins: |
-            semantic-release-replace-plugin@1.2.0
+            semantic-release-replace-plugin@1.2.6
             @semantic-release/git
             @semantic-release/github
             semantic-release-slack-bot

@@ -53,8 +53,6 @@ jobs:
           file: ./build/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
           build-args: |
             APP_VERSION=${{ env.TAG }}
 #            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }} // todo: this is not good.
@@ -112,45 +110,10 @@ jobs:
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
 
-#  publish-image:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout repository files
-#        uses: actions/checkout@v4
-#
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v3
-#        with:
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }}
-#
-#      - name: Set up Docker Buildx
-#        id: buildx
-#        uses: docker/setup-buildx-action@v3
-#
-#      - name: Extract tag
-#        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-#
-#      - name: Build and push prod image
-#        uses: docker/build-push-action@v3
-#        with:
-#          context: ./
-#          file: ./build/Dockerfile
-#          builder: ${{ steps.buildx.outputs.name }}
-#          push: true
-#          tags: aamdigital/ndb-server:${{ env.TAG }}
-#          cache-from: type=gha
-#          cache-to: type=gha,mode=max
-#          build-args: |
-#            APP_VERSION=${{ env.TAG }}
-#            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }}
-#            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
-#            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
-#
-#      - name: If new release, delete pre-release tags from Docker Hub
-#        if: ${{ ! contains(env.TAG, '-master.') }}
-#        run: |
-#          token=$(curl -s -L 'https://hub.docker.com/v2/users/login' -H 'Content-Type: application/json' -d '{ "username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}')
-#          token=${token#*\"token\":\"}
-#          token=${token%%\"*}
-#          curl -s -L "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags?page_size=100" -H "Authorization: Bearer $token" | jq '.results[].name | select(test("-master.")?)' | xargs -n1 -I %TAG curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/%TAG" -H "Authorization: Bearer $token"
+      - name: If new release, delete pre-release tags from Docker Hub
+        if: ${{ ! contains(env.TAG, '-master.') }}
+        run: |
+          token=$(curl -s -L 'https://hub.docker.com/v2/users/login' -H 'Content-Type: application/json' -d '{ "username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}')
+          token=${token#*\"token\":\"}
+          token=${token%%\"*}
+          curl -s -L "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags?page_size=100" -H "Authorization: Bearer $token" | jq '.results[].name | select(test("-master.")?)' | xargs -n1 -I %TAG curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/%TAG" -H "Authorization: Bearer $token"
