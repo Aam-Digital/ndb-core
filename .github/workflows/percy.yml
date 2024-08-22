@@ -12,12 +12,17 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+
+      - name: Set up node
+        uses: actions/setup-node@v4
         with:
           node-version: "16"
           cache: npm
+
       - run: npm ci
+
       - run: npm run percy-storybook
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
