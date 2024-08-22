@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [closed]
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 jobs:
   remove-deployment:
     runs-on: ubuntu-latest
