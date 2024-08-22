@@ -1,4 +1,4 @@
-name: SetUp
+name: Pull Request - Set Up
 
 permissions:
   pull-requests: write
