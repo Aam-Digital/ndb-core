@@ -1,7 +1,7 @@
 name: Pull Request - Clean Up
 
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
 
 env:
@@ -43,7 +43,6 @@ jobs:
           echo ${{ github.base_ref }}
           echo ${{ github.ref }}
           echo ${{ github.ref_name }}
-          echo ${GITHUB_REF}
 
           gh cache list -L 200 --ref ${{ github.event.pull_request.head.ref }} --json id --jq '.[] | .id' | while read -r id; do
             gh cache delete "$id"
