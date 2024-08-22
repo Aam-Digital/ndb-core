@@ -2,17 +2,30 @@ name: Semantic Release
 on:
   push:
     branches:
-      - master
       - official-release
 
 jobs:
-  run-semantic-release:
+  pre-releases-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Previous Pre-Releases
+        # todo: not maintained anymore, needs replacement
+        uses: dev-drprasad/delete-older-releases@v0.3.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          keep_latest: 0
+          delete_tag_pattern: master
+          delete_tags: true
+
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+
       - name: Set up node
         uses: actions/setup-node@v4
 

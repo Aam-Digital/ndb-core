@@ -26,9 +26,33 @@ jobs:
           destination_dir: documentation
           force_orphan: true
 
-  # todo multi arch testing
+  check-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true # To make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
+
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -62,21 +86,27 @@ jobs:
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
             BUILD=${{ false }}
 
-  check-dependencies:
+  pre-release:
     runs-on: ubuntu-latest
+    needs:
+      - test
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        continue-on-error: true # To make sure that SARIF upload gets called
+      - name: Set up node
+        uses: actions/setup-node@v4
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
-          args: --sarif-file-output=snyk.sarif
-
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: snyk.sarif
+          extra_plugins: |
+            semantic-release-replace-plugin@1.2.6
+            @semantic-release/git
+            @semantic-release/github
+            semantic-release-slack-bot
