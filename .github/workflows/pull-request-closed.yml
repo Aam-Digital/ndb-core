@@ -34,6 +34,6 @@ jobs:
 
       - name: Delete github caches for current branch
         run: |
-          gh cache list -L 200 --ref ${GITHUB_REF} --json id --jq '.[] | .id' | while read -r id; do \
-            gh cache delete "$id" \
+          gh cache list -L 200 --ref ${GITHUB_REF} --json id --jq '.[] | .id' | while read -r id; do
+            gh cache delete "$id"
           done
