@@ -35,6 +35,6 @@ export async function initLanguage(locale?: string): Promise<void> {
   const localeModule = await import(
     /* webpackInclude: /(fr|de|it)\.mjs/ */
     `../node_modules/@angular/common/locales/${locale}`
-    );
+  );
   registerLocaleData(localeModule.default);
 }

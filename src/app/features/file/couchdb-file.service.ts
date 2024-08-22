@@ -1,5 +1,12 @@
 import { Inject, Injectable } from "@angular/core";
-import { HttpClient, HttpEvent, HttpEventType, HttpProgressEvent, HttpResponse, HttpStatusCode } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpEvent,
+  HttpEventType,
+  HttpProgressEvent,
+  HttpResponse,
+  HttpStatusCode,
+} from "@angular/common/http";
 import {
   catchError,
   concatMap,

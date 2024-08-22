@@ -1,7 +1,13 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { CouchdbFileService } from "./couchdb-file.service";
-import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType, HttpStatusCode } from "@angular/common/http";
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpEvent,
+  HttpEventType,
+  HttpStatusCode,
+} from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
 import {
   BehaviorSubject,
