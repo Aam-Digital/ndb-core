@@ -1,4 +1,4 @@
-import { xliff12ToJs } from "xliff";
+const xliff = require("xliff");
 
 /**
  * Parses a XLIFF text to a JSON object with the structure needed for `loadTranslations()` by Angular
@@ -8,8 +8,8 @@ import { xliff12ToJs } from "xliff";
  * @param translations a XLIFF text
  * @returns {Promise<{}>} with the JSON object
  */
-export default async (translations: string): Promise<{}> => {
-  const parserResult = await xliff12ToJs(translations, {
+module.exports = async (translations) => {
+  const parserResult = await xliff.xliff12ToJs(translations, {
     captureSpacesBetweenElements: true,
   });
   const xliffContent = parserResult.resources["ng2.template"];
