@@ -2,8 +2,7 @@
   "tagFormat": "${version}",
   "branches": [
     "official-release",
-    {"name": "master", "prerelease": true},
-    {"name": "tw*", "prerelease": true}
+    {"name": "master", "prerelease": true}
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
