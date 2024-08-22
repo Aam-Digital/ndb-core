@@ -61,12 +61,15 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           build-args: |
             APP_VERSION=${{ env.TAG }}
 #            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }} // todo: this is not good.
 #            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
 #            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+        env:
+          SOURCE_DATE_EPOCH: 0
 
       - name: Export digest
         run: |
