@@ -28,3 +28,9 @@ jobs:
           token=${token#*\"token\":\"}
           token=${token%%\"*}
           curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/pr-${{ github.event.number }}" -H "Authorization: Bearer $token"
+
+      - name: Delete github caches for current branch
+        run: |
+          gh cache list -L 200 --ref ${{ GITHUB_REF }} --json id --jq '.[] | .id' | while read -r id; do \
+            gh cache delete "$id" \
+          done
