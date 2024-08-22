@@ -24,6 +24,12 @@ jobs:
             os: [ self-hosted, Linux, ARM64 ]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Cleanup build folder
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
       - name: Checkout repository files
         uses: actions/checkout@v4
 
@@ -90,6 +96,12 @@ jobs:
     needs:
       - build
     steps:
+      - name: Cleanup build folder
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
