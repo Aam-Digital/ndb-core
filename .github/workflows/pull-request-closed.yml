@@ -1,7 +1,7 @@
 name: Pull Request - Clean Up
 
 on:
-  pull_request_target:
+  pull_request:
     types: [closed]
 
 env:
@@ -38,7 +38,10 @@ jobs:
       - name: Delete github caches for current branch
         run: |
           echo ${{ github.event.pull_request.head.ref }}
-          ${GITHUB_REF}
+          echo ${{ github.event.pull_request.base.ref }}
+          echo ${{ github.ref }}
+          echo ${{ github.ref_name }}
+          echo ${GITHUB_REF}
 
           gh cache list -L 200 --ref ${{ github.event.pull_request.head.ref }} --json id --jq '.[] | .id' | while read -r id; do
             gh cache delete "$id"
