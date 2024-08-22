@@ -91,8 +91,8 @@ jobs:
         with:
           context: ./
           file: ./build/Dockerfile
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }}:pr-${{ github.event.number }},push-by-digest=true,name-canonical=true,push=true
-          tags: aamdigital/ndb-server:pr-${{ github.event.number }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+#          tags: aamdigital/ndb-server:pr-${{ github.event.number }}
 #          cache-from: type=gha
 #          cache-to: type=gha,mode=max
 
