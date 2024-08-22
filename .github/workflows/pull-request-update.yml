@@ -9,7 +9,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository files
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         id: buildx
