@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - tw/ci/fix-github-code-scanning
   schedule:
     - cron: '30 6 * * 2'
 
