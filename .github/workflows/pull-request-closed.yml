@@ -1,6 +1,6 @@
 name: Pull Request - Clean Up
 on:
-  pull_request_target:
+  pull_request:
     types: [closed]
 
 jobs:
