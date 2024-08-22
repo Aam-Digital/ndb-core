@@ -13,7 +13,7 @@ jobs:
       matrix:
         platform:
           - linux/amd64
-          - linux/arm64
+          # - linux/arm64 todo use arm64 chrome
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -41,8 +41,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
           tags: test-image
-#          cache-from: type=gha
-#          cache-to: type=gha,mode=min
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
           build-args: |
             UPLOAD_COVERAGE=${{ true }}
             GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
@@ -58,7 +58,7 @@ jobs:
       matrix:
         platform:
           - linux/amd64
-          - linux/arm64
+          # - linux/arm64 todo use arm64 chrome
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
@@ -85,21 +85,29 @@ jobs:
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
-#          cache-from: type=gha
-#          cache-to: type=gha,mode=min
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
           build-args: |
             RUN_TESTS=${{ true }}
             TZ=America/Detroit
             BUILD=${{ false }}
 
   build:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         platform:
           - linux/amd64
           - linux/arm64
+        os:
+          - ubuntu-latest
+          - [self-hosted, linux, x64]
+        exclude:
+          - platform: linux/arm64
+            os: ubuntu-latest
+          - platform: linux/amd64
+            os: [self-hosted, linux, x64]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
