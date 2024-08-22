@@ -101,12 +101,12 @@ jobs:
           - linux/arm64
         os:
           - ubuntu-latest
-          - "[self-hosted, linux, x64]"
+          - [self-hosted, linux, x64]
         exclude:
           - platform: linux/arm64
             os: ubuntu-latest
           - platform: linux/amd64
-            os: "[self-hosted, linux, x64]"
+            os: [self-hosted, linux, x64]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
