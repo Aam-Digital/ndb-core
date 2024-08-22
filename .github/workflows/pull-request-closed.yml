@@ -1,4 +1,4 @@
-name: CleanUp
+name: Pull Request - Clean Up
 on:
   pull_request_target:
     types: [closed]
