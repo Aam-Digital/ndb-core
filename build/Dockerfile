@@ -3,7 +3,7 @@
 # Run the following commands from the root folder to build, run and kill the application
 # >> docker build -f build/Dockerfile -t aam-digital .
 # >> docker run -p=80:80 aam-digital
-FROM node:18.20.4-alpine3.20 AS builder
+FROM node:20-slim AS builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -70,7 +70,7 @@ RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
 
 ### PROD image
 
-FROM nginx:1.26.1-alpine
+FROM nginx:stable-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container
