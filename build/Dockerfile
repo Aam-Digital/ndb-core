@@ -5,14 +5,13 @@
 # >> docker run -p=80:80 aam-digital TODO update docs
 
 FROM node:lts-slim AS base
-COPY package.json ./tmp/package.json
-COPY package-lock.json ./tmp/package-lock.json
+COPY package.json ./opt/app/package.json
+COPY package-lock.json ./opt/app/package-lock.json
 
 
 FROM base AS base-with-dependencies
-WORKDIR /tmp
+WORKDIR /opt/app
 RUN npm ci --no-progress
-RUN mkdir -p /opt/app && cp -a /tmp/node_modules /opt/app/
 
 
 FROM debian:bookworm-slim AS base-with-dependencies-and-testsuite
@@ -22,8 +21,8 @@ RUN apt-get update && apt-get install -y curl
 WORKDIR /tmp
 # 121.0.6167.139-1~deb12u1 -> 2024-02-01
 ARG CHROMIUM_VERSION=121.0.6167.139-1~deb12u1
-RUN curl -o chromium-common.deb http://ftp.debian.org/debian/pool/main/c/chromium/chromium-common_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
-RUN curl -o chromium.deb http://ftp.debian.org/debian/pool/main/c/chromium/chromium_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
+RUN curl -o chromium-common.deb https://ftp.debian.org/debian/pool/main/c/chromium/chromium-common_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
+RUN curl -o chromium.deb https://ftp.debian.org/debian/pool/main/c/chromium/chromium_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
 RUN apt-get install -y ./chromium-common.deb
 RUN apt-get install -y ./chromium.deb
 RUN apt-get install -y git build-essential libssl-dev
@@ -33,13 +32,26 @@ RUN curl -o- install_nvm.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0
 RUN nvm install 20
 
 WORKDIR /opt/app
-RUN curl -LO https://codeclimate.com/downloads/test-reporter/test-reporter-0.11.1-linux-$(dpkg --print-architecture) > ./cc-test-reporter &&\
+RUN curl -o cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-0.11.1-linux-$(dpkg --print-architecture) && \
     chmod +x ./cc-test-reporter
 
 
 FROM base-with-dependencies-and-testsuite AS test
 WORKDIR /opt/app
-ADD . /opt/app
+COPY ./src /opt/app/src/
+COPY ./e2e /opt/app/e2e/
+COPY ./cypress /opt/app/cypress/
+COPY ./build /opt/app/build/
+COPY ./.browserslistrc /opt/app/
+COPY ./.codeclimate.yml /opt/app/
+COPY ./.eslintrc.json /opt/app/
+COPY ./.prettierignore /opt/app/
+COPY ./.prettierrc.json /opt/app/
+COPY ./angular.json /opt/app/
+COPY ./cypress.config.ts /opt/app/
+COPY ./karma.conf.js /opt/app/
+COPY ./tsconfig.json /opt/app/
+COPY ./ngsw-config.json /opt/app/
 
 ARG TZ
 RUN if [ -n "${TZ}" ] ; then \
@@ -70,7 +82,10 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
 
 FROM base-with-dependencies AS build
 WORKDIR /opt/app
-ADD . /opt/app
+COPY ./src /opt/app/
+COPY ./angular.json /opt/app/
+COPY ./tsconfig.json /opt/app/
+COPY ./ngsw-config.json /opt/app/
 
 ARG APP_VERSION="UNKNOWN"
 RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
@@ -93,7 +108,7 @@ RUN npm run build
 #    rm dist/*.map ; fi
 
 ### PROD image
-
+# TODO (security) use non-root user image here
 FROM nginx:stable-alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=build /opt/app/dist/ /usr/share/nginx/html
