@@ -108,18 +108,8 @@ jobs:
             os: [self-hosted, Linux, ARM64]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: list all
-        run: |
-          echo ${{ github.workspace }}
-          ls -lsa
-
       - name: Checkout repository files
         uses: actions/checkout@v4
-
-      - name: list all
-        run: |
-          echo ${{ github.workspace }}
-          ls -lsa
 
       - name: Extract tag
         run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
@@ -160,11 +150,6 @@ jobs:
           cache-to: type=gha,mode=max
         env:
           SOURCE_DATE_EPOCH: 0
-
-      - name: list all
-        run: |
-          echo ${{ github.workspace }}
-          ls -lsa
 
       - name: Export digest
         run: |
