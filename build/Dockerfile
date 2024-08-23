@@ -40,7 +40,6 @@ FROM base-with-dependencies-and-testsuite AS test
 WORKDIR /opt/app
 COPY ./src /opt/app/src/
 COPY ./e2e /opt/app/e2e/
-COPY ./cypress /opt/app/cypress/
 COPY ./build /opt/app/build/
 COPY ./.browserslistrc /opt/app/
 COPY ./.codeclimate.yml /opt/app/
@@ -82,7 +81,8 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
 
 FROM base-with-dependencies AS build
 WORKDIR /opt/app
-COPY ./src /opt/app/
+COPY ./src /opt/app/src/
+COPY ./build /opt/app/build/
 COPY ./angular.json /opt/app/
 COPY ./tsconfig.json /opt/app/
 COPY ./ngsw-config.json /opt/app/
