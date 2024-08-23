@@ -40,7 +40,8 @@ jobs:
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
-          tags: test-image
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             UPLOAD_COVERAGE=${{ true }}
             GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
@@ -83,6 +84,8 @@ jobs:
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           target: builder
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             RUN_TESTS=${{ true }}
             TZ=America/Detroit
@@ -142,22 +145,23 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
-          provenance: false
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
         env:
           SOURCE_DATE_EPOCH: 0
 
       - name: Export digest
         run: |
-          mkdir -p /tmp/digests
+          mkdir -p ./tmp/digests
           digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
+          touch "./tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
           name: digests-${{ env.PLATFORM_PAIR }}
-          path: /tmp/digests/*
+          path: ./tmp/digests/*
           if-no-files-found: error
           retention-days: 1
 
@@ -169,7 +173,7 @@ jobs:
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
-          path: /tmp/digests
+          path: ./tmp/digests
           pattern: digests-*
           merge-multiple: true
 
@@ -189,7 +193,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Create manifest list and push
-        working-directory: /tmp/digests
+        working-directory: ./tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
