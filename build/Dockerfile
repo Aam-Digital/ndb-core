@@ -3,7 +3,7 @@
 # Run the following commands from the root folder to build, run and kill the application
 # >> docker build -f build/Dockerfile -t aam-digital .
 # >> docker run -p=80:80 aam-digital
-FROM node:18-slim AS builder
+FROM node:22-slim AS builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -25,16 +25,16 @@ RUN if [ "$BUILD" = true ] ; then \
 
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
-ARG UPLOAD_COVERAGE=false
+ARG UPLOAD_COVERAGE=true
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
-    apk --no-cache add curl &&\
+    apt update && apt install -y curl &&\
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter &&\
     chmod +x ./cc-test-reporter &&\
     ./cc-test-reporter before-build ; fi
 
 ARG TZ
 RUN if [ -n "${TZ}" ] ; then \
-    apk --no-cache add tzdata && \
+    apt update && apt install -y tzdata && \
     cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime && \
     echo "$TZ" >  /etc/timezone ; fi
 
@@ -43,7 +43,7 @@ ARG RUN_TESTS=false
 ARG CHROME_BIN=/usr/bin/chromium-browser
 # Install chromium for karma, lint code and run tests
 RUN if [ "$RUN_TESTS" = true ] || [ "$UPLOAD_COVERAGE" = true ] ; then \
-    apk --no-cache add chromium &&\
+    apt update && apt install -y chromium &&\
     npm run lint &&\
     npm run test-ci ; fi
 
