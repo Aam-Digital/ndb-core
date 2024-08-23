@@ -16,47 +16,53 @@ COPY . .
 ARG APP_VERSION="UNKNOWN"
 RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
 
+RUN apt update
 
 # When set to false, no production build for the app is done
 ARG BUILD=true
 RUN if [ "$BUILD" = true ] ; then \
-    node build/prepare-translation-files.js &&\
-    npm run build ; fi
+    node build/prepare-translation-files.js ; fi
 
+RUN if [ "$BUILD" = true ] ; then \
+    npm run build ; fi
 
 # When set to true, tests are run and coverage will be uploaded to CodeClimate
 ARG UPLOAD_COVERAGE=true
 RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
-    apt update && apt install -y curl &&\
+    apt install -y curl &&\
     curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter &&\
     chmod +x ./cc-test-reporter &&\
     ./cc-test-reporter before-build ; fi
 
 ARG TZ
 RUN if [ -n "${TZ}" ] ; then \
-    apt update && apt install -y tzdata && \
+    apt install -y tzdata && \
     cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime && \
     echo "$TZ" >  /etc/timezone ; fi
 
 # When set to true, chromium is installed an tests are executed
 ARG RUN_TESTS=false
-ARG CHROME_BIN=/usr/bin/chromium-browser
+ARG CHROME_BIN=/usr/bin/chromium
 # Install chromium for karma, lint code and run tests
 RUN if [ "$RUN_TESTS" = true ] || [ "$UPLOAD_COVERAGE" = true ] ; then \
-    apt update && apt install -y chromium &&\
-    npm run lint &&\
-    npm run test-ci ; fi
+      apt install -y chromium ; fi
 
-# The following arguments need to be provided for the code climate test reporter to work correctly
-# The commit sha
-ARG GIT_COMMIT_SHA
-# The branch
-ARG GIT_BRANCH
-# The time of the commit, can be extracted with `git log -1 --pretty=format:%ct`
-ARG GIT_COMMITTED_AT
-# The ID for the test reporter, can be found on CodeCoverage
-ARG CC_TEST_REPORTER_ID
-RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --debug ; fi
+RUN if [ "$RUN_TESTS" = true ] || [ "$UPLOAD_COVERAGE" = true ] ; then \
+      npm run lint ; fi
+
+RUN if [ "$RUN_TESTS" = true ] || [ "$UPLOAD_COVERAGE" = true ] ; then \
+      npm run test-ci ; fi
+
+## The following arguments need to be provided for the code climate test reporter to work correctly
+## The commit sha
+#ARG GIT_COMMIT_SHA
+## The branch
+#ARG GIT_BRANCH
+## The time of the commit, can be extracted with `git log -1 --pretty=format:%ct`
+#ARG GIT_COMMITTED_AT
+## The ID for the test reporter, can be found on CodeCoverage
+#ARG CC_TEST_REPORTER_ID
+#RUN if [ "$UPLOAD_COVERAGE" = true ] ; then ./cc-test-reporter after-build --debug ; fi
 
 # Information required to upload the sourcemap to sentry
 # If not set, nothing is uploaded
