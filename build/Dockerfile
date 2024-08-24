@@ -23,9 +23,7 @@ WORKDIR /tmp
 ARG CHROMIUM_VERSION=121.0.6167.139-1~deb12u1
 RUN curl -o chromium-common.deb https://ftp.debian.org/debian/pool/main/c/chromium/chromium-common_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
 RUN curl -o chromium.deb https://ftp.debian.org/debian/pool/main/c/chromium/chromium_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
-RUN apt-get install -y ./chromium-common.deb
-RUN apt-get install -y ./chromium.deb
-RUN apt-get install -y build-essential git libssl-dev
+RUN apt-get install -y ./chromium-common.deb ./chromium.deb build-essential git libssl-dev
 
 SHELL ["/bin/bash", "--login", "-c"]
 RUN curl -o- install_nvm.sh https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
