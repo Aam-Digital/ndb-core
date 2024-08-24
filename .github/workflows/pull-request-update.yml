@@ -49,8 +49,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: test
           cache-from: type=gha
+          # todo upload coverage
           build-args: |
-#  todo upload coverage, just for amd64
             UPLOAD_COVERAGE=${{ false }}
             GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
             GIT_BRANCH=${{ github.head_ref }}
