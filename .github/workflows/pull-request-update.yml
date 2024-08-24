@@ -56,7 +56,6 @@ jobs:
             GIT_BRANCH=${{ github.head_ref }}
             GIT_COMMITTED_AT=${{ env.TIME }}
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
-            BUILD=${{ false }}
 
       - name: Run tests with timezone
         if: ${{ matrix.platform == 'linux/amd64' }}
@@ -66,13 +65,11 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          target: builder
+          target: test
           cache-from: type=gha
-          cache-to: type=gha,mode=max
           build-args: |
-            RUN_TESTS=${{ true }}
+            UPLOAD_COVERAGE=${{ false }}
             TZ=America/Detroit
-            BUILD=${{ false }}
 
   build:
     strategy:
