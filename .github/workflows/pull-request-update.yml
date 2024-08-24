@@ -49,8 +49,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: test
           cache-from: type=gha
-          cache-to: type=gha,mode=max
           build-args: |
+#  todo upload coverage, just for amd64
             UPLOAD_COVERAGE=${{ false }}
             GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
             GIT_BRANCH=${{ github.head_ref }}
@@ -58,46 +58,21 @@ jobs:
             CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
             BUILD=${{ false }}
 
-#  test-with-timezone:
-#    runs-on: ubuntu-latest
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        platform:
-#          - linux/amd64
-#          # - linux/arm64 todo use arm64 chrome
-#    steps:
-#      - name: Checkout repository files
-#        uses: actions/checkout@v4
-#
-#      - name: Prepare Platform
-#        run: |
-#          platform=${{ matrix.platform }}
-#          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
-#
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v3
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
-#
-#      - name: Get time of commit
-#        run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
-#
-#      - name: Run tests with timezone
-#        uses: docker/build-push-action@v6
-#        with:
-#          platforms: ${{ matrix.platform }}
-#          context: ./
-#          file: ./build/Dockerfile
-#          builder: ${{ steps.buildx.outputs.name }}
-#          target: builder
-#          cache-from: type=gha
-#          cache-to: type=gha,mode=max
-#          build-args: |
-#            RUN_TESTS=${{ true }}
-#            TZ=America/Detroit
-#            BUILD=${{ false }}
+      - name: Run tests with timezone
+        if: ${{ matrix.platform == 'linux/amd64' }}
+        uses: docker/build-push-action@v6
+        with:
+          platforms: ${{ matrix.platform }}
+          context: ./
+          file: ./build/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          target: builder
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            RUN_TESTS=${{ true }}
+            TZ=America/Detroit
+            BUILD=${{ false }}
 
   build:
     strategy:
