@@ -130,7 +130,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           target: build-export
-          outputs: type=tar,dest=build.tar ./tmp/build/
+          outputs: type=tar,dest=./tmp/build/build.tar .
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
