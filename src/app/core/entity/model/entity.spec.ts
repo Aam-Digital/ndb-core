@@ -34,14 +34,14 @@ describe("Entity", () => {
 
   it("rawData() returns only data matching the schema", function () {
     @DatabaseEntity("TestWithIgnoredFieldEntity")
-    class TestEntity extends Entity {
+    class TestWithIgnoredFieldEntity extends Entity {
       @DatabaseField() text: string = "text";
       @DatabaseField() defaultText: string = "default";
       otherText: string = "other Text";
     }
 
     const id = "test1";
-    const entity = new TestEntity(id);
+    const entity = new TestWithIgnoredFieldEntity(id);
 
     const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

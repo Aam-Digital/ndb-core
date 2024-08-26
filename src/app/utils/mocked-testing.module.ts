@@ -2,7 +2,6 @@ import { ModuleWithProviders, NgModule } from "@angular/core";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
-import { User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -26,6 +25,8 @@ import { TEST_USER } from "../core/user/demo-user-generator.service";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { entityAbilityFactory } from "app/core/permissions/ability/testing-entity-ability-factory";
+import { createEntityOfType } from "../core/demo-data/create-entity-of-type";
+import { TestEntity } from "./test-utils/TestEntity";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -71,7 +72,7 @@ import { entityAbilityFactory } from "app/core/permissions/ability/testing-entit
 export class MockedTestingModule {
   static withState(
     loginState = LoginState.LOGGED_IN,
-    data: Entity[] = [new User(TEST_USER)],
+    data: Entity[] = [createEntityOfType("User", TEST_USER)],
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([...data]);
@@ -100,7 +101,7 @@ export class MockedTestingModule {
         },
         {
           provide: CurrentUserSubject,
-          useValue: new BehaviorSubject(new User(TEST_USER)),
+          useValue: new BehaviorSubject(new TestEntity(TEST_USER)),
         },
       ],
     };

@@ -1,7 +1,6 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { RecurringActivity } from "../../model/recurring-activity";
-import { Child } from "../../../children/model/child";
 import { generateEventWithAttendance } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
@@ -9,9 +8,10 @@ import moment from "moment";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
 import { importProvidersFrom } from "@angular/core";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
-const child1 = Child.create("Jack");
-const child2 = Child.create("Jane");
+const child1 = TestEntity.create("Jack");
+const child2 = TestEntity.create("Jane");
 
 const act1 = RecurringActivity.create("Demo Activity");
 act1.participants.push(child1.getId());

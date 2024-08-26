@@ -7,8 +7,8 @@ import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/co
 import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 import moment from "moment";
 import { DataFilter } from "./filters/filters";
-import { Child } from "../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { TestEntity } from "../../utils/test-utils/TestEntity";
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -70,7 +70,7 @@ describe("FilterService", () => {
   });
 
   it("should support patching with array values", () => {
-    const child = new Child();
+    const child = new TestEntity();
     const filter = {
       children: { $elemMatch: { $eq: child.getId() } },
     } as DataFilter<Note>;
@@ -83,14 +83,14 @@ describe("FilterService", () => {
 
   it("should not set properties without a schema", () => {
     const filter = {
-      childId: `${Child.ENTITY_TYPE}:some-id`,
+      childId: `${TestEntity.ENTITY_TYPE}:some-id`,
       isActive: false,
     } as DataFilter<ChildSchoolRelation>;
 
     const relation = new ChildSchoolRelation();
     service.alignEntityWithFilter(relation, filter);
 
-    expect(relation.childId).toEqual(`${Child.ENTITY_TYPE}:some-id`);
+    expect(relation.childId).toEqual(`${TestEntity.ENTITY_TYPE}:some-id`);
     expect(relation.isActive).toBeTrue();
   });
 

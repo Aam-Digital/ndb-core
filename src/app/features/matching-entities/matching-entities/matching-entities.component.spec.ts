@@ -11,7 +11,6 @@ import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { MatchingEntitiesConfig } from "./matching-entities-config";
 import { Entity } from "../../../core/entity/model/entity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -20,10 +19,11 @@ import { BehaviorSubject, NEVER, Subject } from "rxjs";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { GeoLocation } from "../../location/location.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -40,8 +40,8 @@ describe("MatchingEntitiesComponent", () => {
       newEntityType: ChildSchoolRelation.ENTITY_TYPE,
     },
     matchActionLabel: "match test",
-    rightSide: { entityType: "Child" },
-    leftSide: { entityType: "School" },
+    rightSide: { entityType: TestEntity.ENTITY_TYPE },
+    leftSide: { entityType: TestEntity.ENTITY_TYPE },
   };
 
   const LOCATION_1: GeoLocation = {
@@ -65,9 +65,7 @@ describe("MatchingEntitiesComponent", () => {
         { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(MatchingEntitiesComponent);
     component = fixture.componentInstance;
   }));
@@ -109,16 +107,16 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should assign config entity to the selected entity of the side not having a table with select options", fakeAsync(() => {
-    const testEntity = new Entity("1");
+    const testEntity = new TestEntity("1");
     component.entity = testEntity;
-    component.rightSide = { entityType: "Child" };
+    component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
     component.onMatch = testConfig.onMatch;
     fixture.detectChanges();
     tick();
 
     expect(component.sideDetails[0].selected).toEqual([testEntity]);
 
-    component.leftSide = { entityType: "Child" };
+    component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
     component.rightSide = {};
     component.ngOnInit();
     tick();
@@ -127,15 +125,18 @@ describe("MatchingEntitiesComponent", () => {
   }));
 
   it("should init details for template including available entities table and its columns", fakeAsync(() => {
-    const testEntity = new Entity();
+    const testEntity = new TestEntity();
     component.entity = testEntity;
-    component.rightSide = { entityType: "Child" };
+    component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
     component.onMatch = testConfig.onMatch;
     component.columns = [
       ["_id", "name"],
       ["_rev", "phone"],
     ];
-    const allChildren: Child[] = [Child.create("1"), Child.create("2")];
+    const allChildren: TestEntity[] = [
+      TestEntity.create("1"),
+      TestEntity.create("2"),
+    ];
     const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
     loadTypeSpy.and.resolveTo(allChildren);
 
@@ -152,15 +153,15 @@ describe("MatchingEntitiesComponent", () => {
     expect(component.sideDetails[0].columns).toEqual(["_id", "_rev"]);
 
     expect(component.sideDetails[1].selected).toBeUndefined();
-    expect(component.sideDetails[1].entityType).toEqual(Child);
-    expect(loadTypeSpy).toHaveBeenCalledWith(Child);
+    expect(component.sideDetails[1].entityType).toEqual(TestEntity);
+    expect(loadTypeSpy).toHaveBeenCalledWith(TestEntity);
     expect(component.sideDetails[1].availableEntities).toEqual(allChildren);
     expect(component.sideDetails[1].columns).toEqual(["name", "phone"]);
   }));
 
   it("should select only one entity at a time in single select mode", fakeAsync(() => {
-    const matchedEntity = Child.create("matched child");
-    const otherMatchedEntity = Child.create("second matched child");
+    const matchedEntity = TestEntity.create("matched child");
+    const otherMatchedEntity = TestEntity.create("second matched child");
 
     Object.assign(component, testConfig);
     component.onMatch = {
@@ -180,8 +181,8 @@ describe("MatchingEntitiesComponent", () => {
   }));
 
   it("should select multiple entities in multiSelect mode", fakeAsync(() => {
-    const matchedEntity = Child.create("matched child");
-    const otherMatchedEntity = Child.create("second matched child");
+    const matchedEntity = TestEntity.create("matched child");
+    const otherMatchedEntity = TestEntity.create("second matched child");
 
     Object.assign(component, testConfig);
     component.onMatch = {
@@ -202,8 +203,8 @@ describe("MatchingEntitiesComponent", () => {
   }));
 
   it("should create a new entity onMatch, with single entity property", fakeAsync(() => {
-    const testEntity = new Entity();
-    const matchedEntity = Child.create("matched child");
+    const testEntity = new TestEntity();
+    const matchedEntity = TestEntity.create("matched child");
     component.entity = testEntity;
     Object.assign(component, testConfig);
     component.onMatch = {
@@ -235,8 +236,8 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should create a new entity onMatch, with multiSelect entity-array property", fakeAsync(() => {
     const testEntity = new Entity();
-    const child1 = Child.create("matched child 1");
-    const child2 = Child.create("matched child 2");
+    const child1 = TestEntity.create("matched child 1");
+    const child2 = TestEntity.create("matched child 2");
 
     Object.assign(component, testConfig);
     component.onMatch = {
@@ -270,10 +271,10 @@ describe("MatchingEntitiesComponent", () => {
   }));
 
   it("should create distance column and publish updates", fakeAsync(() => {
-    Child.schema.set("address", { dataType: "location" });
-    component.entity = new Child();
+    TestEntity.schema.set("address", { dataType: "location" });
+    component.entity = new TestEntity();
     component.columns = [[undefined, "distance"]];
-    component.leftSide = { entityType: Child };
+    component.leftSide = { entityType: TestEntity };
     component.onMatch = testConfig.onMatch;
 
     fixture.detectChanges();
@@ -295,7 +296,7 @@ describe("MatchingEntitiesComponent", () => {
       (res) => (newCoordinates = res),
     );
 
-    const compare = new Child();
+    const compare = new TestEntity();
     compare["address"] = LOCATION_1;
 
     component.sideDetails[0].selectMatch(compare);
@@ -304,17 +305,17 @@ describe("MatchingEntitiesComponent", () => {
       (compare["address"] as GeoLocation)?.geoLookup,
     ]);
 
-    Child.schema.delete("address");
+    TestEntity.schema.delete("address");
   }));
 
   it("should select an entity if it has been selected in the map", fakeAsync(() => {
     component.entity = new Entity();
-    component.rightSide = { entityType: "Child" };
+    component.rightSide = { entityType: TestEntity.ENTITY_TYPE };
     component.onMatch = testConfig.onMatch;
     fixture.detectChanges();
     tick();
 
-    const child = new Child();
+    const child = new TestEntity();
     component.entityInMapClicked(child);
 
     expect(component.sideDetails[1].selected).toEqual([child]);
@@ -324,13 +325,13 @@ describe("MatchingEntitiesComponent", () => {
     Object.assign(component, testConfig);
     fixture.detectChanges();
     tick();
-    const selectedChild = new Child();
+    const selectedChild = new TestEntity();
     component.sideDetails[1].selectMatch(selectedChild);
     expect(component.sideDetails[1].selected).toEqual([selectedChild]);
 
     const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
     const newComponent = newFixture.componentInstance;
-    newComponent.entity = new Entity();
+    newComponent.entity = new TestEntity();
     Object.assign(newComponent, testConfig);
     newFixture.detectChanges();
     tick();
@@ -340,15 +341,14 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should update the distance calculation when the selected map properties change", fakeAsync(() => {
     Object.assign(component, testConfig);
-    Child.schema.set("address", { dataType: "location" });
-    Child.schema.set("otherAddress", { dataType: "location" });
-    School.schema.set("address", { dataType: "location" });
-    const leftEntity = new Child();
+    TestEntity.schema.set("address", { dataType: "location" });
+    TestEntity.schema.set("otherAddress", { dataType: "location" });
+    const leftEntity = new TestEntity();
     leftEntity["address"] = LOCATION_1;
     leftEntity["otherAddress"] = LOCATION_2;
-    const rightEntity1 = new School();
+    const rightEntity1 = new TestEntity();
     rightEntity1["address"] = LOCATION_1;
-    const rightEntity2 = new School();
+    const rightEntity2 = new TestEntity();
     rightEntity2["address"] = LOCATION_2;
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo([
       rightEntity1,
@@ -361,7 +361,7 @@ describe("MatchingEntitiesComponent", () => {
     };
     component.rightSide = {
       columns: ["distance"],
-      entityType: "School",
+      entityType: TestEntity.ENTITY_TYPE,
     };
     fixture.detectChanges();
     tick();
@@ -386,7 +386,7 @@ describe("MatchingEntitiesComponent", () => {
     lastLeftValue = undefined;
     lastRightValue = undefined;
     // select only one property
-    component.displayedLocationProperties["Child"] = ["address"];
+    component.displayedLocationProperties[TestEntity.ENTITY_TYPE] = ["address"];
     component.updateMarkersAndDistances();
 
     expect(lastLeftValue).toEqual([]);
@@ -407,7 +407,7 @@ describe("MatchingEntitiesComponent", () => {
     lastLeftValue = undefined;
     lastRightValue = undefined;
     //select both properties
-    component.displayedLocationProperties["Child"] = [
+    component.displayedLocationProperties[TestEntity.ENTITY_TYPE] = [
       "address",
       "otherAddress",
     ];
@@ -415,36 +415,41 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(lastLeftValue).toEqual([
       (rightEntity1["address"] as GeoLocation)?.geoLookup,
+      (rightEntity1["otherAddress"] as GeoLocation)?.geoLookup,
     ]);
     expect(lastRightValue).toEqual([
       (leftEntity["address"] as GeoLocation)?.geoLookup,
       (leftEntity["otherAddress"] as GeoLocation)?.geoLookup,
     ]);
 
-    Child.schema.delete("otherAddress");
-    Child.schema.delete("address");
-    School.schema.delete("address");
+    TestEntity.schema.delete("otherAddress");
+    TestEntity.schema.delete("address");
+    TestEntity.schema.delete("address");
     flush();
   }));
 
+  @DatabaseEntity("OtherEntity")
+  class OtherEntity extends Entity {}
+
   it("should only display filtered entities in the map", fakeAsync(() => {
-    const c1 = new Child();
-    c1.status = "active";
-    const c2 = new Child();
-    c2.status = "inactive";
-    c2.dropoutDate = new Date();
-    const c3 = new Child();
-    c3.status = "inactive";
-    const other = new School();
+    const c1 = new TestEntity();
+    c1.name = "active";
+    const c2 = new TestEntity();
+    c2.name = "inactive";
+    c2.category = { id: "x", label: "inactive" };
+    const c3 = new TestEntity();
+    c3.name = "inactive";
+    const other = new OtherEntity();
     TestBed.inject(EntityMapperService).saveAll([c1, c2, c3, other]);
     tick();
+
     component.leftSide = {
-      entityType: "Child",
-      prefilter: { dropoutDate: { $exists: false } } as any,
-      columns: ["status"],
+      entityType: TestEntity.ENTITY_TYPE,
+      prefilter: { category: { $exists: false } } as any,
+      columns: ["name"],
     };
     component.rightSide = {
-      entityType: "School",
+      entityType: OtherEntity.ENTITY_TYPE,
       columns: ["_id"],
     };
     component.onMatch = testConfig.onMatch;
@@ -458,7 +463,7 @@ describe("MatchingEntitiesComponent", () => {
     ]);
 
     component.applySelectedFilters(component.sideDetails[0], {
-      status: "active",
+      name: "active",
     } as any);
 
     expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
@@ -469,14 +474,14 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should display map if location properties are available", fakeAsync(() => {
     // Clean-up child schema before running test
-    Child.schema.forEach((schema, name) => {
+    TestEntity.schema.forEach((schema, name) => {
       if (schema.dataType === "location") {
-        Child.schema.delete(name);
+        TestEntity.schema.delete(name);
       }
     });
     component.mapVisible = false;
-    component.entity = new Child();
-    component.leftSide = { entityType: Child };
+    component.entity = new TestEntity();
+    component.leftSide = { entityType: TestEntity.ENTITY_TYPE };
     component.onMatch = testConfig.onMatch;
 
     fixture.detectChanges();
@@ -484,14 +489,14 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(component.mapVisible).toBeFalse();
 
-    Child.schema.set("address", { dataType: "location" });
+    TestEntity.schema.set("address", { dataType: "location" });
 
     component.ngOnInit();
     tick();
 
     expect(component.mapVisible).toBeTrue();
 
-    Child.schema.delete("address");
+    TestEntity.schema.delete("address");
   }));
 
   it("should not alter the config object", fakeAsync(() => {
@@ -500,12 +505,18 @@ describe("MatchingEntitiesComponent", () => {
         ["name", "name"],
         ["projectNumber", "distance"],
       ],
-      rightSide: { entityType: "School", columns: ["name", "distance"] },
-      leftSide: { entityType: "Child", columns: ["name", "distance"] },
+      rightSide: {
+        entityType: TestEntity.ENTITY_TYPE,
+        columns: ["name", "distance"],
+      },
+      leftSide: {
+        entityType: TestEntity.ENTITY_TYPE,
+        columns: ["name", "distance"],
+      },
       onMatch: testConfig.onMatch,
     };
-    Child.schema.set("address", { dataType: "location" });
-    School.schema.set("address", { dataType: "location" });
+    TestEntity.schema.set("address1", { dataType: "location" });
+    TestEntity.schema.set("address2", { dataType: "location" });
 
     const configCopy = JSON.parse(JSON.stringify(config));
     routeData.next({ config: configCopy });
@@ -515,8 +526,8 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(configCopy).toEqual(config);
 
-    Child.schema.delete("address");
-    School.schema.delete("address");
+    TestEntity.schema.delete("address1");
+    TestEntity.schema.delete("address2");
   }));
 
   it("should infer multiSelect mode from onMatch's entity schema", fakeAsync(() => {

@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../dynamic-components";
 import { coreComponents } from "./core-components";
-import { User } from "./user/user";
 import { Config } from "./config/config";
 import { StringDatatype } from "./basic-datatypes/string/string.datatype";
 import { DefaultDatatype } from "./entity/default-datatype/default.datatype";
@@ -42,7 +41,7 @@ import { SessionSubject } from "./session/auth/session-info";
   imports: [CommonModule],
 })
 export class CoreModule {
-  static databaseEntities = [Entity, User, Config, TimePeriod];
+  static databaseEntities = [Entity, Config, TimePeriod];
 
   constructor(components: ComponentRegistry) {
     components.addAll(coreComponents);

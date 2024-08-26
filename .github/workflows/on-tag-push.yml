@@ -1,0 +1,130 @@
+name: New Tag
+on:
+  push:
+    tags:
+      - "*"
+env:
+  REGISTRY_IMAGE: aamdigital/ndb-server
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+        os:
+          - ubuntu-latest
+          - [ self-hosted, Linux, ARM64 ]
+        exclude:
+          - platform: linux/arm64
+            os: ubuntu-latest
+          - platform: linux/amd64
+            os: [ self-hosted, Linux, ARM64 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+
+      - name: Extract tag
+        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Prepare Platform
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          platforms: ${{ matrix.platform }}
+          context: ./
+          file: ./build/Dockerfile
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          build-args: |
+            APP_VERSION=${{ env.TAG }}
+#            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }} // todo: this is not good.
+#            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+#            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+        env:
+          SOURCE_DATE_EPOCH: 0
+
+      - name: Export digest
+        run: |
+          mkdir -p ./tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "./tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ env.PLATFORM_PAIR }}
+          path: ./tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ./tmp/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Create manifest list and push
+        working-directory: ./tmp/digests
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+
+      - name: If new release, delete pre-release tags from Docker Hub
+        if: ${{ ! contains(env.TAG, '-master.') }}
+        run: |
+          token=$(curl -s -L 'https://hub.docker.com/v2/users/login' -H 'Content-Type: application/json' -d '{ "username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}')
+          token=${token#*\"token\":\"}
+          token=${token%%\"*}
+          curl -s -L "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags?page_size=100" -H "Authorization: Bearer $token" | jq '.results[].name | select(test("-master.")?)' | xargs -n1 -I %TAG curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/%TAG" -H "Authorization: Bearer $token"

@@ -9,7 +9,7 @@ import {
 import { ChildrenService } from "../../../children/children.service";
 import { NotesDashboardComponent } from "./notes-dashboard.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { RecurringActivity } from "../../../attendance/model/recurring-activity";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("NotesDashboardComponent", () => {
   let component: NotesDashboardComponent;
@@ -121,7 +121,7 @@ describe("NotesDashboardComponent", () => {
       mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
         new Map(),
       );
-      const entity = RecurringActivity.ENTITY_TYPE;
+      const entity = TestEntity.ENTITY_TYPE;
 
       component.entity = entity;
       component.mode = "with-recent-notes";

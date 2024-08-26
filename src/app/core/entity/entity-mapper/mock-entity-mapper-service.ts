@@ -117,17 +117,33 @@ export class MockEntityMapperService extends EntityMapperService {
     entityType: EntityConstructor<T> | string,
     id: string,
   ): Promise<T> {
-    const ctor = this.resolveConstructor(entityType);
-    const type = new ctor().getType();
+    let type = this.getTypeViaRegistry(entityType);
     return this.get(type, id) as T;
   }
 
   async loadType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
   ): Promise<T[]> {
-    const ctor = this.resolveConstructor(entityType);
-    const type = new ctor().getType();
+    let type = this.getTypeViaRegistry(entityType);
     return this.getAll(type);
+  }
+
+  private getTypeViaRegistry(entityType: EntityConstructor | string): string {
+    let type: string;
+    try {
+      const ctor = this.resolveConstructor(entityType);
+      type = new ctor().getType();
+    } catch (e) {
+      console.error(e);
+    }
+    if (!type && typeof entityType === "string") {
+      console.warn(
+        "No constructor found for type; fallback for MockEntityMapper still allows to load",
+        entityType,
+      );
+      type = entityType;
+    }
+    return type;
   }
 
   async save<T extends Entity>(

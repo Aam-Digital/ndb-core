@@ -1,6 +1,5 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { UserSecurityComponent } from "./user-security.component";
-import { User } from "../user";
 import { importProvidersFrom } from "@angular/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
@@ -10,6 +9,7 @@ import {
   SessionInfo,
   SessionSubject,
 } from "app/core/session/auth/session-info";
+import { Entity } from "app/core/entity/model/entity";
 
 export default {
   title: "Core/Admin/User Security",
@@ -49,5 +49,5 @@ const Template: StoryFn<UserSecurityComponent> = (
 
 export const NotRegistered = Template.bind({});
 NotRegistered.args = {
-  entity: new User(),
+  entity: new Entity(),
 };

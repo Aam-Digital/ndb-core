@@ -15,10 +15,13 @@ import { UpdateMetadata } from "../../entity/model/update-metadata";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FileService } from "../../../features/file/file.service";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 
 describe("DuplicateRecordsService", () => {
   let service: DuplicateRecordService;
   let entityMapperService: EntityMapperService;
+
+  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
 
   @DatabaseEntity("DuplicateTestEntity")
   class DuplicateTestEntity extends Entity {
@@ -41,6 +44,7 @@ describe("DuplicateRecordsService", () => {
         { provide: MatDialog, useValue: {} },
         { provide: MatSnackBar, useValue: {} },
         { provide: FileService, useValue: {} },
+        { provide: KeycloakAuthService, useValue: mockAuthService },
         ComponentRegistry,
       ],
     });

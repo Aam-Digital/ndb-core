@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { Child } from "../../model/child";
+import { Entity } from "../../../../core/entity/model/entity";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgForOf, NgIf } from "@angular/common";
 import { FaDynamicIconComponent } from "../../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -25,14 +25,15 @@ import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/en
 })
 export class ChildBlockTooltipComponent implements OnInit {
   /** The entity to show the tooltip for */
-  @Input() entity: Child;
-  icon = Child.icon;
+  @Input() entity: Entity;
+  icon: string;
   imgPath: SafeUrl;
 
   constructor(private fileService: FileService) {}
 
   ngOnInit() {
-    if (this.entity.photo) {
+    this.icon = this.entity?.getConstructor().icon;
+    if (this.entity?.["photo"]) {
       this.fileService
         .loadFile(this.entity, "photo")
         .subscribe((res) => (this.imgPath = res));

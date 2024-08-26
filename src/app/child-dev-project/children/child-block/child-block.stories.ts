@@ -1,8 +1,8 @@
 import { ChildBlockComponent } from "./child-block.component";
-import { Child } from "../model/child";
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 export default {
   title: "Features/Participant/ChildBlock",
@@ -14,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const demoChild = new Child("1");
+const demoChild = createEntityOfType("Child", "1");
 demoChild.name = "John Doe";
 demoChild.projectNumber = "99";
 demoChild.phone = "+49 199 1234567";
@@ -30,7 +30,8 @@ Primary.args = {
   entity: demoChild,
 };
 
-const demoInactiveChild = Child.create("John Doe");
+const demoInactiveChild = createEntityOfType("Child");
+demoInactiveChild.name = "John Doe";
 demoInactiveChild.projectNumber = "42";
 demoInactiveChild.status = "Dropout";
 
