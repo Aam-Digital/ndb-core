@@ -1,0 +1,13 @@
+.mapping-table {
+  width: 100%;
+  max-width: 800px;
+}
+
+.mapping-table th {
+  text-align: left;
+}
+
+:host ::ng-deep mat-form-field {
+  width: 100%;
+  max-width: 400px;
+}
