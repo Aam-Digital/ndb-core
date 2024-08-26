@@ -130,7 +130,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           target: build-export
-          outputs: type=tar,dest=./tmp/build/build.tar .
+          outputs: type=tar,dest=./tmp/build/build_${{ matrix.platform }}.tar .
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
@@ -156,7 +156,7 @@ jobs:
           ls -lsa
           ls -lsa ./tmp/build
           ls -lsa ./tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
+          digest="${{ steps.build-image.outputs.digest }}"
           touch "./tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
