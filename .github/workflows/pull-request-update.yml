@@ -126,7 +126,7 @@ jobs:
           file: ./build/Dockerfile
           target: app
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true,dest=- . > ./temp/build/build.tar
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true,unpack=true,store=true
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
@@ -134,6 +134,7 @@ jobs:
 
       - name: Export digest
         run: |
+          ls -lsa
           mkdir -p ./tmp/digests
           digest="${{ steps.build.outputs.digest }}"
           touch "./tmp/digests/${digest#sha256:}"
