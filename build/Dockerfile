@@ -1,8 +1,16 @@
 # This docker image can be used to run the application locally.
-# To use it only Docker needs to be installed locally
-# Run the following commands from the root folder to build, run and kill the application
-# >> docker build -f build/Dockerfile -t aam-digital . TODO update docs
-# >> docker run -p=80:80 aam-digital TODO update docs
+# To use it only Docker needs to be installed locally.
+
+# Run the following commands from the ndb-core root folder:
+## Run tests:
+# >> docker build --target test -f build/Dockerfile -t aam-digital .
+
+## Build the application:
+# >> docker build --target build -f build/Dockerfile -t aam-digital .
+
+## Build and start application container:
+# >> docker build --target app -f build/Dockerfile -t aam-digital .
+# >> docker run -p=80:80 aam-digital
 
 FROM node:lts-slim AS base
 COPY package.json ./opt/app/package.json
