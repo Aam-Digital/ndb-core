@@ -49,19 +49,29 @@ describe("SyncService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should restart the sync if it fails at one point", fakeAsync(() => {
+  /**
+   * Set up a mocked db and localDb for tests and override the TestBed service provider.
+   */
+  function mockPouchDatabaseService(): {
+    mockLocalDb: jasmine.SpyObj<PouchDB.Database>;
+    db: PouchDatabase;
+  } {
     mockSyncStateSubject.next(SyncState.UNSYNCED);
     const mockLocalDb = jasmine.createSpyObj(["sync"]);
-    spyOn(
-      TestBed.inject(Database) as PouchDatabase,
-      "getPouchDB",
-    ).and.returnValue(mockLocalDb);
+    mockLocalDb.sync.and.resolveTo({});
+
+    const db = TestBed.inject(Database) as PouchDatabase;
+    spyOn(db, "getPouchDB").and.returnValue(mockLocalDb);
+    return { mockLocalDb, db };
+  }
+
+  it("should restart the sync if it fails at one point", fakeAsync(() => {
+    const { mockLocalDb } = mockPouchDatabaseService();
 
     loginState.next(LoginState.LOGGED_IN);
 
     service.startSync();
 
-    mockLocalDb.sync.and.resolveTo({});
     tick(1000);
     expect(mockLocalDb.sync).toHaveBeenCalled();
 
@@ -81,10 +91,7 @@ describe("SyncService", () => {
   }));
 
   it("should sync immediately when local db has changes", fakeAsync(() => {
-    mockSyncStateSubject.next(SyncState.UNSYNCED);
-    const mockLocalDb = jasmine.createSpyObj(["sync"]);
-    const db = TestBed.inject(Database) as PouchDatabase;
-    spyOn(db, "getPouchDB").and.returnValue(mockLocalDb);
+    const { mockLocalDb, db } = mockPouchDatabaseService();
     const mockChanges = new Subject();
     spyOn(db, "changes").and.returnValue(mockChanges);
 
@@ -92,7 +99,6 @@ describe("SyncService", () => {
 
     service.startSync();
 
-    mockLocalDb.sync.and.resolveTo({});
     tick(1000);
     expect(mockLocalDb.sync).toHaveBeenCalled();
     mockLocalDb.sync.calls.reset();
@@ -107,11 +113,7 @@ describe("SyncService", () => {
   }));
 
   it("should skip sync calls when offline", fakeAsync(() => {
-    mockSyncStateSubject.next(SyncState.UNSYNCED);
-    const mockLocalDb = jasmine.createSpyObj(["sync"]);
-    mockLocalDb.sync.and.resolveTo({});
-    const db = TestBed.inject(Database) as PouchDatabase;
-    spyOn(db, "getPouchDB").and.returnValue(mockLocalDb);
+    const { mockLocalDb } = mockPouchDatabaseService();
 
     mockNavigator.onLine = false;
 
@@ -125,5 +127,30 @@ describe("SyncService", () => {
     expect(mockLocalDb.sync).toHaveBeenCalled();
 
     stopPeriodicTimer();
+  }));
+
+  it("should not start additional syncs while a previous sync is still running", fakeAsync(() => {
+    const LONG_SYNC_TIME = 100000;
+
+    const { mockLocalDb } = mockPouchDatabaseService();
+    mockLocalDb.sync.and.callFake(
+      // @ts-ignore
+      async () => await new Promise((r) => setTimeout(r, LONG_SYNC_TIME)),
+    );
+
+    service.startSync();
+
+    tick(SyncService.SYNC_INTERVAL);
+    expect(mockLocalDb.sync).toHaveBeenCalledTimes(1);
+
+    tick(SyncService.SYNC_INTERVAL);
+    expect(mockLocalDb.sync).toHaveBeenCalledTimes(1);
+
+    tick(LONG_SYNC_TIME);
+    expect(mockLocalDb.sync).toHaveBeenCalledTimes(2);
+
+    // stop periodic timer:
+    service.liveSyncEnabled = false;
+    tick(LONG_SYNC_TIME);
   }));
 });
