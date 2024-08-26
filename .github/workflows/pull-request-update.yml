@@ -130,7 +130,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           target: build-export
-          outputs: type=tar,dest=./tmp/build/build_${{ env.PLATFORM_PAIR }}.tar .
+          outputs: type=tar,dest=/opt/app/dist > ./tmp/build/build_${{ env.PLATFORM_PAIR }}.tar
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
@@ -175,7 +175,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  upload-coverage:
+  upload-sourcemap:
     runs-on: ubuntu-latest
     needs:
       - build
