@@ -170,7 +170,7 @@ jobs:
       - name: Upload build archive
         uses: actions/upload-artifact@v4
         with:
-          name: digests-${{ env.PLATFORM_PAIR }}
+          name: build-${{ env.PLATFORM_PAIR }}
           path: ./tmp/build/*
           if-no-files-found: error
           retention-days: 1
@@ -184,6 +184,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./tmp/build
+          pattern: build-*
       - name: List
         run: |
           ls -lsa ./tmp/build
