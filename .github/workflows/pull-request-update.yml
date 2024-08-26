@@ -126,11 +126,17 @@ jobs:
           file: ./build/Dockerfile
           target: app
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true,dest=./tmp/image.tar
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
           SOURCE_DATE_EPOCH: 0
+
+      - name: Extract Source Maps and push to Sentry
+        run: |
+          ls -lsa
+          ls -lsa ./tmp/
+          ctr image mount ./tmp/image.tar
 
       - name: Export digest
         run: |
