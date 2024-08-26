@@ -117,6 +117,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Create export directories
+        run: |
+          mkdir -p ./tmp/build
+          mkdir -p ./tmp/digests
+
       - name: Build
         id: build
         uses: docker/build-push-action@v6
@@ -125,7 +130,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           target: build-export
-          outputs: type=tar,dest=build.tar ./temp/build/
+          outputs: type=tar,dest=build.tar ./tmp/build/
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
@@ -149,7 +154,8 @@ jobs:
       - name: Export digest
         run: |
           ls -lsa
-          mkdir -p ./tmp/digests
+          ls -lsa ./tmp/build
+          ls -lsa ./tmp/digests
           digest="${{ steps.build.outputs.digest }}"
           touch "./tmp/digests/${digest#sha256:}"
 
