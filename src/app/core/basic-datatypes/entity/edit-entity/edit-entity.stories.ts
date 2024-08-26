@@ -7,14 +7,13 @@ import {
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
-import { User } from "../../../user/user";
 import { FormComponent } from "../../../entity-details/form/form.component";
 import { importProvidersFrom } from "@angular/core";
 
-const testUser = new User("1");
-testUser.name = "test entity";
-const user2 = new User("2");
-user2.name = "other entity";
+const testUser = new Entity("1");
+testUser["name"] = "test entity";
+const user2 = new Entity("2");
+user2["name"] = "other entity";
 
 export default {
   title: "Core/Entities/Properties/entity/EditEntity",
@@ -53,13 +52,13 @@ class TestEntity extends Entity {
   @DatabaseField({
     dataType: "entity",
     isArray: true,
-    additional: User.ENTITY_TYPE,
+    additional: Entity.ENTITY_TYPE,
   })
   relatedEntities: string[];
 
   @DatabaseField({
     dataType: "entity",
-    additional: User.ENTITY_TYPE,
+    additional: Entity.ENTITY_TYPE,
   })
   relatedEntity: string;
 

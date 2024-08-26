@@ -1,7 +1,5 @@
 import { Injectable } from "@angular/core";
 import { Database } from "../../database/database";
-import { User } from "../../user/user";
-import { Papa } from "ngx-papaparse";
 import { Config } from "../../config/config";
 
 /**
@@ -11,10 +9,7 @@ import { Config } from "../../config/config";
   providedIn: "root",
 })
 export class BackupService {
-  constructor(
-    private db: Database,
-    private papa: Papa,
-  ) {}
+  constructor(private db: Database) {}
 
   /**
    * Creates an array holding all elements of the database.
@@ -25,18 +20,15 @@ export class BackupService {
   }
 
   /**
-   * Removes all but the user entities of the database
+   * Removes all but the config of the database
    *
    * @returns Promise<any> a promise that resolves after all remove operations are done
    */
   async clearDatabase(): Promise<void> {
     const allDocs = await this.db.getAll();
     for (const row of allDocs) {
-      if (
-        row._id.startsWith(User.ENTITY_TYPE + ":") ||
-        row._id.startsWith(Config.ENTITY_TYPE + ":")
-      ) {
-        // skip User entities and config in order to not break login!
+      if (row._id.startsWith(Config.ENTITY_TYPE + ":")) {
+        // skip config in order to not break login!
         continue;
       }
       await this.db.remove(row);

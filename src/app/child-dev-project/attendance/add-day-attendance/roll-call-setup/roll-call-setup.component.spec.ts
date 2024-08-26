@@ -14,7 +14,7 @@ import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TEST_USER } from "../../../../core/user/demo-user-generator.service";
-import { User } from "../../../../core/user/user";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
@@ -66,10 +66,10 @@ describe("RollCallSetupComponent", () => {
 
     expect(component.existingEvents.length).toBe(2);
     expect(component.existingEvents[0].authors).toEqual([
-      `${User.ENTITY_TYPE}:${TEST_USER}`,
+      `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
     ]);
     expect(component.existingEvents[1].authors).toEqual([
-      `${User.ENTITY_TYPE}:${TEST_USER}`,
+      `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
     ]);
   }));
 

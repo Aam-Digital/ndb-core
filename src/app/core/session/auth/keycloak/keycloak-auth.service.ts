@@ -6,9 +6,9 @@ import { SessionInfo } from "../session-info";
 import { KeycloakEventType, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
 import { Entity } from "../../../entity/model/entity";
-import { User } from "../../../user/user";
 import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
+import { switchMap } from "rxjs/operators";
 
 /**
  * Handles the remote session with keycloak
@@ -105,7 +105,8 @@ export class KeycloakAuthService {
     if (parsedToken.username) {
       sessionInfo.entityId = parsedToken.username.includes(":")
         ? parsedToken.username
-        : Entity.createPrefixedId(User.ENTITY_TYPE, parsedToken.username);
+        : // fallback for legacy config: manually add "User" entity prefix
+          Entity.createPrefixedId("User", parsedToken.username);
     } else {
       Logging.debug(
         `User not linked with an entity (userId: ${sessionInfo.id} | ${sessionInfo.name})`,
@@ -166,6 +167,16 @@ export class KeycloakAuthService {
 
   createUser(user: Partial<KeycloakUserDto>): Observable<any> {
     return this.httpClient.post(`${environment.account_url}/account`, user);
+  }
+
+  deleteUser(username: string): Observable<any> {
+    return this.getUser(username).pipe(
+      switchMap((value) =>
+        this.httpClient.delete(
+          `${environment.account_url}/account/${value.id}`,
+        ),
+      ),
+    );
   }
 
   updateUser(userId: string, user: Partial<KeycloakUserDto>): Observable<any> {

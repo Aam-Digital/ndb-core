@@ -1,14 +1,14 @@
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-import { Child } from "../../children/model/child";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { NEVER } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-function generateTestNote(forChildren: Child[]) {
+function generateTestNote(forChildren: TestEntity[]) {
   const testNote = Note.create(new Date(), "test note");
   testNote.category = {
     _ordinal: 0,
@@ -31,7 +31,11 @@ describe("NoteDetailsComponent", () => {
   let testNote: Note;
 
   beforeEach(waitForAsync(() => {
-    const children = [new Child("1"), new Child("2"), new Child("3")];
+    const children = [
+      new TestEntity("1"),
+      new TestEntity("2"),
+      new TestEntity("3"),
+    ];
     testNote = generateTestNote(children);
 
     TestBed.configureTestingModule({

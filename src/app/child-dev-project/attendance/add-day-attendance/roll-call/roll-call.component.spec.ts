@@ -9,7 +9,6 @@ import {
 import { RollCallComponent } from "./roll-call.component";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
-import { Child } from "../../../children/model/child";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
@@ -17,6 +16,7 @@ import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "../../../children/children.service";
 import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 const PRESENT = {
   id: "PRESENT",
@@ -37,16 +37,18 @@ describe("RollCallComponent", () => {
   let component: RollCallComponent;
   let fixture: ComponentFixture<RollCallComponent>;
 
-  let participant1: Child, participant2: Child, participant3: Child;
+  let participant1: TestEntity,
+    participant2: TestEntity,
+    participant3: TestEntity;
 
   const dummyChanges = {
     eventEntity: new SimpleChange(undefined, {}, true),
   };
 
   beforeEach(waitForAsync(() => {
-    participant1 = new Child("child1");
-    participant2 = new Child("child2");
-    participant3 = new Child("child3");
+    participant1 = new TestEntity("child1");
+    participant2 = new TestEntity("child2");
+    participant3 = new TestEntity("child3");
 
     TestBed.configureTestingModule({
       imports: [
@@ -230,8 +232,8 @@ describe("RollCallComponent", () => {
   }));
 
   function testParticipantsAreSorted(
-    participantsInput: Child[],
-    expectedParticipantsOrder: Child[],
+    participantsInput: TestEntity[],
+    expectedParticipantsOrder: TestEntity[],
     sortParticipantsBy: string,
   ) {
     const event = new Note();

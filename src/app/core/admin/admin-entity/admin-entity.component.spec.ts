@@ -134,7 +134,6 @@ describe("AdminEntityComponent", () => {
 
   it("should save schema and view config", fakeAsync(() => {
     const newSchemaField: EntitySchemaField = {
-      _isCustomizedField: true,
       label: "New field",
     };
     AdminTestEntity.schema.set("testSaveField", newSchemaField);

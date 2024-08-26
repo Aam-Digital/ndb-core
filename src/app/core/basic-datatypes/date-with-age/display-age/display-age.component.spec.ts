@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayAgeComponent } from "./display-age.component";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { DateWithAge } from "../dateWithAge";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("DisplayAgeComponent", () => {
   let component: DisplayAgeComponent;
@@ -16,7 +16,7 @@ describe("DisplayAgeComponent", () => {
 
     fixture = TestBed.createComponent(DisplayAgeComponent);
     component = fixture.componentInstance;
-    component.entity = new Child();
+    component.entity = new TestEntity();
     fixture.detectChanges();
   });
 
@@ -25,7 +25,7 @@ describe("DisplayAgeComponent", () => {
   });
 
   it("should take the date object of the parent entity", () => {
-    const child = new Child();
+    const child = new TestEntity();
     child.dateOfBirth = new DateWithAge(moment().subtract(5, "years").toDate());
 
     component.entity = child;

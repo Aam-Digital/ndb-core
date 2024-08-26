@@ -3,15 +3,15 @@ import { TestBed } from "@angular/core/testing";
 import { SearchService } from "./search.service";
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Entity } from "../../entity/model/entity";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("SearchService", () => {
   let service: SearchService;
-  const childToStringBefore = Child.toStringAttributes;
+  const childToStringBefore = TestEntity.toStringAttributes;
   const csrToStringBefore = ChildSchoolRelation.toStringAttributes;
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe("SearchService", () => {
   });
 
   afterEach(() => {
-    Child.toStringAttributes = childToStringBefore;
+    TestEntity.toStringAttributes = childToStringBefore;
     ChildSchoolRelation.toStringAttributes = csrToStringBefore;
     return TestBed.inject(Database).destroy();
   });
@@ -47,9 +47,9 @@ describe("SearchService", () => {
 
   it("should allow to search for toStringAttributes that are not the entityId", async () => {
     ChildSchoolRelation.toStringAttributes = ["entityId"];
-    Child.toStringAttributes = ["name"];
-    const c1 = Child.create("first");
-    const c2 = Child.create("second");
+    TestEntity.toStringAttributes = ["name"];
+    const c1 = TestEntity.create("first");
+    const c2 = TestEntity.create("second");
     const r = new ChildSchoolRelation("relation");
 
     await runSearchTest("firs", [c1], [c1, c2, r]);
@@ -57,51 +57,51 @@ describe("SearchService", () => {
   });
 
   it("should only index on database properties", async () => {
-    Child.toStringAttributes = ["schoolId", "name"];
-    const child = Child.create("test");
-    child.schoolId = ["someSchool"];
+    TestEntity.toStringAttributes = ["schoolId", "name"];
+    const child = TestEntity.create("test");
+    child["schoolId"] = ["someSchool"];
 
     await runSearchTest("someSchool", [], [child]);
     await runSearchTest("test", [child]);
   });
 
   it("should not fail if toStringAttribute is not set", async () => {
-    Child.toStringAttributes = ["projectNumber", "name"];
-    const child = Child.create("test");
+    TestEntity.toStringAttributes = ["other", "name"];
+    const child = TestEntity.create("test");
 
     await runSearchTest("test", [child], [child]);
   });
 
   it("should include properties that are marked searchable", async () => {
-    Child.toStringAttributes = ["name"];
-    Child.schema.get("projectNumber").searchable = true;
-    const child = Child.create("test");
-    child.projectNumber = "number";
+    TestEntity.toStringAttributes = ["name"];
+    TestEntity.schema.get("other").searchable = true;
+    const child = TestEntity.create("test");
+    child.other = "number";
 
     await runSearchTest("tes", [child], [child]);
     await runSearchTest("numb", [child]);
 
-    delete Child.schema.get("projectNumber").searchable;
+    delete TestEntity.schema.get("other").searchable;
   });
 
   it("should support search terms with multiple words", async () => {
-    Child.toStringAttributes = ["name", "projectNumber"];
-    const child = Child.create("test");
-    child.projectNumber = "number";
+    TestEntity.toStringAttributes = ["name", "other"];
+    const child = TestEntity.create("test");
+    child.other = "number";
 
     await runSearchTest("tes num", [child], [child]);
   });
 
   it("should allows searches for properties with multiple words", async () => {
-    Child.toStringAttributes = ["name"];
-    const child = Child.create("test name");
+    TestEntity.toStringAttributes = ["name"];
+    const child = TestEntity.create("test name");
 
     await runSearchTest("nam", [child], [child]);
   });
 
   it("should not return the same entity multiple times", async () => {
-    Child.toStringAttributes = ["name"];
-    const child = Child.create("Peter Petersilie");
+    TestEntity.toStringAttributes = ["name"];
+    const child = TestEntity.create("Peter Petersilie");
 
     await runSearchTest("peter", [child], [child]);
   });

@@ -7,7 +7,6 @@ import {
   UntypedFormGroup,
 } from "@angular/forms";
 import { Entity } from "../../entity/model/entity";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
@@ -19,17 +18,16 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./FormConfig";
-import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import moment from "moment";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -92,13 +90,13 @@ describe("EntityFormService", () => {
     TestBed.inject(EntityAbility).update([
       { subject: "all", action: "manage" },
       {
-        subject: "School",
+        subject: TestEntity.ENTITY_TYPE,
         action: "create",
         inverted: true,
-        conditions: { name: "un-permitted school" },
+        conditions: { name: "un-permitted entity" },
       },
     ]);
-    const school = new School();
+    const school = new TestEntity();
 
     const formGroup = new UntypedFormGroup({
       name: new UntypedFormControl("normal school"),
@@ -106,37 +104,50 @@ describe("EntityFormService", () => {
     await service.saveChanges(formGroup, school);
     expect(school.name).toBe("normal school");
 
-    formGroup.patchValue({ name: "un-permitted school" });
+    formGroup.patchValue({ name: "un-permitted entity" });
     const result = service.saveChanges(formGroup, school);
     await expectAsync(result).toBeRejected();
     expect(school.name).toBe("normal school");
   });
 
   it("should create forms with the validators included", () => {
-    const formFields = [{ id: "schoolId" }, { id: "result" }];
-    const formGroup = service.createFormGroup(
-      formFields,
-      new ChildSchoolRelation(),
-    );
+    TestEntity.schema.set("result", {
+      validators: { min: 0, max: 100, required: true },
+    });
 
-    expect(formGroup.invalid).toBeTrue();
-    formGroup.patchValue({ schoolId: "someSchool" });
-    expect(formGroup.valid).toBeTrue();
-    formGroup.patchValue({ result: 101 });
-    expect(formGroup.invalid).toBeTrue();
+    const formFields = [{ id: "name" }, { id: "result" }];
+    const formGroup = service.createFormGroup(formFields, new TestEntity());
+
+    expect(formGroup.valid).toBeFalse();
+
+    // @ts-ignore "result" field was temporarily added for this test
     formGroup.patchValue({ result: 100 });
     expect(formGroup.valid).toBeTrue();
+
+    // @ts-ignore "result" field was temporarily added for this test
+    formGroup.patchValue({ result: 101 });
+    expect(formGroup.valid).toBeFalse();
+
+    TestEntity.schema.delete("result");
   });
 
   it("should use create permissions to disable fields when creating a new entity", () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
-      { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
-      { subject: "Child", action: "update", fields: ["name"] },
-      { subject: "Child", action: "create", fields: ["dateOfBirth"] },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "read",
+        fields: ["name", "dateOfBirth"],
+      },
+      { subject: TestEntity.ENTITY_TYPE, action: "update", fields: ["name"] },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "create",
+        fields: ["dateOfBirth"],
+      },
     ]);
 
-    const formGroup = service.createFormGroup(formFields, new Child());
+    const formGroup = service.createFormGroup(formFields, new TestEntity());
 
     expect(formGroup.get("name").disabled).toBeTrue();
     expect(formGroup.get("dateOfBirth").enabled).toBeTrue();
@@ -145,11 +156,15 @@ describe("EntityFormService", () => {
   it("should always keep properties disabled if user does not have 'update' permissions for them", () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
-      { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
-      { subject: "Child", action: "update", fields: ["name"] },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "read",
+        fields: ["name", "dateOfBirth"],
+      },
+      { subject: TestEntity.ENTITY_TYPE, action: "update", fields: ["name"] },
     ]);
 
-    const child = new Child();
+    const child = new TestEntity();
     child._rev = "foo"; // "not new" state
 
     const formGroup = service.createFormGroup(formFields, child);
@@ -283,12 +298,16 @@ describe("EntityFormService", () => {
       value: PLACEHOLDERS.CURRENT_USER,
     };
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue(`${User.ENTITY_TYPE}:${TEST_USER}`);
+    expect(form.get("test")).toHaveValue(
+      `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
+    );
 
     schema.dataType = EntityDatatype.dataType;
     schema.isArray = true;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
+    expect(form.get("test")).toHaveValue([
+      `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
+    ]);
 
     Entity.schema.delete("test");
   });
@@ -367,7 +386,7 @@ describe("EntityFormService", () => {
   });
 
   it("should add column definitions from property schema", () => {
-    class Test extends Child {
+    class Test extends Entity {
       @DatabaseField({
         description: "Property description",
         additional: "someAdditional",

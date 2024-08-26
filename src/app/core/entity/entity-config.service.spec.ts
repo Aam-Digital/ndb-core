@@ -14,7 +14,7 @@ import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
 import { EntityConfig } from "./entity-config";
 import { EntitySchemaField } from "./schema/entity-schema-field";
-import { Child } from "../../child-dev-project/children/model/child";
+import { TestEntity } from "../../utils/test-utils/TestEntity";
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
@@ -84,29 +84,29 @@ describe("EntityConfigService", () => {
   });
 
   it("should reset attribute to basic class config if custom attribute disappears from config doc", () => {
-    const originalLabel = Child.schema.get("name").label;
+    const originalLabel = TestEntity.schema.get("name").label;
     const customLabel = "custom label";
 
     const mockEntityConfigs: (EntityConfig & { _id: string })[] = [
       {
-        _id: "entity:Child",
+        _id: "entity:" + TestEntity.ENTITY_TYPE,
         attributes: { name: { label: customLabel } },
       },
     ];
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
     service.setupEntitiesFromConfig();
-    expect(Child.schema.get("name").label).toEqual(customLabel);
+    expect(TestEntity.schema.get("name").label).toEqual(customLabel);
 
     mockConfigService.getAllConfigs.and.returnValue([
       {
-        _id: "entity:Child",
+        _id: "entity:" + TestEntity.ENTITY_TYPE,
         attributes: {
           /* undo custom label */
         },
       },
     ]);
     service.setupEntitiesFromConfig();
-    expect(Child.schema.get("name").label).toEqual(originalLabel);
+    expect(TestEntity.schema.get("name").label).toEqual(originalLabel);
   });
 
   it("should allow to configure the `.toString` method", () => {

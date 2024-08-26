@@ -11,7 +11,7 @@ import {
   MockEntityMapperService,
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { Child } from "../../../../child-dev-project/children/model/child";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("DisplayTodoCompletionComponent", () => {
   let component: DisplayTodoCompletionComponent;
@@ -35,8 +35,8 @@ describe("DisplayTodoCompletionComponent", () => {
   });
 
   it("should load the entity in completedBy when it has full ID", fakeAsync(() => {
-    const completingChild = new Child("1");
-    const otherChild = new Child("2");
+    const completingChild = new TestEntity("1");
+    const otherChild = new TestEntity("2");
     entityMapper.addAll([completingChild, otherChild]);
 
     component.value = {

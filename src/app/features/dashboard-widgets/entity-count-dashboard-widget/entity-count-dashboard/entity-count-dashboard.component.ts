@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
@@ -46,7 +45,7 @@ export class EntityCountDashboardComponent
   implements EntityCountDashboardConfig, OnInit
 {
   static getRequiredEntities(config: EntityCountDashboardConfig) {
-    return config?.entity || Child.ENTITY_TYPE;
+    return config?.entity || "Child";
   }
 
   /**
@@ -57,7 +56,7 @@ export class EntityCountDashboardComponent
     this._entity = this.entities.get(value);
   }
 
-  private _entity: EntityConstructor = Child;
+  private _entity: EntityConstructor;
   /**
    * The property of the Child entities to group counts by.
    *
@@ -86,6 +85,10 @@ export class EntityCountDashboardComponent
   }
 
   async ngOnInit() {
+    if (!this._entity) {
+      this.entityType = "Child";
+    }
+
     const groupByType = this._entity.schema.get(this.groupBy);
     this.groupedByEntity =
       groupByType.dataType === EntityDatatype.dataType

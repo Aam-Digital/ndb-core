@@ -4,11 +4,11 @@ import { ImportColumnMappingComponent } from "./import-column-mapping.component"
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { MatDialog } from "@angular/material/dialog";
 import { DiscreteImportConfigComponent } from "../../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { ColumnMapping } from "../column-mapping";
 import { of } from "rxjs";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-describe("ImportMapColumnsComponent", () => {
+describe("ImportColumnMappingComponent", () => {
   let component: ImportColumnMappingComponent;
   let fixture: ComponentFixture<ImportColumnMappingComponent>;
 
@@ -30,20 +30,20 @@ describe("ImportMapColumnsComponent", () => {
       { name: "second", gender: "female" },
       { name: "third", gender: "female" },
     ];
-    component.entityType = "Child";
+    component.entityType = TestEntity.ENTITY_TYPE;
     component.columnMapping = [{ column: "name" }, { column: "gender" }];
     const openSpy = spyOn(TestBed.inject(MatDialog), "open");
     openSpy.and.returnValue({ afterClosed: () => of(undefined) } as any);
 
     const genderColumn = component.columnMapping[1];
-    genderColumn.propertyName = "gender";
+    genderColumn.propertyName = "category";
     await component.openMappingComponent(genderColumn);
 
     expect(openSpy).toHaveBeenCalledWith(DiscreteImportConfigComponent, {
       data: {
         col: genderColumn,
         values: ["male", "female"],
-        entityType: Child,
+        entityType: TestEntity,
       },
       disableClose: true,
     });
@@ -53,10 +53,10 @@ describe("ImportMapColumnsComponent", () => {
     spyOn(TestBed.inject(MatDialog), "open").and.returnValue({
       afterClosed: () => of(undefined),
     } as any);
-    component.entityType = "Child";
+    component.entityType = TestEntity.ENTITY_TYPE;
     const columnMapping: ColumnMapping = {
       column: "test",
-      propertyName: "gender",
+      propertyName: "category",
     };
 
     await component.openMappingComponent(columnMapping);
