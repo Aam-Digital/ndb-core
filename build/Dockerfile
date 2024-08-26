@@ -106,8 +106,7 @@ RUN npm run build
 #    rm dist/*.map ; fi
 
 ### PROD image
-# TODO (security) use non-root user image here
-FROM nginx:stable-alpine AS app
+FROM nginxinc/nginx-unprivileged:alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=build /opt/app/dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container
