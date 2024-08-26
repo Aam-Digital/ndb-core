@@ -122,10 +122,6 @@ jobs:
           mkdir -p ./tmp/build
           mkdir -p ./tmp/digests
 
-      - name: Set Platform Name
-        run: |
-          echo "PLATFORM_SHORT=${ matrix.platform//\//_ }" >> $GITHUB_ENV
-
       - name: Build
         id: build
         uses: docker/build-push-action@v6
@@ -134,7 +130,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           target: build-export
-          outputs: type=tar,dest=./tmp/build/build_${{ env.PLATFORM_SHORT }}.tar .
+          outputs: type=tar,dest=./tmp/build/build_${{ env.PLATFORM_PAIR }}.tar .
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
