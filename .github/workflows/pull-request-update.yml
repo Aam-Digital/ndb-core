@@ -175,12 +175,12 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  upload-sourcemap:
+  upload-sourcemaps:
     runs-on: ubuntu-latest
     needs:
       - build
     steps:
-      - name: Download build
+      - name: Download builds
         uses: actions/download-artifact@v4
         with:
           path: ./tmp/build

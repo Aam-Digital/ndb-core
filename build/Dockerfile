@@ -100,7 +100,7 @@ RUN node build/prepare-translation-files.js
 RUN npm run build
 
 
-FROM build AS build-export
+FROM scratch AS build-export
 COPY --from=build /opt/app/dist/ ./dist/
 
 
@@ -119,7 +119,7 @@ COPY --from=build /opt/app/dist/ ./dist/
 ### PROD image
 FROM nginxinc/nginx-unprivileged:alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
-COPY --from=build-export /opt/app/dist/ /usr/share/nginx/html
+COPY --from=build-export /dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container
 ENV PORT=80
 # The url to the CouchDB database
