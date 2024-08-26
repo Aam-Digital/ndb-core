@@ -8,12 +8,15 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { Subject } from "rxjs";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
+import { SyncState } from "../session/session-states/sync-state.enum";
 
 describe("SyncService", () => {
   let service: SyncService;
   let loginState: LoginStateSubject;
   let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator;
+
+  let mockSyncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
     mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
@@ -30,6 +33,7 @@ describe("SyncService", () => {
     });
     service = TestBed.inject(SyncService);
     loginState = TestBed.inject(LoginStateSubject);
+    mockSyncStateSubject = TestBed.inject(SyncStateSubject);
   });
 
   /**
@@ -46,6 +50,7 @@ describe("SyncService", () => {
   });
 
   it("should restart the sync if it fails at one point", fakeAsync(() => {
+    mockSyncStateSubject.next(SyncState.UNSYNCED);
     const mockLocalDb = jasmine.createSpyObj(["sync"]);
     spyOn(
       TestBed.inject(Database) as PouchDatabase,
@@ -76,6 +81,7 @@ describe("SyncService", () => {
   }));
 
   it("should sync immediately when local db has changes", fakeAsync(() => {
+    mockSyncStateSubject.next(SyncState.UNSYNCED);
     const mockLocalDb = jasmine.createSpyObj(["sync"]);
     const db = TestBed.inject(Database) as PouchDatabase;
     spyOn(db, "getPouchDB").and.returnValue(mockLocalDb);
@@ -101,6 +107,7 @@ describe("SyncService", () => {
   }));
 
   it("should skip sync calls when offline", fakeAsync(() => {
+    mockSyncStateSubject.next(SyncState.UNSYNCED);
     const mockLocalDb = jasmine.createSpyObj(["sync"]);
     mockLocalDb.sync.and.resolveTo({});
     const db = TestBed.inject(Database) as PouchDatabase;
