@@ -117,8 +117,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push by digest
+      - name: Build
         id: build
+        uses: docker/build-push-action@v6
+        with:
+          platforms: ${{ matrix.platform }}
+          context: ./
+          file: ./build/Dockerfile
+          target: build-export
+          outputs: --output type=tar,dest=build.tar ./temp/build/
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
+        env:
+          SOURCE_DATE_EPOCH: 0
+
+      - name: Build Image and push by digest
+        id: build-image
         uses: docker/build-push-action@v6
         with:
           platforms: ${{ matrix.platform }}
