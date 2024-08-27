@@ -1,4 +1,4 @@
-name: Pull Request - Update
+name: pull-request-update-or-push-tag
 
 on:
   pull_request:
@@ -157,11 +157,15 @@ jobs:
       - name: Checkout repository files
         uses: actions/checkout@v4
 
-      - name: Extract tag
+      - name: Echo EventType
+        run: |
+          echo "EventType: ${{github.event.type}}"
+
+      - name: Extract tag (release)
         if: ${{ github.event.type == 'ReleaseEvent' }}
         run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
-      - name: Extract tag
+      - name: Extract tag (pull request)
         if: ${{ github.event.type != 'ReleaseEvent' }}
         run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
@@ -344,6 +348,7 @@ jobs:
       - release
     steps:
       - name: Deploy updated image
+        if: ${{ github.event.type != 'ReleaseEvent' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
