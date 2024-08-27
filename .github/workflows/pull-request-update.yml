@@ -126,9 +126,9 @@ jobs:
         run: |
           ls -lsa
           ls -lsa ./tmp/coverage/
-          ls -lsa ./tmp/coverage/coverage-linux-amd64
-          ls -lsa ./tmp/coverage/coverage-linux-amd64/coverage
-          ./cc-test-reporter format-coverage -t lcov "./tmp/coverage/coverage-linux-amd64/coverage/lcov.info"
+          ls -lsa ./tmp/coverage/linux-amd64
+          ls -lsa ./tmp/coverage/linux-amd64/coverage
+          ./cc-test-reporter format-coverage -t lcov "./tmp/coverage/linux-amd64/coverage/lcov.info"
 
       - name: Run CC upload-coverage
         run: |
