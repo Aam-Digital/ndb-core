@@ -1,6 +1,10 @@
 name: Pull Request - Update
 
-on: pull_request
+on:
+  pull_request:
+  push:
+    tags:
+      - "*"
 
 env:
   REGISTRY_IMAGE: aamdigital/ndb-server
@@ -196,6 +200,8 @@ jobs:
           outputs: type=local,dest=./tmp/build/${{ env.PLATFORM_PAIR }}
           cache-from: type=gha
           cache-to: type=gha,mode=min
+          build-args: |
+            APP_VERSION=${{ env.TAG }}
         env:
           SOURCE_DATE_EPOCH: 0
 
@@ -216,7 +222,7 @@ jobs:
           file: ./build/Dockerfile
           target: app
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true,unpack=true,store=true
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha
           cache-to: type=gha,mode=min
           build-args: |
