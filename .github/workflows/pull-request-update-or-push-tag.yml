@@ -171,9 +171,9 @@ jobs:
       - name: Checkout repository files
         uses: actions/checkout@v4
 
-      - name: Echo EventType
+      - name: Echo Event
         run: |
-          echo "EventType: ${{github.event.type}}"
+          echo "${{github.event}}" | jq -r
 
       - name: Extract tag (release)
         if: ${{ github.event.type == 'ReleaseEvent' }}
