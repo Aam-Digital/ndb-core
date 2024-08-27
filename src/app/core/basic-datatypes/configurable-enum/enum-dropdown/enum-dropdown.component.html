@@ -1,31 +1,35 @@
 <mat-form-field>
   <mat-label>{{ label }}</mat-label>
-  <app-basic-autocomplete
-    #autocomplete
-    [formControl]="form"
-    [multi]="multi"
-    [options]="options"
-    [optionToString]="enumValueToString"
-    [createOption]="createNewOption"
-  ></app-basic-autocomplete>
+  <div class="autocomplete-container">
+    <app-basic-autocomplete
+      #autocomplete
+      [formControl]="form"
+      [multi]="multi"
+      [options]="options"
+      [optionToString]="enumValueToString"
+      [createOption]="createNewOption"
+    ></app-basic-autocomplete>
 
-  <fa-icon
-    *ngIf="form.enabled"
-    icon="caret-down"
-    class="form-field-icon-suffix"
-    (click)="autocomplete.showAutocomplete()"
-    matIconSuffix
-  ></fa-icon>
+    <div class="icon-container">
+      <fa-icon
+        *ngIf="form.enabled"
+        icon="caret-down"
+        class="form-field-icon-suffix"
+        (click)="autocomplete.showAutocomplete()"
+        matIconSuffix
+      ></fa-icon>
 
-  <fa-icon
-    *ngIf="form.enabled && !!createNewOption && canEdit"
-    class="form-field-icon-suffix"
-    matIconSuffix
-    (click)="openSettings($event)"
-    icon="wrench"
-  ></fa-icon>
+      <fa-icon
+        *ngIf="form.enabled && !!createNewOption && canEdit"
+        class="form-field-icon-suffix"
+        matIconSuffix
+        (click)="openSettings($event)"
+        icon="wrench"
+      ></fa-icon>
+    </div>
 
-  <mat-error *ngIf="form.errors">
-    <app-error-hint [form]="form"></app-error-hint>
-  </mat-error>
+    <mat-error *ngIf="form.errors">
+      <app-error-hint [form]="form"></app-error-hint>
+    </mat-error>
+  </div>
 </mat-form-field>

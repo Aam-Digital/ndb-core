@@ -110,6 +110,7 @@ export class ImportColumnMappingComponent implements OnChanges {
           values: [...uniqueValues],
           entityType: this.entityCtor,
         },
+        width: "80vw",
         disableClose: true,
       })
       .afterClosed()

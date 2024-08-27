@@ -39,14 +39,17 @@ describe("ImportColumnMappingComponent", () => {
     genderColumn.propertyName = "category";
     await component.openMappingComponent(genderColumn);
 
-    expect(openSpy).toHaveBeenCalledWith(DiscreteImportConfigComponent, {
-      data: {
-        col: genderColumn,
-        values: ["male", "female"],
-        entityType: TestEntity,
-      },
-      disableClose: true,
-    });
+    expect(openSpy).toHaveBeenCalledWith(
+      DiscreteImportConfigComponent,
+      jasmine.objectContaining({
+        data: {
+          col: genderColumn,
+          values: ["male", "female"],
+          entityType: TestEntity,
+        },
+        disableClose: true,
+      }),
+    );
   });
 
   it("should emit changes after popup is closed", async () => {
