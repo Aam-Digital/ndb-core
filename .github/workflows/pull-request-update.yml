@@ -64,6 +64,11 @@ jobs:
       - name: Get time of commit
         run: echo "TIME=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
 
+      - name: Create export directories
+        run: |
+          mkdir -p ./tmp/coverage
+          mkdir -p ./tmp/coverage/${{ env.PLATFORM_PAIR }}
+
       - name: Run tests in Docker image
         uses: docker/build-push-action@v6
         with:
@@ -71,8 +76,8 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
-          outputs: type=local,dest=./
-          target: test
+          outputs: type=local,dest=./tmp/coverage/${{ env.PLATFORM_PAIR }}
+          target: test-coverage
           cache-from: type=gha
 
       - name: Run tests with timezone
@@ -87,15 +92,6 @@ jobs:
           cache-from: type=gha
           build-args: |
             TZ=America/Detroit
-
-      - name: Create export directories
-        run: |
-          mkdir -p ./tmp/coverage
-          mkdir -p ./tmp/coverage/${{ env.PLATFORM_PAIR }}
-
-      - name: Move coverage report
-        run: |
-          mv ./coverage/lcov.info ./tmp/coverage/${{ env.PLATFORM_PAIR }}/
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
@@ -123,19 +119,12 @@ jobs:
 
       - name: Install Code Climate Test Reporter
         run: |
-          ls -lsa
-          ls -lsa ./tmp/coverage
-          ls -lsa ./tmp/coverage/coverage-linux-amd64/
-          ls -lsa ./tmp/coverage/coverage-linux-arm64/
-
-      - name: Install Code Climate Test Reporter
-        run: |
           curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
           chmod +x ./cc-test-reporter
 
       - name: Run CC format-coverage
         run: |
-          ./cc-test-reporter format-coverage -t lcov ./tmp/coverage/coverage-linux-amd64/lcov.info
+          ./cc-test-reporter format-coverage -t lcov ./tmp/coverage/coverage-linux-amd64/coverage/lcov.info
 
       - name: Run CC upload-coverage
         run: |

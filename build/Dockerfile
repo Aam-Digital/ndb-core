@@ -77,6 +77,10 @@ ARG CHROME_BIN=/usr/lib/chromium/chromium
 RUN npm run test-ci
 
 
+FROM scratch AS test-coverage
+COPY --from=test /opt/app/coverage/ ./coverage/
+
+
 FROM base-with-dependencies AS build
 WORKDIR /opt/app
 COPY ./src /opt/app/src/
