@@ -185,7 +185,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ env.PLATFORM_PAIR }}
-          path: ./tmp/build/*
+          path: ./tmp/build/linux-${{ env.PLATFORM_PAIR }}/
           if-no-files-found: error
           retention-days: 1
 
@@ -212,8 +212,8 @@ jobs:
         run: |
           ls -lsa ./tmp/build
           ls -lsa ./tmp/build/build-linux-amd64
-          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./build-linux-amd64/dist
-          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./build-linux-arm64/dist
+          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./tmp/build/build-linux-amd64/dist
+          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./tmp/build/build-linux-arm64/dist
 
   merge:
     runs-on: ubuntu-latest
@@ -258,9 +258,9 @@ jobs:
       - merge
       - upload-sourcemaps
     env:
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}"
-      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}"
-      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}"
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
     steps:
       - name: Install Sentry CLI
         run: |
