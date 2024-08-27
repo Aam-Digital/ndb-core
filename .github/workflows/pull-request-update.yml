@@ -210,14 +210,10 @@ jobs:
 
       - name: Upload sourcemaps
         run: |
-          ls -lsa
-
-          ls -lsa ./tmp/
-
           ls -lsa ./tmp/build
-
-          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./linux-amd64/dist
-          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./linux-arm64/dist
+          ls -lsa ./tmp/build/build-linux-amd64
+          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./build-linux-amd64/dist
+          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./build-linux-arm64/dist
 
   merge:
     runs-on: ubuntu-latest
