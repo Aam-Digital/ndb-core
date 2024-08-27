@@ -20,7 +20,10 @@ import { OkButton } from "../../../common-components/confirmation-dialog/confirm
 @Component({
   selector: "app-enum-dropdown",
   templateUrl: "./enum-dropdown.component.html",
-  styleUrls: ["./enum-dropdown.component.scss"],
+  styleUrls: [
+    "./enum-dropdown.component.scss",
+    "../../../common-components/basic-autocomplete/basic-autocomplete-dropdown.component.scss",
+  ],
   standalone: true,
   imports: [
     MatSelectModule,
