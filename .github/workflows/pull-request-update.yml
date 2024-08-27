@@ -11,13 +11,15 @@ jobs:
     env:
       GIT_COMMIT_SHA: ${{ github.sha }}
       GIT_BRANCH: pr-${{ github.event.number }}
-      GIT_COMMITTED_AT: ${{ env.TIME }}
       CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     steps:
       - name: Install Code Climate Test Reporter
         run: |
           curl -o cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
           chmod +x cc-test-reporter
+
+      - name: Get time of commit
+        run: echo "GIT_COMMITTED_AT=$(git log -1 --pretty=format:%ct)" >> $GITHUB_ENV
 
       - name: Run CC before-build
         run: |
@@ -95,7 +97,6 @@ jobs:
     env:
       GIT_COMMIT_SHA: ${{ github.sha }}
       GIT_BRANCH: pr-${{ github.event.number }}
-      GIT_COMMITTED_AT: ${{ env.TIME }}
       CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     steps:
       - name: Install Code Climate Test Reporter
