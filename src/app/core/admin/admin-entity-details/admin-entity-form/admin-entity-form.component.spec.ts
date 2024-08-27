@@ -10,7 +10,6 @@ import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { Note } from "../../../../child-dev-project/notes/model/note";
 import { FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
@@ -18,6 +17,7 @@ import { of } from "rxjs";
 import { AdminModule } from "../../admin.module";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
@@ -31,7 +31,7 @@ describe("AdminEntityFormComponent", () => {
   beforeEach(() => {
     testConfig = {
       fieldGroups: [
-        { header: "Group 1", fields: ["subject", "date"] },
+        { header: "Group 1", fields: ["name", "other"] },
         { fields: ["category"] },
       ],
     };
@@ -64,7 +64,7 @@ describe("AdminEntityFormComponent", () => {
     component = fixture.componentInstance;
 
     component.config = testConfig;
-    component.entityType = Note;
+    component.entityType = TestEntity;
 
     fixture.detectChanges();
 
@@ -85,7 +85,7 @@ describe("AdminEntityFormComponent", () => {
     };
     component.ngOnChanges({ config: true as any });
 
-    const noteUserFacingFields = Array.from(Note.schema.entries())
+    const noteUserFacingFields = Array.from(TestEntity.schema.entries())
       .filter(([key, value]) => value.label)
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
@@ -126,7 +126,7 @@ describe("AdminEntityFormComponent", () => {
     tick();
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(targetContainer).toEqual(["subject", newFieldId, "date"]);
+    expect(targetContainer).toEqual(["name", newFieldId, "other"]);
     expect(component.availableFields).toContain(
       component.createNewFieldPlaceholder,
     );
@@ -139,7 +139,7 @@ describe("AdminEntityFormComponent", () => {
     component.drop(mockDropNewFieldEvent(targetContainer));
     tick();
 
-    expect(targetContainer).toEqual(["subject", "date"]);
+    expect(targetContainer).toEqual(["name", "other"]);
     expect(mockDialog.open).toHaveBeenCalled();
     expect(component.availableFields).toContain(
       component.createNewFieldPlaceholder,

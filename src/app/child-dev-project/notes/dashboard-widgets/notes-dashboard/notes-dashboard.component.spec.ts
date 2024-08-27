@@ -10,6 +10,12 @@ import { ChildrenService } from "../../../children/children.service";
 import { NotesDashboardComponent } from "./notes-dashboard.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { Entity } from "../../../../core/entity/model/entity";
+
+class Child extends Entity {
+  static ENTITY_TYPE = "Child";
+}
 
 describe("NotesDashboardComponent", () => {
   let component: NotesDashboardComponent;
@@ -29,6 +35,8 @@ describe("NotesDashboardComponent", () => {
       imports: [NotesDashboardComponent, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
+
+    TestBed.inject(EntityRegistry).set("Child", Child);
   }));
 
   describe("with recent notes", () => {
