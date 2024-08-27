@@ -106,9 +106,8 @@ jobs:
     steps:
       - name: Install Code Climate Test Reporter
         run: |
-          ls -lsa
-#          curl -o cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-#          chmod +x cc-test-reporter
+          curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+          chmod +x ./cc-test-reporter
 
       - name: Run CC before-build
         run: |
