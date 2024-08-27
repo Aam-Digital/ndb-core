@@ -72,17 +72,6 @@ RUN if [ -n "${TZ}" ] ; then \
     cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime && \
     echo "$TZ" > /etc/timezone ; fi
 
-# The following arguments need to be provided for the code climate test reporter to work correctly
-# The commit sha
-ARG GIT_COMMIT_SHA
-# The branch
-ARG GIT_BRANCH
-# The time of the commit, can be extracted with `git log -1 --pretty=format:%ct`
-ARG GIT_COMMITTED_AT
-# The ID for the test reporter, can be found on CodeCoverage
-ARG CC_TEST_REPORTER_ID
-ARG UPLOAD_COVERAGE=false
-
 RUN npm run lint
 ARG CHROME_BIN=/usr/lib/chromium/chromium
 RUN npm run test-ci

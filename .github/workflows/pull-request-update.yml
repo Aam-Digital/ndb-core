@@ -6,7 +6,7 @@ env:
   REGISTRY_IMAGE: aamdigital/ndb-server
 
 jobs:
-  pre-test:
+  prepare-code-coverage:
     runs-on: ubuntu-latest
     env:
       GIT_COMMIT_SHA: ${{ github.sha }}
@@ -30,7 +30,7 @@ jobs:
 
   test:
     needs:
-      - pre-test
+      - prepare-code-coverage
     strategy:
       fail-fast: false
       matrix:
@@ -73,13 +73,6 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           target: test
           cache-from: type=gha
-          # todo upload coverage
-          build-args: |
-            UPLOAD_COVERAGE=${{ false }}
-            GIT_COMMIT_SHA=${{ github.event.pull_request.head.sha }}
-            GIT_BRANCH=${{ github.head_ref }}
-            GIT_COMMITTED_AT=${{ env.TIME }}
-            CC_TEST_REPORTER_ID=${{ secrets.CODE_CLIMATE_ID }}
 
       - name: Run tests with timezone
         if: ${{ matrix.platform == 'linux/amd64' }}
@@ -95,7 +88,24 @@ jobs:
             UPLOAD_COVERAGE=${{ false }}
             TZ=America/Detroit
 
-  post-test:
+      - name: Create export directories
+        run: |
+          mkdir -p ./tmp/coverage
+          mkdir -p ./tmp/coverage/${{ env.PLATFORM_PAIR }}
+
+      - name: Move coverage report
+        run: |
+          mv ./coverage/lcov.info ./tmp/coverage/${{ env.PLATFORM_PAIR }}/
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ env.PLATFORM_PAIR }}
+          path: ./tmp/coverage/*
+          if-no-files-found: error
+          retention-days: 1
+
+  upload-code-coverage:
     runs-on: ubuntu-latest
     needs:
       - test
@@ -104,14 +114,31 @@ jobs:
       GIT_BRANCH: pr-${{ github.event.number }}
       CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     steps:
+      - name: Download coverage reports
+        uses: actions/download-artifact@v4
+        with:
+          path: ./tmp/coverage
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Install Code Climate Test Reporter
+        run: |
+          ls -lsa
+          ls -lsa ./tmp/coverage
+          ls -lsa ./tmp/coverage/coverage-linux-amd64/
+          ls -lsa ./tmp/coverage/coverage-linux-arm64/
+
       - name: Install Code Climate Test Reporter
         run: |
           curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
           chmod +x ./cc-test-reporter
 
-      - name: Run CC before-build
+      - name: Run CC format-coverage
         run: |
-          ./cc-test-reporter format-coverage -t lcov ./coverage/lcov.info
+          ./cc-test-reporter format-coverage -t lcov ./tmp/coverage/coverage-linux-amd64/lcov.info
+
+      - name: Run CC upload-coverage
+        run: |
           ./cc-test-reporter upload-coverage
 
   build:
@@ -186,8 +213,6 @@ jobs:
 
       - name: Inject Sentry debug information
         run: |
-          ls -lsa
-          ls -lsa ./tmp/build/${{ env.PLATFORM_PAIR }}
           sentry-cli sourcemaps inject ./tmp/build/${{ env.PLATFORM_PAIR }}/dist
 
       - name: Build Image and push by digest
