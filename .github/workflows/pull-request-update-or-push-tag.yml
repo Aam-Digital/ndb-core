@@ -173,7 +173,7 @@ jobs:
 
       - name: Echo Event
         run: |
-          echo "${{github.event}}" | jq -r
+          echo "${{ toJSON(github.event) }}"
 
       - name: Extract tag (release)
         if: ${{ github.event.type == 'ReleaseEvent' }}
