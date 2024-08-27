@@ -14,11 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GIT_COMMIT_SHA: ${{ github.sha }}
-      GIT_BRANCH: pr-${{ github.event.number }}
       CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
+
+      - name: Extract tag (release)
+        if: ${{ github.event.type == 'ReleaseEvent' }}
+        run: echo "GIT_BRANCH=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Extract tag (pull request)
+        if: ${{ github.event.type != 'ReleaseEvent' }}
+        run: echo "GIT_BRANCH=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Install Code Climate Test Reporter
         run: |
@@ -111,11 +118,18 @@ jobs:
       - test
     env:
       GIT_COMMIT_SHA: ${{ github.sha }}
-      GIT_BRANCH: pr-${{ github.event.number }}
       CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
+
+      - name: Extract tag (release)
+        if: ${{ github.event.type == 'ReleaseEvent' }}
+        run: echo "GIT_BRANCH=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Extract tag (pull request)
+        if: ${{ github.event.type != 'ReleaseEvent' }}
+        run: echo "GIT_BRANCH=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Download coverage reports
         uses: actions/download-artifact@v4
@@ -276,6 +290,14 @@ jobs:
           path: ./tmp/build
           pattern: build-*
 
+      - name: Extract tag (release)
+        if: ${{ github.event.type == 'ReleaseEvent' }}
+        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Extract tag (pull request)
+        if: ${{ github.event.type != 'ReleaseEvent' }}
+        run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
+
       - name: Install Sentry CLI
         run: |
           npm install -g @sentry/cli
@@ -284,8 +306,9 @@ jobs:
         run: |
           ls -lsa ./tmp/build
           ls -lsa ./tmp/build/build-linux-amd64
-          sentry-cli sourcemaps upload --release="ndb-core@pr-${{ github.event.number }}" ./tmp/build/build-linux-amd64/dist
-          sentry-cli sourcemaps upload --release="ndb-core@pr-${{ github.event.number }}" ./tmp/build/build-linux-arm64/dist
+          # todo
+          sentry-cli sourcemaps upload --release="ndb-core@${{ env.TAG }}" ./tmp/build/build-linux-amd64/dist
+          sentry-cli sourcemaps upload --release="ndb-core@${{ env.TAG }}" ./tmp/build/build-linux-arm64/dist
 
   merge:
     runs-on: ubuntu-latest
@@ -334,13 +357,21 @@ jobs:
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
     steps:
+      - name: Extract tag (release)
+        if: ${{ github.event.type == 'ReleaseEvent' }}
+        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Extract tag (pull request)
+        if: ${{ github.event.type != 'ReleaseEvent' }}
+        run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
+
       - name: Install Sentry CLI
         run: |
           npm install -g @sentry/cli
 
       - name: Create Release
         run: |
-          sentry-cli releases new "ndb-core@pr-${{ github.event.number }}"
+          sentry-cli releases new "ndb-core@${{ env.TAG }}"
 
   deploy:
     runs-on: ubuntu-latest
