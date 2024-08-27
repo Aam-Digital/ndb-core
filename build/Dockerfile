@@ -15,7 +15,7 @@
 # DIST_TYPE
 #   --build-arg DIST_TYPE=build
 # -> build (default): will build the application
-# -> local: will use existing ./dist folder from file system
+# -> local: will use existing $LOCAL_DIST_PATH (default ./dist/) folder from file system
 # Will be used for packaging the application into a web container.
 # Just relevant for the stage "app"
 ARG DIST_TYPE="build"
@@ -117,7 +117,8 @@ COPY --from=build /opt/app/dist/ ./dist/
 
 
 FROM scratch AS dist-local
-COPY ./dist/ ./dist/
+ARG LOCAL_DIST_PATH=./dist/
+COPY $LOCAL_DIST_PATH ./dist/
 
 
 FROM dist-${DIST_TYPE} AS dist

@@ -131,7 +131,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           target: dist-build
-          outputs: type=local,dest=./tmp/build/${{ env.PLATFORM_PAIR }}
+          outputs: type=local,dest=./
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
@@ -161,6 +161,7 @@ jobs:
           cache-to: type=gha,mode=min
           build-args:
             DIST_TYPE=local
+            LOCAL_DIST_PATH=./tmp/build/${{ env.PLATFORM_PAIR }}/dist
         env:
           SOURCE_DATE_EPOCH: 0
 
