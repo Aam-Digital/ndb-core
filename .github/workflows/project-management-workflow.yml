@@ -8,18 +8,21 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: move-assigned-issues-to-column-in-progress
+        # todo: not maintained anymore, replace this
         uses: docker://takanabe/github-actions-automate-projects:v0.0.1
         if: github.event_name == 'issues' && github.event.action == 'assigned'
         env:
           GITHUB_PROJECT_URL: https://github.com/Aam-Digital/ndb-core/projects/6
           GITHUB_PROJECT_COLUMN_NAME: In progress
       - name: move-unassigned-issues-to-column-todo
+        # todo: not maintained anymore, replace this
         uses: docker://takanabe/github-actions-automate-projects:v0.0.1
         if: github.event_name == 'issues' && github.event.action == 'unassigned'
         env:
           GITHUB_PROJECT_URL: https://github.com/Aam-Digital/ndb-core/projects/6
           GITHUB_PROJECT_COLUMN_NAME: To do
       - name: add-issues-with-current-milestone-to-project
+        # todo: not maintained anymore, replace this
         uses: docker://takanabe/github-actions-automate-projects:v0.0.1
         if: github.event.action == 'milestoned' && github.issue.milestone.html_url == 'https://github.com/Aam-Digital/ndb-core/milestone/19'
         env:

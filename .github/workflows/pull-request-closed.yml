@@ -37,19 +37,6 @@ jobs:
 
       - name: Delete github caches for current branch
         run: |
-          echo "Needs debugging"
-          echo github.base_ref ${{ github.base_ref }}
-          echo github ${{ github }}
-          echo github.ref ${{ github.ref }}
-          echo github.ref_name ${{ github.ref_name }}
-          echo github.actor ${{ github.actor }}
-          echo github.triggering_actor ${{ github.triggering_actor }}
-          echo github.base_ref ${{ github.base_ref }}
-          echo github.head_ref ${{ github.head_ref }}
-          echo github.event_name ${{ github.event_name }}
-          echo github.event ${{ github.event }}
-          echo github.event.number ${{ github.event.number }}
-
           gh cache list -L 200 --ref "refs/pull/${{ github.event.number }}/merge" --json id --jq '.[] | .id' | while read -r id; do
             gh cache delete "$id"
           done
