@@ -5,11 +5,12 @@
     "baseUrl": "src",
     "strict": false, // we are working towards enabling this soon
     "noImplicitOverride": true,
-//    "noPropertyAccessFromIndexSignature": true,
-//    "noImplicitReturns": true,
-//    "noFallthroughCasesInSwitch": true,
+    // TODO: enable more strict rules (these are included in latest angular default projects)
+    //    "noPropertyAccessFromIndexSignature": true,
+    //    "noImplicitReturns": true,
+    //    "noFallthroughCasesInSwitch": true,
+    //    "isolatedModules": true,
     "skipLibCheck": true,
-//    "isolatedModules": true,
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
@@ -46,9 +47,9 @@
     }
   },
   "angularCompilerOptions": {
-//    "enableI18nLegacyMessageIdFormat": false,
-//    "strictInjectionParameters": true,
-//    "strictInputAccessModifiers": true,
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
     "strictTemplates": true
   }
 }
