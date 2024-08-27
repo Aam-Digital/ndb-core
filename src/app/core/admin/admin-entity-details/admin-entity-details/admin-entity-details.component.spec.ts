@@ -18,7 +18,7 @@ describe("AdminEntityDetailsComponent", () => {
 
   @DatabaseEntity("AdminDetailsTest")
   class AdminDetailsTestEntity extends Entity {
-    static readonly ENTITY_TYPE = "AdminDetailsTest";
+    static override readonly ENTITY_TYPE = "AdminDetailsTest";
 
     @DatabaseField({ label: "Name" }) name: string;
   }

@@ -36,8 +36,7 @@ Logging.initRemoteLogging({
 PwaInstallService.registerPWAInstallListener();
 
 bootstrap().catch((reason) => {
-  console.log("Application Bootstrap failed");
-  console.error(reason);
+  Logging.error("Application Bootstrap failed", reason);
 }); // top-level await not possible here yet, therefore wrapped in `bootstrap()` function
 
 async function bootstrap() {

@@ -107,7 +107,7 @@ describe("NotesRelatedToEntityComponent", () => {
   it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {
     @DatabaseEntity("EntityWithRelations")
     class EntityWithRelations extends Entity {
-      static ENTITY_TYPE = "EntityWithRelations";
+      static override ENTITY_TYPE = "EntityWithRelations";
 
       @DatabaseField({
         dataType: "entity",

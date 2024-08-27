@@ -14,7 +14,7 @@ import { EntityRegistry } from "../../../../core/entity/database-entity.decorato
 import { Entity } from "../../../../core/entity/model/entity";
 
 class Child extends Entity {
-  static ENTITY_TYPE = "Child";
+  static override ENTITY_TYPE = "Child";
 }
 
 describe("NotesDashboardComponent", () => {

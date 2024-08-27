@@ -12,14 +12,14 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
  */
 @DatabaseEntity("TestEntity")
 export class TestEntity extends Entity {
-  static ENTITY_TYPE = "TestEntity";
+  static override ENTITY_TYPE = "TestEntity";
 
-  static toStringAttributes = ["name"];
-  static label = "Test Entity";
-  static labelPlural = "Test Entities";
-  static icon: IconName = "child";
-  static route = "test-entity";
-  static blockComponent = "ChildBlock";
+  static override toStringAttributes = ["name"];
+  static override label = "Test Entity";
+  static override labelPlural = "Test Entities";
+  static override icon: IconName = "child";
+  static override route = "test-entity";
+  static override blockComponent = "ChildBlock";
   static override hasPII = true;
 
   @DatabaseField({

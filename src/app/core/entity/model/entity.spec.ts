@@ -1,20 +1,3 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
@@ -120,18 +103,18 @@ describe("Entity", () => {
 
   it("should convert toString using toStringAttributes config or special [anonymized] label", () => {
     @DatabaseEntity("TestEntityForToString")
-    class TestEntity extends Entity {
-      static toStringAttributes = ["firstname", "lastname"];
-      static label = "TestEntity";
+    class TestEntityForToString extends Entity {
+      static override toStringAttributes = ["firstname", "lastname"];
+      static override label = "TestEntity";
       firstname = "John";
       lastname = "Doe";
     }
 
-    const testEntity = new TestEntity();
+    const testEntity = new TestEntityForToString();
 
     expect(testEntity.toString()).toBe("John Doe");
 
-    const anonymizedEntity = new TestEntity();
+    const anonymizedEntity = new TestEntityForToString();
     anonymizedEntity.firstname = undefined;
     delete anonymizedEntity.lastname;
     anonymizedEntity.anonymized = true;
