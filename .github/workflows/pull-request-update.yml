@@ -210,16 +210,14 @@ jobs:
 
       - name: Upload sourcemaps
         run: |
-
           ls -lsa
 
-          mkdir dist_amd64 && tar -xvf build_linux-amd64 -C ./dist_amd64 --strip-components=1
-          mkdir dist_arm64 && tar -xvf build_linux-arm64 -C ./dist_arm64 --strip-components=1
+          ls -lsa ./tmp/
 
-          ls -lsa
+          ls -lsa ./tmp/build
 
-          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./dist_amd6
-          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./dist_arm64
+          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./linux-amd64/dist
+          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./linux-arm64/dist
 
   merge:
     runs-on: ubuntu-latest
