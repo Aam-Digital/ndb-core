@@ -124,7 +124,7 @@ jobs:
 
       - name: Run CC format-coverage
         run: |
-          ./cc-test-reporter format-coverage -t lcov ./tmp/coverage/coverage-linux-amd64/coverage/lcov.info
+          ./cc-test-reporter format-coverage -t lcov ./tmp/coverage/coverage-linux-amd64/coverage
 
       - name: Run CC upload-coverage
         run: |
