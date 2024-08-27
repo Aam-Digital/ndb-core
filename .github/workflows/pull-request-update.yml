@@ -18,7 +18,7 @@ jobs:
 
       - name: Install Code Climate Test Reporter
         run: |
-          curl -o cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+          curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
           chmod +x ./cc-test-reporter
 
       - name: Get time of commit
