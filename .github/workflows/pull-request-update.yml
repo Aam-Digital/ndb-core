@@ -266,8 +266,8 @@ jobs:
         run: |
           ls -lsa ./tmp/build
           ls -lsa ./tmp/build/build-linux-amd64
-          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./tmp/build/build-linux-amd64/dist
-          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./tmp/build/build-linux-arm64/dist
+          sentry-cli sourcemaps upload --release="ndb-core@pr-${{ github.event.number }}" ./tmp/build/build-linux-amd64/dist
+          sentry-cli sourcemaps upload --release="ndb-core@pr-${{ github.event.number }}" ./tmp/build/build-linux-arm64/dist
 
   merge:
     runs-on: ubuntu-latest
