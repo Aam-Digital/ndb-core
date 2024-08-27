@@ -4,7 +4,7 @@
   [hidden]="focused || display === 'none'"
   [disabled]="_disabled"
   matInput
-  style="text-overflow: ellipsis"
+  style="text-overflow: ellipsis; width: calc(100% - 50px)"
   (focusin)="showAutocomplete()"
   (focusout)="showAutocomplete()"
   [value]="displayText"
