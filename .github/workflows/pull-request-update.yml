@@ -71,6 +71,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
+          outputs: type=local,dest=./
           target: test
           cache-from: type=gha
 
@@ -85,7 +86,6 @@ jobs:
           target: test
           cache-from: type=gha
           build-args: |
-            UPLOAD_COVERAGE=${{ false }}
             TZ=America/Detroit
 
       - name: Create export directories
