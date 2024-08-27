@@ -20,11 +20,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Extract tag (release)
-        if: ${{ github.event.type == 'ReleaseEvent' }}
+        if: ${{ env.GITHUB_REF != '' }}
         run: echo "GIT_BRANCH=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Extract tag (pull request)
-        if: ${{ github.event.type != 'ReleaseEvent' }}
+        if: ${{ env.GITHUB_REF == '' }}
         run: echo "GIT_BRANCH=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Install Code Climate Test Reporter
@@ -124,11 +124,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Extract tag (release)
-        if: ${{ github.event.type == 'ReleaseEvent' }}
+        if: ${{ env.GITHUB_REF != '' }}
         run: echo "GIT_BRANCH=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Extract tag (pull request)
-        if: ${{ github.event.type != 'ReleaseEvent' }}
+        if: ${{ env.GITHUB_REF == '' }}
         run: echo "GIT_BRANCH=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Download coverage reports
@@ -176,11 +176,11 @@ jobs:
           echo "${{ toJSON(github.event) }}"
 
       - name: Extract tag (release)
-        if: ${{ GITHUB_REF != '' }}
+        if: ${{ env.GITHUB_REF != '' }}
         run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Extract tag (pull request)
-        if: ${{ GITHUB_REF == '' }}
+        if: ${{ env.GITHUB_REF == '' }}
         run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Prepare Platform
@@ -291,11 +291,11 @@ jobs:
           pattern: build-*
 
       - name: Extract tag (release)
-        if: ${{ GITHUB_REF != '' }}
+        if: ${{ env.GITHUB_REF != '' }}
         run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Extract tag (pull request)
-        if: ${{ GITHUB_REF == '' }}
+        if: ${{ env.GITHUB_REF == '' }}
         run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Install Sentry CLI
@@ -358,11 +358,11 @@ jobs:
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
     steps:
       - name: Extract tag (release)
-        if: ${{ github.event.type == 'ReleaseEvent' }}
+        if: ${{ env.GITHUB_REF != '' }}
         run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Extract tag (pull request)
-        if: ${{ github.event.type != 'ReleaseEvent' }}
+        if: ${{ env.GITHUB_REF == '' }}
         run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Install Sentry CLI
@@ -379,7 +379,7 @@ jobs:
       - release
     steps:
       - name: Deploy updated image
-        if: ${{ GITHUB_REF == '' }}
+        if: ${{ env.GITHUB_REF == '' }}
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
