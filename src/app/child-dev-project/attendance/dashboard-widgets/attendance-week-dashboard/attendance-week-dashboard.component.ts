@@ -42,7 +42,7 @@ export class AttendanceWeekDashboardComponent
   extends DashboardWidget
   implements OnInit
 {
-  static getRequiredEntities() {
+  static override getRequiredEntities() {
     return EventNote.ENTITY_TYPE;
   }
 

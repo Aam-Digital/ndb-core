@@ -51,7 +51,7 @@ export class Todo extends Entity {
   @DatabaseField()
   completed?: TodoCompletion;
 
-  get isActive(): boolean {
+  override get isActive(): boolean {
     if (this.inactive) {
       // manual archiving of records takes precedence
       return false;
@@ -68,7 +68,7 @@ export class Todo extends Entity {
     );
   }
 
-  getWarningLevel(): WarningLevel {
+  override getWarningLevel(): WarningLevel {
     if (this.isOverdue) {
       return WarningLevel.URGENT;
     }

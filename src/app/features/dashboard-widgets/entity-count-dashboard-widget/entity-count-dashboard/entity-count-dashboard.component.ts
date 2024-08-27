@@ -44,7 +44,7 @@ export class EntityCountDashboardComponent
   extends DashboardWidget
   implements EntityCountDashboardConfig, OnInit
 {
-  static getRequiredEntities(config: EntityCountDashboardConfig) {
+  static override getRequiredEntities(config: EntityCountDashboardConfig) {
     return config?.entity || "Child";
   }
 

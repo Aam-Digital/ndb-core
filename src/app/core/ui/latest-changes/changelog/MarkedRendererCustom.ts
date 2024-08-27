@@ -1,7 +1,7 @@
 import { MarkedRenderer } from "ngx-markdown";
 
 export class MarkedRendererCustom extends MarkedRenderer {
-  public heading(
+  public override heading(
     text: string,
     level: 1 | 2 | 3 | 4 | 5 | 6,
     raw: string,
@@ -20,7 +20,7 @@ export class MarkedRendererCustom extends MarkedRenderer {
     }
   }
 
-  public list(body: string, ordered: boolean, start: number): string {
+  public override list(body: string, ordered: boolean, start: number): string {
     if (ordered) {
       return `<ol class="app-list mat-body-1">${body}</ol>`;
     } else {

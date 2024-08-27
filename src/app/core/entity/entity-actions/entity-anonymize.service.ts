@@ -20,8 +20,8 @@ import { asArray } from "../../../utils/utils";
 })
 export class EntityAnonymizeService extends CascadingEntityAction {
   constructor(
-    protected entityMapper: EntityMapperService,
-    protected schemaService: EntitySchemaService,
+    protected override entityMapper: EntityMapperService,
+    protected override schemaService: EntitySchemaService,
     private fileService: FileService,
   ) {
     super(entityMapper, schemaService);

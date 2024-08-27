@@ -3,6 +3,7 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import {
   FormBuilder,
   FormControl,
+  FormGroup,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
@@ -45,11 +46,7 @@ import { environment } from "../../../../environments/environment";
 })
 export class UserSecurityComponent implements OnInit {
   @Input() entity: Entity;
-  form = this.fb.group({
-    username: [{ value: "", disabled: true }],
-    email: ["", [Validators.required, Validators.email]],
-    roles: new FormControl<Role[]>([], Validators.required),
-  });
+  form: FormGroup;
   availableRoles: Role[] = [];
   user: KeycloakUserDto;
   editing = true;
@@ -62,6 +59,12 @@ export class UserSecurityComponent implements OnInit {
     private alertService: AlertService,
     private http: HttpClient,
   ) {
+    this.form = this.fb.group({
+      username: [{ value: "", disabled: true }],
+      email: ["", [Validators.required, Validators.email]],
+      roles: new FormControl<Role[]>([], Validators.required),
+    });
+
     if (
       sessionInfo.value?.roles.includes(
         KeycloakAuthService.ACCOUNT_MANAGER_ROLE,

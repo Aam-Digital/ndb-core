@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
-    "strict": false, // todo enable this!
-//    "noImplicitOverride": true,
+    "strict": false, // we are working towards enabling this soon
+    "noImplicitOverride": true,
 //    "noPropertyAccessFromIndexSignature": true,
 //    "noImplicitReturns": true,
 //    "noFallthroughCasesInSwitch": true,
@@ -19,7 +19,7 @@
     "moduleResolution": "bundler",
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,
-    "useDefineForClassFields": false, // todo enable this!
+    "useDefineForClassFields": false, // TODO fix decorator issues caused by the changed initialization order
     "target": "ES2022",
     "module": "ES2022",
     "resolveJsonModule": true,

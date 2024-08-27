@@ -36,7 +36,7 @@ export class ProgressDashboardComponent
   extends DashboardWidget
   implements OnInit
 {
-  static getRequiredEntities() {
+  static override getRequiredEntities() {
     return ProgressDashboardConfig.ENTITY_TYPE;
   }
 

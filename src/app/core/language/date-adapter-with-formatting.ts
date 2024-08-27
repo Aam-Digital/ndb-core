@@ -22,7 +22,7 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
    * @param value
    * @param parseFormat
    */
-  parse(value: any, parseFormat?: any): Date | null {
+  override parse(value: any, parseFormat?: any): Date | null {
     if (value && typeof value == "string") {
       return moment(value, parseFormat, this.locale, true).toDate();
     }

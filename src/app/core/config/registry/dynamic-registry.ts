@@ -32,7 +32,7 @@ export abstract class Registry<T> extends Map<string, T> {
     tuples.forEach(([name, value]) => this.add(name, value));
   }
 
-  public get(key: string): T {
+  public override get(key: string): T {
     if (!this.has(key)) {
       throw Error(
         `${this.constructor.name}: Requested item "${key}" is not registered. See dynamic-registry.ts for more details.`,

@@ -87,8 +87,8 @@ export class EntityConfigService {
 
     const schema = this.deepCopySchema(parentClass.schema);
     class DynamicClass extends parentClass {
-      static schema = schema;
-      static ENTITY_TYPE = id;
+      static override schema = schema;
+      static override ENTITY_TYPE = id;
     }
 
     this.entities.set(id, DynamicClass);

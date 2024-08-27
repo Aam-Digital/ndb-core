@@ -36,7 +36,7 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
-  static toStringAttributes = ["subject"];
+  static override toStringAttributes = ["subject"];
   static override hasPII = true;
 
   static create(
@@ -173,7 +173,7 @@ export class Note extends Entity {
   })
   warningLevel: Ordering.EnumValue;
 
-  getWarningLevel(): WarningLevel {
+  override getWarningLevel(): WarningLevel {
     if (this.warningLevel) {
       return WarningLevel[this.warningLevel.id];
     } else {
@@ -181,7 +181,7 @@ export class Note extends Entity {
     }
   }
 
-  public getColor() {
+  public override getColor() {
     const actualLevel = this.getWarningLevel();
     if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
       return this.category?.color;
@@ -305,7 +305,7 @@ export class Note extends Entity {
    * (such as the date, author, e.t.c.) as well as copying the
    * child-array
    */
-  copy(): this {
+  override copy(): this {
     const note = super.copy();
     note.children = [...this.children];
     note.schools = [...this.schools];

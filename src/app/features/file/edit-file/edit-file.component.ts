@@ -60,7 +60,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     super();
   }
 
-  ngOnInit() {
+  override ngOnInit() {
     super.ngOnInit();
     this.initialValue = this.formControl.value;
     this.formControl.statusChanges

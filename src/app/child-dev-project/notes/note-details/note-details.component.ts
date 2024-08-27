@@ -72,7 +72,7 @@ export class NoteDetailsComponent
   implements OnChanges
 {
   @Input() declare entity: Note;
-  entityConstructor = Note;
+  override entityConstructor = Note;
 
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
@@ -109,7 +109,7 @@ export class NoteDetailsComponent
     }>("view:note")?.config.exportConfig;
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
+  override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));

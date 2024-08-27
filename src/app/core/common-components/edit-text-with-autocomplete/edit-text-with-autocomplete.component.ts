@@ -119,7 +119,7 @@ export class EditTextWithAutocompleteComponent
     }
   }
 
-  async ngOnInit() {
+  override async ngOnInit() {
     super.ngOnInit();
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete

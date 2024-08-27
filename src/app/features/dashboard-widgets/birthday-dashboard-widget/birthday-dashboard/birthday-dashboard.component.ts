@@ -32,7 +32,7 @@ export class BirthdayDashboardComponent
   extends DashboardWidget
   implements BirthdayDashboardConfig, OnInit
 {
-  static getRequiredEntities(config: BirthdayDashboardConfig) {
+  static override getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : "Child";
   }
 
