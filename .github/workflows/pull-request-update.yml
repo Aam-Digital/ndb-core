@@ -6,7 +6,26 @@ env:
   REGISTRY_IMAGE: aamdigital/ndb-server
 
 jobs:
+  pre-test:
+    runs-on: ubuntu-latest
+    env:
+      GIT_COMMIT_SHA: ${{ github.sha }}
+      GIT_BRANCH: pr-${{ github.event.number }}
+      GIT_COMMITTED_AT: ${{ env.TIME }}
+      CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
+    steps:
+      - name: Install Code Climate Test Reporter
+        run: |
+          curl -o cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+          chmod +x cc-test-reporter
+
+      - name: Run CC before-build
+        run: |
+          ./cc-test-reporter before-build
+
   test:
+    needs:
+      - pre-test
     strategy:
       fail-fast: false
       matrix:
@@ -70,6 +89,25 @@ jobs:
           build-args: |
             UPLOAD_COVERAGE=${{ false }}
             TZ=America/Detroit
+
+  post-test:
+    runs-on: ubuntu-latest
+    env:
+      GIT_COMMIT_SHA: ${{ github.sha }}
+      GIT_BRANCH: pr-${{ github.event.number }}
+      GIT_COMMITTED_AT: ${{ env.TIME }}
+      CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
+    steps:
+      - name: Install Code Climate Test Reporter
+        run: |
+          ls -lsa
+#          curl -o cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+#          chmod +x cc-test-reporter
+
+      - name: Run CC before-build
+        run: |
+          ./cc-test-reporter format-coverage -t lcov ./coverage/lcov.info
+          ./cc-test-reporter upload-coverage
 
   build:
     strategy:
@@ -167,9 +205,6 @@ jobs:
 
       - name: Export digest
         run: |
-          ls -lsa
-          ls -lsa ./tmp/build
-          ls -lsa ./tmp/digests
           digest="${{ steps.build-image.outputs.digest }}"
           touch "./tmp/digests/${digest#sha256:}"
 

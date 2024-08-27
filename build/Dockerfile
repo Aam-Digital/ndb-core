@@ -82,15 +82,10 @@ ARG GIT_COMMITTED_AT
 # The ID for the test reporter, can be found on CodeCoverage
 ARG CC_TEST_REPORTER_ID
 ARG UPLOAD_COVERAGE=false
-RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
-    RUN ./cc-test-reporter before-build ; fi
 
 RUN npm run lint
 ARG CHROME_BIN=/usr/lib/chromium/chromium
 RUN npm run test-ci
-
-RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
-    RUN ./cc-test-reporter after-build ; fi
 
 
 FROM base-with-dependencies AS build
