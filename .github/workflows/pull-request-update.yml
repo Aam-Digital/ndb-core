@@ -158,7 +158,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Extract tag
+        if: ${{ github.event.type == 'ReleaseEvent' }}
         run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Extract tag
+        if: ${{ github.event.type != 'ReleaseEvent' }}
+        run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
 
       - name: Prepare Platform
         run: |
