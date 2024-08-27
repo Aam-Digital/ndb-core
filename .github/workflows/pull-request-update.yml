@@ -131,7 +131,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           target: dist-build
-          outputs: type=local,dest=./
+          outputs: type=local,dest=./tmp/build/${{ env.PLATFORM_PAIR }}
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
