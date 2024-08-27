@@ -120,6 +120,7 @@ jobs:
       - name: Create export directories
         run: |
           mkdir -p ./tmp/build
+          mkdir -p ./tmp/build/${{ env.PLATFORM_PAIR }}
           mkdir -p ./tmp/digests
 
       - name: Build
@@ -130,7 +131,7 @@ jobs:
           context: ./
           file: ./build/Dockerfile
           target: dist-build
-          outputs: type=tar,dest=./tmp/build/build_${{ env.PLATFORM_PAIR }}.tar
+          outputs: type=local,dest=./tmp/build/${{ env.PLATFORM_PAIR }}
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
@@ -142,7 +143,9 @@ jobs:
 
       - name: Inject Sentry debug information
         run: |
-          sentry-cli sourcemaps inject ./dist
+          ls -lsa
+          ls -lsa ./tmp/build/${{ env.PLATFORM_PAIR }}
+          sentry-cli sourcemaps inject ./tmp/build/${{ env.PLATFORM_PAIR }}/dist
 
       - name: Build Image and push by digest
         id: build-image
