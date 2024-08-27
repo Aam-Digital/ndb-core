@@ -110,6 +110,9 @@ jobs:
       GIT_BRANCH: pr-${{ github.event.number }}
       CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+
       - name: Download coverage reports
         uses: actions/download-artifact@v4
         with:
@@ -124,11 +127,7 @@ jobs:
 
       - name: Run CC format-coverage
         run: |
-          ls -lsa
-          ls -lsa ./tmp/coverage/
-          ls -lsa ./tmp/coverage/linux-amd64
-          ls -lsa ./tmp/coverage/linux-amd64/coverage
-          ./cc-test-reporter format-coverage -t lcov "./tmp/coverage/linux-amd64/coverage/lcov.info"
+          ./cc-test-reporter format-coverage "./tmp/coverage/linux-amd64/coverage/lcov.info" -t lcov
 
       - name: Run CC upload-coverage
         run: |
