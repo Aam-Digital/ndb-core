@@ -6,11 +6,19 @@
 # >> docker build --target test -f build/Dockerfile -t aam-digital .
 
 ## Build the application:
-# >> docker build --target build -f build/Dockerfile -t aam-digital .
+# >> docker build --target dist-build -f build/Dockerfile -o . -t aam-digital .
 
 ## Build and start application container:
 # >> docker build --target app -f build/Dockerfile -t aam-digital .
 # >> docker run -p=80:80 aam-digital
+
+# DIST_TYPE
+#   --build-arg DIST_TYPE=build
+# -> build (default): will build the application
+# -> local: will use existing ./dist folder from file system
+# Will be used for packaging the application into a web container.
+# Just relevant for the stage "app"
+ARG DIST_TYPE="build"
 
 FROM node:lts-slim AS base
 COPY package.json ./opt/app/package.json
@@ -99,27 +107,28 @@ RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environment
 RUN node build/prepare-translation-files.js
 RUN npm run build
 
+RUN if [ "$INJECT_DEBUG_INFORMATION" = true ] ; then \
+    npm install -g @sentry/cli && \
+    sentry-cli sourcemaps inject ./dist ; fi
 
-FROM scratch AS build-export
+
+FROM scratch AS dist-build
 COPY --from=build /opt/app/dist/ ./dist/
 
 
-# TODO
-#
-## Information required to upload the sourcemap to sentry
-## If not set, nothing is uploaded
-#ARG SENTRY_AUTH_TOKEN
-#ARG SENTRY_ORG
-#ARG SENTRY_PROJECT
-#RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
-#    npm install -g @sentry/cli &&\
-#    sentry-cli --auth-token="$SENTRY_AUTH_TOKEN" releases --org="$SENTRY_ORG" --project="$SENTRY_PROJECT" files "ndb-core@$APP_VERSION" upload-sourcemaps dist  && \
-#    rm dist/*.map ; fi
+FROM scratch AS dist-local
+COPY ./dist/ ./dist/
+
+
+FROM dist-${DIST_TYPE} AS dist
+
 
 ### PROD image
 FROM nginxinc/nginx-unprivileged:alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
-COPY --from=build-export /dist/ /usr/share/nginx/html
+
+COPY --from=dist /dist/ /usr/share/nginx/html
+
 # The port on which the app will run in the Docker container
 ENV PORT=80
 # The url to the CouchDB database

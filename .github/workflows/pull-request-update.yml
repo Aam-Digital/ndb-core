@@ -129,12 +129,20 @@ jobs:
           platforms: ${{ matrix.platform }}
           context: ./
           file: ./build/Dockerfile
-          target: build-export
+          target: dist-build
           outputs: type=tar,dest=./tmp/build/build_${{ env.PLATFORM_PAIR }}.tar
           cache-from: type=gha
           cache-to: type=gha,mode=min
         env:
           SOURCE_DATE_EPOCH: 0
+
+      - name: Install Sentry CLI
+        run: |
+          npm install -g @sentry/cli
+
+      - name: Inject Sentry debug information
+        run: |
+          sentry-cli sourcemaps inject ./dist
 
       - name: Build Image and push by digest
         id: build-image
@@ -148,6 +156,8 @@ jobs:
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true,unpack=true,store=true
           cache-from: type=gha
           cache-to: type=gha,mode=min
+          build-args:
+            DIST_TYPE=local
         env:
           SOURCE_DATE_EPOCH: 0
 
@@ -179,15 +189,33 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - build
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}"
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}"
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}"
     steps:
       - name: Download builds
         uses: actions/download-artifact@v4
         with:
           path: ./tmp/build
           pattern: build-*
-      - name: List
+
+      - name: Install Sentry CLI
         run: |
-          ls -lsa ./tmp/build
+          npm install -g @sentry/cli
+
+      - name: Upload sourcemaps
+        run: |
+
+          ls -lsa
+
+          mkdir dist_amd64 && tar -xvf build_linux-amd64 -C ./dist_amd64 --strip-components=1
+          mkdir dist_arm64 && tar -xvf build_linux-arm64 -C ./dist_arm64 --strip-components=1
+
+          ls -lsa
+
+          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./dist_amd6
+          sentry-cli sourcemaps upload --release=pr-${{ github.event.number }} ./dist_arm64
 
   merge:
     runs-on: ubuntu-latest
@@ -226,10 +254,28 @@ jobs:
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
 
-  deploy:
+  release:
     runs-on: ubuntu-latest
     needs:
       - merge
+      - upload-sourcemaps
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}"
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}"
+      SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}"
+    steps:
+      - name: Install Sentry CLI
+        run: |
+          npm install -g @sentry/cli
+
+      - name: Create Release
+        run: |
+          sentry-cli releases new "ndb-core@pr-${{ github.event.number }}"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - release
     steps:
       - name: Deploy updated image
         uses: appleboy/ssh-action@master
