@@ -28,17 +28,12 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { LoggingService } from "../../logging/logging.service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
 
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  mockLoggingService = jasmine.createSpyObj(["warn"]);
-
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: LoggingService, useValue: mockLoggingService }],
       imports: [MockedTestingModule.withState()],
     });
     service = TestBed.inject(EntityFormService);

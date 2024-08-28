@@ -5,7 +5,7 @@ import {
   PLACEHOLDERS,
 } from "../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../session/current-user-subject";
-import { LoggingService } from "../logging/logging.service";
+import { Logging } from "../logging/logging.service";
 import { DefaultValueStrategy } from "./default-value-strategy.interface";
 
 /**
@@ -15,10 +15,7 @@ import { DefaultValueStrategy } from "./default-value-strategy.interface";
   providedIn: "root",
 })
 export class DynamicPlaceholderValueService extends DefaultValueStrategy {
-  constructor(
-    private currentUser: CurrentUserSubject,
-    private logger: LoggingService,
-  ) {
+  constructor(private currentUser: CurrentUserSubject) {
     super();
   }
 
@@ -48,7 +45,7 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
         }
         break;
       default:
-        this.logger.warn(
+        Logging.warn(
           "Unknown PLACEHOLDERS value used in fieldValueConfig: " +
             fieldConfig.defaultValue,
         );

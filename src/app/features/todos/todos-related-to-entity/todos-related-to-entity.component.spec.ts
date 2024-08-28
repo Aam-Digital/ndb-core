@@ -8,18 +8,13 @@ import { Database } from "../../../core/database/database";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
-import { LoggingService } from "../../../core/logging/logging.service";
 
 describe("TodosRelatedToEntityComponent", () => {
   let component: TodosRelatedToEntityComponent;
   let fixture: ComponentFixture<TodosRelatedToEntityComponent>;
 
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  mockLoggingService = jasmine.createSpyObj(["warn"]);
-
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: LoggingService, useValue: mockLoggingService }],
       imports: [TodosRelatedToEntityComponent, DatabaseTestingModule],
     }).compileComponents();
   }));

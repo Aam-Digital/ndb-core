@@ -1,7 +1,6 @@
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
 import { Entity } from "../entity/model/entity";
 import { FormBuilder, FormControl } from "@angular/forms";
-import { LoggingService } from "../logging/logging.service";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { CurrentUserSubject } from "../session/current-user-subject";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
@@ -74,7 +73,6 @@ export async function testDefaultValueCase(
 describe("DefaultValueService", () => {
   let service: DefaultValueService;
   let mockInheritedValueService: jasmine.SpyObj<InheritedValueService>;
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(() => {
     mockInheritedValueService = jasmine.createSpyObj([
@@ -82,11 +80,9 @@ describe("DefaultValueService", () => {
       "initEntityForm",
       "onFormValueChanges",
     ]);
-    mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: LoggingService, useValue: mockLoggingService },
         CurrentUserSubject,
         { provide: InheritedValueService, useValue: mockInheritedValueService },
       ],

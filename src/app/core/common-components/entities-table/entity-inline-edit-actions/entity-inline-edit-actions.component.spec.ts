@@ -23,15 +23,12 @@ import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { LoggingService } from "../../../logging/logging.service";
 
 describe("EntityInlineEditActionsComponent", () => {
   let component: EntityInlineEditActionsComponent<InlineEditEntity>;
   let fixture: ComponentFixture<
     EntityInlineEditActionsComponent<InlineEditEntity>
   >;
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  mockLoggingService = jasmine.createSpyObj(["warn"]);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -45,7 +42,6 @@ describe("EntityInlineEditActionsComponent", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: CurrentUserSubject, useValue: of(null) },
         { provide: EntityActionsService, useValue: null },
-        { provide: LoggingService, useValue: mockLoggingService },
       ],
     }).compileComponents();
 

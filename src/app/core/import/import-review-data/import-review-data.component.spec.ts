@@ -11,7 +11,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { ImportService } from "../import.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { LoggingService } from "../../logging/logging.service";
 
 describe("ImportReviewDataComponent", () => {
   let component: ImportReviewDataComponent;
@@ -19,9 +18,6 @@ describe("ImportReviewDataComponent", () => {
 
   let mockImportService: jasmine.SpyObj<ImportService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
-
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  mockLoggingService = jasmine.createSpyObj(["warn"]);
 
   beforeEach(async () => {
     mockImportService = jasmine.createSpyObj(["transformRawDataToEntities"]);
@@ -34,7 +30,6 @@ describe("ImportReviewDataComponent", () => {
       providers: [
         { provide: ImportService, useValue: mockImportService },
         { provide: MatDialog, useValue: mockDialog },
-        { provide: LoggingService, useValue: mockLoggingService },
       ],
     }).compileComponents();
 
