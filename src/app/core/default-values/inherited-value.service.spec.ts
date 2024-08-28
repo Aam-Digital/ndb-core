@@ -162,45 +162,16 @@ describe("InheritedValueService", () => {
 
   it("should set value on FormControl, if source is single value array", fakeAsync(() => {
     // given
-    let entity = new Entity();
-    entity["foo"] = ["bar", "doo"];
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
-
-    let form: EntityForm<any> = {
-      formGroup: new FormGroup<any>({
-        field1: new FormControl(),
-        field2: new FormControl(),
-      }),
-      entity: entity,
-      defaultValueConfigs: new Map(),
-      watcher: new Map(),
-      inheritedParentValues: new Map(),
-    };
-
-    let targetFormControl = form.formGroup.get("field1");
-
-    // when
-    service.setDefaultValue(
-      targetFormControl,
-      {
+    let form = getDefaultInheritedForm({
+      field: {
         isArray: true,
         defaultValue: {
           mode: "inherited",
           field: "foo",
-          localAttribute: "field2",
+          localAttribute: "reference-1",
         },
       },
-      form,
-    );
-
-    // when
-    tick();
-    form.formGroup.get("field2").setValue("Entity:0");
-    tick(10); // fetching reference is always async
-
-    // then
-    expect(form.watcher.has("sourceFormControlValueChanges_field2")).toBeTrue();
-    expect(targetFormControl.value).toEqual(["bar", "doo"]);
+    });
 
     let entity0 = new Entity();
     entity0["foo"] = ["bar"];
