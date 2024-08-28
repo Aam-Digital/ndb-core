@@ -4,10 +4,14 @@ import { ConfigService } from "../../config/config.service";
 import { createTestingConfigService } from "../../config/testing-config-service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("EntityFieldViewComponent", () => {
   let component: EntityFieldViewComponent;
   let fixture: ComponentFixture<EntityFieldViewComponent>;
+
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
+  mockLoggingService = jasmine.createSpyObj(["warn"]);
 
   let testEntity: TestEntity;
   const testProperty: string = "dateOfBirth";
@@ -19,6 +23,7 @@ describe("EntityFieldViewComponent", () => {
       imports: [EntityFieldViewComponent, MockedTestingModule],
       providers: [
         { provide: ConfigService, useValue: createTestingConfigService() },
+        { provide: LoggingService, useValue: mockLoggingService },
       ],
     }).compileComponents();
 

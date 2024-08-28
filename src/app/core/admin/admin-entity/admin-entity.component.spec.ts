@@ -26,6 +26,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("AdminEntityComponent", () => {
   let component: AdminEntityComponent;
@@ -63,6 +64,9 @@ describe("AdminEntityComponent", () => {
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue(config[viewConfigId]);
 
+    let mockLoggingService: jasmine.SpyObj<LoggingService>;
+    mockLoggingService = jasmine.createSpyObj(["warn"]);
+
     entityMapper = mockEntityMapper([new Config(Config.CONFIG_KEY, config)]);
 
     TestBed.configureTestingModule({
@@ -76,6 +80,7 @@ describe("AdminEntityComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
+        { provide: LoggingService, useValue: mockLoggingService },
         {
           provide: EntityMapperService,
           useValue: entityMapper,

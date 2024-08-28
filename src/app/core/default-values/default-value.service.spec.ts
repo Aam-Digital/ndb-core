@@ -114,7 +114,7 @@ describe("DefaultValueService", () => {
     tick();
 
     // then
-    expect(form.formGroup.get("field").value).toBe(null);
+    expect(form.formGroup.get("field").value).toEqual(null);
   }));
 
   it("should not set default value on FormControl, if target field is dirty and not empty", fakeAsync(() => {

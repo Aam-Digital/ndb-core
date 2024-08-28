@@ -6,10 +6,14 @@ import { CurrentUserSubject } from "../session/current-user-subject";
 import { testDefaultValueCase } from "./default-value.service.spec";
 import { DefaultValueService } from "./default-value.service";
 import { InheritedValueService } from "./inherited-value.service";
+import { LoggingService } from "../logging/logging.service";
 
 describe("DynamicPlaceholderValueService", () => {
   let service: DynamicPlaceholderValueService;
   let defaultValueService: DefaultValueService;
+
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
+  mockLoggingService = jasmine.createSpyObj(["warn"]);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -19,6 +23,7 @@ describe("DynamicPlaceholderValueService", () => {
           provide: InheritedValueService,
           useValue: jasmine.createSpyObj(["initEntityForm"]),
         },
+        { provide: LoggingService, useValue: mockLoggingService },
       ],
     });
     service = TestBed.inject(DynamicPlaceholderValueService);

@@ -28,12 +28,17 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
 
+  let mockLoggingService: jasmine.SpyObj<LoggingService>;
+  mockLoggingService = jasmine.createSpyObj(["warn"]);
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      providers: [{ provide: LoggingService, useValue: mockLoggingService }],
       imports: [MockedTestingModule.withState()],
     });
     service = TestBed.inject(EntityFormService);
@@ -110,22 +115,22 @@ describe("EntityFormService", () => {
     expect(school.name).toBe("normal school");
   });
 
-  it("should create forms with the validators included", () => {
+  it("should create forms with the validators included", async () => {
     TestEntity.schema.set("result", {
       validators: { min: 0, max: 100, required: true },
     });
 
     const formFields = [{ id: "name" }, { id: "result" }];
-    const formGroup = await service.createEntityForm(formFields, new TestEntity());
+    const form = await service.createEntityForm(formFields, new TestEntity());
 
     expect(form.formGroup.valid).toBeFalse();
 
     // @ts-ignore "result" field was temporarily added for this test
-    formGroup.patchValue({ result: 100 });
+    form.formGroup.patchValue({ result: 100 });
     expect(form.formGroup.valid).toBeTrue();
 
     // @ts-ignore "result" field was temporarily added for this test
-    formGroup.patchValue({ result: 101 });
+    form.formGroup.patchValue({ result: 101 });
     expect(form.formGroup.valid).toBeFalse();
 
     TestEntity.schema.delete("result");
@@ -147,7 +152,10 @@ describe("EntityFormService", () => {
       },
     ]);
 
-    const formGroup = await service.createEntityForm(formFields, new TestEntity());
+    const formGroup = await service.createEntityForm(
+      formFields,
+      new TestEntity(),
+    );
     tick();
 
     expect(formGroup.formGroup.get("name").disabled).toBeTrue();
