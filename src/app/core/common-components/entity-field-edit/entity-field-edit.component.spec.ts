@@ -4,7 +4,6 @@ import { EntityFieldEditComponent } from "./entity-field-edit.component";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { Entity } from "../../entity/model/entity";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { DefaultValueService } from "../../default-values/default-value.service";
 
 describe("EntityFieldEditComponent", () => {
   let component: EntityFieldEditComponent;
@@ -22,10 +21,6 @@ describe("EntityFieldEditComponent", () => {
       providers: [
         { provide: EntityFormService, useValue: mockFormService },
         ComponentRegistry,
-        {
-          provide: DefaultValueService,
-          useValue: jasmine.createSpyObj(["getDefaultValueUiHint"]),
-        },
       ],
     });
     fixture = TestBed.createComponent(EntityFieldEditComponent);

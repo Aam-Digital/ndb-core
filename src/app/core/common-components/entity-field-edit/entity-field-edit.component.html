@@ -1,7 +1,8 @@
-<div *ngIf="_field && form && _field.editComponent; else displayComponent">
-  <div
-    [class.field-with-tooltip-suffix]="_field.description || defaultValueHint"
-  >
+<div
+  *ngIf="_field && form && _field.editComponent; else displayComponent"
+  class="flex-row"
+>
+  <div class="flex-grow">
     <ng-container
       [appDynamicComponent]="{
         component: _field.editComponent,
@@ -20,30 +21,11 @@
     [text]="_field.description"
   ></app-help-button>
 
-  <button
-    *ngIf="defaultValueHint && form.formGroup.enabled"
-    mat-icon-button
-    type="button"
-    [disabled]="defaultValueHint.isInSync"
-    (click)="defaultValueHint.syncFromParentField()"
-  >
-    <fa-icon icon="sync"></fa-icon>
-  </button>
-
-  <div class="field-hint" *ngIf="defaultValueHint">
-    <span i18n>
-      Inherited from "<app-entity-field-label
-        [field]="defaultValueHint.inheritedFromField"
-        [entityType]="defaultValueHint.inheritedFromType"
-      ></app-entity-field-label
-      >"
-    </span>
-    @if (defaultValueHint.isInSync) {
-      <span i18n>(up-to-date)</span>
-    } @else {
-      <span i18n>(manually overwritten)</span>
-    }
-  </div>
+  <app-inherited-value-button
+    [form]="form"
+    [field]="_field"
+    [entity]="entity"
+  ></app-inherited-value-button>
 </div>
 
 <ng-template #displayComponent>

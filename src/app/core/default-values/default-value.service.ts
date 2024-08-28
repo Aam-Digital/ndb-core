@@ -116,7 +116,7 @@ export class DefaultValueService {
   getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
     fieldId: string,
-  ): DefaultValueHint | undefined {
+  ): DefaultValueHint | EmptyDefaultValueHint | undefined {
     if (!form) {
       return;
     }
@@ -144,10 +144,30 @@ export class DefaultValueService {
   }
 }
 
-export interface DefaultValueHint {
+export type DefaultValueHint = FullDefaultValueHint | EmptyDefaultValueHint;
+
+/**
+ * Details of the source for an "inherited" default value in a field,
+ * used to display context to the user about this.
+ */
+export interface FullDefaultValueHint {
   isInSync: boolean;
   inheritedFromType: string;
   inheritedFromField: string;
 
   syncFromParentField: () => void;
+
+  isEmpty?: undefined | false;
+}
+
+/**
+ * Reduced "DefaultValueHint" if no referenced parent entity is selected but a rule to inherit values is configured.
+ */
+export interface EmptyDefaultValueHint {
+  inheritedFromField: string;
+  isEmpty: true;
+
+  isInSync?: undefined;
+  inheritedFromType?: undefined;
+  syncFromParentField?: undefined;
 }

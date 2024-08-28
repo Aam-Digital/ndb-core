@@ -119,7 +119,10 @@ export class InheritedValueService extends DefaultValueStrategy {
 
     const parentRefValue = this.getParentRefFromForm(form, defaultConfig);
     if (!parentRefValue) {
-      return;
+      return {
+        inheritedFromField: defaultConfig.localAttribute,
+        isEmpty: true,
+      };
     }
 
     return {
