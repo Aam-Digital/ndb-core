@@ -26,7 +26,7 @@ export class InheritedValueService extends DefaultValueStrategy {
     super();
   }
 
-  async initEntityForm<T extends Entity>(form: EntityForm<T>) {
+  override async initEntityForm<T extends Entity>(form: EntityForm<T>) {
     await this.updateLinkedEntities(form);
   }
 
@@ -104,7 +104,7 @@ export class InheritedValueService extends DefaultValueStrategy {
     );
   }
 
-  async onFormValueChanges<T extends Entity>(form: EntityForm<T>) {
+  override async onFormValueChanges<T extends Entity>(form: EntityForm<T>) {
     await this.updateLinkedEntities(form);
   }
 
