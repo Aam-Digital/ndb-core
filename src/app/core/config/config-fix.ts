@@ -192,7 +192,13 @@ export const defaultJsonConfig = {
       },
       subject: {
         dataType: "string",
-        label: $localize`:Label for the subject of a note:Subject`
+        label: $localize`:Label for the subject of a note:Subject`,
+// TODO: remove before merge
+"defaultValue": {
+  "mode": "inherited",
+  "localAttribute": "children",
+  "field": "name"
+}
       },
       text: {
         dataType: LongTextDatatype.dataType,
@@ -1301,6 +1307,12 @@ export const defaultJsonConfig = {
       remarks: {
         dataType: "string",
         label: $localize`:Label for the remarks of a ASER result:Remarks`,
+// TODO: remove before merge
+"defaultValue": {
+  "mode": "inherited",
+  "localAttribute": "child",
+  "field": "name"
+}
       },
     }
   },

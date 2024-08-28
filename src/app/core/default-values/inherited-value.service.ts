@@ -30,79 +30,87 @@ export class InheritedValueService extends DefaultValueStrategy {
     await this.updateLinkedEntities(form);
   }
 
-  setDefaultValue(
+  async setDefaultValue(
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
     form: EntityForm<any>,
+    entity: Entity,
   ) {
-    let sourceFormControl: AbstractControl<any, any> | null =
-      form.formGroup.get(fieldConfig.defaultValue.localAttribute);
+    const onSourceValueChange = async (change) => {
+      if (form.formGroup.disabled) {
+        return;
+      }
 
-    if (!sourceFormControl || !targetFormControl) {
-      return;
-    }
+      if (
+        targetFormControl.dirty &&
+        !!targetFormControl.value &&
+        form.entity.isNew
+      ) {
+        return;
+      }
 
-    form.watcher.set(
-      "sourceFormControlValueChanges_" +
-        fieldConfig.defaultValue.localAttribute,
-      sourceFormControl.valueChanges.subscribe(async (change) => {
-        if (form.formGroup.disabled) {
-          return;
-        }
+      if (!form.entity.isNew) {
+        return;
+      }
 
-        if (
-          targetFormControl.dirty &&
-          !!targetFormControl.value &&
-          form.entity.isNew
-        ) {
-          return;
-        }
+      if (!change || "") {
+        targetFormControl.setValue(undefined);
+        return;
+      }
 
-        if (!form.entity.isNew) {
-          return;
-        }
-
-        if (!change || "") {
+      // source field is array, use first element if only one element
+      if (Array.isArray(change)) {
+        if (change.length === 1) {
+          change = change[0];
+        } else {
           targetFormControl.setValue(undefined);
           return;
         }
+      }
 
-        // source field is array, use first element if only one element
-        if (Array.isArray(change)) {
-          if (change.length === 1) {
-            change = change[0];
-          } else {
-            targetFormControl.setValue(undefined);
-            return;
-          }
-        }
+      let parentEntity: Entity = await this.entityMapper.load(
+        Entity.extractTypeFromId(change),
+        change,
+      );
 
-        let parentEntity: Entity = await this.entityMapper.load(
-          Entity.extractTypeFromId(change),
-          change,
+      if (
+        !parentEntity ||
+        parentEntity[fieldConfig.defaultValue.field] === undefined
+      ) {
+        return;
+      }
+
+      if (fieldConfig.isArray) {
+        targetFormControl.setValue([
+          ...parentEntity[fieldConfig.defaultValue.field],
+        ]);
+      } else {
+        targetFormControl.setValue(
+          parentEntity[fieldConfig.defaultValue.field],
         );
+      }
 
-        if (
-          !parentEntity ||
-          parentEntity[fieldConfig.defaultValue.field] === undefined
-        ) {
-          return;
-        }
+      targetFormControl.markAsUntouched();
+      targetFormControl.markAsPristine();
+    };
 
-        if (fieldConfig.isArray) {
-          targetFormControl.setValue([
-            ...parentEntity[fieldConfig.defaultValue.field],
-          ]);
-        } else {
-          targetFormControl.setValue(
-            parentEntity[fieldConfig.defaultValue.field],
-          );
-        }
+    // load inherited from initial entity
+    // (e.g. if fields are defined through RelatedEntitiesComponent's factory method, even if that field is not part of the visible form)
+    // TODO: as an alternative, we could add a "hidden" form field for the source field here automatically? (this might help to show better UI hints)
+    await onSourceValueChange(entity[fieldConfig.defaultValue.localAttribute]);
 
-        targetFormControl.markAsUntouched();
-        targetFormControl.markAsPristine();
-      }),
-    );
+    // subscribe to update inherited whenever source field changes
+    let sourceFormControl: AbstractControl<any, any> | null =
+      form.formGroup.get(fieldConfig.defaultValue.localAttribute);
+    if (sourceFormControl && targetFormControl) {
+      form.watcher.set(
+        "sourceFormControlValueChanges_" +
+          fieldConfig.defaultValue.localAttribute,
+        sourceFormControl.valueChanges.subscribe(
+          async (change) => await onSourceValueChange(change),
+        ),
+      );
+    }
   }
 
   override async onFormValueChanges<T extends Entity>(form: EntityForm<T>) {

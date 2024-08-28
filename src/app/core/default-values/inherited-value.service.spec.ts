@@ -65,10 +65,11 @@ describe("InheritedValueService", () => {
         },
       },
       form,
+      entity,
     );
 
     // then
-    expect(targetFormControl.value).toBe(null);
+    expect(targetFormControl.value).toBe(undefined);
     expect(
       form.watcher.has("sourceFormControlValueChanges_field1"),
     ).toBeFalse();
@@ -105,6 +106,7 @@ describe("InheritedValueService", () => {
         },
       },
       form,
+      entity,
     );
 
     // when
@@ -148,6 +150,7 @@ describe("InheritedValueService", () => {
         },
       },
       form,
+      entity,
     );
 
     // when
@@ -314,7 +317,7 @@ describe("InheritedValueService", () => {
     // when/then
     form.formGroup.get("reference-1").setValue("non-existing-entity-id");
     tick(); // fetching reference is always async
-    expect(form.formGroup.get("field").value).toBe(null);
+    expect(form.formGroup.get("field").value).toBe(undefined);
   }));
 
   it("should do nothing, if formGroup is disabled", fakeAsync(() => {
