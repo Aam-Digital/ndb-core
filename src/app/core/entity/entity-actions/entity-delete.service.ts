@@ -6,6 +6,9 @@ import {
   CascadingActionResult,
   CascadingEntityAction,
 } from "./cascading-entity-action";
+import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Safely delete an entity including handling references with related entities.
@@ -16,8 +19,10 @@ import {
 })
 export class EntityDeleteService extends CascadingEntityAction {
   constructor(
-    protected entityMapper: EntityMapperService,
-    protected schemaService: EntitySchemaService,
+    protected override entityMapper: EntityMapperService,
+    protected override schemaService: EntitySchemaService,
+    private keycloakAuthService: KeycloakAuthService,
+    private confirmationDialog: ConfirmationDialogService,
   ) {
     super(entityMapper, schemaService);
   }
@@ -29,9 +34,28 @@ export class EntityDeleteService extends CascadingEntityAction {
    * to support an undo action.
    *
    * @param entity
+   * @param showKeycloakWarning if keycloak deleteUser request fails, a popup warning is shown to the user
    * @private
    */
-  async deleteEntity(entity: Entity): Promise<CascadingActionResult> {
+  async deleteEntity(
+    entity: Entity,
+    showKeycloakWarning = false,
+  ): Promise<CascadingActionResult> {
+    if ("User" === entity.getType()) {
+      this.keycloakAuthService.deleteUser(entity.getId()).subscribe({
+        next: () => {},
+        error: () => {
+          if (showKeycloakWarning) {
+            this.confirmationDialog.getConfirmation(
+              $localize`:delete account in keycloak related error title:Keycloak User could not be deleted`,
+              $localize`:delete account in keycloak related error dialog:User Account could not be deleted in Keycloak. Please delete user manually in Keycloak.`,
+              OkButton,
+            );
+          }
+        },
+      });
+    }
+
     const cascadeResult = await this.cascadeActionToRelatedEntities(
       entity,
       (e) => this.deleteEntity(e),

@@ -3,7 +3,7 @@
 @use "@angular/material/core/style/elevation" as mat-elevation;
 
 .table-container {
-  position: relative; // anchor for further absolute positioning of child elements
+  position: relative; /* anchor for further absolute positioning of child elements */
 }
 
 .column-menu {
@@ -34,4 +34,8 @@
   padding: sizes.$regular;
   background-color: white;
   border-top: none;
+}
+
+.inactive-row {
+  color: colors.$inactive;
 }

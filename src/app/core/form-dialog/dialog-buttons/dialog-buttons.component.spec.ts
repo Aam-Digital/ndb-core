@@ -11,12 +11,12 @@ import { EntityFormService } from "../../common-components/entity-form/entity-fo
 import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
 import { AlertService } from "../../alerts/alert.service";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Router } from "@angular/router";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FormGroup } from "@angular/forms";
 import { firstValueFrom, Subject } from "rxjs";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent;
@@ -81,16 +81,18 @@ describe("DialogButtonsComponent", () => {
   });
 
   it("should create the details route", () => {
-    const child = new Child();
+    const child = new TestEntity();
     child._rev = "existing";
     component.entity = child;
     TestBed.inject(Router).resetConfig([
-      { path: "child/:id", redirectTo: "/" },
+      { path: "test-entity/:id", redirectTo: "/" },
     ]);
 
     component.ngOnInit();
 
-    expect(component.detailsRoute).toBe(`${Child.route}/${child.getId(true)}`);
+    expect(component.detailsRoute).toBe(
+      `${TestEntity.route}/${child.getId(true)}`,
+    );
   });
 
   it("should close the dialog if a entity is deleted", async () => {

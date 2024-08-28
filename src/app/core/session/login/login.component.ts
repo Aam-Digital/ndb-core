@@ -56,7 +56,7 @@ import { race, timer } from "rxjs";
 })
 export class LoginComponent implements OnInit {
   offlineUsers: SessionInfo[] = [];
-  enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
+  enableOfflineLogin: boolean;
   loginInProgress = false;
 
   constructor(
@@ -66,6 +66,8 @@ export class LoginComponent implements OnInit {
     public loginState: LoginStateSubject,
     public siteSettingsService: SiteSettingsService,
   ) {
+    this.enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
+
     sessionManager
       .remoteLogin()
       .then(() => sessionManager.clearRemoteSessionIfNecessary());

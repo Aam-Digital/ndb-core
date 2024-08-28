@@ -8,13 +8,13 @@ import {
 import { AbstractEntityDetailsComponent } from "./abstract-entity-details.component";
 import { Router } from "@angular/router";
 import { EntityDetailsConfig } from "../EntityDetailsConfig";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Component, SimpleChange } from "@angular/core";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 @Component({
   template: ``,
@@ -27,7 +27,7 @@ describe("AbstractEntityDetailsComponent", () => {
   let fixture: ComponentFixture<TestEntityDetailsComponent>;
 
   const routeConfig: EntityDetailsConfig = {
-    entityType: "Child",
+    entityType: TestEntity.ENTITY_TYPE,
     panels: [],
   };
 
@@ -68,7 +68,7 @@ describe("AbstractEntityDetailsComponent", () => {
 
   it("should load the correct entity on init", fakeAsync(() => {
     component.isLoading = true;
-    const testChild = new Child("Test-Child");
+    const testChild = new TestEntity("Test-Child");
     const entityMapper = TestBed.inject(EntityMapperService);
     entityMapper.save(testChild);
     tick();
@@ -80,7 +80,7 @@ describe("AbstractEntityDetailsComponent", () => {
     tick();
 
     expect(entityMapper.load).toHaveBeenCalledWith(
-      Child,
+      TestEntity,
       testChild.getId(true),
     );
     expect(component.entity).toBe(testChild);
@@ -88,7 +88,7 @@ describe("AbstractEntityDetailsComponent", () => {
   }));
 
   it("should also support the long ID format", fakeAsync(() => {
-    const child = new Child();
+    const child = new TestEntity();
     const entityMapper = TestBed.inject(EntityMapperService);
     entityMapper.save(child);
     tick();
@@ -98,7 +98,7 @@ describe("AbstractEntityDetailsComponent", () => {
     component.ngOnChanges(simpleChangesFor(component, "id"));
     tick();
 
-    expect(entityMapper.load).toHaveBeenCalledWith(Child, child.getId());
+    expect(entityMapper.load).toHaveBeenCalledWith(TestEntity, child.getId());
     expect(component.entity).toEqual(child);
 
     // entity is updated

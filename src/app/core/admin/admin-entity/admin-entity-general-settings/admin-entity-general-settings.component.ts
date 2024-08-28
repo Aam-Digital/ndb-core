@@ -27,7 +27,7 @@ import { StringDatatype } from "../../../basic-datatypes/string/string.datatype"
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { MatSort } from "@angular/material/sort";
 import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
-import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-options/anonymize-options.component";
+import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
@@ -126,7 +126,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     newAnonymizationValue,
   ) {
     fieldSchema.anonymize = newAnonymizationValue;
-    fieldSchema._isCustomizedField = true;
 
     this.adminEntityService.updateSchemaField(
       this.entityConstructor,

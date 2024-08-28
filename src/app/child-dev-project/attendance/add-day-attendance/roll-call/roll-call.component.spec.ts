@@ -9,8 +9,6 @@ import {
 import { RollCallComponent } from "./roll-call.component";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
-import { Child } from "../../../children/model/child";
-import { LoggingService } from "../../../../core/logging/logging.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
@@ -18,6 +16,7 @@ import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "../../../children/children.service";
 import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 const PRESENT = {
   id: "PRESENT",
@@ -38,20 +37,18 @@ describe("RollCallComponent", () => {
   let component: RollCallComponent;
   let fixture: ComponentFixture<RollCallComponent>;
 
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-
-  let participant1: Child, participant2: Child, participant3: Child;
+  let participant1: TestEntity,
+    participant2: TestEntity,
+    participant3: TestEntity;
 
   const dummyChanges = {
     eventEntity: new SimpleChange(undefined, {}, true),
   };
 
   beforeEach(waitForAsync(() => {
-    participant1 = new Child("child1");
-    participant2 = new Child("child2");
-    participant3 = new Child("child3");
-
-    mockLoggingService = jasmine.createSpyObj(["warn", "debug"]);
+    participant1 = new TestEntity("child1");
+    participant2 = new TestEntity("child2");
+    participant3 = new TestEntity("child3");
 
     TestBed.configureTestingModule({
       imports: [
@@ -62,10 +59,7 @@ describe("RollCallComponent", () => {
           participant3,
         ]),
       ],
-      providers: [
-        { provide: LoggingService, useValue: mockLoggingService },
-        { provide: ChildrenService, useValue: {} },
-      ],
+      providers: [{ provide: ChildrenService, useValue: {} }],
     }).compileComponents();
   }));
 
@@ -107,7 +101,6 @@ describe("RollCallComponent", () => {
 
     expect(component.children).toEqual([participant1]);
     expect(component.eventEntity.children).not.toContain(nonExistingChildId);
-    expect(mockLoggingService.debug).toHaveBeenCalled();
     flush();
   }));
 
@@ -239,8 +232,8 @@ describe("RollCallComponent", () => {
   }));
 
   function testParticipantsAreSorted(
-    participantsInput: Child[],
-    expectedParticipantsOrder: Child[],
+    participantsInput: TestEntity[],
+    expectedParticipantsOrder: TestEntity[],
     sortParticipantsBy: string,
   ) {
     const event = new Note();

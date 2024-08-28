@@ -24,7 +24,7 @@ export class EntityAbility extends Ability<[EntityAction, string | any]> {
     super([]);
   }
 
-  can(
+  override can(
     action: EntityAction,
     entity: EntitySubject,
     field?: string,
@@ -46,7 +46,11 @@ export class EntityAbility extends Ability<[EntityAction, string | any]> {
     return super.can(action, this.getSubject(entity), field);
   }
 
-  cannot(action: EntityAction, entity: EntitySubject, field?: string): boolean {
+  override cannot(
+    action: EntityAction,
+    entity: EntitySubject,
+    field?: string,
+  ): boolean {
     return super.cannot(action, this.getSubject(entity), field);
   }
 
@@ -66,7 +70,7 @@ export class EntityAbility extends Ability<[EntityAction, string | any]> {
     } else if (entity.ENTITY_TYPE) {
       return entity.ENTITY_TYPE;
     } else {
-      throw new Error(`${entity} is not a valid subject`);
+      throw new Error(`${JSON.stringify(entity)} is not a valid subject`);
     }
   }
 }

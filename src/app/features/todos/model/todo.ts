@@ -1,84 +1,40 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../core/entity/model/entity";
-import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { User } from "../../../core/user/user";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { TimeInterval } from "../recurring-interval/time-interval";
 import { TodoCompletion } from "./todo-completion";
 import { WarningLevel } from "../../../child-dev-project/warning-level";
-import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
+/**
+ * Base Entity Type for the Todo Feature.
+ *
+ * All fields are defined in config (in the database) and customized there,
+ * this class only serves as an interface for required fields upon which core functionalities are built.
+ */
 @DatabaseEntity("Todo")
 export class Todo extends Entity {
-  static label = $localize`:label for entity:Task`;
-  static labelPlural = $localize`:label (plural) for entity:Tasks`;
-  static toStringAttributes = ["subject"];
-  static override hasPII = true;
-
   static create(properties: Partial<Todo>): Todo {
     const instance = new Todo();
     Object.assign(instance, properties);
     return instance;
   }
 
-  @DatabaseField({ label: $localize`:Label:Subject`, showInDetailsView: true })
+  @DatabaseField()
   subject: string = "";
 
-  @DatabaseField({
-    dataType: "date-only",
-    label: $localize`:Label:Deadline`,
-    showInDetailsView: true,
-    anonymize: "retain",
-  })
-  deadline: Date;
-
-  @DatabaseField({
-    dataType: "date-only",
-    label: $localize`:Label:Start date`,
-    description: $localize`:Description:When you are planning to start work so that you keep enough time before the actual hard deadline.`,
-    showInDetailsView: true,
-    anonymize: "retain",
-  })
-  startDate: Date;
-
-  @DatabaseField({
-    label: $localize`:Label:Description`,
-    editComponent: "EditLongText",
-    showInDetailsView: true,
-  })
+  @DatabaseField()
   description: string = "";
 
-  @DatabaseField({
-    label: $localize`:Label:Assigned to`,
-    dataType: "entity",
-    isArray: true,
-    additional: User.ENTITY_TYPE,
-    showInDetailsView: true,
-    defaultValue: {
-      mode: "dynamic",
-      value: PLACEHOLDERS.CURRENT_USER,
-    },
-    anonymize: "retain",
-  })
+  @DatabaseField({ dataType: "date-only" })
+  deadline: Date;
+
+  /**
+   * Optional field to specify a point in time from when the task can be started.
+   */
+  @DatabaseField({ dataType: "date-only" })
+  startDate?: Date;
+
+  @DatabaseField({ dataType: "entity", isArray: true })
   assignedTo: string[] = [];
 
   /**
@@ -86,48 +42,18 @@ export class Todo extends Entity {
    *
    * This property saves ids including their entity type prefix.
    */
-  @DatabaseField({
-    dataType: "entity",
-    isArray: true,
-    label: $localize`:label for the related Entities:Related Records`,
-    additional: [
-      Child.ENTITY_TYPE,
-      School.ENTITY_TYPE,
-      RecurringActivity.ENTITY_TYPE,
-    ],
-    entityReferenceRole: "composite",
-    showInDetailsView: true,
-    anonymize: "retain",
-  })
+  @DatabaseField({ dataType: "entity", isArray: true })
   relatedEntities: string[] = [];
 
-  @DatabaseField({
-    label: $localize`:label for Todo entity property:repeats`,
-    additional: [
-      {
-        label: $localize`:repetition interval option:every week`,
-        interval: { amount: 1, unit: "week" },
-      },
-      {
-        label: $localize`:repetition interval option:every month`,
-        interval: { amount: 1, unit: "month" },
-      },
-    ] as { label: string; interval: TimeInterval }[],
-    showInDetailsView: true,
-    anonymize: "retain",
-  })
+  @DatabaseField()
   repetitionInterval: TimeInterval;
 
-  @DatabaseField({
-    label: $localize`:label for Todo entity property:completed`,
-    viewComponent: "DisplayTodoCompletion",
-    anonymize: "retain",
-  })
+  @DatabaseField()
   completed?: TodoCompletion;
 
-  get isActive(): boolean {
+  override get isActive(): boolean {
     if (this.inactive) {
-      // manual archiving of records takes precendence
+      // manual archiving of records takes precedence
       return false;
     }
 
@@ -142,7 +68,7 @@ export class Todo extends Entity {
     );
   }
 
-  getWarningLevel(): WarningLevel {
+  override getWarningLevel(): WarningLevel {
     if (this.isOverdue) {
       return WarningLevel.URGENT;
     }

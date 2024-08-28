@@ -1,9 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import {
-  IconDefinition,
-  IconName,
-  IconPrefix,
-} from "@fortawesome/fontawesome-svg-core";
+import { IconName, IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import {
   faCalendarAlt,
   faCalendarCheck,
@@ -15,8 +11,9 @@ import {
 import {
   FaIconLibrary,
   FontAwesomeModule,
+  IconDefinition,
 } from "@fortawesome/angular-fontawesome";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { NgIf } from "@angular/common";
 
 /**
@@ -63,7 +60,7 @@ export class FaDynamicIconComponent {
    * In case the provided icon still doesn't exist, a question-mark-icon with circle
    * (see {@link fallbackIcon}) will be shown.
    * <br>
-   * Note that there is no getter and you should not attempt to get the icon name, for example via
+   * Note that there is no getter, and you should not attempt to get the icon name, for example via
    * {@link _icon#iconName} since it is not guaranteed to be the same as the provided name
    * @param icon the icon name
    */
@@ -91,7 +88,7 @@ export class FaDynamicIconComponent {
     if (!definition) {
       // Fallback if the icon is neither in the map nor a registered icon
       definition = FaDynamicIconComponent.fallbackIcon;
-      this.loggingService.warn(
+      Logging.warn(
         `Tried to set icon "${icon}" but it does not exist as a font awesome regular item nor is it registered as an alias.`,
       );
     }
@@ -103,8 +100,5 @@ export class FaDynamicIconComponent {
    */
   _icon: IconDefinition;
 
-  constructor(
-    private iconLibrary: FaIconLibrary,
-    private loggingService: LoggingService,
-  ) {}
+  constructor(private iconLibrary: FaIconLibrary) {}
 }

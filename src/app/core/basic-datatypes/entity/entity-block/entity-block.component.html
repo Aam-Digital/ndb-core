@@ -1,6 +1,9 @@
 <span
   class="block-height truncate-text"
-  [ngClass]="{ clickable: !linkDisabled }"
+  [ngClass]="{
+    clickable: !linkDisabled,
+    '.inactive': !entityToDisplay?.isActive,
+  }"
   (click)="showDetailsPage()"
 >
   @if (entityBlockComponent) {

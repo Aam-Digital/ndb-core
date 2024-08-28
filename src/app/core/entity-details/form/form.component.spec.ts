@@ -7,16 +7,16 @@ import {
 } from "@angular/core/testing";
 
 import { FormComponent } from "./form.component";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Router } from "@angular/router";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../alerts/alert.service";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("FormComponent", () => {
-  let component: FormComponent<Child>;
-  let fixture: ComponentFixture<FormComponent<Child>>;
+  let component: FormComponent<TestEntity>;
+  let fixture: ComponentFixture<FormComponent<TestEntity>>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -26,9 +26,9 @@ describe("FormComponent", () => {
   }));
 
   beforeEach(fakeAsync(() => {
-    fixture = TestBed.createComponent(FormComponent<Child>);
+    fixture = TestBed.createComponent(FormComponent<TestEntity>);
     component = fixture.componentInstance;
-    component.entity = new Child();
+    component.entity = new TestEntity();
     component.fieldGroups = [{ fields: [{ id: "name" }] }];
     fixture.detectChanges();
     tick();
@@ -41,7 +41,7 @@ describe("FormComponent", () => {
   it("should change the creating state", () => {
     expect(component.creatingNew).toBeFalse();
 
-    component.entity = new Child();
+    component.entity = new TestEntity();
     component.fieldGroups = [];
     component.creatingNew = true;
 
@@ -52,7 +52,7 @@ describe("FormComponent", () => {
     const entityFormService = TestBed.inject(EntityFormService);
     spyOn(entityFormService, "saveChanges").and.resolveTo();
 
-    const testChild = new Child();
+    const testChild = new TestEntity();
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
 
@@ -78,7 +78,7 @@ describe("FormComponent", () => {
   });
 
   it("should align form with entity if canceled", () => {
-    const child = new Child();
+    const child = new TestEntity();
     child.name = "test child";
     component.entity = child;
     component.form.formGroup.enable();
@@ -91,7 +91,7 @@ describe("FormComponent", () => {
   });
 
   it("should also reset form values which where not set before", () => {
-    component.entity = new Child();
+    component.entity = new TestEntity();
     component.ngOnInit();
     component.form.formGroup.enable();
 

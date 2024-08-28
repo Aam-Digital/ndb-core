@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { Child } from "../../../children/model/child";
 import { EventNote } from "../../model/event-note";
 import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
@@ -11,6 +10,7 @@ import { AttendanceService } from "../../attendance.service";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment from "moment";
 import * as MockDate from "mockdate";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
@@ -44,8 +44,8 @@ describe("AttendanceWeekDashboardComponent", () => {
   });
 
   it("should display children with low attendance", async () => {
-    const absentChild = new Child();
-    const presentChild = new Child();
+    const absentChild = new TestEntity();
+    const presentChild = new TestEntity();
     const mondayLastWeek = moment().startOf("isoWeek").subtract(7, "days");
     const e1 = EventNote.create(mondayLastWeek.toDate());
     const e2 = EventNote.create(moment(e1.date).add(1, "day").toDate());

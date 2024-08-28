@@ -1,23 +1,7 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { Injectable } from "@angular/core";
 import { DateOnlyDatatype } from "../date-only/date-only.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a short string month format ("YYYY-mm").
@@ -33,10 +17,10 @@ export class MonthDatatype extends DateOnlyDatatype {
   static override dataType = "month";
   static override label: string = $localize`:datatype-label:month (date without day of month)`;
 
-  viewComponent = "DisplayMonth";
-  editComponent = "EditMonth";
+  override viewComponent = "DisplayMonth";
+  override editComponent = "EditMonth";
 
-  transformToDatabaseFormat(value) {
+  override transformToDatabaseFormat(value) {
     if (!(value instanceof Date)) {
       value = new Date(value);
     }
@@ -47,7 +31,7 @@ export class MonthDatatype extends DateOnlyDatatype {
     );
   }
 
-  transformToObjectFormat(
+  override transformToObjectFormat(
     value: string,
     schemaField: EntitySchemaField,
     parent: any,
@@ -55,7 +39,7 @@ export class MonthDatatype extends DateOnlyDatatype {
     const values = value.split("-").map((v) => Number(v));
     const date = new Date(values[0], values[1] - 1);
     if (Number.isNaN(date.getTime())) {
-      this.loggingService.warn(
+      Logging.warn(
         `failed to convert data '${value}' to Date object for ${parent?._id}`,
       );
       return undefined;

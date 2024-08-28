@@ -27,7 +27,7 @@ import { AlertDisplay } from "./alert-display";
  *
  * Inject this service in your classes to easily trigger alerts in the app consistent style.
  *
- * If you want to log technical details and problems, use {@link LoggingService} instead!
+ * If you want to log technical details and problems, use {@link Logging} instead!
  * This service is for user facing messages.
  *
  * You can also use the {@link MatSnackBar} when you want to have more control over what you

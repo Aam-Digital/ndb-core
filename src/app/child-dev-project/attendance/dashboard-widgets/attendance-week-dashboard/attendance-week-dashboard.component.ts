@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { Child } from "../../../children/model/child";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceService } from "../../attendance.service";
 import { EventAttendance } from "../../model/event-attendance";
@@ -16,6 +15,7 @@ import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-d
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EventNote } from "../../model/event-note";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -42,7 +42,7 @@ export class AttendanceWeekDashboardComponent
   extends DashboardWidget
   implements OnInit
 {
-  static getRequiredEntities() {
+  static override getRequiredEntities() {
     return EventNote.ENTITY_TYPE;
   }
 
@@ -85,6 +85,7 @@ export class AttendanceWeekDashboardComponent
   constructor(
     private attendanceService: AttendanceService,
     private router: Router,
+    private entityRegistry: EntityRegistry,
   ) {
     super();
   }
@@ -180,6 +181,7 @@ export class AttendanceWeekDashboardComponent
   }
 
   goToChild(childId: string) {
+    const Child = this.entityRegistry.get("Child");
     this.router.navigate([Child.route, childId]);
   }
 }

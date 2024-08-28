@@ -4,7 +4,6 @@ import { EMPTY, Observable, of } from "rxjs";
 import { FileService } from "./file.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { LoggingService } from "../../core/logging/logging.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SyncStateSubject } from "../../core/session/session-type";
 
@@ -20,11 +19,10 @@ export class MockFileService extends FileService {
   constructor(
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    logger: LoggingService,
     syncState: SyncStateSubject,
     private sanitizer: DomSanitizer,
   ) {
-    super(entityMapper, entities, logger, syncState);
+    super(entityMapper, entities, syncState);
   }
 
   removeFile(entity: Entity, property: string): Observable<any> {

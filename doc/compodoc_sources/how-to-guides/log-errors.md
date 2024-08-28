@@ -11,11 +11,11 @@ If you need to output information for possible debugging that is not handled oth
 This way, all logging is done in a consistent manner and can possibly be transferred to the development team or saved in some other way.
 
 To log information for analysis and debugging (without explicit notification to the user)
-use the [LoggingService](../../injectables/LoggingService.html):
+use the [Logging](../../injectables/LoggingService.html) object:
 
 ```
-constructor(private logger: LoggingService) {
-  this.logger.error('some error information');
+someFun() {
+  Logging.error('some error information');
 }
 ```
 

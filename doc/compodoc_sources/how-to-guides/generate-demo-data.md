@@ -15,7 +15,7 @@ This Guide walks you through the steps to add data to this demo mode for your ow
    In the AppModule (or wherever you import the DemoDataModule) add your service provider:
    _ e.g. `DemoDataModule.forRoot([{ provide: DemoUserGeneratorService, useClass: DemoUserGeneratorService }])`
    _ When the DemoDataModule is loaded your generator is then also triggered.
-1. Change your `config.json` and set `database.useTemporaryDatabase: true` to start the app with in demo mode
+1. Change your `config.json` and set `demo_mode: true` to start the app with in demo mode
    and get your data generated on startup.
 
 ## Creating realistic, random data

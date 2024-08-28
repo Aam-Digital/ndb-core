@@ -1,7 +1,6 @@
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../../children/model/child";
 import { Note } from "../model/note";
 import { faker } from "../../../core/demo-data/faker";
 import { noteIndividualStories } from "./notes_individual-stories";
@@ -13,6 +12,7 @@ import { AttendanceLogicalStatus } from "../../attendance/model/attendance-statu
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { warningLevels } from "../../warning-level";
+import { Entity } from "../../../core/entity/model/entity";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -71,7 +71,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
             child,
             faker.date.between({
               from: moment().subtract(6, "days").toDate(),
-              to: faker.getEarlierDateOrToday(child.dropoutDate),
+              to: moment().toDate(),
             }),
           ),
         );
@@ -84,8 +84,8 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     }
 
     for (const center of centersUnique) {
-      const children: Child[] = this.demoChildren.entities.filter(
-        (c) => c.center === center,
+      const children: Entity[] = this.demoChildren.entities.filter(
+        (c) => c["center"] === center,
       );
       for (let i = 0; i < this.config.groupNotes; i++) {
         data.push(this.generateGroupNote(children));
@@ -95,7 +95,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     return data;
   }
 
-  private generateNoteForChild(child: Child, date?: Date): Note {
+  private generateNoteForChild(child: Entity, date?: Date): Note {
     const note = new Note();
 
     const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
@@ -108,8 +108,8 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
     if (!date) {
       date = faker.date.between({
-        from: child.admissionDate,
-        to: faker.getEarlierDateOrToday(child.dropoutDate),
+        from: child["admissionDate"],
+        to: faker.getEarlierDateOrToday(child["dropoutDate"]),
       });
     }
     note.date = date;
@@ -130,7 +130,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     }
   }
 
-  private generateGroupNote(children: Child[]) {
+  private generateGroupNote(children: Entity[]) {
     const note = new Note();
 
     const selectedStory = faker.helpers.arrayElement(noteGroupStories);

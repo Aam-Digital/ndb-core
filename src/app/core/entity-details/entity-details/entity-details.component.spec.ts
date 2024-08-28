@@ -7,20 +7,20 @@ import {
 } from "@angular/core/testing";
 import { EntityDetailsComponent } from "./entity-details.component";
 import { EntityDetailsConfig, PanelConfig } from "../EntityDetailsConfig";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { SimpleChange } from "@angular/core";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
   let fixture: ComponentFixture<EntityDetailsComponent>;
 
   const routeConfig: EntityDetailsConfig = {
-    entityType: "Child",
+    entityType: TestEntity.ENTITY_TYPE,
     panels: [
       {
         title: "One Form",
@@ -81,7 +81,7 @@ describe("EntityDetailsComponent", () => {
   });
 
   it("sets the panels config with child and creating status", fakeAsync(() => {
-    const testChild = new Child("Test-Child");
+    const testChild = new TestEntity("Test-Child");
     testChild["_rev"] = "1"; // mark as "not new"
     TestBed.inject(EntityMapperService).save(testChild);
     tick();

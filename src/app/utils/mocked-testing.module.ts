@@ -2,7 +2,6 @@ import { ModuleWithProviders, NgModule } from "@angular/core";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
-import { User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -12,7 +11,7 @@ import { DatabaseIndexingService } from "../core/entity/database-indexing/databa
 import { ConfigService } from "../core/config/config.service";
 import { environment } from "../../environments/environment";
 import { createTestingConfigService } from "../core/config/testing-config-service";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
@@ -26,6 +25,12 @@ import { TEST_USER } from "../core/user/demo-user-generator.service";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { entityAbilityFactory } from "app/core/permissions/ability/testing-entity-ability-factory";
+import { createEntityOfType } from "../core/demo-data/create-entity-of-type";
+import { TestEntity } from "./test-utils/TestEntity";
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -45,7 +50,6 @@ import { entityAbilityFactory } from "app/core/permissions/ability/testing-entit
     AppModule,
     NoopAnimationsModule,
     RouterTestingModule,
-    HttpClientTestingModule,
     ReactiveFormsModule,
   ],
   providers: [
@@ -66,12 +70,14 @@ import { entityAbilityFactory } from "app/core/permissions/ability/testing-entit
         queryIndexDocs: () => Promise.resolve([]),
       },
     },
+    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClientTesting(),
   ],
 })
 export class MockedTestingModule {
   static withState(
     loginState = LoginState.LOGGED_IN,
-    data: Entity[] = [new User(TEST_USER)],
+    data: Entity[] = [createEntityOfType("User", TEST_USER)],
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([...data]);
@@ -94,12 +100,13 @@ export class MockedTestingModule {
           provide: SessionSubject,
           useValue: new BehaviorSubject<SessionInfo>({
             name: TEST_USER,
+            id: TEST_USER,
             roles: ["user_app"],
           }),
         },
         {
           provide: CurrentUserSubject,
-          useValue: new BehaviorSubject(new User(TEST_USER)),
+          useValue: new BehaviorSubject(new TestEntity(TEST_USER)),
         },
       ],
     };

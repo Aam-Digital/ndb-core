@@ -17,8 +17,11 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, Inject, LOCALE_ID, NgModule } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
+import { LOCALE_ID, NgModule } from "@angular/core";
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
@@ -31,11 +34,8 @@ import {
   SwRegistrationOptions,
 } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ConfigurableEnumModule } from "./core/basic-datatypes/configurable-enum/configurable-enum.module";
-import { MatPaginatorIntl } from "@angular/material/paginator";
-import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
@@ -70,18 +70,14 @@ import {
 } from "./utils/di-tokens";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { NotesModule } from "./child-dev-project/notes/notes.module";
-import { SchoolsModule } from "./child-dev-project/schools/schools.module";
-import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
-import moment from "moment";
-import { getLocaleFirstDayOfWeek } from "@angular/common";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
-import { appInitializers } from "./app-initializers";
+import { APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES } from "./core/config/config.app-initializer";
 import { ImportModule } from "./core/import/import.module";
 import { ShortcutDashboardWidgetModule } from "./features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module";
 import { EntityCountDashboardWidgetModule } from "./features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-widget.module";
@@ -89,6 +85,8 @@ import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birt
 import { MarkdownPageModule } from "./features/markdown-page/markdown-page.module";
 import { LoginStateSubject } from "./core/session/session-type";
 import { AdminModule } from "./core/admin/admin.module";
+import { Logging } from "./core/logging/logging.service";
+import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initializer";
 
 /**
  * Main entry point of the application.
@@ -97,6 +95,7 @@ import { AdminModule } from "./core/admin/admin.module";
  */
 @NgModule({
   declarations: [AppComponent],
+  bootstrap: [AppComponent],
   imports: [
     // Global Angular modules
     ServiceWorkerModule.register("ngsw-worker.js"),
@@ -105,7 +104,6 @@ import { AdminModule } from "./core/admin/admin.module";
     }),
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     RouterModule.forRoot(allRoutes),
     // Core modules
     CoreModule,
@@ -119,12 +117,10 @@ import { AdminModule } from "./core/admin/admin.module";
     AttendanceModule,
     ChildrenModule,
     NotesModule,
-    SchoolsModule,
     // feature module
     ImportModule,
     FileModule,
     MarkdownPageModule,
-    HistoricalDataModule,
     LocationModule,
     MatchingEntitiesModule,
     ProgressDashboardWidgetModule,
@@ -141,8 +137,7 @@ import { AdminModule } from "./core/admin/admin.module";
     MatDialogModule,
   ],
   providers: [
-    { provide: ErrorHandler, useClass: LoggingErrorHandler },
-    { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
+    ...Logging.getAngularTracingProviders(),
     { provide: ComponentRegistry, useValue: componentRegistry },
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: WINDOW_TOKEN, useValue: window },
@@ -169,17 +164,13 @@ import { AdminModule } from "./core/admin/admin.module";
       }),
       deps: [LoginStateSubject],
     },
-    appInitializers,
+    APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
+    APP_INITIALIZER_DEMO_DATA,
+    provideHttpClient(withInterceptorsFromDi()),
   ],
-  bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(icons: FaIconLibrary, @Inject(LOCALE_ID) locale: string) {
+  constructor(icons: FaIconLibrary) {
     icons.addIconPacks(fas, far);
-    moment.updateLocale(moment.locale(), {
-      week: {
-        dow: getLocaleFirstDayOfWeek(locale),
-      },
-    });
   }
 }

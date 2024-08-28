@@ -1,6 +1,11 @@
 <img [src]="imgPath" alt="Image" class="image" (click)="openPopup()" />
 
-<div class="img-controls">
+<div
+  class="img-controls"
+  [matTooltipDisabled]="!(formControl.enabled && !navigator.onLine)"
+  matTooltip="Changes to files are not possible offline."
+  i18n-matTooltip
+>
   <label class="img-label">{{ label }}</label>
 
   <button
@@ -10,6 +15,7 @@
     (click)="delete()"
     i18n-mattooltip="Tooltip remove file"
     matTooltip="Remove file"
+    [disabled]="!navigator.onLine"
   >
     <fa-icon icon="xmark"></fa-icon>
   </button>
@@ -20,9 +26,11 @@
     (click)="fileUpload.click()"
     i18n-matTooltip="Tooltip upload file button"
     matTooltip="Upload file"
+    [disabled]="!navigator.onLine"
   >
     <fa-icon icon="upload"></fa-icon>
   </button>
+
   <input
     type="file"
     style="display: none"

@@ -11,9 +11,9 @@ export class DateWithAgeDatatype extends DateOnlyDatatype {
   static override dataType = "date-with-age";
   static override label: string = $localize`:datatype-label:date of birth (date + age)`;
 
-  editComponent = "EditAge";
+  override editComponent = "EditAge";
 
-  transformToObjectFormat(
+  override transformToObjectFormat(
     value,
     schemaField: EntitySchemaField,
     parent: any,

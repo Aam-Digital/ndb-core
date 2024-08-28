@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Config } from "./config";
-import { LoggingService } from "../logging/logging.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
 import {
@@ -12,6 +11,8 @@ import { FieldGroup } from "../entity-details/form/field-group";
 import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { migrateAddMissingEntityAttributes } from "./migrate-add-entity-attributes";
+import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -26,8 +27,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
-  constructor(entityMapper: EntityMapperService, logger: LoggingService) {
-    super(Config, Config.CONFIG_KEY, entityMapper, logger);
+  constructor(entityMapper: EntityMapperService) {
+    super(Config, Config.CONFIG_KEY, entityMapper);
     super.startLoading();
     this.entityUpdated.subscribe(async (config) => {
       this.currentConfig = this.applyMigrations(config);
@@ -66,7 +67,12 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityDetailsInputEntityType,
       migrateEntityArrayDatatype,
       migrateEntitySchemaDefaultValue,
+      migrateChildrenListConfig,
+      migrateHistoricalDataComponent,
     ];
+
+    // TODO: execute this on server via ndb-admin
+    config = migrateAddMissingEntityAttributes(config);
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
       let configPart = rawValue;
@@ -280,4 +286,41 @@ const migrateEntitySchemaDefaultValue: ConfigMigration = (
     mode: "static",
     value: configPart,
   } as DefaultValueConfig;
+};
+
+const migrateChildrenListConfig: ConfigMigration = (key, configPart) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.["component"] !== "ChildrenList"
+  ) {
+    return configPart;
+  }
+
+  configPart["component"] = "EntityList";
+
+  configPart["config"] = configPart["config"] ?? {};
+  configPart["config"]["entityType"] = "Child";
+  configPart["config"]["loaderMethod"] = "ChildrenService";
+
+  return configPart;
+};
+
+const migrateHistoricalDataComponent: ConfigMigration = (key, configPart) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.["component"] !== "HistoricalDataComponent"
+  ) {
+    return configPart;
+  }
+
+  configPart["component"] = "RelatedEntities";
+
+  configPart["config"] = configPart["config"] ?? {};
+  if (Array.isArray(configPart["config"])) {
+    configPart["config"] = { columns: configPart["config"] };
+  }
+  configPart["config"]["entityType"] = "HistoricalEntityData";
+  configPart["config"]["loaderMethod"] = LoaderMethod.HistoricalDataService;
+
+  return configPart;
 };

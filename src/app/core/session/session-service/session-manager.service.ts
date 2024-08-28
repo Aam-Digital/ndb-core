@@ -24,7 +24,6 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { AppSettings } from "../../app-settings";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { Database } from "../../database/database";
@@ -114,8 +113,8 @@ export class SessionManagerService {
     const entityType = Entity.extractTypeFromId(entityId);
     this.entityMapper
       .load(entityType, entityId)
-      .then((res) => this.currentUser.next(res))
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .then((res) => this.currentUser.next(res));
     this.updateSubscription = this.entityMapper
       .receiveUpdates(entityType)
       .pipe(
@@ -174,9 +173,9 @@ export class SessionManagerService {
   }
 
   private async initializeDatabaseForCurrentUser(user: SessionInfo) {
-    const userDBName = `${user.name}-${AppSettings.DB_NAME}`;
+    const userDBName = `${user.name}-${environment.DB_NAME}`;
     // Work on a temporary database before initializing the real one
-    const tmpDB = new PouchDatabase(undefined);
+    const tmpDB = new PouchDatabase();
     this.initDatabase(userDBName, tmpDB);
     if (!(await tmpDB.isEmpty())) {
       // Current user has own database, we are done here
@@ -184,13 +183,13 @@ export class SessionManagerService {
       return;
     }
 
-    this.initDatabase(AppSettings.DB_NAME, tmpDB);
+    this.initDatabase(environment.DB_NAME, tmpDB);
     const dbFallback = window.localStorage.getItem(this.DEPRECATED_DB_KEY);
     const dbAvailable = !dbFallback || dbFallback === user.name;
     if (dbAvailable && !(await tmpDB.isEmpty())) {
       // Old database is available and can be used by the current user
       window.localStorage.setItem(this.DEPRECATED_DB_KEY, user.name);
-      this.initDatabase(AppSettings.DB_NAME);
+      this.initDatabase(environment.DB_NAME);
       return;
     }
 

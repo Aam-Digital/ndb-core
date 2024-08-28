@@ -202,7 +202,6 @@ describe("AdminEntityFieldComponent", () => {
     const testFieldData: EntitySchemaField = {
       label: "test field",
       dataType: "string",
-      _isCustomizedField: true,
     };
 
     @DatabaseEntity("EntityUpdatedInAdminUI")

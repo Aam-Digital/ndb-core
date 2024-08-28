@@ -45,8 +45,9 @@ import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
-import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-options/anonymize-options.component";
+import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
 import { MatCheckbox } from "@angular/material/checkbox";
+import { DefaultValueOptionsComponent } from "./default-value-options/default-value-options.component";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -76,6 +77,7 @@ import { MatCheckbox } from "@angular/material/checkbox";
     ConfigureEntityFieldValidatorComponent,
     AnonymizeOptionsComponent,
     MatCheckbox,
+    DefaultValueOptionsComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
@@ -162,10 +164,6 @@ export class AdminEntityFieldComponent implements OnChanges {
       .get("dataType")
       .valueChanges.subscribe((v) => this.updateDataTypeAdditional(v));
     this.updateForNewOrExistingField();
-  }
-
-  changeFieldAnonymization(newAnonymizationValue) {
-    this.schemaFieldsForm.get("anonymize").setValue(newAnonymizationValue);
   }
 
   private updateForNewOrExistingField() {
@@ -285,7 +283,7 @@ export class AdminEntityFieldComponent implements OnChanges {
       }
     }
     const updatedEntitySchema = Object.assign(
-      { _isCustomizedField: true },
+      {},
       this.entitySchemaField, // TODO: remove this merge once all schema fields are in the form (then only form values should apply)
       formValues,
     );

@@ -5,12 +5,12 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Optional,
   Output,
   Self,
   TemplateRef,
   ViewChild,
-  OnInit,
 } from "@angular/core";
 import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -138,11 +138,11 @@ export class BasicAutocompleteComponent<O, V = O>
       .join(", ");
   }
 
-  get disabled(): boolean {
+  override get disabled(): boolean {
     return this._disabled;
   }
 
-  set disabled(value: boolean) {
+  override set disabled(value: boolean) {
     this._disabled = coerceBooleanProperty(value);
     this._disabled
       ? this.autocompleteForm.disable()
@@ -153,7 +153,7 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
   }
-
+  retainSearchValue: string;
   private _options: SelectableOption<O, V>[] = [];
 
   _selectedOptions: SelectableOption<O, V>[] = [];
@@ -182,6 +182,12 @@ export class BasicAutocompleteComponent<O, V = O>
   ngOnInit() {
     this.autocompleteSuggestedOptions.subscribe((options) => {
       this.autocompleteOptions = options;
+    });
+    // Subscribe to the valueChanges observable to print the input value
+    this.autocompleteForm.valueChanges.subscribe((value) => {
+      if (typeof value === "string") {
+        this.retainSearchValue = value;
+      }
     });
   }
 
@@ -226,7 +232,11 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   showAutocomplete(valueToRevertTo?: string) {
-    this.autocompleteForm.setValue("");
+    if (this.retainSearchValue) {
+      this.autocompleteForm.setValue(this.retainSearchValue);
+    } else {
+      this.autocompleteForm.setValue("");
+    }
     if (!this.multi) {
       // cannot setValue to "" here because the current selection would be lost
       this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
@@ -358,7 +368,7 @@ export class BasicAutocompleteComponent<O, V = O>
     }
   }
 
-  onContainerClick(event: MouseEvent) {
+  override onContainerClick(event: MouseEvent) {
     if (
       !this._disabled &&
       (event.target as Element).tagName.toLowerCase() != "input"
@@ -367,7 +377,7 @@ export class BasicAutocompleteComponent<O, V = O>
     }
   }
 
-  writeValue(val: V[] | V) {
+  override writeValue(val: V[] | V) {
     super.writeValue(val);
     this.setInitialInputValue();
   }

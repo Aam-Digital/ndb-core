@@ -97,10 +97,10 @@ describe("EnumDropdownComponent", () => {
     const res = await component.createNewOption("second");
 
     expect(confirmationSpy).toHaveBeenCalled();
-    expect(res).toEqual({ id: "second", label: "second" });
+    expect(res).toEqual({ id: "SECOND", label: "second" });
     expect(enumEntity.values).toEqual([
       { id: "1", label: "first" },
-      { id: "second", label: "second" },
+      { id: "SECOND", label: "second" },
     ]);
     expect(saveSpy).toHaveBeenCalledWith(enumEntity);
   });

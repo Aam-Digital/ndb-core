@@ -1,6 +1,6 @@
-<h1>Technical User Support Details</h1>
+<h1 i18n>Technical User Support Details</h1>
 
-<p id="table-description" class="text-secondary">
+<p id="table-description" class="text-secondary" i18n>
   The following details of your device and app can help the user support
   troubleshoot when you are having technical issues.
 </p>
@@ -15,11 +15,21 @@
   <tbody class="support-table--body">
     <tr>
       <td>Session</td>
-      <td>{{ sessionInfo?.name ?? "-" }}</td>
+      <td>{{ sessionInfo?.id ?? "-" }}</td>
     </tr>
     <tr>
       <td>Username</td>
-      <td>{{ currentUser?.toString() ?? "-" }}</td>
+      <td>{{ sessionInfo?.email ?? "-" }}</td>
+    </tr>
+    <tr>
+      <td>User Profile</td>
+      <td>
+        @if (currentUser) {
+          {{ sessionInfo?.entityId }} ({{ currentUser?.toString() }})
+        } @else {
+          -
+        }
+      </td>
     </tr>
     <tr>
       <td>App version</td>
@@ -66,16 +76,17 @@
 </mat-expansion-panel>
 
 <div class="flex-row gap-regular">
-  <button mat-raised-button (click)="sendReport()">Send Details</button>
+  <button mat-raised-button (click)="sendReport()" i18n>Send Details</button>
   <button
     mat-raised-button
     matTooltip="Download a backup of all data in your local database."
     i18n-matTooltip="Support Panel - Download local db tooltip"
     (click)="downloadLocalDatabase()"
+    i18n
   >
     Download Local Database
   </button>
-  <button mat-raised-button color="warn" (click)="resetApplication()">
+  <button mat-raised-button color="warn" (click)="resetApplication()" i18n>
     Reset Application
   </button>
 </div>

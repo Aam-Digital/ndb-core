@@ -11,18 +11,19 @@ import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { PouchDatabase } from "../database/pouch-database";
-import { AppSettings } from "../app-settings";
 import { Database } from "../database/database";
 import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("DemoDataInitializerService", () => {
   const normalUser: SessionInfo = {
-    name: "demo",
+    name: DemoUserGeneratorService.DEFAULT_USERNAME,
+    id: DemoUserGeneratorService.DEFAULT_USERNAME,
     entityId: "User:demo",
     roles: ["user_app"],
   };
   const adminUser: SessionInfo = {
-    name: "demo-admin",
+    name: DemoUserGeneratorService.ADMIN_USERNAME,
+    id: DemoUserGeneratorService.ADMIN_USERNAME,
     entityId: "User:demo-admin",
     roles: ["user_app", "admin_app"],
   };
@@ -36,8 +37,8 @@ describe("DemoDataInitializerService", () => {
 
   beforeEach(() => {
     environment.session_type = SessionType.mock;
-    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppSettings.DB_NAME}`;
-    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${AppSettings.DB_NAME}`;
+    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${environment.DB_NAME}`;
+    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${environment.DB_NAME}`;
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
     mockDemoDataService.publishDemoData.and.resolveTo();
     mockDialog = jasmine.createSpyObj(["open"]);
@@ -62,7 +63,7 @@ describe("DemoDataInitializerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    const tmpDB = new PouchDatabase(undefined);
+    const tmpDB = new PouchDatabase();
     await tmpDB.initInMemoryDB(demoUserDBName).destroy();
     await tmpDB.initInMemoryDB(adminDBName).destroy();
   });
@@ -115,7 +116,8 @@ describe("DemoDataInitializerService", () => {
     tick();
 
     TestBed.inject(SessionSubject).next({
-      name: DemoUserGeneratorService.ADMIN_USERNAME,
+      name: adminUser.name,
+      id: adminUser.id,
       roles: [],
     });
     database.initInMemoryDB(adminDBName);
@@ -146,7 +148,8 @@ describe("DemoDataInitializerService", () => {
 
     const database = TestBed.inject(Database) as PouchDatabase;
     TestBed.inject(SessionSubject).next({
-      name: DemoUserGeneratorService.ADMIN_USERNAME,
+      name: adminUser.name,
+      id: adminUser.id,
       roles: [],
     });
     database.initInMemoryDB(adminDBName);

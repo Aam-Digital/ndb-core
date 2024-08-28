@@ -6,8 +6,14 @@ import { BehaviorSubject } from "rxjs";
  * This is retrieved during the login process and will always be present once state changes to `LOGGED_IN`.
  */
 export interface SessionInfo {
+  /*
+   * The user account id from the auth server (e.g. User ID in Keycloak)
+   */
+  id: string;
+
   /**
    * Name of user account.
+   * @deprecated Use id or entityId instead as this is an unpredictable mix from different sources
    */
   name: string;
 

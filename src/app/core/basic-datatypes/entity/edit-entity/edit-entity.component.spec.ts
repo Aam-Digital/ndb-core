@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EditEntityComponent } from "./edit-entity.component";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { setupEditComponent } from "../../../entity/default-datatype/edit-component.spec";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityDatatype } from "../entity.datatype";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("EditEntityComponent", () => {
   let component: EditEntityComponent;
@@ -21,7 +21,7 @@ describe("EditEntityComponent", () => {
     fixture = TestBed.createComponent(EditEntityComponent);
     component = fixture.componentInstance;
     setupEditComponent(component);
-    component.entityName = Child.ENTITY_TYPE;
+    component.entityName = TestEntity.ENTITY_TYPE;
     fixture.detectChanges();
   });
 

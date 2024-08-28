@@ -23,6 +23,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
+import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -126,11 +127,18 @@ export class ConfigureEnumPopupComponent {
     );
   }
 
-  createNewOption() {
-    this.enumEntity.values.push({
-      id: this.newOptionInput,
-      label: this.newOptionInput,
-    });
+  async createNewOption() {
+    try {
+      this.enumEntity.addOption(this.newOptionInput);
+    } catch (error) {
+      await this.confirmationService.getConfirmation(
+        $localize`Failed to create new option`,
+        $localize`Couldn't create this new option. Please check if the value already exists.`,
+        OkButton,
+      );
+      return;
+    }
+
     this.newOptionInput = "";
   }
 }

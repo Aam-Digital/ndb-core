@@ -1,0 +1,42 @@
+name: Semantic Release
+on:
+  push:
+    branches:
+      - official-release
+
+jobs:
+  pre-releases-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete Previous Pre-Releases
+        # todo: not maintained anymore, needs replacement
+        uses: dev-drprasad/delete-older-releases@v0.3.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          keep_latest: 0
+          delete_tag_pattern: master
+          delete_tags: true
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          extra_plugins: |
+            semantic-release-replace-plugin@1.2.6
+            @semantic-release/git
+            @semantic-release/github
+            semantic-release-slack-bot

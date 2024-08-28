@@ -2,8 +2,8 @@ import { DisableEntityOperationDirective } from "./disable-entity-operation.dire
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Entity } from "../../entity/model/entity";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityAbility } from "../ability/entity-ability";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("DisableEntityOperationDirective", () => {
   let testComponent: ComponentFixture<TestComponent>;
@@ -49,7 +49,7 @@ describe("DisableEntityOperationDirective", () => {
     ).toBeFalse();
 
     (mockAbility.cannot as jasmine.Spy).and.returnValue(true);
-    testComponent.componentInstance.entityConstructor = Child;
+    testComponent.componentInstance.entityConstructor = TestEntity;
     testComponent.detectChanges();
 
     expect(

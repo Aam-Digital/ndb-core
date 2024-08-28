@@ -44,7 +44,8 @@ export class EditAttendanceComponent
 {
   showAttendance = false;
   mobile = false;
-  @Input() entity: Note;
+
+  @Input() declare entity: Note;
   attendanceForm: FormControl<Map<string, EventAttendance>>;
 
   constructor(screenWithObserver: ScreenWidthObserver) {
@@ -55,7 +56,7 @@ export class EditAttendanceComponent
       .subscribe((isDesktop) => (this.mobile = !isDesktop));
   }
 
-  ngOnInit() {
+  override ngOnInit() {
     super.ngOnInit();
     const category = this.parent.get(
       "category",

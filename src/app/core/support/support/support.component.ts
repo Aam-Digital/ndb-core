@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
-import * as Sentry from "@sentry/browser";
+import * as Sentry from "@sentry/angular";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
@@ -36,7 +36,7 @@ export class SupportComponent implements OnInit {
   storageInfo: string;
   swStatus: string;
   swLog = "not available";
-  userAgent = this.window.navigator.userAgent;
+  userAgent: string;
   appVersion: string;
   dbInfo: string;
 
@@ -55,6 +55,7 @@ export class SupportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.userAgent = this.window.navigator.userAgent;
     this.sessionInfo = this.sessionSubject.value;
     this.currentUser = this.currentUserSubject.value;
     this.appVersion = environment.appVersion;
@@ -130,7 +131,11 @@ export class SupportComponent implements OnInit {
   sendReport() {
     // This is sent even without submitting the crash report.
     Sentry.captureMessage("report information", {
-      user: { name: this.sessionInfo?.name },
+      user: {
+        id: this.sessionInfo?.id,
+        email: this.sessionInfo?.email,
+        name: this.sessionInfo?.name,
+      },
       level: "debug",
       extra: {
         currentUser: this.currentUser?.getId(),
@@ -148,7 +153,7 @@ export class SupportComponent implements OnInit {
     Sentry.showReportDialog({
       user: {
         name: this.sessionInfo?.name,
-        email: "example@email.com",
+        email: this.sessionInfo?.email,
       },
       title: $localize`:Title user feedback dialog:Support request`,
       subtitle: $localize`:Subtitle user feedback dialog:Please describe the problem you are facing.`,

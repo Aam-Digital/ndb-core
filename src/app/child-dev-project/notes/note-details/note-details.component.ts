@@ -34,7 +34,6 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
 import { Router } from "@angular/router";
-import { LoggingService } from "../../../core/logging/logging.service";
 import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
@@ -72,8 +71,8 @@ export class NoteDetailsComponent
   extends AbstractEntityDetailsComponent
   implements OnChanges
 {
-  @Input() entity: Note;
-  entityConstructor = Note;
+  @Input() declare entity: Note;
+  override entityConstructor = Note;
 
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
@@ -99,26 +98,18 @@ export class NoteDetailsComponent
     entities: EntityRegistry,
     ability: EntityAbility,
     router: Router,
-    logger: LoggingService,
     unsavedChanges: UnsavedChangesService,
     private configService: ConfigService,
     private entityFormService: EntityFormService,
   ) {
-    super(
-      entityMapperService,
-      entities,
-      ability,
-      router,
-      logger,
-      unsavedChanges,
-    );
+    super(entityMapperService, entities, ability, router, unsavedChanges);
 
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
+  override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));

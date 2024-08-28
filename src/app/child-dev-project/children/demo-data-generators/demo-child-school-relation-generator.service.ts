@@ -1,11 +1,11 @@
 import { DemoChildGenerator } from "./demo-child-generator.service";
-import { DemoSchoolGenerator } from "../../schools/demo-school-generator.service";
+import { DemoSchoolGenerator } from "./demo-school-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Injectable } from "@angular/core";
-import { Child } from "../model/child";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { faker } from "../../../core/demo-data/faker";
-import { School } from "../../schools/model/school";
+import { Entity } from "../../../core/entity/model/entity";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 
 /**
  * Generate ChildSchoolRelation entities linking a child to a school for a specific year.
@@ -30,6 +30,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   constructor(
     private demoChildren: DemoChildGenerator,
     private demoSchools: DemoSchoolGenerator,
+    private entityRegistry: EntityRegistry,
   ) {
     super();
   }
@@ -44,18 +45,16 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     return data;
   }
 
-  private generateChildSchoolRecordsForChild(
-    child: Child,
-  ): ChildSchoolRelation[] {
+  private generateChildSchoolRecordsForChild(child: Entity): Entity[] {
     const data: ChildSchoolRelation[] = [];
 
-    const firstYear = child.admissionDate.getFullYear();
+    const firstYear = child["admissionDate"].getFullYear();
     let finalYear = new Date().getFullYear();
-    if (child.dropoutDate) {
-      finalYear = child.dropoutDate.getFullYear();
+    if (child["dropoutDate"]) {
+      finalYear = child["dropoutDate"].getFullYear();
     }
 
-    let currentSchool: School = undefined;
+    let currentSchool: Entity = undefined;
     let offset = 0;
     while (firstYear + offset <= finalYear && offset <= 12) {
       currentSchool = this.selectNextSchool(currentSchool);
@@ -65,7 +64,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
           firstYear + offset,
           offset + 1,
           currentSchool,
-        ),
+        ) as ChildSchoolRelation,
       );
 
       offset++;
@@ -79,18 +78,18 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   }
 
   private generateRecord(
-    child: Child,
+    child: Entity,
     year,
     schoolClass: number,
-    school: School,
+    school: Entity,
   ): ChildSchoolRelation {
-    const schoolRelation = new ChildSchoolRelation();
+    const schoolRelation: ChildSchoolRelation = new ChildSchoolRelation();
     schoolRelation.childId = child.getId();
     schoolRelation.start = new Date(year + "-01-01");
     schoolRelation.end = new Date(year + "-12-31");
-    schoolRelation.schoolClass = String(schoolClass);
+    schoolRelation["schoolClass"] = String(schoolClass);
     schoolRelation.schoolId = school.getId();
-    schoolRelation.result = faker.number.int(100);
+    schoolRelation["result"] = faker.number.int(100);
     return schoolRelation;
   }
 
@@ -98,7 +97,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
    * Select a different school randomly in a certain percentages of cases keeping the currentSchool otherwise.
    * @param currentSchool
    */
-  private selectNextSchool(currentSchool: School) {
+  private selectNextSchool(currentSchool: Entity) {
     if (!currentSchool) {
       return faker.helpers.arrayElement(this.demoSchools.entities);
     }

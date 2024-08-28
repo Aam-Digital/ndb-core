@@ -83,7 +83,7 @@ describe("LoginComponent", () => {
   });
 
   it("should show offline login if remote login fails", fakeAsync(() => {
-    const mockUsers = [{ name: "test", roles: [] }];
+    const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
     spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
     spyOn(sessionManager, "remoteLoginAvailable").and.returnValue(true);
     const remoteLoginSubject = new Subject<SessionInfo>();
@@ -102,7 +102,7 @@ describe("LoginComponent", () => {
   }));
 
   it("should show offline login after 5 seconds", fakeAsync(() => {
-    const mockUsers = [{ name: "test", roles: [] }];
+    const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];
     spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
 
     loginState.next(LoginState.LOGGED_OUT);

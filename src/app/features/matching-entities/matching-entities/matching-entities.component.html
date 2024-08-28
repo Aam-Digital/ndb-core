@@ -76,7 +76,7 @@
       [sideDetails?.[0].selected, sideDetails?.[1].selected] | flattenArray
     "
     (entityClick)="entityInMapClicked($event)"
-    [(displayedProperties)]="displayedProperties"
+    [(displayedProperties)]="displayedLocationProperties"
     (displayedPropertiesChange)="updateMarkersAndDistances()"
   ></app-map>
 </div>

@@ -523,4 +523,31 @@ describe("ConfigService", () => {
     const actualFromNew = service.getConfig<EntityConfig>("entity:X");
     expect(actualFromNew).toEqual(newFormat);
   }));
+
+  it("should migrate entity-array dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      component: "ChildrenList",
+      config: {},
+    };
+    const newFormat = {
+      component: "EntityList",
+      config: {
+        entityType: "Child",
+        loaderMethod: "ChildrenService",
+      },
+    };
+    config.data = { "view:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const actualFromOld = service.getConfig("view:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "view:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig("view:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
 });

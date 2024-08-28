@@ -1,0 +1,126 @@
+<mat-form-field [formGroup]="form" floatLabel="always">
+  <mat-label i18n>Default Value</mat-label>
+
+  <div class="flex-row gap-regular align-center">
+    @switch (mode) {
+      @default {
+        <input
+          #inputElement
+          matInput
+          formControlName="value"
+          placeholder="no default value"
+          i18n-placeholder
+        />
+      }
+      @case ("dynamic") {
+        <mat-select formControlName="value">
+          <mat-option
+            value="$now"
+            matTooltip="Fill the current date initially, when a record is created."
+            i18n-matTooltip
+            i18n
+            >Current Date</mat-option
+          >
+          <mat-option
+            value="$current_user"
+            matTooltip="Fill the currently logged in user, when a record is created."
+            i18n-matTooltip
+            i18n
+            >Current User</mat-option
+          >
+        </mat-select>
+      }
+      @case ("inherited") {
+        <mat-select formControlName="localAttribute">
+          <div
+            class="select-dropdown-header"
+            matTooltip="The field of this record that defines the related record from which you want to inherit a value."
+            i18n-matTooltip
+            i18n
+          >
+            Inherit from linked record:
+          </div>
+          @for (attr of availableInheritanceAttributes; track attr) {
+            <mat-option [value]="attr">
+              <app-entity-field-label
+                [field]="attr"
+                [entityType]="entityType"
+              ></app-entity-field-label>
+            </mat-option>
+          }
+        </mat-select>
+
+        <mat-select formControlName="field" #inheritedFieldSelect>
+          <div
+            class="select-dropdown-header"
+            matTooltip="The field of the linked record from which the value is copied into this field."
+            i18n-matTooltip
+            i18n
+          >
+            Inherited field of linked record:
+          </div>
+          @for (
+            field of currentInheritanceFields?.availableFields;
+            track field
+          ) {
+            <mat-option [value]="field">
+              <app-entity-field-label
+                [field]="field"
+                [entityType]="currentInheritanceFields?.referencedEntityType"
+              ></app-entity-field-label>
+            </mat-option>
+          }
+        </mat-select>
+      }
+    }
+
+    <mat-button-toggle-group
+      formControlName="mode"
+      aria-label="default value mode"
+      hideSingleSelectionIndicator
+      style="flex: none"
+    >
+      <mat-button-toggle
+        value="static"
+        matTooltip="simple, fixed default value"
+        i18n-matTooltip
+      >
+        <fa-icon icon="circle"></fa-icon>
+      </mat-button-toggle>
+
+      <mat-button-toggle
+        value="dynamic"
+        matTooltip="dynamic placeholder (e.g. current date or user)"
+        i18n-matTooltip
+      >
+        <fa-icon icon="circle-left"></fa-icon>
+      </mat-button-toggle>
+
+      <mat-button-toggle
+        value="inherited"
+        matTooltip="value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)"
+        i18n-matTooltip
+        [disabled]="!(availableInheritanceAttributes?.length > 0)"
+      >
+        <fa-icon icon="circle-nodes"></fa-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <button
+      mat-icon-button
+      matIconSuffix
+      matTooltip="Remove default value"
+      i18n-matTooltip
+      (click)="clearDefaultValue()"
+      color="{{ form.invalid ? 'accent' : '' }}"
+    >
+      <fa-icon icon="times"></fa-icon>
+    </button>
+  </div>
+
+  @if (form.invalid) {
+    <mat-error i18n="error message"
+      >Select default value or clear default value mode</mat-error
+    >
+  }
+</mat-form-field>

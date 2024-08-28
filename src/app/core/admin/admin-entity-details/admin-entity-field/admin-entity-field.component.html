@@ -147,16 +147,20 @@
         ADVANCED SETTINGS
       -->
       <mat-tab label="Advanced Options & Validation" i18n-label>
-        <div class="grid-layout margin-top-regular">
+        <div class="grid-layout-wide margin-top-regular">
           <div class="entity-form-cell">
-            <mat-form-field>
-              <mat-label i18n>Default Value</mat-label>
-              <input formControlName="defaultValue" matInput />
-            </mat-form-field>
+            <app-default-value-options
+              [value]="entitySchemaField.defaultValue"
+              (valueChange)="
+                schemaFieldsForm.get('defaultValue').setValue($event)
+              "
+              [entityType]="entityType"
+            >
+            </app-default-value-options>
 
             <app-anonymize-options
               [value]="entitySchemaField.anonymize"
-              (valueChange)="changeFieldAnonymization($event)"
+              (valueChange)="schemaFieldsForm.get('anonymize').setValue($event)"
             >
               <span i18n>Anonymize</span>
               <fa-icon
@@ -173,6 +177,7 @@
             </mat-form-field>
             -->
           </div>
+
           <div class="entity-form-cell">
             <app-configure-entity-field-validator
               [entitySchemaField]="entitySchemaField"

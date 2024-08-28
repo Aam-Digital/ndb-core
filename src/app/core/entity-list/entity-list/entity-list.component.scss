@@ -9,15 +9,13 @@
  */
 .filter-field {
   @media screen and (min-width: breakpoints.$md) {
-    // restricts the width so that the field does not feel too big
+    /* restricts the width so that the field does not feel too big */
     max-width: 412px;
   }
 }
 
 .bulk-action-button {
-  position: fixed;
   right: sizes.$large;
-  z-index: 999;
 
   padding: sizes.$regular;
   background-color: colors.$background;

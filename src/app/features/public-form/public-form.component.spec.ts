@@ -11,25 +11,25 @@ import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
 import { ActivatedRoute } from "@angular/router";
-import { Child } from "../../child-dev-project/children/model/child";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
+import { TestEntity } from "../../utils/test-utils/TestEntity";
 
 describe("PublicFormComponent", () => {
-  let component: PublicFormComponent<Child>;
-  let fixture: ComponentFixture<PublicFormComponent<Child>>;
+  let component: PublicFormComponent<TestEntity>;
+  let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
   let initRemoteDBSpy: jasmine.Spy;
   let testFormConfig: PublicFormConfig;
 
   beforeEach(waitForAsync(() => {
     testFormConfig = new PublicFormConfig("form-id");
     testFormConfig.title = "test form";
-    testFormConfig.entity = "Child";
-    testFormConfig.columns = [["name"], ["gender"]];
+    testFormConfig.entity = "TestEntity";
+    testFormConfig.columns = [["name"], ["category"]];
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
@@ -48,7 +48,7 @@ describe("PublicFormComponent", () => {
   beforeEach(() => {
     initRemoteDBSpy = spyOn(TestBed.inject(PouchDatabase), "initRemoteDB");
 
-    fixture = TestBed.createComponent(PublicFormComponent<Child>);
+    fixture = TestBed.createComponent(PublicFormComponent<TestEntity>);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -64,22 +64,24 @@ describe("PublicFormComponent", () => {
   it("should initialize component with values from PublicFormConfig once config is ready", fakeAsync(() => {
     expect(component.entity).toBeUndefined();
     testFormConfig.title = "Some test title";
-    testFormConfig.entity = "Child";
+    testFormConfig.entity = "TestEntity";
 
     initComponent();
     tick();
 
-    expect(component.entity.getConstructor()).toBe(Child);
+    expect(component.entity.getConstructor()).toBe(TestEntity);
     expect(component.formConfig.title).toBe("Some test title");
   }));
 
   it("should prefill entity with transformed values", fakeAsync(() => {
-    testFormConfig.prefilled = { status: "new", gender: "M" };
+    testFormConfig.prefilled = { name: "new", category: "M" };
     initComponent();
     tick();
 
-    expect(component.entity.status).toBe("new");
-    expect(component.entity.gender).toBe(genders.find(({ id }) => id === "M"));
+    expect(component.entity.name).toBe("new");
+    expect(component.entity.category).toBe(
+      genders.find(({ id }) => id === "M"),
+    );
   }));
 
   it("should show a snackbar and reset form when the form has been submitted", fakeAsync(() => {

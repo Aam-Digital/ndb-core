@@ -3,18 +3,17 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityImportConfigComponent } from "./entity-import-config.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MappingDialogData } from "../../../import/import-column-mapping/import-column-mapping.component";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../../entity/database-entity.decorator";
-import { ChildSchoolRelation } from "../../../../child-dev-project/children/model/childSchoolRelation";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("EntityImportConfigComponent", () => {
   let component: EntityImportConfigComponent;
@@ -25,8 +24,8 @@ describe("EntityImportConfigComponent", () => {
   beforeEach(() => {
     data = {
       values: [],
-      col: { column: "", propertyName: "childId" },
-      entityType: ChildSchoolRelation,
+      col: { column: "", propertyName: "ref" },
+      entityType: TestEntity,
     };
     TestBed.configureTestingModule({
       imports: [
@@ -51,7 +50,7 @@ describe("EntityImportConfigComponent", () => {
   });
 
   it("should show all properties of the provided entity that have a label", () => {
-    const childPropertiesWithLabel = [...Child.schema.entries()]
+    const childPropertiesWithLabel = [...TestEntity.schema.entries()]
       .filter(([_, schema]) => !!schema.label)
       .map(([property, schema]) => ({ property, label: schema.label }));
     expect(component.availableProperties).toEqual(childPropertiesWithLabel);

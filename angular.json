@@ -17,7 +17,7 @@
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "tsConfig": "src/tsconfig.app.json",
+            "tsConfig": "tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "i18nMissingTranslation": "warning",
             "assets": [
@@ -109,7 +109,7 @@
               "src/polyfills.ts",
               "zone.js/testing"
             ],
-            "tsConfig": "src/tsconfig.spec.json",
+            "tsConfig": "tsconfig.spec.json",
             "styles": [
               "src/styles/styles.scss",
               "src/styles/themes/ndb-theme.scss"
@@ -198,9 +198,12 @@
     }
   },
   "cli": {
-    "analytics": "0bd2cce5-bfb0-4375-af96-a8222d782810",
+    "cache": {
+      "enabled": true
+    },
     "schematicCollections": [
       "@angular-eslint/schematics"
-    ]
+    ],
+    "analytics": "3a23cbc9-8780-4947-bdf1-57719d16d60d"
   }
 }

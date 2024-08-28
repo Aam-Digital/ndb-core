@@ -9,7 +9,7 @@ import {
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 describe("UpdateManagerService", () => {
@@ -23,7 +23,6 @@ describe("UpdateManagerService", () => {
   let appRef: jasmine.SpyObj<ApplicationRef>;
   let stableSubject: Subject<boolean>;
   let latestChangesDialog: jasmine.SpyObj<LatestChangesDialogService>;
-  let mockLogger: jasmine.SpyObj<LoggingService>;
   let unsavedChanges: UnsavedChangesService;
 
   beforeEach(() => {
@@ -44,7 +43,7 @@ describe("UpdateManagerService", () => {
     stableSubject = new Subject<boolean>();
     appRef = jasmine.createSpyObj([], { isStable: stableSubject });
     latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
-    mockLogger = jasmine.createSpyObj(["error"]);
+    spyOn(Logging, "error");
     unsavedChanges = new UnsavedChangesService(undefined);
     unsavedChanges.pending = true;
 
@@ -178,7 +177,7 @@ describe("UpdateManagerService", () => {
       type: "UNRECOVERABLE_STATE",
     });
 
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(Logging.error).toHaveBeenCalledWith(
       jasmine.stringContaining("ERROR REASON"),
     );
     expect(mockLocation.reload).toHaveBeenCalled();
@@ -189,7 +188,6 @@ describe("UpdateManagerService", () => {
       appRef,
       swUpdate,
       snackBar,
-      mockLogger,
       latestChangesDialog,
       unsavedChanges,
       mockLocation,

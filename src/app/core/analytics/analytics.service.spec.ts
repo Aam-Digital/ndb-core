@@ -9,9 +9,12 @@ import {
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConfigService } from "../config/config.service";
 import { UsageAnalyticsConfig } from "./usage-analytics-config";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../config/config";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
+import { LoginStateSubject } from "../session/session-type";
+import { SessionSubject } from "../session/auth/session-info";
+import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("AnalyticsService", () => {
   let service: AnalyticsService;
@@ -47,6 +50,11 @@ describe("AnalyticsService", () => {
           provide: SiteSettingsService,
           useValue: { siteName: siteNameSubject },
         },
+        {
+          provide: LoginStateSubject,
+          useValue: new BehaviorSubject(LoginState.LOGGED_IN),
+        },
+        { provide: SessionSubject, useValue: new BehaviorSubject(undefined) },
       ],
     });
     service = TestBed.inject(AnalyticsService);
