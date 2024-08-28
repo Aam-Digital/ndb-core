@@ -63,6 +63,8 @@ COPY ./.prettierrc.json /opt/app/
 COPY ./angular.json /opt/app/
 COPY ./cypress.config.ts /opt/app/
 COPY ./karma.conf.js /opt/app/
+COPY ./tsconfig.app.json /opt/app/
+COPY ./tsconfig.spec.json /opt/app/
 COPY ./tsconfig.json /opt/app/
 COPY ./ngsw-config.json /opt/app/
 
@@ -87,6 +89,8 @@ COPY ./src /opt/app/src/
 COPY ./build /opt/app/build/
 COPY ./angular.json /opt/app/
 COPY ./tsconfig.json /opt/app/
+COPY ./tsconfig.app.json /opt/app/
+COPY ./tsconfig.spec.json /opt/app/
 COPY ./ngsw-config.json /opt/app/
 
 ARG APP_VERSION="UNKNOWN"

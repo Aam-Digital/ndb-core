@@ -18,7 +18,10 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { LOCALE_ID, NgModule } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
@@ -92,6 +95,7 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
  */
 @NgModule({
   declarations: [AppComponent],
+  bootstrap: [AppComponent],
   imports: [
     // Global Angular modules
     ServiceWorkerModule.register("ngsw-worker.js"),
@@ -100,7 +104,6 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
     }),
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     RouterModule.forRoot(allRoutes),
     // Core modules
     CoreModule,
@@ -163,8 +166,8 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
     },
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     APP_INITIALIZER_DEMO_DATA,
+    provideHttpClient(withInterceptorsFromDi()),
   ],
-  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(icons: FaIconLibrary) {

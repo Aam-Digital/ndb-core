@@ -30,7 +30,7 @@ export class EditConfigurableEnumComponent
   enumId: string;
   multi = false;
 
-  ngOnInit() {
+  override ngOnInit() {
     super.ngOnInit();
     this.multi = this.formFieldConfig.isArray;
     this.enumId = this.formFieldConfig.additional;

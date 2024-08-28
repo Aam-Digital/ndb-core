@@ -65,7 +65,7 @@ export class EntityDetailsComponent
    */
   @Input() panels: Panel[] = [];
 
-  async ngOnChanges(changes: SimpleChanges) {
+  override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
     if (changes.id || changes.entity || changes.panels) {

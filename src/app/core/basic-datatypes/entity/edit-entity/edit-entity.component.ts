@@ -25,7 +25,7 @@ export class EditEntityComponent<T extends string[] | string = string[]>
 
   multi: boolean = false;
 
-  ngOnInit() {
+  override ngOnInit() {
     super.ngOnInit();
 
     this.entityName = this.entityName ?? this.formFieldConfig.additional;

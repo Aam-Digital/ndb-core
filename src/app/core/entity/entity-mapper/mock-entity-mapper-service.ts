@@ -113,7 +113,7 @@ export class MockEntityMapperService extends EntityMapperService {
     }
   }
 
-  public async load<T extends Entity>(
+  public override async load<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     id: string,
   ): Promise<T> {
@@ -121,7 +121,7 @@ export class MockEntityMapperService extends EntityMapperService {
     return this.get(type, id) as T;
   }
 
-  async loadType<T extends Entity>(
+  override async loadType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
   ): Promise<T[]> {
     let type = this.getTypeViaRegistry(entityType);
@@ -146,23 +146,23 @@ export class MockEntityMapperService extends EntityMapperService {
     return type;
   }
 
-  async save<T extends Entity>(
+  override async save<T extends Entity>(
     entity: T,
     forceUpdate: boolean = false,
   ): Promise<any> {
     this.add(entity);
   }
 
-  async saveAll(entities: Entity[]): Promise<any> {
+  override async saveAll(entities: Entity[]): Promise<any> {
     this.addAll(entities);
   }
 
-  remove<T extends Entity>(entity: T): Promise<any> {
+  override remove<T extends Entity>(entity: T): Promise<any> {
     this.delete(entity);
     return Promise.resolve();
   }
 
-  receiveUpdates<T extends Entity>(
+  override receiveUpdates<T extends Entity>(
     entityType: EntityConstructor<T> | string,
   ): Observable<UpdatedEntity<T>> {
     let name =

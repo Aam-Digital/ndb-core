@@ -44,16 +44,16 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   // also see super class for Inputs
 
   @Input() single = true;
-  @Input() showInactive = false;
+  @Input() override showInactive = false;
 
-  @Input() set columns(value: FormFieldConfig[]) {
+  @Input() override set columns(value: FormFieldConfig[]) {
     this._columns = [...value, isActiveIndicator];
   }
-  get columns(): FormFieldConfig[] {
+  override get columns(): FormFieldConfig[] {
     return this._columns;
   }
 
-  _columns: FormFieldConfig[] = [
+  override _columns: FormFieldConfig[] = [
     { id: "start", visibleFrom: "md" },
     { id: "end", visibleFrom: "md" },
     isActiveIndicator,
@@ -62,7 +62,7 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   backgroundColorFn = (r: E) => r.getColor();
   hasCurrentlyActiveEntry: boolean;
 
-  async ngOnInit() {
+  override async ngOnInit() {
     await super.ngOnInit();
     this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
   }

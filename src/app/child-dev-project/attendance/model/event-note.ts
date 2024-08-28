@@ -20,7 +20,7 @@ import { Note } from "../../notes/model/note";
 
 @DatabaseEntity("EventNote")
 export class EventNote extends Note {
-  static create(date: Date, subject: string = ""): EventNote {
+  static override create(date: Date, subject: string = ""): EventNote {
     const instance = new EventNote();
     instance.date = date;
     instance.subject = subject;

@@ -17,7 +17,7 @@ import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/das
   standalone: true,
 })
 export class ImportantNotesDashboardComponent extends DashboardWidget {
-  static getRequiredEntities() {
+  static override getRequiredEntities() {
     return Note.ENTITY_TYPE;
   }
 

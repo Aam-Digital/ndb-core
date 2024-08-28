@@ -42,7 +42,7 @@ export class NotesDashboardComponent
   extends DashboardWidget
   implements OnInit, NotesDashboardConfig
 {
-  static getRequiredEntities(config: NotesDashboardConfig) {
+  static override getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;
   }
 

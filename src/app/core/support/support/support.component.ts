@@ -36,7 +36,7 @@ export class SupportComponent implements OnInit {
   storageInfo: string;
   swStatus: string;
   swLog = "not available";
-  userAgent = this.window.navigator.userAgent;
+  userAgent: string;
   appVersion: string;
   dbInfo: string;
 
@@ -55,6 +55,7 @@ export class SupportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.userAgent = this.window.navigator.userAgent;
     this.sessionInfo = this.sessionSubject.value;
     this.currentUser = this.currentUserSubject.value;
     this.appVersion = environment.appVersion;
