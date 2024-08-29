@@ -31,14 +31,9 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
   @Input() formControlName: string;
 
   /**
-   *
+   * Describes the defaultValue behaviour for this field
    */
   @Input() defaultValueConfig: DefaultValueConfig | undefined;
-
-  /**
-   *
-   */
-  @Input() defaultParentValue: any | undefined;
 
   /**
    * A label for this component.
