@@ -211,7 +211,7 @@ describe("InheritedValueService", () => {
     tick(10); // fetching reference is always async
 
     // then
-    expect(form.formGroup.get("field").value).toEqual(null);
+    expect(form.formGroup.get("field").value).toEqual(undefined);
   }));
 
   it("should reset FormControl, if parent (array) field got cleared", fakeAsync(() => {

@@ -90,6 +90,10 @@ describe("DefaultValueService", () => {
     service = TestBed.inject(DefaultValueService);
   });
 
+  afterEach(() => {
+    cleanUpTemporarySchemaFields();
+  });
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
