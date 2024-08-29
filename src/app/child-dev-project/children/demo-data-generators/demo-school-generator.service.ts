@@ -59,19 +59,6 @@ export class DemoSchoolGenerator extends DemoDataGenerator<Entity> {
 
       school["address"] = faker.geoAddress();
 
-      // TODO: remove before merge:
-      school["bool"] = faker.helpers.arrayElement([true, false]);
-      school["string"] = faker.helpers.arrayElement(["A", "B", "C"]);
-      school["enum"] = faker.helpers.arrayElement([{ id: "M" }, { id: "F" }]);
-      school["refSingle"] = faker.helpers.arrayElement([
-        "School:1",
-        "School:2",
-      ]);
-      school["refMulti"] = faker.helpers.arrayElement([
-        ["School:1", "School:2"],
-        ["School:3", "School:4"],
-      ]);
-
       data.push(school);
     }
     return data;

@@ -1108,65 +1108,7 @@ export const defaultJsonConfig = {
         "additional": "School",
         "label": $localize`:Label for school attribute:Branch of`,
         "description": $localize`:Description for school attribute:Select the "parent school" here to build a hierarchy of a school with multiple branch institutions.`
-      },
-
-      // TODO: remove before merge:
-      "testSchools": {
-        "dataType": "entity",
-        "isArray": true,
-        "additional": "School",
-        "label": "[For Testing]: related schools array",
-        "description": "--> source for inheriting 'timing'"
-      },
-      "bool": {
-        "dataType": "boolean",
-        "label": "test boolean",
-        "defaultValue": {
-          "mode": "inherited",
-          "localAttribute": "testSchools",
-          "field": "bool"
-        }
-      },
-      "string": {
-        "dataType": "string",
-        "label": "test string",
-        "defaultValue": {
-          "mode": "inherited",
-          "localAttribute": "testSchools",
-          "field": "string"
-        }
-      },
-      "enum": {
-        "dataType": "configurable-enum",
-        "additional": "genders",
-        "label": "test enum",
-        "defaultValue": {
-          "mode": "inherited",
-          "localAttribute": "testSchools",
-          "field": "enum"
-        }
-      },
-      "refSingle": {
-        "dataType": "entity",
-        "additional": "School",
-        "label": "test refSingle",
-        "defaultValue": {
-          "mode": "inherited",
-          "localAttribute": "testSchools",
-          "field": "refSingle"
-        }
-      },
-      "refMulti": {
-        "dataType": "entity",
-        "additional": "School",
-        "isArray": true,
-        "label": "test refMulti",
-        "defaultValue": {
-          "mode": "inherited",
-          "localAttribute": "testSchools",
-          "field": "refMulti"
-        }
-      },
+      }
     },
   },
   "entity:HistoricalEntityData": {
