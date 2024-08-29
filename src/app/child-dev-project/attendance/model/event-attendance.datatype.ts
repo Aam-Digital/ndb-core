@@ -23,7 +23,7 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
     this.embeddedType = new EventAttendanceDatatype(schemaService);
   }
 
-  transformToDatabaseFormat(value: Map<string, any>) {
+  override transformToDatabaseFormat(value: Map<string, any>) {
     if (!(value instanceof Map)) {
       console.warn(
         'property to be saved with "map" EntitySchema is not of expected type',
@@ -39,7 +39,7 @@ export class EventAttendanceMapDatatype extends DefaultDatatype<
     return result;
   }
 
-  transformToObjectFormat(value: any[]) {
+  override transformToObjectFormat(value: any[]) {
     if (value instanceof Map) {
       // usually this shouldn't already be a map but in MockDatabase somehow this can happen
       return value;

@@ -12,8 +12,8 @@
     class="child-pic"
   ></app-display-img>
   <span class="font-size-rel">{{ entity?.toString() }}</span>
-  <span class="subnote" *ngIf="entity?.projectNumber">
-    ({{ entity?.projectNumber }})</span
+  <span class="subnote" *ngIf="entity?.['projectNumber']">
+    ({{ entity?.["projectNumber"] }})</span
   >
 </span>
 

@@ -162,9 +162,7 @@ export class Entity {
     }
   }
 
-  static getBlockComponent(): string {
-    return;
-  }
+  static blockComponent?: string;
 
   /**
    * whether this entity type can contain "personally identifiable information" (PII)

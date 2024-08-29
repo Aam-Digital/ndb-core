@@ -16,26 +16,57 @@ import {
 } from "./cascading-entity-action.spec";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { EventAttendanceMapDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { throwError } from "rxjs";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
   let entityMapper: MockEntityMapperService;
 
+  let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
+  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+
   beforeEach(() => {
     entityMapper = mockEntityMapper(allEntities.map((e) => e.copy()));
+
+    mockAuthService = jasmine.createSpyObj(["deleteUser"]);
+    mockAuthService.deleteUser.and.returnValue(
+      throwError(() => {
+        new Error();
+      }),
+    );
+
+    mockConfirmationDialog = jasmine.createSpyObj([
+      "getConfirmation",
+      "showProgressDialog",
+    ]);
+    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
+    mockConfirmationDialog.showProgressDialog.and.returnValue(
+      jasmine.createSpyObj(["close"]),
+    );
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
         EntityDeleteService,
         { provide: EntityMapperService, useValue: entityMapper },
+        { provide: KeycloakAuthService, useValue: mockAuthService },
+        { provide: MatSnackBar, useValue: snackBarSpy },
         {
           provide: DefaultDatatype,
           useClass: EventAttendanceMapDatatype,
           multi: true,
+        },
+        {
+          provide: ConfirmationDialogService,
+          useValue: mockConfirmationDialog,
         },
       ],
     });
@@ -79,6 +110,18 @@ describe("EntityDeleteService", () => {
       [ENTITIES.ReferencedAsComposite, ENTITIES.ReferencingSingleComposite],
       entityMapper,
     );
+  });
+
+  it("should delete several entities and show dialog if keycloak deletion fails", async () => {
+    // given
+    mockAuthService.deleteUser.and.returnValue(throwError(() => new Error()));
+    let userEntity = createEntityOfType("User");
+
+    // when
+    await service.deleteEntity(userEntity, true);
+
+    // then
+    expect(mockConfirmationDialog.getConfirmation).toHaveBeenCalledTimes(1);
   });
 
   it("should not cascade delete the 'composite'-type entity that still references additional other entities but remove id", async () => {
@@ -178,12 +221,15 @@ describe("EntityDeleteService", () => {
   it("should remove multiple ref ids from related note", async () => {
     const schemaField = Note.schema.get("relatedEntities");
     const originalSchemaAdditional = schemaField.additional;
-    schemaField.additional = [Child.ENTITY_TYPE];
+    schemaField.additional = [TestEntity.ENTITY_TYPE];
+    const schemaField2 = Note.schema.get("children");
+    const originalSchema2Additional = schemaField2.additional;
+    schemaField2.additional = TestEntity.ENTITY_TYPE;
 
-    const primary = new Child();
+    const primary = new TestEntity();
     const note = new Note();
     note.subject = "test";
-    note.children = [primary.getId(), "Child:some-other"];
+    note.children = [primary.getId(), TestEntity.ENTITY_TYPE + ":some-other"];
     note.relatedEntities = [primary.getId()];
     const originalNote = note.copy();
     await entityMapper.save(primary);
@@ -194,7 +240,9 @@ describe("EntityDeleteService", () => {
     const actualNote = entityMapper.get(Note.ENTITY_TYPE, note.getId()) as Note;
 
     expect(actualNote.relatedEntities).toEqual([]);
-    expect(actualNote.children).toEqual(["Child:some-other"]);
+    expect(actualNote.children).toEqual([
+      TestEntity.ENTITY_TYPE + ":some-other",
+    ]);
 
     expect(result.originalEntitiesBeforeChange.length).toBe(2);
     expectEntitiesToMatch(result.originalEntitiesBeforeChange, [
@@ -204,5 +252,6 @@ describe("EntityDeleteService", () => {
 
     // restore original schema
     schemaField.additional = originalSchemaAdditional;
+    schemaField2.additional = originalSchema2Additional;
   });
 });

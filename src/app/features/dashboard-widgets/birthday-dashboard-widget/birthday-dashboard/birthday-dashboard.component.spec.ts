@@ -7,7 +7,6 @@ import {
 
 import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { ConfigService } from "../../../../core/config/config.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -19,6 +18,7 @@ import {
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { DateWithAge } from "../../../../core/basic-datatypes/date-with-age/dateWithAge";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("BirthdayDashboardComponent", () => {
   let component: BirthdayDashboardComponent;
@@ -39,6 +39,9 @@ describe("BirthdayDashboardComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BirthdayDashboardComponent);
     component = fixture.componentInstance;
+
+    component.entities = { [TestEntity.ENTITY_TYPE]: "dateOfBirth" };
+
     fixture.detectChanges();
   });
 
@@ -51,13 +54,13 @@ describe("BirthdayDashboardComponent", () => {
       .subtract(10, "years")
       .add(5, "days")
       .startOf("day");
-    const child1 = new Child();
+    const child1 = new TestEntity();
     child1.dateOfBirth = new DateWithAge(birthdaySoon.toDate());
     const birthdayFarAway = moment()
       .subtract(15, "years")
       .add(5, "weeks")
       .startOf("day");
-    const child2 = new Child();
+    const child2 = new TestEntity();
     child2.dateOfBirth = new DateWithAge(birthdayFarAway.toDate());
     entityMapper.saveAll([child1, child2]);
 
@@ -75,13 +78,13 @@ describe("BirthdayDashboardComponent", () => {
       .subtract(12, "years")
       .add(5, "days")
       .startOf("day");
-    const child1 = new Child();
+    const child1 = new TestEntity();
     child1.dateOfBirth = new DateWithAge(firstBirthday.toDate());
     const secondBirthday = moment()
       .subtract(15, "years")
       .add(2, "weeks")
       .startOf("day");
-    const child2 = new Child();
+    const child2 = new TestEntity();
     child2.dateOfBirth = new DateWithAge(secondBirthday.toDate());
     entityMapper.saveAll([child1, child2]);
 
@@ -110,7 +113,7 @@ describe("BirthdayDashboardComponent", () => {
     e2.birthday = new DateWithAge(
       moment().subtract(12, "year").add(3, "day").toDate(),
     );
-    const e3 = new Child();
+    const e3 = new TestEntity();
     e3.dateOfBirth = new DateWithAge(
       moment().subtract(8, "year").add(2, "day").toDate(),
     );
@@ -118,7 +121,7 @@ describe("BirthdayDashboardComponent", () => {
 
     component.entities = {
       BirthdayEntity: "birthday",
-      Child: "dateOfBirth",
+      [TestEntity.ENTITY_TYPE]: "dateOfBirth",
     };
     component.ngOnInit();
     tick();

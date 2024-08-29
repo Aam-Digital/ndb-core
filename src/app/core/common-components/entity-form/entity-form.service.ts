@@ -18,13 +18,34 @@ import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { DefaultValueService } from "../../entity/default-value.service";
+import { DefaultValueService } from "../../default-values/default-value.service";
+import { DefaultValueConfig } from "../../entity/schema/default-value-config";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
  */
-export type TypedForm<T> = FormGroup<{ [K in keyof T]: ɵElement<T[K], null> }>;
-export type EntityForm<T extends Entity> = TypedForm<Partial<T>>;
+export type TypedFormGroup<T> = FormGroup<{
+  [K in keyof T]: ɵElement<T[K], null>;
+}>;
+
+export type EntityFormGroup<T extends Entity> = TypedFormGroup<Partial<T>>;
+
+export interface EntityForm<T extends Entity> {
+  formGroup: EntityFormGroup<T>;
+  entity: T;
+
+  /**
+   * map of field ids to the default value configuration for that field
+   */
+  defaultValueConfigs: Map<string, DefaultValueConfig>;
+
+  /**
+   * map of field ids to the current value to be inherited from the referenced parent entities' field
+   */
+  inheritedParentValues: Map<string, any>;
+
+  watcher: Map<string, Subscription>;
+}
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -109,19 +130,48 @@ export class EntityFormService {
   }
 
   /**
-   * Creates a FormGroups from the formFields and the existing values from the entity.
+   * Creates a form with the formFields and the existing values from the entity.
    * Missing fields in the formFields are filled with schema information.
    * @param formFields
    * @param entity
    * @param forTable
    * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
    */
-  public createFormGroup<T extends Entity>(
+  public async createEntityForm<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
     forTable = false,
     withPermissionCheck = true,
-  ): EntityForm<T> {
+  ): Promise<EntityForm<T>> {
+    const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
+      formFields,
+      entity,
+      forTable,
+      withPermissionCheck,
+    );
+
+    const defaultValueConfigs =
+      DefaultValueService.getDefaultValueConfigs(entity);
+
+    const entityForm: EntityForm<T> = {
+      formGroup: typedFormGroup,
+      entity: entity,
+      defaultValueConfigs: defaultValueConfigs,
+      inheritedParentValues: new Map(),
+      watcher: new Map(),
+    };
+
+    await this.defaultValueService.handleEntityForm(entityForm, entity);
+
+    return entityForm;
+  }
+
+  private createFormGroup<T extends Entity>(
+    formFields: ColumnConfig[],
+    entity: T,
+    forTable = false,
+    withPermissionCheck = true,
+  ): EntityFormGroup<T> {
     const formConfig = {};
     const copy = entity.copy();
 
@@ -137,6 +187,7 @@ export class EntityFormService {
     const valueChangesSubscription = group.valueChanges.subscribe(
       () => (this.unsavedChanges.pending = group.dirty),
     );
+
     this.subscriptions.push(valueChangesSubscription);
 
     if (withPermissionCheck) {
@@ -146,8 +197,6 @@ export class EntityFormService {
         .subscribe(() => this.disableReadOnlyFormControls(group, entity));
       this.subscriptions.push(statusChangesSubscription);
     }
-
-    this.defaultValueService.handle(group, entity);
 
     return group;
   }
@@ -186,7 +235,7 @@ export class EntityFormService {
   }
 
   private disableReadOnlyFormControls<T extends Entity>(
-    form: EntityForm<T>,
+    form: EntityFormGroup<T>,
     entity: T,
   ) {
     const action = entity.isNew ? "create" : "update";
@@ -206,7 +255,7 @@ export class EntityFormService {
    * @returns a copy of the input entity with the changes from the form group
    */
   public async saveChanges<T extends Entity>(
-    form: EntityForm<T>,
+    form: EntityFormGroup<T>,
     entity: T,
   ): Promise<T> {
     this.checkFormValidity(form);
@@ -233,7 +282,7 @@ export class EntityFormService {
     return Object.assign(entity, updatedEntity);
   }
 
-  private checkFormValidity<T extends Entity>(form: EntityForm<T>) {
+  private checkFormValidity<T extends Entity>(form: EntityFormGroup<T>) {
     // errors regarding invalid fields won't be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
@@ -264,7 +313,7 @@ export class EntityFormService {
     }
   }
 
-  resetForm<E extends Entity>(form: EntityForm<E>, entity: E) {
+  resetForm<E extends Entity>(form: EntityFormGroup<E>, entity: E) {
     for (const key of Object.keys(form.controls)) {
       form.get(key).setValue(entity[key]);
     }

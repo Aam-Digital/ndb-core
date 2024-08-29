@@ -1,6 +1,6 @@
-import { Center } from "../../model/child";
+import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 
-export const centersUnique: Center[] = [
+export const centersUnique: ConfigurableEnumValue[] = [
   { id: "alipore", label: $localize`:center:Alipore` },
   { id: "tollygunge", label: $localize`:center:Tollygunge` },
   { id: "barabazar", label: $localize`:center:Barabazar` },

@@ -1,11 +1,11 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { RelatedEntitiesComponent } from "./related-entities.component";
 import { Note } from "../../../child-dev-project/notes/model/note";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-const child = new Child("testChild");
+const child = new TestEntity("testChild");
 child.name = "Testee";
 
 export default {

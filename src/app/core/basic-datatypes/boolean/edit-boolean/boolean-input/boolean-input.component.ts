@@ -47,7 +47,7 @@ export class BooleanInputComponent extends CustomFormControlDirective<boolean> {
     );
   }
 
-  onContainerClick(event: MouseEvent) {
+  override onContainerClick(event: MouseEvent) {
     if ((event.target as Element).tagName.toLowerCase() != "mat-checkbox") {
       this.inputElement.focus();
     }

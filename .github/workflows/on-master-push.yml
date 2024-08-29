@@ -1,0 +1,99 @@
+name: Master Push
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  create-and-deploy-compodoc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install @compodoc/compodoc
+
+      - name: Run compodoc
+        run: npm run compodoc
+
+      - name: Deploy on pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: doc/compodoc
+          destination_dir: documentation
+          force_orphan: true
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+        os:
+          - ubuntu-latest
+          - [ self-hosted, Linux, ARM64 ]
+        exclude:
+          - platform: linux/arm64
+            os: ubuntu-latest
+          - platform: linux/amd64
+            os: [ self-hosted, Linux, ARM64 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run tests in Docker image
+        uses: docker/build-push-action@v6
+        with:
+          platforms: ${{ matrix.platform }}
+          context: ./
+          file: ./build/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          target: test
+
+      - name: Run tests with timezone
+        if: ${{ matrix.platform == 'linux/amd64' }}
+        uses: docker/build-push-action@v6
+        with:
+          platforms: ${{ matrix.platform }}
+          context: ./
+          file: ./build/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          target: test
+          build-args: |
+            TZ=America/Detroit
+
+  pre-release:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          extra_plugins: |
+            semantic-release-replace-plugin@1.2.6
+            @semantic-release/git
+            @semantic-release/github
+            semantic-release-slack-bot

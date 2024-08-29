@@ -14,7 +14,7 @@ import {
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { Config } from "../config/config";
 import { Entity } from "../entity/model/entity";
-import { from, interval, merge, of } from "rxjs";
+import { from, interval, merge, of, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 
@@ -132,7 +132,13 @@ export class SyncService {
     )
       .pipe(
         debounceTime(500),
-        mergeMap(() => from(this.sync())),
+        mergeMap(() => {
+          if (this.syncStateSubject.value == SyncState.STARTED) {
+            return of();
+          } else {
+            return from(this.sync());
+          }
+        }),
         retry({ delay: SyncService.SYNC_INTERVAL }),
         takeWhile(() => this.liveSyncEnabled),
       )

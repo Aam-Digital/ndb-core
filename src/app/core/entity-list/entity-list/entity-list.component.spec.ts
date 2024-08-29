@@ -8,7 +8,6 @@ import {
 import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "../EntityListConfig";
 import { Entity } from "../../entity/model/entity";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -21,6 +20,7 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -46,11 +46,11 @@ describe("EntityListComponent", () => {
       groups: [
         {
           name: "Basic Info",
-          columns: ["projectNumber", "name", "age", "gender"],
+          columns: ["name", "age", "category"],
         },
         {
           name: "School Info",
-          columns: ["name", "age", "school"],
+          columns: ["name", "age", "other"],
         },
       ],
     },
@@ -63,7 +63,7 @@ describe("EntityListComponent", () => {
         false: "Currently inactive children",
       } as BooleanFilterConfig,
       {
-        id: "center",
+        id: "category",
       },
     ],
   };
@@ -196,7 +196,7 @@ describe("EntityListComponent", () => {
     initComponentInputs();
     tick();
 
-    const entity = new Child();
+    const entity = new TestEntity();
     entityUpdates.next({ entity: entity, type: "new" });
     tick();
 
@@ -207,7 +207,7 @@ describe("EntityListComponent", () => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
-    const entity = new Child();
+    const entity = new TestEntity();
     createComponent();
     initComponentInputs();
     tick();
@@ -224,7 +224,7 @@ describe("EntityListComponent", () => {
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
 
-    component.entityConstructor = Child;
+    component.entityConstructor = TestEntity;
 
     fixture.detectChanges();
   }

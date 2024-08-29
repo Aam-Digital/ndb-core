@@ -6,9 +6,9 @@ import { SessionInfo } from "../session-info";
 import { KeycloakEventType, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
 import { Entity } from "../../../entity/model/entity";
-import { User } from "../../../user/user";
 import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
+import { switchMap } from "rxjs/operators";
 
 /**
  * Handles the remote session with keycloak
@@ -97,16 +97,19 @@ export class KeycloakAuthService {
 
     const sessionInfo: SessionInfo = {
       name: parsedToken.username ?? parsedToken.sub,
+      id: parsedToken.sub,
       roles: parsedToken["_couchdb.roles"],
+      email: parsedToken.email,
     };
 
     if (parsedToken.username) {
       sessionInfo.entityId = parsedToken.username.includes(":")
         ? parsedToken.username
-        : Entity.createPrefixedId(User.ENTITY_TYPE, parsedToken.username);
+        : // fallback for legacy config: manually add "User" entity prefix
+          Entity.createPrefixedId("User", parsedToken.username);
     } else {
       Logging.debug(
-        `User not linked with an entity (userId: ${sessionInfo.name})`,
+        `User not linked with an entity (userId: ${sessionInfo.id} | ${sessionInfo.name})`,
       );
     }
 
@@ -151,9 +154,9 @@ export class KeycloakAuthService {
     });
   }
 
-  async getUserinfo(): Promise<KeycloakUser> {
+  async getUserinfo(): Promise<KeycloakUserDto> {
     const user = await this.keycloak.getKeycloakInstance().loadUserInfo();
-    return user as KeycloakUser;
+    return user as KeycloakUserDto;
   }
 
   setEmail(email: string): Observable<any> {
@@ -162,19 +165,29 @@ export class KeycloakAuthService {
     });
   }
 
-  createUser(user: Partial<KeycloakUser>): Observable<any> {
+  createUser(user: Partial<KeycloakUserDto>): Observable<any> {
     return this.httpClient.post(`${environment.account_url}/account`, user);
   }
 
-  updateUser(userId: string, user: Partial<KeycloakUser>): Observable<any> {
+  deleteUser(username: string): Observable<any> {
+    return this.getUser(username).pipe(
+      switchMap((value) =>
+        this.httpClient.delete(
+          `${environment.account_url}/account/${value.id}`,
+        ),
+      ),
+    );
+  }
+
+  updateUser(userId: string, user: Partial<KeycloakUserDto>): Observable<any> {
     return this.httpClient.put(
       `${environment.account_url}/account/${userId}`,
       user,
     );
   }
 
-  getUser(username: string): Observable<KeycloakUser> {
-    return this.httpClient.get<KeycloakUser>(
+  getUser(username: string): Observable<KeycloakUserDto> {
+    return this.httpClient.get<KeycloakUserDto>(
       `${environment.account_url}/account/${username}`,
     );
   }
@@ -210,10 +223,12 @@ export interface Role {
 }
 
 /**
- * Extract of Keycloak user object.
+ * Extract of Keycloak user object as provided by the external Keycloak Service.
  * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_userrepresentation}
+ *
+ * These fields overlap with our internal `SessionInfo` interface that is seen as abstracted from Keycloak.
  */
-export interface KeycloakUser {
+export interface KeycloakUserDto {
   id: string;
   username: string;
   email: string;

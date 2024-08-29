@@ -1,16 +1,16 @@
 import { DemoActivityGeneratorService } from "./demo-activity-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { RecurringActivity } from "../model/recurring-activity";
-import { Child } from "../../children/model/child";
 import { EventNote } from "../model/event-note";
 import { DemoActivityEventsGeneratorService } from "./demo-activity-events-generator.service";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("DemoActivityEventsGenerator", () => {
   let service: DemoDataGenerator<EventNote>;
 
   beforeEach(() => {
     const testActivity = RecurringActivity.create("test-activity");
-    testActivity.participants.push(Child.create("John Doe").getId());
+    testActivity.participants.push(TestEntity.create("John Doe").getId());
 
     const mockActivityGenerator = {
       entities: [testActivity],

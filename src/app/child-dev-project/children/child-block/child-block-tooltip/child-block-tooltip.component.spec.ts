@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { FileService } from "../../../../features/file/file.service";
-import { Child } from "../../model/child";
+import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
 
 describe("ChildBlockTooltipComponent", () => {
   let component: ChildBlockTooltipComponent;
@@ -19,7 +19,7 @@ describe("ChildBlockTooltipComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildBlockTooltipComponent);
     component = fixture.componentInstance;
-    component.entity = new Child();
+    component.entity = createEntityOfType("Child");
     fixture.detectChanges();
   });
 

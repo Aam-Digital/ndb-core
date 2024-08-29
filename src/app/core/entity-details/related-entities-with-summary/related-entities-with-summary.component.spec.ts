@@ -7,27 +7,40 @@ import {
 } from "@angular/core/testing";
 
 import { RelatedEntitiesWithSummaryComponent } from "./related-entities-with-summary.component";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EducationalMaterial } from "../../../child-dev-project/children/educational-material/model/educational-material";
-import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { Entity } from "../../entity/model/entity";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
 
 describe("RelatedEntitiesWithSummaryComponent", () => {
   let component: RelatedEntitiesWithSummaryComponent;
   let fixture: ComponentFixture<RelatedEntitiesWithSummaryComponent>;
-  const updates = new Subject<UpdatedEntity<EducationalMaterial>>();
-  const child = new Child("22");
-  const PENCIL: ConfigurableEnumValue = {
-    id: "pencil",
-    label: "Pencil",
-  };
-  const RULER: ConfigurableEnumValue = {
-    id: "ruler",
-    label: "Ruler",
-  };
+
+  @DatabaseEntity("TestEntityWithAmount")
+  class TestEntityWithAmount extends Entity {
+    @DatabaseField() amount: number;
+    @DatabaseField() category: string;
+
+    @DatabaseField({
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    })
+    reference: string;
+
+    @DatabaseField() other: string;
+
+    static create(data: Partial<TestEntityWithAmount>): TestEntityWithAmount {
+      return Object.assign(new TestEntityWithAmount(), data);
+    }
+  }
+
+  const updates = new Subject<UpdatedEntity<TestEntityWithAmount>>();
+  const primaryEntity = new TestEntity("22");
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -43,12 +56,12 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(RelatedEntitiesWithSummaryComponent);
     component = fixture.componentInstance;
-    component.entity = child;
-    component.entityType = EducationalMaterial.ENTITY_TYPE;
+    component.entity = primaryEntity;
+    component.entityType = TestEntityWithAmount.ENTITY_TYPE;
 
     component.summaries = {
-      countProperty: "materialAmount",
-      groupBy: "materialType",
+      countProperty: "amount",
+      groupBy: "category",
       total: true,
       average: true,
     };
@@ -68,30 +81,26 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   });
 
   function setRecordsAndGenerateSummary(
-    ...records: Partial<EducationalMaterial>[]
+    ...records: Partial<TestEntityWithAmount>[]
   ) {
-    component.data = records.map(EducationalMaterial.create);
+    component.data = records.map(TestEntityWithAmount.create);
     component.updateSummary(component.data);
   }
 
   it("produces a singleton summary when there is a single record", () => {
-    setRecordsAndGenerateSummary({ materialType: PENCIL, materialAmount: 1 });
-    expect(component.summarySum).toEqual(`${PENCIL.label}: 1`);
-    expect(component.summaryAvg).toEqual(`${PENCIL.label}: 1`);
+    setRecordsAndGenerateSummary({ category: "PENCIL", amount: 1 });
+    expect(component.summarySum).toEqual(`PENCIL: 1`);
+    expect(component.summaryAvg).toEqual(`PENCIL: 1`);
   });
 
   it("produces a summary of all records when they are all different", () => {
     setRecordsAndGenerateSummary(
-      { materialType: PENCIL, materialAmount: 2 },
-      { materialType: RULER, materialAmount: 1 },
-      { materialAmount: 1 },
+      { category: "PENCIL", amount: 2 },
+      { category: "PAPER", amount: 1 },
+      { amount: 1 },
     );
-    expect(component.summarySum).toEqual(
-      `${PENCIL.label}: 2, ${RULER.label}: 1, undefined: 1`,
-    );
-    expect(component.summaryAvg).toEqual(
-      `${PENCIL.label}: 2, ${RULER.label}: 1, undefined: 1`,
-    );
+    expect(component.summarySum).toEqual(`PENCIL: 2, PAPER: 1, undefined: 1`);
+    expect(component.summaryAvg).toEqual(`PENCIL: 2, PAPER: 1, undefined: 1`);
   });
 
   it("produces a singly summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
@@ -106,31 +115,25 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
 
   it("produces a summary of all records when there are duplicates", () => {
     setRecordsAndGenerateSummary(
-      { materialType: PENCIL, materialAmount: 1 },
-      { materialType: RULER, materialAmount: 1 },
-      { materialType: PENCIL, materialAmount: 3 },
+      { category: "PENCIL", amount: 1 },
+      { category: "PAPER", amount: 1 },
+      { category: "PENCIL", amount: 3 },
     );
 
-    expect(component.summarySum).toEqual(
-      `${PENCIL.label}: 4, ${RULER.label}: 1`,
-    );
-    expect(component.summaryAvg).toEqual(
-      `${PENCIL.label}: 2, ${RULER.label}: 1`,
-    );
+    expect(component.summarySum).toEqual(`PENCIL: 4, PAPER: 1`);
+    expect(component.summaryAvg).toEqual(`PENCIL: 2, PAPER: 1`);
   });
 
   it("produces summary of all records when average is false and total is true", () => {
     component.summaries.total = true;
     component.summaries.average = false;
     setRecordsAndGenerateSummary(
-      { materialType: PENCIL, materialAmount: 1 },
-      { materialType: RULER, materialAmount: 1 },
-      { materialType: PENCIL, materialAmount: 3 },
+      { category: "PENCIL", amount: 1 },
+      { category: "PAPER", amount: 1 },
+      { category: "PENCIL", amount: 3 },
     );
 
-    expect(component.summarySum).toEqual(
-      `${PENCIL.label}: 4, ${RULER.label}: 1`,
-    );
+    expect(component.summarySum).toEqual(`PENCIL: 4, PAPER: 1`);
     expect(component.summaryAvg).toEqual(``);
   });
 
@@ -138,24 +141,22 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     component.summaries.total = false;
     component.summaries.average = true;
     setRecordsAndGenerateSummary(
-      { materialType: PENCIL, materialAmount: 1 },
-      { materialType: RULER, materialAmount: 1 },
-      { materialType: PENCIL, materialAmount: 3 },
+      { category: "PENCIL", amount: 1 },
+      { category: "PAPER", amount: 1 },
+      { category: "PENCIL", amount: 3 },
     );
 
     expect(component.summarySum).toEqual(``);
-    expect(component.summaryAvg).toEqual(
-      `${PENCIL.label}: 2, ${RULER.label}: 1`,
-    );
+    expect(component.summaryAvg).toEqual(`PENCIL: 2, PAPER: 1`);
   });
 
   it("does not produces summary of all records when both average and total are false", () => {
     component.summaries.total = false;
     component.summaries.average = false;
     setRecordsAndGenerateSummary(
-      { materialType: PENCIL, materialAmount: 1 },
-      { materialType: RULER, materialAmount: 1 },
-      { materialType: PENCIL, materialAmount: 3 },
+      { category: "PENCIL", amount: 1 },
+      { category: "PAPER", amount: 1 },
+      { category: "PENCIL", amount: 3 },
     );
 
     expect(component.summarySum).toEqual(``);
@@ -164,38 +165,30 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
 
   it("produces summary of all records when both average and total are true", () => {
     setRecordsAndGenerateSummary(
-      { materialType: PENCIL, materialAmount: 1 },
-      { materialType: RULER, materialAmount: 1 },
-      { materialType: PENCIL, materialAmount: 3 },
+      { category: "PENCIL", amount: 1 },
+      { category: "PAPER", amount: 1 },
+      { category: "PENCIL", amount: 3 },
     );
 
-    expect(component.summarySum).toEqual(
-      `${PENCIL.label}: 4, ${RULER.label}: 1`,
-    );
-    expect(component.summaryAvg).toEqual(
-      `${PENCIL.label}: 2, ${RULER.label}: 1`,
-    );
+    expect(component.summarySum).toEqual(`PENCIL: 4, PAPER: 1`);
+    expect(component.summaryAvg).toEqual(`PENCIL: 2, PAPER: 1`);
   });
 
-  it("loads all education data associated with a child and updates the summary", fakeAsync(() => {
-    const educationalData = [
-      { materialType: PENCIL, materialAmount: 1, child: child.getId() },
-      { materialType: RULER, materialAmount: 2, child: child.getId() },
-    ].map(EducationalMaterial.create);
-    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
-      educationalData,
-    );
+  it("loads all data associated with the given ref and updates the summary", fakeAsync(() => {
+    const data = [
+      { category: "PENCIL", amount: 1, reference: primaryEntity.getId() },
+      { category: "PAPER", amount: 2, reference: primaryEntity.getId() },
+    ].map(TestEntityWithAmount.create);
+    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(data);
 
-    component.entity = new Child("22");
+    component.entity = new TestEntity("22");
     component.ngOnInit();
     tick();
     fixture.detectChanges();
     tick();
 
-    expect(component.summarySum).toEqual(
-      `${PENCIL.label}: 1, ${RULER.label}: 2`,
-    );
-    expect(component.data).toEqual(educationalData);
+    expect(component.summarySum).toEqual(`PENCIL: 1, PAPER: 2`);
+    expect(component.data).toEqual(data);
   }));
 
   it("should update the summary when entity updates are received", fakeAsync(() => {
@@ -203,34 +196,34 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     fixture.detectChanges();
     tick();
 
-    const update1 = EducationalMaterial.create({
-      child: child.getId(),
-      materialType: PENCIL,
-      materialAmount: 1,
+    const update1 = TestEntityWithAmount.create({
+      reference: primaryEntity.getId(),
+      category: "PENCIL",
+      amount: 1,
     });
     updates.next({ entity: update1, type: "new" });
     fixture.detectChanges();
     tick();
 
     expect(component.data).toEqual([update1]);
-    expect(component.summarySum).toBe(`${PENCIL.label}: 1`);
+    expect(component.summarySum).toBe(`PENCIL: 1`);
 
-    const update2 = update1.copy() as EducationalMaterial;
-    update2.materialAmount = 2;
+    const update2 = update1.copy() as TestEntityWithAmount;
+    update2.amount = 2;
     updates.next({ entity: update2, type: "update" });
     fixture.detectChanges();
     tick();
 
     expect(component.data).toEqual([update2]);
-    expect(component.summarySum).toBe(`${PENCIL.label}: 2`);
+    expect(component.summarySum).toBe(`PENCIL: 2`);
 
-    const unrelatedUpdate = update1.copy() as EducationalMaterial;
-    unrelatedUpdate.child = "differentChild";
+    const unrelatedUpdate = update1.copy() as TestEntityWithAmount;
+    unrelatedUpdate.reference = "different-ref";
     updates.next({ entity: unrelatedUpdate, type: "new" });
     fixture.detectChanges();
     tick();
     // No change
     expect(component.data).toEqual([update2]);
-    expect(component.summarySum).toBe(`${PENCIL.label}: 2`);
+    expect(component.summarySum).toBe(`PENCIL: 2`);
   }));
 });

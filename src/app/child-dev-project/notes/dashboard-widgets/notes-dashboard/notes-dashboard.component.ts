@@ -3,7 +3,6 @@ import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { Child } from "../../../children/model/child";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { DecimalPipe, NgIf } from "@angular/common";
@@ -43,7 +42,7 @@ export class NotesDashboardComponent
   extends DashboardWidget
   implements OnInit, NotesDashboardConfig
 {
-  static getRequiredEntities(config: NotesDashboardConfig) {
+  static override getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;
   }
 
@@ -54,7 +53,7 @@ export class NotesDashboardComponent
     this._entity = this.entities.get(value);
   }
 
-  _entity: EntityConstructor = Child;
+  _entity: EntityConstructor;
   /**
    * number of days since last note that entities should be considered having a "recent" note.
    */
@@ -80,6 +79,10 @@ export class NotesDashboardComponent
   }
 
   ngOnInit() {
+    if (!this._entity) {
+      this.entity = "Child";
+    }
+
     let dayRangeBoundary = this.sinceDays;
     if (this.fromBeginningOfWeek) {
       dayRangeBoundary += moment().diff(moment().startOf("week"), "days");

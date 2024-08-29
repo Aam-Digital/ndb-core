@@ -35,10 +35,9 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
-import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Config } from "../../config/config";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -53,7 +52,7 @@ describe("SessionManagerService", () => {
   let initIndexedSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
-    dbUser = { name: TEST_USER, roles: ["user_app"] };
+    dbUser = { name: TEST_USER, id: "99", roles: ["user_app"] };
     mockKeycloak = jasmine.createSpyObj(["login", "logout", "addAuthHeader"]);
     mockKeycloak.login.and.resolveTo(dbUser);
     mockNavigator = { onLine: true };
@@ -109,6 +108,7 @@ describe("SessionManagerService", () => {
   it("should update the session info once authenticated", async () => {
     const updatedUser: SessionInfo = {
       name: TEST_USER,
+      id: "101",
       roles: dbUser.roles.concat("admin"),
     };
     mockKeycloak.login.and.resolveTo(updatedUser);
@@ -124,14 +124,15 @@ describe("SessionManagerService", () => {
 
   it("should initialize current user as the entity to which a login is connected", async () => {
     const entityMapper = TestBed.inject(EntityMapperService);
-    const loggedInUser = new User(TEST_USER);
-    const otherUser = new User("other_user");
+    const loggedInUser = new TestEntity(TEST_USER);
+    const otherUser = new TestEntity("other_user");
     await entityMapper.saveAll([loggedInUser, otherUser]);
     const currentUser = TestBed.inject(CurrentUserSubject);
 
     // first login with existing user entity
     mockKeycloak.login.and.resolveTo({
       name: TEST_USER,
+      id: "101",
       roles: [],
       entityId: loggedInUser.getId(),
     });
@@ -142,10 +143,11 @@ describe("SessionManagerService", () => {
     await service.logout();
     expect(currentUser.value).toBeUndefined();
 
-    const adminUser = new User("admin-user");
+    const adminUser = new TestEntity("admin-user");
     // login, user entity not available yet
     mockKeycloak.login.and.resolveTo({
       name: "admin-user",
+      id: "101",
       roles: ["admin"],
       entityId: adminUser.getId(),
     });
@@ -160,7 +162,11 @@ describe("SessionManagerService", () => {
   it("should not initialize the user entity if no entityId is set", async () => {
     const loadSpy = spyOn(TestBed.inject(EntityMapperService), "load");
 
-    mockKeycloak.login.and.resolveTo({ name: "some-user", roles: [] });
+    mockKeycloak.login.and.resolveTo({
+      name: "some-user",
+      id: "101",
+      roles: [],
+    });
     await service.remoteLogin();
 
     expect(loadSpy).not.toHaveBeenCalled();
@@ -169,14 +175,15 @@ describe("SessionManagerService", () => {
   });
 
   it("should allow other entities to log in", async () => {
-    const loggedInChild = new Child("123");
+    const loggedInChild = new TestEntity("123");
     const childSession: SessionInfo = {
       name: loggedInChild.getId(),
+      id: "101",
       roles: [],
       entityId: loggedInChild.getId(),
     };
     mockKeycloak.login.and.resolveTo(childSession);
-    const otherChild = new Child("456");
+    const otherChild = new TestEntity("456");
     await TestBed.inject(EntityMapperService).saveAll([
       loggedInChild,
       otherChild,

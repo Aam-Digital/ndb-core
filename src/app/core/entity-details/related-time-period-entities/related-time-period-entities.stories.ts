@@ -3,33 +3,33 @@ import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entiti
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 
-const child = new Child("testChild");
-const school1 = new School("1");
+const child = createEntityOfType("Child", "testChild");
+child.name = "Test Child";
+const school1 = createEntityOfType("School", "1");
 school1.name = "School 1";
-const school2 = new School("2");
+const school2 = createEntityOfType("School", "2");
 school2.name = "School 2";
 const rel1 = new ChildSchoolRelation("1");
 rel1.childId = child.getId();
 rel1.schoolId = school1.getId();
-rel1.schoolClass = "3";
+rel1["schoolClass"] = "3";
 rel1.start = new Date();
 const rel2 = new ChildSchoolRelation("2");
 rel2.childId = child.getId();
 rel2.schoolId = school2.getId();
-rel2.schoolClass = "2";
+rel2["schoolClass"] = "2";
 rel2.start = new Date();
 rel2.end = new Date();
-rel2.result = 80;
+rel2["result"] = 80;
 const rel3 = new ChildSchoolRelation("3");
 rel3.childId = child.getId();
 rel3.schoolId = school1.getId();
-rel3.schoolClass = "1";
+rel3["schoolClass"] = "1";
 rel3.start = new Date();
 rel3.end = new Date();
-rel3.result = 23;
+rel3["result"] = 23;
 
 export default {
   title: "Core/Entities/Related TimePeriod Entities",

@@ -88,9 +88,9 @@ export class TodoListComponent
   extends EntityListComponent<Todo>
   implements OnInit
 {
-  // TODO: make this component obsolete by generalizing Entity and EntityList so that we can define a viewDetailsComponent on the entity that gets opened as popup?
+  // TODO: make this component obsolete by generalizing Entity and EntityList so that we can define a viewDetailsComponent on the entity that gets opened as popup? #2511
 
-  entityConstructor = Todo;
+  override entityConstructor = Todo;
 
   override clickMode: "navigate" | "popup" | "none" = "none";
 
@@ -122,6 +122,7 @@ export class TodoListComponent
       dialog,
       duplicateRecord,
       entityActionsService,
+      null,
     );
   }
 

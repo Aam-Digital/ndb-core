@@ -18,19 +18,23 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { MarkdownModule } from "ngx-markdown";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import {
+  HttpClient,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 
 /**
  * Display any information contained in a markdown file.
  */
 @NgModule({
+  exports: [MarkdownModule],
   imports: [
-    HttpClientModule,
     MarkdownModule.forRoot({
       loader: HttpClient,
     }),
   ],
-  exports: [MarkdownModule],
+  providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class MarkdownPageModule {
   constructor(private components: ComponentRegistry) {

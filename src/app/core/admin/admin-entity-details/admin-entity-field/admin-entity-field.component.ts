@@ -283,7 +283,7 @@ export class AdminEntityFieldComponent implements OnChanges {
       }
     }
     const updatedEntitySchema = Object.assign(
-      { _isCustomizedField: true },
+      {},
       this.entitySchemaField, // TODO: remove this merge once all schema fields are in the form (then only form values should apply)
       formValues,
     );

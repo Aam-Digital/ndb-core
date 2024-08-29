@@ -12,7 +12,7 @@ describe("ImportSelectTypeComponent", () => {
   let fixture: ComponentFixture<ImportEntityTypeComponent>;
 
   class TestEntity extends Entity {
-    static _isCustomizedType = true; // set by config service applying custom definitions
+    static override _isCustomizedType = true; // set by config service applying custom definitions
   }
 
   let mockRegistry: EntityRegistry;

@@ -15,7 +15,7 @@ import {
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { Child } from "../../../children/model/child";
+import { Entity } from "../../../../core/entity/model/entity";
 import { Logging } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
@@ -38,7 +38,7 @@ import { ConfirmationDialogService } from "../../../../core/common-components/co
 // Only allow horizontal swiping
 @Injectable()
 class HorizontalHammerConfig extends HammerGestureConfig {
-  overrides = {
+  override overrides = {
     swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
     pinch: { enable: false },
     rotate: { enable: false },
@@ -105,7 +105,7 @@ export class RollCallComponent implements OnChanges {
    * The index, child and attendance that is currently being processed
    */
   currentIndex = 0;
-  currentChild: Child;
+  currentChild: Entity;
   currentAttendance: EventAttendance;
   /**
    * whether any changes have been made to the model
@@ -115,8 +115,8 @@ export class RollCallComponent implements OnChanges {
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
-  children: Child[] = [];
-  inactiveParticipants: Child[];
+  children: Entity[] = [];
+  inactiveParticipants: Entity[];
 
   constructor(
     private enumService: ConfigurableEnumService,
@@ -170,9 +170,12 @@ export class RollCallComponent implements OnChanges {
     this.children = [];
     this.inactiveParticipants = [];
     for (const childId of this.eventEntity.children) {
-      let child: Child;
+      let child: Entity;
       try {
-        child = await this.entityMapper.load(Child, childId);
+        child = await this.entityMapper.load(
+          Entity.extractTypeFromId(childId),
+          childId,
+        );
       } catch (e) {
         Logging.debug(
           "Could not find child " +

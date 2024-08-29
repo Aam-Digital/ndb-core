@@ -25,7 +25,7 @@ export class TimePeriod extends Entity {
   /**
    * Returns true if this relation is currently active
    */
-  get isActive(): boolean {
+  override get isActive(): boolean {
     if (this.inactive) {
       // manual archiving of records takes precendence
       return false;
@@ -45,11 +45,11 @@ export class TimePeriod extends Entity {
     );
   }
 
-  getColor(): string {
+  override getColor(): string {
     return this.isActive ? "#90ee9040" : "";
   }
 
-  assertValid() {
+  override assertValid() {
     super.assertValid();
 
     this.checkValidDateRange();

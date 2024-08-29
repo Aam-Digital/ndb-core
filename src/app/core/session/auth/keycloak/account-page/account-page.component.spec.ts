@@ -6,7 +6,7 @@ import {
 } from "@angular/core/testing";
 
 import { AccountPageComponent } from "./account-page.component";
-import { KeycloakAuthService, KeycloakUser } from "../keycloak-auth.service";
+import { KeycloakAuthService, KeycloakUserDto } from "../keycloak-auth.service";
 import { of, throwError } from "rxjs";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -47,7 +47,7 @@ describe("AccountPageComponent", () => {
 
   it("should show the email if its already set", fakeAsync(() => {
     const email = "mail@exmaple.com";
-    mockAuthService.getUserinfo.and.resolveTo({ email } as KeycloakUser);
+    mockAuthService.getUserinfo.and.resolveTo({ email } as KeycloakUserDto);
 
     component.ngOnInit();
     tick();

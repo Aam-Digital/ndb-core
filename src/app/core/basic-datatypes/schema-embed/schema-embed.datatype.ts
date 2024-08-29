@@ -39,14 +39,14 @@ export abstract class SchemaEmbedDatatype extends DefaultDatatype {
     super();
   }
 
-  transformToDatabaseFormat(value: any) {
+  override transformToDatabaseFormat(value: any) {
     return this.schemaService.transformEntityToDatabaseFormat(
       value,
       this.embeddedType.schema,
     );
   }
 
-  transformToObjectFormat(value: any) {
+  override transformToObjectFormat(value: any) {
     const instance = new this.embeddedType();
     this.schemaService.loadDataIntoEntity(instance, value);
     return instance;

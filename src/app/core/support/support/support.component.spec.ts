@@ -11,9 +11,13 @@ import { BehaviorSubject, of } from "rxjs";
 import { SwUpdate } from "@angular/service-worker";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { HttpClient } from "@angular/common/http";
+import {
+  HttpClient,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 import { MatDialogModule } from "@angular/material/dialog";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouch-database";
 import { BackupService } from "../../admin/backup/backup.service";
@@ -21,9 +25,9 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
-import { User } from "../../user/user";
+import { Entity } from "../../entity/model/entity";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { SessionSubject } from "../../session/auth/session-info";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 
 class MockDeleteRequest {
@@ -36,8 +40,8 @@ class MockDeleteRequest {
 describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
-  const testUser = { name: TEST_USER, roles: [] };
-  const userEntity = new User(TEST_USER);
+  const testUser: SessionInfo = { name: TEST_USER, id: TEST_USER, roles: [] };
+  const userEntity = new Entity(TEST_USER);
   const mockSW = { isEnabled: false };
   let mockDB: jasmine.SpyObj<PouchDatabase>;
   const mockWindow = {
@@ -62,12 +66,7 @@ describe("SupportComponent", () => {
     } as any);
     mockLocation = {};
     await TestBed.configureTestingModule({
-      imports: [
-        SupportComponent,
-        MatDialogModule,
-        HttpClientTestingModule,
-        NoopAnimationsModule,
-      ],
+      imports: [SupportComponent, MatDialogModule, NoopAnimationsModule],
       providers: [
         {
           provide: SessionSubject,
@@ -84,6 +83,8 @@ describe("SupportComponent", () => {
         { provide: BackupService, useValue: null },
         { provide: DownloadService, useValue: null },
         SyncStateSubject,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
   });

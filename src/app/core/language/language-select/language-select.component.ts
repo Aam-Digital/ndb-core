@@ -35,12 +35,14 @@ export class LanguageSelectComponent {
   /**
    * The region code of the currently selected language/region
    */
-  siteRegionCode = this.translationService.currentRegionCode();
+  siteRegionCode: string;
 
   constructor(
     private translationService: LanguageService,
     @Inject(LOCATION_TOKEN) private location: Location,
-  ) {}
+  ) {
+    this.siteRegionCode = this.translationService.currentRegionCode();
+  }
 
   changeLocale(lang: string) {
     localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, lang);
