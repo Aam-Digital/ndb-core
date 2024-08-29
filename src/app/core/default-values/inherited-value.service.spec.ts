@@ -65,7 +65,6 @@ describe("InheritedValueService", () => {
         },
       },
       form,
-      entity,
     );
 
     // then
@@ -106,7 +105,6 @@ describe("InheritedValueService", () => {
         },
       },
       form,
-      entity,
     );
 
     // when
@@ -150,7 +148,6 @@ describe("InheritedValueService", () => {
         },
       },
       form,
-      entity,
     );
 
     // when
@@ -345,5 +342,32 @@ describe("InheritedValueService", () => {
     form.formGroup.get("reference-1").setValue("non-existing-entity-id");
     tick(); // fetching reference is always async
     expect(form.formGroup.get("field").value).toBe(null);
+  }));
+
+  it("should set value on FormControl, if source is not in formGroup but set on entity", fakeAsync(() => {
+    // given
+    let form = getDefaultInheritedForm({
+      field: {
+        isArray: true,
+        defaultValue: {
+          mode: "inherited",
+          field: "foo",
+          localAttribute: "reference-1",
+        },
+      },
+    });
+    form.formGroup.removeControl("reference-1");
+
+    let entity0 = new Entity();
+    entity0["foo"] = ["bar"];
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+    form.entity["reference-1"] = entity0.getId();
+
+    // when
+    defaultValueService.handleEntityForm(form, form.entity);
+    tick();
+
+    // then
+    expect(form.formGroup.get("field").value).toEqual(["bar"]);
   }));
 });

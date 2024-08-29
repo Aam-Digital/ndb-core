@@ -59,7 +59,6 @@ export class DefaultValueService {
             targetFormControl,
             entitySchemaField,
             form,
-            entity,
           );
           break;
       }

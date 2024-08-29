@@ -14,13 +14,11 @@ export abstract class DefaultValueStrategy {
    * @param targetFormControl The form control to set the default value for.
    * @param fieldConfig The field configuration of this entity field.
    * @param form The overall entity form, including all related fields to support complex, interrelated value calculations.
-   * @param entity The entity that is currently edited in the form, to be able to inherited values from fields not displayed in the form directly.
    */
   abstract setDefaultValue(
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
     form: EntityForm<any>,
-    entity?: Entity,
   ): void;
 
   async onFormValueChanges<T extends Entity>(
@@ -30,6 +28,11 @@ export abstract class DefaultValueStrategy {
   async initEntityForm<T extends Entity>(form: EntityForm<T>): Promise<void> {}
 }
 
+/**
+ * Get the default value configs filtered for the given mode.
+ * @param defaultValueConfigs
+ * @param mode
+ */
 export function getConfigsByMode(
   defaultValueConfigs: Map<string, DefaultValueConfig>,
   mode: ("inherited" | "static" | "dynamic")[],

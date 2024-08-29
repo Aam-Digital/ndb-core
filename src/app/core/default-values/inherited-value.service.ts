@@ -30,74 +30,25 @@ export class InheritedValueService extends DefaultValueStrategy {
     await this.updateLinkedEntities(form);
   }
 
+  /**
+   * Set up the inheritance value for a field, triggering an initial inheritance
+   * and watching future changes of the source (parent) field for automatic updates.
+   * @param targetFormControl
+   * @param fieldConfig
+   * @param form
+   */
   async setDefaultValue(
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
     form: EntityForm<any>,
-    entity: Entity,
   ) {
-    const onSourceValueChange = async (change) => {
-      if (form.formGroup.disabled) {
-        return;
-      }
-
-      if (
-        targetFormControl.dirty &&
-        !!targetFormControl.value &&
-        form.entity.isNew
-      ) {
-        return;
-      }
-
-      if (!form.entity.isNew) {
-        return;
-      }
-
-      if (!change || "") {
-        targetFormControl.setValue(undefined);
-        return;
-      }
-
-      // source field is array, use first element if only one element
-      if (Array.isArray(change)) {
-        if (change.length === 1) {
-          change = change[0];
-        } else {
-          targetFormControl.setValue(undefined);
-          return;
-        }
-      }
-
-      let parentEntity: Entity = await this.entityMapper.load(
-        Entity.extractTypeFromId(change),
-        change,
-      );
-
-      if (
-        !parentEntity ||
-        parentEntity[fieldConfig.defaultValue.field] === undefined
-      ) {
-        return;
-      }
-
-      if (fieldConfig.isArray) {
-        targetFormControl.setValue([
-          ...parentEntity[fieldConfig.defaultValue.field],
-        ]);
-      } else {
-        targetFormControl.setValue(
-          parentEntity[fieldConfig.defaultValue.field],
-        );
-      }
-
-      targetFormControl.markAsUntouched();
-      targetFormControl.markAsPristine();
-    };
-
     // load inherited from initial entity
-    // (e.g. if fields are defined through RelatedEntitiesComponent's factory method, even if that field is not part of the visible form)
-    // TODO: as an alternative, we could add a "hidden" form field for the source field here automatically? (this might help to show better UI hints)
-    await onSourceValueChange(entity[fieldConfig.defaultValue.localAttribute]);
+    await this.onSourceValueChange(
+      form,
+      targetFormControl,
+      fieldConfig,
+      this.getParentRefId(form, fieldConfig.defaultValue),
+    );
 
     // subscribe to update inherited whenever source field changes
     let sourceFormControl: AbstractControl<any, any> | null =
@@ -107,16 +58,97 @@ export class InheritedValueService extends DefaultValueStrategy {
         "sourceFormControlValueChanges_" +
           fieldConfig.defaultValue.localAttribute,
         sourceFormControl.valueChanges.subscribe(
-          async (change) => await onSourceValueChange(change),
+          async (change) =>
+            await this.onSourceValueChange(
+              form,
+              targetFormControl,
+              fieldConfig,
+              change,
+            ),
         ),
       );
     }
+  }
+
+  /**
+   * Update the inherited (target field) value based on the change of the source field (parent reference) change.
+   * @param form
+   * @param targetFormControl
+   * @param fieldConfig
+   * @param change The new entity ID value of the source (parent ref) field.
+   * @private
+   */
+  private async onSourceValueChange(
+    form: EntityForm<any>,
+    targetFormControl: AbstractControl<any, any>,
+    fieldConfig: EntitySchemaField,
+    change,
+  ) {
+    if (form.formGroup.disabled) {
+      return;
+    }
+
+    if (
+      targetFormControl.dirty &&
+      !!targetFormControl.value &&
+      form.entity.isNew
+    ) {
+      return;
+    }
+
+    if (!form.entity.isNew) {
+      return;
+    }
+
+    if (!change || "") {
+      targetFormControl.setValue(undefined);
+      return;
+    }
+
+    // source field is array, use first element if only one element
+    if (Array.isArray(change)) {
+      if (change.length === 1) {
+        change = change[0];
+      } else {
+        targetFormControl.setValue(undefined);
+        return;
+      }
+    }
+
+    let parentEntity: Entity = await this.entityMapper.load(
+      Entity.extractTypeFromId(change),
+      change,
+    );
+
+    if (
+      !parentEntity ||
+      parentEntity[fieldConfig.defaultValue.field] === undefined
+    ) {
+      return;
+    }
+
+    if (fieldConfig.isArray) {
+      targetFormControl.setValue([
+        ...parentEntity[fieldConfig.defaultValue.field],
+      ]);
+    } else {
+      targetFormControl.setValue(parentEntity[fieldConfig.defaultValue.field]);
+    }
+
+    targetFormControl.markAsUntouched();
+    targetFormControl.markAsPristine();
   }
 
   override async onFormValueChanges<T extends Entity>(form: EntityForm<T>) {
     await this.updateLinkedEntities(form);
   }
 
+  /**
+   * Get details about the status and context of an inherited value field
+   * to display to the user.
+   * @param form
+   * @param fieldId
+   */
   getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
     fieldId: string,
@@ -126,7 +158,7 @@ export class InheritedValueService extends DefaultValueStrategy {
       return;
     }
 
-    const parentRefValue = this.getParentRefFromForm(form, defaultConfig);
+    const parentRefValue = this.getParentRefId(form, defaultConfig);
     if (!parentRefValue) {
       return {
         inheritedFromField: defaultConfig.localAttribute,
@@ -161,29 +193,36 @@ export class InheritedValueService extends DefaultValueStrategy {
       form,
     );
 
-    for (let [key, value] of linkedEntityRefs) {
-      if (value.length > 1) {
+    for (let [fieldId, parentEntityIds] of linkedEntityRefs) {
+      if (parentEntityIds.length > 1) {
         // multi-inheritance not supported (yet) -> keep values in form and stop inheritance
-        form.inheritedParentValues.delete(key);
+        form.inheritedParentValues.delete(fieldId);
         continue;
       }
 
       let parentEntity: Entity;
-      if (value.length === 1) {
+      if (parentEntityIds.length === 1) {
         parentEntity = await this.entityMapper.load(
-          Entity.extractTypeFromId(value[0]),
-          value[0],
+          Entity.extractTypeFromId(parentEntityIds[0]),
+          parentEntityIds[0],
         );
       }
 
       // if value empty -> set inherited values to undefined
       form.inheritedParentValues.set(
-        key,
-        parentEntity?.[inheritedConfigs.get(key).field],
+        fieldId,
+        parentEntity?.[inheritedConfigs.get(fieldId).field],
       );
     }
   }
 
+  /**
+   * Get the linked entity references from the form.
+   * @param inheritedConfigs
+   * @param form
+   * @return Entity ids of the linked parent entities (always wrapped as an array)
+   * @private
+   */
   private getLinkedEntityRefs<T extends Entity>(
     inheritedConfigs: Map<string, DefaultValueConfig>,
     form: EntityForm<T>,
@@ -191,9 +230,11 @@ export class InheritedValueService extends DefaultValueStrategy {
     const linkedEntityRefs: Map<string, string[]> = new Map();
 
     for (const [key, defaultValueConfig] of inheritedConfigs) {
-      let linkedEntities: null | string | string[] = form.formGroup.get(
-        defaultValueConfig.localAttribute,
-      )?.value;
+      let linkedEntities: null | string | string[] = this.getParentRefId(
+        form,
+        defaultValueConfig,
+        false,
+      );
 
       if (linkedEntities == null || linkedEntities.length == 0) {
         continue;
@@ -205,13 +246,25 @@ export class InheritedValueService extends DefaultValueStrategy {
     return linkedEntityRefs;
   }
 
-  private getParentRefFromForm<T extends Entity>(
+  /**
+   * Get the parent reference id from the form or entity.
+   * @param form
+   * @param defaultConfig
+   * @param castToSingle Whether for arrays of IDs, this should be cast to a single ID only.
+   * @private
+   */
+  private getParentRefId<T extends Entity>(
     form: EntityForm<T>,
     defaultConfig: DefaultValueConfig,
+    castToSingle = true,
   ): string | undefined {
-    const linkedFieldValue = form.formGroup?.get(
-      defaultConfig.localAttribute,
-    )?.value;
+    const linkedFieldValue =
+      form.formGroup?.get(defaultConfig.localAttribute)?.value ??
+      form.entity?.[defaultConfig.localAttribute];
+
+    if (!castToSingle) {
+      return linkedFieldValue;
+    }
 
     if (Array.isArray(linkedFieldValue)) {
       // inheritance is only supported for a single parent reference
