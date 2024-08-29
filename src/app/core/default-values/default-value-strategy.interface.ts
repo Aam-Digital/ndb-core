@@ -28,6 +28,11 @@ export abstract class DefaultValueStrategy {
   async initEntityForm<T extends Entity>(form: EntityForm<T>): Promise<void> {}
 }
 
+/**
+ * Get the default value configs filtered for the given mode.
+ * @param defaultValueConfigs
+ * @param mode
+ */
 export function getConfigsByMode(
   defaultValueConfigs: Map<string, DefaultValueConfig>,
   mode: ("inherited" | "static" | "dynamic")[],
