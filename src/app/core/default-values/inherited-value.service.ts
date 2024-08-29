@@ -72,6 +72,7 @@ export class InheritedValueService extends DefaultValueStrategy {
           if (change.length === 1) {
             change = change[0];
           } else {
+            targetFormControl.setValue(undefined);
             return;
           }
         }
