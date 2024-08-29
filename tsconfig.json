@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
-    "strict": false, // we are working towards enabling this soon
+    "strict": false,
+    // we are working towards enabling this soon
     "noImplicitOverride": true,
     // TODO: enable more strict rules (these are included in latest angular default projects)
     //    "noPropertyAccessFromIndexSignature": true,
@@ -20,7 +21,8 @@
     "moduleResolution": "bundler",
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,
-    "useDefineForClassFields": false, // TODO fix decorator issues caused by the changed initialization order
+    "useDefineForClassFields": false,
+    // TODO fix decorator issues caused by the changed initialization order
     "target": "ES2022",
     "module": "ES2022",
     "resolveJsonModule": true,
@@ -46,6 +48,11 @@
       ]
     }
   },
+  "exclude": [
+    "e2e",
+    "./cypress.config.ts",
+    "**/*.cy.tsx"
+  ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

@@ -99,7 +99,7 @@ export class EntitySelectComponent<
    * and {@link selection} as well as {@link selectionChange} will
    * still work as expected
    */
-  @Input() showEntities = true;
+  @Input() showEntities: boolean = true;
 
   /**
    * true when this is loading and false when it's ready.

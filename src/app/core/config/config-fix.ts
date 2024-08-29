@@ -397,10 +397,8 @@ export const defaultJsonConfig = {
         "language"
       ],
       "filters": [
-        {
-          "id": "privateSchool",
-          "label": $localize`Private School`
-        }
+        { "id": "privateSchool" },
+        { "id": "parentSchool" }
       ]
     }
   },
@@ -417,7 +415,8 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "fieldGroups": [
-                  { "fields": ["name", "privateSchool"] },
+                  { "fields": ["name", "privateSchool", "parentSchool"] },
+                  { fields: [ "testSchools", "bool", "string", "enum", "refSingle", "refMulti" ]},
                   { "fields": ["address", "phone"] },
                   { "fields": ["language", "timing"] },
                   { "fields": ["remarks"] }
@@ -1072,11 +1071,21 @@ export const defaultJsonConfig = {
       },
       "privateSchool": {
         "dataType": "boolean",
-        "label": $localize`:Label for if a school is a private school:Private School`
+        "label": $localize`:Label for if a school is a private school:Private School`,
+        "defaultValue": {
+          "mode": "inherited",
+          "localAttribute": "parentSchool",
+          "field": "privateSchool"
+        }
       },
       "language": {
         "dataType": "string",
-        "label": $localize`:Label for the language of a school:Language`
+        "label": $localize`:Label for the language of a school:Language`,
+        "defaultValue": {
+          "mode": "inherited",
+          "localAttribute": "parentSchool",
+          "field": "language"
+        }
       },
       "address": {
         "dataType": "location",
@@ -1093,6 +1102,12 @@ export const defaultJsonConfig = {
       "remarks": {
         "dataType": "string",
         "label": $localize`:Label for the remarks for a school:Remarks`
+      },
+      "parentSchool": {
+        "dataType": "entity",
+        "additional": "School",
+        "label": $localize`:Label for school attribute:Branch of`,
+        "description": $localize`:Description for school attribute:Select the "parent school" here to build a hierarchy of a school with multiple branch institutions.`
       }
     },
   },
