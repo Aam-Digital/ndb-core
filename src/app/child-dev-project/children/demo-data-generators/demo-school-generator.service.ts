@@ -58,6 +58,7 @@ export class DemoSchoolGenerator extends DemoDataGenerator<Entity> {
       ]);
 
       school["address"] = faker.geoAddress();
+
       data.push(school);
     }
     return data;
