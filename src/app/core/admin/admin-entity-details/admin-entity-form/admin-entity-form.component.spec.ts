@@ -7,7 +7,10 @@ import {
 
 import { AdminEntityFormComponent } from "./admin-entity-form.component";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
-import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../../common-components/entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { FormGroup } from "@angular/forms";
@@ -18,6 +21,7 @@ import { AdminModule } from "../../admin.module";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { DefaultValueService } from "../../../default-values/default-value.service";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
@@ -28,7 +32,7 @@ describe("AdminEntityFormComponent", () => {
 
   let testConfig: FormConfig;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     testConfig = {
       fieldGroups: [
         { header: "Group 1", fields: ["name", "other"] },
@@ -37,9 +41,13 @@ describe("AdminEntityFormComponent", () => {
     };
 
     mockFormService = jasmine.createSpyObj("EntityFormService", [
-      "createFormGroup",
+      "createEntityForm",
     ]);
-    mockFormService.createFormGroup.and.returnValue(new FormGroup({}));
+    mockFormService.createEntityForm.and.returnValue(
+      Promise.resolve({
+        formGroup: new FormGroup({}),
+      } as EntityForm<any>),
+    );
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({
@@ -58,6 +66,10 @@ describe("AdminEntityFormComponent", () => {
           provide: MatDialog,
           useValue: mockDialog,
         },
+        {
+          provide: DefaultValueService,
+          useValue: jasmine.createSpyObj(["getDefaultValueUiHint"]),
+        },
       ],
     });
     fixture = TestBed.createComponent(AdminEntityFormComponent);
@@ -68,7 +80,7 @@ describe("AdminEntityFormComponent", () => {
 
     fixture.detectChanges();
 
-    component.ngOnChanges({ config: true as any });
+    await component.ngOnChanges({ config: true as any });
   });
 
   it("should create and init a form", () => {
@@ -78,12 +90,13 @@ describe("AdminEntityFormComponent", () => {
     expect(component.dummyForm).toBeTruthy();
   });
 
-  it("should load all fields from schema that are not already in form as available fields", () => {
+  it("should load all fields from schema that are not already in form as available fields", async () => {
     const fieldsInView = ["date"];
     component.config = {
       fieldGroups: [{ fields: fieldsInView }],
     };
-    component.ngOnChanges({ config: true as any });
+
+    await component.ngOnChanges({ config: true as any });
 
     const noteUserFacingFields = Array.from(TestEntity.schema.entries())
       .filter(([key, value]) => value.label)

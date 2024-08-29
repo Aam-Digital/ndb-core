@@ -30,7 +30,7 @@ import {
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import {
-  EntityForm,
+  EntityFormGroup,
   EntityFormService,
 } from "../entity-form/entity-form.service";
 import { tableSort } from "./table-sort/table-sort";
@@ -448,5 +448,5 @@ export class EntitiesTableComponent<T extends Entity> {
  */
 export interface TableRow<T extends Entity> {
   record: T;
-  formGroup?: EntityForm<T>;
+  formGroup?: EntityFormGroup<T>;
 }
