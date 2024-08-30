@@ -14,6 +14,7 @@ import { DatePipe, NgForOf } from "@angular/common";
 import { DownloadService } from "../../export/download-service/download.service";
 import { MatListModule } from "@angular/material/list";
 import { RouteTarget } from "../../../route-target";
+import { AdminOverviewService } from "./admin-overview.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -39,6 +40,7 @@ export class AdminOverviewComponent implements OnInit {
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private configService: ConfigService,
+    protected adminOverviewService: AdminOverviewService,
   ) {}
 
   ngOnInit() {
