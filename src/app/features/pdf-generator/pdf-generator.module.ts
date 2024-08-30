@@ -8,10 +8,19 @@ import { EntityDetailsConfig } from "../../core/entity-details/EntityDetailsConf
 import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
+import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
+import { ApiFileTemplateDatatype } from "./api-file-template-datatype/api-file-template.datatype";
 
 @NgModule({
   declarations: [],
   imports: [CommonModule],
+  providers: [
+    {
+      provide: DefaultDatatype,
+      useClass: ApiFileTemplateDatatype,
+      multi: true,
+    },
+  ],
 })
 export class PdfGeneratorModule {
   static databaseEntities = [FileTemplate];
@@ -46,7 +55,15 @@ export class PdfGeneratorModule {
   }
 }
 
-const dynamicComponents: [string, AsyncComponent][] = [];
+const dynamicComponents: [string, AsyncComponent][] = [
+  [
+    "EditApiFileTemplate",
+    () =>
+      import(
+        "./api-file-template-datatype/edit-api-file-template.component"
+      ).then((c) => c.EditApiFileTemplateComponent),
+  ],
+];
 
 const viewConfigs: ViewConfig[] = [
   // List View

@@ -23,6 +23,18 @@ import { ErrorHintComponent } from "../../../core/common-components/error-hint/e
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
+export const EditFileComponent_IMPORTS = [
+  MatFormFieldModule,
+  NgClass,
+  MatInputModule,
+  ReactiveFormsModule,
+  MatTooltipModule,
+  NgIf,
+  MatButtonModule,
+  FontAwesomeModule,
+  ErrorHintComponent,
+];
+
 /**
  * This component should be used as a `editComponent` when a property should store files.
  * It allows to show, upload and remove files.
@@ -32,17 +44,7 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
   selector: "app-edit-file",
   templateUrl: "./edit-file.component.html",
   styleUrls: ["./edit-file.component.scss"],
-  imports: [
-    MatFormFieldModule,
-    NgClass,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatTooltipModule,
-    NgIf,
-    MatButtonModule,
-    FontAwesomeModule,
-    ErrorHintComponent,
-  ],
+  imports: EditFileComponent_IMPORTS,
   standalone: true,
 })
 export class EditFileComponent extends EditComponent<string> implements OnInit {

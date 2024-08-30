@@ -49,9 +49,10 @@ export class FileTemplate extends Entity {
    * ID in the PDF Generator API to access this template
    */
   @DatabaseField({
-    label: $localize`:File Template:Template ID`,
-    //TODO validators: { required: true },
+    label: $localize`:File Template:Template File`,
+    description: $localize`:File Template:Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific entity when generating a PDF.`,
+    validators: { required: true },
+    dataType: "api-file-template",
   })
-  // TODO: component to upload a template file to the API and get the ID
   templateId: string;
 }
