@@ -141,6 +141,5 @@ ENV CSP="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: blob: https://*.
 # 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
 
 # variables are inserted into the nginx config
-RUN envsubst '$$PORT $$COUCHDB_URL $$QUERY_URL $$NOMINATIM_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD envsubst '$$PORT $$COUCHDB_URL $$QUERY_URL $$NOMINATIM_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+    nginx -g 'daemon off;'
