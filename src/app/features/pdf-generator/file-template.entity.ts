@@ -21,6 +21,7 @@ export class FileTemplate extends Entity {
    */
   @DatabaseField({
     label: $localize`:File Template:Title`,
+    validators: { required: true },
   })
   title: string;
 
@@ -39,8 +40,9 @@ export class FileTemplate extends Entity {
   @DatabaseField({
     label: $localize`:File Template:Applicable Entity Types`,
     labelShort: $localize`:File Template:Entity Types`,
+    editComponent: "EditEntityTypeDropdown",
+    isArray: true,
   })
-  // TODO: create custom datatype or "dynamic" enum for all entity types (see AdminEntityFieldComponent, ImportEntityTypeComponent, etc.)
   applicableForEntityTypes: string[];
 
   /**
@@ -48,6 +50,7 @@ export class FileTemplate extends Entity {
    */
   @DatabaseField({
     label: $localize`:File Template:Template ID`,
+    //TODO validators: { required: true },
   })
   // TODO: component to upload a template file to the API and get the ID
   templateId: string;

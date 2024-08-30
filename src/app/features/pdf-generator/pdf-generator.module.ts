@@ -73,8 +73,8 @@ const viewConfigs: ViewConfig[] = [
               component: "Form",
               config: {
                 fieldGroups: [
-                  { fields: ["title", "description", "templateId"] },
-                  { fields: ["applicableForEntityTypes"] },
+                  { fields: ["title", "description"] },
+                  { fields: ["applicableForEntityTypes", "templateId"] },
                 ],
               },
             },
