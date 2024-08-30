@@ -13,6 +13,7 @@ import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { migrateAddMissingEntityAttributes } from "./migrate-add-entity-attributes";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
+import { de } from "@faker-js/faker";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -69,6 +70,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntitySchemaDefaultValue,
       migrateChildrenListConfig,
       migrateHistoricalDataComponent,
+      migratePhotoDatatype,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -256,6 +258,16 @@ const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
     delete config["innerDataType"];
   }
 
+  return configPart;
+};
+
+/** Migrate the "photo" datatype to use the new "file" datatype  and remove editComponent if no longer needed */
+
+const migratePhotoDatatype: ConfigMigration = (key, configPart) => {
+  if (configPart?.dataType === "photo") configPart.dataType = "file";
+  if (configPart?.editComponent === "EditPhoto") {
+    delete configPart.editComponent;
+  }
   return configPart;
 };
 

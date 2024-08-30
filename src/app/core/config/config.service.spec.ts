@@ -550,4 +550,37 @@ describe("ConfigService", () => {
     const actualFromNew = service.getConfig("view:X");
     expect(actualFromNew).toEqual(newFormat);
   }));
+
+  fit("should migrate to new photo dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      attributes: {
+        myPhoto: {
+          dataType: "photo",
+          editComponent: "EditPhoto",
+          label: "My Photo",
+        },
+      },
+    };
+    const newFormat: EntityConfig = {
+      attributes: {
+        myPhoto: {
+          dataType: "file",
+          label: "My Photo",
+        },
+      },
+    };
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
 });
