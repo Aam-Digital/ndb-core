@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
 import { RoutedViewComponent } from "../ui/routed-view/routed-view.component";
-import { AdminComponent } from "./admin/admin.component";
+import { AdminOverviewComponent } from "./admin-overview/admin-overview.component";
 import { ConfigImportComponent } from "../../features/config-setup/config-import/config-import.component";
 import { ConflictResolutionListComponent } from "../../features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 import { UserRoleGuard } from "../permissions/permission-guard/user-role.guard";
@@ -10,7 +10,7 @@ import { SetupWizardComponent } from "./setup-wizard/setup-wizard.component";
 export const adminRoutes: Routes = [
   {
     path: "",
-    component: AdminComponent,
+    component: AdminOverviewComponent,
     canActivate: [UserRoleGuard],
     data: {
       permittedUserRoles: ["admin_app"],
