@@ -21,13 +21,13 @@ import { RouteTarget } from "../../../route-target";
 @UntilDestroy()
 @RouteTarget("Admin")
 @Component({
-  selector: "app-admin",
-  templateUrl: "./admin.component.html",
-  styleUrls: ["./admin.component.scss"],
+  selector: "app-admin-overview",
+  templateUrl: "./admin-overview.component.html",
+  styleUrls: ["./admin-overview.component.scss"],
   imports: [MatButtonModule, RouterLink, NgForOf, DatePipe, MatListModule],
   standalone: true,
 })
-export class AdminComponent implements OnInit {
+export class AdminOverviewComponent implements OnInit {
   /** all alerts */
   alerts: ExtendedAlertConfig[] = [];
 
