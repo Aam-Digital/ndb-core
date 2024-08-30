@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { EntityActionsMenuService } from './entity-actions-menu.service';
+import { EntityActionsMenuService } from "./entity-actions-menu.service";
 
-describe('EntityActionsMenuService', () => {
+describe("EntityActionsMenuService", () => {
   let service: EntityActionsMenuService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('EntityActionsMenuService', () => {
     service = TestBed.inject(EntityActionsMenuService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

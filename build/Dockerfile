@@ -123,7 +123,7 @@ COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=dist /dist/ /usr/share/nginx/html
 
 # The port on which the app will run in the Docker container
-ENV PORT=80
+ENV PORT=8080
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
 # The url to the query backend, see https://github.com/Aam-Digital/query-backend
@@ -137,10 +137,9 @@ ENV CSP_REPORT_URI="https://o167951.ingest.sentry.io/api/1242399/security/"
 # overwrite the Content-Security-Policy rules (report-uri is added automatically)
 # default includes all required whitelists for production server
 # to disable any CSP blocking, set to "default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'"
-ENV CSP="default-src 'self' 'unsafe-eval' data: blob: https://*.tile.openstreetmap.org/ https://matomo.aam-digital.org  https://*.aam-digital.com https://api.github.com/repos/Aam-Digital/ https://sentry.io $CSP_REPORT_URI; style-src 'self' 'unsafe-inline'"
+ENV CSP="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: blob: https://*.tile.openstreetmap.org/ https://matomo.aam-digital.org https://*.aam-digital.com https://*.aam-digital.net https://*.aam-digital.app https://api.github.com/repos/Aam-Digital/ https://sentry.io $CSP_REPORT_URI; style-src 'self' 'unsafe-inline'"
 # 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
 
 # variables are inserted into the nginx config
-RUN envsubst '$$PORT $$COUCHDB_URL $$QUERY_URL $$NOMINATIM_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD envsubst '$$PORT $$COUCHDB_URL $$QUERY_URL $$NOMINATIM_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+    nginx -g 'daemon off;'
