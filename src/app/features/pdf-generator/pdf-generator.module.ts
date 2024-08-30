@@ -6,6 +6,8 @@ import { RouterService } from "../../core/config/dynamic-routing/router.service"
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
 import { EntityDetailsConfig } from "../../core/entity-details/EntityDetailsConfig";
 import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
+import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
+import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 
 @NgModule({
   declarations: [],
@@ -14,9 +16,33 @@ import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 export class PdfGeneratorModule {
   static databaseEntities = [FileTemplate];
 
-  constructor(components: ComponentRegistry, routerService: RouterService) {
+  constructor(
+    components: ComponentRegistry,
+    routerService: RouterService,
+    adminOverviewService: AdminOverviewService,
+    entityActionsMenuService: EntityActionsMenuService,
+  ) {
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
+
+    entityActionsMenuService.registerActions([
+      {
+        action: "pdf",
+        label: $localize`:entity context menu:Generate PDF`,
+        icon: "print",
+        tooltip: $localize`:entity context menu tooltip:Create a PDF file based on a selected file template.`,
+        permission: "read",
+        execute: async (e) => {
+          alert("COMING SOON");
+          return true;
+        },
+      },
+    ]);
+
+    adminOverviewService.menuItems.push({
+      label: $localize`:admin menu item:PDF File Templates`,
+      link: FileTemplate.route,
+    });
   }
 }
 

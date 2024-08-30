@@ -49,5 +49,6 @@ export class FileTemplate extends Entity {
   @DatabaseField({
     label: $localize`:File Template:Template ID`,
   })
+  // TODO: component to upload a template file to the API and get the ID
   templateId: string;
 }
