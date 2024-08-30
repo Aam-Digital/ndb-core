@@ -85,7 +85,7 @@ export class EntityFormComponent<T extends Entity = Entity>
     }
 
     if (changes.form && this.form) {
-      this.initialFormValues = this.form.getRawValue();
+      this.initialFormValues = this.form.formGroup.getRawValue();
       this.disableForLockedEntity();
     }
   }
@@ -96,9 +96,9 @@ export class EntityFormComponent<T extends Entity = Entity>
       return;
     }
 
-    const userEditedFields = Object.entries(this.form.getRawValue()).filter(
-      ([key]) => this.form.controls[key].dirty,
-    );
+    const userEditedFields = Object.entries(
+      this.form.formGroup.getRawValue(),
+    ).filter(([key]) => this.form.formGroup.controls[key].dirty);
     let userEditsWithoutConflicts = userEditedFields.filter(([key]) =>
       // no conflict with updated values
       this.entityEqualsFormValue(
@@ -120,18 +120,18 @@ export class EntityFormComponent<T extends Entity = Entity>
     // apply update to all pristine (not user-edited) fields and update base entity (to avoid conflicts when saving)
     Object.assign(this.entity, externallyUpdatedEntity);
     Object.assign(this.initialFormValues, externallyUpdatedEntity);
-    this.form.reset(externallyUpdatedEntity as any);
+    this.form.formGroup.reset(externallyUpdatedEntity as any);
 
     // re-apply user-edited fields
     userEditsWithoutConflicts.forEach(([key, value]) => {
-      this.form.get(key).setValue(value);
-      this.form.get(key).markAsDirty();
+      this.form.formGroup.get(key).setValue(value);
+      this.form.formGroup.get(key).markAsDirty();
     });
   }
 
   private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this.form.getRawValue()).every(([key, value]) =>
-      this.entityEqualsFormValue(entity[key], value),
+    return Object.entries(this.form.formGroup.getRawValue()).every(
+      ([key, value]) => this.entityEqualsFormValue(entity[key], value),
     );
   }
 
@@ -171,7 +171,7 @@ export class EntityFormComponent<T extends Entity = Entity>
    */
   private disableForLockedEntity() {
     if (this.entity?.anonymized) {
-      this.form.disable();
+      this.form.formGroup.disable();
     }
   }
 }

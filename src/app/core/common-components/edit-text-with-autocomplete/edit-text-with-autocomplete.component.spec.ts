@@ -31,21 +31,23 @@ describe("EditTextWithAutocompleteComponent", () => {
     }).compileComponents();
   }));
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(waitForAsync(async () => {
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);
     component = fixture.componentInstance;
     loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
     loadTypeSpy.and.resolveTo([]);
     const entityFormService = TestBed.inject(EntityFormService);
-    component.parent = entityFormService.createFormGroup(
-      [
-        { id: "title" },
-        { id: "type" },
-        { id: "assignedTo" },
-        { id: "linkedGroups" },
-      ],
-      new RecurringActivity(),
-    );
+    component.parent = (
+      await entityFormService.createEntityForm(
+        [
+          { id: "title" },
+          { id: "type" },
+          { id: "assignedTo" },
+          { id: "linkedGroups" },
+        ],
+        new RecurringActivity(),
+      )
+    ).formGroup;
     component.formControl = component.parent.get(
       "title",
     ) as FormControl<string>;

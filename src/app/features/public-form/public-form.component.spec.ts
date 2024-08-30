@@ -90,14 +90,17 @@ describe("PublicFormComponent", () => {
     const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     saveSpy.and.resolveTo();
-    component.form.get("name").setValue("some name");
+    component.form.formGroup.get("name").setValue("some name");
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
+    expect(saveSpy).toHaveBeenCalledWith(
+      component.form.formGroup,
+      component.entity,
+    );
     tick();
     expect(openSnackbarSpy).toHaveBeenCalled();
-    expect(component.form.get("name")).toHaveValue(null);
+    expect(component.form.formGroup.get("name")).toHaveValue(null);
   }));
 
   it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
@@ -106,27 +109,31 @@ describe("PublicFormComponent", () => {
     const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     saveSpy.and.throwError(new InvalidFormFieldError());
-    component.form.get("name").setValue("some name");
+    component.form.formGroup.get("name").setValue("some name");
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
+    expect(saveSpy).toHaveBeenCalledWith(
+      component.form.formGroup,
+      component.entity,
+    );
     tick();
     expect(openSnackbarSpy).toHaveBeenCalledWith(
       jasmine.stringContaining("invalid"),
     );
-    expect(component.form.get("name")).toHaveValue("some name");
+    expect(component.form.formGroup.get("name")).toHaveValue("some name");
   }));
 
   it("should reset the form when clicking reset", fakeAsync(() => {
     initComponent();
     tick();
-    component.form.get("name").setValue("some name");
-    expect(component.form.get("name")).toHaveValue("some name");
+    component.form.formGroup.get("name").setValue("some name");
+    expect(component.form.formGroup.get("name")).toHaveValue("some name");
 
     component.reset();
+    tick();
 
-    expect(component.form.get("name")).toHaveValue(null);
+    expect(component.form.formGroup.get("name")).toHaveValue(null);
   }));
 
   function initComponent() {

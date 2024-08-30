@@ -1,0 +1,51 @@
+@if (defaultValueHint) {
+  <div [appTemplateTooltip]="tooltip" class="inline-box">
+    <button
+      mat-icon-button
+      type="button"
+      [disabled]="
+        form.formGroup.disabled ||
+        defaultValueHint.isInSync ||
+        defaultValueHint.isEmpty
+      "
+      (click)="defaultValueHint.syncFromParentField()"
+    >
+      <fa-icon
+        [icon]="defaultValueHint.isInSync ? 'link' : 'link-slash'"
+      ></fa-icon>
+    </button>
+  </div>
+}
+
+<ng-template #tooltip>
+  <div class="field-hint">
+    <div i18n>
+      Inherited value from parent record selected in field
+      "<app-entity-field-label
+        [field]="defaultValueHint.inheritedFromField"
+        [entityType]="entity.getConstructor()"
+      ></app-entity-field-label
+      >"
+    </div>
+
+    <br />
+
+    @if (defaultValueHint.isEmpty) {
+      <div i18n>
+        Select exactly one record in the parent field to automatically inherit
+        its value here.
+      </div>
+    } @else if (defaultValueHint.isInSync) {
+      <div i18n>(up-to-date, inherited from parent record)</div>
+    } @else {
+      <div i18n>
+        (manually overwritten): click to reset value to inherited from parent
+        record
+        @if (!form.formGroup.enabled) {
+          (requires the form to be in "Edit" mode)
+        }
+      </div>
+      <div i18n></div>
+    }
+  </div>
+</ng-template>

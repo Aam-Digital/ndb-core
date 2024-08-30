@@ -31,6 +31,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from "@angular/common/http";
+import { LoggingService } from "../core/logging/logging.service";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -81,6 +82,8 @@ export class MockedTestingModule {
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([...data]);
+    let mockLoggingService: jasmine.SpyObj<LoggingService>;
+    mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     return {
       ngModule: MockedTestingModule,
@@ -90,6 +93,8 @@ export class MockedTestingModule {
           useFactory: entityAbilityFactory,
           deps: [EntitySchemaService],
         },
+
+        { provide: LoggingService, useValue: mockLoggingService },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
         {

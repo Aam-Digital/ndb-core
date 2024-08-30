@@ -21,7 +21,7 @@ import { DialogCloseComponent } from "../../../../core/common-components/dialog-
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { TypedForm } from "../../../../core/common-components/entity-form/entity-form.service";
+import { TypedFormGroup } from "../../../../core/common-components/entity-form/entity-form.service";
 
 export interface EditProgressDashboardComponentData {
   title: string;
@@ -94,7 +94,7 @@ export class EditProgressDashboardComponent implements OnInit {
   }
 
   currentLessThanTarget(
-    control: TypedForm<ProgressDashboardPart>,
+    control: TypedFormGroup<ProgressDashboardPart>,
   ): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");
