@@ -1020,7 +1020,6 @@ export const defaultJsonConfig = {
       photo: {
         dataType: "photo",
         label: $localize`:Label for the file field of a photo of a child:Photo`,
-        editComponent: "EditPhoto",
       },
       phone: {
         dataType: "string",
