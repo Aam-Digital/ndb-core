@@ -551,7 +551,7 @@ describe("ConfigService", () => {
     expect(actualFromNew).toEqual(newFormat);
   }));
 
-  fit("should migrate to new photo dataType", fakeAsync(() => {
+  it("should migrate to new photo dataType", fakeAsync(() => {
     const config = new Config();
     const oldFormat = {
       attributes: {

@@ -1,0 +1,12 @@
+import { Injectable } from "@angular/core";
+import { NumberDatatype } from "../number.datatype";
+
+/** Datatype for percentage values */
+@Injectable()
+export class Percentage extends NumberDatatype {
+  static override dataType = "percentage";
+  static override label: string = $localize`:datatype-label:Result`;
+
+  override viewComponent = "DisplayPercentage";
+  override editComponent = "EditNumber";
+}
