@@ -556,24 +556,33 @@ describe("ConfigService", () => {
     const oldFormat = {
       attributes: {
         myPhoto: {
-          dataType: "photo",
+          dataType: "file",
           editComponent: "EditPhoto",
           label: "My Photo",
         },
-      },
-    };
-    const newFormat: EntityConfig = {
-      attributes: {
-        myPhoto: {
+        simpleFile: {
           dataType: "file",
-          label: "My Photo",
+          label: "Simple File attachment",
         },
       },
     };
+
+    const newFormat: EntityConfig = {
+      attributes: {
+        myPhoto: {
+          dataType: "photo",
+          label: "My Photo",
+        },
+        simpleFile: {
+          dataType: "file",
+          label: "Simple File attachment",
+        },
+      },
+    };
+
     config.data = { "entity:X": oldFormat };
     updateSubject.next({ entity: config, type: "update" });
     tick();
-
     const actualFromOld = service.getConfig<EntityConfig>("entity:X");
     expect(actualFromOld).toEqual(newFormat);
 
