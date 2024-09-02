@@ -13,7 +13,6 @@ import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { migrateAddMissingEntityAttributes } from "./migrate-add-entity-attributes";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
-import { de } from "@faker-js/faker";
 
 /**
  * Access dynamic app configuration retrieved from the database
