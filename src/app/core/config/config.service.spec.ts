@@ -556,7 +556,7 @@ describe("ConfigService", () => {
     const oldFormat = {
       attributes: {
         myPhoto: {
-          dataType: "photo",
+          dataType: "file",
           editComponent: "EditPhoto",
           label: "My Photo",
         },
