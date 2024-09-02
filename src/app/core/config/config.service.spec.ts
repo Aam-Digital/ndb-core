@@ -565,7 +565,7 @@ describe("ConfigService", () => {
     const newFormat: EntityConfig = {
       attributes: {
         myPhoto: {
-          dataType: "file",
+          dataType: "photo",
           label: "My Photo",
         },
       },
