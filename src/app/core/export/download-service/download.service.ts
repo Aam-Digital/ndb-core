@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
-import { ExportDataFormat } from "../export-data-directive/export-data.directive";
 import { Logging } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { transformToReadableFormat } from "../../common-components/entities-table/value-accessor/value-accessor";
@@ -8,6 +7,8 @@ import { Papa } from "ngx-papaparse";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+
+export type FileDownloadFormat = "csv" | "json" | "raw";
 
 /**
  * This service allows to start a download process from the browser.
@@ -35,7 +36,7 @@ export class DownloadService {
    */
   async triggerDownload(
     data: any,
-    format: ExportDataFormat,
+    format: FileDownloadFormat,
     filename: string,
     exportConfig?: ExportColumnConfig[],
   ) {
@@ -51,7 +52,7 @@ export class DownloadService {
 
   private async getFormattedBlobData(
     data: any,
-    format: ExportDataFormat,
+    format: FileDownloadFormat,
     exportConfig?: ExportColumnConfig[],
   ): Promise<Blob> {
     let result = "";
@@ -70,6 +71,8 @@ export class DownloadService {
       case "csv":
         result = await this.createCsv(data);
         return new Blob([result], { type: "text/csv" });
+      case "raw":
+        return new Blob([data]);
       default:
         Logging.warn(`Not supported format: ${format}`);
         return new Blob([""]);

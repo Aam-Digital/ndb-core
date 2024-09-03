@@ -10,6 +10,8 @@ import { AdminOverviewService } from "../../core/admin/admin-overview/admin-over
 import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { ApiFileTemplateDatatype } from "./api-file-template-datatype/api-file-template.datatype";
+import { Entity2FileService } from "./entity-2-file/entity-2-file.service";
+import { Entity } from "../../core/entity/model/entity";
 
 @NgModule({
   declarations: [],
@@ -30,6 +32,7 @@ export class PdfGeneratorModule {
     routerService: RouterService,
     adminOverviewService: AdminOverviewService,
     entityActionsMenuService: EntityActionsMenuService,
+    entity2FileService: Entity2FileService,
   ) {
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
@@ -41,10 +44,7 @@ export class PdfGeneratorModule {
         icon: "print",
         tooltip: $localize`:entity context menu tooltip:Create a PDF file based on a selected file template.`,
         permission: "read",
-        execute: async (e) => {
-          alert("COMING SOON");
-          return true;
-        },
+        execute: async (e: Entity) => entity2FileService.generateFile(e),
       },
     ]);
 

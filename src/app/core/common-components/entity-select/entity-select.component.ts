@@ -133,13 +133,13 @@ export class EntitySelectComponent<
   private async loadAvailableEntities() {
     this.loading.next(true);
 
-    this.allEntities = [];
+    const entities = [];
     for (const type of this._entityType) {
-      this.allEntities.push(
-        ...(await this.entityMapperService.loadType<E>(type)),
-      );
+      entities.push(...(await this.entityMapperService.loadType<E>(type)));
     }
-    this.allEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
+    this.allEntities = entities
+      .filter((e) => this.additionalFilter(e))
+      .sort((a, b) => a.toString().localeCompare(b.toString()));
 
     await this.updateAvailableOptions();
 
