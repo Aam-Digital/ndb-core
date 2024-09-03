@@ -55,7 +55,7 @@ export class EditRecurringIntervalComponent
     super();
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     super.ngOnInit();
     this.predefinedIntervals = this.additional ?? this.predefinedIntervals;
 

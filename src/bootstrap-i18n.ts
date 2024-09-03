@@ -4,7 +4,7 @@ import {
 } from "./app/core/language/language-statics";
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
-import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
+import * as parseXliffToJson from "./app/utils/parse-xliff-to-js.js";
 
 /**
  * Load translation files and apply them to angular localize system.

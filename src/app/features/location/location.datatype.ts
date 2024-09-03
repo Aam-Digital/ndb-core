@@ -19,14 +19,14 @@ export class LocationDatatype extends DefaultDatatype<
   static override dataType = "location";
   static override label: string = $localize`:datatype-label:location (address + map)`;
 
-  editComponent = "EditLocation";
-  viewComponent = "ViewLocation";
+  override editComponent = "EditLocation";
+  override viewComponent = "ViewLocation";
 
   constructor(private geoService: GeoService) {
     super();
   }
 
-  transformToObjectFormat(value: GeoLocation): GeoLocation {
+  override transformToObjectFormat(value: GeoLocation): GeoLocation {
     if (typeof value !== "object") {
       // until we have an extended location datatype that includes a custom address addition field, discard invalid values (e.g. in case datatype was changed)
       return undefined;
@@ -43,7 +43,7 @@ export class LocationDatatype extends DefaultDatatype<
     return value;
   }
 
-  async importMapFunction(val: any): Promise<GeoLocation> {
+  override async importMapFunction(val: any): Promise<GeoLocation> {
     if (!val) {
       return undefined;
     }

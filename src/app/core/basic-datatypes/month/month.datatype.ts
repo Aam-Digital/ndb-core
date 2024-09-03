@@ -17,10 +17,10 @@ export class MonthDatatype extends DateOnlyDatatype {
   static override dataType = "month";
   static override label: string = $localize`:datatype-label:month (date without day of month)`;
 
-  viewComponent = "DisplayMonth";
-  editComponent = "EditMonth";
+  override viewComponent = "DisplayMonth";
+  override editComponent = "EditMonth";
 
-  transformToDatabaseFormat(value) {
+  override transformToDatabaseFormat(value) {
     if (!(value instanceof Date)) {
       value = new Date(value);
     }
@@ -31,7 +31,7 @@ export class MonthDatatype extends DateOnlyDatatype {
     );
   }
 
-  transformToObjectFormat(
+  override transformToObjectFormat(
     value: string,
     schemaField: EntitySchemaField,
     parent: any,

@@ -397,10 +397,7 @@ export const defaultJsonConfig = {
         "language"
       ],
       "filters": [
-        {
-          "id": "privateSchool",
-          "label": $localize`Private School`
-        }
+        { "id": "privateSchool" }
       ]
     }
   },
@@ -417,7 +414,7 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "fieldGroups": [
-                  { "fields": ["name", "privateSchool"] },
+                  { "fields": ["name", "privateSchool", "parentSchool"] },
                   { "fields": ["address", "phone"] },
                   { "fields": ["language", "timing"] },
                   { "fields": ["remarks"] }

@@ -24,7 +24,10 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 @Component({
   selector: "app-entity-select",
   templateUrl: "./entity-select.component.html",
-  styleUrls: ["./entity-select.component.scss"],
+  styleUrls: [
+    "./entity-select.component.scss",
+    "../../common-components/basic-autocomplete/basic-autocomplete-dropdown.component.scss",
+  ],
   imports: [
     MatFormFieldModule,
     NgIf,
@@ -96,7 +99,7 @@ export class EntitySelectComponent<
    * and {@link selection} as well as {@link selectionChange} will
    * still work as expected
    */
-  @Input() showEntities = true;
+  @Input() showEntities: boolean = true;
 
   /**
    * true when this is loading and false when it's ready.

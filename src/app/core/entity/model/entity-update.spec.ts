@@ -1,7 +1,7 @@
 import { Entity } from "./entity";
 import { applyUpdate } from "./entity-update";
 
-class TestEntity extends Entity {
+class TestUpdateEntity extends Entity {
   value: number;
 
   constructor(id: string, value: number) {
@@ -9,23 +9,23 @@ class TestEntity extends Entity {
     this.value = value;
   }
 
-  getType(): string {
+  override getType(): string {
     return "TestEntity";
   }
 }
 
 describe("entity-update", () => {
-  let existingEntities: TestEntity[] = [];
+  let existingEntities: TestUpdateEntity[] = [];
 
   beforeEach(() => {
     existingEntities = ["n1", "n2", "n3", "n5"].map(
-      (id) => new TestEntity(id, 1),
+      (id) => new TestUpdateEntity(id, 1),
     );
   });
 
   it("updates the entity-list when a new entity should be inserted", () => {
-    const newEntities = applyUpdate<TestEntity>(existingEntities, {
-      entity: new TestEntity("n6", 1),
+    const newEntities = applyUpdate<TestUpdateEntity>(existingEntities, {
+      entity: new TestUpdateEntity("n6", 1),
       type: "new",
     });
     expect(newEntities).toHaveSize(existingEntities.length + 1);
@@ -34,8 +34,8 @@ describe("entity-update", () => {
 
   it("updates the entity-list when an existing entity should be updated", () => {
     const indexOfN2 = existingEntities.findIndex((e) => e.getId(true) === "n2");
-    const newEntities = applyUpdate<TestEntity>(existingEntities, {
-      entity: new TestEntity("n2", 2),
+    const newEntities = applyUpdate<TestUpdateEntity>(existingEntities, {
+      entity: new TestUpdateEntity("n2", 2),
       type: "update",
     });
     expect(newEntities).toHaveSize(existingEntities.length);
@@ -44,8 +44,8 @@ describe("entity-update", () => {
 
   it("deletes an element from the entity-list when an entity should be deleted", () => {
     const oldLength = existingEntities.length;
-    const newEntities = applyUpdate<TestEntity>(existingEntities, {
-      entity: new TestEntity("n2", 3),
+    const newEntities = applyUpdate<TestUpdateEntity>(existingEntities, {
+      entity: new TestUpdateEntity("n2", 3),
       type: "remove",
     });
     expect(newEntities).toHaveSize(oldLength - 1);
@@ -53,12 +53,15 @@ describe("entity-update", () => {
   });
 
   it("does not change the list when the passed updated-entity is illegal", () => {
-    const newEntities = applyUpdate<TestEntity>(existingEntities, undefined);
+    const newEntities = applyUpdate<TestUpdateEntity>(
+      existingEntities,
+      undefined,
+    );
     expect(newEntities).toEqual(existingEntities);
   });
 
   it("does not change the list when the passed entity is illegal", () => {
-    const newEntities = applyUpdate<TestEntity>(existingEntities, {
+    const newEntities = applyUpdate<TestUpdateEntity>(existingEntities, {
       entity: undefined,
       type: "new",
     });
@@ -66,10 +69,10 @@ describe("entity-update", () => {
   });
 
   it("does not change the list when an updated entity is not in the list", () => {
-    const newEntities = applyUpdate<TestEntity>(
+    const newEntities = applyUpdate<TestUpdateEntity>(
       existingEntities,
       {
-        entity: new TestEntity("n6", 1),
+        entity: new TestUpdateEntity("n6", 1),
         type: "update",
       },
       false,
@@ -79,19 +82,19 @@ describe("entity-update", () => {
 
   it("does not mutate the original array", () => {
     const original = [...existingEntities];
-    applyUpdate<TestEntity>(existingEntities, {
-      entity: new TestEntity("n7", 1),
+    applyUpdate<TestUpdateEntity>(existingEntities, {
+      entity: new TestUpdateEntity("n7", 1),
       type: "new",
     });
-    applyUpdate<TestEntity>(existingEntities, {
-      entity: new TestEntity("n2", 10),
+    applyUpdate<TestUpdateEntity>(existingEntities, {
+      entity: new TestUpdateEntity("n2", 10),
       type: "update",
     });
-    applyUpdate<TestEntity>(existingEntities, {
-      entity: new TestEntity("n1", 0),
+    applyUpdate<TestUpdateEntity>(existingEntities, {
+      entity: new TestUpdateEntity("n1", 0),
       type: "remove",
     });
-    applyUpdate<TestEntity>(existingEntities, undefined);
+    applyUpdate<TestUpdateEntity>(existingEntities, undefined);
     expect(existingEntities).toEqual(original);
   });
 });

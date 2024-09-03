@@ -12,21 +12,21 @@ export abstract class DiscreteDatatype<
   EntityType,
   DBType,
 > extends DefaultDatatype<EntityType, DBType> {
-  importConfigComponent = "DiscreteImportConfig";
+  override importConfigComponent = "DiscreteImportConfig";
 
-  abstract transformToDatabaseFormat(
+  abstract override transformToDatabaseFormat(
     value,
     schemaField?: EntitySchemaField,
     parent?: Entity,
   );
 
-  abstract transformToObjectFormat(
+  abstract override transformToObjectFormat(
     value,
     schemaField?: EntitySchemaField,
     parent?: any,
   );
 
-  async importMapFunction(
+  override async importMapFunction(
     val,
     schemaField: EntitySchemaField,
     additional: { [key: string]: any },
@@ -34,7 +34,7 @@ export abstract class DiscreteDatatype<
     return super.importMapFunction(additional?.[val], schemaField);
   }
 
-  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
+  override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
     if (!col.additional) {
       return "?";
     }

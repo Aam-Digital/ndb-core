@@ -1,9 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import {
-  IconDefinition,
-  IconName,
-  IconPrefix,
-} from "@fortawesome/fontawesome-svg-core";
+import { IconName, IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import {
   faCalendarAlt,
   faCalendarCheck,
@@ -15,6 +11,7 @@ import {
 import {
   FaIconLibrary,
   FontAwesomeModule,
+  IconDefinition,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "../../logging/logging.service";
 import { NgIf } from "@angular/common";
@@ -63,7 +60,7 @@ export class FaDynamicIconComponent {
    * In case the provided icon still doesn't exist, a question-mark-icon with circle
    * (see {@link fallbackIcon}) will be shown.
    * <br>
-   * Note that there is no getter and you should not attempt to get the icon name, for example via
+   * Note that there is no getter, and you should not attempt to get the icon name, for example via
    * {@link _icon#iconName} since it is not guaranteed to be the same as the provided name
    * @param icon the icon name
    */

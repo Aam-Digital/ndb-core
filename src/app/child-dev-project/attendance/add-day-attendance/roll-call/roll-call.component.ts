@@ -38,7 +38,7 @@ import { ConfirmationDialogService } from "../../../../core/common-components/co
 // Only allow horizontal swiping
 @Injectable()
 class HorizontalHammerConfig extends HammerGestureConfig {
-  overrides = {
+  override overrides = {
     swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
     pinch: { enable: false },
     rotate: { enable: false },

@@ -6,7 +6,7 @@ import {
   tick,
   waitForAsync,
 } from "@angular/core/testing";
-import { AdminComponent } from "./admin.component";
+import { AdminOverviewComponent } from "./admin-overview.component";
 import { BackupService } from "../backup/backup.service";
 import { ConfigService } from "../../config/config.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -16,8 +16,8 @@ import { environment } from "../../../../environments/environment";
 import { DownloadService } from "../../export/download-service/download.service";
 
 describe("AdminComponent", () => {
-  let component: AdminComponent;
-  let fixture: ComponentFixture<AdminComponent>;
+  let component: AdminOverviewComponent;
+  let fixture: ComponentFixture<AdminOverviewComponent>;
 
   const mockBackupService = jasmine.createSpyObj<BackupService>([
     "getDatabaseExport",
@@ -46,7 +46,7 @@ describe("AdminComponent", () => {
     mockDownloadService = jasmine.createSpyObj(["triggerDownload"]);
 
     TestBed.configureTestingModule({
-      imports: [AdminComponent, MockedTestingModule.withState()],
+      imports: [AdminOverviewComponent, MockedTestingModule.withState()],
       providers: [
         { provide: BackupService, useValue: mockBackupService },
         {
@@ -59,7 +59,7 @@ describe("AdminComponent", () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminComponent);
+    fixture = TestBed.createComponent(AdminOverviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

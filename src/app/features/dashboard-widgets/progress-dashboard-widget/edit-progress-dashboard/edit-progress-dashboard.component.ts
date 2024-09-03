@@ -1,10 +1,11 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import {
   ProgressDashboardConfig,
   ProgressDashboardPart,
 } from "../progress-dashboard/progress-dashboard-config";
 import {
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -20,7 +21,7 @@ import { DialogCloseComponent } from "../../../../core/common-components/dialog-
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { TypedForm } from "../../../../core/common-components/entity-form/entity-form.service";
+import { TypedFormGroup } from "../../../../core/common-components/entity-form/entity-form.service";
 
 export interface EditProgressDashboardComponentData {
   title: string;
@@ -45,7 +46,7 @@ export interface EditProgressDashboardComponentData {
   ],
   standalone: true,
 })
-export class EditProgressDashboardComponent {
+export class EditProgressDashboardComponent implements OnInit {
   /**
    * This marks the control as invalid when the whole form has an error
    */
@@ -53,19 +54,25 @@ export class EditProgressDashboardComponent {
     isErrorState: (control: FormControl | null) => !control?.parent?.valid,
   };
 
-  title = new FormControl(this.data.title, [Validators.required]);
-  parts = this.fb.array(
-    this.data.parts.map((part) => this.createPartForm(part)),
-  );
-  outputData = new FormGroup({
-    title: this.title,
-    parts: this.parts,
-  });
+  title: FormControl;
+  parts: FormArray;
+  outputData: FormGroup;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: ProgressDashboardConfig,
     private fb: FormBuilder,
   ) {}
+
+  ngOnInit(): void {
+    this.title = new FormControl(this.data.title, [Validators.required]);
+    this.parts = this.fb.array(
+      this.data.parts.map((part) => this.createPartForm(part)),
+    );
+    this.outputData = new FormGroup({
+      title: this.title,
+      parts: this.parts,
+    });
+  }
 
   createPartForm(part: ProgressDashboardPart) {
     return this.fb.group(
@@ -87,7 +94,7 @@ export class EditProgressDashboardComponent {
   }
 
   currentLessThanTarget(
-    control: TypedForm<ProgressDashboardPart>,
+    control: TypedFormGroup<ProgressDashboardPart>,
   ): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");

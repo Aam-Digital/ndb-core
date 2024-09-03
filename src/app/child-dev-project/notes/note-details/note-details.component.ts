@@ -71,8 +71,8 @@ export class NoteDetailsComponent
   extends AbstractEntityDetailsComponent
   implements OnChanges
 {
-  @Input() entity: Note;
-  entityConstructor = Note;
+  @Input() declare entity: Note;
+  override entityConstructor = Note;
 
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
@@ -109,20 +109,23 @@ export class NoteDetailsComponent
     }>("view:note")?.config.exportConfig;
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
+  override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 
-    this.form = this.entityFormService.createFormGroup(
+    this.form = await this.entityFormService.createEntityForm(
       this.middleForm.concat(this.topForm, this.bottomForm),
       this.entity,
     );
+
     // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
     this.tmpEntity = this.entity.copy();
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      this.tmpEntity = Object.assign(this.tmpEntity, value);
-    });
+    this.form.formGroup.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        this.tmpEntity = Object.assign(this.tmpEntity, value);
+      });
   }
 }

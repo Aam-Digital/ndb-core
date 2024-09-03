@@ -10,7 +10,7 @@ import { asArray } from "../../../utils/utils";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
-  static route = "attendance/recurring-activity";
+  static override route = "attendance/recurring-activity";
 
   static create(title: string = ""): RecurringActivity {
     const instance = new RecurringActivity();

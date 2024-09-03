@@ -93,11 +93,11 @@ describe("EntityMapperService", () => {
   });
 
   it("returns empty array when loading non existing entity type ", async () => {
-    class TestEntity extends Entity {
-      static ENTITY_TYPE = "TestEntity";
+    class TempTestEntity extends Entity {
+      static override ENTITY_TYPE = "TestEntity";
     }
 
-    const result = await entityMapper.loadType<TestEntity>(TestEntity);
+    const result = await entityMapper.loadType<TempTestEntity>(TempTestEntity);
     expect(result).toBeEmpty();
   });
 

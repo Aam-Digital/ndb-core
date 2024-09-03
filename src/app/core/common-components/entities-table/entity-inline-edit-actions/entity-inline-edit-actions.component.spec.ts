@@ -56,13 +56,13 @@ describe("EntityInlineEditActionsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should create a formGroup when editing a row", () => {
+  it("should create a formGroup when editing a row", async () => {
     const child = new InlineEditEntity();
     child.name = "Child Name";
     child.projectNumber = "01";
     component.row = { record: child };
 
-    component.edit();
+    await component.edit();
 
     const formGroup = component.row.formGroup;
     expect(formGroup.get("name")).toHaveValue("Child Name");

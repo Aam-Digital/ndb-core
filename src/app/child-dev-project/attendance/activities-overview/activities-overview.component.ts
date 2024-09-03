@@ -20,7 +20,7 @@ export class ActivitiesOverviewComponent
   extends RelatedEntitiesComponent<RecurringActivity>
   implements OnInit
 {
-  entityCtr = RecurringActivity;
+  override entityCtr = RecurringActivity;
 
   titleColumn: FormFieldConfig = {
     id: "title",
@@ -39,7 +39,7 @@ export class ActivitiesOverviewComponent
     { id: "excludedParticipants" },
   ];
 
-  async ngOnInit() {
+  override async ngOnInit() {
     this.titleColumn.additional.relevantValue = this.entity.getId();
     await super.ngOnInit();
   }

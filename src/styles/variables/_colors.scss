@@ -1,28 +1,28 @@
 @use "@angular/material" as mat;
 @use "variables/ndb-light-theme" as theme;
 
-$err-palette: mat.define-palette(mat.$red-palette);
-$warn-palette: mat.define-palette(mat.$orange-palette);
-$success-palette: mat.define-palette(mat.$green-palette);
+$err-palette: mat.m2-define-palette(mat.$m2-red-palette);
+$warn-palette: mat.m2-define-palette(mat.$m2-orange-palette);
+$success-palette: mat.m2-define-palette(mat.$m2-green-palette);
 
-$success: mat.get-color-from-palette($success-palette);
-$warn: mat.get-color-from-palette($warn-palette);
-$error: mat.get-color-from-palette($err-palette);
+$success: mat.m2-get-color-from-palette($success-palette);
+$warn: mat.m2-get-color-from-palette($warn-palette);
+$error: mat.m2-get-color-from-palette($err-palette);
 
-$primary: mat.get-color-from-palette(theme.$primary);
-$accent: mat.get-color-from-palette(theme.$accent);
+$primary: mat.m2-get-color-from-palette(theme.$primary);
+$accent: mat.m2-get-color-from-palette(theme.$accent);
 
-$grey-transparent: mat.get-color-from-palette(
-  mat.$grey-palette,
+$grey-transparent: mat.m2-get-color-from-palette(
+  mat.$m2-grey-palette,
   $hue: 400,
   $opacity: 0.1
 );
-$grey-light: mat.get-color-from-palette(mat.$grey-palette, 50);
-$grey-medium: mat.get-color-from-palette(mat.$grey-palette, 100);
-$grey-darker: mat.get-color-from-palette(mat.$grey-palette, 300);
+$grey-light: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 50);
+$grey-medium: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 100);
+$grey-darker: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 300);
 
 $muted: rgba(0, 0, 0, 0.54);
-$muted-background: mat.get-color-from-palette(mat.$grey-palette);
+$muted-background: mat.m2-get-color-from-palette(mat.$m2-grey-palette);
 $disabled: rgba(0, 0, 0, 0.38);
 $disabled-transparent: $grey-transparent;
 $border-color: $grey-darker;
@@ -33,18 +33,18 @@ $inactive: grey;
 /* background for the main view */
 $background: white;
 /* background for the sidebar */
-$background-secondary: mat.get-color-from-palette(theme.$primary, 50);
+$background-secondary: mat.m2-get-color-from-palette(theme.$primary, 50);
 /* light grey color background to highlight special ui elements */
-$background-neutral: mat.get-color-from-palette(
-  mat.$light-theme-background-palette,
+$background-neutral: mat.m2-get-color-from-palette(
+  mat.$m2-light-theme-background-palette,
   card
 );
 
 /* especially for labels in disabled forms (which is our default view) */
-$text: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text);
-$text-secondary: mat.get-color-from-palette(mat.$grey-palette, 800);
-$hint-text: mat.get-color-from-palette(
-  mat.$light-theme-foreground-palette,
+$text: mat.m2-get-color-from-palette(mat.$m2-light-theme-foreground-palette, text);
+$text-secondary: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 800);
+$hint-text: mat.m2-get-color-from-palette(
+  mat.$m2-light-theme-foreground-palette,
   hint-text
 );
 

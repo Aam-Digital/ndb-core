@@ -42,7 +42,7 @@ export class ChildSchoolOverviewComponent
   implements OnInit
 {
   mode: "child" | "school" = "child";
-  entityCtr = ChildSchoolRelation;
+  override entityCtr = ChildSchoolRelation;
 
   constructor(
     private childrenService: ChildrenService,

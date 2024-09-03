@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { EntityFormService } from "./entity-form.service";
 import {
@@ -110,28 +110,28 @@ describe("EntityFormService", () => {
     expect(school.name).toBe("normal school");
   });
 
-  it("should create forms with the validators included", () => {
+  it("should create forms with the validators included", async () => {
     TestEntity.schema.set("result", {
       validators: { min: 0, max: 100, required: true },
     });
 
     const formFields = [{ id: "name" }, { id: "result" }];
-    const formGroup = service.createFormGroup(formFields, new TestEntity());
+    const form = await service.createEntityForm(formFields, new TestEntity());
 
-    expect(formGroup.valid).toBeFalse();
-
-    // @ts-ignore "result" field was temporarily added for this test
-    formGroup.patchValue({ result: 100 });
-    expect(formGroup.valid).toBeTrue();
+    expect(form.formGroup.valid).toBeFalse();
 
     // @ts-ignore "result" field was temporarily added for this test
-    formGroup.patchValue({ result: 101 });
-    expect(formGroup.valid).toBeFalse();
+    form.formGroup.patchValue({ result: 100 });
+    expect(form.formGroup.valid).toBeTrue();
+
+    // @ts-ignore "result" field was temporarily added for this test
+    form.formGroup.patchValue({ result: 101 });
+    expect(form.formGroup.valid).toBeFalse();
 
     TestEntity.schema.delete("result");
   });
 
-  it("should use create permissions to disable fields when creating a new entity", () => {
+  it("should use create permissions to disable fields when creating a new entity", fakeAsync(async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
       {
@@ -147,13 +147,17 @@ describe("EntityFormService", () => {
       },
     ]);
 
-    const formGroup = service.createFormGroup(formFields, new TestEntity());
+    const formGroup = await service.createEntityForm(
+      formFields,
+      new TestEntity(),
+    );
+    tick();
 
-    expect(formGroup.get("name").disabled).toBeTrue();
-    expect(formGroup.get("dateOfBirth").enabled).toBeTrue();
-  });
+    expect(formGroup.formGroup.get("name").disabled).toBeTrue();
+    expect(formGroup.formGroup.get("dateOfBirth").enabled).toBeTrue();
+  }));
 
-  it("should always keep properties disabled if user does not have 'update' permissions for them", () => {
+  it("should always keep properties disabled if user does not have 'update' permissions for them", async () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
       {
@@ -167,55 +171,55 @@ describe("EntityFormService", () => {
     const child = new TestEntity();
     child._rev = "foo"; // "not new" state
 
-    const formGroup = service.createFormGroup(formFields, child);
+    const form = await service.createEntityForm(formFields, child);
 
-    expect(formGroup.get("name").enabled).toBeTrue();
-    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
+    expect(form.formGroup.get("name").enabled).toBeTrue();
+    expect(form.formGroup.get("dateOfBirth").disabled).toBeTrue();
 
-    formGroup.disable();
+    form.formGroup.disable();
 
-    expect(formGroup.get("name").disabled).toBeTrue();
-    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
+    expect(form.formGroup.get("name").disabled).toBeTrue();
+    expect(form.formGroup.get("dateOfBirth").disabled).toBeTrue();
 
-    formGroup.enable();
+    form.formGroup.enable();
 
-    expect(formGroup.get("name").enabled).toBeTrue();
-    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
+    expect(form.formGroup.get("name").enabled).toBeTrue();
+    expect(form.formGroup.get("dateOfBirth").disabled).toBeTrue();
   });
 
-  it("should create a error if form is invalid", () => {
+  it("should create a error if form is invalid", async () => {
     const formFields = [{ id: "schoolId" }, { id: "start" }];
-    const formGroup = service.createFormGroup(
+    const form = await service.createEntityForm(
       formFields,
       new ChildSchoolRelation(),
     );
 
     return expectAsync(
-      service.saveChanges(formGroup, new ChildSchoolRelation()),
+      service.saveChanges(form.formGroup, new ChildSchoolRelation()),
     ).toBeRejectedWith(jasmine.any(InvalidFormFieldError));
   });
 
   it("should set pending changes once a form is edited and reset it once saved or canceled", async () => {
     const formFields = [{ id: "inactive" }];
-    const formGroup = service.createFormGroup(formFields, new Entity());
+    const form = await service.createEntityForm(formFields, new Entity());
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
 
-    formGroup.markAsDirty();
-    formGroup.get("inactive").setValue(true);
+    form.formGroup.markAsDirty();
+    form.formGroup.get("inactive").setValue(true);
     expect(unsavedChanges.pending).toBeTrue();
 
     TestBed.inject(EntityAbility).update([
       { action: "manage", subject: "all" },
     ]);
-    await service.saveChanges(formGroup, new Entity());
+    await service.saveChanges(form.formGroup, new Entity());
 
     expect(unsavedChanges.pending).toBeFalse();
 
-    formGroup.markAsDirty();
-    formGroup.get("inactive").setValue(true);
+    form.formGroup.markAsDirty();
+    form.formGroup.get("inactive").setValue(true);
     expect(unsavedChanges.pending).toBeTrue();
 
-    service.resetForm(formGroup, new Entity());
+    service.resetForm(form.formGroup, new Entity());
 
     expect(unsavedChanges.pending).toBeFalse();
   });
@@ -237,17 +241,17 @@ describe("EntityFormService", () => {
 
     const formFields = ["simpleField", "getterField", "emptyField"];
     const mockEntity = new MockEntity();
-    const formGroup = service.createFormGroup(formFields, mockEntity);
+    const form = await service.createEntityForm(formFields, mockEntity);
 
-    formGroup.get("simpleField").setValue("new");
-    formGroup.get("getterField").setValue("new value");
-    formGroup.get("emptyField").setValue("value");
+    form.formGroup.get("simpleField").setValue("new");
+    form.formGroup.get("getterField").setValue("new value");
+    form.formGroup.get("emptyField").setValue("value");
 
-    service.resetForm(formGroup, mockEntity);
+    service.resetForm(form.formGroup, mockEntity);
 
-    expect(formGroup.get("simpleField").value).toBe("original");
-    expect(formGroup.get("getterField").value).toBe("original value");
-    expect(formGroup.get("emptyField").value).toBeUndefined();
+    expect(form.formGroup.get("simpleField").value).toBe("original");
+    expect(form.formGroup.get("getterField").value).toBe("original value");
+    expect(form.formGroup.get("emptyField").value).toBeUndefined();
   });
 
   it("should reset state once navigation happens", async () => {
@@ -255,9 +259,9 @@ describe("EntityFormService", () => {
     router.resetConfig([{ path: "test", component: NotFoundComponent }]);
     const unsavedChanged = TestBed.inject(UnsavedChangesService);
     const formFields = [{ id: "inactive" }];
-    const formGroup = service.createFormGroup(formFields, new Entity());
-    formGroup.markAsDirty();
-    formGroup.get("inactive").setValue(true);
+    const formGroup = await service.createEntityForm(formFields, new Entity());
+    formGroup.formGroup.markAsDirty();
+    formGroup.formGroup.get("inactive").setValue(true);
 
     expect(unsavedChanged.pending).toBeTrue();
 
@@ -266,13 +270,13 @@ describe("EntityFormService", () => {
     expect(unsavedChanged.pending).toBeFalse();
 
     // Changes are not listened to anymore
-    formGroup.markAsDirty();
-    formGroup.get("inactive").setValue(true);
+    formGroup.formGroup.markAsDirty();
+    formGroup.formGroup.get("inactive").setValue(true);
 
     expect(unsavedChanged.pending).toBeFalse();
   });
 
-  it("should assign default values", () => {
+  it("should assign default values", async () => {
     const schema: EntitySchemaField = {
       defaultValue: {
         mode: "static",
@@ -281,38 +285,39 @@ describe("EntityFormService", () => {
     };
     Entity.schema.set("test", schema);
 
-    let form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue(1);
+    let form = await service.createEntityForm([{ id: "test" }], new Entity());
+    expect(form.formGroup.get("test")).toHaveValue(1);
 
     schema.defaultValue = {
       mode: "dynamic",
       value: PLACEHOLDERS.NOW,
     };
-    form = service.createFormGroup([{ id: "test" }], new Entity());
+
+    form = await service.createEntityForm([{ id: "test" }], new Entity());
     expect(
-      moment(form.get("test").value).isSame(moment(), "minutes"),
+      moment(form.formGroup.get("test").value).isSame(moment(), "minutes"),
     ).toBeTrue();
 
     schema.defaultValue = {
       mode: "dynamic",
       value: PLACEHOLDERS.CURRENT_USER,
     };
-    form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue(
+    form = await service.createEntityForm([{ id: "test" }], new Entity());
+    expect(form.formGroup.get("test")).toHaveValue(
       `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
     );
 
     schema.dataType = EntityDatatype.dataType;
     schema.isArray = true;
-    form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([
+    form = await service.createEntityForm([{ id: "test" }], new Entity());
+    expect(form.formGroup.get("test")).toHaveValue([
       `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
     ]);
 
     Entity.schema.delete("test");
   });
 
-  it("should not fail if user entity does not exist and current user value is assigned", () => {
+  it("should not fail if user entity does not exist and current user value is assigned", async () => {
     TestBed.inject(CurrentUserSubject).next(undefined);
 
     // simple property
@@ -322,19 +327,19 @@ describe("EntityFormService", () => {
         value: PLACEHOLDERS.CURRENT_USER,
       },
     });
-    let form = service.createFormGroup([{ id: "user" }], new Entity());
-    expect(form.get("user")).toHaveValue(null);
+    let form = await service.createEntityForm([{ id: "user" }], new Entity());
+    expect(form.formGroup.get("user")).toHaveValue(null);
 
     // array property
     Entity.schema.get("user").dataType = EntityDatatype.dataType;
     Entity.schema.get("user").isArray = true;
-    form = service.createFormGroup([{ id: "user" }], new Entity());
-    expect(form.get("user")).toHaveValue(null);
+    form = await service.createEntityForm([{ id: "user" }], new Entity());
+    expect(form.formGroup.get("user")).toHaveValue(null);
 
     Entity.schema.delete("user");
   });
 
-  it("should not assign default values to existing entities", () => {
+  it("should not assign default values to existing entities", async () => {
     Entity.schema.set("test", {
       defaultValue: {
         mode: "static",
@@ -344,13 +349,13 @@ describe("EntityFormService", () => {
 
     const entity = new Entity();
     entity._rev = "1-existing_entity";
-    const form = service.createFormGroup([{ id: "test" }], entity);
-    expect(form.get("test")).toHaveValue(null);
+    const form = await service.createEntityForm([{ id: "test" }], entity);
+    expect(form.formGroup.get("test")).toHaveValue(null);
 
     Entity.schema.delete("test");
   });
 
-  it("should not overwrite existing values with default value", () => {
+  it("should not overwrite existing values with default value", async () => {
     Entity.schema.set("test", {
       defaultValue: {
         mode: "static",
@@ -360,8 +365,8 @@ describe("EntityFormService", () => {
 
     const entity = new Entity();
     entity["test"] = 2;
-    const form = service.createFormGroup([{ id: "test" }], entity);
-    expect(form.get("test")).toHaveValue(2);
+    const form = await service.createEntityForm([{ id: "test" }], entity);
+    expect(form.formGroup.get("test")).toHaveValue(2);
 
     Entity.schema.delete("test");
   });
@@ -370,11 +375,11 @@ describe("EntityFormService", () => {
     Entity.schema.set("test", { dataType: "string" });
 
     const entity = new Entity();
-    const form = service.createFormGroup([{ id: "test" }], entity);
-    form.get("test").reset();
-    expect(form.get("test").getRawValue()).toEqual(null);
+    const form = await service.createEntityForm([{ id: "test" }], entity);
+    form.formGroup.get("test").reset();
+    expect(form.formGroup.get("test").getRawValue()).toEqual(null);
 
-    await service.saveChanges(form, entity);
+    await service.saveChanges(form.formGroup, entity);
 
     const entityMapper = TestBed.inject(
       EntityMapperService,

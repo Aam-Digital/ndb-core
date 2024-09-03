@@ -11,9 +11,13 @@ import { BehaviorSubject, of } from "rxjs";
 import { SwUpdate } from "@angular/service-worker";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { HttpClient } from "@angular/common/http";
+import {
+  HttpClient,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 import { MatDialogModule } from "@angular/material/dialog";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouch-database";
 import { BackupService } from "../../admin/backup/backup.service";
@@ -62,12 +66,7 @@ describe("SupportComponent", () => {
     } as any);
     mockLocation = {};
     await TestBed.configureTestingModule({
-      imports: [
-        SupportComponent,
-        MatDialogModule,
-        HttpClientTestingModule,
-        NoopAnimationsModule,
-      ],
+      imports: [SupportComponent, MatDialogModule, NoopAnimationsModule],
       providers: [
         {
           provide: SessionSubject,
@@ -84,6 +83,8 @@ describe("SupportComponent", () => {
         { provide: BackupService, useValue: null },
         { provide: DownloadService, useValue: null },
         SyncStateSubject,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
   });
