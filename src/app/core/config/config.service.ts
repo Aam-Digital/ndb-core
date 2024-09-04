@@ -69,6 +69,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntitySchemaDefaultValue,
       migrateChildrenListConfig,
       migrateHistoricalDataComponent,
+      migratePhotoDatatype,
+      migratePercentageDatatype,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -254,6 +256,32 @@ const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
   if (config.dataType === "configurable-enum" && config["innerDataType"]) {
     config.additional = config["innerDataType"];
     delete config["innerDataType"];
+  }
+
+  return configPart;
+};
+
+/** Migrate the "file" datatype to use the new "photo" datatype  and remove editComponent if no longer needed */
+const migratePhotoDatatype: ConfigMigration = (key, configPart) => {
+  if (
+    configPart?.dataType === "file" &&
+    configPart?.editComponent === "EditPhoto"
+  ) {
+    configPart.dataType = "photo";
+    delete configPart.editComponent;
+  }
+  return configPart;
+};
+
+/** Migrate the number datatype to use the new "percentage" datatype */
+const migratePercentageDatatype: ConfigMigration = (key, configPart) => {
+  if (
+    configPart?.dataType === "number" &&
+    configPart?.viewComponent === "DisplayPercentage"
+  ) {
+    configPart.dataType = "percentage";
+    delete configPart.viewComponent;
+    delete configPart.editComponent;
   }
 
   return configPart;

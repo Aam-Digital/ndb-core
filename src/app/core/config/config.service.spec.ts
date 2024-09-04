@@ -550,4 +550,89 @@ describe("ConfigService", () => {
     const actualFromNew = service.getConfig("view:X");
     expect(actualFromNew).toEqual(newFormat);
   }));
+
+  it("should migrate to new photo dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      attributes: {
+        myPhoto: {
+          dataType: "file",
+          editComponent: "EditPhoto",
+          label: "My Photo",
+        },
+        simpleFile: {
+          dataType: "file",
+          label: "Simple File attachment",
+        },
+      },
+    };
+
+    const newFormat: EntityConfig = {
+      attributes: {
+        myPhoto: {
+          dataType: "photo",
+          label: "My Photo",
+        },
+        simpleFile: {
+          dataType: "file",
+          label: "Simple File attachment",
+        },
+      },
+    };
+
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
+
+  it("should migrate to Percentage dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      attributes: {
+        myPercentage: {
+          dataType: "number",
+          viewComponent: "DisplayPercentage",
+          editComponent: "EditNumber",
+          label: "My Percentage",
+        },
+        simpleNumber: {
+          dataType: "number",
+          label: "Simple Number",
+        },
+      },
+    };
+
+    const newFormat: EntityConfig = {
+      attributes: {
+        myPercentage: {
+          dataType: "percentage",
+          label: "My Percentage",
+        },
+        simpleNumber: {
+          dataType: "number",
+          label: "Simple Number",
+        },
+      },
+    };
+
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
 });

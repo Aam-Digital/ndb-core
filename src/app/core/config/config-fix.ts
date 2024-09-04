@@ -1018,9 +1018,8 @@ export const defaultJsonConfig = {
         label: $localize`:Label for the remarks about a dropout of a child:Dropout remarks`,
       },
       photo: {
-        dataType: "file",
+        dataType: "photo",
         label: $localize`:Label for the file field of a photo of a child:Photo`,
-        editComponent: "EditPhoto",
       },
       phone: {
         dataType: "string",
@@ -1301,10 +1300,8 @@ export const defaultJsonConfig = {
         anonymize: "retain",
       },
       result: {
-        dataType: "number",
+        dataType: "percentage",
         label: $localize`:Label for the percentage result of a relation:Result`,
-        viewComponent: "DisplayPercentage",
-        editComponent: "EditNumber",
         validators: {
           min: 0,
           max: 100,

@@ -18,6 +18,7 @@ import { LongTextDatatype } from "./basic-datatypes/string/long-text.datatype";
 import { UpdateMetadataDatatype } from "./entity/model/update-metadata.datatype";
 import { CurrentUserSubject } from "./session/current-user-subject";
 import { SessionSubject } from "./session/auth/session-info";
+import { PercentageDatatype } from "./basic-datatypes/number/display-percentage/percentage.datatype";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -37,6 +38,7 @@ import { SessionSubject } from "./session/auth/session-info";
     { provide: DefaultDatatype, useClass: MonthDatatype, multi: true },
     { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
     { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+    { provide: DefaultDatatype, useClass: PercentageDatatype, multi: true },
   ],
   imports: [CommonModule],
 })
