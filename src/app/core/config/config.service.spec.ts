@@ -7,6 +7,7 @@ import { UpdatedEntity } from "../entity/model/entity-update";
 import { EntityConfig } from "../entity/entity-config";
 import { FieldGroup } from "../entity-details/form/field-group";
 import { NavigationMenuConfig } from "../ui/navigation/menu-item";
+import { result } from "lodash-es";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -551,7 +552,7 @@ describe("ConfigService", () => {
     expect(actualFromNew).toEqual(newFormat);
   }));
 
-  fit("should migrate to new photo dataType", fakeAsync(() => {
+  it("should migrate to new photo dataType", fakeAsync(() => {
     const config = new Config();
     const oldFormat = {
       attributes: {
@@ -576,6 +577,49 @@ describe("ConfigService", () => {
         simpleFile: {
           dataType: "file",
           label: "Simple File attachment",
+        },
+      },
+    };
+
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
+
+  fit("should migrate to Percentage dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      attributes: {
+        myPercentage: {
+          dataType: "number",
+          viewComponent: "DisplayPercentage",
+          editComponent: "EditNumber",
+          label: "My Percentage",
+        },
+        simpleNumber: {
+          dataType: "number",
+          label: "Simple Number",
+        },
+      },
+    };
+
+    const newFormat: EntityConfig = {
+      attributes: {
+        myPercentage: {
+          dataType: "percentage",
+          label: "My Percentage",
+        },
+        simpleNumber: {
+          dataType: "number",
+          label: "Simple Number",
         },
       },
     };

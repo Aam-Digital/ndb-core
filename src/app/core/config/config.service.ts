@@ -70,6 +70,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateChildrenListConfig,
       migrateHistoricalDataComponent,
       migratePhotoDatatype,
+      migratePercentageDatatype,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -260,7 +261,7 @@ const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
-/** Migrate the "photo" datatype to use the new "file" datatype  and remove editComponent if no longer needed */
+/** Migrate the "file" datatype to use the new "photo" datatype  and remove editComponent if no longer needed */
 
 const migratePhotoDatatype: ConfigMigration = (key, configPart) => {
   if (
@@ -270,6 +271,20 @@ const migratePhotoDatatype: ConfigMigration = (key, configPart) => {
     configPart.dataType = "photo";
     delete configPart.editComponent;
   }
+  return configPart;
+};
+
+/** Migrate the number datatype to use the new "percentage" datatype */
+const migratePercentageDatatype: ConfigMigration = (key, configPart) => {
+  if (
+    configPart?.dataType === "number" &&
+    configPart?.viewComponent === "DisplayPercentage"
+  ) {
+    configPart.dataType = "percentage";
+    delete configPart.viewComponent;
+    delete configPart.editComponent;
+  }
+
   return configPart;
 };
 
