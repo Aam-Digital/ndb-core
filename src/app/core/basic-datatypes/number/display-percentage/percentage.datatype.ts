@@ -5,7 +5,7 @@ import { NumberDatatype } from "../number.datatype";
 @Injectable()
 export class Percentage extends NumberDatatype {
   static override dataType = "percentage";
-  static override label: string = $localize`:datatype-label:Result`;
+  static override label: string = $localize`:datatype-label:Percentage`;
 
   override viewComponent = "DisplayPercentage";
   override editComponent = "EditNumber";
