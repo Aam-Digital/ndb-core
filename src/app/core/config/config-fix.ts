@@ -1301,7 +1301,7 @@ export const defaultJsonConfig = {
       },
       result: {
         dataType: "percentage",
-        label: $localize`:Label for the percentage result of a relation:Percentage`,
+        label: $localize`:Label for the percentage result of a relation:Result`,
         validators: {
           min: 0,
           max: 100,
