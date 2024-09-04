@@ -1300,8 +1300,8 @@ export const defaultJsonConfig = {
         anonymize: "retain",
       },
       result: {
-        dataType: "number",
-        label: $localize`:Label for the percentage result of a relation:Result`,
+        dataType: "percentage",
+        label: $localize`:Label for the percentage result of a relation:Percentage`,
         viewComponent: "DisplayPercentage",
         editComponent: "EditNumber",
         validators: {

@@ -263,8 +263,11 @@ const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
 /** Migrate the "photo" datatype to use the new "file" datatype  and remove editComponent if no longer needed */
 
 const migratePhotoDatatype: ConfigMigration = (key, configPart) => {
-  if (configPart?.dataType === "photo") configPart.dataType = "file";
-  if (configPart?.editComponent === "EditPhoto") {
+  if (
+    configPart?.dataType === "file" &&
+    configPart?.editComponent === "EditPhoto"
+  ) {
+    configPart.dataType = "photo";
     delete configPart.editComponent;
   }
   return configPart;
