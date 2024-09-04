@@ -594,7 +594,7 @@ describe("ConfigService", () => {
     expect(actualFromNew).toEqual(newFormat);
   }));
 
-  fit("should migrate to Percentage dataType", fakeAsync(() => {
+  it("should migrate to Percentage dataType", fakeAsync(() => {
     const config = new Config();
     const oldFormat = {
       attributes: {
