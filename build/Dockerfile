@@ -35,8 +35,8 @@ COPY --from=base-with-dependencies /opt/app /opt/app
 
 RUN apt-get update && apt-get install -y curl
 WORKDIR /tmp
-# 121.0.6167.139-1~deb12u1 -> 2024-02-01
-ARG CHROMIUM_VERSION=121.0.6167.139-1~deb12u1
+# 120.0.6099.224-1~deb11u1 -> 2024-02-01
+ARG CHROMIUM_VERSION=120.0.6099.224-1~deb11u1
 RUN curl -o chromium-common.deb https://ftp.debian.org/debian/pool/main/c/chromium/chromium-common_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
 RUN curl -o chromium.deb https://ftp.debian.org/debian/pool/main/c/chromium/chromium_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
 RUN apt-get install -y ./chromium-common.deb ./chromium.deb build-essential git libssl-dev
