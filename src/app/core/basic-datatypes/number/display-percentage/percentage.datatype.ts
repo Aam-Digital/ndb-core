@@ -3,7 +3,7 @@ import { NumberDatatype } from "../number.datatype";
 
 /** Datatype for percentage values */
 @Injectable()
-export class Percentage extends NumberDatatype {
+export class PercentageDatatype extends NumberDatatype {
   static override dataType = "percentage";
   static override label: string = $localize`:datatype-label:Percentage`;
 
