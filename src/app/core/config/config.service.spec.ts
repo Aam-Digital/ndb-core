@@ -7,7 +7,6 @@ import { UpdatedEntity } from "../entity/model/entity-update";
 import { EntityConfig } from "../entity/entity-config";
 import { FieldGroup } from "../entity-details/form/field-group";
 import { NavigationMenuConfig } from "../ui/navigation/menu-item";
-import { result } from "lodash-es";
 
 describe("ConfigService", () => {
   let service: ConfigService;
