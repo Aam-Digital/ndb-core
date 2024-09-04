@@ -18,6 +18,7 @@ export async function initEnvironmentConfig() {
   } catch (err) {
     if (
       !environment.production ||
+      environment.appVersion?.startsWith("pr-") ||
       environment.appVersion === "UNKNOWN" ||
       environment.appVersion === "0.0.0"
     ) {

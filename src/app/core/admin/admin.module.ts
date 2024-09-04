@@ -20,8 +20,11 @@ export class AdminModule {
   constructor(components: ComponentRegistry) {
     components.addAll([
       [
-        "Admin",
-        () => import("./admin/admin.component").then((c) => c.AdminComponent),
+        "AdminOverview",
+        () =>
+          import("./admin-overview/admin-overview.component").then(
+            (c) => c.AdminOverviewComponent,
+          ),
       ],
       [
         "AdminEntity",

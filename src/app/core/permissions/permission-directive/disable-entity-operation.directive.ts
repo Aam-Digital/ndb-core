@@ -9,7 +9,7 @@ import {
   ViewContainerRef,
 } from "@angular/core";
 import { DisabledWrapperComponent } from "./disabled-wrapper.component";
-import { EntityAction, EntitySubject } from "../permission-types";
+import { EntityActionPermission, EntitySubject } from "../permission-types";
 import { EntityAbility } from "../ability/entity-ability";
 import { Unsubscribe } from "@casl/ability";
 
@@ -30,7 +30,7 @@ export class DisableEntityOperationDirective
    * The entity property defines for which kind of entity the operation will be performed, e.g. Child
    */
   @Input("appDisabledEntityOperation") arguments: {
-    operation: EntityAction;
+    operation: EntityActionPermission;
     entity: EntitySubject;
     field?: string;
   };

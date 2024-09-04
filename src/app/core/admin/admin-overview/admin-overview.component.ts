@@ -14,6 +14,7 @@ import { DatePipe, NgForOf } from "@angular/common";
 import { DownloadService } from "../../export/download-service/download.service";
 import { MatListModule } from "@angular/material/list";
 import { RouteTarget } from "../../../route-target";
+import { AdminOverviewService } from "./admin-overview.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -21,13 +22,13 @@ import { RouteTarget } from "../../../route-target";
 @UntilDestroy()
 @RouteTarget("Admin")
 @Component({
-  selector: "app-admin",
-  templateUrl: "./admin.component.html",
-  styleUrls: ["./admin.component.scss"],
+  selector: "app-admin-overview",
+  templateUrl: "./admin-overview.component.html",
+  styleUrls: ["./admin-overview.component.scss"],
   imports: [MatButtonModule, RouterLink, NgForOf, DatePipe, MatListModule],
   standalone: true,
 })
-export class AdminComponent implements OnInit {
+export class AdminOverviewComponent implements OnInit {
   /** all alerts */
   alerts: ExtendedAlertConfig[] = [];
 
@@ -39,6 +40,7 @@ export class AdminComponent implements OnInit {
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private configService: ConfigService,
+    protected adminOverviewService: AdminOverviewService,
   ) {}
 
   ngOnInit() {
