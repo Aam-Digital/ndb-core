@@ -32,12 +32,12 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
   });
   formControlDirective: FormControlDirective;
 
-  @Input() set value(value: NumericRange) {
+  @Input() override set value(value: NumericRange) {
     // update the internal formGroup when the value changes from the outside
     this.formGroup.setValue(value, { emitEvent: false });
     super.value = value;
   }
-  get value(): NumericRange {
+  override get value(): NumericRange {
     return super.value;
   }
 
