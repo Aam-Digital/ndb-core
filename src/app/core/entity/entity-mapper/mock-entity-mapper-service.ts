@@ -113,40 +113,56 @@ export class MockEntityMapperService extends EntityMapperService {
     }
   }
 
-  public async load<T extends Entity>(
+  public override async load<T extends Entity>(
     entityType: EntityConstructor<T> | string,
     id: string,
   ): Promise<T> {
-    const ctor = this.resolveConstructor(entityType);
-    const type = new ctor().getType();
+    let type = this.getTypeViaRegistry(entityType);
     return this.get(type, id) as T;
   }
 
-  async loadType<T extends Entity>(
+  override async loadType<T extends Entity>(
     entityType: EntityConstructor<T> | string,
   ): Promise<T[]> {
-    const ctor = this.resolveConstructor(entityType);
-    const type = new ctor().getType();
+    let type = this.getTypeViaRegistry(entityType);
     return this.getAll(type);
   }
 
-  async save<T extends Entity>(
+  private getTypeViaRegistry(entityType: EntityConstructor | string): string {
+    let type: string;
+    try {
+      const ctor = this.resolveConstructor(entityType);
+      type = new ctor().getType();
+    } catch (e) {
+      console.error(e);
+    }
+    if (!type && typeof entityType === "string") {
+      console.warn(
+        "No constructor found for type; fallback for MockEntityMapper still allows to load",
+        entityType,
+      );
+      type = entityType;
+    }
+    return type;
+  }
+
+  override async save<T extends Entity>(
     entity: T,
     forceUpdate: boolean = false,
   ): Promise<any> {
     this.add(entity);
   }
 
-  async saveAll(entities: Entity[]): Promise<any> {
+  override async saveAll(entities: Entity[]): Promise<any> {
     this.addAll(entities);
   }
 
-  remove<T extends Entity>(entity: T): Promise<any> {
+  override remove<T extends Entity>(entity: T): Promise<any> {
     this.delete(entity);
     return Promise.resolve();
   }
 
-  receiveUpdates<T extends Entity>(
+  override receiveUpdates<T extends Entity>(
     entityType: EntityConstructor<T> | string,
   ): Observable<UpdatedEntity<T>> {
     let name =

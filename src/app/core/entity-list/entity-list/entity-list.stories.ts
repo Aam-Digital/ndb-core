@@ -1,12 +1,9 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { EntityListComponent } from "./entity-list.component";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { User } from "../../user/user";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
-
-const user = new User();
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 export default {
   title: "Core/Entities/Entity List",
@@ -18,8 +15,8 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<EntityListComponent<Child>> = (
-  args: EntityListComponent<Child>,
+const Template: StoryFn<EntityListComponent<TestEntity>> = (
+  args: EntityListComponent<TestEntity>,
 ) => ({
   component: EntityListComponent,
   props: args,

@@ -113,12 +113,12 @@ describe("DashboardComponent", () => {
       { component: "EntityCountDashboard" },
     ];
 
-    session.next({ name: "not_admin", roles: ["user_app"] });
+    session.next({ name: "not_admin", id: "1", roles: ["user_app"] });
     component.widgets = widgets;
     tick();
     expect(component.widgets).toEqual([widgets[1]]);
 
-    session.next({ name: "admin", roles: ["user_app", "admin_app"] });
+    session.next({ name: "admin", id: "2", roles: ["user_app", "admin_app"] });
     component.widgets = widgets;
     tick();
     expect(component.widgets).toEqual(widgets);

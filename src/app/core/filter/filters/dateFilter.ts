@@ -15,8 +15,8 @@ export class DateFilter<T extends Entity> extends Filter<T> {
   override component = DateRangeFilterComponent;
 
   constructor(
-    public name: string,
-    public label: string = name,
+    public override name: string,
+    public override label: string = name,
     public rangeOptions: DateRangeFilterConfigOption[],
   ) {
     super(name, label);

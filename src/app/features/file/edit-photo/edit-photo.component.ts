@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -7,19 +7,26 @@ import { EditFileComponent } from "../edit-file/edit-file.component";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../file.service";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { MatButtonModule } from "@angular/material/button";
 import { resizeImage } from "../file-utils";
 import { MatDialog } from "@angular/material/dialog";
 import { ImagePopupComponent } from "./image-popup/image-popup.component";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { MatHint } from "@angular/material/form-field";
 
 @DynamicComponent("EditPhoto")
 @Component({
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",
   styleUrls: ["./edit-photo.component.scss"],
-  imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule, NgIf],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    NgIf,
+    MatHint,
+  ],
   standalone: true,
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
@@ -31,14 +38,14 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
   constructor(
     fileService: FileService,
     alertService: AlertService,
-    logger: LoggingService,
     entityMapper: EntityMapperService,
     private dialog: MatDialog,
+    @Inject(NAVIGATOR_TOKEN) navigator: Navigator,
   ) {
-    super(fileService, alertService, logger, entityMapper);
+    super(fileService, alertService, entityMapper, navigator);
   }
 
-  async onFileSelected(file: File): Promise<void> {
+  override async onFileSelected(file: File): Promise<void> {
     const cvs = await resizeImage(file, this.compression);
     this.imgPath = cvs.toDataURL();
     const blob = await new Promise<Blob>((res) => cvs.toBlob(res));
@@ -49,7 +56,7 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     return super.onFileSelected(reducedFile);
   }
 
-  ngOnInit() {
+  override ngOnInit() {
     super.ngOnInit();
     this.compression = this.additional ?? this.compression;
     if (this.formControl.value) {
@@ -62,12 +69,12 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     }
   }
 
-  delete() {
+  override delete() {
     this.resetPreview(this.defaultImage);
     super.delete();
   }
 
-  protected resetFile() {
+  protected override resetFile() {
     this.resetPreview(this.initialImg);
     super.resetFile();
   }
@@ -79,7 +86,7 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     this.imgPath = resetImage;
   }
 
-  protected deleteExistingFile() {
+  protected override deleteExistingFile() {
     URL.revokeObjectURL(this.initialImg as string);
     this.initialImg = this.defaultImage;
     super.deleteExistingFile();

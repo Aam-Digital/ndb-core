@@ -35,14 +35,14 @@ export class NumberDatatype extends DefaultDatatype<number, number> {
   static override dataType = "number";
   static override label: string = $localize`:datatype-label:number`;
 
-  viewComponent = "DisplayText";
-  editComponent = "EditNumber";
+  override viewComponent = "DisplayText";
+  override editComponent = "EditNumber";
 
-  transformToDatabaseFormat(value) {
+  override transformToDatabaseFormat(value) {
     return Number(value);
   }
 
-  transformToObjectFormat(value) {
+  override transformToObjectFormat(value) {
     return Number(value);
   }
 }

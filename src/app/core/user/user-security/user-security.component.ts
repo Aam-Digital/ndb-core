@@ -3,17 +3,17 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import {
   FormBuilder,
   FormControl,
+  FormGroup,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
 import {
   KeycloakAuthService,
-  KeycloakUser,
+  KeycloakUserDto,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
-import { AppSettings } from "../../app-settings";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -24,6 +24,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
 import { catchError } from "rxjs/operators";
+import { environment } from "../../../../environments/environment";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")
@@ -45,13 +46,9 @@ import { catchError } from "rxjs/operators";
 })
 export class UserSecurityComponent implements OnInit {
   @Input() entity: Entity;
-  form = this.fb.group({
-    username: [{ value: "", disabled: true }],
-    email: ["", [Validators.required, Validators.email]],
-    roles: new FormControl<Role[]>([]),
-  });
+  form: FormGroup;
   availableRoles: Role[] = [];
-  user: KeycloakUser;
+  user: KeycloakUserDto;
   editing = true;
   userIsPermitted = false;
 
@@ -62,6 +59,12 @@ export class UserSecurityComponent implements OnInit {
     private alertService: AlertService,
     private http: HttpClient,
   ) {
+    this.form = this.fb.group({
+      username: [{ value: "", disabled: true }],
+      email: ["", [Validators.required, Validators.email]],
+      roles: new FormControl<Role[]>([], Validators.required),
+    });
+
     if (
       sessionInfo.value?.roles.includes(
         KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
@@ -107,7 +110,7 @@ export class UserSecurityComponent implements OnInit {
       });
   }
 
-  private assignUser(user: KeycloakUser) {
+  private assignUser(user: KeycloakUserDto) {
     this.user = user;
     this.initializeForm();
     if (this.user) {
@@ -162,7 +165,7 @@ export class UserSecurityComponent implements OnInit {
               this.form.get("email").value
             }`,
           );
-          this.user = user as KeycloakUser;
+          this.user = user as KeycloakUserDto;
           this.disableForm();
         },
         error: ({ error }) => this.form.setErrors({ failed: error.message }),
@@ -184,7 +187,10 @@ export class UserSecurityComponent implements OnInit {
     }
   }
 
-  private updateKeycloakUser(update: Partial<KeycloakUser>, message: string) {
+  private updateKeycloakUser(
+    update: Partial<KeycloakUserDto>,
+    message: string,
+  ) {
     this.authService.updateUser(this.user.id, update).subscribe({
       next: () => {
         this.alertService.addInfo(message);
@@ -199,7 +205,7 @@ export class UserSecurityComponent implements OnInit {
     });
   }
 
-  getFormValues(): Partial<KeycloakUser> {
+  getFormValues(): Partial<KeycloakUserDto> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -211,7 +217,7 @@ export class UserSecurityComponent implements OnInit {
   private triggerSyncReset() {
     this.http
       .post(
-        `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}/clear_local`,
+        `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}/clear_local`,
         undefined,
       )
       .subscribe({

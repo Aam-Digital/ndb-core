@@ -1,21 +1,31 @@
-<div *ngIf="_field && _field.editComponent; else displayComponent">
-  <div [class.field-with-tooltip-suffix]="_field.description">
+<div
+  *ngIf="_field && form && _field.editComponent; else displayComponent"
+  class="flex-row"
+>
+  <div class="flex-grow">
     <ng-container
       [appDynamicComponent]="{
         component: _field.editComponent,
         config: {
           formFieldConfig: _field,
-          formControl: form?.get(_field.id),
+          formControl: form?.formGroup.get(_field.id),
           entity: entity,
         },
       }"
     >
     </ng-container>
   </div>
+
   <app-help-button
     *ngIf="!compactMode"
     [text]="_field.description"
   ></app-help-button>
+
+  <app-inherited-value-button
+    [form]="form"
+    [field]="_field"
+    [entity]="entity"
+  ></app-inherited-value-button>
 </div>
 
 <ng-template #displayComponent>

@@ -27,10 +27,10 @@ export class FileDatatype extends StringDatatype {
   static override dataType = "file";
   static override label: string = $localize`:datatype-label:file attachment`;
 
-  viewComponent = "ViewFile";
-  editComponent = "EditFile";
+  override viewComponent = "ViewFile";
+  override editComponent = "EditFile";
 
-  async anonymize(
+  override async anonymize(
     value: string,
     schemaField: EntitySchemaField,
     parent: any,

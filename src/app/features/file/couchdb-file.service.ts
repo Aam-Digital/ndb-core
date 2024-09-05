@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import {
   HttpClient,
   HttpEvent,
@@ -7,7 +7,6 @@ import {
   HttpResponse,
   HttpStatusCode,
 } from "@angular/common/http";
-import { AppSettings } from "../../core/app-settings";
 import {
   catchError,
   concatMap,
@@ -17,7 +16,7 @@ import {
   shareReplay,
   tap,
 } from "rxjs/operators";
-import { from, Observable, of } from "rxjs";
+import { from, Observable, of, throwError } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
@@ -26,12 +25,15 @@ import { FileService } from "./file.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { LoggingService } from "../../core/logging/logging.service";
+import { Logging } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SyncStateSubject } from "../../core/session/session-type";
 import { SyncService } from "../../core/database/sync.service";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
+import { environment } from "../../../environments/environment";
+import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
+import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
 
 /**
  * Stores the files in the CouchDB.
@@ -40,7 +42,7 @@ import { SyncState } from "../../core/session/session-states/sync-state.enum";
  */
 @Injectable()
 export class CouchdbFileService extends FileService {
-  private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
+  private attachmentsUrl = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
   private cache: { [key: string]: Observable<string> } = {};
@@ -53,13 +55,17 @@ export class CouchdbFileService extends FileService {
     private syncService: SyncService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    logger: LoggingService,
     syncState: SyncStateSubject,
+    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
   ) {
-    super(entityMapper, entities, logger, syncState);
+    super(entityMapper, entities, syncState);
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
+    if (!this.navigator.onLine) {
+      return throwError(() => new NotAvailableOfflineError("File Attachments"));
+    }
+
     const obs = this.requestQueue.add(
       this.runFileUpload(file, entity, property),
     );
@@ -113,6 +119,10 @@ export class CouchdbFileService extends FileService {
   }
 
   removeFile(entity: Entity, property: string) {
+    if (!this.navigator.onLine) {
+      return throwError(() => new NotAvailableOfflineError("File Attachments"));
+    }
+
     return this.requestQueue.add(this.runFileRemoval(entity, property));
   }
 
@@ -186,9 +196,7 @@ export class CouchdbFileService extends FileService {
         .pipe(
           map((blob) => URL.createObjectURL(blob)),
           catchError((err) => {
-            this.logger.warn(
-              `Could not load file (${entity?.getId()} . ${property}): ${err}`,
-            );
+            Logging.warn("Could not load file", entity?.getId(), property, err);
 
             if (throwErrors) {
               throw err;

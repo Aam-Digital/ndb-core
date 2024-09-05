@@ -6,13 +6,19 @@ import {
 } from "@storybook/angular";
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
-import { Child } from "../../children/model/child";
 import { MatDialogRef } from "@angular/material/dialog";
 import { NEVER } from "rxjs";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { Entity } from "../../../core/entity/model/entity";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
-const demoChildren: Child[] = [Child.create("Joe"), Child.create("Jane")];
+const demoChildren: Entity[] = [
+  createEntityOfType("Child"),
+  createEntityOfType("Child"),
+];
+demoChildren[0]["name"] = "Joe";
+demoChildren[1]["name"] = "Jane";
 
 export default {
   title: "Features/NoteDetails",

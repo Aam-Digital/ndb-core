@@ -19,7 +19,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import moment from "moment";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Datatype for the EntitySchemaService transforming values to Date instances.
@@ -40,21 +40,21 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
   // currently not shown to users in Admin UI, as this is not supported well with timezones and UI
   // static override label: string = $localize`:datatype-label:date (with time)`;
 
-  viewComponent = "DisplayDate";
-  editComponent = "EditDate";
+  override viewComponent = "DisplayDate";
+  override editComponent = "EditDate";
 
-  constructor(protected loggingService?: LoggingService) {
-    super();
-  }
-
-  transformToDatabaseFormat(value: Date) {
+  override transformToDatabaseFormat(value: Date) {
     return value as any;
   }
 
-  transformToObjectFormat(value, schemaField: EntitySchemaField, parent: any) {
+  override transformToObjectFormat(
+    value,
+    schemaField: EntitySchemaField,
+    parent: any,
+  ) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
-      this.loggingService.warn(
+      Logging.warn(
         `failed to convert data '${value}' to Date object for ${parent?._id}`,
       );
       return undefined;
@@ -62,9 +62,9 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
     return date;
   }
 
-  importConfigComponent = "DateImportConfig";
+  override importConfigComponent = "DateImportConfig";
 
-  async importMapFunction(
+  override async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
     additional?: any,
@@ -77,7 +77,7 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
     }
   }
 
-  async anonymize(value: Date): Promise<Date> {
+  override async anonymize(value: Date): Promise<Date> {
     // normalize to 01.06. of the year, which has less statistical distortion than 01.01.
     // (roughly half the dates before anonymization will be earlier and half will be later)
     return new Date(value.getFullYear(), 6, 1);

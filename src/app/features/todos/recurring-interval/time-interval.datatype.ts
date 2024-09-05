@@ -7,6 +7,6 @@ export class TimeIntervalDatatype extends DefaultDatatype {
   static override dataType = "time-interval";
   static override label: string = $localize`:datatype-label:time interval`;
 
-  viewComponent = "DisplayRecurringInterval";
-  editComponent = "EditRecurringInterval";
+  override viewComponent = "DisplayRecurringInterval";
+  override editComponent = "EditRecurringInterval";
 }

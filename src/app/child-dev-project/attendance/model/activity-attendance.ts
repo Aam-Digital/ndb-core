@@ -197,7 +197,7 @@ export class ActivityAttendance extends Entity {
   /**
    * Custom warning level for attendance thresholds - optionally for a specific child.
    */
-  public getWarningLevel(forChildId?: string): WarningLevel {
+  public override getWarningLevel(forChildId?: string): WarningLevel {
     let attendancePercentage;
     if (forChildId) {
       attendancePercentage = this.getAttendancePercentage(forChildId);
@@ -216,7 +216,7 @@ export class ActivityAttendance extends Entity {
     }
   }
 
-  public getColor(forChildId?: string): string {
+  public override getColor(forChildId?: string): string {
     return getWarningLevelColor(this.getWarningLevel(forChildId));
   }
 }

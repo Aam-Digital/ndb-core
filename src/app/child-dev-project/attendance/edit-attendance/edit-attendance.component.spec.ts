@@ -10,8 +10,9 @@ import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { Child } from "../../children/model/child";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
+import { Entity } from "../../../core/entity/model/entity";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
@@ -19,10 +20,10 @@ describe("EditAttendanceComponent", () => {
   let categoryForm: FormControl<InteractionType>;
   let childrenForm: FormControl<string[]>;
 
-  let childrenEntities: Child[];
+  let childrenEntities: Entity[];
 
   beforeEach(async () => {
-    childrenEntities = [new Child("child1"), new Child("child2")];
+    childrenEntities = [new TestEntity("child1"), new TestEntity("child2")];
 
     await TestBed.configureTestingModule({
       imports: [

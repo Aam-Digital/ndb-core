@@ -1,5 +1,6 @@
 import { testDatatype } from "../../entity/schema/entity-schema.service.spec";
 import { DateDatatype } from "./date.datatype";
+import { Logging } from "../../logging/logging.service";
 
 describe("Schema data type: date", () => {
   testDatatype(
@@ -17,8 +18,8 @@ describe("Schema data type: date", () => {
   });
 
   it("should log warning if transformation fails", () => {
-    const mockLogger = jasmine.createSpyObj("LoggingService", ["warn"]);
-    const datatype = new DateDatatype(mockLogger);
+    spyOn(Logging, "warn");
+    const datatype = new DateDatatype();
 
     const result = datatype.transformToObjectFormat("invalidDate", null, {
       _id: "Child:test",
@@ -26,6 +27,6 @@ describe("Schema data type: date", () => {
     });
 
     expect(result).toBeUndefined();
-    expect(mockLogger.warn).toHaveBeenCalled();
+    expect(Logging.warn).toHaveBeenCalled();
   });
 });

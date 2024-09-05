@@ -1,7 +1,6 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../dynamic-components";
 import { coreComponents } from "./core-components";
-import { User } from "./user/user";
 import { Config } from "./config/config";
 import { StringDatatype } from "./basic-datatypes/string/string.datatype";
 import { DefaultDatatype } from "./entity/default-datatype/default.datatype";
@@ -19,6 +18,7 @@ import { LongTextDatatype } from "./basic-datatypes/string/long-text.datatype";
 import { UpdateMetadataDatatype } from "./entity/model/update-metadata.datatype";
 import { CurrentUserSubject } from "./session/current-user-subject";
 import { SessionSubject } from "./session/auth/session-info";
+import { PercentageDatatype } from "./basic-datatypes/number/display-percentage/percentage.datatype";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -38,11 +38,12 @@ import { SessionSubject } from "./session/auth/session-info";
     { provide: DefaultDatatype, useClass: MonthDatatype, multi: true },
     { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
     { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
+    { provide: DefaultDatatype, useClass: PercentageDatatype, multi: true },
   ],
   imports: [CommonModule],
 })
 export class CoreModule {
-  static databaseEntities = [Entity, User, Config, TimePeriod];
+  static databaseEntities = [Entity, Config, TimePeriod];
 
   constructor(components: ComponentRegistry) {
     components.addAll(coreComponents);

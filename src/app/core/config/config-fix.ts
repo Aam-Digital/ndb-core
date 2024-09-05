@@ -1,8 +1,12 @@
-import { Child } from "../../child-dev-project/children/model/child";
-import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
-import { EducationalMaterial } from "../../child-dev-project/children/educational-material/model/educational-material";
+import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
+import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
+import { INTERACTION_TYPE_CONFIG_ID } from "../../child-dev-project/notes/model/interaction-type.interface";
+import { EventAttendanceMap } from "../../child-dev-project/attendance/model/event-attendance";
+import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -158,6 +162,92 @@ export const defaultJsonConfig = {
       ]
     }
   },
+  "entity:Note": {
+    toStringAttributes: ["subject"],
+    label: $localize`:label for entity:Note`,
+    labelPlural: $localize`:label (plural) for entity:Notes`,
+    hasPII: true,
+    attributes: {
+      children: {
+        label: $localize`:Label for the children of a note:Children`,
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+        entityReferenceRole: "composite",
+        editComponent: "EditAttendance",
+        anonymize: "retain",
+      },
+      childrenAttendance: {
+        dataType: EventAttendanceMap.DATA_TYPE,
+        anonymize: "retain"
+      },
+      date: {
+        label: $localize`:Label for the date of a note:Date`,
+        dataType: "date-only",
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+        anonymize: "retain",
+      },
+      subject: {
+        dataType: "string",
+        label: $localize`:Label for the subject of a note:Subject`
+      },
+      text: {
+        dataType: LongTextDatatype.dataType,
+        label: $localize`:Label for the actual notes of a note:Notes`,
+      },
+      authors: {
+        label: $localize`:Label for the social worker(s) who created the note:SW`,
+        dataType: "entity",
+        isArray: true,
+        additional: "User",
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.CURRENT_USER,
+        },
+        anonymize: "retain",
+      },
+      category: {
+        label: $localize`:Label for the category of a note:Category`,
+        dataType: "configurable-enum",
+        additional: INTERACTION_TYPE_CONFIG_ID,
+        anonymize: "retain",
+      },
+      attachment: {
+        label: $localize`Attachment`,
+        dataType: "file",
+      },
+      relatesTo: {
+        dataType: "entity",
+        additional: RecurringActivity.ENTITY_TYPE,
+        anonymize: "retain",
+      },
+      relatedEntities: {
+        label: $localize`:label for the related Entities:Related Records`,
+        dataType: "entity",
+        isArray: true,
+        // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
+        additional: undefined,
+        anonymize: "retain",
+      },
+      schools: {
+        label: $localize`:label for the linked schools:Groups`,
+        dataType: "entity",
+        isArray: true,
+        additional: "School",
+        entityReferenceRole: "composite",
+        anonymize: "retain",
+      },
+      warningLevel: {
+        label: $localize`:Status of a note:Status`,
+        dataType: "configurable-enum",
+        additional: "warning-levels",
+        anonymize: "retain",
+      },
+    }
+  },
   "view:note": {
     "component": "NotesManager",
     "config": {
@@ -307,10 +397,7 @@ export const defaultJsonConfig = {
         "language"
       ],
       "filters": [
-        {
-          "id": "privateSchool",
-          "label": $localize`Private School`
-        }
+        { "id": "privateSchool" }
       ]
     }
   },
@@ -327,7 +414,7 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "fieldGroups": [
-                  { "fields": ["name", "privateSchool"] },
+                  { "fields": ["name", "privateSchool", "parentSchool"] },
                   { "fields": ["address", "phone"] },
                   { "fields": ["language", "timing"] },
                   { "fields": ["remarks"] }
@@ -382,7 +469,7 @@ export const defaultJsonConfig = {
           "viewComponent": "DisplayEntity",
           "label": $localize`:Column label for school which child attends:School`,
           "id": "schoolId",
-          "additional": `${School.ENTITY_TYPE}`,
+          "additional": "School",
           "noSorting": true
         },
         {
@@ -585,7 +672,7 @@ export const defaultJsonConfig = {
               "component": "MatchingEntities",
               "config": {
                 "rightSide": {
-                  "entityType": School.ENTITY_TYPE,
+                  "entityType": "School",
                   "availableFilters": [{"id": "language"}],
                 },
               }
@@ -645,8 +732,13 @@ export const defaultJsonConfig = {
                   {
                     "id": "bmi",
                     "label": $localize`:Table header, Short for Body Mass Index:BMI`,
-                    "viewComponent": "DisplayText",
                     "description": $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
+                    "viewComponent": "DisplayCalculatedValue",
+                    "additional": {
+                      "calculation": "bmi",
+                      "valueFields": ["weight", "height"],
+                      "decimalPlaces": 1
+                    }
                   }
                 ]
               }
@@ -660,7 +752,7 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "RelatedEntitiesWithSummary",
               "config": {
-                "entityType": EducationalMaterial.ENTITY_TYPE,
+                "entityType": "EducationalMaterial",
                 "property": "child",
                 "columns": [
                   { "id": "date", "visibleFrom": "xs" },
@@ -714,6 +806,91 @@ export const defaultJsonConfig = {
           ]
         }
       ]
+    }
+  },
+  "entity:EducationMaterial": {
+    attributes: {
+      child: {
+        dataType: EntityDatatype.dataType,
+        additional: "Child",
+        entityReferenceRole: "composite",
+      },
+      date: {
+        dataType: "date",
+        label: $localize`:Date on which the material has been borrowed:Date`,
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+      },
+      materialType: {
+        label: $localize`:The material which has been borrowed:Material`,
+        dataType: "configurable-enum",
+        additional: "materials",
+        validators: {
+          required: true,
+        },
+      },
+      materialAmount: {
+        dataType: "number",
+        label: $localize`:The amount of the material which has been borrowed:Amount`,
+        defaultValue: {
+          mode: "static",
+          value: 1,
+        },
+        validators: {
+          required: true,
+        },
+      },
+      description: {
+        dataType: "string",
+        label: $localize`:An additional description for the borrowed material:Description`,
+      }
+    }
+  },
+  "entity:RecurringActivity": {
+    toStringAttributes: ["title"],
+    label: $localize`:label for entity:Recurring Activity`,
+    labelPlural: $localize`:label (plural) for entity:Recurring Activities`,
+    color: "#00838F",
+    route: "attendance/recurring-activity",
+    attributes: {
+      title: {
+        dataType: "string",
+        label: $localize`:Label for the title of a recurring activity:Title`,
+        validators: {
+          required: true,
+        },
+      },
+      type: {
+        label: $localize`:Label for the interaction type of a recurring activity:Type`,
+        dataType: "configurable-enum",
+        additional: INTERACTION_TYPE_CONFIG_ID,
+      },
+      participants: {
+        label: $localize`:Label for the participants of a recurring activity:Participants`,
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+      },
+      linkedGroups: {
+        label: $localize`:Label for the linked schools of a recurring activity:Groups`,
+        dataType: "entity",
+        isArray: true,
+        additional: "School",
+      },
+      excludedParticipants: {
+        label: $localize`:Label for excluded participants of a recurring activity:Excluded Participants`,
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+      },
+      assignedTo: {
+        label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
+        dataType: "entity",
+        isArray: true,
+        additional: "User",
+      }
     }
   },
   "view:attendance/recurring-activity": {
@@ -783,8 +960,76 @@ export const defaultJsonConfig = {
   "entity:Child": {
     "label": $localize`:Label for child:Child`,
     "labelPlural": $localize`:Plural label for child:Children`,
+    "toStringAttributes": ["name"],
+    "icon": "child",
+    "color": "#1565C0",
+    "blockComponent": "ChildBlock",
+    "hasPII": true,
 
     "attributes": {
+      name: {
+        dataType: "string",
+        label: $localize`:Label for the name of a child:Name`,
+        validators: {
+          required: true,
+        },
+      },
+      projectNumber: {
+        dataType: "string",
+        label: $localize`:Label for the project number of a child:Project Number`,
+        labelShort: $localize`:Short label for the project number:PN`,
+        searchable: true,
+        anonymize: "retain",
+      },
+      dateOfBirth: {
+        dataType: "date-with-age",
+        label: $localize`:Label for the date of birth of a child:Date of birth`,
+        labelShort: $localize`:Short label for the date of birth:DoB`,
+        anonymize: "retain-anonymized",
+      },
+      center: {
+        dataType: "configurable-enum",
+        additional: "center",
+        label: $localize`:Label for the center of a child:Center`,
+        anonymize: "retain",
+      },
+      gender: {
+        dataType: "configurable-enum",
+        label: $localize`:Label for the gender of a child:Gender`,
+        additional: "genders",
+        anonymize: "retain",
+      },
+      admissionDate: {
+        dataType: "date-only",
+        label: $localize`:Label for the admission date of a child:Admission`,
+        anonymize: "retain-anonymized",
+      },
+      status: {
+        dataType: "string",
+        label: $localize`:Label for the status of a child:Status`,
+      },
+      dropoutDate: {
+        dataType: "date-only",
+        label: $localize`:Label for the dropout date of a child:Dropout Date`,
+        anonymize: "retain-anonymized",
+      },
+      dropoutType: {
+        dataType: "string",
+        label: $localize`:Label for the type of dropout of a child:Dropout Type`,
+        anonymize: "retain",
+      },
+      dropoutRemarks: {
+        dataType: "string",
+        label: $localize`:Label for the remarks about a dropout of a child:Dropout remarks`,
+      },
+      photo: {
+        dataType: "photo",
+        label: $localize`:Label for the file field of a photo of a child:Photo`,
+      },
+      phone: {
+        dataType: "string",
+        label: $localize`:Label for the phone number of a child:Phone Number`,
+      },
       "address": {
         "dataType": "location",
         "label": $localize`:Label for the address of a child:Address`
@@ -813,10 +1058,18 @@ export const defaultJsonConfig = {
     },
   },
   "entity:School": {
+    "toStringAttributes": ["name"],
+    "icon": "university",
+    "label": $localize`:label for entity:School`,
+    "labelPlural": $localize`:label (plural) for entity:Schools`,
+    "color": "#9E9D24",
     "attributes": {
       "name": {
         "dataType": "string",
-        "label": $localize`:Label for the name of a school:Name`
+        "label": $localize`:Label for the name of a school:Name`,
+        "validators": {
+          required: true,
+        },
       },
       "privateSchool": {
         "dataType": "boolean",
@@ -845,7 +1098,23 @@ export const defaultJsonConfig = {
     },
   },
   "entity:HistoricalEntityData": {
+    hasPII: true,
     "attributes": {
+      date: {
+        dataType: "date",
+        label: $localize`:Label for date of historical data:Date`,
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+        anonymize: "retain-anonymized",
+      },
+      relatedEntity: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+        anonymize: "retain",
+      },
       "isMotivatedDuringClass": {
         "dataType": "configurable-enum",
         "additional": "rating-answer",
@@ -879,6 +1148,12 @@ export const defaultJsonConfig = {
     }
   },
   "entity:User": {
+    "toStringAttributes": ["name"],
+    "icon": "user",
+    "label": $localize`:label for entity:User`,
+    "labelPlural": $localize`:label (plural) for entity:Users`,
+    "hasPII": true,
+
     "attributes": {
       "phone": {
         "dataType": "string",
@@ -890,11 +1165,11 @@ export const defaultJsonConfig = {
     "component": "MatchingEntities",
     "config": {
       "rightSide": {
-        "entityType": School.ENTITY_TYPE,
-        "prefilter": { "privateSchool": true },
+        "entityType": "School",
+        "prefilter": {"privateSchool": true},
         "availableFilters": [{"id": "language"}],
       },
-      "leftSide": { "entityType": Child.ENTITY_TYPE },
+      "leftSide": {"entityType": "Child"},
     }
   },
   "appConfig:matching-entities": {
@@ -911,23 +1186,134 @@ export const defaultJsonConfig = {
       "columnsToReview": ["start", "end", "result", "childId", "schoolId"]
     }
   },
+  "entity:Aser": {
+    hasPII: true,
+    attributes: {
+      child: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+      },
 
-  "entity:Todo": {
-    "attributes": {}
-  },
-  "view:todo": {
-    "component": "TodoList",
-    "config": {
-      "entityType": "Todo",
-      "columns": ["deadline", "subject", "assignedTo", "startDate", "relatedEntities"],
-      "filters": [
-        {"id": "assignedTo"},
+      date: {
+        dataType: "date",
+        label: $localize`:Label for date of the ASER results:Date`,
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+        anonymize: "retain-anonymized",
+      },
 
-        {
-          "id": "due-status",
-          "type": "prebuilt"
-        }
-      ]
+      hindi: {
+        label: $localize`:Label of the Hindi ASER result:Hindi`,
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      bengali: {
+        label: $localize`:Label of the Bengali ASER result:Bengali`,
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      english: {
+        label: $localize`:Label of the English ASER result:English`,
+        dataType: "configurable-enum",
+        additional: "reading-levels",
+      },
+      math: {
+        label: $localize`:Label of the Math ASER result:Math`,
+        dataType: "configurable-enum",
+        additional: "math-levels",
+      },
+
+      remarks: {
+        dataType: "string",
+        label: $localize`:Label for the remarks of a ASER result:Remarks`,
+      },
     }
-  }
+  },
+  "entity:HealthCheck": {
+    hasPII: true,
+    attributes: {
+      child: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+        anonymize: "retain",
+      },
+      date: {
+        dataType: "date",
+        label: $localize`:Label for date of a health check:Date`,
+        anonymize: "retain-anonymized",
+        defaultValue: {
+          mode: "dynamic",
+          value: PLACEHOLDERS.NOW,
+        },
+      },
+      height: {
+        dataType: "number",
+        label: $localize`:Label for height in cm of a health check:Height [cm]`,
+        viewComponent: "DisplayUnit",
+        additional: "cm",
+      },
+      weight: {
+        dataType: "number",
+        label: $localize`:Label for weight in kg of a health check:Weight [kg]`,
+        viewComponent: "DisplayUnit",
+        additional: "kg",
+      },
+    }
+  },
+  "entity:ChildSchoolRelation": {
+    hasPII: true,
+    attributes: {
+      childId: {
+        dataType: "entity",
+        additional: "Child",
+        entityReferenceRole: "composite",
+        validators: {
+          required: true,
+        },
+        anonymize: "retain",
+        label: $localize`:Label for the child of a relation:Child`,
+      },
+      schoolId: {
+        dataType: "entity",
+        additional: "School",
+        entityReferenceRole: "aggregate",
+        validators: {
+          required: true,
+        },
+        anonymize: "retain",
+        label: $localize`:Label for the school of a relation:School`,
+      },
+      schoolClass: {
+        dataType: "string",
+        label: $localize`:Label for the class of a relation:Class`,
+        anonymize: "retain",
+      },
+      start: {
+        dataType: "date-only",
+        label: $localize`:Label for the start date of a relation:Start date`,
+        description: $localize`:Description of the start date of a relation:The date a child joins a school`,
+        anonymize: "retain",
+      },
+      end: {
+        dataType: "date-only",
+        label: $localize`:Label for the end date of a relation:End date`,
+        description: $localize`:Description of the end date of a relation:The date of a child leaving the school`,
+        anonymize: "retain",
+      },
+      result: {
+        dataType: "percentage",
+        label: $localize`:Label for the percentage result of a relation:Result`,
+        validators: {
+          min: 0,
+          max: 100,
+        },
+      },
+    }
+  },
+
+  ...todoDefaultConfigs,
 };

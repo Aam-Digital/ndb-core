@@ -1,9 +1,8 @@
 import { Component } from "@angular/core";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { Route, Router } from "@angular/router";
-import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { ConfigService } from "../config.service";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 
 import { RouterService } from "./router.service";
 import { ViewConfig } from "./view-config.interface";
@@ -14,20 +13,19 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AuthGuard } from "../../session/auth.guard";
 import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
 import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
+import { EntityListComponent } from "../../entity-list/entity-list/entity-list.component";
 
 class TestComponent extends Component {}
 
 describe("RouterService", () => {
   let service: RouterService;
 
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-
   beforeEach(waitForAsync(() => {
-    mockLoggingService = jasmine.createSpyObj(["warn"]);
+    spyOn(Logging, "warn");
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule],
-      providers: [{ provide: LoggingService, useValue: mockLoggingService }],
+      providers: [],
     });
     service = TestBed.inject(RouterService);
   }));
@@ -96,7 +94,7 @@ describe("RouterService", () => {
   it("should extend a view config route of lazy loaded routes (hard coded)", () => {
     const existingRoutes: Route[] = [
       { path: "other", component: TestComponent },
-      { path: "child", component: ChildrenListComponent },
+      { path: "child", component: EntityListComponent },
     ];
     const testViewConfigs: ViewConfig[] = [
       {
@@ -113,7 +111,7 @@ describe("RouterService", () => {
         canDeactivate: [jasmine.any(Function)],
         data: { permittedUserRoles: ["admin_app"] },
       },
-      { path: "child", component: ChildrenListComponent },
+      { path: "child", component: EntityListComponent },
     ];
 
     const router = TestBed.inject(Router);

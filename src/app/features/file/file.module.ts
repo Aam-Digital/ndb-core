@@ -9,6 +9,7 @@ import { ComponentRegistry } from "../../dynamic-components";
 import { fileComponents } from "./file-components";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { FileDatatype } from "./file.datatype";
+import { PhotoDatatype } from "./photo.datatype";
 
 @NgModule({
   providers: [
@@ -20,6 +21,7 @@ import { FileDatatype } from "./file.datatype";
         : injector.get(MockFileService);
     }),
     { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
+    { provide: DefaultDatatype, useClass: PhotoDatatype, multi: true },
   ],
 })
 export class FileModule {

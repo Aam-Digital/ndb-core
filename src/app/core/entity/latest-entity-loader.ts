@@ -1,5 +1,5 @@
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
-import { LoggingService } from "../logging/logging.service";
+import { Logging } from "../logging/logging.service";
 import { filter } from "rxjs/operators";
 import { Entity, EntityConstructor } from "./model/entity";
 import { HttpStatusCode } from "@angular/common/http";
@@ -18,7 +18,6 @@ export abstract class LatestEntityLoader<T extends Entity> {
     private entityCtor: EntityConstructor<T>,
     private entityID: string,
     protected entityMapper: EntityMapperService,
-    protected logger: LoggingService,
   ) {}
 
   /**
@@ -48,8 +47,8 @@ export abstract class LatestEntityLoader<T extends Entity> {
       return entity;
     } catch (err) {
       if (err?.status !== HttpStatusCode.NotFound) {
-        this.logger.error(
-          `Loading entity "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed: ${this.entityID}`,
+        Logging.error(
+          `Initial loading of entity "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed [Service based on LatestEntityLoader]`,
           err,
         );
       }

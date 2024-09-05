@@ -7,6 +7,7 @@ import { Observable } from "rxjs";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ReadonlyFunctionComponent } from "../../../core/common-components/display-readonly-function/readonly-function.component";
+import { GeoLocation } from "../location.datatype";
 
 /**
  * Config for displaying the distance between two entities
@@ -73,8 +74,10 @@ export class ViewDistanceComponent
     const results: number[] = [];
     for (const prop of this.config.coordinatesProperties) {
       for (const coord of compareCoordinates) {
-        if (e[prop] && coord) {
-          results.push(getKmDistance(e[prop], coord));
+        if (e[prop]?.geoLookup && coord) {
+          results.push(
+            getKmDistance((e[prop] as GeoLocation).geoLookup, coord),
+          );
         }
       }
     }

@@ -26,6 +26,7 @@ export class EntityConfigService {
   /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";
 
+  // TODO remove this?
   /** original initial entity schemas without overrides from config */
   private coreEntitySchemas = new Map<string, EntitySchema>();
 
@@ -86,8 +87,8 @@ export class EntityConfigService {
 
     const schema = this.deepCopySchema(parentClass.schema);
     class DynamicClass extends parentClass {
-      static schema = schema;
-      static ENTITY_TYPE = id;
+      static override schema = schema;
+      static override ENTITY_TYPE = id;
     }
 
     this.entities.set(id, DynamicClass);
@@ -127,7 +128,7 @@ export class EntityConfigService {
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
     for (const [key, value] of Object.entries(entityConfig?.attributes ?? {})) {
-      value._isCustomizedField = true;
+      delete value["_isCustomizedField"]; // clean up previous flag that is not deprecated
       addPropertySchema(entityType.prototype, key, value);
     }
 

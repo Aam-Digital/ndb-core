@@ -1,4 +1,4 @@
-import { Child } from "../model/child";
+import { Entity } from "../../../core/entity/model/entity";
 import { religions } from "./fixtures/religions";
 import { languages } from "./fixtures/languages";
 import { dropoutTypes } from "./fixtures/dropout-types";
@@ -9,13 +9,14 @@ import { centersWithProbability } from "./fixtures/centers";
 import { genders } from "../model/genders";
 import { calculateAge } from "../../../utils/utils";
 import { DateWithAge } from "../../../core/basic-datatypes/date-with-age/dateWithAge";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 export class DemoChildConfig {
   count: number;
 }
 
 @Injectable()
-export class DemoChildGenerator extends DemoDataGenerator<Child> {
+export class DemoChildGenerator extends DemoDataGenerator<Entity> {
   static count: number;
 
   /**
@@ -31,14 +32,14 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
   }
 
   static generateEntity(id: string) {
-    const child = new Child(id);
+    const child = createEntityOfType("Child", id);
     child.name = faker.person.firstName() + " " + faker.person.lastName();
     child.projectNumber = id;
-    child["religion"] = faker.helpers.arrayElement(religions);
-    child.gender = faker.helpers.arrayElement(genders.slice(1));
+    child.religion = faker.helpers.arrayElement(religions);
+    child.gender = faker.helpers.arrayElement(genders.slice(1)).id;
     child.dateOfBirth = new DateWithAge(faker.dateOfBirth(5, 20));
-    child["motherTongue"] = faker.helpers.arrayElement(languages);
-    child.center = faker.helpers.arrayElement(centersWithProbability);
+    child.motherTongue = faker.helpers.arrayElement(languages);
+    child.center = faker.helpers.arrayElement(centersWithProbability).id;
     child.phone =
       "+" +
       faker.number.int({ min: 10, max: 99 }) +
@@ -57,7 +58,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     return child;
   }
 
-  private static makeChildDropout(child: Child) {
+  private static makeChildDropout(child: Entity & { [key: string]: any }) {
     child.dropoutDate = faker.date.between({
       from: child.admissionDate,
       to: new Date(),
@@ -65,13 +66,14 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.dropoutRemarks = faker.lorem.sentence();
     child.dropoutType = faker.helpers.arrayElement(dropoutTypes);
     child.status = $localize`:Child status:Dropout`;
+    child.inactive = true;
   }
 
   constructor(public config: DemoChildConfig) {
     super();
   }
 
-  generateEntities(): Child[] {
+  generateEntities(): Entity[] {
     const data = [];
     for (let i = 1; i <= this.config.count; i++) {
       data.push(DemoChildGenerator.generateEntity(String(i)));

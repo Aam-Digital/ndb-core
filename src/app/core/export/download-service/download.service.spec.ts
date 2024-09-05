@@ -1,6 +1,4 @@
 import { TestBed } from "@angular/core/testing";
-
-import { LoggingService } from "../../logging/logging.service";
 import { DownloadService } from "./download.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
@@ -9,17 +7,16 @@ import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/c
 import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { School } from "app/child-dev-project/schools/model/school";
-import { Child } from "app/child-dev-project/children/model/child";
 import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("DownloadService", () => {
   let service: DownloadService;
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
   let mockedEntityMapper;
-  const testSchool = School.create({ name: "Test School" });
-  const testChild = Child.create("Test Child");
+  const testSchool = TestEntity.create({ name: "Test School" });
+  const testChild = TestEntity.create("Test Child");
 
   beforeEach(() => {
     mockDataTransformationService = jasmine.createSpyObj([
@@ -37,7 +34,6 @@ describe("DownloadService", () => {
           provide: EntityMapperService,
           useValue: mockedEntityMapper,
         },
-        LoggingService,
       ],
     });
     service = TestBed.inject(DownloadService);

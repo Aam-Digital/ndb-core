@@ -7,11 +7,14 @@ import {
 } from "./usage-analytics-config";
 import { Angulartics2, Angulartics2Matomo } from "angulartics2";
 import md5 from "md5";
+import { LoginState } from "../session/session-states/login-state.enum";
+import { LoginStateSubject } from "../session/session-type";
+import { SessionSubject } from "../session/auth/session-info";
 
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
  *
- * This is automatically disabled if the config.json does not specify "usage_analytics" settings.
+ * This is automatically disabled if the config doc does not specify "usage_analytics" settings.
  */
 @Injectable({
   providedIn: "root",
@@ -23,7 +26,25 @@ export class AnalyticsService {
     private angulartics2: Angulartics2,
     private angulartics2Matomo: Angulartics2Matomo,
     private configService: ConfigService,
-  ) {}
+    loginState: LoginStateSubject,
+    private sessionInfo: SessionSubject,
+  ) {
+    if (environment.production) {
+      this.init();
+    }
+
+    // update the user context for remote error logging and tracking and load config initially
+    loginState.subscribe((s: LoginState) => this.updateSessionInfo(s));
+  }
+
+  private updateSessionInfo(newState: LoginState): void {
+    if (newState === LoginState.LOGGED_IN) {
+      const username = this.sessionInfo.value?.name;
+      this.setUser(username);
+    } else {
+      this.setUser(undefined);
+    }
+  }
 
   /**
    * Sets a unique user hash which is always for the same user but does not expose the username.

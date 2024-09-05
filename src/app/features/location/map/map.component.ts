@@ -24,6 +24,7 @@ import {
   LocationProperties,
   MapPropertiesPopupComponent,
 } from "./map-properties-popup/map-properties-popup.component";
+import { GeoResult } from "../geo.service";
 
 @Component({
   selector: "app-map",
@@ -158,9 +159,10 @@ export class MapComponent implements AfterViewInit {
       .filter((entity) => !!entity)
       .forEach((entity) => {
         this.getMapProperties(entity)
-          .filter((prop) => !!entity[prop])
-          .forEach((prop) => {
-            const marker = L.marker([entity[prop].lat, entity[prop].lon]);
+          .map((prop) => entity[prop]?.geoLookup)
+          .filter((loc: GeoResult) => !!loc)
+          .forEach((loc: GeoResult) => {
+            const marker = L.marker([loc.lat, loc.lon]);
             marker.bindTooltip(entity.toString());
             marker.on("click", () => this.entityClick.emit(entity));
             marker["entity"] = entity;

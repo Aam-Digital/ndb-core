@@ -46,11 +46,19 @@
       BULK SELECT
     -->
     <ng-container [matColumnDef]="ACTIONCOLUMN_SELECT">
-      <th mat-header-cell *matHeaderCellDef style="width: 0"></th>
+      <th mat-header-cell *matHeaderCellDef style="width: 0">
+        <mat-checkbox
+          (change)="selectAllRows($event)"
+          [checked]="isAllSelected()"
+          [indeterminate]="isIndeterminate()"
+        ></mat-checkbox>
+      </th>
 
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
+          (change)="onRowSelect($event, row)"
           [checked]="selectedRecords?.includes(row.record)"
+          (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
     </ng-container>
@@ -78,9 +86,10 @@
     <tr
       mat-row
       *matRowDef="let row; columns: _columnsToDisplay"
+      [class.inactive-row]="!row.record.isActive"
       [style.background-color]="getBackgroundColor?.(row.record)"
       class="table-row"
-      (click)="onRowClick(row)"
+      (mousedown)="onRowMouseDown($event, row)"
       style="cursor: pointer"
     ></tr>
   </table>

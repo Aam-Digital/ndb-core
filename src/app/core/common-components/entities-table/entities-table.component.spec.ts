@@ -5,7 +5,6 @@ import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import moment from "moment/moment";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
@@ -19,6 +18,7 @@ import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { Router } from "@angular/router";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -131,10 +131,10 @@ describe("EntitiesTableComponent", () => {
 
   it("should sort standard objects", () => {
     const children = [
-      new Child("0"),
-      new Child("1"),
-      new Child("2"),
-      new Child("3"),
+      new TestEntity("0"),
+      new TestEntity("1"),
+      new TestEntity("2"),
+      new TestEntity("3"),
     ];
     children[0].name = "AA";
     children[3].name = "AB";
@@ -170,7 +170,7 @@ describe("EntitiesTableComponent", () => {
 
   it("should sort strings ignoring case", () => {
     const names = ["C", "A", "b"];
-    component.records = names.map((name) => Child.create(name));
+    component.records = names.map((name) => TestEntity.create(name));
 
     component.sortBy = { active: "name", direction: "asc" };
     fixture.detectChanges();
@@ -183,7 +183,7 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should notify when an entity is clicked", (done) => {
-    const child = new Child();
+    const child = new TestEntity();
     component.entityClick.subscribe((entity) => {
       expect(entity).toEqual(child);
       done();
@@ -193,14 +193,15 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should filter data based on filter definition", () => {
-    const c1 = Child.create("Matching");
+    const c1 = TestEntity.create("Matching");
     c1.dateOfBirth = new DateWithAge(moment().subtract(1, "years").toDate());
-    const c2 = Child.create("Not Matching");
+    const c2 = TestEntity.create("Not Matching");
     c2.dateOfBirth = new DateWithAge(moment().subtract(2, "years").toDate());
-    const c3 = Child.create("Matching");
+    const c3 = TestEntity.create("Matching");
     c3.dateOfBirth = new DateWithAge(moment().subtract(3, "years").toDate());
     // get type-safety for filters
-    const childComponent = component as any as EntitiesTableComponent<Child>;
+    const childComponent =
+      component as any as EntitiesTableComponent<TestEntity>;
     childComponent.records = [c1, c2, c3];
 
     childComponent.filter = { name: "Matching" };
@@ -217,9 +218,9 @@ describe("EntitiesTableComponent", () => {
 
     expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
 
-    const c4 = Child.create("Matching");
+    const c4 = TestEntity.create("Matching");
     c4.dateOfBirth = new DateWithAge(moment().subtract(4, "years").toDate());
-    const c5 = Child.create("Not Matching");
+    const c5 = TestEntity.create("Not Matching");
 
     childComponent.records = [c1, c2, c3, c4, c5];
 
@@ -230,14 +231,14 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should remove an entity if it does not pass the filter anymore", fakeAsync(() => {
-    const child = new Child();
-    child.gender = genders[1];
+    const child = new TestEntity();
+    child.category = genders[1];
     component.records = [child];
-    component.filter = { "gender.id": genders[1].id } as any;
+    component.filter = { "category.id": genders[1].id } as any;
 
     expect(component.recordsDataSource.data).toEqual([{ record: child }]);
 
-    child.gender = genders[2];
+    child.category = genders[2];
     component.records = [child]; // parent component has to update the records Input array
 
     expect(component.recordsDataSource.data).toEqual([]);
@@ -255,7 +256,7 @@ describe("EntitiesTableComponent", () => {
   });
 
   it("should overwrite entity schema fields with customColumn config", async () => {
-    component.entityType = Child;
+    component.entityType = TestEntity;
     const customField = {
       id: "name",
       label: "Custom Name Label",
@@ -279,14 +280,17 @@ describe("EntitiesTableComponent", () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     component.clickMode = "navigate";
 
-    const child = new Child();
+    const child = new TestEntity();
     expect(child.isNew).toBeTrue();
     component.showEntity(child);
-    expect(navigateSpy).toHaveBeenCalledWith(["/child", "new"]);
+    expect(navigateSpy).toHaveBeenCalledWith([TestEntity.route, "new"]);
 
     child._rev = "1-existing";
     expect(child.isNew).toBeFalse();
     component.showEntity(child);
-    expect(navigateSpy).toHaveBeenCalledWith(["/child", child.getId(true)]);
+    expect(navigateSpy).toHaveBeenCalledWith([
+      TestEntity.route,
+      child.getId(true),
+    ]);
   });
 });

@@ -20,7 +20,7 @@ import { SwUpdate } from "@angular/service-worker";
 import { filter, first } from "rxjs/operators";
 import { concat, interval } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
@@ -40,13 +40,12 @@ export class UpdateManagerService {
     private appRef: ApplicationRef,
     private updates: SwUpdate,
     private snackBar: MatSnackBar,
-    private logger: LoggingService,
     private latestChangesDialogService: LatestChangesDialogService,
     private unsavedChanges: UnsavedChangesService,
     @Inject(LOCATION_TOKEN) private location: Location,
   ) {
     this.updates.unrecoverable.subscribe((err) => {
-      this.logger.error("App is in unrecoverable state: " + err.reason);
+      Logging.error("App is in unrecoverable state: " + err.reason);
       this.location.reload();
     });
     const currentVersion = localStorage.getItem(
@@ -91,7 +90,7 @@ export class UpdateManagerService {
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
     everyHoursOnceAppIsStable$.subscribe(() =>
-      this.updates.checkForUpdate().catch((err) => this.logger.error(err)),
+      this.updates.checkForUpdate().catch((err) => Logging.error(err)),
     );
   }
 
@@ -137,7 +136,7 @@ export class UpdateManagerService {
     }
 
     this.updates.unrecoverable.subscribe(({ reason }) => {
-      this.logger.warn(`SW in unrecoverable state: ${reason}`);
+      Logging.warn(`SW in unrecoverable state: ${reason}`);
       this.snackBar
         .open(
           $localize`The app is in a unrecoverable state, please reload.`,

@@ -14,7 +14,6 @@ import { AppModule } from "../app.module";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { Entity } from "../core/entity/model/entity";
-import { User } from "../core/user/user";
 import {
   mockEntityMapper,
   MockEntityMapperService,
@@ -71,7 +70,7 @@ export const entityFormStorybookDefaultParameters = {
 })
 export class StorybookBaseModule {
   private static initData: Entity[] = [];
-  static withData(data: Entity[] = [new User(TEST_USER)]) {
+  static withData(data: Entity[] = [new Entity(TEST_USER)]) {
     StorybookBaseModule.initData = data;
     return StorybookBaseModule;
   }

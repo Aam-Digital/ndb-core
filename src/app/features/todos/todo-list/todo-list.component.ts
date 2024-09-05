@@ -19,7 +19,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { DuplicateRecordService } from "../../../core/entity-list/duplicate-records/duplicate-records.service";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { LoggingService } from "../../../core/logging/logging.service";
+import { Logging } from "../../../core/logging/logging.service";
 import {
   AsyncPipe,
   NgForOf,
@@ -88,9 +88,9 @@ export class TodoListComponent
   extends EntityListComponent<Todo>
   implements OnInit
 {
-  // TODO: make this component obsolete by generalizing Entity and EntityList so that we can define a viewDetailsComponent on the entity that gets opened as popup?
+  // TODO: make this component obsolete by generalizing Entity and EntityList so that we can define a viewDetailsComponent on the entity that gets opened as popup? #2511
 
-  entityConstructor = Todo;
+  override entityConstructor = Todo;
 
   override clickMode: "navigate" | "popup" | "none" = "none";
 
@@ -112,7 +112,6 @@ export class TodoListComponent
     duplicateRecord: DuplicateRecordService,
     private currentUser: CurrentUserSubject,
     private formDialog: FormDialogService,
-    private logger: LoggingService,
   ) {
     super(
       screenWidthObserver,
@@ -123,6 +122,7 @@ export class TodoListComponent
       dialog,
       duplicateRecord,
       entityActionsService,
+      null,
     );
   }
 
@@ -144,7 +144,7 @@ export class TodoListComponent
           break;
         }
         default: {
-          this.logger.warn(
+          Logging.warn(
             "[TodoList] No filter options available for prebuilt filter: " +
               prebuiltFilter.id,
           );

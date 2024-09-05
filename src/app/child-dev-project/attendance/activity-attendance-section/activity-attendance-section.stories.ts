@@ -16,8 +16,8 @@ import moment from "moment";
 import { AttendanceService } from "../attendance.service";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
-import { Child } from "../../children/model/child";
 import { importProvidersFrom } from "@angular/core";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
@@ -89,7 +89,9 @@ export default {
         },
         {
           provide: ChildrenService,
-          useValue: { getChild: () => of(Child.create("John Doe")) },
+          useValue: {
+            getChild: () => of(TestEntity.create({ name: "John Doe" })),
+          },
         },
       ],
     }),

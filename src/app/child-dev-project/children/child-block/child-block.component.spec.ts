@@ -2,9 +2,9 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildBlockComponent } from "./child-block.component";
 import { ChildrenService } from "../children.service";
-import { Child } from "../model/child";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { FileService } from "../../../features/file/file.service";
+import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 
 describe("ChildBlockComponent", () => {
   let component: ChildBlockComponent;
@@ -15,7 +15,7 @@ describe("ChildBlockComponent", () => {
     mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
       "getChild",
     ]);
-    mockChildrenService.getChild.and.resolveTo(new Child(""));
+    mockChildrenService.getChild.and.resolveTo(createEntityOfType("Child"));
 
     TestBed.configureTestingModule({
       imports: [ChildBlockComponent, FontAwesomeTestingModule],
@@ -29,7 +29,7 @@ describe("ChildBlockComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildBlockComponent);
     component = fixture.componentInstance;
-    component.entity = new Child("");
+    component.entity = createEntityOfType("Child");
     fixture.detectChanges();
   });
 

@@ -18,7 +18,7 @@ import {
 } from "./setup-wizard-config";
 import { MarkdownComponent } from "ngx-markdown";
 import { MatTooltip } from "@angular/material/tooltip";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 
 @Component({
   selector: "app-setup-wizard",
@@ -48,10 +48,7 @@ export class SetupWizardComponent implements OnInit {
 
   private configEntity: Config<SetupWizardConfig>;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private logger: LoggingService,
-  ) {}
+  constructor(private entityMapper: EntityMapperService) {}
 
   async ngOnInit() {
     await this.loadSetupConfig();
@@ -65,7 +62,7 @@ export class SetupWizardComponent implements OnInit {
       >(Config, CONFIG_SETUP_WIZARD_ID);
       this.steps = this.configEntity?.data.steps;
     } catch (e) {
-      this.logger.debug("no setup wizard config loaded", e);
+      Logging.debug("no setup wizard config loaded", e);
     }
   }
 

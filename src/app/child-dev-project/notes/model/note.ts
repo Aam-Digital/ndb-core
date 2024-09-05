@@ -30,18 +30,13 @@ import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
-import { User } from "../../../core/user/user";
-import { Child } from "../../children/model/child";
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
-import { School } from "../../schools/model/school";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
-  static toStringAttributes = ["subject"];
-  static label = $localize`:label for entity:Note`;
-  static labelPlural = $localize`:label (plural) for entity:Notes`;
+  static override toStringAttributes = ["subject"];
   static override hasPII = true;
 
   static create(
@@ -75,12 +70,12 @@ export class Note extends Entity {
     }
   }
 
+  // TODO: remove these special properties (children, schools) and use relatedEntities instead once the attendance system is generalized (#1364)
   /** IDs of Child entities linked with this note */
   @DatabaseField({
-    label: $localize`:Label for the children of a note:Children`,
     dataType: "entity",
     isArray: true,
-    additional: Child.ENTITY_TYPE,
+    additional: "Child",
     entityReferenceRole: "composite",
     editComponent: "EditAttendance",
     anonymize: "retain",
@@ -96,7 +91,6 @@ export class Note extends Entity {
   private childrenAttendance: EventAttendanceMap = new EventAttendanceMap();
 
   @DatabaseField({
-    label: $localize`:Label for the date of a note:Date`,
     dataType: "date-only",
     defaultValue: {
       mode: "dynamic",
@@ -106,21 +100,17 @@ export class Note extends Entity {
   })
   date: Date;
 
-  @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
+  @DatabaseField()
   subject: string;
 
-  @DatabaseField({
-    label: $localize`:Label for the actual notes of a note:Notes`,
-    editComponent: "EditLongText",
-  })
+  @DatabaseField({ dataType: "long-text" })
   text: string;
 
   /** IDs of users that authored this note */
   @DatabaseField({
-    label: $localize`:Label for the social worker(s) who created the note:SW`,
     dataType: "entity",
     isArray: true,
-    additional: User.ENTITY_TYPE,
+    additional: "User",
     defaultValue: {
       mode: "dynamic",
       value: PLACEHOLDERS.CURRENT_USER,
@@ -130,7 +120,6 @@ export class Note extends Entity {
   authors: string[] = [];
 
   @DatabaseField({
-    label: $localize`:Label for the category of a note:Category`,
     dataType: "configurable-enum",
     additional: INTERACTION_TYPE_CONFIG_ID,
     anonymize: "retain",
@@ -138,7 +127,6 @@ export class Note extends Entity {
   category: InteractionType;
 
   @DatabaseField({
-    label: $localize`Attachment`,
     dataType: "file",
   })
   attachment: string;
@@ -158,7 +146,6 @@ export class Note extends Entity {
    * This property saves ids including their entity type prefix.
    */
   @DatabaseField({
-    label: $localize`:label for the related Entities:Related Records`,
     dataType: "entity",
     isArray: true,
     // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
@@ -171,24 +158,22 @@ export class Note extends Entity {
    * related school ids (e.g. to infer participants for event roll calls)
    */
   @DatabaseField({
-    label: $localize`:label for the linked schools:Groups`,
     dataType: "entity",
     isArray: true,
-    additional: School.ENTITY_TYPE,
+    additional: "School",
     entityReferenceRole: "composite",
     anonymize: "retain",
   })
   schools: string[] = [];
 
   @DatabaseField({
-    label: $localize`:Status of a note:Status`,
     dataType: "configurable-enum",
     additional: "warning-levels",
     anonymize: "retain",
   })
   warningLevel: Ordering.EnumValue;
 
-  getWarningLevel(): WarningLevel {
+  override getWarningLevel(): WarningLevel {
     if (this.warningLevel) {
       return WarningLevel[this.warningLevel.id];
     } else {
@@ -196,7 +181,7 @@ export class Note extends Entity {
     }
   }
 
-  public getColor() {
+  public override getColor() {
     const actualLevel = this.getWarningLevel();
     if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
       return this.category?.color;
@@ -230,7 +215,7 @@ export class Note extends Entity {
    * adds a new child to this note
    * @param child The child or the id of the child to add to the notes
    */
-  addChild(child: Child | string) {
+  addChild(child: Entity | string) {
     const childId = typeof child === "string" ? child : child?.getId();
     if (!childId || this.children.includes(childId)) {
       return;
@@ -243,7 +228,7 @@ export class Note extends Entity {
    * adds a new school to this note
    * @param school The school or its id to be added to the note
    */
-  addSchool(school: School | string) {
+  addSchool(school: Entity | string) {
     const schoolId = typeof school === "string" ? school : school.getId();
     if (this.schools.includes(schoolId)) {
       return;
@@ -260,7 +245,7 @@ export class Note extends Entity {
    *
    * @param child: The child or the id of the child to look for
    */
-  getAttendance(child: string | Child): EventAttendance {
+  getAttendance(child: string | Entity): EventAttendance {
     const childId = typeof child === "string" ? child : child.getId();
     if (!this.children.includes(childId)) {
       return undefined;
@@ -320,7 +305,7 @@ export class Note extends Entity {
    * (such as the date, author, e.t.c.) as well as copying the
    * child-array
    */
-  copy(): this {
+  override copy(): this {
     const note = super.copy();
     note.children = [...this.children];
     note.schools = [...this.schools];

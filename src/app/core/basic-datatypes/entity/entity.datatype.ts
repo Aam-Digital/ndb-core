@@ -35,9 +35,9 @@ export class EntityDatatype extends StringDatatype {
   static override dataType = "entity";
   static override label: string = $localize`:datatype-label:link to another record`;
 
-  editComponent = "EditEntity";
-  viewComponent = "DisplayEntity";
-  importConfigComponent = "EntityImportConfig";
+  override editComponent = "EditEntity";
+  override viewComponent = "DisplayEntity";
+  override importConfigComponent = "EntityImportConfig";
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -46,7 +46,7 @@ export class EntityDatatype extends StringDatatype {
     super();
   }
 
-  importMapFunction(
+  override importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
     additional?: any,
@@ -59,7 +59,7 @@ export class EntityDatatype extends StringDatatype {
       .then((res) => res.find((e) => e[additional] === val)?.getId());
   }
 
-  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
+  override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
     return col.additional ? undefined : "?";
   }
 
@@ -69,7 +69,7 @@ export class EntityDatatype extends StringDatatype {
    * @param schemaField
    * @param parent
    */
-  async anonymize(
+  override async anonymize(
     value,
     schemaField: EntitySchemaField,
     parent,

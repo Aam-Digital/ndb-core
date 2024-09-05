@@ -9,12 +9,13 @@ import { MapComponent } from "./map.component";
 import { ConfigService } from "../../../core/config/config.service";
 import * as L from "leaflet";
 import { Coordinates } from "../coordinates";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EMPTY, of, Subject } from "rxjs";
+import { GeoLocation } from "../location.datatype";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("MapComponent", () => {
   let component: MapComponent;
@@ -22,6 +23,11 @@ describe("MapComponent", () => {
   let mockDialog: jasmine.SpyObj<MatDialog>;
   const config: MapConfig = { start: [52, 13] };
   let map: L.Map;
+
+  const TEST_LOCATION: GeoLocation = {
+    locationString: "test address",
+    geoLookup: { lat: 1, lon: 1, display_name: "test address" },
+  };
 
   beforeEach(async () => {
     mockDialog = jasmine.createSpyObj(["open"]);
@@ -76,9 +82,9 @@ describe("MapComponent", () => {
   });
 
   it("should create markers for entities and emit entity when marker is clicked", (done) => {
-    Child.schema.set("address", { dataType: "location" });
-    const child = new Child();
-    child["address"] = { lat: 1, lon: 1 };
+    TestEntity.schema.set("address", { dataType: "location" });
+    const child = new TestEntity();
+    child["address"] = TEST_LOCATION;
     component.entities = [child];
 
     const marker = getEntityMarkers()[0];
@@ -92,7 +98,7 @@ describe("MapComponent", () => {
     });
 
     marker.fireEvent("click");
-    Child.schema.delete("address");
+    TestEntity.schema.delete("address");
   });
 
   it("should open a popup with the same marker data", async () => {
@@ -108,21 +114,23 @@ describe("MapComponent", () => {
 
   it("should open a popup that allows to change the properties displayed in the map", () => {
     const emitSpy = spyOn(component.displayedPropertiesChange, "emit");
-    Child.schema.set("address", { dataType: "location" });
-    Child.schema.set("otherAddress", { dataType: "location" });
-    const child = new Child();
-    child["address"] = { lat: 1, lon: 1 };
-    child["otherAddress"] = { lat: 1, lon: 2 };
+    TestEntity.schema.set("address", { dataType: "location" });
+    TestEntity.schema.set("otherAddress", { dataType: "location" });
+    const child = new TestEntity();
+    child["address"] = TEST_LOCATION;
+    child["otherAddress"] = {
+      geoLookup: { lon: 99, lat: 99, display_name: "other address" },
+    } as GeoLocation;
 
     component.entities = [child];
 
     // all location properties are selected on default
     expect(emitSpy).toHaveBeenCalledWith({
-      [Child.ENTITY_TYPE]: ["address", "otherAddress"],
+      [TestEntity.ENTITY_TYPE]: ["address", "otherAddress"],
     });
     expect(getEntityMarkers()).toHaveSize(2);
 
-    const dialogResult = { [Child.ENTITY_TYPE]: ["address"] };
+    const dialogResult = { [TestEntity.ENTITY_TYPE]: ["address"] };
     mockDialog.open.and.returnValue({
       afterClosed: () => of(dialogResult),
     } as any);
@@ -132,27 +140,27 @@ describe("MapComponent", () => {
     expect(emitSpy).toHaveBeenCalledWith(dialogResult);
     expect(getEntityMarkers()).toHaveSize(1);
 
-    Child.schema.delete("address");
-    Child.schema.delete("otherAddress");
+    TestEntity.schema.delete("address");
+    TestEntity.schema.delete("otherAddress");
   });
 
   it("should only show the button to select properties if entities have been set", () => {
     component.displayedProperties = {};
     expect(component.showPropertySelection).toBeFalse();
 
-    component.displayedProperties = { [Child.ENTITY_TYPE]: ["address"] };
+    component.displayedProperties = { [TestEntity.ENTITY_TYPE]: ["address"] };
     expect(component.showPropertySelection).toBeTrue();
 
     component.displayedProperties = {};
     component.showPropertySelection = false;
-    component.entities = [new Child()];
+    component.entities = [new TestEntity()];
 
     expect(component.showPropertySelection).toBeTrue();
   });
 
   it("should trigger an update for the markers, once the map popup has been closed", async () => {
     component.displayedProperties = {
-      [Child.ENTITY_TYPE]: ["address", "otherAddress"],
+      [TestEntity.ENTITY_TYPE]: ["address", "otherAddress"],
     };
     const dialogClosed = new Subject<void>();
     mockDialog.open.and.returnValue({ afterClosed: () => dialogClosed } as any);
@@ -162,11 +170,11 @@ describe("MapComponent", () => {
     const popupData = mockDialog.open.calls.mostRecent().args[1]
       .data as MapPopupConfig;
     const properties = popupData.displayedProperties;
-    properties[Child.ENTITY_TYPE] = ["otherAddress"];
+    properties[TestEntity.ENTITY_TYPE] = ["otherAddress"];
     dialogClosed.next();
 
     expect(emitSpy).toHaveBeenCalledWith({
-      [Child.ENTITY_TYPE]: ["otherAddress"],
+      [TestEntity.ENTITY_TYPE]: ["otherAddress"],
     });
   });
 

@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  Optional,
   Output,
   SimpleChanges,
 } from "@angular/core";
@@ -55,6 +56,10 @@ import { EntityCreateButtonComponent } from "../../common-components/entity-crea
 import { AbilityModule } from "@casl/angular";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
+import {
+  EntitySpecialLoaderService,
+  LoaderMethod,
+} from "../../entity/entity-special-loader/entity-special-loader.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -111,6 +116,11 @@ export class EntityListComponent<T extends Entity>
   @Input() entityConstructor: EntityConstructor<T>;
   @Input() defaultSort: Sort;
   @Input() exportConfig: ExportColumnConfig[];
+
+  /**
+   * The special service or method to load data via an index or other special method.
+   */
+  @Input() loaderMethod: LoaderMethod;
 
   @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
 
@@ -171,6 +181,7 @@ export class EntityListComponent<T extends Entity>
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
     private entityActionsService: EntityActionsService,
+    @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -225,7 +236,11 @@ export class EntityListComponent<T extends Entity>
    * Template method that can be overwritten to change the loading logic.
    * @protected
    */
-  protected async getEntities(): Promise<T[]> {
+  protected getEntities(): Promise<T[]> {
+    if (this.loaderMethod && this.entitySpecialLoader) {
+      return this.entitySpecialLoader.loadData(this.loaderMethod);
+    }
+
     return this.entityMapperService.loadType(this.entityConstructor);
   }
 

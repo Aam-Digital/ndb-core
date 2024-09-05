@@ -1,24 +1,24 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { DisplayEntityComponent } from "./display-entity.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
-const child1 = new Child();
+const child1 = new TestEntity();
 child1.name = "Test Name";
-child1.projectNumber = "1";
-const child2 = new Child();
+child1.other = "1";
+const child2 = new TestEntity();
 child2.name = "First Name";
-child2.projectNumber = "2";
-const child3 = new Child();
+child2.other = "2";
+const child3 = new TestEntity();
 child3.name = "Second Name";
-child3.projectNumber = "3";
-const child4 = new Child();
+child3.other = "3";
+const child4 = new TestEntity();
 child4.name = "Third Name";
-child4.projectNumber = "4";
-const child5 = new Child();
+child4.other = "4";
+const child5 = new TestEntity();
 child5.name = "Fifth Name";
-child5.projectNumber = "5";
+child5.other = "5";
 
 export default {
   title: "Core/Entities/Properties/entity/DisplayEntity",

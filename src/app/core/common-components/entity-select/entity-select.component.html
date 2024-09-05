@@ -1,44 +1,45 @@
 <mat-form-field>
   <mat-label>{{ label }}</mat-label>
+  <div class="autocomplete-container">
+    <app-basic-autocomplete
+      #autocomplete
+      [formControl]="form"
+      [valueMapper]="entityToId"
+      [optionToString]="accessor"
+      (autocompleteFilterChange)="recalculateMatchingInactive($event)"
+      [multi]="multi"
+      [display]="showEntities ? 'chips' : 'none'"
+      [options]="availableOptions | async"
+      [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
+      [createOption]="createNewEntity"
+    >
+      <ng-template let-item>
+        <app-entity-block
+          style="margin: auto"
+          [entityToDisplay]="item"
+          [linkDisabled]="form.enabled"
+        ></app-entity-block>
+      </ng-template>
 
-  <app-basic-autocomplete
-    #autocomplete
-    [formControl]="form"
-    [valueMapper]="entityToId"
-    [optionToString]="accessor"
-    (autocompleteFilterChange)="recalculateMatchingInactive($event)"
-    [multi]="multi"
-    [display]="showEntities ? 'chips' : 'none'"
-    [options]="availableOptions | async"
-    [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
-    [createOption]="createNewEntity"
-  >
-    <ng-template let-item>
-      <app-entity-block
-        style="margin: auto"
-        [entityToDisplay]="item"
-        [linkDisabled]="form.enabled"
-      ></app-entity-block>
-    </ng-template>
-
-    <ng-container autocompleteFooter *ngIf="currentlyMatchingInactive > 0">
-      <mat-slide-toggle
-        [checked]="includeInactive"
-        (toggleChange)="toggleIncludeInactive()"
-        i18n="Label for checkbox|e.g. include inactive children"
-        >Also show {{ currentlyMatchingInactive }} inactive
-      </mat-slide-toggle>
-    </ng-container>
-  </app-basic-autocomplete>
-
-  <fa-icon
-    *ngIf="form.enabled"
-    icon="caret-down"
-    class="form-field-icon-suffix"
-    (click)="autocomplete.showAutocomplete()"
-    matIconSuffix
-  ></fa-icon>
-
+      <ng-container autocompleteFooter *ngIf="currentlyMatchingInactive > 0">
+        <mat-slide-toggle
+          [checked]="includeInactive"
+          (toggleChange)="toggleIncludeInactive()"
+          i18n="Label for checkbox|e.g. include inactive children"
+          >Also show {{ currentlyMatchingInactive }} inactive
+        </mat-slide-toggle>
+      </ng-container>
+    </app-basic-autocomplete>
+    <div class="icon-container">
+      <fa-icon
+        *ngIf="form.enabled"
+        icon="caret-down"
+        class="form-field-icon-suffix"
+        (click)="autocomplete.showAutocomplete()"
+        matIconSuffix
+      ></fa-icon>
+    </div>
+  </div>
   <mat-error *ngIf="form.errors">
     <app-error-hint [form]="form"></app-error-hint>
   </mat-error>

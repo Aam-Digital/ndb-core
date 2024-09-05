@@ -15,7 +15,6 @@ import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/con
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { FileModule } from "../../features/file/file.module";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { LoggingService } from "../logging/logging.service";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 
@@ -156,7 +155,6 @@ describe("SiteSettingsService", () => {
       TestBed.inject(EntitySchemaService),
       TestBed.inject(ConfigurableEnumService),
       TestBed.inject(EntityMapperService),
-      TestBed.inject(LoggingService),
     );
 
     expect(titleSpy).toHaveBeenCalledWith(settings.siteName);

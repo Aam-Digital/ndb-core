@@ -16,7 +16,7 @@ export async function expectEntitiesToBeInDatabase(
 ) {
   const entityMapperService = TestBed.inject(EntityMapperService);
   const actualData = await entityMapperService.loadType(
-    expectedEntities[0].getConstructor(),
+    expectedEntities[0].getType(),
   );
 
   expectEntitiesToMatch(actualData, expectedEntities, ignoreId, onlyExpected);

@@ -11,13 +11,13 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import {
   KeycloakAuthService,
-  KeycloakUser,
+  KeycloakUserDto,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { BehaviorSubject, of, throwError } from "rxjs";
-import { User } from "../user";
-import { AppSettings } from "../../app-settings";
 import { SessionSubject } from "../../session/auth/session-info";
+import { environment } from "../../../../environments/environment";
+import { Entity } from "../../entity/model/entity";
 
 describe("UserSecurityComponent", () => {
   let component: UserSecurityComponent;
@@ -33,8 +33,8 @@ describe("UserSecurityComponent", () => {
     name: "Not Assigned Role",
     description: "this role is not assigned to the user",
   };
-  const user = Object.assign(new User(), { username: "test-user" });
-  let keycloakUser: KeycloakUser;
+  const user = Object.assign(new Entity(), { username: "test-user" });
+  let keycloakUser: KeycloakUserDto;
 
   beforeEach(async () => {
     keycloakUser = {
@@ -132,8 +132,11 @@ describe("UserSecurityComponent", () => {
           new HttpErrorResponse({ error: { message: "user unauthorized" } }),
       ),
     );
-
-    component.form.patchValue({ username: "test-name", email: "my@email.com" });
+    component.form.patchValue({
+      username: "test-name",
+      email: "my@email.com",
+      roles: [{ id: "test_role", name: "test role", description: "x" }],
+    });
     component.createAccount();
     tick();
 
@@ -163,7 +166,7 @@ describe("UserSecurityComponent", () => {
     tick();
 
     expect(mockHttp.post).toHaveBeenCalledWith(
-      `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}/clear_local`,
+      `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}/clear_local`,
       undefined,
     );
     flush();

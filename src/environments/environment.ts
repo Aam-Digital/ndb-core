@@ -19,6 +19,7 @@ import { SessionType } from "../app/core/session/session-type";
 
 /**
  * Central environment that allows to configure differences between a "dev" and a "prod" build.
+ * For deployments, the `assets/config.json` can be used to override these settings as well.
  *
  * The file contents for the current environment will overwrite these during build.
  * The build system defaults to the dev environment which uses `environment.ts`, but if you do
@@ -30,9 +31,15 @@ export const environment = {
   appVersion: "0.0.0", // replaced automatically during docker build
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
-  /** The following settings can be overridden by the `config.json` if present, see {@link AppSettings} */
+
   demo_mode: true,
   session_type: SessionType.local,
   account_url: "https://accounts.aam-digital.net",
   email: undefined,
+
+  /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
+  DB_PROXY_PREFIX: "/db",
+
+  /** Name of the database that is used */
+  DB_NAME: "app",
 };

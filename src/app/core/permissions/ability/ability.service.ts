@@ -4,11 +4,13 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { merge } from "rxjs";
+import { map } from "rxjs/operators";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -18,15 +20,18 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
  */
 @Injectable()
 export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
+  private currentRules: DatabaseRules;
+
   constructor(
     private ability: EntityAbility,
     private sessionInfo: SessionSubject,
     private currentUser: CurrentUserSubject,
     private permissionEnforcer: PermissionEnforcerService,
     entityMapper: EntityMapperService,
-    logger: LoggingService,
   ) {
-    super(Config, Config.PERMISSION_KEY, entityMapper, logger);
+    super(Config, Config.PERMISSION_KEY, entityMapper);
+
+    this.entityUpdated.subscribe((config) => (this.currentRules = config.data));
   }
 
   async initializeRules() {
@@ -38,9 +43,11 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       this.ability.update([{ action: "manage", subject: "all" }]);
     }
 
-    this.entityUpdated.subscribe((config) =>
-      this.updateAbilityWithUserRules(config.data),
-    );
+    merge(
+      this.entityUpdated.pipe(map((config) => config.data)),
+      this.sessionInfo.pipe(map(() => this.currentRules)),
+      this.currentUser.pipe(map(() => this.currentRules)),
+    ).subscribe((rules) => this.updateAbilityWithUserRules(rules));
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
@@ -52,7 +59,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     if (userRules.length === 0) {
       // No rules or only default rules defined
       const user = this.sessionInfo.value;
-      this.logger.warn(
+      Logging.warn(
         `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
     }
