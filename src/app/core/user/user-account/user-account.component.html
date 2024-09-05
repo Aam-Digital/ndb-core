@@ -30,7 +30,7 @@
     <h2 i18n>Your profile:</h2>
     @if (currentUser | async) {
       <app-entity-block
-        [entityToDisplay]="currentUser | async"
+        [entity]="currentUser | async"
         class="entity-box"
       ></app-entity-block>
     } @else if ((sessionInfo | async)?.entityId) {

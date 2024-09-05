@@ -24,6 +24,34 @@ describe("ConfigService", () => {
     service = TestBed.inject(ConfigService);
   }));
 
+  /**
+   * Check that config is migrated as expected (and doesn't destroy new config)
+   * @param oldFormat Config.data object to test
+   * @param expectedNewFormat Config.data object expected after migration
+   */
+  function testConfigMigration(oldFormat: Object, expectedNewFormat: Object) {
+    const config = new Config();
+
+    config.data = JSON.parse(JSON.stringify(oldFormat));
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    expectConfigToMatch(expectedNewFormat);
+
+    config.data = JSON.parse(JSON.stringify(expectedNewFormat));
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    expectConfigToMatch(expectedNewFormat);
+
+    function expectConfigToMatch(expectedConfigData: Object) {
+      for (const [configKey, configNewValue] of Object.entries(
+        expectedConfigData,
+      )) {
+        const actualFromOld = service.getConfig(configKey);
+        expect(actualFromOld).toEqual(configNewValue);
+      }
+    }
+  }
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
@@ -524,8 +552,7 @@ describe("ConfigService", () => {
     expect(actualFromNew).toEqual(newFormat);
   }));
 
-  it("should migrate entity-array dataType", fakeAsync(() => {
-    const config = new Config();
+  it("should migrate ChildrenList", fakeAsync(() => {
     const oldFormat = {
       component: "ChildrenList",
       config: {},
@@ -537,18 +564,8 @@ describe("ConfigService", () => {
         loaderMethod: "ChildrenService",
       },
     };
-    config.data = { "view:X": oldFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
 
-    const actualFromOld = service.getConfig("view:X");
-    expect(actualFromOld).toEqual(newFormat);
-
-    config.data = { "view:X": newFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    const actualFromNew = service.getConfig("view:X");
-    expect(actualFromNew).toEqual(newFormat);
+    testConfigMigration({ "view:X": oldFormat }, { "view:X": newFormat });
   }));
 
   it("should migrate to new photo dataType", fakeAsync(() => {
@@ -634,5 +651,26 @@ describe("ConfigService", () => {
     tick();
     const actualFromNew = service.getConfig<EntityConfig>("entity:X");
     expect(actualFromNew).toEqual(newFormat);
+  }));
+
+  it("should migrate ChildBlock config", fakeAsync(() => {
+    testConfigMigration(
+      {
+        "entity:ChildX": {
+          label: "ChildX",
+          blockComponent: "ChildBlock",
+        },
+      },
+      {
+        "entity:ChildX": {
+          label: "ChildX",
+          toBlockDetailsAttributes: {
+            title: "name",
+            photo: "photo",
+            fields: ["phone", "schoolId", "schoolClass"],
+          },
+        },
+      },
+    );
   }));
 });

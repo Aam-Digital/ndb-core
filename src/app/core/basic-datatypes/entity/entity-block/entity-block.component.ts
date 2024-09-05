@@ -2,10 +2,15 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Router } from "@angular/router";
-import { NgClass, NgIf } from "@angular/common";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { Logging } from "../../../logging/logging.service";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { TemplateTooltipDirective } from "../../../common-components/template-tooltip/template-tooltip.directive";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { DisplayImgComponent } from "../../../../features/file/display-img/display-img.component";
+import { EntityBlockConfig } from "./entity-block-config";
+import { EntityFieldViewComponent } from "../../../common-components/entity-field-view/entity-field-view.component";
 
 /**
  * Display an inline block representing an entity.
@@ -14,11 +19,21 @@ import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-ic
   selector: "app-entity-block",
   templateUrl: "./entity-block.component.html",
   styleUrls: ["./entity-block.component.scss"],
-  imports: [NgClass, NgIf, DynamicComponentDirective, FaDynamicIconComponent],
+  imports: [
+    NgClass,
+    NgIf,
+    DynamicComponentDirective,
+    FaDynamicIconComponent,
+    TemplateTooltipDirective,
+    FaIconComponent,
+    NgForOf,
+    DisplayImgComponent,
+    EntityFieldViewComponent,
+  ],
   standalone: true,
 })
 export class EntityBlockComponent implements OnInit {
-  @Input() entityToDisplay: Entity;
+  @Input() entity: Entity;
   @Input() linkDisabled = false;
 
   /**
@@ -27,7 +42,7 @@ export class EntityBlockComponent implements OnInit {
    */
   @Input() entityId: string;
 
-  entityBlockComponent: string;
+  entityBlockConfig: EntityBlockConfig;
   entityIcon: string;
 
   constructor(
@@ -36,7 +51,7 @@ export class EntityBlockComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    if (!this.entityToDisplay) {
+    if (!this.entity) {
       await this.loadEntity();
     }
 
@@ -49,7 +64,7 @@ export class EntityBlockComponent implements OnInit {
     }
 
     try {
-      this.entityToDisplay = await this.entityMapper.load(
+      this.entity = await this.entityMapper.load(
         Entity.extractTypeFromId(this.entityId),
         this.entityId,
       );
@@ -64,13 +79,13 @@ export class EntityBlockComponent implements OnInit {
   }
 
   private initDisplayDetails() {
-    if (!this.entityToDisplay) {
+    if (!this.entity) {
       return;
     }
 
-    const entityType = this.entityToDisplay.getConstructor();
+    const entityType = this.entity.getConstructor();
 
-    this.entityBlockComponent = entityType.blockComponent;
+    this.entityBlockConfig = entityType.toBlockDetailsAttributes;
     this.entityIcon = entityType.icon;
   }
 
@@ -80,8 +95,8 @@ export class EntityBlockComponent implements OnInit {
     }
 
     this.router.navigate([
-      this.entityToDisplay.getConstructor().route,
-      this.entityToDisplay.getId(true),
+      this.entity.getConstructor().route,
+      this.entity.getId(true),
     ]);
   }
 }
