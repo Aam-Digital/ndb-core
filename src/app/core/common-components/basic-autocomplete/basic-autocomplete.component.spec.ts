@@ -163,13 +163,13 @@ describe("BasicAutocompleteComponent", () => {
 
     component.showAutocomplete();
     expect(component.autocompleteForm).toHaveValue("");
-    expect(component.focused).toBeTrue();
+    expect(component.isInSearchMode()).toBeTrue();
 
     component.onFocusOut({} as any);
     tick(200);
 
     expect(component.displayText).toBe("some, values");
-    expect(component.focused).toBeFalse();
+    expect(component.isInSearchMode()).toBeFalse();
   }));
 
   it("should update the error state if the form is invalid", () => {
