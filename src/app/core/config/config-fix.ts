@@ -956,9 +956,9 @@ export const defaultJsonConfig = {
     "label": $localize`:Label for child:Child`,
     "labelPlural": $localize`:Plural label for child:Children`,
     "toStringAttributes": ["name"],
+    "toBlockDetailsAttributes": { "title": "name", "photo": "photo", "fields": ["phone", "schoolId", "schoolClass"] },
     "icon": "child",
     "color": "#1565C0",
-    "blockComponent": "ChildBlock",
     "hasPII": true,
 
     "attributes": {

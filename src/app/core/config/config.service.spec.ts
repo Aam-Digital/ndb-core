@@ -525,7 +525,6 @@ describe("ConfigService", () => {
   }));
 
   it("should migrate entity-array dataType", fakeAsync(() => {
-    const config = new Config();
     const oldFormat = {
       component: "ChildrenList",
       config: {},
@@ -537,17 +536,56 @@ describe("ConfigService", () => {
         loaderMethod: "ChildrenService",
       },
     };
-    config.data = { "view:X": oldFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
 
-    const actualFromOld = service.getConfig("view:X");
-    expect(actualFromOld).toEqual(newFormat);
-
-    config.data = { "view:X": newFormat };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    const actualFromNew = service.getConfig("view:X");
-    expect(actualFromNew).toEqual(newFormat);
+    testConfigMigration({ "view:X": oldFormat }, { "view:X": newFormat });
   }));
+
+  it("should migrate ChildBlock config", fakeAsync(() => {
+    testConfigMigration(
+      {
+        "entity:ChildX": {
+          label: "ChildX",
+          blockComponent: "ChildBlock",
+        },
+      },
+      {
+        "entity:ChildX": {
+          label: "ChildX",
+          toBlockDetailsAttributes: {
+            title: "name",
+            photo: "photo",
+            fields: ["phone", "schoolId", "schoolClass"],
+          },
+        },
+      },
+    );
+  }));
+
+  /**
+   * Check that config is migrated as expected (and doesn't destroy new config)
+   * @param oldFormat Config.data object to test
+   * @param expectedNewFormat Config.data object expected after migration
+   */
+  function testConfigMigration(oldFormat: Object, expectedNewFormat: Object) {
+    const config = new Config();
+
+    config.data = oldFormat;
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    expectConfigToMatch(expectedNewFormat);
+
+    config.data = expectedNewFormat;
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    expectConfigToMatch(expectedNewFormat);
+
+    function expectConfigToMatch(expectedConfigData: Object) {
+      for (const [configKey, configNewValue] of Object.entries(
+        expectedConfigData,
+      )) {
+        const actualFromOld = service.getConfig(configKey);
+        expect(actualFromOld).toEqual(configNewValue);
+      }
+    }
+  }
 });

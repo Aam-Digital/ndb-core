@@ -2,29 +2,45 @@
   class="block-height truncate-text"
   [ngClass]="{
     clickable: !linkDisabled,
-    '.inactive': !entityToDisplay?.isActive,
+    '.inactive': !entity?.isActive,
   }"
   (click)="showDetailsPage()"
+  [appTemplateTooltip]="tooltip"
+  [tooltipDisabled]="!entityBlockConfig"
 >
-  @if (entityBlockComponent) {
-    <ng-container
-      [appDynamicComponent]="{
-        component: entityBlockComponent,
-        config: {
-          entity: entityToDisplay,
-          linkDisabled: linkDisabled,
-          tooltipDisabled: true,
-        },
-      }"
-    >
-    </ng-container>
-  } @else {
-    <app-fa-dynamic-icon
-      *ngIf="entityIcon"
-      [icon]="entityIcon"
-      class="margin-right-small"
-    ></app-fa-dynamic-icon>
+  <app-fa-dynamic-icon
+    *ngIf="entityIcon"
+    [icon]="entityIcon"
+    class="margin-right-small"
+  ></app-fa-dynamic-icon>
 
-    {{ entityToDisplay?.toString() }}
-  }
+  {{ entity?.toString() }}
 </span>
+
+<!-- Tooltip on Hover -->
+<ng-template #tooltip>
+  <div class="tooltip-container">
+    <app-display-img
+      class="tooltip-photo"
+      [entity]="entity"
+      [imgProperty]="entityBlockConfig?.photo"
+    ></app-display-img>
+
+    <div>
+      <!-- Font-weight is applied as style to override the default -->
+      <h3 style="font-weight: bold">
+        <app-entity-field-view
+          [entity]="entity"
+          [field]="entityBlockConfig?.title"
+        ></app-entity-field-view>
+      </h3>
+
+      @for (field of entityBlockConfig?.fields; track field) {
+        <app-entity-field-view
+          [entity]="entity"
+          [field]="field"
+        ></app-entity-field-view>
+      }
+    </div>
+  </div>
+</ng-template>

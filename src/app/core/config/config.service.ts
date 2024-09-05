@@ -69,6 +69,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntitySchemaDefaultValue,
       migrateChildrenListConfig,
       migrateHistoricalDataComponent,
+      migrateEntityBlock,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -321,6 +322,24 @@ const migrateHistoricalDataComponent: ConfigMigration = (key, configPart) => {
   }
   configPart["config"]["entityType"] = "HistoricalEntityData";
   configPart["config"]["loaderMethod"] = LoaderMethod.HistoricalDataService;
+
+  return configPart;
+};
+
+/**
+ * ChildBlockComponent was removed and entity types can instead define a configurable tooltip setting.
+ */
+const migrateEntityBlock: ConfigMigration = (key, configPart) => {
+  if (configPart?.["blockComponent"] === "ChildBlock") {
+    delete configPart["blockComponent"];
+    configPart["toBlockDetailsAttributes"] = {
+      title: "name",
+      photo: "photo",
+      fields: ["phone", "schoolId", "schoolClass"],
+    };
+
+    return configPart;
+  }
 
   return configPart;
 };

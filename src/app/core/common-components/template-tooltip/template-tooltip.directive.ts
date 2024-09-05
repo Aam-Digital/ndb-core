@@ -47,7 +47,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    * The amount of time in milliseconds that the user has to hover over the element before the tooltip
    * is shown
    */
-  @Input() delayShow: number = 1000;
+  @Input() delayShow: number = 150;
 
   /**
    * The amount of time in milliseconds that the user's mouse has to leave the tooltip before it will

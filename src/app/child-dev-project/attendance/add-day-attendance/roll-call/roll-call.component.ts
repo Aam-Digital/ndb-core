@@ -23,7 +23,6 @@ import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
 import { RollCallTabComponent } from "./roll-call-tab/roll-call-tab.component";
 import {
   HAMMER_GESTURE_CONFIG,
@@ -34,6 +33,7 @@ import Hammer from "hammerjs";
 import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConfirmationDialogService } from "../../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 
 // Only allow horizontal swiping
 @Injectable()
@@ -65,7 +65,7 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     MatProgressBarModule,
     MatButtonModule,
     FontAwesomeModule,
-    ChildBlockComponent,
+    EntityBlockComponent,
     NgForOf,
     NgClass,
     RollCallTabComponent,

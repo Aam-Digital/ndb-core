@@ -16,7 +16,7 @@
       (onSelectionChange)="$event.source.selected ? selectEntity(entity) : null"
     >
       <app-entity-block
-        [entityToDisplay]="entity"
+        [entity]="entity"
         [linkDisabled]="true"
       ></app-entity-block>
     </mat-option>
