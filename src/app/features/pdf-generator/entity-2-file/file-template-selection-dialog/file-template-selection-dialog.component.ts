@@ -15,7 +15,7 @@ import { EntitySelectComponent } from "../../../../core/common-components/entity
 import { FormControl } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { DisableEntityOperationDirective } from "../../../../core/permissions/permission-directive/disable-entity-operation.directive";
-import { delay, finalize } from "rxjs";
+import { finalize } from "rxjs";
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatProgressBar } from "@angular/material/progress-bar";
 
@@ -66,14 +66,11 @@ export class FileTemplateSelectionDialogComponent {
     this.loadingRequestedFile = true;
     this.pdfGeneratorApi
       .generatePdfFromTemplate(templateId, this.entity)
-      .pipe(
-        delay(1000),
-        finalize(() => (this.loadingRequestedFile = false)),
-      )
+      .pipe(finalize(() => (this.loadingRequestedFile = false)))
       .subscribe((file) => {
         this.downloadService.triggerDownload(
           file,
-          "raw",
+          "pdf",
           this.entity.toString(),
         );
         this.dialogRef.close(true);

@@ -8,7 +8,7 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
-export type FileDownloadFormat = "csv" | "json" | "raw";
+export type FileDownloadFormat = "csv" | "json" | "pdf";
 
 /**
  * This service allows to start a download process from the browser.
@@ -71,7 +71,7 @@ export class DownloadService {
       case "csv":
         result = await this.createCsv(data);
         return new Blob([result], { type: "text/csv" });
-      case "raw":
+      case "pdf":
         return new Blob([data]);
       default:
         Logging.warn(`Not supported format: ${format}`);
