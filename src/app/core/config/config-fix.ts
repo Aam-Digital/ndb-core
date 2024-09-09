@@ -7,6 +7,7 @@ import { INTERACTION_TYPE_CONFIG_ID } from "../../child-dev-project/notes/model/
 import { EventAttendanceMap } from "../../child-dev-project/attendance/model/event-attendance";
 import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { EntityConfig } from "../entity/entity-config";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -956,9 +957,9 @@ export const defaultJsonConfig = {
     "label": $localize`:Label for child:Child`,
     "labelPlural": $localize`:Plural label for child:Children`,
     "toStringAttributes": ["name"],
+    "toBlockDetailsAttributes": { "title": "name", "image": "photo", "fields": ["phone", "schoolId", "schoolClass"] },
     "icon": "child",
     "color": "#1565C0",
-    "blockComponent": "ChildBlock",
     "hasPII": true,
 
     "attributes": {
@@ -1051,7 +1052,7 @@ export const defaultJsonConfig = {
         "label": $localize`:Label for a child attribute:Birth certificate`
       }
     },
-  },
+  } as EntityConfig,
   "entity:School": {
     "toStringAttributes": ["name"],
     "icon": "university",
