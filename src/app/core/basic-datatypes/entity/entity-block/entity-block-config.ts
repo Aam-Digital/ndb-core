@@ -10,7 +10,7 @@ export interface EntityBlockConfig {
   /**
    * Optional photo to display in the tooltip.
    */
-  photo?: string;
+  image?: string;
 
   /**
    * Other fields to be displayed.

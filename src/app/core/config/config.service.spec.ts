@@ -24,6 +24,34 @@ describe("ConfigService", () => {
     service = TestBed.inject(ConfigService);
   }));
 
+  /**
+   * Check that config is migrated as expected (and doesn't destroy new config)
+   * @param oldFormat Config.data object to test
+   * @param expectedNewFormat Config.data object expected after migration
+   */
+  function testConfigMigration(oldFormat: Object, expectedNewFormat: Object) {
+    const config = new Config();
+
+    config.data = JSON.parse(JSON.stringify(oldFormat));
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    expectConfigToMatch(expectedNewFormat);
+
+    config.data = JSON.parse(JSON.stringify(expectedNewFormat));
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    expectConfigToMatch(expectedNewFormat);
+
+    function expectConfigToMatch(expectedConfigData: Object) {
+      for (const [configKey, configNewValue] of Object.entries(
+        expectedConfigData,
+      )) {
+        const actualFromOld = service.getConfig(configKey);
+        expect(actualFromOld).toEqual(configNewValue);
+      }
+    }
+  }
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
@@ -524,7 +552,7 @@ describe("ConfigService", () => {
     expect(actualFromNew).toEqual(newFormat);
   }));
 
-  it("should migrate entity-array dataType", fakeAsync(() => {
+  it("should migrate ChildrenList", fakeAsync(() => {
     const oldFormat = {
       component: "ChildrenList",
       config: {},
@@ -538,6 +566,91 @@ describe("ConfigService", () => {
     };
 
     testConfigMigration({ "view:X": oldFormat }, { "view:X": newFormat });
+  }));
+
+  it("should migrate to new photo dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      attributes: {
+        myPhoto: {
+          dataType: "file",
+          editComponent: "EditPhoto",
+          label: "My Photo",
+        },
+        simpleFile: {
+          dataType: "file",
+          label: "Simple File attachment",
+        },
+      },
+    };
+
+    const newFormat: EntityConfig = {
+      attributes: {
+        myPhoto: {
+          dataType: "photo",
+          label: "My Photo",
+        },
+        simpleFile: {
+          dataType: "file",
+          label: "Simple File attachment",
+        },
+      },
+    };
+
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
+
+  it("should migrate to Percentage dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      attributes: {
+        myPercentage: {
+          dataType: "number",
+          viewComponent: "DisplayPercentage",
+          editComponent: "EditNumber",
+          label: "My Percentage",
+        },
+        simpleNumber: {
+          dataType: "number",
+          label: "Simple Number",
+        },
+      },
+    };
+
+    const newFormat: EntityConfig = {
+      attributes: {
+        myPercentage: {
+          dataType: "percentage",
+          label: "My Percentage",
+        },
+        simpleNumber: {
+          dataType: "number",
+          label: "Simple Number",
+        },
+      },
+    };
+
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
   }));
 
   it("should migrate ChildBlock config", fakeAsync(() => {
@@ -560,32 +673,4 @@ describe("ConfigService", () => {
       },
     );
   }));
-
-  /**
-   * Check that config is migrated as expected (and doesn't destroy new config)
-   * @param oldFormat Config.data object to test
-   * @param expectedNewFormat Config.data object expected after migration
-   */
-  function testConfigMigration(oldFormat: Object, expectedNewFormat: Object) {
-    const config = new Config();
-
-    config.data = oldFormat;
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    expectConfigToMatch(expectedNewFormat);
-
-    config.data = expectedNewFormat;
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-    expectConfigToMatch(expectedNewFormat);
-
-    function expectConfigToMatch(expectedConfigData: Object) {
-      for (const [configKey, configNewValue] of Object.entries(
-        expectedConfigData,
-      )) {
-        const actualFromOld = service.getConfig(configKey);
-        expect(actualFromOld).toEqual(configNewValue);
-      }
-    }
-  }
 });
