@@ -22,6 +22,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { FileFieldConfig } from "../file.datatype";
 
 /**
  * This component should be used as a `editComponent` when a property should store files.
@@ -51,6 +52,18 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   private removeClicked = false;
   initialValue: string;
 
+  /**
+   * config for the given form field / entity attribute, containing special settings for this component.
+   * (re-declared here for better typing)
+   */
+  declare additional: FileFieldConfig;
+
+  /**
+   * The accepted file types for file selection dialog.
+   * If not defined, allows any file.
+   */
+  acceptedFileTypes: string = "*";
+
   constructor(
     protected fileService: FileService,
     private alertService: AlertService,
@@ -63,6 +76,10 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   override ngOnInit() {
     super.ngOnInit();
     this.initialValue = this.formControl.value;
+
+    this.acceptedFileTypes =
+      this.additional?.acceptedFileTypes ?? this.acceptedFileTypes;
+
     this.formControl.statusChanges
       .pipe(
         distinctUntilChanged(),
