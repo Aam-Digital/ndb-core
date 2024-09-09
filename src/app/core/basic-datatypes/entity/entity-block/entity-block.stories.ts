@@ -1,10 +1,9 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { EntityBlockComponent } from "./entity-block.component";
-import { Child } from "../../../../child-dev-project/children/model/child";
-import { School } from "../../../../child-dev-project/schools/model/school";
-import { User } from "../../../user/user";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+import { Entity } from "../../../entity/model/entity";
+import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
 
 export default {
   title: "Core/Entities/EntityBlock",
@@ -23,7 +22,7 @@ const Template: StoryFn<EntityBlockComponent> = (
   props: args,
 });
 
-const testChild = new Child();
+const testChild = createEntityOfType("Child");
 testChild.name = "Test Name";
 testChild.projectNumber = "10";
 export const ChildComponent = Template.bind({});
@@ -31,16 +30,8 @@ ChildComponent.args = {
   entityToDisplay: testChild,
 };
 
-const testSchool = new School();
-testSchool.name = "Test School";
-export const SchoolComponent = Template.bind({});
-SchoolComponent.args = {
-  entityToDisplay: testSchool,
-};
-
-const testUser = new User();
-testUser.name = "Test User";
+const testEntity = new Entity();
 export const DefaultComponent = Template.bind({});
 DefaultComponent.args = {
-  entityToDisplay: testUser,
+  entityToDisplay: testEntity,
 };

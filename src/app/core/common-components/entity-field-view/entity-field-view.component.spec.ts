@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityFieldViewComponent } from "./entity-field-view.component";
 import { ConfigService } from "../../config/config.service";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { createTestingConfigService } from "../../config/testing-config-service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("EntityFieldViewComponent", () => {
   let component: EntityFieldViewComponent;
   let fixture: ComponentFixture<EntityFieldViewComponent>;
 
-  let testEntity: Child;
+  let testEntity: TestEntity;
   const testProperty: string = "dateOfBirth";
 
   beforeEach(async () => {
-    testEntity = Child.create("tester");
+    testEntity = TestEntity.create("tester");
 
     await TestBed.configureTestingModule({
       imports: [EntityFieldViewComponent, MockedTestingModule],
@@ -44,7 +44,9 @@ describe("EntityFieldViewComponent", () => {
   it("should get label from schema", () => {
     component.ngOnChanges({ field: true as any });
 
-    expect(component._field.label).toBe(Child.schema.get(testProperty).label);
+    expect(component._field.label).toBe(
+      TestEntity.schema.get(testProperty).label,
+    );
   });
 
   it("should support object as property config", () => {

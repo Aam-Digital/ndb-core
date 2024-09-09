@@ -1,10 +1,10 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportHistoryComponent } from "./import-history.component";
-import { User } from "../../user/user";
 import { IMPORT_SAMPLE_PREVIOUS_IMPORTS } from "../import/import-sample-raw-data";
 import { importProvidersFrom } from "@angular/core";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { Entity } from "../../entity/model/entity";
 
 export default {
   title: "Features/Import/Import History",
@@ -15,7 +15,7 @@ export default {
         importProvidersFrom(
           StorybookBaseModule.withData([
             ...IMPORT_SAMPLE_PREVIOUS_IMPORTS,
-            Object.assign(new User(TEST_USER), { name: TEST_USER }),
+            Object.assign(new Entity(TEST_USER), { name: TEST_USER }),
           ]),
         ),
       ],

@@ -160,10 +160,6 @@ export class AdminEntityComponent implements OnInit {
     const entitySchemaConfig: EntityConfig = newConfig.data[entityConfigKey];
 
     for (const [fieldId, field] of this.entityConstructor.schema.entries()) {
-      if (!field._isCustomizedField) {
-        // do not write unchanged default fields from the classes into config
-        continue;
-      }
       entitySchemaConfig.attributes[fieldId] = field;
     }
     if (this.configEntitySettings) {

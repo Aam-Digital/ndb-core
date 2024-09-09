@@ -1,27 +1,22 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntityFormComponent } from "./entity-form.component";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form.service";
 import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("EntityFormComponent", () => {
-  let component: EntityFormComponent<Child>;
-  let fixture: ComponentFixture<EntityFormComponent<Child>>;
+  let component: EntityFormComponent<TestEntity>;
+  let fixture: ComponentFixture<EntityFormComponent<TestEntity>>;
 
   let mockConfirmation: jasmine.SpyObj<ConfirmationDialogService>;
 
   const testColumns = [
-    [
-      { id: "name" },
-      { id: "projectNumber" },
-      { id: "photo" },
-      { id: "dateOfBirth" },
-    ],
+    [{ id: "name" }, { id: "other" }, { id: "photo" }, { id: "dateOfBirth" }],
   ];
 
   beforeEach(waitForAsync(() => {
@@ -35,16 +30,16 @@ describe("EntityFormComponent", () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EntityFormComponent<Child>);
+    fixture = TestBed.createComponent(EntityFormComponent<TestEntity>);
     component = fixture.componentInstance;
 
-    setupInitialForm(new Child(), testColumns);
+    setupInitialForm(new TestEntity(), testColumns);
   });
 
-  function setupInitialForm(entity, columns) {
+  async function setupInitialForm(entity, columns) {
     component.entity = entity;
     component.fieldGroups = columns.map((c) => ({ fields: c }));
-    component.form = TestBed.inject(EntityFormService).createFormGroup(
+    component.form = await TestBed.inject(EntityFormService).createEntityForm(
       columns[0],
       component.entity,
     );
@@ -64,7 +59,11 @@ describe("EntityFormComponent", () => {
     ];
 
     TestBed.inject(EntityAbility).update([
-      { subject: "Child", action: "read", fields: ["foo", "name"] },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "read",
+        fields: ["foo", "name"],
+      },
     ]);
 
     component.entity._rev = "foo";
@@ -85,7 +84,11 @@ describe("EntityFormComponent", () => {
     ];
 
     TestBed.inject(EntityAbility).update([
-      { subject: "Child", action: "create", fields: ["foo", "name"] },
+      {
+        subject: TestEntity.ENTITY_TYPE,
+        action: "create",
+        fields: ["foo", "name"],
+      },
     ]);
 
     component.ngOnChanges({ entity: true, form: true } as any);
@@ -105,7 +108,7 @@ describe("EntityFormComponent", () => {
 
     TestBed.inject(EntityAbility).update([
       {
-        subject: "Child",
+        subject: TestEntity.ENTITY_TYPE,
         action: "manage",
         fields: ["foo", "name"],
         conditions: { name: "x" },
@@ -155,11 +158,11 @@ describe("EntityFormComponent", () => {
   });
 
   it("should overwrite without popup for changes affecting untouched fields", async () => {
-    const originalEntity = { projectNumber: "p1" };
-    const formValues = { projectNumber: "p2" };
+    const originalEntity = { other: "p1" };
+    const formValues = { other: "p2" };
     const remoteValues = {
       name: "changed",
-      projectNumber: "p1",
+      other: "p1",
       _rev: "new rev",
     };
     await expectApplyChangesPopup(
@@ -168,7 +171,7 @@ describe("EntityFormComponent", () => {
       formValues,
       remoteValues,
       {
-        projectNumber: "p2",
+        other: "p2",
         name: "changed",
         _rev: "new rev",
       },
@@ -176,8 +179,8 @@ describe("EntityFormComponent", () => {
   });
 
   it("should clear field in form for properties removed in updated remote entity", async () => {
-    const originalEntity = { projectNumber: "p1", name: "test" };
-    const formValues = { projectNumber: "p2", name: "test" };
+    const originalEntity = { other: "p1", name: "test" };
+    const formValues = { other: "p2", name: "test" };
     const remoteValues = {
       _rev: "new rev",
     };
@@ -187,7 +190,7 @@ describe("EntityFormComponent", () => {
       formValues,
       remoteValues,
       {
-        projectNumber: "p2",
+        other: "p2",
         _rev: "new rev",
       },
     );
@@ -204,19 +207,22 @@ describe("EntityFormComponent", () => {
 
   async function expectApplyChangesPopup(
     popupAction: "not-shown" | "yes" | "no",
-    originalEntity: Partial<Child>,
-    formChanges: Partial<Child>,
-    remoteChanges: Partial<Child>,
-    expectedFormValues: Partial<Child>,
+    originalEntity: Partial<TestEntity>,
+    formChanges: Partial<TestEntity>,
+    remoteChanges: Partial<TestEntity>,
+    expectedFormValues: Partial<TestEntity>,
   ) {
-    setupInitialForm(Object.assign(new Child(), originalEntity), testColumns);
+    await setupInitialForm(
+      Object.assign(new TestEntity(), originalEntity),
+      testColumns,
+    );
 
     mockConfirmation.getConfirmation.and.resolveTo(popupAction === "yes");
     for (const c in formChanges) {
-      component.form.get(c).setValue(formChanges[c]);
-      component.form.get(c).markAsDirty();
+      component.form.formGroup.get(c).setValue(formChanges[c]);
+      component.form.formGroup.get(c).markAsDirty();
     }
-    const updatedChild = new Child(component.entity.getId());
+    const updatedChild = new TestEntity(component.entity.getId());
     Object.assign(updatedChild, remoteChanges);
 
     const entityMapper = TestBed.inject(EntityMapperService);
@@ -225,10 +231,10 @@ describe("EntityFormComponent", () => {
     const entityAfterSave = Object.assign(
       {},
       component.entity,
-      component.form.getRawValue(),
+      component.form.formGroup.getRawValue(),
     );
     for (const [key, value] of Object.entries(expectedFormValues)) {
-      const form = component.form.get(key);
+      const form = component.form.formGroup.get(key);
       if (form) {
         expect(form).toHaveValue(value);
       }

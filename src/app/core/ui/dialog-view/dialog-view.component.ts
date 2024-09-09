@@ -73,7 +73,7 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
     };
   }
 
-  componentInjector: Injector | undefined;
+  declare componentInjector: Injector | undefined;
 }
 
 export interface DialogViewData<T = any> {

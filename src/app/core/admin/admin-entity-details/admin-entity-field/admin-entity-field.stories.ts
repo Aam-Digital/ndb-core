@@ -9,7 +9,7 @@ import { importProvidersFrom } from "@angular/core";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
-import { School } from "../../../../child-dev-project/schools/model/school";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 export default {
   title: "Core/Admin/Entity Field",
@@ -46,11 +46,11 @@ EditExisting.args = {
     label: "Firstname",
     description: "abc",
   } as EntitySchemaField,
-  entityType: School,
+  entityType: TestEntity,
 };
 
 export const CreateNew = Template.bind({});
 CreateNew.args = {
   fieldId: null,
-  entityType: School,
+  entityType: TestEntity,
 };

@@ -1,8 +1,8 @@
-import { Child } from "../../model/child";
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip.component";
 import { importProvidersFrom } from "@angular/core";
+import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
 
 export default {
   title: "Features/Participant/ChildBlockTooltip",
@@ -14,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const demoChild = new Child("1");
+const demoChild = createEntityOfType("Child", "1");
 demoChild.name = "John Doe";
 demoChild.projectNumber = "99";
 demoChild.phone = "+49 199 1234567";

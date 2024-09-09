@@ -3,12 +3,12 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DiscreteImportConfigComponent } from "./discrete-import-config.component";
 import { MappingDialogData } from "../../../import/import-column-mapping/import-column-mapping.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("DiscreteImportConfigComponent", () => {
   let component: DiscreteImportConfigComponent;
@@ -19,8 +19,8 @@ describe("DiscreteImportConfigComponent", () => {
   beforeEach(async () => {
     data = {
       values,
-      col: { column: "", propertyName: "gender" },
-      entityType: Child,
+      col: { column: "", propertyName: "category" },
+      entityType: TestEntity,
     };
     await TestBed.configureTestingModule({
       imports: [DiscreteImportConfigComponent, MockedTestingModule],
@@ -43,7 +43,7 @@ describe("DiscreteImportConfigComponent", () => {
     expect(component.component).toBe(
       new ConfigurableEnumDatatype(undefined).editComponent,
     );
-    expect(component.schema).toBe(Child.schema.get("gender"));
+    expect(component.schema).toBe(TestEntity.schema.get("category"));
   });
 
   it("should ask for confirmation on save if not all values were assigned", async () => {

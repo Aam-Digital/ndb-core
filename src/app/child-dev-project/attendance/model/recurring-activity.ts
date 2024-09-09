@@ -6,18 +6,11 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
-import { User } from "../../../core/user/user";
-import { Child } from "../../children/model/child";
-import { School } from "../../schools/model/school";
 import { asArray } from "../../../utils/utils";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
-  static toStringAttributes = ["title"];
-  static label = $localize`:label for entity:Recurring Activity`;
-  static labelPlural = $localize`:label (plural) for entity:Recurring Activities`;
-  static color = "#00838F";
-  static route = "attendance/recurring-activity";
+  static override route = "attendance/recurring-activity";
 
   static create(title: string = ""): RecurringActivity {
     const instance = new RecurringActivity();
@@ -34,12 +27,7 @@ export class RecurringActivity extends Entity {
   }
 
   /** primary name to identify the activity */
-  @DatabaseField({
-    label: $localize`:Label for the title of a recurring activity:Title`,
-    validators: {
-      required: true,
-    },
-  })
+  @DatabaseField()
   title: string = "";
 
   /**
@@ -48,7 +36,6 @@ export class RecurringActivity extends Entity {
    * This is also assigned to individual events' category generated for this activity.
    */
   @DatabaseField({
-    label: $localize`:Label for the interaction type of a recurring activity:Type`,
     dataType: "configurable-enum",
     additional: INTERACTION_TYPE_CONFIG_ID,
   })
@@ -56,37 +43,29 @@ export class RecurringActivity extends Entity {
 
   /** IDs of children linked to this activity */
   @DatabaseField({
-    label: $localize`:Label for the participants of a recurring activity:Participants`,
     dataType: "entity",
     isArray: true,
-    additional: Child.ENTITY_TYPE,
   })
   participants: string[] = [];
 
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
   @DatabaseField({
-    label: $localize`:Label for the linked schools of a recurring activity:Groups`,
     dataType: "entity",
     isArray: true,
-    additional: School.ENTITY_TYPE,
   })
   linkedGroups: string[] = [];
 
   /** IDs of children that should be excluded from this activity despite being a group member */
   @DatabaseField({
-    label: $localize`:Label for excluded participants of a recurring activity:Excluded Participants`,
     dataType: "entity",
     isArray: true,
-    additional: Child.ENTITY_TYPE,
   })
   excludedParticipants: string[] = [];
 
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
-    label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
     dataType: "entity",
     isArray: true,
-    additional: User.ENTITY_TYPE,
   })
   assignedTo: string[] = [];
 

@@ -8,7 +8,6 @@ import { Entity } from "../../entity/model/entity";
   providedIn: "root",
 })
 export class DuplicateRecordService {
-  get: jasmine.Spy<jasmine.Func>;
   constructor(
     private entitymapperservice: EntityMapperService,
     private entityTypes: EntityRegistry,

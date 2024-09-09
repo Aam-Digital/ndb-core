@@ -25,12 +25,12 @@ describe("DuplicateRecordsService", () => {
 
   @DatabaseEntity("DuplicateTestEntity")
   class DuplicateTestEntity extends Entity {
-    static toStringAttributes = ["name"];
+    static override toStringAttributes = ["name"];
     @DatabaseField() name: String;
     @DatabaseField() boolProperty: boolean;
-    @DatabaseField() created: UpdateMetadata;
-    @DatabaseField() updated: UpdateMetadata;
-    @DatabaseField() inactive: boolean;
+    @DatabaseField() override created: UpdateMetadata;
+    @DatabaseField() override updated: UpdateMetadata;
+    @DatabaseField() override inactive: boolean;
   }
 
   beforeEach(() => {

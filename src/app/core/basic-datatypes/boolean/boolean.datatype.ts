@@ -6,14 +6,14 @@ export class BooleanDatatype extends DiscreteDatatype<boolean, boolean> {
   static override dataType = "boolean";
   static override label: string = $localize`:datatype-label:checkbox`;
 
-  editComponent = "EditBoolean";
-  viewComponent = "DisplayCheckmark";
+  override editComponent = "EditBoolean";
+  override viewComponent = "DisplayCheckmark";
 
-  transformToDatabaseFormat(value: boolean) {
+  override transformToDatabaseFormat(value: boolean) {
     return value;
   }
 
-  transformToObjectFormat(value: boolean) {
+  override transformToObjectFormat(value: boolean) {
     return value;
   }
 }

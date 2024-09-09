@@ -26,7 +26,7 @@ import { DashboardWidget } from "../../../core/dashboard/dashboard-widget/dashbo
   ],
 })
 export class TodosDashboardComponent extends DashboardWidget {
-  static getRequiredEntities() {
+  static override getRequiredEntities() {
     return Todo.ENTITY_TYPE;
   }
 

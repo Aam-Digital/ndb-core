@@ -10,7 +10,10 @@ import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
-import { MatCheckboxModule } from "@angular/material/checkbox";
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from "@angular/material/checkbox";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import {
@@ -27,7 +30,7 @@ import {
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import {
-  EntityForm,
+  EntityFormGroup,
   EntityFormService,
 } from "../entity-form/entity-form.service";
 import { tableSort } from "./table-sort/table-sort";
@@ -77,6 +80,8 @@ export class EntitiesTableComponent<T extends Entity> {
     this.updateFilteredData();
     this.isLoading = false;
   }
+  private lastSelectedIndex: number = null;
+  private lastSelection: boolean = null;
   _records: T[] = [];
   /** data displayed in the template's table */
   recordsDataSource: MatTableDataSource<TableRow<T>>;
@@ -235,7 +240,6 @@ export class EntitiesTableComponent<T extends Entity> {
         this.selectedRecords.splice(index, 1);
       }
     }
-
     this.selectedRecordsChange.emit(this.selectedRecords);
   }
 
@@ -263,7 +267,6 @@ export class EntitiesTableComponent<T extends Entity> {
     if (row.formGroup && !row.formGroup.disabled) {
       return;
     }
-
     if (this._selectable) {
       this.selectRow(row, !this.selectedRecords?.includes(row.record));
       return;
@@ -271,6 +274,79 @@ export class EntitiesTableComponent<T extends Entity> {
 
     this.showEntity(row.record);
     this.entityClick.emit(row.record);
+  }
+
+  onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
+    if (!this._selectable) {
+      this.onRowClick(row);
+      return;
+    }
+
+    // Find the index of the row in the sorted and filtered data
+    const sortedData = this.recordsDataSource.sortData(
+      this.recordsDataSource.data,
+      this.recordsDataSource.sort,
+    );
+    const currentIndex = sortedData.indexOf(row);
+
+    const isCheckboxClick =
+      event.target instanceof HTMLInputElement &&
+      event.target.type === "checkbox";
+
+    if (event.shiftKey && this.lastSelectedIndex !== null) {
+      const start = Math.min(this.lastSelectedIndex, currentIndex);
+      const end = Math.max(this.lastSelectedIndex, currentIndex);
+      const shouldCheck =
+        this.lastSelection !== null
+          ? !this.lastSelection
+          : !this.selectedRecords.includes(row.record);
+
+      for (let i = start; i <= end; i++) {
+        const rowToSelect = sortedData[i];
+        const isSelected = this.selectedRecords.includes(rowToSelect.record);
+
+        if (shouldCheck && !isSelected) {
+          this.selectedRecords.push(rowToSelect.record);
+        } else if (!shouldCheck && isSelected) {
+          this.selectedRecords = this.selectedRecords.filter(
+            (record) => record !== rowToSelect.record,
+          );
+        }
+      }
+      this.selectedRecordsChange.emit(this.selectedRecords);
+    } else {
+      const isSelected = this.selectedRecords.includes(row.record);
+      this.selectRow(row, !isSelected);
+      this.lastSelectedIndex = currentIndex;
+      this.lastSelection = isSelected;
+    }
+
+    if (isCheckboxClick) {
+      this.onRowClick(row);
+    }
+  }
+
+  onRowSelect(event: MatCheckboxChange, row: TableRow<T>) {
+    this.selectRow(row, event.checked);
+  }
+
+  selectAllRows(event: MatCheckboxChange) {
+    if (event.checked) {
+      this.selectedRecords = this.recordsDataSource.data.map(
+        (row) => row.record,
+      );
+    } else {
+      this.selectedRecords = [];
+    }
+    this.selectedRecordsChange.emit(this.selectedRecords);
+  }
+
+  isAllSelected() {
+    return this.selectedRecords.length === this.recordsDataSource.data.length;
+  }
+
+  isIndeterminate() {
+    return this.selectedRecords.length > 0 && !this.isAllSelected();
   }
 
   showEntity(entity: T) {
@@ -372,5 +448,5 @@ export class EntitiesTableComponent<T extends Entity> {
  */
 export interface TableRow<T extends Entity> {
   record: T;
-  formGroup?: EntityForm<T>;
+  formGroup?: EntityFormGroup<T>;
 }

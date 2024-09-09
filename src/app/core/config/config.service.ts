@@ -11,6 +11,8 @@ import { FieldGroup } from "../entity-details/form/field-group";
 import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { migrateAddMissingEntityAttributes } from "./migrate-add-entity-attributes";
+import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -65,7 +67,14 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityDetailsInputEntityType,
       migrateEntityArrayDatatype,
       migrateEntitySchemaDefaultValue,
+      migrateChildrenListConfig,
+      migrateHistoricalDataComponent,
+      migratePhotoDatatype,
+      migratePercentageDatatype,
     ];
+
+    // TODO: execute this on server via ndb-admin
+    config = migrateAddMissingEntityAttributes(config);
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
       let configPart = rawValue;
@@ -252,6 +261,32 @@ const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
+/** Migrate the "file" datatype to use the new "photo" datatype  and remove editComponent if no longer needed */
+const migratePhotoDatatype: ConfigMigration = (key, configPart) => {
+  if (
+    configPart?.dataType === "file" &&
+    configPart?.editComponent === "EditPhoto"
+  ) {
+    configPart.dataType = "photo";
+    delete configPart.editComponent;
+  }
+  return configPart;
+};
+
+/** Migrate the number datatype to use the new "percentage" datatype */
+const migratePercentageDatatype: ConfigMigration = (key, configPart) => {
+  if (
+    configPart?.dataType === "number" &&
+    configPart?.viewComponent === "DisplayPercentage"
+  ) {
+    configPart.dataType = "percentage";
+    delete configPart.viewComponent;
+    delete configPart.editComponent;
+  }
+
+  return configPart;
+};
+
 const migrateEntitySchemaDefaultValue: ConfigMigration = (
   key: string,
   configPart: any,
@@ -279,4 +314,41 @@ const migrateEntitySchemaDefaultValue: ConfigMigration = (
     mode: "static",
     value: configPart,
   } as DefaultValueConfig;
+};
+
+const migrateChildrenListConfig: ConfigMigration = (key, configPart) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.["component"] !== "ChildrenList"
+  ) {
+    return configPart;
+  }
+
+  configPart["component"] = "EntityList";
+
+  configPart["config"] = configPart["config"] ?? {};
+  configPart["config"]["entityType"] = "Child";
+  configPart["config"]["loaderMethod"] = "ChildrenService";
+
+  return configPart;
+};
+
+const migrateHistoricalDataComponent: ConfigMigration = (key, configPart) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.["component"] !== "HistoricalDataComponent"
+  ) {
+    return configPart;
+  }
+
+  configPart["component"] = "RelatedEntities";
+
+  configPart["config"] = configPart["config"] ?? {};
+  if (Array.isArray(configPart["config"])) {
+    configPart["config"] = { columns: configPart["config"] };
+  }
+  configPart["config"]["entityType"] = "HistoricalEntityData";
+  configPart["config"]["loaderMethod"] = LoaderMethod.HistoricalDataService;
+
+  return configPart;
 };

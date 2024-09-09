@@ -59,14 +59,16 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   @Output() filterObjChange = new EventEmitter<DataFilter<T>>();
 
   filterSelections: Filter<T>[] = [];
-  urlPath = getUrlWithoutParams(this.router);
+  urlPath: string;
 
   constructor(
     private filterGenerator: FilterGeneratorService,
     private filterService: FilterService,
     private router: Router,
     private route: ActivatedRoute,
-  ) {}
+  ) {
+    this.urlPath = getUrlWithoutParams(this.router);
+  }
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.filterConfig || changes.entityType || changes.entities) {

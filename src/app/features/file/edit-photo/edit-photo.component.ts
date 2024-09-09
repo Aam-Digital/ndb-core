@@ -40,12 +40,12 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     alertService: AlertService,
     entityMapper: EntityMapperService,
     private dialog: MatDialog,
-    @Inject(NAVIGATOR_TOKEN) protected navigator: Navigator,
+    @Inject(NAVIGATOR_TOKEN) navigator: Navigator,
   ) {
     super(fileService, alertService, entityMapper, navigator);
   }
 
-  async onFileSelected(file: File): Promise<void> {
+  override async onFileSelected(file: File): Promise<void> {
     const cvs = await resizeImage(file, this.compression);
     this.imgPath = cvs.toDataURL();
     const blob = await new Promise<Blob>((res) => cvs.toBlob(res));
@@ -56,7 +56,7 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     return super.onFileSelected(reducedFile);
   }
 
-  ngOnInit() {
+  override ngOnInit() {
     super.ngOnInit();
     this.compression = this.additional ?? this.compression;
     if (this.formControl.value) {
@@ -69,12 +69,12 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     }
   }
 
-  delete() {
+  override delete() {
     this.resetPreview(this.defaultImage);
     super.delete();
   }
 
-  protected resetFile() {
+  protected override resetFile() {
     this.resetPreview(this.initialImg);
     super.resetFile();
   }
@@ -86,7 +86,7 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     this.imgPath = resetImage;
   }
 
-  protected deleteExistingFile() {
+  protected override deleteExistingFile() {
     URL.revokeObjectURL(this.initialImg as string);
     this.initialImg = this.defaultImage;
     super.deleteExistingFile();

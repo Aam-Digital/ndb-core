@@ -95,9 +95,9 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * (optional, defaults to the name of the selection)
    */
   constructor(
-    public name: string,
+    public override name: string,
     public options: FilterSelectionOption<T>[],
-    public label: string = name,
+    public override label: string = name,
   ) {
     super(name, label);
     this.selectedOptionValues = [];

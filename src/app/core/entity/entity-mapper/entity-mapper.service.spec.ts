@@ -23,7 +23,6 @@ import { DatabaseEntity } from "../database-entity.decorator";
 import { Database } from "../../database/database";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("EntityMapperService", () => {
@@ -94,11 +93,11 @@ describe("EntityMapperService", () => {
   });
 
   it("returns empty array when loading non existing entity type ", async () => {
-    class TestEntity extends Entity {
-      static ENTITY_TYPE = "TestEntity";
+    class TempTestEntity extends Entity {
+      static override ENTITY_TYPE = "TestEntity";
     }
 
-    const result = await entityMapper.loadType<TestEntity>(TestEntity);
+    const result = await entityMapper.loadType<TempTestEntity>(TempTestEntity);
     expect(result).toBeEmpty();
   });
 
@@ -255,7 +254,8 @@ describe("EntityMapperService", () => {
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
-    TestBed.inject(CurrentUserSubject).next(new User(TEST_USER));
+    const currentUser = new Entity(TEST_USER);
+    TestBed.inject(CurrentUserSubject).next(currentUser);
     const id = "test_created";
     const entity = new Entity(id);
 
@@ -265,13 +265,9 @@ describe("EntityMapperService", () => {
     const createdEntity = await entityMapper.load(Entity, id);
 
     expect(createdEntity.created?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.created?.by).toEqual(
-      `${User.ENTITY_TYPE}:${TEST_USER}`,
-    );
+    expect(createdEntity.created?.by).toEqual(currentUser.getId());
     expect(createdEntity.updated?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.updated?.by).toEqual(
-      `${User.ENTITY_TYPE}:${TEST_USER}`,
-    );
+    expect(createdEntity.updated?.by).toEqual(currentUser.getId());
 
     const mockTime2 = mockTime1 + 1;
     jasmine.clock().mockDate(new Date(mockTime2));

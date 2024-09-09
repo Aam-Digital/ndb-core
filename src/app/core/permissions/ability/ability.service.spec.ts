@@ -2,11 +2,9 @@ import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { AbilityService } from "./ability.service";
 import { BehaviorSubject, Subject } from "rxjs";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
-import { User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
@@ -19,7 +17,8 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { EventAttendanceMapDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
 import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
-import { Entity } from "../../entity/model/entity";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -28,8 +27,8 @@ describe("AbilityService", () => {
   let entityMapper: jasmine.SpyObj<EntityMapperService>;
   const rules: DatabaseRules = {
     user_app: [
-      { subject: "Child", action: "read" },
-      { subject: "Note", action: "manage", inverted: true },
+      { subject: TestEntity.ENTITY_TYPE, action: "read" },
+      { subject: Note.ENTITY_TYPE, action: "manage", inverted: true },
     ],
     admin_app: [{ subject: "all", action: "manage" }],
   };
@@ -50,8 +49,15 @@ describe("AbilityService", () => {
           useValue: new BehaviorSubject({
             name: TEST_USER,
             roles: ["user_app"],
-            entityId: Entity.createPrefixedId(User.ENTITY_TYPE, TEST_USER),
+            entityId: TestEntity.createPrefixedId(
+              TestEntity.ENTITY_TYPE,
+              TEST_USER,
+            ),
           }),
+        },
+        {
+          provide: CurrentUserSubject,
+          useValue: new BehaviorSubject(new TestEntity(TEST_USER)),
         },
         {
           provide: DefaultDatatype,
@@ -162,11 +168,11 @@ describe("AbilityService", () => {
     });
     tick();
 
-    expect(ability.can("read", Child)).toBeTrue();
-    expect(ability.can("create", Child)).toBeFalse();
-    expect(ability.can("manage", Child)).toBeFalse();
-    expect(ability.can("read", new Child())).toBeTrue();
-    expect(ability.can("create", new Child())).toBeFalse();
+    expect(ability.can("read", TestEntity)).toBeTrue();
+    expect(ability.can("create", TestEntity)).toBeFalse();
+    expect(ability.can("manage", TestEntity)).toBeFalse();
+    expect(ability.can("read", new TestEntity())).toBeTrue();
+    expect(ability.can("create", new TestEntity())).toBeFalse();
     expect(ability.can("manage", Note)).toBeFalse();
     expect(ability.can("manage", new Note())).toBeFalse();
     expect(ability.can("create", new Note())).toBeFalse();
@@ -182,8 +188,8 @@ describe("AbilityService", () => {
     entityUpdates.next({ entity: updatedConfig, type: "update" });
     tick();
 
-    expect(ability.can("manage", Child)).toBeTrue();
-    expect(ability.can("manage", new Child())).toBeTrue();
+    expect(ability.can("manage", TestEntity)).toBeTrue();
+    expect(ability.can("manage", new TestEntity())).toBeTrue();
     expect(ability.can("manage", Note)).toBeTrue();
     expect(ability.can("manage", new Note())).toBeTrue();
   }));
@@ -222,23 +228,18 @@ describe("AbilityService", () => {
       const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
         user_app: [
           {
-            subject: "User",
+            subject: "TestEntity",
             action: "manage",
-            conditions: { name: placeholder },
+            conditions: { _id: placeholder },
           },
         ],
       });
       entityUpdates.next({ entity: config, type: "update" });
       tick();
 
-      const userEntity = new User();
-      userEntity.name = Entity.createPrefixedId(User.ENTITY_TYPE, TEST_USER);
+      const userEntity = new TestEntity(TEST_USER);
       expect(ability.can("manage", userEntity)).toBeTrue();
-      const anotherUser = new User();
-      anotherUser.name = Entity.createPrefixedId(
-        User.ENTITY_TYPE,
-        "another user",
-      );
+      const anotherUser = new TestEntity();
       expect(ability.cannot("manage", anotherUser)).toBeTrue();
     }
 

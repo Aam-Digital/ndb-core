@@ -6,22 +6,19 @@ import {
 } from "@angular/core/testing";
 
 import { EntityActionsMenuComponent } from "./entity-actions-menu.component";
-import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { EntityActionsMenuService } from "./entity-actions-menu.service";
+import { EntityAction } from "./entity-action.interface";
+import { Entity } from "../../entity/model/entity";
 
 describe("EntityActionsMenuComponent", () => {
   let component: EntityActionsMenuComponent;
   let fixture: ComponentFixture<EntityActionsMenuComponent>;
 
-  let mockEntityRemoveService: jasmine.SpyObj<EntityActionsService>;
-
   beforeEach(() => {
-    mockEntityRemoveService = jasmine.createSpyObj(["delete"]);
     TestBed.configureTestingModule({
       imports: [EntityActionsMenuComponent, MockedTestingModule],
-      providers: [
-        { provide: EntityActionsService, useValue: mockEntityRemoveService },
-      ],
+      providers: [EntityActionsMenuService],
     });
     fixture = TestBed.createComponent(EntityActionsMenuComponent);
     component = fixture.componentInstance;
@@ -33,16 +30,26 @@ describe("EntityActionsMenuComponent", () => {
   });
 
   it("should emit actionTriggered Output upon action", fakeAsync(() => {
-    mockEntityRemoveService.delete.and.resolveTo(true);
+    const testAction: EntityAction = {
+      action: "test_action",
+      label: "Test Action",
+      icon: "test_icon",
+      execute: () => null,
+    };
+    spyOn(testAction, "execute").and.resolveTo(true);
+
+    const actionsService = TestBed.inject(EntityActionsMenuService);
+    actionsService.registerActions([testAction]);
+    component.entity = new Entity();
 
     let actionEvent;
     component.actionTriggered.subscribe((x) => (actionEvent = x));
+    component.ngOnChanges({ entity: { currentValue: {} } as any });
 
-    component.executeAction(
-      component.defaultActions.find((x) => x.action === "delete"),
-    );
+    component.executeAction(testAction);
     tick();
 
-    expect(actionEvent).toBe("delete");
+    expect(testAction.execute).toHaveBeenCalledWith(component.entity, false);
+    expect(actionEvent).toBe("test_action");
   }));
 });

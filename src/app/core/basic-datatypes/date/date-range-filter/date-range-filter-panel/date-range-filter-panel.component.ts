@@ -62,17 +62,20 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   ],
 })
 export class DateRangeFilterPanelComponent {
-  selectedRangeValue: DateRange<Date> = new DateRange(
-    this.filter.getDateRange().start ?? new Date("1900-01-01"),
-    this.filter.getDateRange().end ?? new Date("2999-12-31"),
-  );
-  selectedOption = this.filter.getSelectedOption();
+  selectedRangeValue: DateRange<Date>;
+  selectedOption: DateRangeFilterConfigOption;
   comparisonRange: DateRange<Date> = new DateRange(null, null);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public filter: DateFilter<any>,
     private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>,
-  ) {}
+  ) {
+    this.selectedRangeValue = new DateRange(
+      this.filter.getDateRange().start ?? new Date("1900-01-01"),
+      this.filter.getDateRange().end ?? new Date("2999-12-31"),
+    );
+    this.selectedOption = this.filter.getSelectedOption();
+  }
 
   preselectRange(dateRangeOption): void {
     this.comparisonRange = calculateDateRange(dateRangeOption);

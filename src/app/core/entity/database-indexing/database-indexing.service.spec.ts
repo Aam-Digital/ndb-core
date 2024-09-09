@@ -20,12 +20,28 @@ import { Database } from "../../database/database";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { fakeAsync, tick } from "@angular/core/testing";
 import { firstValueFrom } from "rxjs";
-import { Todo } from "../../../features/todos/model/todo";
 import { Note } from "../../../child-dev-project/notes/model/note";
+import { Entity } from "../model/entity";
+import { DatabaseField } from "../database-field.decorator";
+import { DatabaseEntity } from "../database-entity.decorator";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
   let mockDb: jasmine.SpyObj<Database>;
+
+  @DatabaseEntity("TestEntityWithRelation")
+  class TestEntityWithRelation extends Entity {
+    @DatabaseField({
+      dataType: "entity",
+      isArray: true,
+    })
+    relatedEntities: string[];
+
+    @DatabaseField({
+      dataType: "date",
+    })
+    deadline: Date;
+  }
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
@@ -154,7 +170,11 @@ describe("DatabaseIndexingService", () => {
 
   it("should generate index for entity property", async () => {
     const call = spyOn(service, "createIndex");
-    await service.generateIndexOnProperty("testIndex", Todo, "relatedEntities");
+    await service.generateIndexOnProperty(
+      "testIndex",
+      TestEntityWithRelation,
+      "relatedEntities",
+    );
 
     const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
     expect(cleanedUpStringify(actualCreatedDesignDoc)).toEqual(
@@ -163,7 +183,7 @@ describe("DatabaseIndexingService", () => {
         views: {
           by_relatedEntities: {
             map: `(doc) => {
-            if (!doc._id.startsWith("Todo")) return;
+            if (!doc._id.startsWith("${TestEntityWithRelation.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.relatedEntities)) return;
             doc.relatedEntities.forEach((relatedEntity) => {
               emit(relatedEntity);
@@ -195,7 +215,7 @@ describe("DatabaseIndexingService", () => {
     const call = spyOn(service, "createIndex");
     await service.generateIndexOnProperty(
       "testIndex",
-      Todo,
+      TestEntityWithRelation,
       "relatedEntities",
       "deadline",
     );
@@ -205,7 +225,7 @@ describe("DatabaseIndexingService", () => {
       cleanedUpStringify(actualCreatedDesignDoc.views.by_relatedEntities.map),
     ).toEqual(
       cleanedUpStringify(`(doc) => {
-            if (!doc._id.startsWith("Todo")) return;
+            if (!doc._id.startsWith("${TestEntityWithRelation.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.relatedEntities)) return;
 
             doc.relatedEntities.forEach((relatedEntity) => {

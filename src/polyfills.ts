@@ -1,19 +1,3 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
  * You can add your own extra polyfills to this file.
@@ -33,7 +17,6 @@
  * Zone JS is required by Angular itself.
  */
 import "zone.js"; // Included with Angular CLI.
-
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
@@ -47,16 +30,13 @@ import "@angular/localize/init";
  * Need to import at least one locale-data with intl.
  */
 // import 'intl/locale-data/jsonp/en';
-
 // Import hammer.js to enable gestures
 // on mobile devices
 import "hammerjs";
+import * as buffer from "buffer";
+import * as process from "process";
 
 // WARNING: workaround to allow PouchDB with Angular v6: https://github.com/pouchdb/pouchdb/issues/7263
 (window as any).global = window;
-
-import * as buffer from "buffer";
 (window as any).Buffer = buffer.Buffer;
-
-import * as process from "process";
 (window as any).process = process;

@@ -19,8 +19,8 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
 })
 export class EntityDeleteService extends CascadingEntityAction {
   constructor(
-    protected entityMapper: EntityMapperService,
-    protected schemaService: EntitySchemaService,
+    protected override entityMapper: EntityMapperService,
+    protected override schemaService: EntitySchemaService,
     private keycloakAuthService: KeycloakAuthService,
     private confirmationDialog: ConfirmationDialogService,
   ) {

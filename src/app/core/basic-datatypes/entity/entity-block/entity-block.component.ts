@@ -70,7 +70,7 @@ export class EntityBlockComponent implements OnInit {
 
     const entityType = this.entityToDisplay.getConstructor();
 
-    this.entityBlockComponent = entityType.getBlockComponent();
+    this.entityBlockComponent = entityType.blockComponent;
     this.entityIcon = entityType.icon;
   }
 

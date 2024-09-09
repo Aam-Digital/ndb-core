@@ -23,7 +23,7 @@ export class EditNumberComponent
   extends EditComponent<number>
   implements OnInit
 {
-  ngOnInit() {
+  override ngOnInit() {
     super.ngOnInit();
     const newValidators = [CustomNumberValidators.isNumber];
     if (this.formControl.validator) {

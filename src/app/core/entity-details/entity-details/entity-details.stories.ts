@@ -2,14 +2,14 @@ import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { EntityDetailsComponent } from "./entity-details.component";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityDetailsConfig } from "../EntityDetailsConfig";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-const demoEntity = Child.create("John Doe");
+const demoEntity = TestEntity.create("John Doe");
 demoEntity._rev = "1"; // make not "isNew"
 
 const config: EntityDetailsConfig = {
-  entityType: "Child",
+  entityType: TestEntity.ENTITY_TYPE,
   panels: [
     {
       title: $localize`:Panel title:Basic Information`,
@@ -19,12 +19,11 @@ const config: EntityDetailsConfig = {
           component: "Form",
           config: {
             fieldGroups: [
-              { fields: ["photo"] },
               {
-                fields: ["name", "projectNumber", "admissionDate"],
+                fields: ["name", "dateOfBirth"],
                 header: "Personal Information",
               },
-              { fields: ["center", "phone"], header: "Contact Details" },
+              { fields: ["category", "other"], header: "Contact Details" },
             ],
           },
         },

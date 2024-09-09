@@ -18,7 +18,10 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { LOCALE_ID, NgModule } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
@@ -67,8 +70,6 @@ import {
 } from "./utils/di-tokens";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { NotesModule } from "./child-dev-project/notes/notes.module";
-import { SchoolsModule } from "./child-dev-project/schools/schools.module";
-import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
@@ -94,6 +95,7 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
  */
 @NgModule({
   declarations: [AppComponent],
+  bootstrap: [AppComponent],
   imports: [
     // Global Angular modules
     ServiceWorkerModule.register("ngsw-worker.js"),
@@ -102,7 +104,6 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
     }),
     BrowserModule,
     BrowserAnimationsModule,
-    HttpClientModule,
     RouterModule.forRoot(allRoutes),
     // Core modules
     CoreModule,
@@ -116,12 +117,10 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
     AttendanceModule,
     ChildrenModule,
     NotesModule,
-    SchoolsModule,
     // feature module
     ImportModule,
     FileModule,
     MarkdownPageModule,
-    HistoricalDataModule,
     LocationModule,
     MatchingEntitiesModule,
     ProgressDashboardWidgetModule,
@@ -167,8 +166,8 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
     },
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     APP_INITIALIZER_DEMO_DATA,
+    provideHttpClient(withInterceptorsFromDi()),
   ],
-  bootstrap: [AppComponent],
 })
 export class AppModule {
   constructor(icons: FaIconLibrary) {
