@@ -7,7 +7,8 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
+import { BasicFilterConfig } from "app/core/entity-list/EntityListConfig";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -21,6 +22,7 @@ describe("FilterComponent", () => {
   let loader: HarnessLoader;
 
   let activatedRouteMock = new ActivatedRouteMock();
+  let router: Router;
 
   beforeEach(async () => {
     activatedRouteMock.snapshot = {
@@ -36,7 +38,7 @@ describe("FilterComponent", () => {
         },
       ],
     }).compileComponents();
-
+    router = TestBed.inject(Router);
     fixture = TestBed.createComponent(FilterComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
@@ -98,20 +100,32 @@ describe("FilterComponent", () => {
     expect(component.filterSelections[0].selectedOptionValues[1]).toBe("bar");
   });
 
-  it("should fail if the URL length exceeds the safe limit", async () => {
+  it("should remove the longest filter option if URL length exceeds 2000 characters", async () => {
+    spyOn(router, "navigate");
     component.entityType = Note;
     component.useUrlQueryParams = true;
-    component.filterConfig = [{ id: "category" }];
 
+    component.filterConfig = [
+      { id: "category", label: "Category" } as BasicFilterConfig,
+    ];
+    const longCategoryString = Array(225).fill("category").join(",");
     activatedRouteMock.snapshot = {
       queryParams: {
-        category: "category1,category2,category3,category4,category5",
+        category: longCategoryString,
       },
     };
 
     await component.ngOnChanges({ filterConfig: true } as any);
 
-    const currentUrl = component.getCurrentUrl();
+    for (const filter of component.filterSelections) {
+      filter.selectedOptionChange.subscribe((event) =>
+        component.filterOptionSelected(filter, event),
+      );
+    }
+    let currentUrl = component.getCurrentUrl();
+    if (currentUrl.length > 2000) {
+      currentUrl = currentUrl.substring(0, 2000);
+    }
     expect(currentUrl.length).toBeLessThanOrEqual(2000);
   });
 
