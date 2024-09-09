@@ -115,22 +115,17 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   private updateUrl(key: string, value: string) {
     const params = {};
     params[key] = value;
+    let queryParams = { ...this.route.snapshot.queryParams, ...params };
 
     let potentialUrl = this.router
       .createUrlTree([], {
         relativeTo: this.route,
-        queryParams: { ...this.route.snapshot.queryParams, ...params },
+        queryParams,
         queryParamsHandling: "merge",
       })
       .toString();
 
-    if (potentialUrl.length <= 2000) {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: params,
-        queryParamsHandling: "merge",
-      });
-    } else {
+    if (potentialUrl.length > 2000) {
       let longestKey: string | null = null;
       let maxLength = 0;
 
@@ -143,23 +138,22 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
       if (longestKey) {
         delete params[longestKey];
+        queryParams = { ...this.route.snapshot.queryParams, ...params };
+
         potentialUrl = this.router
           .createUrlTree([], {
             relativeTo: this.route,
-            queryParams: { ...this.route.snapshot.queryParams, ...params },
+            queryParams,
             queryParamsHandling: "merge",
           })
           .toString();
-
-        if (potentialUrl.length <= 2000) {
-          this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: params,
-            queryParamsHandling: "merge",
-          });
-        }
       }
     }
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: params,
+      queryParamsHandling: "merge",
+    });
   }
   getCurrentUrl(): string {
     const params = this.filterSelections.reduce((acc, filter) => {
