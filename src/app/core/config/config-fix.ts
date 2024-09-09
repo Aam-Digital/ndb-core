@@ -1049,7 +1049,10 @@ export const defaultJsonConfig = {
       },
       "birth_certificate": {
         "dataType": "file",
-        "label": $localize`:Label for a child attribute:Birth certificate`
+        "label": $localize`:Label for a child attribute:Birth certificate`,
+        "additional": {
+          "acceptedFileTypes": ".pdf"
+        }
       }
     },
   } as EntityConfig,

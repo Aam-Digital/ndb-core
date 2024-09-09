@@ -35,7 +35,7 @@
     type="file"
     style="display: none"
     (change)="onFileSelected($event.target['files'][0])"
-    accept="image/*"
+    [accept]="acceptedFileTypes"
     #fileUpload
   />
 </div>
