@@ -4,8 +4,8 @@
 @use "typography/custom-typography";
 
 .cards-wrapper {
-  @include grid-layout.adaptive($min-block-width: 250px);
   margin-top: sizes.$large;
+  @include grid-layout.adaptive($min-block-width: 250px);
 }
 
 .mat-mdc-card[disabled] {
