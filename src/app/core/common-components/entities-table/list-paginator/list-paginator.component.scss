@@ -8,18 +8,21 @@ $slider-padding-all: 16px;
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  justify-content: flex-start;
+  background-color: white;
+
   @media all and (max-width: $approx-width-paginator) {
     flex-direction: column-reverse;
     align-items: flex-start;
   }
-  justify-content: flex-start;
-  background-color: white;
 }
 
 .slider {
   padding-left: sizes.$regular;
+  font-size: small;
+
   @media all and (max-width: $approx-width-paginator) {
     padding-bottom: sizes.$regular;
   }
-  font-size: small;
 }
