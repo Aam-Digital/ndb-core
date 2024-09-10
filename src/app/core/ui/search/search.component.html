@@ -64,7 +64,7 @@
       </mat-option>
 
       <mat-option *ngFor="let res of results | async" [value]="res">
-        <app-entity-block [entityToDisplay]="res"></app-entity-block>
+        <app-entity-block [entity]="res"></app-entity-block>
       </mat-option>
     </ng-container>
   </mat-autocomplete>

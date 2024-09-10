@@ -1,7 +1,7 @@
 <!--Display-->
 <input
   *ngIf="display === 'text' || display === 'none'; else chipsDisplay"
-  [hidden]="focused || display === 'none'"
+  [hidden]="isInSearchMode() || display === 'none'"
   [disabled]="_disabled"
   matInput
   style="text-overflow: ellipsis; width: calc(100% - 50px)"
@@ -13,7 +13,7 @@
 
 <!--Search-->
 <input
-  [hidden]="!focused"
+  [hidden]="!isInSearchMode()"
   #inputElement
   [formControl]="autocompleteForm"
   matInput
@@ -31,7 +31,7 @@
   #autoSuggestions="matAutocomplete"
   (optionSelected)="select($event.option.value)"
   autoActiveFirstOption
-  [hideSingleSelectionIndicator]="multi"
+  [hideSingleSelectionIndicator]="true"
 >
   <div
     cdkDropList
@@ -43,11 +43,15 @@
       [style.height]="(autocompleteOptions?.length ?? 0) * 48 + 'px'"
       [style.max-height]="3 * 48 + 'px'"
       itemSize="48"
+      minBufferPx="200"
     >
       <mat-option
         [value]="item"
         cdkDrag
-        *cdkVirtualFor="let item of autocompleteOptions"
+        *cdkVirtualFor="
+          let item of autocompleteOptions;
+          trackBy: trackByOptionValueFn
+        "
       >
         <div class="flex-row disable-autocomplete-active-color align-center">
           <div *ngIf="reorder">

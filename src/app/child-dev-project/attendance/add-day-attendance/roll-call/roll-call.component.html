@@ -63,14 +63,13 @@
     </div>
   </div>
 
-  <app-child-block
+  <app-entity-block
     class="margin-small"
     *ngIf="!isFinished"
     [entity]="currentChild"
     [linkDisabled]="true"
-    [tooltipDisabled]="true"
   >
-  </app-child-block>
+  </app-entity-block>
 
   <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
     <app-roll-call-tab

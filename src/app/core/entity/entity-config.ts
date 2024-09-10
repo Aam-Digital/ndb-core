@@ -1,4 +1,5 @@
 import { EntitySchemaField } from "./schema/entity-schema-field";
+import { EntityBlockConfig } from "../basic-datatypes/entity/entity-block/entity-block-config";
 
 /**
  * Dynamic configuration for a entity.
@@ -17,6 +18,11 @@ export interface EntityConfig {
    * (optional) the default is the ID of the entity (`.entityId`)
    */
   toStringAttributes?: string[];
+
+  /**
+   * Details to be displayed of this entity as a tooltip.
+   */
+  toBlockDetailsAttributes?: EntityBlockConfig;
 
   /**
    * human-readable name/label of the entity in the UI

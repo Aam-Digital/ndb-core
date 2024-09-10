@@ -23,9 +23,7 @@ describe("NotesRelatedToEntityComponent", () => {
     TestBed.configureTestingModule({
       imports: [NotesRelatedToEntityComponent, MockedTestingModule.withState()],
     }).compileComponents();
-  }));
 
-  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
     component = fixture.componentInstance;
   }));

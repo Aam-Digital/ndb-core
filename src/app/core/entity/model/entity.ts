@@ -24,6 +24,7 @@ import {
 } from "../../../child-dev-project/warning-level";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { UpdateMetadata } from "./update-metadata";
+import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
 
 /**
  * This represents a static class of type <T>.
@@ -75,6 +76,11 @@ export class Entity {
    * This can be overwritten in subclasses or through the config.
    */
   static toStringAttributes = ["entityId"];
+
+  /**
+   * Defining which attributes will be displayed in a tooltip on hover when the record is displayed as an entity-block.
+   */
+  static toBlockDetailsAttributes?: EntityBlockConfig;
 
   /**
    * human-readable name/label of the entity in the UI
@@ -161,8 +167,6 @@ export class Entity {
       return id;
     }
   }
-
-  static blockComponent?: string;
 
   /**
    * whether this entity type can contain "personally identifiable information" (PII)

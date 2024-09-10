@@ -24,7 +24,8 @@ export default {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            entitySchemaField: { id: null },
+            entitySchemaField: { id: "name" },
+            entityType: TestEntity,
           },
         },
         { provide: MatDialogRef, useValue: null },
