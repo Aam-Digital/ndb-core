@@ -14,13 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GIT_COMMIT_SHA: ${{ github.sha }}
+      GIT_BRANCH: ${{ github.head_ref }}
       CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
-
-      - name: Extract branch
-        run: echo "GIT_BRANCH=ndb-core/${{ github.head_ref }}" >> $GITHUB_ENV
 
       - name: Install Code Climate Test Reporter
         run: |
@@ -113,13 +111,11 @@ jobs:
       - test
     env:
       GIT_COMMIT_SHA: ${{ github.sha }}
+      GIT_BRANCH: ${{ github.head_ref }}
       CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
-
-      - name: Extract branch
-        run: echo "GIT_BRANCH=ndb-core/${{ github.head_ref }}" >> $GITHUB_ENV
 
       - name: Download coverage reports
         uses: actions/download-artifact@v4
