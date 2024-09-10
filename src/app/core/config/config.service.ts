@@ -369,5 +369,9 @@ const migrateEntityBlock: ConfigMigration = (key, configPart) => {
     return configPart;
   }
 
+  if (key === "viewComponent" && configPart === "ChildBlock") {
+    return "EntityBlock";
+  }
+
   return configPart;
 };
