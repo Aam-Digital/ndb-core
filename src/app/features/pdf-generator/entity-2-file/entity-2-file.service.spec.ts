@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { Entity2FileService } from './entity-2-file.service';
+import { Entity2FileService } from "./entity-2-file.service";
 
-describe('Entity2FileService', () => {
+describe("Entity2FileService", () => {
   let service: Entity2FileService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('Entity2FileService', () => {
     service = TestBed.inject(Entity2FileService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });
