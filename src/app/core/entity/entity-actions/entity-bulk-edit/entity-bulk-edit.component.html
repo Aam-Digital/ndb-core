@@ -1,0 +1,30 @@
+<h2 mat-dialog-title i18n>Bulk edit {{ selectedRows }} tasks</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <form [formGroup]="schemaFieldsForm">
+    <div class="entity-form-cell">
+      <mat-form-field appearance="fill">
+        <mat-label>Property to update</mat-label>
+        <mat-select
+          formControlName="selectedField"
+          (selectionChange)="onChangeProperty($event.value)"
+        >
+          <mat-option *ngFor="let field of entityFields" [value]="field.key">
+            {{ field.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="entity-form-cell">
+      <mat-form-field>
+        <textarea formControlName="label" matInput rows="3"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="save()" i18n="Button label">Save</button>
+  <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
+</mat-dialog-actions>

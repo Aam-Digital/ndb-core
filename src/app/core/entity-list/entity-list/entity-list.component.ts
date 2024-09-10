@@ -319,6 +319,14 @@ export class EntityListComponent<T extends Entity>
     this.selectedRows = undefined;
   }
 
+  async editRecords() {
+    await this.entityActionsService.edit(
+      this.selectedRows,
+      false,
+      this.entityConstructor,
+    );
+    this.selectedRows = undefined;
+  }
   async deleteRecords() {
     await this.entityActionsService.delete(this.selectedRows);
     this.selectedRows = undefined;

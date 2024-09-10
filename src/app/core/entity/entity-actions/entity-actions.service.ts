@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
-import { Entity } from "../model/entity";
+import { Entity, EntityConstructor } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
@@ -10,6 +10,10 @@ import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { CascadingActionResult } from "./cascading-entity-action";
 import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
+import { EntityEditService } from "./entity-edit.service";
+import { MatDialog } from "@angular/material/dialog";
+import { lastValueFrom } from "rxjs";
+import { EntityBulkEditComponent } from "./entity-bulk-edit/entity-bulk-edit.component";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -23,8 +27,10 @@ export class EntityActionsService {
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private matDialog: MatDialog,
     private entityMapper: EntityMapperService,
     private entityDelete: EntityDeleteService,
+    private entityEdit: EntityEditService,
     private entityAnonymize: EntityAnonymizeService,
     entityActionsMenuService: EntityActionsMenuService,
   ) {
@@ -53,6 +59,14 @@ export class EntityActionsService {
         icon: "trash",
         label: $localize`:entity context menu:Delete`,
         tooltip: $localize`:entity context menu tooltip:Remove the record completely from the database.`,
+      },
+      {
+        action: "edit",
+        execute: (e, nav) => this.edit(e, nav),
+        permission: "edit",
+        icon: "edit",
+        label: $localize`:entity context menu:Edit`,
+        tooltip: $localize`:entity context menu tooltip:Update the record.`,
       },
     ]);
   }
@@ -169,6 +183,79 @@ export class EntityActionsService {
   }
 
   /**
+   * Shows a confirmation dialog to the user
+   * and removes the entity if the user confirms.
+   *
+   * This also triggers a toast message, enabling the user to undo the action.
+   *
+   * @param entityParam The entity to remove
+   * @param navigate whether upon delete the app will navigate back
+   */
+  async edit<E extends Entity>(
+    entityParam: E | E[],
+    navigate: boolean = false,
+    entityConstructor?: EntityConstructor,
+  ): Promise<boolean> {
+    let textForDeleteEntity = "";
+    let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
+    if (entities.length > 1) {
+      textForDeleteEntity =
+        $localize`:Demonstrative pronoun plural:these` +
+        " " +
+        entities.length +
+        " " +
+        entities[0].getConstructor().labelPlural;
+    } else {
+      textForDeleteEntity =
+        $localize`:Definite article singular:the` +
+        " " +
+        entities[0].getConstructor().label +
+        ' "' +
+        entities[0].toString() +
+        '"';
+    }
+    let result = new CascadingActionResult();
+
+    if (
+      await this.confirmationDialog.getConfirmation(
+        $localize`:Edit confirmation title:Edit?`,
+        $localize`:Edit confirmation dialog:
+        This will edit the data. Statistical reports (also for past time periods) will change and not include this record anymore.\n
+        If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.\n
+        Are you sure you want to delete ${textForDeleteEntity}?`,
+      )
+    ) {
+      const dialogRef = this.matDialog.open(EntityBulkEditComponent, {
+        width: "30%",
+        maxHeight: "90vh",
+        data: { entityConstructor, selectedRow: entities },
+      });
+
+      const results = await lastValueFrom(dialogRef.afterClosed());
+      if (results) {
+        let originalEntities: E[] = Array.isArray(entityParam)
+          ? entityParam
+          : [entityParam];
+        const newEntities: E[] = originalEntities.map((e) => e.copy());
+        newEntities.forEach(async (e) => {
+          e[results.selectedField] = results.label;
+          await this.entityMapper.save(e);
+        });
+
+        this.showSnackbarConfirmationWithUndo(
+          this.generateMessageForConfirmationWithUndo(
+            newEntities,
+            $localize`:Entity action confirmation message verb:edited`,
+          ),
+          originalEntities,
+        );
+        return true;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Anonymize the given entity,
    * removing properties that are not explicitly configured in the schema to be retained.
    *
@@ -250,6 +337,7 @@ export class EntityActionsService {
     const newEntities: E[] = originalEntities.map((e) => e.copy());
     newEntities.forEach(async (e) => {
       e.inactive = true;
+      console.log(e, "eejejnejejejhejh");
       await this.entityMapper.save(e);
     });
 
