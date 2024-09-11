@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DisplayLongTextComponent } from "./display-long-text.component";
 import { Entity } from "../../../../entity/model/entity";
 
-describe("DisplayUnitComponent", () => {
+describe("DisplayLongTextComponent", () => {
   let component: DisplayLongTextComponent;
   let fixture: ComponentFixture<DisplayLongTextComponent>;
 
