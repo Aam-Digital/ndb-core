@@ -24,7 +24,10 @@ import { MatOption } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
-import { EntityForm, EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import {
+  EntityForm,
+  EntityFormService,
+} from "app/core/common-components/entity-form/entity-form.service";
 
 @Component({
   selector: "app-entity-bulk-edit",
@@ -98,50 +101,46 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
         label: field.label,
         field: field,
       }));
-    console.log(this.entityFields, "entityFields");
   }
 
   onChangeProperty(fieldId: string) {
-    // console.log(this.entityData, "this.entityData");
-
     this._field = this.entityFormService.extendFormFieldConfig(
       fieldId,
       this.entityData.getConstructor(),
     );
-    if (this._field) {
-      // Call the method to fetch entity fields data (assuming it's done somewhere in your flow)
-      this.fetchEntityFieldsData(); 
 
-      // Extract the 'field' properties from the populated 'entityFields'
-      const fieldObjects = this.entityFields.map(item => item.key); 
-      // console.log(fieldObjects, "fieldObjects");
+    this.fetchEntityFieldsData();
 
-      // Pass the field objects into the form creation method
-      this.entityFormService
-        .createEntityForm(
-          fieldObjects,  // Use the extracted field objects
-          this.entityData,
-        )
-        .then((value) => {
-          this.form = value;
-          // console.log(this.form, "parentformmm");
-        });
+    const fieldKeys = this.entityFields.map((item) => item.key);
+    this.createEntityForm(fieldKeys);
 
-      this.showDynamicFields = true;
-    }
+    this.showDynamicFields = true;
+  }
+
+  private createEntityForm(fieldKeys: string[]) {
+    this.entityFormService
+      .createEntityForm(fieldKeys, this.entityData)
+      .then((form) => {
+        this.form = form;
+        const selectedField = this.schemaFieldsForm.get("selectedField").value;
+
+        if (this.form.formGroup.controls[selectedField]) {
+          this.form.formGroup.controls[selectedField].setValue("");
+        }
+      });
   }
 
   save() {
     this.schemaFieldsForm.markAllAsTouched();
-    if (this.schemaFieldsForm.invalid) {
-      return;
-    }
-    // console.log("this.schemaFieldsForm",this.schemaFieldsForm)
-    // console.log("this.form",this.form.formGroup.controls[this.schemaFieldsForm.get("selectedField").value].value)
+
+    if (this.schemaFieldsForm.invalid) return;
+
+    const selectedField = this.schemaFieldsForm.get("selectedField").value;
+    const label = this.form.formGroup.controls[selectedField]?.value || "";
 
     const newSchemaField = {
-      selectedField: this.schemaFieldsForm.get("selectedField").value,
-      label: this.form.formGroup.controls[this.schemaFieldsForm.get("selectedField").value].value,
+      selectedField,
+      label,
     };
 
     this.dialogRef.close(newSchemaField);
