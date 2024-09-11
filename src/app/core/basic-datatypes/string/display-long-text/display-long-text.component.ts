@@ -20,9 +20,13 @@ export class DisplayLongTextComponent
       return;
     }
 
-    const maxLines = 4;
-    const lines = this.value.split("\n");
-
+    const maxLines = 3;
+    const maxCharacters = 250;
+    const text =
+      this.value.length > maxCharacters
+        ? this.value.slice(0, maxCharacters) + "..."
+        : this.value;
+    const lines = text.split("\n");
     this.formattedValue =
       lines.length > maxLines
         ? lines.slice(0, maxLines).join("<br>") + "..."
