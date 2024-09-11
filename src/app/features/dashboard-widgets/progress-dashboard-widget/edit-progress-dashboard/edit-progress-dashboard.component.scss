@@ -20,11 +20,12 @@
 }
 
 .title-field {
+  width: 90%;
+  min-width: 0;
+
   input {
     font-size: 32px;
   }
-  width: 90%;
-  min-width: 0;
 }
 
 .header-field {
