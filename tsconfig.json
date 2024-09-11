@@ -52,8 +52,6 @@
       "e2e",
       "./cypress.config.ts",
       "**/*.cy.tsx",
-      "src/app/core/basic-datatypes/string/edit-text/display-long-text/display-longtext.component.spec.ts",
-      "src/app/core/basic-datatypes/string/edit-text/display-long-text/display-unit.stories.ts"
   ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
