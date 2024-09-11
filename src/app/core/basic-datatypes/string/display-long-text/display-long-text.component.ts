@@ -1,6 +1,18 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
+
+/**
+ * Config for details of how a long-text field should be displayed.
+ * (define as "additional" on the entity field)
+ */
+export interface LongTextFieldConfig {
+  /** Maximum number of lines to show */
+  maxLines?: number;
+
+  /** Maximum number of characters to show */
+  maxCharacters?: number;
+}
 
 @DynamicComponent("DisplayLongText")
 @Component({
@@ -9,9 +21,11 @@ import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-com
   standalone: true,
 })
 export class DisplayLongTextComponent
-  extends ViewDirective<string, string>
+  extends ViewDirective<string, LongTextFieldConfig>
   implements OnInit
 {
+  @Input() declare config: LongTextFieldConfig;
+
   formattedValue: string = "";
 
   ngOnInit(): void {
@@ -20,8 +34,8 @@ export class DisplayLongTextComponent
       return;
     }
 
-    const maxLines = 3;
-    const maxCharacters = 250;
+    const maxLines = this.config?.maxLines ?? 3;
+    const maxCharacters = this.config?.maxCharacters ?? 250;
     const text =
       this.value.length > maxCharacters
         ? this.value.slice(0, maxCharacters) + "..."
