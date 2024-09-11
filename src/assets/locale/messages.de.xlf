@@ -3648,6 +3648,14 @@
         </context-group>
         <note priority="1" from="description">admin entity: nav item</note>
       </trans-unit>
+      <trans-unit id="8589026079134671263" datatype="html">
+        <source> This component (<x id="INTERPOLATION" equiv-text="{{ configDetailsView.component }}"/>) cannot be edited by users in the Admin UI yet. Please contact your technical support team to make changes to this. </source>
+        <target state="translated"> Diese Komponente (<x id="INTERPOLATION" equiv-text="{{ configDetailsView.component }}"/>) kann aktuell noch nicht von Nutzer:innen in der Admin-Oberfläche bearbeitet werden. Bitte kontaktieren Sie Ihr technisches Support-Team, um hier Änderungen vorzunehmen. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
+          <context context-type="linenumber">57,61</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="3492007542396725315" datatype="html">
         <source>Welcome</source>
         <target state="translated"> Willkommen </target>
@@ -3885,7 +3893,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Save config confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6614677774493793726" datatype="html">
