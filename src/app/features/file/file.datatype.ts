@@ -43,3 +43,19 @@ export class FileDatatype extends StringDatatype {
     );
   }
 }
+
+/**
+ * (Optional) "additional" object to configure details of a "file" datatype / form field.
+ */
+export interface FileFieldConfig {
+  /**
+   * The accepted file types for file selection dialog.
+   * If not defined, allows any file.
+   */
+  acceptedFileTypes?: string;
+
+  /**
+   * The maxSize to which the image will be automatically resized before upload.
+   */
+  imageCompression?: number;
+}

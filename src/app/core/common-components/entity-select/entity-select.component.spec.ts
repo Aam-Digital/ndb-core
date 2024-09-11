@@ -19,29 +19,33 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { of } from "rxjs";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any, any>;
   let fixture: ComponentFixture<EntitySelectComponent<any, any>>;
-  let testUsers: Entity[];
-  let testChildren: Entity[];
+  let test1Entities: TestEntity[];
+  let test2Entities: Test2Entity[];
   let formControl: FormControl;
+
+  @DatabaseEntity("Test2Entity")
+  class Test2Entity extends TestEntity {}
 
   beforeEach(waitForAsync(() => {
     formControl = new FormControl();
 
-    testUsers = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
+    test1Entities = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
       return new TestEntity(s);
     });
-    testChildren = [createEntityOfType("Child"), createEntityOfType("Child")];
-    const otherEntities: Entity[] = [createEntityOfType("School")];
+    test2Entities = [new Test2Entity(), new Test2Entity()];
+    const otherEntities: Entity[] = [createEntityOfType("OtherEntityType")];
 
     TestBed.configureTestingModule({
       imports: [
         EntitySelectComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
-          ...testUsers,
-          ...testChildren,
+          ...test1Entities,
+          ...test2Entities,
           ...otherEntities,
         ]),
       ],
@@ -63,7 +67,7 @@ describe("EntitySelectComponent", () => {
     component.entityType = TestEntity.ENTITY_TYPE;
     fixture.detectChanges();
     tick();
-    expect(component.allEntities.length).toBe(testUsers.length);
+    expect(component.allEntities.length).toBe(test1Entities.length);
   }));
 
   it("should not be in loading-state when all data is received", fakeAsync(() => {
@@ -78,22 +82,22 @@ describe("EntitySelectComponent", () => {
     tick();
     fixture.detectChanges();
     expect(component.availableOptions.value).toEqual(
-      jasmine.arrayWithExactContents(testUsers),
+      jasmine.arrayWithExactContents(test1Entities),
     );
   }));
 
   it("suggests all entities of multiple different types if configured", fakeAsync(() => {
-    component.entityType = [TestEntity.ENTITY_TYPE, "Child"];
+    component.entityType = [TestEntity.ENTITY_TYPE, Test2Entity.ENTITY_TYPE];
     tick();
     fixture.detectChanges();
 
     expect(component.allEntities).toEqual(
-      [...testUsers, ...testChildren].sort((a, b) =>
+      [...test1Entities, ...test2Entities].sort((a, b) =>
         a.toString().localeCompare(b.toString()),
       ),
     );
     expect(component.availableOptions.value).toEqual(
-      [...testUsers, ...testChildren].sort((a, b) =>
+      [...test1Entities, ...test2Entities].sort((a, b) =>
         a.toString().localeCompare(b.toString()),
       ),
     );
@@ -103,7 +107,7 @@ describe("EntitySelectComponent", () => {
     const warnSpy = spyOn(Logging, "warn");
     component.entityType = TestEntity.ENTITY_TYPE;
     component.label = "test label";
-    component.form.setValue([testUsers[0].getId(), "missing_user"]);
+    component.form.setValue([test1Entities[0].getId(), "missing_user"]);
     tick();
     fixture.detectChanges();
 
@@ -113,24 +117,26 @@ describe("EntitySelectComponent", () => {
       "missing_user",
       jasmine.anything(),
     );
-    expect(component.form.value).toEqual([testUsers[0].getId()]);
+    expect(component.form.value).toEqual([test1Entities[0].getId()]);
   }));
 
   it("shows inactive entities according to the includeInactive state", fakeAsync(() => {
-    testUsers[0].isActive = false;
-    testUsers[2].isActive = false;
+    test1Entities[0].isActive = false;
+    test1Entities[2].isActive = false;
     component.entityType = TestEntity.ENTITY_TYPE;
     tick();
 
     expect(component.availableOptions.value.length).toEqual(
-      testUsers.length - 2,
+      test1Entities.length - 2,
     );
 
     component.toggleIncludeInactive();
     tick();
-    expect(component.availableOptions.value.length).toEqual(testUsers.length);
+    expect(component.availableOptions.value.length).toEqual(
+      test1Entities.length,
+    );
 
-    testUsers[2].isActive = true;
+    test1Entities[2].isActive = true;
     component.toggleIncludeInactive();
     tick();
     expect(component.availableOptions.value.length).toEqual(3);
@@ -157,21 +163,24 @@ describe("EntitySelectComponent", () => {
 
   it("should show selected entities of type that is not configured", fakeAsync(() => {
     component.entityType = [TestEntity.ENTITY_TYPE];
-    component.form.setValue([testUsers[0].getId(), testChildren[0].getId()]);
+    component.form.setValue([
+      test1Entities[0].getId(),
+      test2Entities[0].getId(),
+    ]);
     tick();
     fixture.detectChanges();
 
     expect(component.form.value).toEqual(
       jasmine.arrayWithExactContents([
-        testUsers[0].getId(),
-        testChildren[0].getId(),
+        test1Entities[0].getId(),
+        test2Entities[0].getId(),
       ]),
     );
     expect(component.allEntities).toEqual(
-      jasmine.arrayWithExactContents(testUsers),
+      jasmine.arrayWithExactContents(test1Entities),
     );
     expect(component.availableOptions.value).toEqual(
-      jasmine.arrayWithExactContents([...testUsers, testChildren[0]]),
+      jasmine.arrayWithExactContents([...test1Entities, test2Entities[0]]),
     );
   }));
 

@@ -9,21 +9,9 @@
 
 <h2>Shortcuts</h2>
 <mat-nav-list>
-  <mat-list-item [routerLink]="['/admin/site-settings']" i18n="admin menu item">
-    Site Settings
-  </mat-list-item>
-
-  <mat-list-item [routerLink]="['/admin/conflicts']" i18n="admin menu item">
-    Database Conflicts
-  </mat-list-item>
-
-  <mat-list-item [routerLink]="['/admin/entity']" i18n="admin menu item">
-    Administer Entity Types
-  </mat-list-item>
-
-  <mat-list-item [routerLink]="['/admin/setup-wizard']" i18n="admin menu item">
-    Setup Wizard
-  </mat-list-item>
+  @for (item of adminOverviewService.menuItems; track item) {
+    <mat-list-item [routerLink]="[item.link]">{{ item.label }}</mat-list-item>
+  }
 </mat-nav-list>
 
 <hr />

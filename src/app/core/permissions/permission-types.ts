@@ -17,7 +17,7 @@ const actions = [
  * The type allows all strings defined in the `actions` array.
  * E.g. "read" or "manage"
  */
-export type EntityAction = (typeof actions)[number];
+export type EntityActionPermission = (typeof actions)[number];
 
 /**
  * The type which defines which subjects can be used for permissions.
@@ -30,7 +30,7 @@ export type EntitySubject = EntityConstructor | Entity | string;
  * The format that the JSON defined rules need to have.
  * In the JSON object the Entities can be specified by using their ENTITY_TYPE string representation.
  */
-export type DatabaseRule = RawRuleOf<Ability<[EntityAction, string]>>;
+export type DatabaseRule = RawRuleOf<Ability<[EntityActionPermission, string]>>;
 
 /**
  * The format of the JSON object which defines the rules for each role.

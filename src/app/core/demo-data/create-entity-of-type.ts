@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
-import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { Entity } from "../entity/model/entity";
+import { entityRegistry } from "../entity/database-entity.decorator";
 
 /**
  * "Simulate" a custom entity type that saves all fields without transformations through a mocked EntitySchema.
@@ -19,10 +19,7 @@ export function createEntityOfType(
   // @ts-ignore
   entity._id = entity._id.replace(Entity.ENTITY_TYPE, type);
 
-  entity.getSchema = () =>
-    new Map<string, EntitySchemaField>(
-      Object.keys(entity).map((key) => [key, {}]),
-    );
+  entity.getSchema = () => entityRegistry.get(type).schema;
   entity.getType = () => type;
 
   return entity;

@@ -6,7 +6,7 @@ import { SessionInfo } from "../session-info";
 import { KeycloakEventType, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
 import { Entity } from "../../../entity/model/entity";
-import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
+import { ParsedJWT, parseJwt } from "../../session-utils";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 import { switchMap } from "rxjs/operators";
 

@@ -1,5 +1,6 @@
 <input
   type="file"
+  [accept]="acceptedFileTypes"
   style="display: none"
   (change)="onFileSelected($event.target['files'][0])"
   #fileUpload

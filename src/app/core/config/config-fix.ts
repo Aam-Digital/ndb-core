@@ -7,6 +7,7 @@ import { INTERACTION_TYPE_CONFIG_ID } from "../../child-dev-project/notes/model/
 import { EventAttendanceMap } from "../../child-dev-project/attendance/model/event-attendance";
 import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { EntityConfig } from "../entity/entity-config";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -956,9 +957,9 @@ export const defaultJsonConfig = {
     "label": $localize`:Label for child:Child`,
     "labelPlural": $localize`:Plural label for child:Children`,
     "toStringAttributes": ["name"],
+    "toBlockDetailsAttributes": { "title": "name", "image": "photo", "fields": ["phone", "schoolId", "schoolClass"] },
     "icon": "child",
     "color": "#1565C0",
-    "blockComponent": "ChildBlock",
     "hasPII": true,
 
     "attributes": {
@@ -1018,9 +1019,8 @@ export const defaultJsonConfig = {
         label: $localize`:Label for the remarks about a dropout of a child:Dropout remarks`,
       },
       photo: {
-        dataType: "file",
+        dataType: "photo",
         label: $localize`:Label for the file field of a photo of a child:Photo`,
-        editComponent: "EditPhoto",
       },
       phone: {
         dataType: "string",
@@ -1049,10 +1049,13 @@ export const defaultJsonConfig = {
       },
       "birth_certificate": {
         "dataType": "file",
-        "label": $localize`:Label for a child attribute:Birth certificate`
+        "label": $localize`:Label for a child attribute:Birth certificate`,
+        "additional": {
+          "acceptedFileTypes": ".pdf"
+        }
       }
     },
-  },
+  } as EntityConfig,
   "entity:School": {
     "toStringAttributes": ["name"],
     "icon": "university",
@@ -1301,10 +1304,8 @@ export const defaultJsonConfig = {
         anonymize: "retain",
       },
       result: {
-        dataType: "number",
+        dataType: "percentage",
         label: $localize`:Label for the percentage result of a relation:Result`,
-        viewComponent: "DisplayPercentage",
-        editComponent: "EditNumber",
         validators: {
           min: 0,
           max: 100,

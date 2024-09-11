@@ -9,6 +9,7 @@ import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { CascadingActionResult } from "./cascading-entity-action";
+import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -25,7 +26,36 @@ export class EntityActionsService {
     private entityMapper: EntityMapperService,
     private entityDelete: EntityDeleteService,
     private entityAnonymize: EntityAnonymizeService,
-  ) {}
+    entityActionsMenuService: EntityActionsMenuService,
+  ) {
+    entityActionsMenuService.registerActions([
+      {
+        action: "archive",
+        execute: (e) => this.archive(e),
+        permission: "update",
+        icon: "box-archive",
+        label: $localize`:entity context menu:Archive`,
+        tooltip: $localize`:entity context menu tooltip:Mark the record as inactive, hiding it from lists by default while keeping the data.`,
+        primaryAction: true,
+      },
+      {
+        action: "anonymize",
+        execute: (e) => this.anonymize(e),
+        permission: "update",
+        icon: "user-secret",
+        label: $localize`:entity context menu:Anonymize`,
+        tooltip: $localize`:entity context menu tooltip:Remove all personal data and keep an archived basic record for statistical reporting.`,
+      },
+      {
+        action: "delete",
+        execute: (e, nav) => this.delete(e, nav),
+        permission: "delete",
+        icon: "trash",
+        label: $localize`:entity context menu:Delete`,
+        tooltip: $localize`:entity context menu tooltip:Remove the record completely from the database.`,
+      },
+    ]);
+  }
 
   showSnackbarConfirmationWithUndo(
     message: string,
