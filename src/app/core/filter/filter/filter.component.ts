@@ -113,11 +113,36 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   }
 
   private updateUrl(key: string, value: string) {
-    const params = {};
-    params[key] = value;
+    const MAX_URL_LENGTH = 2000;
+    let queryParams = { ...this.route.snapshot.queryParams, [key]: value };
+
+    let potentialUrl = this.router
+      .createUrlTree([], {
+        relativeTo: this.route,
+        queryParams,
+        queryParamsHandling: "merge",
+      })
+      .toString();
+    if (potentialUrl.length > MAX_URL_LENGTH) {
+      let longestKey: string | null = null;
+      let maxLength = 0;
+      Object.keys(queryParams).forEach((key) => {
+        if (queryParams[key].length > maxLength) {
+          longestKey = key;
+          maxLength = queryParams[key].length;
+        }
+      });
+
+      if (longestKey) {
+        queryParams[longestKey] = undefined;
+      } else {
+        queryParams[key] = undefined;
+      }
+    }
+
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: params,
+      queryParams: queryParams,
       queryParamsHandling: "merge",
     });
   }
