@@ -8,7 +8,8 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
-import { BasicFilterConfig } from "app/core/entity-list/EntityListConfig";
+import { BasicFilterConfig } from "../../entity-list/EntityListConfig";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -101,32 +102,37 @@ describe("FilterComponent", () => {
   });
 
   it("should remove the longest filter option if URL length exceeds 2000 characters", async () => {
-    spyOn(router, "navigate");
-    component.entityType = Note;
+    const initialQueryParams = { dateOfBirth: "a,b" };
+    activatedRouteMock.snapshot.queryParams = initialQueryParams;
+    const routerNavigate = spyOn(router, "navigate");
+
+    component.entityType = TestEntity;
+    component.entities = [];
     component.useUrlQueryParams = true;
-
-    component.filterConfig = [
-      { id: "category", label: "Category" } as BasicFilterConfig,
-    ];
-    const longCategoryString = Array(225).fill("category").join(",");
-    activatedRouteMock.snapshot = {
-      queryParams: {
-        category: longCategoryString,
-      },
-    };
-
+    component.filterConfig = [{ id: "category" } as BasicFilterConfig];
     await component.ngOnChanges({ filterConfig: true } as any);
 
-    for (const filter of component.filterSelections) {
-      filter.selectedOptionChange.subscribe((event) =>
-        component.filterOptionSelected(filter, event),
-      );
-    }
-    let currentUrl = component.getCurrentUrl();
-    if (currentUrl.length > 2000) {
-      currentUrl = currentUrl.substring(0, 2000);
-    }
-    expect(currentUrl.length).toBeLessThanOrEqual(2000);
+    component.filterOptionSelected(component.filterSelections[0], [
+      "categoryXX",
+      "categoryYY",
+    ]);
+    // filter options should be added to url
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      relativeTo: activatedRouteMock as any,
+      queryParams: { ...initialQueryParams, category: "categoryXX,categoryYY" },
+      queryParamsHandling: "merge",
+    });
+    routerNavigate.calls.reset();
+
+    const longOptions = Array(250).fill("categoryZZ");
+    component.filterOptionSelected(component.filterSelections[0], longOptions);
+    // long options should be skipped, short options for other filter still present
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      relativeTo: activatedRouteMock as any,
+      queryParams: { ...initialQueryParams, category: undefined },
+      queryParamsHandling: "merge",
+    });
+    routerNavigate.calls.reset();
   });
 
   it("should load url params and set no filter value when empty", async () => {

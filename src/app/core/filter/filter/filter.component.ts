@@ -113,9 +113,8 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   }
 
   private updateUrl(key: string, value: string) {
-    const params = {};
-    params[key] = value;
-    let queryParams = { ...this.route.snapshot.queryParams, ...params };
+    const MAX_URL_LENGTH = 2000;
+    let queryParams = { ...this.route.snapshot.queryParams, [key]: value };
 
     let potentialUrl = this.router
       .createUrlTree([], {
@@ -124,52 +123,28 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
         queryParamsHandling: "merge",
       })
       .toString();
-
-    if (potentialUrl.length > 2000) {
+    if (potentialUrl.length > MAX_URL_LENGTH) {
       let longestKey: string | null = null;
       let maxLength = 0;
-
-      Object.keys(params).forEach((key) => {
-        if (params[key].length > maxLength) {
+      Object.keys(queryParams).forEach((key) => {
+        if (queryParams[key].length > maxLength) {
           longestKey = key;
-          maxLength = params[key].length;
+          maxLength = queryParams[key].length;
         }
       });
 
       if (longestKey) {
-        delete params[longestKey];
-        queryParams = { ...this.route.snapshot.queryParams, ...params };
-
-        potentialUrl = this.router
-          .createUrlTree([], {
-            relativeTo: this.route,
-            queryParams,
-            queryParamsHandling: "merge",
-          })
-          .toString();
+        queryParams[longestKey] = undefined;
+      } else {
+        queryParams[key] = undefined;
       }
     }
+
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: params,
+      queryParams: queryParams,
       queryParamsHandling: "merge",
     });
-  }
-  getCurrentUrl(): string {
-    const params = this.filterSelections.reduce((acc, filter) => {
-      if (filter.selectedOptionValues.length > 0) {
-        acc[filter.name] = filter.selectedOptionValues.join(",");
-      }
-      return acc;
-    }, {});
-
-    return this.router
-      .createUrlTree([], {
-        relativeTo: this.route,
-        queryParams: { ...this.route.snapshot.queryParams, ...params },
-        queryParamsHandling: "merge",
-      })
-      .toString();
   }
 
   private loadUrlParams() {
