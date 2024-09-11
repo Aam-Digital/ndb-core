@@ -131,7 +131,7 @@ export const coreComponents: ComponentTuple[] = [
     "DisplayLongText",
     () =>
       import(
-        "./basic-datatypes/string/edit-text/display-long-text/display-long-text.component"
+        "./basic-datatypes/string/display-long-text/display-long-text.component"
       ).then((c) => c.DisplayLongTextComponent),
   ],
 
