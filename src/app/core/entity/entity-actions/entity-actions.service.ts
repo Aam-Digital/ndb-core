@@ -14,6 +14,7 @@ import { EntityEditService } from "./entity-edit.service";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
 import { EntityBulkEditComponent } from "./entity-bulk-edit/entity-bulk-edit.component";
+import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -222,7 +223,7 @@ export class EntityActionsService {
         $localize`:Edit confirmation dialog:
         This will edit the data. Statistical reports (also for past time periods) will change and not include this record anymore.\n
         If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.\n
-        Are you sure you want to delete ${textForDeleteEntity}?`,
+        Are you sure you want to edit ${textForDeleteEntity}?`,
       )
     ) {
       const dialogRef = this.matDialog.open(EntityBulkEditComponent, {
@@ -230,27 +231,18 @@ export class EntityActionsService {
         maxHeight: "90vh",
         data: { entityConstructor, selectedRow: entities },
       });
-
       const results = await lastValueFrom(dialogRef.afterClosed());
-      if (results) {
-        let originalEntities: E[] = Array.isArray(entityParam)
-          ? entityParam
-          : [entityParam];
-        const newEntities: E[] = originalEntities.map((e) => e.copy());
-        newEntities.forEach(async (e) => {
-          e[results.selectedField] = results.label;
-          await this.entityMapper.save(e);
-        });
-
-        this.showSnackbarConfirmationWithUndo(
-          this.generateMessageForConfirmationWithUndo(
-            newEntities,
-            $localize`:Entity action confirmation message verb:edited`,
-          ),
-          originalEntities,
-        );
-        return true;
-      }
+    if (results) {
+      const result = await this.entityEdit.editEntity(results, entityParam);
+      this.showSnackbarConfirmationWithUndo(
+        this.generateMessageForConfirmationWithUndo(
+           entities,
+          $localize`:Entity action confirmation message verb:edited`,
+        ),
+        result.originalEntities,
+      );
+      return true;
+    }
     }
     return true;
   }

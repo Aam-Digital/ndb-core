@@ -322,7 +322,7 @@ export class EntityListComponent<T extends Entity>
   async editRecords() {
     await this.entityActionsService.edit(
       this.selectedRows,
-      false,
+      true,
       this.entityConstructor,
     );
     this.selectedRows = undefined;
