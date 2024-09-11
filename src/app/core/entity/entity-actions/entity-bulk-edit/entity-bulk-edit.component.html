@@ -16,11 +16,20 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="entity-form-cell">
+
+    <div *ngIf = "showDynamicFields" class="entity-form-cell">
+      <app-entity-field-edit
+        [field]="_field"
+        [entity]="entityData"
+        [form]="form"
+      ></app-entity-field-edit>
+    </div>
+
+    <!-- <div class="entity-form-cell">
       <mat-form-field>
         <textarea formControlName="label" matInput rows="3"></textarea>
       </mat-form-field>
-    </div>
+    </div> -->
   </form>
 </mat-dialog-content>
 

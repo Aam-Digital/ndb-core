@@ -8,6 +8,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
 import { MatInputModule } from "@angular/material/input";
 import { ErrorHintComponent } from "app/core/common-components/error-hint/error-hint.component";
+import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import {
   FormBuilder,
   FormGroup,
@@ -18,13 +19,12 @@ import {
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityConstructor } from "../../model/entity";
+import { Entity, EntityConstructor } from "../../model/entity";
 import { MatOption } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { DynamicComponentDirective } from "app/core/config/dynamic-components/dynamic-component.directive";
+import { EntityForm, EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 
 @Component({
   selector: "app-entity-bulk-edit",
@@ -43,12 +43,12 @@ import { DynamicComponentDirective } from "app/core/config/dynamic-components/dy
     MatFormFieldModule,
     MatSelectModule,
     CommonModule,
-    DynamicComponentDirective,
+    EntityFieldEditComponent,
   ],
   templateUrl: "./entity-bulk-edit.component.html",
   styleUrl: "./entity-bulk-edit.component.scss",
 })
-export class EntityBulkEditComponent implements OnInit {
+export class EntityBulkEditComponent<E extends Entity> implements OnInit {
   formField: FormFieldConfig;
   schemaFieldsForm: FormGroup;
   entityConstructor: EntityConstructor;
@@ -56,6 +56,8 @@ export class EntityBulkEditComponent implements OnInit {
   entityData: any;
   showDynamicFields: boolean = false;
   _field: FormFieldConfig;
+  form: EntityForm<E> | undefined;
+
   entityFields: Array<{ key: string; label: string; field: any }> = [];
 
   constructor(
@@ -85,7 +87,6 @@ export class EntityBulkEditComponent implements OnInit {
   private initForm() {
     this.schemaFieldsForm = this.fb.group({
       selectedField: ["", Validators.required],
-      label: ["", Validators.required],
     });
   }
 
@@ -101,13 +102,31 @@ export class EntityBulkEditComponent implements OnInit {
   }
 
   onChangeProperty(fieldId: string) {
-    console.log(this.entityData, "this.entityData");
+    // console.log(this.entityData, "this.entityData");
 
     this._field = this.entityFormService.extendFormFieldConfig(
       fieldId,
       this.entityData.getConstructor(),
     );
     if (this._field) {
+      // Call the method to fetch entity fields data (assuming it's done somewhere in your flow)
+      this.fetchEntityFieldsData(); 
+
+      // Extract the 'field' properties from the populated 'entityFields'
+      const fieldObjects = this.entityFields.map(item => item.key); 
+      // console.log(fieldObjects, "fieldObjects");
+
+      // Pass the field objects into the form creation method
+      this.entityFormService
+        .createEntityForm(
+          fieldObjects,  // Use the extracted field objects
+          this.entityData,
+        )
+        .then((value) => {
+          this.form = value;
+          // console.log(this.form, "parentformmm");
+        });
+
       this.showDynamicFields = true;
     }
   }
@@ -117,10 +136,12 @@ export class EntityBulkEditComponent implements OnInit {
     if (this.schemaFieldsForm.invalid) {
       return;
     }
+    // console.log("this.schemaFieldsForm",this.schemaFieldsForm)
+    // console.log("this.form",this.form.formGroup.controls[this.schemaFieldsForm.get("selectedField").value].value)
 
     const newSchemaField = {
       selectedField: this.schemaFieldsForm.get("selectedField").value,
-      label: this.schemaFieldsForm.get("label").value,
+      label: this.form.formGroup.controls[this.schemaFieldsForm.get("selectedField").value].value,
     };
 
     this.dialogRef.close(newSchemaField);
