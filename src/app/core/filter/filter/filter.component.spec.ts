@@ -7,7 +7,9 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
+import { BasicFilterConfig } from "../../entity-list/EntityListConfig";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 class ActivatedRouteMock {
   public snapshot = {
@@ -21,6 +23,7 @@ describe("FilterComponent", () => {
   let loader: HarnessLoader;
 
   let activatedRouteMock = new ActivatedRouteMock();
+  let router: Router;
 
   beforeEach(async () => {
     activatedRouteMock.snapshot = {
@@ -36,7 +39,7 @@ describe("FilterComponent", () => {
         },
       ],
     }).compileComponents();
-
+    router = TestBed.inject(Router);
     fixture = TestBed.createComponent(FilterComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
@@ -96,6 +99,40 @@ describe("FilterComponent", () => {
     expect(component.filterSelections[0].selectedOptionValues.length).toBe(2);
     expect(component.filterSelections[0].selectedOptionValues[0]).toBe("foo");
     expect(component.filterSelections[0].selectedOptionValues[1]).toBe("bar");
+  });
+
+  it("should remove the longest filter option if URL length exceeds 2000 characters", async () => {
+    const initialQueryParams = { dateOfBirth: "a,b" };
+    activatedRouteMock.snapshot.queryParams = initialQueryParams;
+    const routerNavigate = spyOn(router, "navigate");
+
+    component.entityType = TestEntity;
+    component.entities = [];
+    component.useUrlQueryParams = true;
+    component.filterConfig = [{ id: "category" } as BasicFilterConfig];
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    component.filterOptionSelected(component.filterSelections[0], [
+      "categoryXX",
+      "categoryYY",
+    ]);
+    // filter options should be added to url
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      relativeTo: activatedRouteMock as any,
+      queryParams: { ...initialQueryParams, category: "categoryXX,categoryYY" },
+      queryParamsHandling: "merge",
+    });
+    routerNavigate.calls.reset();
+
+    const longOptions = Array(250).fill("categoryZZ");
+    component.filterOptionSelected(component.filterSelections[0], longOptions);
+    // long options should be skipped, short options for other filter still present
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      relativeTo: activatedRouteMock as any,
+      queryParams: { ...initialQueryParams, category: undefined },
+      queryParamsHandling: "merge",
+    });
+    routerNavigate.calls.reset();
   });
 
   it("should load url params and set no filter value when empty", async () => {
