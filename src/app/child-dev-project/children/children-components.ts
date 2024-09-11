@@ -15,13 +15,6 @@ export const childrenComponents: ComponentTuple[] = [
         "../attendance/recent-attendance-blocks/recent-attendance-blocks.component"
       ).then((c) => c.RecentAttendanceBlocksComponent),
   ],
-  [
-    "ChildBlock",
-    () =>
-      import("./child-block/child-block.component").then(
-        (c) => c.ChildBlockComponent,
-      ),
-  ],
 
   [
     "PreviousSchools",

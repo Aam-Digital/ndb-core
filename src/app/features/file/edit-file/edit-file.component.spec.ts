@@ -16,6 +16,7 @@ import { FileService } from "../file.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { FileFieldConfig } from "../file.datatype";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
@@ -55,6 +56,19 @@ describe("EditFileComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should use acceptedFileTypes from field config", () => {
+    setupComponent();
+    component.formFieldConfig = {
+      id: "testProp",
+      dataType: "file",
+      additional: { acceptedFileTypes: ".png" } as FileFieldConfig,
+    };
+
+    component.ngOnInit();
+
+    expect(component.acceptedFileTypes).toBe(".png");
   });
 
   it("should not upload a file that was selected but the process was canceled", () => {

@@ -11,8 +11,9 @@
 @mixin adaptive($min-block-width, $max-screen-width: $min-block-width) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax($min-block-width, 1fr));
+  grid-gap: sizes.$large;
+
   @media screen and (max-width: $max-screen-width) {
     grid-template-columns: 1fr;
   }
-  grid-gap: sizes.$large;
 }

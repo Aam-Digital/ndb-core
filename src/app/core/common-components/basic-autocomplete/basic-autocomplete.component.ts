@@ -9,8 +9,11 @@ import {
   Optional,
   Output,
   Self,
+  signal,
   TemplateRef,
+  TrackByFunction,
   ViewChild,
+  WritableSignal,
 } from "@angular/core";
 import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -153,15 +156,29 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
   }
-  retainSearchValue: string;
   private _options: SelectableOption<O, V>[] = [];
 
   _selectedOptions: SelectableOption<O, V>[] = [];
 
   /**
+   * Keep the search value to help users quickly multi-select multiple related options without having to type filter text again
+   */
+  retainSearchValue: string;
+
+  /**
    * Display the selected items as simple text, as chips or not at all (if used in combination with another component)
    */
   @Input() display: "text" | "chips" | "none" = "text";
+
+  /**
+   * display the search input rather than the selected elements only
+   * (when the form field gets focused).
+   */
+  isInSearchMode: WritableSignal<boolean> = signal(false);
+  trackByOptionValueFn: TrackByFunction<SelectableOption<O, V>> | undefined = (
+    i,
+    o,
+  ) => o?.asValue;
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
@@ -232,9 +249,11 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   showAutocomplete(valueToRevertTo?: string) {
-    if (this.retainSearchValue) {
+    if (this.multi && this.retainSearchValue) {
+      // reset the search value to previously entered text to help user selecting multiple similar options without retyping filter text
       this.autocompleteForm.setValue(this.retainSearchValue);
     } else {
+      // reset the search value to show all available options again
       this.autocompleteForm.setValue("");
     }
     if (!this.multi) {
@@ -254,10 +273,10 @@ export class BasicAutocompleteComponent<O, V = O>
       }
     });
 
-    this.focus();
+    this.isInSearchMode.set(true);
 
     // update virtual scroll as the container remains empty until the user scrolls initially
-    this.virtualScrollViewport.scrollToIndex(0);
+    this.virtualScrollViewport.checkViewportSize();
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
@@ -344,7 +363,7 @@ export class BasicAutocompleteComponent<O, V = O>
     } else {
       this._selectedOptions = [option];
       this.value = option.asValue;
-      this.blur();
+      this.isInSearchMode.set(false);
     }
   }
 
@@ -364,7 +383,7 @@ export class BasicAutocompleteComponent<O, V = O>
       if (!this.multi && this.autocompleteForm.value === "") {
         this.select(undefined);
       }
-      this.blur();
+      this.isInSearchMode.set(false);
     }
   }
 
