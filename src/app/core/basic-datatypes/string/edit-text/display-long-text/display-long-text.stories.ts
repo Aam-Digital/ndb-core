@@ -4,7 +4,7 @@ import { DisplayLongTextComponent } from "./display-long-text.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Properties/number/DisplayUnit",
+  title: "Core/Entities/Properties/string/DisplayLongText",
   component: DisplayLongTextComponent,
   decorators: [
     applicationConfig({
@@ -21,18 +21,9 @@ const Template: StoryFn<DisplayLongTextComponent> = (
 
 export const Basic = Template.bind({});
 Basic.args = {
-  value: 5,
-  config: "kg",
-};
+  value: `Lorem ipsum dolor sit amet,
 
-export const Zero = Template.bind({});
-Zero.args = {
-  value: 0,
-  config: "kg",
-};
-
-export const WithoutValue = Template.bind({});
-WithoutValue.args = {
-  value: undefined,
-  config: "kg",
+  consectetur adipiscing elit. Nullam nec
+  purus nec nunc ultricies ultricies.
+  `,
 };
