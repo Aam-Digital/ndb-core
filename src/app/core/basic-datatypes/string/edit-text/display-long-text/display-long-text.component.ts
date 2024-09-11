@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { ViewDirective } from "../../../../entity/default-datatype/view.directive";
-import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../../config/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("DisplayLongText")
 @Component({
