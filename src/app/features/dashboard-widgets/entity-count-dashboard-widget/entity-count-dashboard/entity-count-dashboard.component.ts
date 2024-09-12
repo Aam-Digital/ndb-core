@@ -21,7 +21,7 @@ import { NgIf } from "@angular/common";
 
 interface EntityCountDashboardConfig {
   entity?: string;
-  groupBy?: string;
+  groupBy?: string[];
 }
 
 @DynamicComponent("ChildrenCountDashboard")
@@ -62,7 +62,7 @@ export class EntityCountDashboardComponent
    *
    * Default is "center".
    */
-  @Input() groupBy = "center";
+  @Input() groupBy: string[] = ["center"];
 
   /**
    * if the groupBy field is an entity reference this holds the related entity type,
@@ -89,7 +89,8 @@ export class EntityCountDashboardComponent
       this.entityType = "Child";
     }
 
-    const groupByType = this._entity.schema.get(this.groupBy);
+    const firstGroupBy = this.groupBy[0];
+    const groupByType = this._entity.schema.get(firstGroupBy);
     this.groupedByEntity =
       groupByType.dataType === EntityDatatype.dataType
         ? groupByType.additional
@@ -103,14 +104,15 @@ export class EntityCountDashboardComponent
 
   goToChildrenList(filterId: string) {
     const params = {};
-    params[this.groupBy] = filterId;
+    params[this.groupBy[0]] = filterId;
 
-    this.router.navigate([this._entity.route], { queryParams: params });
+    this.router.navigate([Entity.route], { queryParams: params });
   }
 
   private updateCounts(entities: Entity[]) {
     this.totalEntities = entities.length;
-    const groups = groupBy(entities, this.groupBy as keyof Entity);
+    const firstGroupBy = this.groupBy[0];
+    const groups = groupBy(entities, firstGroupBy as keyof Entity);
     this.entityGroupCounts = groups.map(([group, entities]) => {
       const label = extractHumanReadableLabel(group);
       return {

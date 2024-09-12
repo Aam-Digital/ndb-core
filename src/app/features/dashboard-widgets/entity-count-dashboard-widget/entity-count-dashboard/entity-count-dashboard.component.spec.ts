@@ -34,7 +34,7 @@ describe("EntityCountDashboardComponent", () => {
     component = fixture.componentInstance;
 
     component.entityType = TestEntity.ENTITY_TYPE;
-    component.groupBy = "category";
+    component.groupBy = ["category", "gender"];
 
     fixture.detectChanges();
   });
@@ -82,7 +82,7 @@ describe("EntityCountDashboardComponent", () => {
   it("should groupBy enum values and display label", async () => {
     const testGroupBy = "test";
     TestEntity.schema.set(testGroupBy, { dataType: "configurable-enum" });
-    component.groupBy = testGroupBy;
+    component.groupBy = [testGroupBy];
 
     const children = [
       new TestEntity(),
@@ -116,7 +116,7 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy entity references and display an entity-block", async () => {
     const testGroupBy = "ref";
-    component.groupBy = testGroupBy;
+    component.groupBy = [testGroupBy];
     component.entityType = TestEntity.ENTITY_TYPE;
 
     const c1 = new Entity("ref-1");
@@ -144,7 +144,7 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy arrays, split and summarized for individual array elements", async () => {
     const testGroupBy = "children";
-    component.groupBy = testGroupBy;
+    component.groupBy = [testGroupBy];
     component.entityType = Note.ENTITY_TYPE;
 
     const x0 = new Note();

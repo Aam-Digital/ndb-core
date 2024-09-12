@@ -33,4 +33,7 @@ const Template: StoryFn<EntityCountDashboardComponent> = (
 });
 
 export const Primary = Template.bind({});
-Primary.args = {};
+Primary.args = {
+  entityType: "TestEntity",
+  groupBy: ["category", "gender"],
+};
