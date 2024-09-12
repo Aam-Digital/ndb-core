@@ -240,7 +240,6 @@ export class EntityActionsService {
           ),
           result.originalEntities,
         );
-        return true;
       }
     }
     return true;
