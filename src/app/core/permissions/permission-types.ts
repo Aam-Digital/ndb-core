@@ -9,7 +9,6 @@ const actions = [
   "create",
   "update",
   "delete",
-  "update",
   "manage", // Matches any actions
 ] as const;
 
