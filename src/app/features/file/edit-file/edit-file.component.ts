@@ -105,6 +105,12 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
       });
   }
 
+  /**
+   * Template method to allow easy override of mapping the initialValue from the formControl.
+   * @protected
+   */
+  protected setInitialValue() {}
+
   async onFileSelected(file: File) {
     // directly reset input so subsequent selections with the same name also trigger the change event
     this.fileUploadInput.nativeElement.value = "";

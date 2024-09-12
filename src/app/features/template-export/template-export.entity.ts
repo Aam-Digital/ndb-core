@@ -4,6 +4,7 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
 import { FileFieldConfig } from "../file/file.datatype";
 import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
+import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
 
 /**
  * Represents a TemplateExport that can be used to generate PDFs via API,
@@ -52,24 +53,28 @@ export class TemplateExport extends Entity {
   applicableForEntityTypes: string[];
 
   /**
-   * ID in the PDF Generator API to access this template
+   * File (storing the file name) of the template uploaded to the server.
    */
   @DatabaseField({
     label: $localize`:TemplateExport:Template File`,
     description: $localize`:TemplateExport:Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific entity when generating a PDF.`,
     validators: { required: true },
-    dataType: "template-export-file",
+    dataType: TemplateExportFileDatatype.dataType,
     additional: {
       acceptedFileTypes:
         ".docx, .doc, .odt, .xlsx, .xls, .ods, .pptx, .ppt, .odp",
     } as FileFieldConfig,
   })
-  templateId: string;
+  templateFile: string;
 
   /**
-   * The file name of the template file as uploaded by the user
+   * ID of the template file in the server-side managed API.
+   *
+   * This is not displayed to users - they interact with the templateFile property instead
+   * while this templateId is automatically set when the file is uploaded.
    */
-  templateFilename: string; // TODO
+  @DatabaseField()
+  templateId: string;
 
   /**
    * A string with the pattern including placeholders for the file name of the generated files.
