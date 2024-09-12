@@ -14,7 +14,6 @@ import { EntityEditService } from "./entity-edit.service";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
 import { EntityBulkEditComponent } from "./entity-bulk-edit/entity-bulk-edit.component";
-import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
