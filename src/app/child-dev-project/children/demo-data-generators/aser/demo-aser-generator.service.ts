@@ -51,15 +51,15 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
       aserResult.math = this.selectNextSkillLevel(
         mathLevels.slice(1),
         previousResult.math,
-      ).id;
+      );
       aserResult.english = this.selectNextSkillLevel(
         readingLevels.slice(1),
         previousResult.english,
-      ).id;
+      );
       aserResult[firstLanguage] = this.selectNextSkillLevel(
         readingLevels.slice(1),
         previousResult[firstLanguage],
-      ).id;
+      );
 
       data.push(aserResult);
 

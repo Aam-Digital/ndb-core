@@ -36,10 +36,10 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
     child.name = faker.person.firstName() + " " + faker.person.lastName();
     child.projectNumber = id;
     child.religion = faker.helpers.arrayElement(religions);
-    child.gender = faker.helpers.arrayElement(genders.slice(1)).id;
+    child.gender = faker.helpers.arrayElement(genders.slice(1));
     child.dateOfBirth = new DateWithAge(faker.dateOfBirth(5, 20));
     child.motherTongue = faker.helpers.arrayElement(languages);
-    child.center = faker.helpers.arrayElement(centersWithProbability).id;
+    child.center = faker.helpers.arrayElement(centersWithProbability);
     child.phone =
       "+" +
       faker.number.int({ min: 10, max: 99 }) +

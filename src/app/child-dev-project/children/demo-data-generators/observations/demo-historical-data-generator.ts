@@ -52,8 +52,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
       const historicalDataOfChild = [...Array(countOfData)].map(() => {
         const historicalData = createEntityOfType("HistoricalEntityData");
         for (const attribute of attributes) {
-          historicalData[attribute] =
-            faker.helpers.arrayElement(ratingAnswers).id;
+          historicalData[attribute] = faker.helpers.arrayElement(ratingAnswers);
         }
         historicalData.date = faker.date.past();
         historicalData.relatedEntity = child.getId();
