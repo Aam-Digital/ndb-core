@@ -52,7 +52,6 @@ import {
   styleUrl: "./entity-bulk-edit.component.scss",
 })
 export class EntityBulkEditComponent<E extends Entity> implements OnInit {
-  formField: FormFieldConfig;
   schemaFieldsForm: FormGroup;
   entityConstructor: EntityConstructor;
   selectedRows: any;

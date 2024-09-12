@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
-import { Entity, EntityConstructor } from "../model/entity";
+import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
@@ -10,10 +10,6 @@ import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { CascadingActionResult } from "./cascading-entity-action";
 import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
-import { EntityEditService } from "./entity-edit.service";
-import { MatDialog } from "@angular/material/dialog";
-import { lastValueFrom } from "rxjs";
-import { EntityBulkEditComponent } from "./entity-bulk-edit/entity-bulk-edit.component";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -27,10 +23,8 @@ export class EntityActionsService {
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private matDialog: MatDialog,
     private entityMapper: EntityMapperService,
     private entityDelete: EntityDeleteService,
-    private entityEdit: EntityEditService,
     private entityAnonymize: EntityAnonymizeService,
     entityActionsMenuService: EntityActionsMenuService,
   ) {
@@ -175,37 +169,6 @@ export class EntityActionsService {
   }
 
   /**
-   * Shows a confirmation dialog to the user
-   * and edit the entity if the user confirms.
-   *
-   * This also triggers a toast message, enabling the user to undo the action.
-   *
-   * @param entityParam The entity to edit
-   */
-  async edit<E extends Entity>(
-    entityParam: E | E[],
-    entityConstructor?: EntityConstructor,
-  ): Promise<boolean> {
-    let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
-    const dialogRef = this.matDialog.open(EntityBulkEditComponent, {
-      maxHeight: "90vh",
-      data: { entityConstructor, selectedRow: entities },
-    });
-    const results = await lastValueFrom(dialogRef.afterClosed());
-    if (results) {
-      const result = await this.entityEdit.editEntity(results, entityParam);
-      this.showSnackbarConfirmationWithUndo(
-        this.generateMessageForConfirmationWithUndo(
-          entities,
-          $localize`:Entity action confirmation message verb:edited`,
-        ),
-        result.originalEntities,
-      );
-    }
-    return true;
-  }
-
-  /**
    * Anonymize the given entity,
    * removing properties that are not explicitly configured in the schema to be retained.
    *
@@ -323,7 +286,7 @@ export class EntityActionsService {
     return true;
   }
 
-  private generateMessageForConfirmationWithUndo(
+  public generateMessageForConfirmationWithUndo(
     entities: Entity[],
     action: string,
   ): string {

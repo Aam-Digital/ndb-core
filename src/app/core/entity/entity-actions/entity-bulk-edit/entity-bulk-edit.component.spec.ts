@@ -67,7 +67,7 @@ describe("EntityBulkEditComponent", () => {
   });
 
   it("should initialize schemaFieldsForm with proper values", () => {
-    component.formField = { id: "foo", label: "Test Label" };
+    component._field = { id: "foo", label: "Test Label" };
 
     component.ngOnInit();
     expect(component.schemaFieldsForm.get("selectedField").value).toBe("");
