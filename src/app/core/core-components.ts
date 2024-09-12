@@ -37,6 +37,13 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.DisplayEntityComponent),
   ],
   [
+    "EntityBlock",
+    () =>
+      import(
+        "./basic-datatypes/entity/entity-block/entity-block.component"
+      ).then((c) => c.EntityBlockComponent),
+  ],
+  [
     "EditTextWithAutocomplete",
     () =>
       import(
@@ -120,6 +127,14 @@ export const coreComponents: ComponentTuple[] = [
         "./basic-datatypes/string/display-text/display-text.component"
       ).then((c) => c.DisplayTextComponent),
   ],
+  [
+    "DisplayLongText",
+    () =>
+      import(
+        "./basic-datatypes/string/display-long-text/display-long-text.component"
+      ).then((c) => c.DisplayLongTextComponent),
+  ],
+
   [
     "DisplayDate",
     () =>

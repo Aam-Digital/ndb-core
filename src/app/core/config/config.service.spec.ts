@@ -123,6 +123,9 @@ describe("ConfigService", () => {
   it("should create export config string", fakeAsync(() => {
     const config = new Config();
     config.data = { first: "foo", second: "bar" };
+    // @ts-ignore disable migrations for this test
+    spyOn(service, "applyMigrations").and.callFake((c) => c);
+
     const expected = JSON.stringify(config.data);
     updateSubject.next({ entity: config, type: "update" });
     tick();

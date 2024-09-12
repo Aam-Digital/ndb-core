@@ -11,10 +11,12 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { DisplayImgComponent } from "../../../../features/file/display-img/display-img.component";
 import { EntityBlockConfig } from "./entity-block-config";
 import { EntityFieldViewComponent } from "../../../common-components/entity-field-view/entity-field-view.component";
+import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 
 /**
  * Display an inline block representing an entity.
  */
+@DynamicComponent("EntityBlock")
 @Component({
   selector: "app-entity-block",
   templateUrl: "./entity-block.component.html",
