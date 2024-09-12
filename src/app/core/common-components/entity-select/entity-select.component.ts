@@ -80,6 +80,11 @@ export class EntitySelectComponent<
   @Input() multi: boolean = true;
 
   /**
+   * Disable the option to type any text into the selection field and use a "Create new ..." link to open the form for a new entity.
+   */
+  @Input() disableCreateNew: boolean;
+
+  /**
    * The label is what is seen above the list. For example when used
    * in the note-details-view, this is "Children"
    */

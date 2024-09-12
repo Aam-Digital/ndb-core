@@ -3,6 +3,7 @@ import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
 import { FileFieldConfig } from "../file/file.datatype";
+import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
 
 /**
  * Represents a TemplateExport that can be used to generate PDFs via API,
@@ -15,6 +16,10 @@ export class TemplateExport extends Entity {
   static override label = $localize`:TemplateExport:Export Template`;
   static override labelPlural = $localize`:TemplateExport:Export Templates`;
   static override toStringAttributes = ["title"];
+  static override toBlockDetailsAttributes: EntityBlockConfig = {
+    title: "title",
+    fields: ["description"],
+  };
   static override route = "admin/template-export";
 
   /**

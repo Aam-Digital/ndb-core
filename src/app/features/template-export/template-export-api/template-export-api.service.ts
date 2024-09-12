@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@angular/core";
 import { FileService } from "../../file/file.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { Entity } from "app/core/entity/model/entity";
-import { Observable, throwError } from "rxjs";
+import { Observable, of, throwError } from "rxjs";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { SyncStateSubject } from "../../../core/session/session-type";
@@ -11,14 +11,28 @@ import { NotAvailableOfflineError } from "../../../core/session/not-available-of
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { switchMap } from "rxjs/operators";
 import { TemplateExport } from "../template-export.entity";
+import { Logging } from "../../../core/logging/logging.service";
 
+/**
+ * Format of API response body upon uploading a new template file.
+ */
 interface TemplateUploadResponseDto {
   templateId: string;
 }
 
+/**
+ * Format of API request body to render a PDF from a template.
+ * TemplateId is provided via URL path.
+ */
 interface TemplateRenderRequestDto {
+  /**
+   * target file type (e.g. "pdf")
+   */
   convertTo: string;
-  reportName: string;
+
+  /**
+   * The data used to fill placeholders in the template.
+   */
   data: Object;
 }
 
@@ -75,17 +89,20 @@ export class TemplateExportApiService extends FileService {
     // TODO: replace with actual implementation for PDF API
     throw new Error("Method not implemented.");
   }
+
   loadFile(entity: Entity, property: string): Observable<SafeUrl> {
-    // TODO: replace with actual implementation for PDF API
+    // should not be required for our use cases of the Template Export API
     throw new Error("Method not implemented.");
   }
+
   removeFile(entity: Entity, property: string): Observable<any> {
-    // TODO: replace with actual implementation for PDF API
-    throw new Error("Method not implemented.");
+    // we do not do explicit file removal due to the design of the API
+    Logging.debug("skipping file removal for Template Export API");
+    return of(true);
   }
   removeAllFiles(entity: Entity): Observable<any> {
-    // TODO: replace with actual implementation for PDF API
-    throw new Error("Method not implemented.");
+    Logging.debug("skipping file removal for Template Export API");
+    return of(true);
   }
 
   /*

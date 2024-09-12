@@ -19,8 +19,9 @@ import { ActivatedRoute } from "@angular/router";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { delay, of } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { map } from "rxjs/operators";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { TemplateExport } from "../template-export.entity";
 
 describe("TemplateExportSelectionDialogComponent", () => {
   let component: TemplateExportSelectionDialogComponent;
@@ -76,6 +77,20 @@ describe("TemplateExportSelectionDialogComponent", () => {
     fixture.detectChanges();
   });
 
+  it("should only show applicable templates for the entity type", () => {
+    const template1 = new TemplateExport();
+    template1.applicableForEntityTypes = [TestEntity.ENTITY_TYPE];
+    expect(component.templateEntityFilter(template1)).toBeTrue();
+
+    const template2 = new TemplateExport();
+    template2.applicableForEntityTypes = ["other type", TestEntity.ENTITY_TYPE];
+    expect(component.templateEntityFilter(template2)).toBeTrue();
+
+    const template3 = new TemplateExport();
+    template3.applicableForEntityTypes = ["other type"];
+    expect(component.templateEntityFilter(template3)).toBeFalse();
+  });
+
   it("should trigger download with API response when requesting file", fakeAsync(() => {
     const entity = new TestEntity();
     entity.name = "test entity";
@@ -105,9 +120,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
 
   it("should disable loading but not close dialog if API request fails", fakeAsync(() => {
     mockPdfGeneratorApiService.generatePdfFromTemplate.and.returnValue(
-      of().pipe(
+      of(false).pipe(
         delay(100),
-        switchMap(() => {
+        map(() => {
           throw new Error();
         }),
       ),

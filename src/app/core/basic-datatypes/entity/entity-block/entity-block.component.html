@@ -20,11 +20,13 @@
 <!-- Tooltip on Hover -->
 <ng-template #tooltip>
   <div class="tooltip-container">
-    <app-display-img
-      class="tooltip-photo"
-      [entity]="entity"
-      [imgProperty]="entityBlockConfig?.image"
-    ></app-display-img>
+    @if (entityBlockConfig?.image) {
+      <app-display-img
+        class="tooltip-photo"
+        [entity]="entity"
+        [imgProperty]="entityBlockConfig?.image"
+      ></app-display-img>
+    }
 
     <div>
       <!-- Font-weight is applied as style to override the default -->

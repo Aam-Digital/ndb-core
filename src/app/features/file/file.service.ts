@@ -85,6 +85,11 @@ export abstract class FileService {
    */
   abstract showFile(entity: Entity, property: string): void;
 
+  /**
+   * Loads the file and returns it as a blob.
+   * @param entity
+   * @param property
+   */
   abstract loadFile(entity: Entity, property: string): Observable<SafeUrl>;
 
   /**
