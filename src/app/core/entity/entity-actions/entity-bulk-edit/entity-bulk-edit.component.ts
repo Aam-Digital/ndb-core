@@ -10,8 +10,7 @@ import { MatInputModule } from "@angular/material/input";
 import { ErrorHintComponent } from "app/core/common-components/error-hint/error-hint.component";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import {
-  FormBuilder,
-  FormGroup,
+  FormControl,
   FormsModule,
   ReactiveFormsModule,
   Validators,
@@ -52,7 +51,7 @@ import {
   styleUrl: "./entity-bulk-edit.component.scss",
 })
 export class EntityBulkEditComponent<E extends Entity> implements OnInit {
-  schemaFieldsForm: FormGroup;
+  selectedSchemaFieldFormControl: FormControl;
   entityConstructor: EntityConstructor;
   selectedRows: any;
   entityData: any;
@@ -69,7 +68,6 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
       entityConstructor: EntityConstructor;
     },
     private dialogRef: MatDialogRef<any>,
-    private fb: FormBuilder,
     private entityFormService: EntityFormService,
   ) {
     this.entityConstructor = data.entityConstructor;
@@ -87,9 +85,10 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
   }
 
   private initForm() {
-    this.schemaFieldsForm = this.fb.group({
-      selectedField: ["", Validators.required],
-    });
+    this.selectedSchemaFieldFormControl = new FormControl(
+      "",
+      Validators.required,
+    );
   }
 
   fetchEntityFieldsData() {
@@ -121,7 +120,7 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
       .createEntityForm(fieldKeys, this.entityData)
       .then((form) => {
         this.form = form;
-        const selectedField = this.schemaFieldsForm.get("selectedField").value;
+        const selectedField = this.selectedSchemaFieldFormControl.value;
 
         if (this.form.formGroup.controls[selectedField]) {
           this.form.formGroup.controls[selectedField].setValue("");
@@ -130,12 +129,12 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
   }
 
   save() {
-    this.schemaFieldsForm.markAllAsTouched();
+    this.selectedSchemaFieldFormControl.markAsTouched();
 
-    if (this.schemaFieldsForm.invalid) return;
+    if (this.selectedSchemaFieldFormControl.invalid) return;
 
-    const selectedField = this.schemaFieldsForm.get("selectedField").value;
-    const label = this.form.formGroup.controls[selectedField]?.value || "";
+    const selectedField = this.selectedSchemaFieldFormControl.value;
+    const label = this.form?.formGroup.controls[selectedField]?.value || "";
 
     const newSchemaField = {
       selectedField,

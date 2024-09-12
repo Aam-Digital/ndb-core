@@ -66,11 +66,11 @@ describe("EntityBulkEditComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should initialize schemaFieldsForm with proper values", () => {
+  it("should initialize selectedField with proper values", () => {
     component._field = { id: "foo", label: "Test Label" };
 
     component.ngOnInit();
-    expect(component.schemaFieldsForm.get("selectedField").value).toBe("");
+    expect(component.selectedSchemaFieldFormControl.value).toBe("");
   });
 
   it("should fetch and populate entity fields", () => {
@@ -82,7 +82,7 @@ describe("EntityBulkEditComponent", () => {
   });
 
   it("should not save if the form is invalid", () => {
-    component.schemaFieldsForm.get("selectedField").setValue("");
+    component.selectedSchemaFieldFormControl.setValue("");
 
     component.save();
 

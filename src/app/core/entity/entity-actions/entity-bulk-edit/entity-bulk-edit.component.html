@@ -12,12 +12,12 @@
     selection carefully before proceeding or edit the records individually.
   </p>
 
-  <form [formGroup]="schemaFieldsForm">
+  <form>
     <div class="entity-form-cell">
       <mat-form-field appearance="fill">
         <mat-label>Property to update</mat-label>
         <mat-select
-          formControlName="selectedField"
+          [formControl]="selectedSchemaFieldFormControl"
           (selectionChange)="onChangeProperty($event.value)"
         >
           <mat-option *ngFor="let field of entityFields" [value]="field.key">
