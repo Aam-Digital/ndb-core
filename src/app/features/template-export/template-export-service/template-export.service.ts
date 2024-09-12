@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
-import { FileTemplateSelectionDialogComponent } from "./file-template-selection-dialog/file-template-selection-dialog.component";
+import { TemplateExportSelectionDialogComponent } from "../template-export-selection-dialog/template-export-selection-dialog.component";
 
 /**
  * Triggers a user flow to
@@ -10,16 +10,16 @@ import { FileTemplateSelectionDialogComponent } from "./file-template-selection-
 @Injectable({
   providedIn: "root",
 })
-export class Entity2FileService {
+export class TemplateExportService {
   constructor(private dialog: MatDialog) {}
 
   /**
    * Open a dialog for the user to select a template and generate a file from it for the given entity.
-   * @param entity
+   * @param entity The entity or other data object to provide placeholder values for the template
    * @return Boolean whether the action was successfully completed
    */
-  async generateFile(entity: Entity): Promise<boolean> {
-    this.dialog.open(FileTemplateSelectionDialogComponent, { data: entity });
+  async generateFile(entity: Entity | Object): Promise<boolean> {
+    this.dialog.open(TemplateExportSelectionDialogComponent, { data: entity });
 
     return true;
   }

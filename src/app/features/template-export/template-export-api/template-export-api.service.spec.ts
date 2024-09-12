@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { PdfGeneratorApiService } from "./pdf-generator-api.service";
+import { TemplateExportApiService } from "./template-export-api.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { SyncStateSubject } from "../../../core/session/session-type";
@@ -13,8 +13,8 @@ import {
   withInterceptorsFromDi,
 } from "@angular/common/http";
 
-describe("PdfGeneratorApiService", () => {
-  let service: PdfGeneratorApiService;
+describe("TemplateExportApiService", () => {
+  let service: TemplateExportApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -30,7 +30,7 @@ describe("PdfGeneratorApiService", () => {
         provideHttpClientTesting(),
       ],
     });
-    service = TestBed.inject(PdfGeneratorApiService);
+    service = TestBed.inject(TemplateExportApiService);
   });
 
   it("should be created", () => {

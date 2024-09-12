@@ -87,7 +87,7 @@ import { LoginStateSubject } from "./core/session/session-type";
 import { AdminModule } from "./core/admin/admin.module";
 import { Logging } from "./core/logging/logging.service";
 import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initializer";
-import { PdfGeneratorModule } from "./features/pdf-generator/pdf-generator.module";
+import { TemplateExportModule } from "./features/template-export/template-export.module";
 
 /**
  * Main entry point of the application.
@@ -131,7 +131,7 @@ import { PdfGeneratorModule } from "./features/pdf-generator/pdf-generator.modul
     ReportingModule,
     TodosModule,
     AdminModule,
-    PdfGeneratorModule,
+    TemplateExportModule,
     // top level component
     UiComponent,
     // Global Angular Material modules

@@ -4,9 +4,9 @@
     Select the template based on which to generate a file for the current record
     or
     <a
-      [routerLink]="FileTemplate.route"
+      [routerLink]="TemplateExport.route"
       *appDisabledEntityOperation="{
-        entity: FileTemplate,
+        entity: TemplateExport,
         operation: 'update',
       }"
       matDialogClose
@@ -15,7 +15,7 @@
   </p>
 
   <app-entity-select
-    [entityType]="FileTemplate.ENTITY_TYPE"
+    [entityType]="TemplateExport.ENTITY_TYPE"
     [additionalFilter]="templateEntityFilter"
     [multi]="false"
     label="Template"

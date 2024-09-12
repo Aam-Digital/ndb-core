@@ -10,7 +10,7 @@ import { HttpClient } from "@angular/common/http";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { switchMap } from "rxjs/operators";
-import { FileTemplate } from "../file-template.entity";
+import { TemplateExport } from "../template-export.entity";
 
 interface TemplateUploadResponseDto {
   templateId: string;
@@ -28,7 +28,7 @@ interface TemplateRenderRequestDto {
 @Injectable({
   providedIn: "root",
 })
-export class PdfGeneratorApiService extends FileService {
+export class TemplateExportApiService extends FileService {
   readonly BACKEND_URL = "/query/api/v1/export/";
 
   constructor(
@@ -64,7 +64,7 @@ export class PdfGeneratorApiService extends FileService {
       switchMap(async (res: TemplateUploadResponseDto) => {
         // TODO: maybe store template filename + templateId (API) in entity, to show the user better meta-information?
 
-        (entity as FileTemplate).templateId = res.templateId;
+        (entity as TemplateExport).templateId = res.templateId;
         await this.entityMapper.save(entity);
         return res.templateId;
       }),
@@ -94,7 +94,7 @@ export class PdfGeneratorApiService extends FileService {
 
   /**
    * Generate a PDF applying actual data to an existing template.
-   * @param templateEntityId The id of the FileTemplate entity (not the template ID of the PDF API)
+   * @param templateEntityId The id of the TemplateExport entity (not the template ID of the PDF API)
    * @param data The data object (typically an entity) to be applied to the template
    * @return An array buffer of the generated PDF
    */
@@ -106,10 +106,10 @@ export class PdfGeneratorApiService extends FileService {
       this.BACKEND_URL + "render/" + templateEntityId,
       {
         convertTo: "pdf",
-        reportName: "report", // TODO: use template title + entity toString ?
         data: data,
       } as TemplateRenderRequestDto,
       { responseType: "arraybuffer" },
-    );
+    ); // TODO .pipe(switchMap(async (res: ArrayBuffer) => {
+    // read header Content-Disposition to get filename
   }
 }

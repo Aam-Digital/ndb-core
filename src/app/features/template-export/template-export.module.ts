@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FileTemplate } from "./file-template.entity";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
@@ -9,69 +8,73 @@ import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
-import { ApiFileTemplateDatatype } from "./api-file-template-datatype/api-file-template.datatype";
-import { Entity2FileService } from "./entity-2-file/entity-2-file.service";
 import { Entity } from "../../core/entity/model/entity";
+import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
+import { TemplateExport } from "./template-export.entity";
+import { TemplateExportService } from "./template-export-service/template-export.service";
 
+/**
+ * Manage template files with placeholders that can be used to render files for export of entities.
+ */
 @NgModule({
   declarations: [],
   imports: [CommonModule],
   providers: [
     {
       provide: DefaultDatatype,
-      useClass: ApiFileTemplateDatatype,
+      useClass: TemplateExportFileDatatype,
       multi: true,
     },
   ],
 })
-export class PdfGeneratorModule {
-  static databaseEntities = [FileTemplate];
+export class TemplateExportModule {
+  static databaseEntities = [TemplateExport];
 
   constructor(
     components: ComponentRegistry,
     routerService: RouterService,
     adminOverviewService: AdminOverviewService,
     entityActionsMenuService: EntityActionsMenuService,
-    entity2FileService: Entity2FileService,
+    templateExportService: TemplateExportService,
   ) {
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
 
     entityActionsMenuService.registerActions([
       {
-        action: "pdf",
-        label: $localize`:entity context menu:Generate PDF`,
+        action: "template-export",
+        label: $localize`:entity context menu:Generate File`,
         icon: "print",
-        tooltip: $localize`:entity context menu tooltip:Create a PDF file based on a selected file template.`,
+        tooltip: $localize`:entity context menu tooltip:Create a file based on a selected template.`,
         permission: "read",
-        execute: async (e: Entity) => entity2FileService.generateFile(e),
+        execute: async (e: Entity) => templateExportService.generateFile(e),
       },
     ]);
 
     adminOverviewService.menuItems.push({
-      label: $localize`:admin menu item:PDF File Templates`,
-      link: FileTemplate.route,
+      label: $localize`:admin menu item:Manage Export Templates`,
+      link: TemplateExport.route,
     });
   }
 }
 
 const dynamicComponents: [string, AsyncComponent][] = [
   [
-    "EditApiFileTemplate",
+    "EditTemplateExportFile",
     () =>
       import(
-        "./api-file-template-datatype/edit-api-file-template.component"
-      ).then((c) => c.EditApiFileTemplateComponent),
+        "./template-export-file-datatype/edit-template-export-file.component"
+      ).then((c) => c.EditTemplateExportFileComponent),
   ],
 ];
 
 const viewConfigs: ViewConfig[] = [
   // List View
   {
-    _id: "view:" + FileTemplate.route,
+    _id: "view:" + TemplateExport.route,
     component: "EntityList",
     config: {
-      entityType: FileTemplate.ENTITY_TYPE,
+      entityType: TemplateExport.ENTITY_TYPE,
       columns: ["title", "description", "applicableForEntityTypes"],
       filters: [{ id: "applicableForEntityTypes" }],
     } as EntityListConfig,
@@ -79,10 +82,10 @@ const viewConfigs: ViewConfig[] = [
 
   // Details View
   {
-    _id: "view:" + FileTemplate.route + "/:id",
+    _id: "view:" + TemplateExport.route + "/:id",
     component: "EntityDetails",
     config: {
-      entityType: FileTemplate.ENTITY_TYPE,
+      entityType: TemplateExport.ENTITY_TYPE,
       panels: [
         {
           components: [

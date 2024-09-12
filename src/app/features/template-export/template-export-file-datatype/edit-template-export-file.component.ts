@@ -7,26 +7,26 @@ import {
 import { AlertService } from "../../../core/alerts/alert.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { PdfGeneratorApiService } from "../pdf-generator-api/pdf-generator-api.service";
+import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
 
 /**
  * An edit component that allows to manage template files stored in the PDF Generator API.
  */
-@DynamicComponent("EditApiFileTemplate")
+@DynamicComponent("EditTemplateExportFile")
 @Component({
-  selector: "app-edit-api-file-template",
+  selector: "app-template-export-file",
   templateUrl: "../../file/edit-file/edit-file.component.html",
   styleUrls: ["../../file/edit-file/edit-file.component.scss"],
   imports: EditFileComponent_IMPORTS,
   standalone: true,
 })
-export class EditApiFileTemplateComponent extends EditFileComponent {
+export class EditTemplateExportFileComponent extends EditFileComponent {
   constructor(
-    pdfGeneratorApiService: PdfGeneratorApiService,
+    templateExportApi: TemplateExportApiService,
     alertService: AlertService,
     entityMapper: EntityMapperService,
     @Inject(NAVIGATOR_TOKEN) navigator: Navigator,
   ) {
-    super(pdfGeneratorApiService, alertService, entityMapper, navigator);
+    super(templateExportApi, alertService, entityMapper, navigator);
   }
 }

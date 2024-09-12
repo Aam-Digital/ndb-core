@@ -1,27 +1,27 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditApiFileTemplateComponent } from "./edit-api-file-template.component";
+import { EditTemplateExportFileComponent } from "./edit-template-export-file.component";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { PdfGeneratorApiService } from "../pdf-generator-api/pdf-generator-api.service";
+import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
 
-describe("EditApiFileTemplateComponent", () => {
-  let component: EditApiFileTemplateComponent;
-  let fixture: ComponentFixture<EditApiFileTemplateComponent>;
+describe("EditTemplateExportFileComponent", () => {
+  let component: EditTemplateExportFileComponent;
+  let fixture: ComponentFixture<EditTemplateExportFileComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditApiFileTemplateComponent],
+      imports: [EditTemplateExportFileComponent],
       providers: [
         { provide: AlertService, useValue: null },
         { provide: EntityMapperService, useValue: null },
         { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
-        { provide: PdfGeneratorApiService, useValue: null },
+        { provide: TemplateExportApiService, useValue: null },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EditApiFileTemplateComponent);
+    fixture = TestBed.createComponent(EditTemplateExportFileComponent);
     component = fixture.componentInstance;
   });
 
