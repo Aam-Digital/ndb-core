@@ -72,7 +72,7 @@ export class DownloadService {
         result = await this.createCsv(data);
         return new Blob([result], { type: "text/csv" });
       case "pdf":
-        return new Blob([data]);
+        return new Blob([data], { type: "application/pdf" });
       default:
         Logging.warn(`Not supported format: ${format}`);
         return new Blob([""]);
