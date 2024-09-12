@@ -6,7 +6,7 @@ import { CascadingEntityAction } from "./cascading-entity-action";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 
 /**
- * Safely delete an entity including handling references with related entities.
+ * Safely edit an entity including handling references with related entities.
  * This service is usually used in combination with the `EntityActionsService`, which provides user confirmation processes around this.
  */
 @Injectable({
@@ -21,7 +21,6 @@ export class EntityEditService extends CascadingEntityAction {
     super(entityMapper, schemaService);
   }
 
-  // Define the generic `E extends Entity` here
   async editEntity<E extends Entity>(
     result: any,
     entityParam: E | E[],

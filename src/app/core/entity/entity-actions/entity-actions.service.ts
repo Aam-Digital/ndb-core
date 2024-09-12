@@ -185,12 +185,12 @@ export class EntityActionsService {
 
   /**
    * Shows a confirmation dialog to the user
-   * and removes the entity if the user confirms.
+   * and edit the entity if the user confirms.
    *
    * This also triggers a toast message, enabling the user to undo the action.
    *
-   * @param entityParam The entity to remove
-   * @param navigate whether upon delete the app will navigate back
+   * @param entityParam The entity to edit
+   * @param navigate whether upon edit the app will navigate back
    */
   async edit<E extends Entity>(
     entityParam: E | E[],
@@ -215,7 +215,6 @@ export class EntityActionsService {
         entities[0].toString() +
         '"';
     }
-    let result = new CascadingActionResult();
 
     if (
       await this.confirmationDialog.getConfirmation(
@@ -329,7 +328,6 @@ export class EntityActionsService {
     const newEntities: E[] = originalEntities.map((e) => e.copy());
     newEntities.forEach(async (e) => {
       e.inactive = true;
-      console.log(e, "eejejnejejejhejh");
       await this.entityMapper.save(e);
     });
 
