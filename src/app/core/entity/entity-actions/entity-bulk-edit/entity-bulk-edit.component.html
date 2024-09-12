@@ -4,15 +4,14 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <p>
+  <p i18n>
     You are about to modify the selected records. This action will apply changes
-    across multiple entries and cannot be undone. Please ensure that the fields
-    you are updating reflect the correct information for all selected
-    records.<br />
-    If you are unsure about making changes across all these records, consider
-    applying edits individually or reviewing your selection carefully before
-    proceeding.
+    across multiple entries. Make sure that the fields you are updating reflect
+    the correct information for all selected records.<br />
+    If you are unsure about making changes across all these records, review your
+    selection carefully before proceeding or edit the records individually.
   </p>
+
   <form [formGroup]="schemaFieldsForm">
     <div class="entity-form-cell">
       <mat-form-field appearance="fill">
