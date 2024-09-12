@@ -61,14 +61,6 @@ export class EntityActionsService {
         label: $localize`:entity context menu:Delete`,
         tooltip: $localize`:entity context menu tooltip:Remove the record completely from the database.`,
       },
-      {
-        action: "edit",
-        execute: (e, nav) => this.edit(e, nav),
-        permission: "edit",
-        icon: "edit",
-        label: $localize`:entity context menu:Edit`,
-        tooltip: $localize`:entity context menu tooltip:Update the record.`,
-      },
     ]);
   }
 
@@ -216,31 +208,21 @@ export class EntityActionsService {
         '"';
     }
 
-    if (
-      await this.confirmationDialog.getConfirmation(
-        $localize`:Edit confirmation title:Edit?`,
-        $localize`:Edit confirmation dialog:
-        You are about to modify the selected records. This action will apply changes across multiple entries and cannot be undone. Please ensure that the fields you are updating reflect the correct information for all selected records.\n
-        If you are unsure about making changes across all these records, consider applying edits individually or reviewing your selection carefully before proceeding.\n
-        Are you sure you want to Edit ${textForEditEntity}?`,
-      )
-    ) {
-      const dialogRef = this.matDialog.open(EntityBulkEditComponent, {
-        width: "30%",
-        maxHeight: "90vh",
-        data: { entityConstructor, selectedRow: entities },
-      });
-      const results = await lastValueFrom(dialogRef.afterClosed());
-      if (results) {
-        const result = await this.entityEdit.editEntity(results, entityParam);
-        this.showSnackbarConfirmationWithUndo(
-          this.generateMessageForConfirmationWithUndo(
-            entities,
-            $localize`:Entity action confirmation message verb:edited`,
-          ),
-          result.originalEntities,
-        );
-      }
+    const dialogRef = this.matDialog.open(EntityBulkEditComponent, {
+      width: "30%",
+      maxHeight: "90vh",
+      data: { entityConstructor, selectedRow: entities },
+    });
+    const results = await lastValueFrom(dialogRef.afterClosed());
+    if (results) {
+      const result = await this.entityEdit.editEntity(results, entityParam);
+      this.showSnackbarConfirmationWithUndo(
+        this.generateMessageForConfirmationWithUndo(
+          entities,
+          $localize`:Entity action confirmation message verb:edited`,
+        ),
+        result.originalEntities,
+      );
     }
     return true;
   }
