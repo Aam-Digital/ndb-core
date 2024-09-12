@@ -46,15 +46,26 @@
     <div class="config-component flex-grow mat-elevation-z1">
       @switch (mode) {
         @case ("details") {
-          <app-admin-entity-details
-            [entityConstructor]="entityConstructor"
-            [config]="configDetailsView"
-          ></app-admin-entity-details>
+          @switch (configDetailsView.component) {
+            @case ("EntityDetails") {
+              <app-admin-entity-details
+                [entityConstructor]="entityConstructor"
+                [config]="configDetailsView.config"
+              ></app-admin-entity-details>
+            }
+            @default {
+              <p class="admin-ui-not-supported-info" i18n>
+                This component ({{ configDetailsView.component }}) cannot be
+                edited by users in the Admin UI yet. Please contact your
+                technical support team to make changes to this.
+              </p>
+            }
+          }
         }
         @case ("list") {
           <app-admin-entity-list
             [entityConstructor]="entityConstructor"
-            [config]="configListView"
+            [config]="configListView.config"
           ></app-admin-entity-list>
         }
         @case ("general") {

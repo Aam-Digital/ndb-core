@@ -3263,6 +3263,14 @@
         </context-group>
         <note priority="1" from="description">admin entity: nav item</note>
       </trans-unit>
+      <trans-unit id="8589026079134671263" datatype="html">
+        <source> This component (<x id="INTERPOLATION" equiv-text="{{ configDetailsView.component }}"/>) cannot be edited by users in the Admin UI yet. Please contact your technical support team to make changes to this. </source>
+        <target state="new"> This component (<x id="INTERPOLATION" equiv-text="{{ configDetailsView.component }}"/>) cannot be edited by users in the Admin UI yet. Please contact your technical support team to make changes to this. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
+          <context context-type="linenumber">57,61</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="3492007542396725315" datatype="html">
         <source>Welcome</source>
         <target state="translated"> Welcome </target>
@@ -3500,7 +3508,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Save config confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">156</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6614677774493793726" datatype="html">

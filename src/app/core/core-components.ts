@@ -128,6 +128,14 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.DisplayTextComponent),
   ],
   [
+    "DisplayLongText",
+    () =>
+      import(
+        "./basic-datatypes/string/display-long-text/display-long-text.component"
+      ).then((c) => c.DisplayLongTextComponent),
+  ],
+
+  [
     "DisplayDate",
     () =>
       import("./basic-datatypes/date/display-date/display-date.component").then(

@@ -72,6 +72,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migratePhotoDatatype,
       migratePercentageDatatype,
       migrateEntityBlock,
+      addDefaultNoteDetailsConfig,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -371,6 +372,25 @@ const migrateEntityBlock: ConfigMigration = (key, configPart) => {
 
   if (key === "viewComponent" && configPart === "ChildBlock") {
     return "EntityBlock";
+  }
+
+  return configPart;
+};
+
+/**
+ * Add default view:note/:id NoteDetails config
+ * to avoid breaking note details with a default config from AdminModule
+ */
+const addDefaultNoteDetailsConfig: ConfigMigration = (key, configPart) => {
+  if (
+    // add at top-level of config
+    configPart?.["_id"] === "Config:CONFIG_ENTITY" &&
+    !configPart?.["data"]["view:note/:id"]
+  ) {
+    configPart["data"]["view:note/:id"] = {
+      component: "NoteDetails",
+      config: {},
+    };
   }
 
   return configPart;
