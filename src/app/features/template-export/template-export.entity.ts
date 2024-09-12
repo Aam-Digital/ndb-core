@@ -65,14 +65,19 @@ export class TemplateExport extends Entity {
     } as FileFieldConfig,
   })
   templateId: string;
+
   /**
    * The file name of the template file as uploaded by the user
    */
-  templateFilename: string;
+  templateFilename: string; // TODO
 
   /**
-   * A string with the pattern including placeholders for the file name of the generated files,
-   * e.g. "report_{d.name}_{d.dateOfBirth}.pdf"
+   * A string with the pattern including placeholders for the file name of the generated files.
    */
+  @DatabaseField({
+    label: $localize`:TemplateExport:File name pattern for generated file`,
+    labelShort: $localize`:TemplateExport:File name pattern`,
+    description: $localize`:TemplateExport:The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}.pdf").`,
+  })
   targetFilename: string;
 }

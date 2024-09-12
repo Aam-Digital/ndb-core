@@ -6,7 +6,7 @@ import { Observable, of, throwError } from "rxjs";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { SyncStateSubject } from "../../../core/session/session-type";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpResponse } from "@angular/common/http";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { switchMap } from "rxjs/operators";
@@ -34,6 +34,11 @@ interface TemplateRenderRequestDto {
    * The data used to fill placeholders in the template.
    */
   data: Object;
+}
+
+export interface TemplateExportResult {
+  filename: string;
+  file: ArrayBuffer;
 }
 
 /**
@@ -118,15 +123,23 @@ export class TemplateExportApiService extends FileService {
   generatePdfFromTemplate(
     templateEntityId: string,
     data: Object,
-  ): Observable<SafeUrl> {
-    return this.httpClient.post(
-      this.BACKEND_URL + "render/" + templateEntityId,
-      {
-        convertTo: "pdf",
-        data: data,
-      } as TemplateRenderRequestDto,
-      { responseType: "arraybuffer" },
-    ); // TODO .pipe(switchMap(async (res: ArrayBuffer) => {
-    // read header Content-Disposition to get filename
+  ): Observable<TemplateExportResult> {
+    return this.httpClient
+      .post(
+        this.BACKEND_URL + "render/" + templateEntityId,
+        {
+          convertTo: "pdf",
+          data: data,
+        } as TemplateRenderRequestDto,
+        { observe: "response", responseType: "arraybuffer" },
+      )
+      .pipe(
+        switchMap(async (res: HttpResponse<ArrayBuffer>) => {
+          return {
+            filename: res.headers.get("Content-Disposition"),
+            file: res.body,
+          };
+        }),
+      );
   }
 }

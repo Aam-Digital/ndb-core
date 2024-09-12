@@ -93,8 +93,32 @@ const viewConfigs: ViewConfig[] = [
               component: "Form",
               config: {
                 fieldGroups: [
-                  { fields: ["title", "description"] },
-                  { fields: ["applicableForEntityTypes", "templateId"] },
+                  {
+                    fields: [
+                      "title",
+                      "description",
+                      "applicableForEntityTypes",
+                    ],
+                  },
+                  {
+                    fields: [
+                      {
+                        id: "template_explanation",
+                        editComponent: "EditDescriptionOnly",
+                        label: $localize`:TemplateExport:Upload a specially prepared template file here.
+The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
+For example {d.name} will be replaced with the value in the "name" field of the given entity.
+See the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.
+
+The placeholder keys must match the field "Field ID" of the record data structure in Aam Digital.
+You can find this in the Admin UI form builder (Edit Data Structure -> Details View) and edit a specific field to view its details.
+
+Template files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF.`,
+                      },
+                      "templateId",
+                      "targetFilename",
+                    ],
+                  },
                 ],
               },
             },

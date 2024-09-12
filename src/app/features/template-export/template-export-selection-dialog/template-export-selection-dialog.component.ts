@@ -7,7 +7,10 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/model/entity";
-import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
+import {
+  TemplateExportApiService,
+  TemplateExportResult,
+} from "../template-export-api/template-export-api.service";
 import { MatButton } from "@angular/material/button";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { TemplateExport } from "../template-export.entity";
@@ -74,11 +77,11 @@ export class TemplateExportSelectionDialogComponent {
           );
           this.loadingRequestedFile = false;
         },
-        next: (file) => {
+        next: (templateResult: TemplateExportResult) => {
           this.downloadService.triggerDownload(
-            file,
+            templateResult.file,
             "pdf",
-            this.entity?.toString(),
+            templateResult.filename ?? this.entity?.toString(),
           );
           this.loadingRequestedFile = false;
           this.dialogRef.close(true);

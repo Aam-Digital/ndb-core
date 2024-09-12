@@ -8,7 +8,10 @@ import {
 import { TemplateExportSelectionDialogComponent } from "./template-export-selection-dialog.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/model/entity";
-import { TemplateExportApiService } from "../template-export-api/template-export-api.service";
+import {
+  TemplateExportApiService,
+  TemplateExportResult,
+} from "../template-export-api/template-export-api.service";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
@@ -96,7 +99,10 @@ describe("TemplateExportSelectionDialogComponent", () => {
     entity.name = "test entity";
     component.entity = entity;
 
-    const mockResponse = new Blob();
+    const mockResponse: TemplateExportResult = {
+      filename: "test.pdf",
+      file: new ArrayBuffer(10),
+    };
     mockPdfGeneratorApiService.generatePdfFromTemplate.and.returnValue(
       of(mockResponse).pipe(delay(100)),
     );
@@ -111,9 +117,9 @@ describe("TemplateExportSelectionDialogComponent", () => {
       mockPdfGeneratorApiService.generatePdfFromTemplate,
     ).toHaveBeenCalled();
     expect(mockDownloadService.triggerDownload).toHaveBeenCalledWith(
-      mockResponse,
+      mockResponse.file,
       "pdf",
-      entity.toString(),
+      mockResponse.filename,
     );
     expect(mockDialogRef.close).toHaveBeenCalled();
   }));

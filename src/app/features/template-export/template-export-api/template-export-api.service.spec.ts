@@ -10,6 +10,8 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
 import {
   HttpClient,
+  HttpHeaders,
+  HttpResponse,
   provideHttpClient,
   withInterceptorsFromDi,
 } from "@angular/common/http";
@@ -104,16 +106,24 @@ describe("TemplateExportApiService", () => {
     const templateEntity = new TemplateExport("test-template-id");
     const dataEntity = { name: "abc" };
 
+    const mockResponse = new HttpResponse({
+      body: new ArrayBuffer(10),
+      headers: new HttpHeaders({ "Content-Disposition": "test-filename" }),
+      status: 200,
+    });
     const mockApiResponse = spyOn(
       TestBed.inject(HttpClient),
       "post",
-    ).and.returnValue(of(new Blob()));
+    ).and.returnValue(of(mockResponse));
 
     const result = await lastValueFrom(
       service.generatePdfFromTemplate(templateEntity.getId(), dataEntity),
     );
 
-    expect(result).toBeInstanceOf(Blob);
+    expect(result).toEqual({
+      filename: "test-filename",
+      file: mockResponse.body,
+    });
     expect(mockApiResponse).toHaveBeenCalledWith(
       service.BACKEND_URL + "render/" + templateEntity.getId(),
       {
