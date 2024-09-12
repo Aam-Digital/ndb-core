@@ -694,6 +694,10 @@
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">856</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="8650499415827640724" datatype="html">
         <source>Type</source>
@@ -1141,6 +1145,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">843</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">39</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo-default-configs.ts</context>
@@ -4852,6 +4860,10 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
           <context context-type="linenumber">27</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="1694267721118246954" datatype="html">
         <source>Configure Field "<x id="INTERPOLATION" equiv-text="{{ entitySchemaField.label }}"/>"</source>
@@ -7387,7 +7399,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">File Upload Error Message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">130</context>
+          <context context-type="linenumber">138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1155903752025647007" datatype="html">
@@ -7396,7 +7408,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">File Upload Error Message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">132</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8743818386993039028" datatype="html">
@@ -7405,7 +7417,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">File Upload Error Message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">143</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2381267598974852900" datatype="html">
@@ -7414,7 +7426,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Message for user</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">185</context>
+          <context context-type="linenumber">195</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1974607876357286691" datatype="html">
@@ -8268,6 +8280,198 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">97</context>
         </context-group>
         <note priority="1" from="description">Button to download data</note>
+      </trans-unit>
+      <trans-unit id="7799372078125125090" datatype="html">
+        <source>Generate File from Template</source>
+        <target state="new">Generate File from Template</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7745244129478763178" datatype="html">
+        <source> Select the template based on which to generate a file for the current record or <x id="START_LINK" ctype="x-a" equiv-text="&lt;a
+      [routerLink]=&quot;TemplateExport.route&quot;
+      *appDisabledEntityOperation=&quot;{
+        entity: TemplateExport,
+        operation: 'update',
+      }&quot;
+      matDialogClose
+      >"/>configure available templates<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a
+    >"/>. </source>
+        <target state="new"> Select the template based on which to generate a file for the current record or <x id="START_LINK" ctype="x-a" equiv-text="&lt;a
+      [routerLink]=&quot;TemplateExport.route&quot;
+      *appDisabledEntityOperation=&quot;{
+        entity: TemplateExport,
+        operation: 'update',
+      }&quot;
+      matDialogClose
+      >"/>configure available templates<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a
+    >"/>. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
+          <context context-type="linenumber">3,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5610425955750546094" datatype="html">
+        <source>Template</source>
+        <target state="new">Template</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3740165325390560180" datatype="html">
+        <source>Select a file template</source>
+        <target state="new">Select a file template</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4072910007862654890" datatype="html">
+        <source>Generate File</source>
+        <target state="new">Generate File</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="789688904588709799" datatype="html">
+        <source>Failed to generate document [<x id="PH" equiv-text="error"/>]</source>
+        <target state="new">Failed to generate document [<x id="PH" equiv-text="error"/>]</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4115277409045448265" datatype="html">
+        <source>Export Template</source>
+        <target state="new">Export Template</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="4238302896708018552" datatype="html">
+        <source>Export Templates</source>
+        <target state="new">Export Templates</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="4711227772135365615" datatype="html">
+        <source>Applicable Entity Types</source>
+        <target state="new">Applicable Entity Types</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="5049413433623978138" datatype="html">
+        <source>Entity Types</source>
+        <target state="new">Entity Types</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="7635494124656371456" datatype="html">
+        <source>Template File</source>
+        <target state="new">Template File</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="1532134828462979794" datatype="html">
+        <source>Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific entity when generating a PDF.</source>
+        <target state="new">Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific entity when generating a PDF.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="7873150375551239187" datatype="html">
+        <source>File name pattern for generated file</source>
+        <target state="new">File name pattern for generated file</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="2457281208979739045" datatype="html">
+        <source>File name pattern</source>
+        <target state="new">File name pattern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="6019588592701270147" datatype="html">
+        <source>The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}.pdf").</source>
+        <target state="new">The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}.pdf").</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
+      </trans-unit>
+      <trans-unit id="2802527336682245295" datatype="html">
+        <source>Create a file based on a selected template.</source>
+        <target state="new">Create a file based on a selected template.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+        <note priority="1" from="description">entity context menu tooltip</note>
+      </trans-unit>
+      <trans-unit id="1677889929775962659" datatype="html">
+        <source>Manage Export Templates</source>
+        <target state="new">Manage Export Templates</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+        <note priority="1" from="description">admin menu item</note>
+      </trans-unit>
+      <trans-unit id="7825436843695902859" datatype="html">
+        <source>Upload a specially prepared template file here.
+The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
+For example {d.name} will be replaced with the value in the "name" field of the given entity.
+See the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.
+
+The placeholder keys must match the field "Field ID" of the record data structure in Aam Digital.
+You can find this in the Admin UI form builder (Edit Data Structure -> Details View) and edit a specific field to view its details.
+
+Template files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF.</source>
+        <target state="new">Upload a specially prepared template file here.
+The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
+For example {d.name} will be replaced with the value in the "name" field of the given entity.
+See the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.
+
+The placeholder keys must match the field "Field ID" of the record data structure in Aam Digital.
+You can find this in the Admin UI form builder (Edit Data Structure -> Details View) and edit a specific field to view its details.
+
+Template files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/template-export/template-export.module.ts</context>
+          <context context-type="linenumber">108,116</context>
+        </context-group>
+        <note priority="1" from="description">TemplateExport</note>
       </trans-unit>
       <trans-unit id="545544867626738363" datatype="html">
         <source>get signed agreement</source>
