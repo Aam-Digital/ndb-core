@@ -197,17 +197,17 @@ export class EntityActionsService {
     navigate: boolean = false,
     entityConstructor?: EntityConstructor,
   ): Promise<boolean> {
-    let textForDeleteEntity = "";
+    let textForEditEntity = "";
     let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
     if (entities.length > 1) {
-      textForDeleteEntity =
+      textForEditEntity =
         $localize`:Demonstrative pronoun plural:these` +
         " " +
         entities.length +
         " " +
         entities[0].getConstructor().labelPlural;
     } else {
-      textForDeleteEntity =
+      textForEditEntity =
         $localize`:Definite article singular:the` +
         " " +
         entities[0].getConstructor().label +
@@ -221,9 +221,9 @@ export class EntityActionsService {
       await this.confirmationDialog.getConfirmation(
         $localize`:Edit confirmation title:Edit?`,
         $localize`:Edit confirmation dialog:
-        This will edit the data. Statistical reports (also for past time periods) will change and not include this record anymore.\n
-        If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.\n
-        Are you sure you want to edit ${textForDeleteEntity}?`,
+        You are about to modify the selected records. This action will apply changes across multiple entries and cannot be undone. Please ensure that the fields you are updating reflect the correct information for all selected records.\n
+        If you are unsure about making changes across all these records, consider applying edits individually or reviewing your selection carefully before proceeding.\n
+        Are you sure you want to Edit ${textForEditEntity}?`,
       )
     ) {
       const dialogRef = this.matDialog.open(EntityBulkEditComponent, {
@@ -232,17 +232,17 @@ export class EntityActionsService {
         data: { entityConstructor, selectedRow: entities },
       });
       const results = await lastValueFrom(dialogRef.afterClosed());
-    if (results) {
-      const result = await this.entityEdit.editEntity(results, entityParam);
-      this.showSnackbarConfirmationWithUndo(
-        this.generateMessageForConfirmationWithUndo(
-           entities,
-          $localize`:Entity action confirmation message verb:edited`,
-        ),
-        result.originalEntities,
-      );
-      return true;
-    }
+      if (results) {
+        const result = await this.entityEdit.editEntity(results, entityParam);
+        this.showSnackbarConfirmationWithUndo(
+          this.generateMessageForConfirmationWithUndo(
+            entities,
+            $localize`:Entity action confirmation message verb:edited`,
+          ),
+          result.originalEntities,
+        );
+        return true;
+      }
     }
     return true;
   }
