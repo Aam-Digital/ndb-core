@@ -182,34 +182,13 @@ export class EntityActionsService {
    * This also triggers a toast message, enabling the user to undo the action.
    *
    * @param entityParam The entity to edit
-   * @param navigate whether upon edit the app will navigate back
    */
   async edit<E extends Entity>(
     entityParam: E | E[],
-    navigate: boolean = false,
     entityConstructor?: EntityConstructor,
   ): Promise<boolean> {
-    let textForEditEntity = "";
     let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
-    if (entities.length > 1) {
-      textForEditEntity =
-        $localize`:Demonstrative pronoun plural:these` +
-        " " +
-        entities.length +
-        " " +
-        entities[0].getConstructor().labelPlural;
-    } else {
-      textForEditEntity =
-        $localize`:Definite article singular:the` +
-        " " +
-        entities[0].getConstructor().label +
-        ' "' +
-        entities[0].toString() +
-        '"';
-    }
-
     const dialogRef = this.matDialog.open(EntityBulkEditComponent, {
-      width: "30%",
       maxHeight: "90vh",
       data: { entityConstructor, selectedRow: entities },
     });
