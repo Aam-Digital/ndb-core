@@ -47,6 +47,7 @@ import { EntityActionsService } from "app/core/entity/entity-actions/entity-acti
 import { AbilityModule } from "@casl/angular";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 import { EntityActionsMenuComponent } from "../../../core/entity-details/entity-actions-menu/entity-actions-menu.component";
+import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.service";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -107,6 +108,7 @@ export class TodoListComponent
     activatedRoute: ActivatedRoute,
     entityMapperService: EntityMapperService,
     entityActionsService: EntityActionsService,
+    entityEditService: EntityEditService,
     entities: EntityRegistry,
     dialog: MatDialog,
     duplicateRecord: DuplicateRecordService,
@@ -122,6 +124,7 @@ export class TodoListComponent
       dialog,
       duplicateRecord,
       entityActionsService,
+      entityEditService,
       null,
     );
   }

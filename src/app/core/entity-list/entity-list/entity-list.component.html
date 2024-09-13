@@ -260,6 +260,15 @@
     >
       <button
         mat-raised-button
+        (click)="editRecords()"
+        [disabled]="selectedRows.length === 0"
+        color="accent"
+        i18n="bulk action button"
+      >
+        Bulk Edit
+      </button>
+      <button
+        mat-raised-button
         (click)="archiveRecords()"
         [disabled]="selectedRows.length === 0"
         color="accent"

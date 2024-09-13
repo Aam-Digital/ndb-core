@@ -1,0 +1,43 @@
+<h2 mat-dialog-title i18n>
+  Bulk edit {{ entitiesToEdit.length }} {{ entityConstructor.labelPlural }}
+</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <p i18n>
+    You are about to modify the selected records. This action will apply changes
+    across multiple entries. Make sure that the fields you are updating reflect
+    the correct information for all selected records.<br />
+    If you are unsure about making changes across all these records, review your
+    selection carefully before proceeding or edit the records individually.
+  </p>
+
+  <form>
+    <div class="entity-form-cell">
+      <mat-form-field appearance="fill">
+        <mat-label i18n>Property to update</mat-label>
+        <mat-select
+          [formControl]="selectedFieldFormControl"
+          (selectionChange)="onChangeProperty($event.value)"
+        >
+          <mat-option *ngFor="let field of entityFields" [value]="field.key">
+            {{ field.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="showValueForm" class="entity-form-cell">
+      <app-entity-field-edit
+        [field]="selectedField"
+        [entity]="entityData"
+        [form]="fieldValueForm"
+      ></app-entity-field-edit>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="save()" i18n="Button label">Save</button>
+  <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
+</mat-dialog-actions>
