@@ -128,6 +128,10 @@
           <context context-type="linenumber">194</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
           <context context-type="linenumber">123</context>
         </context-group>
@@ -1702,6 +1706,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component.ts</context>
           <context context-type="linenumber">112</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
+          <context context-type="linenumber">42</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
@@ -4553,11 +4561,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">298,300</context>
+          <context context-type="linenumber">307,309</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">298,300</context>
+          <context context-type="linenumber">307,309</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.html</context>
@@ -4796,8 +4804,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">258</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1910227132918837305" datatype="html">
-        <source> Archive </source>
+      <trans-unit id="3859231369706026080" datatype="html">
+        <source> Bulk Edit </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">267,269</context>
@@ -4805,6 +4813,18 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">267,269</context>
+        </context-group>
+        <note priority="1" from="description">bulk action button</note>
+      </trans-unit>
+      <trans-unit id="1910227132918837305" datatype="html">
+        <source> Archive </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
+          <context context-type="linenumber">276,278</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
+          <context context-type="linenumber">276,278</context>
         </context-group>
         <note priority="1" from="description">bulk action button</note>
       </trans-unit>
@@ -4812,11 +4832,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Anonymize </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">276,278</context>
+          <context context-type="linenumber">285,287</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">276,278</context>
+          <context context-type="linenumber">285,287</context>
         </context-group>
         <note priority="1" from="description">bulk action button</note>
       </trans-unit>
@@ -4824,11 +4844,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Delete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">285,287</context>
+          <context context-type="linenumber">294,296</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">285,287</context>
+          <context context-type="linenumber">294,296</context>
         </context-group>
         <note priority="1" from="description">bulk action button</note>
       </trans-unit>
@@ -4836,11 +4856,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Duplicate </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">294,296</context>
+          <context context-type="linenumber">303,305</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">294,296</context>
+          <context context-type="linenumber">303,305</context>
         </context-group>
         <note priority="1" from="description">bulk action button</note>
       </trans-unit>
@@ -5075,6 +5095,28 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <note priority="1" from="description">Entity action confirmation message</note>
       </trans-unit>
+      <trans-unit id="4145435326093352332" datatype="html">
+        <source> Bulk edit <x id="INTERPOLATION" equiv-text="{{ selectedRows }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
+</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
+          <context context-type="linenumber">1,3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2803306445942692791" datatype="html">
+        <source> You are about to modify the selected records. This action will apply changes across multiple entries. Make sure that the fields you are updating reflect the correct information for all selected records.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> If you are unsure about making changes across all these records, review your selection carefully before proceeding or edit the records individually. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
+          <context context-type="linenumber">7,13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4008663713017944853" datatype="html">
+        <source>Property to update</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7116208952371501369" datatype="html">
         <source>Keycloak User could not be deleted</source>
         <context-group purpose="location">
@@ -5090,6 +5132,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">51</context>
         </context-group>
         <note priority="1" from="description">delete account in keycloak related error dialog</note>
+      </trans-unit>
+      <trans-unit id="5611353616187282769" datatype="html">
+        <source>edited</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-edit.service.ts</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+        <note priority="1" from="description">Entity action confirmation message verb</note>
       </trans-unit>
       <trans-unit id="8222817247365376056" datatype="html">
         <source>[anonymized <x id="PH" equiv-text="this.getConstructor().label"/>]</source>
@@ -7541,7 +7591,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Overdue</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">175</context>
         </context-group>
         <note priority="1" from="description">Filter-option for todos</note>
       </trans-unit>
@@ -7549,7 +7599,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Completed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">177</context>
+          <context context-type="linenumber">180</context>
         </context-group>
         <note priority="1" from="description">Filter-option for todos</note>
       </trans-unit>
@@ -7557,7 +7607,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>All Open</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">185</context>
         </context-group>
         <note priority="1" from="description">Filter-option for todos</note>
       </trans-unit>
@@ -7565,21 +7615,21 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Any</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">185</context>
+          <context context-type="linenumber">188</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5729690486395000500" datatype="html">
         <source>Tasks due</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">187</context>
+          <context context-type="linenumber">190</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5815531307136235479" datatype="html">
         <source>Currently Active</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">206</context>
+          <context context-type="linenumber">209</context>
         </context-group>
         <note priority="1" from="description">Filter-option for todos</note>
       </trans-unit>
