@@ -1,5 +1,5 @@
 <h2 mat-dialog-title i18n>
-  Bulk edit {{ selectedRows }} {{ entityConstructor.labelPlural }}
+  Bulk edit {{ entitiesToEdit.length }} {{ entityConstructor.labelPlural }}
 </h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
@@ -17,7 +17,7 @@
       <mat-form-field appearance="fill">
         <mat-label i18n>Property to update</mat-label>
         <mat-select
-          [formControl]="selectedSchemaFieldFormControl"
+          [formControl]="selectedFieldFormControl"
           (selectionChange)="onChangeProperty($event.value)"
         >
           <mat-option *ngFor="let field of entityFields" [value]="field.key">
@@ -27,11 +27,11 @@
       </mat-form-field>
     </div>
 
-    <div *ngIf="showDynamicFields" class="entity-form-cell">
+    <div *ngIf="showValueForm" class="entity-form-cell">
       <app-entity-field-edit
-        [field]="_field"
+        [field]="selectedField"
         [entity]="entityData"
-        [form]="form"
+        [form]="fieldValueForm"
       ></app-entity-field-edit>
     </div>
   </form>

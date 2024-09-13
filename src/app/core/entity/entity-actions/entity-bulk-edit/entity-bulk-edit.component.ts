@@ -51,44 +51,42 @@ import {
   styleUrl: "./entity-bulk-edit.component.scss",
 })
 export class EntityBulkEditComponent<E extends Entity> implements OnInit {
-  selectedSchemaFieldFormControl: FormControl;
   entityConstructor: EntityConstructor;
-  selectedRows: any;
-  entityData: any;
-  showDynamicFields: boolean = false;
-  _field: FormFieldConfig;
-  form: EntityForm<E> | undefined;
+  entitiesToEdit: E[];
 
+  selectedFieldFormControl: FormControl;
+  fieldValueForm: EntityForm<E>;
+
+  /**
+   * The available fields of the entity, from which the user can choose.
+   */
   entityFields: Array<{ key: string; label: string; field: any }> = [];
+
+  entityData: E;
+  showValueForm: boolean = false;
+  selectedField: FormFieldConfig;
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
-      selectedRow: any;
+      entitiesToEdit: E[];
       entityConstructor: EntityConstructor;
     },
     private dialogRef: MatDialogRef<any>,
     private entityFormService: EntityFormService,
   ) {
     this.entityConstructor = data.entityConstructor;
-    this.entityData = data.selectedRow[0];
-    this.selectedRows = data.selectedRow.length;
+    this.entityData = data.entitiesToEdit[0];
+    this.entitiesToEdit = data.entitiesToEdit;
   }
 
   ngOnInit(): void {
-    this.init();
-  }
-
-  private init() {
     this.initForm();
     this.fetchEntityFieldsData();
   }
 
   private initForm() {
-    this.selectedSchemaFieldFormControl = new FormControl(
-      "",
-      Validators.required,
-    );
+    this.selectedFieldFormControl = new FormControl("", Validators.required);
   }
 
   fetchEntityFieldsData() {
@@ -101,46 +99,49 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
       }));
   }
 
-  onChangeProperty(fieldId: string) {
-    this._field = this.entityFormService.extendFormFieldConfig(
+  async onChangeProperty(fieldId: string) {
+    this.selectedField = this.entityFormService.extendFormFieldConfig(
       fieldId,
-      this.entityData.getConstructor(),
+      this.entityConstructor,
     );
 
     this.fetchEntityFieldsData();
 
     const fieldKeys = this.entityFields.map((item) => item.key);
-    this.createEntityForm(fieldKeys);
+    await this.createEntityForm(fieldKeys);
 
-    this.showDynamicFields = true;
+    this.showValueForm = true;
   }
 
-  private createEntityForm(fieldKeys: string[]) {
-    this.entityFormService
-      .createEntityForm(fieldKeys, this.entityData)
-      .then((form) => {
-        this.form = form;
-        const selectedField = this.selectedSchemaFieldFormControl.value;
+  private async createEntityForm(fieldKeys: string[]) {
+    this.fieldValueForm = await this.entityFormService.createEntityForm(
+      fieldKeys,
+      this.entityData,
+    );
 
-        if (this.form.formGroup.controls[selectedField]) {
-          this.form.formGroup.controls[selectedField].setValue("");
-        }
-      });
+    const selectedField = this.selectedFieldFormControl.value;
+    if (this.fieldValueForm.formGroup.controls[selectedField]) {
+      this.fieldValueForm.formGroup.controls[selectedField].setValue("");
+    }
   }
 
   save() {
-    this.selectedSchemaFieldFormControl.markAsTouched();
+    this.selectedFieldFormControl.markAsTouched();
+    if (this.selectedFieldFormControl.invalid) return;
 
-    if (this.selectedSchemaFieldFormControl.invalid) return;
+    const selectedField = this.selectedFieldFormControl.value;
+    const value =
+      this.fieldValueForm?.formGroup.controls[selectedField]?.value || "";
 
-    const selectedField = this.selectedSchemaFieldFormControl.value;
-    const value = this.form?.formGroup.controls[selectedField]?.value || "";
-
-    const newSchemaField = {
+    const returnValue: BulkEditAction = {
       selectedField,
       value,
     };
-
-    this.dialogRef.close(newSchemaField);
+    this.dialogRef.close(returnValue);
   }
+}
+
+export interface BulkEditAction {
+  selectedField: string;
+  value: any;
 }

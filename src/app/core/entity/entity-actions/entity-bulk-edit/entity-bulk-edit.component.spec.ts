@@ -46,7 +46,7 @@ describe("EntityBulkEditComponent", () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            selectedRow: [mockEntityData],
+            entitiesToEdit: [mockEntityData],
             entityConstructor: mockEntityConstructor,
           },
         },
@@ -67,10 +67,10 @@ describe("EntityBulkEditComponent", () => {
   });
 
   it("should initialize selectedField with proper values", () => {
-    component._field = { id: "foo", label: "Test Label" };
+    component.selectedField = { id: "foo", label: "Test Label" };
 
     component.ngOnInit();
-    expect(component.selectedSchemaFieldFormControl.value).toBe("");
+    expect(component.selectedFieldFormControl.value).toBe("");
   });
 
   it("should fetch and populate entity fields", () => {
@@ -82,7 +82,7 @@ describe("EntityBulkEditComponent", () => {
   });
 
   it("should not save if the form is invalid", () => {
-    component.selectedSchemaFieldFormControl.setValue("");
+    component.selectedFieldFormControl.setValue("");
 
     component.save();
 

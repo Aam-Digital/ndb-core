@@ -5,9 +5,13 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 import { CascadingEntityAction } from "./cascading-entity-action";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { lastValueFrom } from "rxjs";
-import { EntityBulkEditComponent } from "./entity-bulk-edit/entity-bulk-edit.component";
+import {
+  BulkEditAction,
+  EntityBulkEditComponent,
+} from "./entity-bulk-edit/entity-bulk-edit.component";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
+import { asArray } from "../../../utils/utils";
 
 /**
  * Bulk edit fields of multiple entities at once.
@@ -32,20 +36,22 @@ export class EntityEditService extends CascadingEntityAction {
    *
    * This also triggers a toast message, enabling the user to undo the action.
    *
-   * @param entityParam The entity to edit
+   * @param entitiesToEdit The entities to apply a bulk edit to.
+   * @param entityType
    */
   async edit<E extends Entity>(
-    entityParam: E | E[],
-    entityConstructor?: EntityConstructor,
+    entitiesToEdit: E | E[],
+    entityType: EntityConstructor,
   ): Promise<boolean> {
-    let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
+    let entities = asArray(entitiesToEdit);
     const dialogRef = this.matDialog.open(EntityBulkEditComponent, {
       maxHeight: "90vh",
-      data: { entityConstructor, selectedRow: entities },
+      data: { entityConstructor: entityType, entitiesToEdit: entities },
     });
-    const results = await lastValueFrom(dialogRef.afterClosed());
-    if (results) {
-      const result = await this.editEntity(results, entityParam);
+    const action: BulkEditAction = await lastValueFrom(dialogRef.afterClosed());
+
+    if (action) {
+      const result = await this.editEntity(action, entitiesToEdit);
       this.entityActionsService.showSnackbarConfirmationWithUndo(
         this.entityActionsService.generateMessageForConfirmationWithUndo(
           entities,
@@ -58,26 +64,28 @@ export class EntityEditService extends CascadingEntityAction {
   }
 
   async editEntity<E extends Entity>(
-    updatedEntity: { selectedField: string; value: any },
+    action: BulkEditAction,
     entitiesToEdit: E | E[],
   ): Promise<{ success: boolean; originalEntities: E[]; newEntities: E[] }> {
-    if (updatedEntity) {
-      let originalEntities: E[] = Array.isArray(entitiesToEdit)
-        ? entitiesToEdit
-        : [entitiesToEdit];
-      const newEntities: E[] = originalEntities.map((e) => e.copy());
-
-      for (const e of newEntities) {
-        e[updatedEntity.selectedField] = updatedEntity.value;
-        await this.entityMapper.save(e);
-      }
-
-      this.unsavedChanges.pending = false;
-      return {
-        success: true,
-        originalEntities,
-        newEntities,
-      };
+    if (!action) {
+      return;
     }
+
+    let originalEntities: E[] = Array.isArray(entitiesToEdit)
+      ? entitiesToEdit
+      : [entitiesToEdit];
+    const newEntities: E[] = originalEntities.map((e) => e.copy());
+
+    for (const e of newEntities) {
+      e[action.selectedField] = action.value;
+      await this.entityMapper.save(e);
+    }
+
+    this.unsavedChanges.pending = false;
+    return {
+      success: true,
+      originalEntities,
+      newEntities,
+    };
   }
 }
