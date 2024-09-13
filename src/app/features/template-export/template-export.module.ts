@@ -116,7 +116,7 @@ You can find this in the Admin UI form builder (Edit Data Structure -> Details V
 Template files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF.`,
                       },
                       "templateFile",
-                      "targetFilename",
+                      "targetFileName",
                     ],
                   },
                 ],

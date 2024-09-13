@@ -45,7 +45,9 @@ export class DownloadService {
       format,
       exportConfig,
     );
-    const filenameWithExtension = filename + "." + format.toLowerCase();
+    const filenameWithExtension = filename.endsWith("." + format)
+      ? filename
+      : filename + "." + format;
     const link = this.createDownloadLink(blobData, filenameWithExtension);
     link.click();
   }

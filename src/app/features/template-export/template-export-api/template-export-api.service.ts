@@ -6,7 +6,7 @@ import { Observable, of, throwError } from "rxjs";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { SyncStateSubject } from "../../../core/session/session-type";
-import { HttpClient, HttpResponse } from "@angular/common/http";
+import { HttpResponse } from "@angular/common/http";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { switchMap } from "rxjs/operators";
@@ -55,7 +55,6 @@ export class TemplateExportApiService extends FileService {
     entities: EntityRegistry,
     syncState: SyncStateSubject,
     @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
-    private httpClient: HttpClient,
   ) {
     super(entityMapper, entities, syncState);
   }
@@ -92,9 +91,12 @@ export class TemplateExportApiService extends FileService {
     );
   }
 
-  showFile(entity: Entity, property: string): void {
-    // TODO: replace with actual implementation for PDF API
-    throw new Error("Method not implemented.");
+  protected override getShowFileUrl(
+    entity: TemplateExport,
+    property: string,
+  ): string {
+    // TODO: should we use the entityId here instead, to stay consistent?
+    return this.BACKEND_URL + "template/" + entity.templateId;
   }
 
   loadFile(entity: Entity, property: string): Observable<SafeUrl> {
@@ -137,8 +139,13 @@ export class TemplateExportApiService extends FileService {
       )
       .pipe(
         switchMap(async (res: HttpResponse<ArrayBuffer>) => {
+          // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
+          const filename = decodeURIComponent(
+            res.headers.get("Content-Disposition"),
+          ).match(/filename=_(.+)_/)[1];
+
           return {
-            filename: res.headers.get("Content-Disposition"),
+            filename: filename,
             file: res.body,
           };
         }),

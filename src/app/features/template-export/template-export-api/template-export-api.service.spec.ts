@@ -108,7 +108,9 @@ describe("TemplateExportApiService", () => {
 
     const mockResponse = new HttpResponse({
       body: new ArrayBuffer(10),
-      headers: new HttpHeaders({ "Content-Disposition": "test-filename" }),
+      headers: new HttpHeaders({
+        "Content-Disposition": "filename=_cert_John%20Doe.pdf_",
+      }),
       status: 200,
     });
     const mockApiResponse = spyOn(
@@ -121,7 +123,7 @@ describe("TemplateExportApiService", () => {
     );
 
     expect(result).toEqual({
-      filename: "test-filename",
+      filename: "cert_John Doe.pdf",
       file: mockResponse.body,
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
