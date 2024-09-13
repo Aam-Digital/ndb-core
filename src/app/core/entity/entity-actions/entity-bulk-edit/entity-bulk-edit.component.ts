@@ -134,11 +134,11 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
     if (this.selectedSchemaFieldFormControl.invalid) return;
 
     const selectedField = this.selectedSchemaFieldFormControl.value;
-    const label = this.form?.formGroup.controls[selectedField]?.value || "";
+    const value = this.form?.formGroup.controls[selectedField]?.value || "";
 
     const newSchemaField = {
       selectedField,
-      label,
+      value,
     };
 
     this.dialogRef.close(newSchemaField);

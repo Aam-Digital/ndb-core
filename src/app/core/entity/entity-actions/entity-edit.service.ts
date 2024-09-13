@@ -59,7 +59,7 @@ export class EntityEditService extends CascadingEntityAction {
   }
 
   async editEntity<E extends Entity>(
-    updatedEntity: { selectedField: string; label: E | E[] },
+    updatedEntity: { selectedField: string; value: any },
     entitiesToEdit: E | E[],
   ): Promise<{ success: boolean; originalEntities: E[]; newEntities: E[] }> {
     if (updatedEntity) {
@@ -69,7 +69,7 @@ export class EntityEditService extends CascadingEntityAction {
       const newEntities: E[] = originalEntities.map((e) => e.copy());
 
       for (const e of newEntities) {
-        e[updatedEntity.selectedField] = updatedEntity.label;
+        e[updatedEntity.selectedField] = updatedEntity.value;
         await this.entityMapper.save(e);
       }
 
