@@ -18,6 +18,10 @@ import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/das
 import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { NgIf } from "@angular/common";
+import { MatButtonToggleGroup } from "@angular/material/button-toggle";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
 
 interface EntityCountDashboardConfig {
   entity?: string;
@@ -37,6 +41,10 @@ interface EntityCountDashboardConfig {
     DashboardListWidgetComponent,
     EntityBlockComponent,
     NgIf,
+    MatButtonToggleGroup,
+    CommonModule,
+    FormsModule,
+    MatButtonToggleModule,
   ],
   standalone: true,
 })
@@ -62,13 +70,14 @@ export class EntityCountDashboardComponent
    *
    * Default is "center".
    */
-  @Input() groupBy: string[] = ["center"];
+  @Input() groupBy: string[] = ["center", "gender", "location"];
 
   /**
    * if the groupBy field is an entity reference this holds the related entity type,
    * so that the entity block will be displayed instead of an id string,
    * otherwise undefined, to display simply the group label.
    * */
+  selectedGroupBy: string;
   groupedByEntity: string;
 
   totalEntities: number;

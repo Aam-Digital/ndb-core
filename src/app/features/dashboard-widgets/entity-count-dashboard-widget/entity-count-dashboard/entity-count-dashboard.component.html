@@ -1,3 +1,11 @@
+<mat-button-toggle-group
+  [(ngModel)]="selectedGroupBy"
+  aria-label="Group By Toggle"
+>
+  <mat-button-toggle *ngFor="let group of groupBy" [value]="group">
+    {{ group }}
+  </mat-button-toggle>
+</mat-button-toggle-group>
 <app-dashboard-list-widget
   [icon]="entityIcon"
   theme="child"
