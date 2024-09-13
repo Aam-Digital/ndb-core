@@ -106,7 +106,7 @@ export class EntityCountDashboardComponent
     const params = {};
     params[this.groupBy[0]] = filterId;
 
-    this.router.navigate([Entity.route], { queryParams: params });
+    this.router.navigate([this._entity.route], { queryParams: params });
   }
 
   private updateCounts(entities: Entity[]) {
