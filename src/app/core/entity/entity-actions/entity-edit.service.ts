@@ -46,7 +46,6 @@ export class EntityEditService extends CascadingEntityAction {
     });
     const results = await lastValueFrom(dialogRef.afterClosed());
     if (results) {
-      console.log(results, "results");
       const result = await this.editEntity(results, entityParam);
       this.entityActionsService.showSnackbarConfirmationWithUndo(
         this.entityActionsService.generateMessageForConfirmationWithUndo(
@@ -60,17 +59,17 @@ export class EntityEditService extends CascadingEntityAction {
   }
 
   async editEntity<E extends Entity>(
-    result: any,
+    updatedEntity: { selectedField: string; label: E | E[] },
     entitiesToEdit: E | E[],
   ): Promise<{ success: boolean; originalEntities: E[]; newEntities: E[] }> {
-    if (result) {
+    if (updatedEntity) {
       let originalEntities: E[] = Array.isArray(entitiesToEdit)
         ? entitiesToEdit
         : [entitiesToEdit];
       const newEntities: E[] = originalEntities.map((e) => e.copy());
 
       for (const e of newEntities) {
-        e[result.selectedField] = result.label;
+        e[updatedEntity.selectedField] = updatedEntity.label;
         await this.entityMapper.save(e);
       }
 
