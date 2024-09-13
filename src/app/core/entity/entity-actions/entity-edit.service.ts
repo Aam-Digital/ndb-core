@@ -10,8 +10,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
 
 /**
- * Safely edit an entity including handling references with related entities.
- * This service is usually used in combination with the `EntityActionsService`, which provides user confirmation processes around this.
+ * Bulk edit fields of multiple entities at once.
  */
 @Injectable({
   providedIn: "root",
