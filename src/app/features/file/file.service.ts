@@ -29,7 +29,7 @@ import { MatDialog } from "@angular/material/dialog";
 export abstract class FileService {
   protected snackbar: MatSnackBar = inject(MatSnackBar);
   protected dialog: MatDialog = inject(MatDialog);
-  @Optional() protected httpClient: HttpClient = inject(HttpClient, {
+  protected httpClient: HttpClient = inject(HttpClient, {
     optional: true,
   });
 
