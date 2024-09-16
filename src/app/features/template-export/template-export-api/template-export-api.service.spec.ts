@@ -109,7 +109,7 @@ describe("TemplateExportApiService", () => {
     const mockResponse = new HttpResponse({
       body: new ArrayBuffer(10),
       headers: new HttpHeaders({
-        "Content-Disposition": "filename=_cert_John%20Doe.pdf_",
+        "Content-Disposition": 'filename="cert_John%20Doe.pdf"',
       }),
       status: 200,
     });

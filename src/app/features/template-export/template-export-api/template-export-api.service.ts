@@ -139,12 +139,19 @@ export class TemplateExportApiService extends FileService {
       .pipe(
         switchMap(async (res: HttpResponse<ArrayBuffer>) => {
           // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
-          const filename = decodeURIComponent(
+          const filenameMatch = decodeURIComponent(
             res.headers.get("Content-Disposition"),
-          ).match(/filename=_(.+)_/)[1];
+          ).match(/filename="(.+)"/);
+
+          let fileName: string;
+          if (filenameMatch && filenameMatch.length > 1) {
+            fileName = filenameMatch[1];
+          } else {
+            fileName = templateEntityId.replace(":", "_");
+          }
 
           return {
-            filename: filename,
+            filename: fileName,
             file: res.body,
           };
         }),
