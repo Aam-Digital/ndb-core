@@ -95,8 +95,7 @@ export class TemplateExportApiService extends FileService {
     entity: TemplateExport,
     property: string,
   ): string {
-    // TODO: should we use the entityId here instead, to stay consistent?
-    return this.BACKEND_URL + "template/" + entity.templateId;
+    return this.BACKEND_URL + "template/" + entity.getId();
   }
 
   loadFile(entity: Entity, property: string): Observable<SafeUrl> {
