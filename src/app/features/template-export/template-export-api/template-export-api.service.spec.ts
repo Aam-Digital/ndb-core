@@ -102,7 +102,7 @@ describe("TemplateExportApiService", () => {
     expect(mockPOST).not.toHaveBeenCalled();
   });
 
-  it("should request a generated file from API", async () => {
+  it("should request a generated file from API and use Content-Disposition", async () => {
     const templateEntity = new TemplateExport("test-template-id");
     const dataEntity = { name: "abc" };
 
@@ -124,6 +124,37 @@ describe("TemplateExportApiService", () => {
 
     expect(result).toEqual({
       filename: "cert_John Doe.pdf",
+      file: mockResponse.body,
+    });
+    expect(mockApiResponse).toHaveBeenCalledWith(
+      service.BACKEND_URL + "render/" + templateEntity.getId(),
+      {
+        convertTo: "pdf",
+        data: dataEntity,
+      },
+      jasmine.any(Object),
+    );
+  });
+
+  it("should request a generated file from API with default fileName", async () => {
+    const templateEntity = new TemplateExport("test-template-id");
+    const dataEntity = { name: "abc" };
+
+    const mockResponse = new HttpResponse({
+      body: new ArrayBuffer(10),
+      status: 200,
+    });
+    const mockApiResponse = spyOn(
+      TestBed.inject(HttpClient),
+      "post",
+    ).and.returnValue(of(mockResponse));
+
+    const result = await lastValueFrom(
+      service.generatePdfFromTemplate(templateEntity.getId(), dataEntity),
+    );
+
+    expect(result).toEqual({
+      filename: "TemplateExport_test-template-id",
       file: mockResponse.body,
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
