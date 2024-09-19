@@ -6,6 +6,7 @@ import { ConfigurableEnumValue } from "../../core/basic-datatypes/configurable-e
 import { ConfigurableEnumDatatype } from "../../core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DateWithAge } from "../../core/basic-datatypes/date-with-age/dateWithAge";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
 
 /**
  * Basic Entity type for unit tests, so that we don't have to create custom entity classes for every test.
@@ -19,7 +20,10 @@ export class TestEntity extends Entity {
   static override labelPlural = "Test Entities";
   static override icon: IconName = "child";
   static override route = "test-entity";
-  static override blockComponent = "ChildBlock";
+  static override toBlockDetailsAttributes: EntityBlockConfig = {
+    title: "name",
+    fields: ["other", "category"],
+  };
   static override hasPII = true;
 
   @DatabaseField({

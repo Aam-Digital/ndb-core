@@ -71,6 +71,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateHistoricalDataComponent,
       migratePhotoDatatype,
       migratePercentageDatatype,
+      migrateEntityBlock,
+      addDefaultNoteDetailsConfig,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -349,6 +351,47 @@ const migrateHistoricalDataComponent: ConfigMigration = (key, configPart) => {
   }
   configPart["config"]["entityType"] = "HistoricalEntityData";
   configPart["config"]["loaderMethod"] = LoaderMethod.HistoricalDataService;
+
+  return configPart;
+};
+
+/**
+ * ChildBlockComponent was removed and entity types can instead define a configurable tooltip setting.
+ */
+const migrateEntityBlock: ConfigMigration = (key, configPart) => {
+  if (configPart?.["blockComponent"] === "ChildBlock") {
+    delete configPart["blockComponent"];
+    configPart["toBlockDetailsAttributes"] = {
+      title: "name",
+      photo: "photo",
+      fields: ["phone", "schoolId", "schoolClass"],
+    };
+
+    return configPart;
+  }
+
+  if (key === "viewComponent" && configPart === "ChildBlock") {
+    return "EntityBlock";
+  }
+
+  return configPart;
+};
+
+/**
+ * Add default view:note/:id NoteDetails config
+ * to avoid breaking note details with a default config from AdminModule
+ */
+const addDefaultNoteDetailsConfig: ConfigMigration = (key, configPart) => {
+  if (
+    // add at top-level of config
+    configPart?.["_id"] === "Config:CONFIG_ENTITY" &&
+    !configPart?.["data"]["view:note/:id"]
+  ) {
+    configPart["data"]["view:note/:id"] = {
+      component: "NoteDetails",
+      config: {},
+    };
+  }
 
   return configPart;
 };
