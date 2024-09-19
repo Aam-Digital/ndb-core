@@ -1,66 +1,91 @@
-<mat-button-toggle-group
-  [(ngModel)]="selectedGroupBy"
-  aria-label="Group By Toggle"
->
-  <mat-button-toggle *ngFor="let group of groupBy" [value]="group">
-    {{ group }}
-  </mat-button-toggle>
-</mat-button-toggle-group>
-<app-dashboard-list-widget
-  [icon]="entityIcon"
-  theme="child"
-  [title]="totalEntities"
-  [subtitle]="label"
-  [entries]="entityGroupCounts"
->
-  <div class="table-wrapper">
-    <table
-      mat-table
-      i18n-aria-label="Label for children count dashboard"
-      aria-label="Table showing disaggregation of the beneficiaries"
-    >
-      <ng-container matColumnDef="label">
-        <td *matCellDef="let group">
-          <span *ngIf="!groupedByEntity">{{ group.label }}</span>
-          <app-entity-block
-            *ngIf="groupedByEntity"
-            [entityId]="group.id"
-          ></app-entity-block>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="value">
-        <td *matCellDef="let group" class="text-align-end">
-          {{ group.value }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="link">
-        <td *matCellDef class="text-align-end">
-          <fa-icon icon="external-link-square-alt"></fa-icon>
-        </td>
-      </ng-container>
+<c-carousel [interval]="0">
+  <c-carousel-indicators>
+    <li
+      *ngFor="let slide of slides; let i = index"
+      [class.active]="i === currentGroupIndex"
+      (click)="goToSlide(i)"
+    ></li>
+  </c-carousel-indicators>
 
-      <tr hidden>
-        <th
-          scope="col"
-          i18n="The center that a partiipant belongs to, e.g. a city"
-        >
-          Center
-        </th>
-        <th scope="col" i18n="The amount of children that study at one school">
-          Count of children
-        </th>
-        <th scope="col" i18n="A link that takes a user to a center">Link</th>
-      </tr>
-      <tr
-        mat-row
-        *matRowDef="let row; let i = index; columns: ['label', 'value', 'link']"
-        (click)="goToChildrenList(row.id)"
-        class="pointer"
-        angulartics2On="click"
-        angularticsCategory="Navigation"
-        angularticsAction="dashboard_children_count_school_link"
-        [angularticsLabel]="'list-entry-' + i"
-      ></tr>
-    </table>
-  </div>
-</app-dashboard-list-widget>
+  <c-carousel-inner>
+    <c-carousel-item
+      *ngFor="let group of groupBy; let i = index"
+      [class.active]="i === currentGroupIndex"
+    >
+      <app-dashboard-list-widget
+        [icon]="entityIcon"
+        theme="child"
+        [title]="totalEntities"
+        [subtitle]="group"
+        [entries]="entityGroupCounts[group]"
+      >
+        <div class="table-wrapper">
+          <table
+            mat-table
+            i18n-aria-label="Label for children count dashboard"
+            aria-label="Table showing disaggregation of the beneficiaries"
+          >
+            <ng-container matColumnDef="label">
+              <td *matCellDef="let group">
+                <span *ngIf="!groupedByEntity">{{ group.label }}</span>
+                <app-entity-block
+                  *ngIf="groupedByEntity"
+                  [entityId]="group.id"
+                ></app-entity-block>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="value">
+              <td *matCellDef="let group" class="text-align-end">
+                {{ group.value }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="link">
+              <td *matCellDef class="text-align-end">
+                <fa-icon icon="external-link-square-alt"></fa-icon>
+              </td>
+            </ng-container>
+
+            <tr hidden>
+              <th
+                scope="col"
+                i18n="The center that a partiipant belongs to, e.g. a city"
+              >
+                Center
+              </th>
+              <th
+                scope="col"
+                i18n="The amount of children that study at one school"
+              >
+                Count of children
+              </th>
+              <th scope="col" i18n="A link that takes a user to a center">
+                Link
+              </th>
+            </tr>
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                let i = index;
+                columns: ['label', 'value', 'link']
+              "
+              (click)="goToChildrenList(row.id)"
+              class="pointer"
+              angulartics2On="click"
+              angularticsCategory="Navigation"
+              angularticsAction="dashboard_children_count_school_link"
+              [angularticsLabel]="'list-entry-' + i"
+            ></tr>
+          </table>
+        </div>
+      </app-dashboard-list-widget>
+    </c-carousel-item>
+  </c-carousel-inner>
+
+  <c-carousel-control caption="Previous" direction="prev" (click)="getPrev()">
+    <span class="carousel-icon">&#60;</span>
+  </c-carousel-control>
+  <c-carousel-control caption="Next" direction="next" (click)="getNext()">
+    <span class="carousel-icon">&#62;</span>
+  </c-carousel-control>
+</c-carousel>

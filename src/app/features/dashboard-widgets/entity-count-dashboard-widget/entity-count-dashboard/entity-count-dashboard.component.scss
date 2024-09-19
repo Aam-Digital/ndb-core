@@ -1,1 +1,60 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
+
+c-carousel {
+  position: relative;
+  overflow: visible;
+}
+
+c-carousel-inner {
+  padding: 0 20px;
+}
+
+c-carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+  gap: 8px;
+}
+
+c-carousel-indicators li {
+  width: 10px;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+c-carousel-indicators li.active {
+  background-color: #007bff;
+}
+
+c-carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 10px;
+}
+
+c-carousel-control[direction="prev"] {
+  left: 10px;
+}
+
+c-carousel-control[direction="next"] {
+  right: 10px;
+
+  .carousel-icon {
+    font-size: 24px;
+    color: white;
+    align-items: center;
+    justify-content: center;
+  }
+}

@@ -21,7 +21,13 @@ import { NgIf } from "@angular/common";
 import { MatButtonToggleGroup } from "@angular/material/button-toggle";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import {
+  CarouselComponent,
+  CarouselControlComponent,
+  CarouselInnerComponent,
+  CarouselItemComponent,
+  CarouselIndicatorsComponent,
+} from "@coreui/angular";
 
 interface EntityCountDashboardConfig {
   entity?: string;
@@ -44,7 +50,11 @@ interface EntityCountDashboardConfig {
     MatButtonToggleGroup,
     CommonModule,
     FormsModule,
-    MatButtonToggleModule,
+    CarouselComponent,
+    CarouselControlComponent,
+    CarouselInnerComponent,
+    CarouselItemComponent,
+    CarouselIndicatorsComponent,
   ],
   standalone: true,
 })
@@ -52,6 +62,21 @@ export class EntityCountDashboardComponent
   extends DashboardWidget
   implements EntityCountDashboardConfig, OnInit
 {
+  getPrev() {
+    this.currentGroupIndex =
+      (this.currentGroupIndex - 1 + this.groupBy.length) % this.groupBy.length;
+  }
+
+  getNext() {
+    this.currentGroupIndex = (this.currentGroupIndex + 1) % this.groupBy.length;
+  }
+
+  goToSlide(index: number) {
+    if (index >= 0 && index < this.groupBy.length) {
+      this.currentGroupIndex = index;
+    }
+  }
+
   static override getRequiredEntities(config: EntityCountDashboardConfig) {
     return config?.entity || "Child";
   }
@@ -70,20 +95,23 @@ export class EntityCountDashboardComponent
    *
    * Default is "center".
    */
-  @Input() groupBy: string[] = ["center", "gender", "location"];
+  @Input() groupBy: string[] = ["center", "gender"];
 
   /**
    * if the groupBy field is an entity reference this holds the related entity type,
    * so that the entity block will be displayed instead of an id string,
    * otherwise undefined, to display simply the group label.
    * */
-  selectedGroupBy: string;
+  currentGroupIndex = 0;
   groupedByEntity: string;
 
   totalEntities: number;
-  entityGroupCounts: { label: string; value: number; id: string }[] = [];
+  entityGroupCounts: {
+    [groupBy: string]: { label: string; value: number; id: string }[];
+  } = {};
   label: string;
   entityIcon: IconName;
+  slides: any[] = [];
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -98,17 +126,20 @@ export class EntityCountDashboardComponent
       this.entityType = "Child";
     }
 
-    const firstGroupBy = this.groupBy[0];
-    const groupByType = this._entity.schema.get(firstGroupBy);
-    this.groupedByEntity =
-      groupByType.dataType === EntityDatatype.dataType
-        ? groupByType.additional
-        : undefined;
-
-    const entities = await this.entityMapper.loadType(this._entity);
-    this.updateCounts(entities.filter((e) => e.isActive));
+    for (const groupByField of this.groupBy) {
+      await this.loadDataForGroupBy(groupByField);
+    }
     this.label = this._entity.labelPlural;
     this.entityIcon = this._entity.icon;
+  }
+
+  async loadDataForGroupBy(groupByField: string) {
+    const entities = await this.entityMapper.loadType(this._entity);
+    this.updateCounts(
+      entities.filter((e) => e.isActive),
+      groupByField,
+    );
+    console.log("Error");
   }
 
   goToChildrenList(filterId: string) {
@@ -118,11 +149,16 @@ export class EntityCountDashboardComponent
     this.router.navigate([this._entity.route], { queryParams: params });
   }
 
-  private updateCounts(entities: Entity[]) {
+  private updateCounts(entities: Entity[], groupByField: string) {
+    const groupByType = this._entity.schema.get(groupByField);
+    this.groupedByEntity =
+      groupByType.dataType === EntityDatatype.dataType
+        ? groupByType.additional
+        : undefined;
     this.totalEntities = entities.length;
-    const firstGroupBy = this.groupBy[0];
-    const groups = groupBy(entities, firstGroupBy as keyof Entity);
-    this.entityGroupCounts = groups.map(([group, entities]) => {
+
+    const groups = groupBy(entities, groupByField as keyof Entity);
+    this.entityGroupCounts[groupByField] = groups.map(([group, entities]) => {
       const label = extractHumanReadableLabel(group);
       return {
         label: label,
