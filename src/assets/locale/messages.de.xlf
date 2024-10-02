@@ -1671,15 +1671,15 @@
         <target state="translated">"<x id="PH" equiv-text="file.name"/>" wird hochgeladen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">72</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7211396766149775337" datatype="html">
         <source>Loading "<x id="PH" equiv-text="entity[property]"/>"</source>
         <target state="translated">"<x id="PH" equiv-text="entity[property]"/>" wird heruntergeladen</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="sourcefile">src/app/features/file/file.service.ts</context>
+          <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4204232858147199020" datatype="html">
@@ -3552,12 +3552,28 @@
           <context context-type="linenumber">47,53</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="9011959596901584887" datatype="html">
+        <source>Color</source>
+        <target state="translated">Farbe</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1058292643981725161" datatype="html">
+        <source>The color to represent this entity type, e.g. when displaying records as pins on the map.</source>
+        <target state="translated">Die Farbe für diesen Typ, z.B. für die Anzeige von Markierungen auf der Karte.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="6648629370488895575" datatype="html">
         <source>Generated Title of Record</source>
         <target state="translated">Generierter Titel eines Datensatzes</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8703736367007810623" datatype="html">
@@ -3565,7 +3581,7 @@
         <target state="translated">Die Werte der ausgewählten Felder werden (in dieser Reihenfolge) genutzt um eine Bezeichnung für einen konkreten Datensatz zu erzeugen. (Nur Felder vom Typ "Text" sind hierfür verfügbar)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5045392956487283965" datatype="html">
@@ -3573,7 +3589,7 @@
         <target state="translated">Anonymisierung konfigurieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7782904061382038164" datatype="html">
@@ -3581,7 +3597,7 @@
         <target state="translated">Enthält persönliche Daten (DSGVO-relevant)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">110</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4379176514372959023" datatype="html">
@@ -3589,7 +3605,7 @@
         <target state="translated">Auswählen, wenn Angaben dieses Datentyps persönliche Daten enthalten können. Diese Option aktiviert die "Anonymisierungs-Funktion". Damit können Nutzer:innen einen Datensatz dieses Typs anonymisieren, anstatt diesen nur zu archivieren oder komplett zu löschen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5591054546376436766" datatype="html">
@@ -3597,7 +3613,7 @@
         <target state="translated"> Einstellungen wie Datensätze dieses Typs anonymisiert werden. Nutzer:innen können einen Eintrag "anonymisieren" als Alternative dazu ihn zu archivieren (wobei alle persönlichen Daten gespeichert bleiben) oder zu löschen (wobei jegliche Spur des Datensatzes entfernt wird, selbst ihn Berichten und sonstigen Auswertungen). Die Liste aller Profilfelder hier definiert, welche Felder "erhalten" bleiben können, um weiterhin statistische Auswertungen zu ermöglichen, und welche Felder entfernt werden müssen, da sie persönliche Daten enthalten. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">106,114</context>
+          <context context-type="linenumber">119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3826197724850782348" datatype="html">
@@ -6120,7 +6136,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         </context-group>
       </trans-unit>
       <trans-unit id="4145435326093352332" datatype="html">
-        <source> Bulk edit <x id="INTERPOLATION" equiv-text="{{ selectedRows }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
+        <source> Bulk edit <x id="INTERPOLATION" equiv-text="{{ entitiesToEdit.length }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
 </source>
         <target state="translated"> Bearbeiten von <x id="INTERPOLATION" equiv-text="{{ selectedRows }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
 </target>
@@ -6166,11 +6182,11 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
       <trans-unit id="5611353616187282769" datatype="html">
         <source>edited</source>
         <target state="translated">bearbeitet</target>
+        <note priority="1" from="description">Entity action confirmation message verb</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-edit.service.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">58</context>
         </context-group>
-        <note priority="1" from="description">Entity action confirmation message verb</note>
       </trans-unit>
       <trans-unit id="5775346636203685655" datatype="html">
         <source>Undo</source>
@@ -6226,7 +6242,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Entity.toString fallback for anonymized record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/model/entity.ts</context>
-          <context context-type="linenumber">313</context>
+          <context context-type="linenumber">320</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6116431777503568524" datatype="html">

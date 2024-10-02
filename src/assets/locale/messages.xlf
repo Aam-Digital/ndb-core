@@ -2273,46 +2273,60 @@
           <context context-type="linenumber">47,53</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="9011959596901584887" datatype="html">
+        <source>Color</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1058292643981725161" datatype="html">
+        <source>The color to represent this entity type, e.g. when displaying records as pins on the map.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="6648629370488895575" datatype="html">
         <source>Generated Title of Record</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8703736367007810623" datatype="html">
         <source>Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type. (Only text fields can be used here)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5045392956487283965" datatype="html">
         <source>Configure PII / Anonymization</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7782904061382038164" datatype="html">
         <source>Has personal information (PII)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">110</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4379176514372959023" datatype="html">
         <source>If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the &apos;anonymization&apos; feature. This allows users to anonymize records of this type instead of just archiving or deleting them.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5591054546376436766" datatype="html">
         <source> Configure how records of this type can be anonymized. Users can &quot;anonymize&quot; a record as an alternative to just archiving it (keeping all personal details) or deleting it (losing any trace of the record, even in reports). Select below which fields can be &quot;retained&quot; to keep some limited data for statistical reporting and which fields have to be removed because they contain personal details. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">106,114</context>
+          <context context-type="linenumber">119,127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3826197724850782348" datatype="html">
@@ -5112,7 +5126,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Entity action confirmation message</note>
       </trans-unit>
       <trans-unit id="4145435326093352332" datatype="html">
-        <source> Bulk edit <x id="INTERPOLATION" equiv-text="{{ selectedRows }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
+        <source> Bulk edit <x id="INTERPOLATION" equiv-text="{{ entitiesToEdit.length }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
 </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
@@ -5153,7 +5167,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>edited</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-edit.service.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">58</context>
         </context-group>
         <note priority="1" from="description">Entity action confirmation message verb</note>
       </trans-unit>
@@ -5161,7 +5175,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>[anonymized <x id="PH" equiv-text="this.getConstructor().label"/>]</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/model/entity.ts</context>
-          <context context-type="linenumber">313,315</context>
+          <context context-type="linenumber">320,322</context>
         </context-group>
         <note priority="1" from="description">Entity.toString fallback for anonymized record</note>
       </trans-unit>
@@ -6715,14 +6729,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">72</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7211396766149775337" datatype="html">
-        <source>Loading &quot;<x id="PH" equiv-text="entity[property]"/>&quot;</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4204232858147199020" datatype="html">
@@ -6807,6 +6814,13 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">28</context>
         </context-group>
         <note priority="1" from="description">datatype-label</note>
+      </trans-unit>
+      <trans-unit id="7211396766149775337" datatype="html">
+        <source>Loading &quot;<x id="PH" equiv-text="entity[property]"/>&quot;</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/file.service.ts</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="1765928751560639960" datatype="html">
         <source>profile photo</source>
