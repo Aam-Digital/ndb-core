@@ -179,6 +179,7 @@ export class AdminEntityComponent implements OnInit {
       entitySchemaConfig.label = this.configEntitySettings.label;
       entitySchemaConfig.labelPlural = this.configEntitySettings.labelPlural;
       entitySchemaConfig.icon = this.configEntitySettings.icon;
+      entitySchemaConfig.color = this.configEntitySettings.color;
       entitySchemaConfig.toStringAttributes =
         this.configEntitySettings.toStringAttributes;
       entitySchemaConfig.hasPII = this.configEntitySettings.hasPII;

@@ -1,8 +1,6 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { EntitySelectComponent } from "./entity-select.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { componentRegistry } from "../../../dynamic-components";
-import { ChildBlockComponent } from "../../../child-dev-project/children/child-block/child-block.component";
 import { importProvidersFrom } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
@@ -51,7 +49,7 @@ export default {
   },
 } as Meta;
 
-componentRegistry.add("ChildBlock", async () => ChildBlockComponent);
+//componentRegistry.add("EntityBlock", async () => EntityBlockComponent);
 
 const Template: StoryFn<EntitySelectComponent<TestEntity>> = (
   args: EntitySelectComponent<TestEntity>,

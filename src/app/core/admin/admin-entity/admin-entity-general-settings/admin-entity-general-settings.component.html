@@ -53,6 +53,19 @@
               >
             </mat-hint>
           </mat-form-field>
+
+          <mat-form-field floatLabel="always">
+            <mat-label>
+              <span i18n>Color</span>
+              &nbsp;
+              <fa-icon
+                icon="question-circle"
+                matTooltip="The color to represent this entity type, e.g. when displaying records as pins on the map."
+                i18n-matTooltip
+              ></fa-icon>
+            </mat-label>
+            <input formControlName="color" matInput />
+          </mat-form-field>
         </div>
 
         <div class="entity-form-cell">

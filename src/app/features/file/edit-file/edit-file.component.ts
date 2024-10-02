@@ -24,6 +24,18 @@ import { NotAvailableOfflineError } from "../../../core/session/not-available-of
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { FileFieldConfig } from "../file.datatype";
 
+export const EditFileComponent_IMPORTS = [
+  MatFormFieldModule,
+  NgClass,
+  MatInputModule,
+  ReactiveFormsModule,
+  MatTooltipModule,
+  NgIf,
+  MatButtonModule,
+  FontAwesomeModule,
+  ErrorHintComponent,
+];
+
 /**
  * This component should be used as a `editComponent` when a property should store files.
  * It allows to show, upload and remove files.
@@ -33,17 +45,7 @@ import { FileFieldConfig } from "../file.datatype";
   selector: "app-edit-file",
   templateUrl: "./edit-file.component.html",
   styleUrls: ["./edit-file.component.scss"],
-  imports: [
-    MatFormFieldModule,
-    NgClass,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatTooltipModule,
-    NgIf,
-    MatButtonModule,
-    FontAwesomeModule,
-    ErrorHintComponent,
-  ],
+  imports: EditFileComponent_IMPORTS,
   standalone: true,
 })
 export class EditFileComponent extends EditComponent<string> implements OnInit {
@@ -103,6 +105,12 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
       });
   }
 
+  /**
+   * Template method to allow easy override of mapping the initialValue from the formControl.
+   * @protected
+   */
+  protected setInitialValue() {}
+
   async onFileSelected(file: File) {
     // directly reset input so subsequent selections with the same name also trigger the change event
     this.fileUploadInput.nativeElement.value = "";
@@ -159,7 +167,9 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     if (this.initialValue && this.formControl.value === this.initialValue) {
       this.showFile();
     } else {
-      this.fileUploadInput.nativeElement.click();
+      if (this.formControl.enabled) {
+        this.fileUploadInput.nativeElement.click();
+      }
     }
   }
 

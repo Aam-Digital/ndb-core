@@ -72,7 +72,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
       to: faker.getEarlierDateOrToday(child["dropoutDate"]),
     });
     entity.materialAmount = faker.helpers.arrayElement([1, 1, 1, 2, 3]);
-    entity.materialType = faker.helpers.arrayElement(materials).id;
+    entity.materialType = faker.helpers.arrayElement(materials);
 
     return entity;
   }
