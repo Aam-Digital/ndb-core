@@ -99,10 +99,10 @@ RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environment
 RUN node build/prepare-translation-files.js
 RUN npm run build
 
-## TODO: reactivate this without breaking ngsw hashes
-#RUN if [ "$INJECT_DEBUG_INFORMATION" = true ] ; then \
-#    npm install -g @sentry/cli && \
-#    sentry-cli sourcemaps inject ./dist ; fi
+RUN npm install -g @sentry/cli && \
+RUN sentry-cli sourcemaps inject ./dist ; fi
+RUN ./node_modules/.bin/ngsw-config dist ngsw-config.json
+
 
 FROM scratch AS dist-build
 COPY --from=build /opt/app/dist/ ./dist/
