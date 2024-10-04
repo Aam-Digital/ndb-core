@@ -214,9 +214,9 @@ jobs:
         run: |
           npm install -g @sentry/cli
 
-      - name: Inject Sentry debug information
-        run: |
-          sentry-cli sourcemaps inject ./tmp/build/${{ env.PLATFORM_PAIR }}/dist
+#      - name: Inject Sentry debug information
+#        run: |
+#          sentry-cli sourcemaps inject ./tmp/build/${{ env.PLATFORM_PAIR }}/dist
 
       - name: Build Image and push by digest
         id: build-image
