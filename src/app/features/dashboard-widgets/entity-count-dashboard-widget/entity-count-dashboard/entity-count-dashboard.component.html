@@ -4,6 +4,7 @@
       *ngFor="let slide of slides; let i = index"
       [class.active]="i === currentGroupIndex"
       (click)="goToSlide(i)"
+      [title]="'Slide ' + (i + 1)"
     ></li>
   </c-carousel-indicators>
 
@@ -26,7 +27,7 @@
             aria-label="Table showing disaggregation of the beneficiaries"
           >
             <ng-container matColumnDef="label">
-              <td *matCellDef="let group">
+              <td *matCellDef="let group" scope="row">
                 <span *ngIf="!groupedByEntity">{{ group.label }}</span>
                 <app-entity-block
                   *ngIf="groupedByEntity"
@@ -82,10 +83,20 @@
     </c-carousel-item>
   </c-carousel-inner>
 
-  <c-carousel-control caption="Previous" direction="prev" (click)="getPrev()">
+  <c-carousel-control
+    caption="Previous"
+    direction="prev"
+    aria-label="Previous slide"
+    (click)="getPrev()"
+  >
     <span class="carousel-icon">&#60;</span>
   </c-carousel-control>
-  <c-carousel-control caption="Next" direction="next" (click)="getNext()">
+  <c-carousel-control
+    caption="Next"
+    direction="next"
+    aria-label="Next slide"
+    (click)="getNext()"
+  >
     <span class="carousel-icon">&#62;</span>
   </c-carousel-control>
 </c-carousel>
