@@ -62,7 +62,7 @@ export class TemplateExport extends Entity {
     dataType: TemplateExportFileDatatype.dataType,
     additional: {
       acceptedFileTypes:
-        ".docx, .doc, .odt, .xlsx, .xls, .ods, .pptx, .ppt, .odp",
+        ".docx, .doc, .odt, .xlsx, .xls, .ods, .pptx, .ppt, .odp, .pdf",
     } as FileFieldConfig,
   })
   templateFile: string;
