@@ -26,6 +26,9 @@ import { NgForOf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
+import { MatMenuModule } from "@angular/material/menu";
+import { CommonModule } from "@angular/common";
+import { MatIcon } from "@angular/material/icon";
 
 /**
  * Main app menu listing.
@@ -41,6 +44,9 @@ import { RoutePermissionsService } from "../../../config/dynamic-routing/route-p
     Angulartics2Module,
     RouterLink,
     FaDynamicIconComponent,
+    MatMenuModule,
+    CommonModule,
+    MatIcon,
   ],
   standalone: true,
 })
@@ -72,6 +78,10 @@ export class NavigationComponent {
       });
   }
 
+  hasSubMenu(item: MenuItem): boolean {
+    return item.subMenu && item.subMenu.length > 0;
+  }
+
   /**
    * Computes the active link from a set of MenuItems.
    * The active link is the link with the most "overlap", i.e.
@@ -90,9 +100,9 @@ export class NavigationComponent {
       case 0:
         return "";
       case 1:
-        const link = items[0].target;
+        const target = items[0].target as string;
         // for root "/" only return on exact match to avoid confusing highlighting of unrelated items
-        return newUrl === target || target.length > 1 ? link : "";
+        return newUrl === target || target.length > 1 ? target : "";
       default:
         // If there are multiple matches (A user navigates with a URL that starts with
         // multiple links from a MenuItem), use the element where the length is bigger.

@@ -21,7 +21,7 @@ export class RoutePermissionsService {
   async filterPermittedRoutes(items: MenuItem[]): Promise<MenuItem[]> {
     const accessibleRoutes: MenuItem[] = [];
     for (const item of items) {
-      if (await this.isAccessibleRouteForUser(item.link)) {
+      if (await this.isAccessibleRouteForUser(item.target as string)) {
         accessibleRoutes.push(item);
       }
     }

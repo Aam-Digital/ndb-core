@@ -24,6 +24,7 @@ const flatMenuItems: MenuItem[] = [
     label: "Home",
     icon: "home",
     target: "/",
+    subMenu: [],
   },
   {
     label: "About",
@@ -41,7 +42,7 @@ const nestedMenuItems: MenuItem[] = [
   {
     label: "Services",
     icon: "build",
-    target: [
+    subMenu: [
       {
         label: "Web Development",
         icon: "code",

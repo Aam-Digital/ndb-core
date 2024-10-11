@@ -10,7 +10,7 @@
 <h2>Shortcuts</h2>
 <mat-nav-list>
   @for (item of adminOverviewService.menuItems; track item) {
-    <mat-list-item [routerLink]="[item.link]">{{ item.label }}</mat-list-item>
+    <mat-list-item [routerLink]="[item.target]">{{ item.label }}</mat-list-item>
   }
 </mat-nav-list>
 

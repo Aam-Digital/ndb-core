@@ -27,12 +27,12 @@ Primary.args = {
     {
       label: "Record Attendance",
       icon: "calendar-check-o",
-      link: "/attendance/add-day",
+      target: "/attendance/add-day",
     },
     {
       label: "All Notes",
       icon: "file-text",
-      link: "/note",
+      target: "/note",
     },
   ] as MenuItem[],
 };

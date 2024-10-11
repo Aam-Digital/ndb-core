@@ -187,7 +187,7 @@ const migrateMenuItemConfig: ConfigMigration = (key, configPart) => {
     | {
         name: string;
         icon: string;
-        link: string;
+        target: string;
       }
     | MenuItem
   )[] = configPart.items;
@@ -197,7 +197,7 @@ const migrateMenuItemConfig: ConfigMigration = (key, configPart) => {
       return {
         label: item["name"],
         icon: item.icon,
-        link: item.link,
+        target: item.target,
       };
     } else {
       return item;

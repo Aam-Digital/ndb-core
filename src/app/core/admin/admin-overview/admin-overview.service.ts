@@ -13,19 +13,19 @@ export class AdminOverviewService {
   menuItems: MenuItem[] = [
     {
       label: $localize`:admin menu item:Site Settings`,
-      link: "/admin/site-settings",
+      target: "/admin/site-settings",
     },
     {
       label: $localize`:admin menu item:Database Conflicts`,
-      link: "/admin/conflicts",
+      target: "/admin/conflicts",
     },
     {
       label: $localize`:admin menu item:Administer Entity Types`,
-      link: "/admin/entity",
+      target: "/admin/entity",
     },
     {
       label: $localize`:admin menu item:Setup Wizard`,
-      link: "/admin/setup-wizard",
+      target: "/admin/setup-wizard",
     },
   ];
 }

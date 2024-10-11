@@ -13,7 +13,9 @@ export interface MenuItem {
   /**
    * The url fragment to which the item will route to (e.g. '/dashboard')
    */
-  target: string | MenuItem[];
+  target?: string;
+
+  subMenu?: MenuItem[];
 }
 
 /**
