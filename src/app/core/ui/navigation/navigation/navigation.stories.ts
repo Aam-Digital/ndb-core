@@ -23,18 +23,18 @@ const flatMenuItems: MenuItem[] = [
   {
     label: "Home",
     icon: "home",
-    target: "/",
+    link: "/",
     subMenu: [],
   },
   {
     label: "About",
     icon: "info",
-    target: "/about",
+    link: "/about",
   },
   {
     label: "Contact",
     icon: "contact",
-    target: "/contact",
+    link: "/contact",
   },
 ];
 
@@ -46,24 +46,24 @@ const nestedMenuItems: MenuItem[] = [
       {
         label: "Web Development",
         icon: "code",
-        target: "/services/web-development",
+        link: "/services/web-development",
       },
       {
         label: "App Development",
         icon: "phone_android",
-        target: "/services/app-development",
+        link: "/services/app-development",
       },
     ],
   },
   {
     label: "Portfolio",
     icon: "work",
-    target: "/portfolio",
+    link: "/portfolio",
   },
   {
     label: "Blog",
     icon: "article",
-    target: "/blog",
+    link: "/blog",
   },
 ];
 

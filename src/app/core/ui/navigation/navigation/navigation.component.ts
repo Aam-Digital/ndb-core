@@ -28,10 +28,10 @@ import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-ic
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { CommonModule } from "@angular/common";
-import { MatIcon } from "@angular/material/icon";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MenuItemComponent } from "../menu-item.component";
 
-/**
- * Main app menu listing.
+/* Main app menu listing.
  */
 @UntilDestroy()
 @Component({
@@ -46,7 +46,8 @@ import { MatIcon } from "@angular/material/icon";
     FaDynamicIconComponent,
     MatMenuModule,
     CommonModule,
-    MatIcon,
+    FaIconComponent,
+    MenuItemComponent,
   ],
   standalone: true,
 })
@@ -78,10 +79,6 @@ export class NavigationComponent {
       });
   }
 
-  hasSubMenu(item: MenuItem): boolean {
-    return item.subMenu && item.subMenu.length > 0;
-  }
-
   /**
    * Computes the active link from a set of MenuItems.
    * The active link is the link with the most "overlap", i.e.
@@ -93,14 +90,13 @@ export class NavigationComponent {
   private computeActiveLink(newUrl: string): string {
     // conservative filter matching all items that could fit to the given url
     const items: MenuItem[] = this.menuItems.filter(
-      (item) =>
-        typeof item.target === "string" && newUrl.startsWith(item.target),
+      (item) => typeof item.link === "string" && newUrl.startsWith(item.link),
     );
     switch (items.length) {
       case 0:
         return "";
       case 1:
-        const target = items[0].target as string;
+        const target = items[0].link as string;
         // for root "/" only return on exact match to avoid confusing highlighting of unrelated items
         return newUrl === target || target.length > 1 ? target : "";
       default:
@@ -116,8 +112,8 @@ export class NavigationComponent {
         // both '/attendance' and '/attendance/add/day' are a prefix of '/attendance/add/day'.
         // In the latter case, the one with the longer URL should match.
         return items.reduce((i1, i2) =>
-          (i1.target as string).length > (i2.target as string).length ? i1 : i2,
-        ).target as string;
+          (i1.link as string).length > (i2.link as string).length ? i1 : i2,
+        ).link as string;
     }
   }
 

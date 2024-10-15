@@ -53,7 +53,7 @@ export class TemplateExportModule {
 
     adminOverviewService.menuItems.push({
       label: $localize`:admin menu item:Manage Export Templates`,
-      target: TemplateExport.route,
+      link: TemplateExport.route,
     });
   }
 }

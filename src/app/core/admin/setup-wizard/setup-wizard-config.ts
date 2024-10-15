@@ -54,11 +54,11 @@ We are currently extending and optimizing the user interfaces for these steps._
       actions: [
         {
           label: $localize`:Setup Wizard Step Action:Customize Child profile`,
-          target: "/admin/entity/Child",
+          link: "/admin/entity/Child",
         },
         {
           label: $localize`:Setup Wizard Step Action:Customize School profile`,
-          target: "/admin/entity/School",
+          link: "/admin/entity/School",
         },
       ],
     },
@@ -70,7 +70,7 @@ Data is synced and all users have access to the latest information.`,
       actions: [
         {
           label: $localize`:Setup Wizard Step Action:Manage User Accounts`,
-          target: "/user",
+          link: "/user",
         },
       ],
     },
@@ -84,7 +84,7 @@ The Import Module helps your map your spreadsheet data to the relevant fields in
       actions: [
         {
           label: $localize`:Setup Wizard Step Action:Import Data`,
-          target: "/import",
+          link: "/import",
         },
       ],
     },

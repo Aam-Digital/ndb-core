@@ -17,39 +17,6 @@
 
 <mat-nav-list>
   <ng-container *ngFor="let item of menuItems">
-    <mat-list-item
-      angulartics2On="click"
-      angularticsCategory="Navigation"
-      angularticsAction="app_navigation_link_click"
-      [angularticsLabel]="item.label"
-      [routerLink]="[item.target]"
-      [class.matched-background]="item.target === activeLink"
-      onclick="this.blur();"
-    >
-      <a class="flex-row gap-small">
-        <app-fa-dynamic-icon
-          class="nav-icon"
-          [icon]="item.icon"
-        ></app-fa-dynamic-icon>
-        <div>{{ item.label }}</div>
-      </a>
-    </mat-list-item>
-
-    <ng-container *ngIf="hasSubMenu(item)">
-      <button
-        mat-menu-item
-        [matMenuTriggerFor]="subMenu"
-        mat-icon="more_vert"
-      ></button>
-      <mat-menu #subMenu="matMenu">
-        <ng-container *ngFor="let subItem of item.subMenu">
-          <button mat-menu-item [routerLink]="subItem.target">
-            {{ subItem.label }}
-          </button>
-        </ng-container>
-      </mat-menu>
-    </ng-container>
-
-    <mat-divider></mat-divider>
+    <app-menu-item [item]="item"></app-menu-item>
   </ng-container>
 </mat-nav-list>

@@ -1,0 +1,34 @@
+<mat-list-item
+  angulartics2On="click"
+  angularticsCategory="Navigation"
+  angularticsAction="app_navigation_link_click"
+  [angularticsLabel]="item.label"
+  [routerLink]="[item.link]"
+  [class.matched-background]="item.link === activeLink"
+  onclick="this.blur();"
+>
+  <a class="flex-row gap-small">
+    <app-fa-dynamic-icon
+      class="nav-icon"
+      [icon]="item.icon"
+    ></app-fa-dynamic-icon>
+    <div>{{ item.label }}</div>
+    <span
+      *ngIf="item.subMenu?.length"
+      [matMenuTriggerFor]="subMenu"
+      class="chevron-icon"
+    >
+      <fa-icon icon="chevron-right"></fa-icon>
+    </span>
+  </a>
+</mat-list-item>
+
+<!-- Render submenus recursively -->
+<ng-container *ngIf="item.subMenu?.length">
+  <mat-menu #subMenu="matMenu">
+    <ng-container *ngFor="let subItem of item.subMenu">
+      <app-menu-item [item]="subItem"></app-menu-item>
+      <!-- Recursion happens here -->
+    </ng-container>
+  </mat-menu>
+</ng-container>
