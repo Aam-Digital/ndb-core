@@ -12,6 +12,7 @@ import { MatMenuModule } from "@angular/material/menu";
 @Component({
   selector: "app-menu-item",
   templateUrl: "./menu-item.component.html",
+  styleUrls: ["./menu-item.component.scss"],
   imports: [
     CommonModule,
     MatListModule,

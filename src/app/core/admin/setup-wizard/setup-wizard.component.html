@@ -18,8 +18,8 @@
       <markdown>{{ step.text }}</markdown>
 
       <mat-action-list>
-        @for (action of step.actions; track action.target) {
-          <button mat-list-item [routerLink]="action.target">
+        @for (action of step.actions; track action.link) {
+          <button mat-list-item [routerLink]="action.link">
             {{ action.label }}
           </button>
         }

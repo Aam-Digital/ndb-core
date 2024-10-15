@@ -13,22 +13,15 @@
       [icon]="item.icon"
     ></app-fa-dynamic-icon>
     <div>{{ item.label }}</div>
-    <span
-      *ngIf="item.subMenu?.length"
-      [matMenuTriggerFor]="subMenu"
-      class="chevron-icon"
-    >
+    <span *ngIf="item.subMenu?.length" [matMenuTriggerFor]="subMenu">
       <fa-icon icon="chevron-right"></fa-icon>
     </span>
   </a>
 </mat-list-item>
 
 <!-- Render submenus recursively -->
-<ng-container *ngIf="item.subMenu?.length">
-  <mat-menu #subMenu="matMenu">
-    <ng-container *ngFor="let subItem of item.subMenu">
-      <app-menu-item [item]="subItem"></app-menu-item>
-      <!-- Recursion happens here -->
-    </ng-container>
-  </mat-menu>
-</ng-container>
+<mat-menu #subMenu="matMenu">
+  <ng-container *ngFor="let subItem of item.subMenu">
+    <app-menu-item [item]="subItem"></app-menu-item>
+  </ng-container>
+</mat-menu>
