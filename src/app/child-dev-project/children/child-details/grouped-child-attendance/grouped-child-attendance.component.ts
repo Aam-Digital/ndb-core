@@ -45,6 +45,7 @@ export class GroupedChildAttendanceComponent implements OnInit {
       (a) =>
         !a.excludedParticipants.includes(this.entity.getId()) &&
         a.isActive == true,
+        
     );
     this.loading = false;
   }
