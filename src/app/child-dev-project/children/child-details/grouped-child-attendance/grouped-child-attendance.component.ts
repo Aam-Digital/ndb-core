@@ -41,7 +41,11 @@ export class GroupedChildAttendanceComponent implements OnInit {
     this.loading = true;
     this.activities = (
       await this.attendanceService.getActivitiesForChild(this.entity.getId())
-    ).filter((a) => !a.excludedParticipants.includes(this.entity.getId()));
+    ).filter(
+      (a) =>
+        !a.excludedParticipants.includes(this.entity.getId()) &&
+        a.isActive == true,
+    );
     this.loading = false;
   }
 }
