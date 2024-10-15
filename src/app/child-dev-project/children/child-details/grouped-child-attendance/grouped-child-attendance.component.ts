@@ -8,6 +8,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../../utils/tab-state/tab-state.module";
 import { ActivityAttendanceSectionComponent } from "../../../attendance/activity-attendance-section/activity-attendance-section.component";
+import { MatSelectModule } from "@angular/material/select";
 
 @DynamicComponent("GroupedChildAttendance")
 @Component({
@@ -22,6 +23,7 @@ import { ActivityAttendanceSectionComponent } from "../../../attendance/activity
     TabStateModule,
     ActivityAttendanceSectionComponent,
     NgForOf,
+    MatSelectModule
   ],
   standalone: true,
 })
@@ -29,7 +31,11 @@ export class GroupedChildAttendanceComponent implements OnInit {
   @Input() entity: Entity;
 
   loading: boolean = true;
+  selectedActivity: boolean = false;
   activities: RecurringActivity[] = [];
+  archiveActivities: RecurringActivity[] = [];
+  seletcedArchiveActivities: RecurringActivity[] = [];
+
 
   constructor(private attendanceService: AttendanceService) {}
 
@@ -46,6 +52,25 @@ export class GroupedChildAttendanceComponent implements OnInit {
         !a.excludedParticipants.includes(this.entity.getId()) &&
         a.isActive == true,
     );
+
+    this.archiveActivities = (
+      await this.attendanceService.getActivitiesForChild(this.entity.getId())
+    ).filter(
+      (a) =>
+        !a.excludedParticipants.includes(this.entity.getId()) &&
+        a.isActive == false,
+    );
     this.loading = false;
+  }
+  async onActivityChange(selected: string) {
+    this.selectedActivity = true;
+    this.seletcedArchiveActivities = (
+      await this.attendanceService.getActivitiesForChild(this.entity.getId())
+    ).filter(
+      (a) =>
+        a.title == selected &&
+        !a.excludedParticipants.includes(this.entity.getId()) &&
+        a.isActive == false,
+    );
   }
 }
