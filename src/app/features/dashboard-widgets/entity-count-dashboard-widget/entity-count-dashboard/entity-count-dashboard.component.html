@@ -1,102 +1,97 @@
-<c-carousel [interval]="0">
-  <c-carousel-indicators>
-    <li
-      *ngFor="let slide of slides; let i = index"
-      [class.active]="i === currentGroupIndex"
-      (click)="goToSlide(i)"
-      [title]="'Slide ' + (i + 1)"
-    ></li>
-  </c-carousel-indicators>
-
-  <c-carousel-inner>
-    <c-carousel-item
-      *ngFor="let group of groupBy; let i = index"
-      [class.active]="i === currentGroupIndex"
+<app-dashboard-list-widget
+  [icon]="entityIcon"
+  theme="child"
+  [title]="totalEntities"
+  [subtitle]="label"
+  [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
+>
+  <div
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5em;
+    "
+  >
+    <button
+      mat-icon-button
+      matTooltip="Previous Grouping"
+      i18n-matTooltip~
+      caption="Previous"
+      aria-label="Previous grouping"
+      (click)="getPrev()"
+      *ngIf="groupBy?.length > 1"
+      [style.transform]="'scale(0.75)'"
     >
-      <app-dashboard-list-widget
-        [icon]="entityIcon"
-        theme="child"
-        [title]="totalEntities"
-        [subtitle]="group"
-        [entries]="entityGroupCounts[group]"
-      >
-        <div class="table-wrapper">
-          <table
-            mat-table
-            i18n-aria-label="Label for children count dashboard"
-            aria-label="Table showing disaggregation of the beneficiaries"
-          >
-            <ng-container matColumnDef="label">
-              <td *matCellDef="let group" scope="row">
-                <span *ngIf="!groupedByEntity">{{ group.label }}</span>
-                <app-entity-block
-                  *ngIf="groupedByEntity"
-                  [entityId]="group.id"
-                ></app-entity-block>
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="value">
-              <td *matCellDef="let group" class="text-align-end">
-                {{ group.value }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="link">
-              <td *matCellDef class="text-align-end">
-                <fa-icon icon="external-link-square-alt"></fa-icon>
-              </td>
-            </ng-container>
+      <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
+    </button>
 
-            <tr hidden>
-              <th
-                scope="col"
-                i18n="The center that a partiipant belongs to, e.g. a city"
-              >
-                Center
-              </th>
-              <th
-                scope="col"
-                i18n="The amount of children that study at one school"
-              >
-                Count of children
-              </th>
-              <th scope="col" i18n="A link that takes a user to a center">
-                Link
-              </th>
-            </tr>
-            <tr
-              mat-row
-              *matRowDef="
-                let row;
-                let i = index;
-                columns: ['label', 'value', 'link']
-              "
-              (click)="goToChildrenList(row.id)"
-              class="pointer"
-              angulartics2On="click"
-              angularticsCategory="Navigation"
-              angularticsAction="dashboard_children_count_school_link"
-              [angularticsLabel]="'list-entry-' + i"
-            ></tr>
-          </table>
-        </div>
-      </app-dashboard-list-widget>
-    </c-carousel-item>
-  </c-carousel-inner>
+    <span style="margin: 0 1em" i18n>
+      by {{ groupBy[currentGroupIndex] }}
+    </span>
 
-  <c-carousel-control
-    caption="Previous"
-    direction="prev"
-    aria-label="Previous slide"
-    (click)="getPrev()"
-  >
-    <span class="carousel-icon">&#60;</span>
-  </c-carousel-control>
-  <c-carousel-control
-    caption="Next"
-    direction="next"
-    aria-label="Next slide"
-    (click)="getNext()"
-  >
-    <span class="carousel-icon">&#62;</span>
-  </c-carousel-control>
-</c-carousel>
+    <button
+      mat-icon-button
+      matTooltip="Next Grouping"
+      i18n-matTooltip
+      caption="Next"
+      aria-label="Next grouping"
+      (click)="getNext()"
+      *ngIf="groupBy?.length > 1"
+      [style.transform]="'scale(0.75)'"
+    >
+      <fa-icon icon="circle-chevron-right"></fa-icon>
+    </button>
+  </div>
+
+  <div class="table-wrapper">
+    <table
+      mat-table
+      i18n-aria-label="Label for children count dashboard"
+      aria-label="Table showing disaggregation of the beneficiaries"
+    >
+      <ng-container matColumnDef="label">
+        <td *matCellDef="let group" scope="row">
+          <span *ngIf="!groupedByEntity">{{ group.label }}</span>
+          <app-entity-block
+            *ngIf="groupedByEntity"
+            [entityId]="group.id"
+          ></app-entity-block>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="value">
+        <td *matCellDef="let group" class="text-align-end">
+          {{ group.value }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="link">
+        <td *matCellDef class="text-align-end">
+          <fa-icon icon="external-link-square-alt"></fa-icon>
+        </td>
+      </ng-container>
+
+      <tr hidden>
+        <th
+          scope="col"
+          i18n="The center that a partiipant belongs to, e.g. a city"
+        >
+          Center
+        </th>
+        <th scope="col" i18n="The amount of children that study at one school">
+          Count of children
+        </th>
+        <th scope="col" i18n="A link that takes a user to a center">Link</th>
+      </tr>
+      <tr
+        mat-row
+        *matRowDef="let row; let i = index; columns: ['label', 'value', 'link']"
+        (click)="goToChildrenList(row.id)"
+        class="pointer"
+        angulartics2On="click"
+        angularticsCategory="Navigation"
+        angularticsAction="dashboard_children_count_school_link"
+        [angularticsLabel]="'list-entry-' + i"
+      ></tr>
+    </table>
+  </div>
+</app-dashboard-list-widget>

@@ -13,11 +13,11 @@ export default {
       providers: [
         importProvidersFrom(
           StorybookBaseModule.withData([
-            TestEntity.create({ category: genders[0] }),
-            TestEntity.create({ category: genders[1] }),
-            TestEntity.create({ category: genders[1] }),
-            TestEntity.create({ category: genders[1] }),
-            TestEntity.create({ category: genders[2] }),
+            TestEntity.create({ category: genders[0], other: "otherA" }),
+            TestEntity.create({ category: genders[1], other: "otherB" }),
+            TestEntity.create({ category: genders[1], other: "otherC" }),
+            TestEntity.create({ category: genders[1], other: "otherD" }),
+            TestEntity.create({ category: genders[2], other: "otherE" }),
           ]),
         ),
       ],
@@ -36,5 +36,5 @@ export const Primary = Template.bind({});
 Primary.args = {
   entityType: "TestEntity",
 
-  groupBy: ["category", "gender"],
+  groupBy: ["category", "other"],
 };

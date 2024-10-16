@@ -21,13 +21,8 @@ import { NgIf } from "@angular/common";
 import { MatButtonToggleGroup } from "@angular/material/button-toggle";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import {
-  CarouselComponent,
-  CarouselControlComponent,
-  CarouselInnerComponent,
-  CarouselItemComponent,
-  CarouselIndicatorsComponent,
-} from "@coreui/angular";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatIconButton } from "@angular/material/button";
 
 interface EntityCountDashboardConfig {
   entity?: string;
@@ -50,11 +45,8 @@ interface EntityCountDashboardConfig {
     MatButtonToggleGroup,
     CommonModule,
     FormsModule,
-    CarouselComponent,
-    CarouselControlComponent,
-    CarouselInnerComponent,
-    CarouselItemComponent,
-    CarouselIndicatorsComponent,
+    MatTooltipModule,
+    MatIconButton,
   ],
   standalone: true,
 })
@@ -69,12 +61,6 @@ export class EntityCountDashboardComponent
 
   getNext() {
     this.currentGroupIndex = (this.currentGroupIndex + 1) % this.groupBy.length;
-  }
-
-  goToSlide(index: number) {
-    if (index >= 0 && index < this.groupBy.length) {
-      this.currentGroupIndex = index;
-    }
   }
 
   static override getRequiredEntities(config: EntityCountDashboardConfig) {
@@ -111,7 +97,6 @@ export class EntityCountDashboardComponent
   } = {};
   label: string;
   entityIcon: IconName;
-  slides: any[] = [];
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -139,7 +124,6 @@ export class EntityCountDashboardComponent
       entities.filter((e) => e.isActive),
       groupByField,
     );
-    console.log("Error");
   }
 
   goToChildrenList(filterId: string) {
