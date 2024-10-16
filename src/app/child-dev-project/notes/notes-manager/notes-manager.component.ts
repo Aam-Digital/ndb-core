@@ -62,6 +62,9 @@ export class NotesManagerComponent implements OnInit {
   @Input() includeEventNotes: boolean;
   @Input() showEventNotesToggle: boolean;
 
+  // not used anymore, but throwing errors when missing
+  @Input() entityType: any;
+
   entityConstructor = Note;
   notes: Note[];
 
