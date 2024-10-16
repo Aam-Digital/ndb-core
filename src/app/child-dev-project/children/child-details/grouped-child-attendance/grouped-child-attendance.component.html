@@ -11,14 +11,14 @@
     </app-activity-attendance-section>
   </mat-tab>
 
-  <mat-tab label="Previous Activities">
-    <h4>
-      In thi section we are showing Historical activities for any activieties
-      where student is enrolled
-    </h4>
+  <mat-tab *ngIf="archiveActivities.length > 0" label="Previous Activities">
+    <p i18n>
+      This section displays historical activities in which the student was
+      previously enrolled.
+    </p>
 
     <mat-form-field>
-      <mat-label>Previous Activities</mat-label>
+      <mat-label>Select a Previous Activity</mat-label>
       <mat-select (selectionChange)="onActivityChange($event.value)">
         <mat-option
           *ngFor="let archiveActivity of archiveActivities"
@@ -30,8 +30,6 @@
     </mat-form-field>
     <div *ngIf="selectedActivity">
       <div *ngFor="let seletcedArchiveActivity of seletcedArchiveActivities">
-        <h3 i18n>{{ seletcedArchiveActivity.title }}</h3>
-
         <app-activity-attendance-section
           [entity]="seletcedArchiveActivity"
           [forChild]="entity.getId()"

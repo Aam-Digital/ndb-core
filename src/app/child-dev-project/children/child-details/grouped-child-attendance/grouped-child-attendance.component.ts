@@ -23,7 +23,7 @@ import { MatSelectModule } from "@angular/material/select";
     TabStateModule,
     ActivityAttendanceSectionComponent,
     NgForOf,
-    MatSelectModule
+    MatSelectModule,
   ],
   standalone: true,
 })
@@ -45,32 +45,31 @@ export class GroupedChildAttendanceComponent implements OnInit {
 
   private async loadActivities() {
     this.loading = true;
-    this.activities = (
-      await this.attendanceService.getActivitiesForChild(this.entity.getId())
-    ).filter(
+    const allActivities = await this.attendanceService.getActivitiesForChild(
+      this.entity.getId(),
+    );
+
+    this.activities = allActivities.filter(
       (a) =>
         !a.excludedParticipants.includes(this.entity.getId()) &&
         a.isActive == true,
     );
 
-    this.archiveActivities = (
-      await this.attendanceService.getActivitiesForChild(this.entity.getId())
-    ).filter(
+    this.archiveActivities = allActivities.filter(
       (a) =>
         !a.excludedParticipants.includes(this.entity.getId()) &&
         a.isActive == false,
     );
+
     this.loading = false;
   }
-  async onActivityChange(selected: string) {
+
+  async onActivityChange(selectedArchiveActivitiy: string) {
     this.selectedActivity = true;
-    this.seletcedArchiveActivities = (
-      await this.attendanceService.getActivitiesForChild(this.entity.getId())
-    ).filter(
+    this.seletcedArchiveActivities = this.archiveActivities.filter(
       (a) =>
-        a.title == selected &&
-        !a.excludedParticipants.includes(this.entity.getId()) &&
-        a.isActive == false,
+        a.title == selectedArchiveActivitiy &&
+        !a.excludedParticipants.includes(this.entity.getId()),
     );
   }
 }
