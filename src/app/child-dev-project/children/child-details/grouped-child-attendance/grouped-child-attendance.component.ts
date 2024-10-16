@@ -36,7 +36,6 @@ export class GroupedChildAttendanceComponent implements OnInit {
   archiveActivities: RecurringActivity[] = [];
   seletcedArchiveActivities: RecurringActivity[] = [];
 
-
   constructor(private attendanceService: AttendanceService) {}
 
   ngOnInit() {
