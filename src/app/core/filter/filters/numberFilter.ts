@@ -21,7 +21,7 @@ export class NumberFilter<T extends Entity> extends Filter<T> {
 
     const filterObject: { $gte?; $lte?: number } = {};
     if (this.selectedOptionValues[0]) {
-      filterObject.$gte = [{}, Number(this.selectedOptionValues[0])];
+      filterObject.$gte = Number(this.selectedOptionValues[0]);
     }
     if (this.selectedOptionValues[1]) {
       filterObject.$lte = Number(this.selectedOptionValues[1]);

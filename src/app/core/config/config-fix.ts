@@ -503,6 +503,7 @@ export const defaultJsonConfig = {
               "name",
               "age",
               "gender",
+              "shoeSize",
               "schoolClass",
               "schoolId",
               "center",
@@ -566,9 +567,9 @@ export const defaultJsonConfig = {
           "label": $localize`:Label of schools filter:School`
         },
         {
-          "id": "schoolClass",
+          "id": "shoeSize",
           "type": "numbers",
-          "label": "Classes"
+          "label": "Shoe Size"
         }
       ],
       "exportConfig": [
@@ -599,7 +600,7 @@ export const defaultJsonConfig = {
                     "header": $localize`:Header for form section:Personal Information`
                   },
                   {
-                    "fields": ["dateOfBirth", "birth_certificate", "gender", "motherTongue"],
+                    "fields": ["dateOfBirth", "birth_certificate", "gender", "motherTongue","shoeSize"],
                     "header": $localize`:Header for form section:Additional`
                   },
                   {
@@ -1034,6 +1035,10 @@ export const defaultJsonConfig = {
       "address": {
         "dataType": "location",
         "label": $localize`:Label for the address of a child:Address`
+      },
+      "shoeSize": {
+        "dataType": "number",
+        "label": $localize`:Label for a child attribute:Shoe Size`
       },
       "health_bloodGroup": {
         "dataType": "string",
