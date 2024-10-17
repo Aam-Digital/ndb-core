@@ -156,6 +156,7 @@ describe("AdminEntityComponent", () => {
       label: "Admin Test",
       labelPlural: "Admin Test",
       icon: undefined,
+      color: undefined,
       toStringAttributes: ["entityId"],
       hasPII: false,
       attributes: jasmine.objectContaining({

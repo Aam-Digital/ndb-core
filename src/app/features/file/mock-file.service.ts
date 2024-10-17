@@ -34,9 +34,13 @@ export class MockFileService extends FileService {
     return EMPTY;
   }
 
-  showFile(entity: Entity, property: string): void {
+  override showFile(entity: Entity, property: string): void {
     const url = this.fileMap.get(`${entity.getId()}:${property}`);
     window.open(url, "_blank");
+  }
+
+  protected override getShowFileUrl(entity: Entity, property: string): string {
+    return "";
   }
 
   loadFile(entity: Entity, property: string): Observable<SafeUrl> {

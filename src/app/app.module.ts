@@ -87,6 +87,7 @@ import { LoginStateSubject } from "./core/session/session-type";
 import { AdminModule } from "./core/admin/admin.module";
 import { Logging } from "./core/logging/logging.service";
 import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initializer";
+import { TemplateExportModule } from "./features/template-export/template-export.module";
 
 /**
  * Main entry point of the application.
@@ -130,6 +131,7 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
     ReportingModule,
     TodosModule,
     AdminModule,
+    TemplateExportModule,
     // top level component
     UiComponent,
     // Global Angular Material modules
