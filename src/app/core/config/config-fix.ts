@@ -20,7 +20,7 @@ export const defaultJsonConfig = {
       {
         "label": $localize`:Menu item:Dashboard`,
         "icon": "home",
-        "link": "/"
+        "link": "/",
       },
       {
         "label": $localize`:Menu item:Children`,
