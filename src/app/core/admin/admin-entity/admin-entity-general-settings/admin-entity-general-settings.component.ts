@@ -90,6 +90,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       label: [this.generalSettings.label, Validators.required],
       labelPlural: [this.generalSettings.labelPlural],
       icon: [this.generalSettings.icon],
+      color: [this.generalSettings.color],
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],
     });
