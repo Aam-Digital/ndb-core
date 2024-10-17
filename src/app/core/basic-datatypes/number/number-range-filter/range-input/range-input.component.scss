@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+}
+
+.input-element {
+  border: none;
+  background: none;
+  padding: 0;
+  outline: none;
+  font: inherit;
+  text-align: center;
+  color: currentColor;
+
+  max-width: calc(50% - 10px);
+}
