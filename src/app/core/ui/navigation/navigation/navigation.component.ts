@@ -28,7 +28,6 @@ import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-ic
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { CommonModule } from "@angular/common";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MenuItemComponent } from "../menu-item.component";
 
 /* Main app menu listing.
@@ -46,7 +45,6 @@ import { MenuItemComponent } from "../menu-item.component";
     FaDynamicIconComponent,
     MatMenuModule,
     CommonModule,
-    FaIconComponent,
     MenuItemComponent,
   ],
   standalone: true,

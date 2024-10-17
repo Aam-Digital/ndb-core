@@ -29,6 +29,12 @@ export class MenuItemComponent {
   @Input() item: MenuItem; // Receives each individual menu item as input
   activeLink: string;
 
+  isExpanded: boolean = false;
+
+  toggleSubMenu(): void {
+    this.isExpanded = !this.isExpanded;
+  }
+
   hasSubMenu(item: MenuItem): boolean {
     return !!item.subMenu && item.subMenu.length > 0;
   }
