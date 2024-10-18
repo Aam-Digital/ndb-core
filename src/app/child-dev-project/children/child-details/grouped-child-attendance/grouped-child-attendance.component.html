@@ -13,12 +13,11 @@
 
   <mat-tab *ngIf="archivedActivities.length > 0" label="Previous Activities">
     <p i18n>
-      This section displays historical activities in which the student was
-      previously enrolled.
+      This section displays historical activities that have been archived.
     </p>
 
     <mat-form-field>
-      <mat-label>Select a Previous Activity</mat-label>
+      <mat-label i18n>Select activity</mat-label>
       <mat-select (selectionChange)="onActivityChange($event.value)">
         <mat-option
           *ngFor="let archivedActivity of archivedActivities"
