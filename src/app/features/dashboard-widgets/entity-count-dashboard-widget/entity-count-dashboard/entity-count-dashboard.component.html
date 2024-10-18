@@ -3,8 +3,47 @@
   theme="child"
   [title]="totalEntities"
   [subtitle]="label"
-  [entries]="entityGroupCounts"
+  [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
 >
+  <div
+    style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5em;
+    "
+  >
+    <button
+      mat-icon-button
+      matTooltip="Previous Grouping"
+      i18n-matTooltip~
+      caption="Previous"
+      aria-label="Previous grouping"
+      (click)="getPrev()"
+      *ngIf="groupBy?.length > 1"
+      [style.transform]="'scale(0.75)'"
+    >
+      <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
+    </button>
+
+    <span style="margin: 0 1em" i18n>
+      by <app-entity-field-label [entityType]="_entity" [field]="groupBy[currentGroupIndex]"></app-entity-field-label>
+    </span>
+
+    <button
+      mat-icon-button
+      matTooltip="Next Grouping"
+      i18n-matTooltip
+      caption="Next"
+      aria-label="Next grouping"
+      (click)="getNext()"
+      *ngIf="groupBy?.length > 1"
+      [style.transform]="'scale(0.75)'"
+    >
+      <fa-icon icon="circle-chevron-right"></fa-icon>
+    </button>
+  </div>
+
   <div class="table-wrapper">
     <table
       mat-table
@@ -12,7 +51,7 @@
       aria-label="Table showing disaggregation of the beneficiaries"
     >
       <ng-container matColumnDef="label">
-        <td *matCellDef="let group">
+        <td *matCellDef="let group" scope="row">
           <span *ngIf="!groupedByEntity">{{ group.label }}</span>
           <app-entity-block
             *ngIf="groupedByEntity"
