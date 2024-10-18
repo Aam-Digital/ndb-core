@@ -1,0 +1,1193 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content miscellaneous-typealiases">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Miscellaneous</li>
+  <li class="breadcrumb-item">Type aliases</li>
+</ol>
+
+<section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#AsyncComponent" title="src/app/dynamic-components.ts" ><b>AsyncComponent</b>&nbsp;&nbsp;&nbsp;(src/.../dynamic-components.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#AsyncPromiseValidatorFn" title="src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts" ><b>AsyncPromiseValidatorFn</b>&nbsp;&nbsp;&nbsp;(src/.../dynamic-validators.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ColumnConfig" title="src/app/core/common-components/entity-form/FormConfig.ts" ><b>ColumnConfig</b>&nbsp;&nbsp;&nbsp;(src/.../FormConfig.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ComponentTuple" title="src/app/dynamic-components.ts" ><b>ComponentTuple</b>&nbsp;&nbsp;&nbsp;(src/.../dynamic-components.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Config" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts" ><b>Config</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum-ordering.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ConfigMigration" title="src/app/core/config/config.service.ts" ><b>ConfigMigration</b>&nbsp;&nbsp;&nbsp;(src/.../config.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ConfigurableEnumConfig" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum.interface.ts" ><b>ConfigurableEnumConfig</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum.interface.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DashboardTheme" title="src/app/core/dashboard/dashboard-widget/dashboard-widget.component.ts" ><b>DashboardTheme</b>&nbsp;&nbsp;&nbsp;(src/.../dashboard-widget.component.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DatabaseRule" title="src/app/core/permissions/permission-types.ts" ><b>DatabaseRule</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DataFilter" title="src/app/core/filter/filters/filters.ts" ><b>DataFilter</b>&nbsp;&nbsp;&nbsp;(src/.../filters.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DefaultValueHint" title="src/app/core/default-values/default-value.service.ts" ><b>DefaultValueHint</b>&nbsp;&nbsp;&nbsp;(src/.../default-value.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DefaultValueMode" title="src/app/core/entity/schema/default-value-config.ts" ><b>DefaultValueMode</b>&nbsp;&nbsp;&nbsp;(src/.../default-value-config.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DynamicValidator" title="src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts" ><b>DynamicValidator</b>&nbsp;&nbsp;&nbsp;(src/.../form-validator-config.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#EntityActionPermission" title="src/app/core/permissions/permission-types.ts" ><b>EntityActionPermission</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#EntityConstructor" title="src/app/core/entity/model/entity.ts" ><b>EntityConstructor</b>&nbsp;&nbsp;&nbsp;(src/.../entity.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#EntityFormGroup" title="src/app/core/common-components/entity-form/entity-form.service.ts" ><b>EntityFormGroup</b>&nbsp;&nbsp;&nbsp;(src/.../entity-form.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#EntityReferenceRole" title="src/app/core/basic-datatypes/entity/entity-reference-role.ts" ><b>EntityReferenceRole</b>&nbsp;&nbsp;&nbsp;(src/.../entity-reference-role.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#EntitySchema" title="src/app/core/entity/schema/entity-schema.ts" ><b>EntitySchema</b>&nbsp;&nbsp;&nbsp;(src/.../entity-schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#EntitySubject" title="src/app/core/permissions/permission-types.ts" ><b>EntitySubject</b>&nbsp;&nbsp;&nbsp;(src/.../permission-types.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#EnumValue" title="src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts" ><b>EnumValue</b>&nbsp;&nbsp;&nbsp;(src/.../configurable-enum-ordering.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Faker" title="src/app/core/demo-data/faker.ts" ><b>Faker</b>&nbsp;&nbsp;&nbsp;(src/.../faker.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#FileDownloadFormat" title="src/app/core/export/download-service/download.service.ts" ><b>FileDownloadFormat</b>&nbsp;&nbsp;&nbsp;(src/.../download.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#FilterConfig" title="src/app/core/entity-list/EntityListConfig.ts" ><b>FilterConfig</b>&nbsp;&nbsp;&nbsp;(src/.../EntityListConfig.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#FormValidatorConfig" title="src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts" ><b>FormValidatorConfig</b>&nbsp;&nbsp;&nbsp;(src/.../form-validator-config.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#GeneratedConfig" title="src/app/features/config-setup/config-import-parser.service.ts" ><b>GeneratedConfig</b>&nbsp;&nbsp;&nbsp;(src/.../config-import-parser.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#GetAllOptions" title="src/app/core/database/database.ts" ><b>GetAllOptions</b>&nbsp;&nbsp;&nbsp;(src/.../database.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#GetOptions" title="src/app/core/database/database.ts" ><b>GetOptions</b>&nbsp;&nbsp;&nbsp;(src/.../database.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#IsDesktop" title="src/app/utils/media/screen-size-observer.service.ts" ><b>IsDesktop</b>&nbsp;&nbsp;&nbsp;(src/.../screen-size-observer.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#LocationProperties" title="src/app/features/location/map/map-properties-popup/map-properties-popup.component.ts" ><b>LocationProperties</b>&nbsp;&nbsp;&nbsp;(src/.../map-properties-popup.component.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#NoteForActivitySetup" title="src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.ts" ><b>NoteForActivitySetup</b>&nbsp;&nbsp;&nbsp;(src/.../roll-call-setup.component.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#OpenStreetMapsSearchResult" title="src/app/features/location/geo.service.ts" ><b>OpenStreetMapsSearchResult</b>&nbsp;&nbsp;&nbsp;(src/.../geo.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#PositionState" title="src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component.ts" ><b>PositionState</b>&nbsp;&nbsp;&nbsp;(src/.../roll-call-tab.component.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#QueryOptions" title="src/app/core/database/database.ts" ><b>QueryOptions</b>&nbsp;&nbsp;&nbsp;(src/.../database.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ReportEntity" title="src/app/features/reporting/report-config.ts" ><b>ReportEntity</b>&nbsp;&nbsp;&nbsp;(src/.../report-config.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SkillLevel" title="src/app/child-dev-project/children/demo-data-generators/aser/skill-levels.ts" ><b>SkillLevel</b>&nbsp;&nbsp;&nbsp;(src/.../skill-levels.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SqlOptions" title="src/app/features/reporting/sql-report/sqs-schema.ts" ><b>SqlOptions</b>&nbsp;&nbsp;&nbsp;(src/.../sqs-schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SqlTables" title="src/app/features/reporting/sql-report/sqs-schema.ts" ><b>SqlTables</b>&nbsp;&nbsp;&nbsp;(src/.../sqs-schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SqlType" title="src/app/features/reporting/sql-report/sqs-schema.ts" ><b>SqlType</b>&nbsp;&nbsp;&nbsp;(src/.../sqs-schema.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SyncResult" title="src/app/core/database/sync.service.ts" ><b>SyncResult</b>&nbsp;&nbsp;&nbsp;(src/.../sync.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#TypedFormGroup" title="src/app/core/common-components/entity-form/entity-form.service.ts" ><b>TypedFormGroup</b>&nbsp;&nbsp;&nbsp;(src/.../entity-form.service.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <h3>src/app/dynamic-components.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="AsyncComponent"></a>
+                    <span class="name "><b>AsyncComponent</b><a href="#AsyncComponent"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ComponentTuple"></a>
+                    <span class="name "><b>ComponentTuple</b><a href="#ComponentTuple"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../miscellaneous/typealiases.html#AsyncComponent" target="_self" >[string, AsyncComponent]</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="AsyncPromiseValidatorFn"></a>
+                    <span class="name "><b>AsyncPromiseValidatorFn</b><a href="#AsyncPromiseValidatorFn"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/common-components/entity-form/FormConfig.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ColumnConfig"></a>
+                    <span class="name "><b>ColumnConfig</b><a href="#ColumnConfig"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Type for the definition of a single column in the EntitySubrecord</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../interfaces/FormFieldConfig.html" target="_self" >string | FormFieldConfig</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/basic-datatypes/configurable-enum/configurable-enum-ordering.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Config"></a>
+                    <span class="name "><b>Config</b><a href="#Config"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>ConfigurableEnumConfig&lt;&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EnumValue"></a>
+                    <span class="name "><b>EnumValue</b><a href="#EnumValue"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/config/config.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ConfigMigration"></a>
+                    <span class="name "><b>ConfigMigration</b><a href="#ConfigMigration"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A ConfigMigration is checked during a full JSON.parse using a reviver function.
+If the migration does not apply to the given configPart, make sure to return it unchanged.
+Multiple migrations are chained and can transform the same config part one after the other.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/basic-datatypes/configurable-enum/configurable-enum.interface.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ConfigurableEnumConfig"></a>
+                    <span class="name "><b>ConfigurableEnumConfig</b><a href="#ConfigurableEnumConfig"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Interface specifying overall object representing an enum with all its options
+as stored in the config database</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>Array&lt;T&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/dashboard/dashboard-widget/dashboard-widget.component.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DashboardTheme"></a>
+                    <span class="name "><b>DashboardTheme</b><a href="#DashboardTheme"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;general&quot; | &quot;child&quot; | &quot;attendance&quot; | &quot;note&quot; | &quot;class&quot; | &quot;school&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/permissions/permission-types.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DatabaseRule"></a>
+                    <span class="name "><b>DatabaseRule</b><a href="#DatabaseRule"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The format that the JSON defined rules need to have.
+In the JSON object the Entities can be specified by using their ENTITY_TYPE string representation.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>RawRuleOf&lt;Ability&lt;&gt;&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EntityActionPermission"></a>
+                    <span class="name "><b>EntityActionPermission</b><a href="#EntityActionPermission"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The type which defines which actions can be used for permissions.
+The type allows all strings defined in the <code>actions</code> array.
+E.g. &quot;read&quot; or &quot;manage&quot;</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EntitySubject"></a>
+                    <span class="name "><b>EntitySubject</b><a href="#EntitySubject"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The type which defines which subjects can be used for permissions.
+This matches any entity classes, entity objects and the wildcard string &quot;all&quot;
+E.g. <code>Child</code>, <code>new Note()</code> or <code>all</code></p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../classes/Entity.html" target="_self" >EntityConstructor | Entity | string</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/filter/filters/filters.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DataFilter"></a>
+                    <span class="name "><b>DataFilter</b><a href="#DataFilter"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>This filter can be used to filter an array of entities.
+It has to follow the MongoDB Query Syntax ://<a href="http://www.mongodb.com/docs/manual/reference/operator/query/%7B@link">www.mongodb.com/docs/manual/reference/operator/query/{@link</a> https}.</p>
+<p>The filter is parsed using ucast ://github.com/stalniy/ucast/tree/master/packages/mongo2js<a href="https">https</a></p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>MongoQuery&lt;T&gt; | literal type</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/default-values/default-value.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DefaultValueHint"></a>
+                    <span class="name "><b>DefaultValueHint</b><a href="#DefaultValueHint"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../miscellaneous/typealiases.html#DefaultValueHint" target="_self" >FullDefaultValueHint | EmptyDefaultValueHint</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/entity/schema/default-value-config.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DefaultValueMode"></a>
+                    <span class="name "><b>DefaultValueMode</b><a href="#DefaultValueMode"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;inherited&quot; | &quot;static&quot; | &quot;dynamic&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/common-components/entity-form/dynamic-form-validators/form-validator-config.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DynamicValidator"></a>
+                    <span class="name "><b>DynamicValidator</b><a href="#DynamicValidator"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Available validators that can be used to display errors to the user
+when a form is invalid</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;min&quot; | &quot;max&quot; | &quot;required&quot; | &quot;validEmail&quot; | &quot;uniqueId&quot; | &quot;pattern&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FormValidatorConfig"></a>
+                    <span class="name "><b>FormValidatorConfig</b><a href="#FormValidatorConfig"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>the validators config. This is an object where the key
+must be one of the <code>DynamicValidators</code>. The value to that key
+is specific to that validator.
+For example, the <code>max</code> validator requires a number while the <code>pattern</code>
+validator requires a string or regex.
+Compliant examples:</p>
+<pre>
+{
+  min: 5,
+  pattern: "[a-z]*",
+}
+</pre>
+<p>Non-compliant examples:</p>
+<pre>
+{
+  min: "abc",
+  rabbit: true
+}
+</pre></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/entity/model/entity.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EntityConstructor"></a>
+                    <span class="name "><b>EntityConstructor</b><a href="#EntityConstructor"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>This represents a static class of type <T>.
+It can be used for passing a class from which new objects should be created.
+It can also be used to check the ENTITY_TYPE of a class
+For example usage check the <a href="../injectables/EntityMapperService.html">EntityMapperService</a>.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/common-components/entity-form/entity-form.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EntityFormGroup"></a>
+                    <span class="name "><b>EntityFormGroup</b><a href="#EntityFormGroup"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../miscellaneous/typealiases.html#TypedFormGroup" target="_self" >TypedFormGroup&lt;Partial&lt;T&gt;&gt;</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="TypedFormGroup"></a>
+                    <span class="name "><b>TypedFormGroup</b><a href="#TypedFormGroup"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>These are utility types that allow to define the type of <code>FormGroup</code> the way it is returned by <code>EntityFormService.create</code></p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>FormGroup&lt;ɵElement&lt; | &gt;&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/basic-datatypes/entity/entity-reference-role.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EntityReferenceRole"></a>
+                    <span class="name "><b>EntityReferenceRole</b><a href="#EntityReferenceRole"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Specifies the role of an entity reference where
+   &quot;aggregate&quot; = &quot;has a&quot; relationship where both entities have meaning independent of each other;
+   &quot;composite&quot; = &quot;part of&quot; relationship where the referenced entity should not exist without the referenced entity.</p>
+<p>Default is treated as &quot;aggregate&quot;.</p>
+<p>(role names following the UML association types)</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;aggregate&quot; | &quot;composite&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/entity/schema/entity-schema.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="EntitySchema"></a>
+                    <span class="name "><b>EntitySchema</b><a href="#EntitySchema"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Complete schema of an Entity containing multiple EntitySchemaFields.</p>
+<p>This is generated from all <code>@DatabaseField()</code> of a class
+and then defines the transformation for that whole entity type.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../interfaces/EntitySchemaField.html" target="_self" >Map&lt;string | EntitySchemaField&gt;</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/demo-data/faker.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Faker"></a>
+                    <span class="name "><b>Faker</b><a href="#Faker"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Typing for faker including extended functionality.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/export/download-service/download.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FileDownloadFormat"></a>
+                    <span class="name "><b>FileDownloadFormat</b><a href="#FileDownloadFormat"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/entity-list/EntityListConfig.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="FilterConfig"></a>
+                    <span class="name "><b>FilterConfig</b><a href="#FilterConfig"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>BasicFilterConfig | BooleanFilterConfig | PrebuiltFilterConfig&lt;T&gt; | ConfigurableEnumFilterConfig&lt;T&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/config-setup/config-import-parser.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="GeneratedConfig"></a>
+                    <span class="name "><b>GeneratedConfig</b><a href="#GeneratedConfig"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>literal type</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/database/database.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="GetAllOptions"></a>
+                    <span class="name "><b>GetAllOptions</b><a href="#GetAllOptions"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Basic database read options supported by <a href="../classes/Database.html">Database</a>.</p>
+<p>also see <a href="https://pouchdb.com/api.html#fetch_document">https://pouchdb.com/api.html#fetch_document</a></p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>PouchDB.Core.AllDocsWithKeyOptions | PouchDB.Core.AllDocsWithKeysOptions | PouchDB.Core.AllDocsWithinRangeOptions | PouchDB.Core.AllDocsOptions</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="GetOptions"></a>
+                    <span class="name "><b>GetOptions</b><a href="#GetOptions"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Basic database read options supported by <a href="../classes/Database.html">Database</a>.</p>
+<p>also see <a href="https://pouchdb.com/api.html#fetch_document">https://pouchdb.com/api.html#fetch_document</a></p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../miscellaneous/typealiases.html#GetOptions" target="_self" >PouchDB.Core.GetOptions</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="QueryOptions"></a>
+                    <span class="name "><b>QueryOptions</b><a href="#QueryOptions"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Basic query options supported by <a href="../classes/Database.html">Database</a>.</p>
+<p>also see <a href="https://pouchdb.com/guides/queries.html">https://pouchdb.com/guides/queries.html</a></p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>PouchDB.Query.Options&lt;any | any&gt;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/utils/media/screen-size-observer.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="IsDesktop"></a>
+                    <span class="name "><b>IsDesktop</b><a href="#IsDesktop"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A type that is used to document the return type of the <code>platform</code> observable.
+A variable that has this type shall only have two values that are encoded in
+a boolean way:</p>
+<ul>
+<li><code>true</code>: the variable represents that the width of something is considered &#39;desktop width&#39;</li>
+<li><code>false</code>: the variable represents that the width of something is considered &#39;mobile width&#39;</li>
+</ul>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/location/map/map-properties-popup/map-properties-popup.component.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="LocationProperties"></a>
+                    <span class="name "><b>LocationProperties</b><a href="#LocationProperties"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A map of entity types and the (selected) location properties of this type</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>literal type</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="NoteForActivitySetup"></a>
+                    <span class="name "><b>NoteForActivitySetup</b><a href="#NoteForActivitySetup"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/location/geo.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="OpenStreetMapsSearchResult"></a>
+                    <span class="name "><b>OpenStreetMapsSearchResult</b><a href="#OpenStreetMapsSearchResult"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call-tab/roll-call-tab.component.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="PositionState"></a>
+                    <span class="name "><b>PositionState</b><a href="#PositionState"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>These position states are used internally as animation states for the tab body. Setting the
+position state to left, right, or center will transition the tab body from its current
+position to its respective state. If there is no current position (void, in the case of a new
+tab body), then there will be no transition animation to its state.</p>
+<p>In the case of a new tab body that should immediately be centered with an animating transition,
+then left-origin-center or right-origin-center can be used, which will use left or right as its
+pseudo-prior state.</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;left&quot; | &quot;center&quot; | &quot;right&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/reporting/report-config.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ReportEntity"></a>
+                    <span class="name "><b>ReportEntity</b><a href="#ReportEntity"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Union type to enable type safety for report configs.
+Use this instead of the {@class ReportConfig}</p>
+</div>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>AggregationReport | ExportingReport | SqlReport</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/child-dev-project/children/demo-data-generators/aser/skill-levels.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SkillLevel"></a>
+                    <span class="name "><b>SkillLevel</b><a href="#SkillLevel"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/features/reporting/sql-report/sqs-schema.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SqlOptions"></a>
+                    <span class="name "><b>SqlOptions</b><a href="#SqlOptions"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>literal type</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SqlTables"></a>
+                    <span class="name "><b>SqlTables</b><a href="#SqlTables"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>literal type</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SqlType"></a>
+                    <span class="name "><b>SqlType</b><a href="#SqlType"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>    <code>&quot;TEXT&quot; | &quot;INTEGER&quot; | &quot;REAL&quot;</code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>    <h3>src/app/core/database/sync.service.ts</h3>
+    <section data-compodoc="block-typealias">
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SyncResult"></a>
+                    <span class="name "><b>SyncResult</b><a href="#SyncResult"><span class="icon ion-ios-link"></span></a></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                    <code>        <code><a href="../miscellaneous/typealiases.html#SyncResult" target="_self" >PouchDB.Replication.SyncResultComplete&lt;any&gt;</a></code>
+</code>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-typealiases';
+            var COMPODOC_CURRENT_PAGE_URL = 'typealiases.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
