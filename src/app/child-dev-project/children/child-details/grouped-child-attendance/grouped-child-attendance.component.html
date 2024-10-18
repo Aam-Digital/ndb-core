@@ -29,13 +29,11 @@
       </mat-select>
     </mat-form-field>
     <div *ngIf="selectedActivity">
-      <div *ngFor="let selectedArchivedActivity of selectedArchivedActivities">
-        <app-activity-attendance-section
-          [entity]="selectedArchivedActivity"
-          [forChild]="entity.getId()"
-        >
-        </app-activity-attendance-section>
-      </div>
+      <app-activity-attendance-section
+        [entity]="selectedActivity"
+        [forChild]="entity.getId()"
+      >
+      </app-activity-attendance-section>
     </div>
   </mat-tab>
 </mat-tab-group>

@@ -31,10 +31,9 @@ export class GroupedChildAttendanceComponent implements OnInit {
   @Input() entity: Entity;
 
   loading: boolean = true;
-  selectedActivity: boolean = false;
+  selectedActivity: RecurringActivity;
   activities: RecurringActivity[] = [];
   archivedActivities: RecurringActivity[] = [];
-  selectedArchivedActivities: RecurringActivity[] = [];
 
   constructor(private attendanceService: AttendanceService) {}
 
@@ -64,11 +63,6 @@ export class GroupedChildAttendanceComponent implements OnInit {
   }
 
   onActivityChange(selectedArchivedActivity: RecurringActivity) {
-    this.selectedActivity = true;
-    this.selectedArchivedActivities = this.archivedActivities.filter(
-      (a) =>
-        a.title == selectedArchivedActivity.title &&
-        !a.excludedParticipants.includes(this.entity.getId()),
-    );
+    this.selectedActivity = selectedArchivedActivity;
   }
 }
