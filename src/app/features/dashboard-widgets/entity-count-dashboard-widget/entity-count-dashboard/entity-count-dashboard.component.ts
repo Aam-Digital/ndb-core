@@ -23,6 +23,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
+import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
 
 interface EntityCountDashboardConfig {
   entity?: string;
@@ -47,7 +48,8 @@ interface EntityCountDashboardConfig {
     FormsModule,
     MatTooltipModule,
     MatIconButton,
-  ],
+    EntityFieldLabelComponent
+],
   standalone: true,
 })
 export class EntityCountDashboardComponent
@@ -75,7 +77,8 @@ export class EntityCountDashboardComponent
     this._entity = this.entities.get(value);
   }
 
-  private _entity: EntityConstructor;
+  protected _entity: EntityConstructor;
+
   /**
    * The property of the Child entities to group counts by.
    *
