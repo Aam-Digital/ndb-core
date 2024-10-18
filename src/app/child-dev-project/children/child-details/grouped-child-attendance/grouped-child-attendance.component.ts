@@ -33,8 +33,8 @@ export class GroupedChildAttendanceComponent implements OnInit {
   loading: boolean = true;
   selectedActivity: boolean = false;
   activities: RecurringActivity[] = [];
-  archiveActivities: RecurringActivity[] = [];
-  seletcedArchiveActivities: RecurringActivity[] = [];
+  archivedActivities: RecurringActivity[] = [];
+  selectedArchivedActivities: RecurringActivity[] = [];
 
   constructor(private attendanceService: AttendanceService) {}
 
@@ -54,7 +54,7 @@ export class GroupedChildAttendanceComponent implements OnInit {
         a.isActive == true,
     );
 
-    this.archiveActivities = allActivities.filter(
+    this.archivedActivities = allActivities.filter(
       (a) =>
         !a.excludedParticipants.includes(this.entity.getId()) &&
         a.isActive == false,
@@ -63,11 +63,11 @@ export class GroupedChildAttendanceComponent implements OnInit {
     this.loading = false;
   }
 
-  async onActivityChange(selectedArchiveActivitiy: string) {
+  onActivityChange(selectedArchivedActivity: RecurringActivity) {
     this.selectedActivity = true;
-    this.seletcedArchiveActivities = this.archiveActivities.filter(
+    this.selectedArchivedActivities = this.archivedActivities.filter(
       (a) =>
-        a.title == selectedArchiveActivitiy &&
+        a.title == selectedArchivedActivity.title &&
         !a.excludedParticipants.includes(this.entity.getId()),
     );
   }
