@@ -33,7 +33,7 @@ export const environment = {
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
 
   demo_mode: true,
-  session_type: SessionType.mock,
+  session_type: SessionType.local,
   account_url: "https://accounts.aam-digital.net",
   email: undefined,
 
