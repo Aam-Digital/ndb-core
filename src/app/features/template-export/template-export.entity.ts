@@ -83,6 +83,7 @@ export class TemplateExport extends Entity {
     label: $localize`:TemplateExport:File name pattern for generated file`,
     labelShort: $localize`:TemplateExport:File name pattern`,
     description: $localize`:TemplateExport:The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}.pdf").`,
+    validators: { required: true },
   })
   targetFileName: string;
 }
