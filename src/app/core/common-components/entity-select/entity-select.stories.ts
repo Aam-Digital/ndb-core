@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta } from "@storybook/angular";
 import { EntitySelectComponent } from "./entity-select.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
@@ -51,44 +51,43 @@ export default {
 
 //componentRegistry.add("EntityBlock", async () => EntityBlockComponent);
 
-const Template: StoryFn<EntitySelectComponent<TestEntity>> = (
-  args: EntitySelectComponent<TestEntity>,
-) => ({
-  component: EntitySelectComponent,
-  props: args,
-});
-
-export const Active = Template.bind({});
-Active.args = {
-  entityType: "Child",
-  label: "Attending Children",
-  placeholder: "Select Children",
-  form: new FormControl(),
-};
-
-export const MultipleTypes = Template.bind({});
-MultipleTypes.args = {
-  entityType: ["Child", TestEntity.ENTITY_TYPE],
-  label: "Related Records",
-  placeholder: "Select records",
-  form: new FormControl(),
-};
-
-export const SingleSelect = Template.bind({});
-SingleSelect.args = {
-  entityType: "Child",
-  label: "Select one child",
-  multi: false,
-  form: new FormControl(child1.getId()),
-};
-
-export const Disabled = Template.bind({});
 const formDisabled = new FormControl();
 formDisabled.setValue([child1.getId()]);
 formDisabled.disable();
-Disabled.args = {
-  entityType: "Child",
-  label: "Attending Children",
-  placeholder: "Select Children",
-  form: formDisabled,
+
+
+export const Active = {
+  args: {
+    entityType: "Child",
+    label: "Attending Children",
+    placeholder: "Select Children",
+    form: new FormControl(),
+  },
+};
+
+export const MultipleTypes = {
+  args: {
+    entityType: ["Child", TestEntity.ENTITY_TYPE],
+    label: "Related Records",
+    placeholder: "Select records",
+    form: new FormControl(),
+  },
+};
+
+export const SingleSelect = {
+  args: {
+    entityType: "Child",
+    label: "Select one child",
+    multi: false,
+    form: new FormControl(child1.getId()),
+  },
+};
+
+export const Disabled = {
+  args: {
+    entityType: "Child",
+    label: "Attending Children",
+    placeholder: "Select Children",
+    form: formDisabled,
+  },
 };

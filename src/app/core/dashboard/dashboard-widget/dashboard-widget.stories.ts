@@ -20,20 +20,26 @@ const Template: StoryFn<DashboardWidgetComponent> = (
   props: args,
 });
 
-export const Default = Template.bind({});
-Default.args = {
-  title: "111",
-  subtitle: "of all numbers",
-  icon: "child",
-  theme: "child",
-  explanation: "this is a demo tooltip",
+export const Default = {
+  render: Template,
+
+  args: {
+    title: "111",
+    subtitle: "of all numbers",
+    icon: "child",
+    theme: "child",
+    explanation: "this is a demo tooltip",
+  },
 };
 
-export const Loading = Template.bind({});
-Loading.args = {
-  title: "111",
-  subtitle: "of all numbers",
-  icon: "child",
-  theme: "child",
-  loading: true,
+export const Loading = {
+  render: Template,
+
+  args: {
+    title: "111",
+    subtitle: "of all numbers",
+    icon: "child",
+    theme: "child",
+    loading: true,
+  },
 };

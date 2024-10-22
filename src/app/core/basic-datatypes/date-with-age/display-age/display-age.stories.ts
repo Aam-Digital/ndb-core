@@ -22,14 +22,20 @@ const Template: StoryFn<DisplayAgeComponent> = (args: DisplayAgeComponent) => ({
 const date = new DateWithAge("2001-12-25");
 (date as any)["age"] = "12";
 
-export const Basic = Template.bind({});
-Basic.args = {
-  config: "dateOfBirth",
-  entity: { dateOfBirth: date },
+export const Basic = {
+  render: Template,
+
+  args: {
+    config: "dateOfBirth",
+    entity: { dateOfBirth: date },
+  },
 };
 
-export const WithoutValue = Template.bind({});
-WithoutValue.args = {
-  config: "dateOfBirth",
-  entity: {},
+export const WithoutValue = {
+  render: Template,
+
+  args: {
+    config: "dateOfBirth",
+    entity: {},
+  },
 };

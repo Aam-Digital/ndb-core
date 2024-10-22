@@ -52,5 +52,7 @@ const Template: StoryFn<ChangelogComponent> = (args: ChangelogComponent) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = {
+  render: Template,
+  args: {},
+};

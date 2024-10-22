@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportFileComponent } from "./import-file.component";
 import { IMPORT_SAMPLE_RAW_DATA } from "../import/import-sample-raw-data";
@@ -14,14 +14,13 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ImportFileComponent> = (args: ImportFileComponent) => ({
-  props: args,
-});
+export const Basic: StoryObj<ImportFileComponent> = {
+  args: {},
+};
 
-export const Basic = Template.bind({});
-Basic.args = {};
-
-export const WithSampleData = Template.bind({});
-WithSampleData.args = {
-  data: IMPORT_SAMPLE_RAW_DATA,
+export const WithSampleData = {
+  args: {
+    // TODO: this is not an official @Input() of the component, may cause issues in storybook
+    data: IMPORT_SAMPLE_RAW_DATA,
+  },
 };

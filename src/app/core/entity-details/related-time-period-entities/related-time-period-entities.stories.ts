@@ -52,10 +52,13 @@ const Template: StoryFn<
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  entity: child,
-  entityType: ChildSchoolRelation.ENTITY_TYPE,
-  property: "childId",
-  columns: ["start", "end", "schoolId", "schoolClass", "result"],
+export const Primary = {
+  render: Template,
+
+  args: {
+    entity: child,
+    entityType: ChildSchoolRelation.ENTITY_TYPE,
+    property: "childId",
+    columns: ["start", "end", "schoolId", "schoolClass", "result"],
+  },
 };
