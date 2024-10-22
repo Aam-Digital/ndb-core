@@ -54,6 +54,13 @@ export class ActivityAttendance extends Entity {
   activity: RecurringActivity;
 
   /**
+   * List of (actual, recorded in at least one event) participants.
+   */
+  get participants(): string[] {
+    return Array.from(new Set(this.events.flatMap((event) => event.children)));
+  }
+
+  /**
    * Mapping child ids to a map with all *logical* status as object keys and their counts as values.
    */
   individualLogicalStatusCounts = new Map<
