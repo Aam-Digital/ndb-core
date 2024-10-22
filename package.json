@@ -121,5 +121,8 @@
     "ts-node": "^10.9.2",
     "typescript": "~5.5.4",
     "xliff": "^6.2.1"
+  },
+  "overrides": {
+    "chokidar": "4.0.1"
   }
 }
