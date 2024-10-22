@@ -33,7 +33,10 @@ const Template: StoryFn<ProgressDashboardComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  dashboardConfigId: "1",
+export const Primary = {
+  render: Template,
+
+  args: {
+    dashboardConfigId: "1",
+  },
 };

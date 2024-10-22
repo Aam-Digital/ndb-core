@@ -46,17 +46,26 @@ const activityEvent = Note.create(new Date(), "Coaching Batch C");
 activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C").getId();
 demoChildren.forEach((c) => activityEvent.addChild(c));
 
-export const OneTimeEvent = Template.bind({});
-OneTimeEvent.args = {
-  event: simpleEvent,
+export const OneTimeEvent = {
+  render: Template,
+
+  args: {
+    event: simpleEvent,
+  },
 };
 
-export const OneTimeEventComplex = Template.bind({});
-OneTimeEventComplex.args = {
-  event: longEvent,
+export const OneTimeEventComplex = {
+  render: Template,
+
+  args: {
+    event: longEvent,
+  },
 };
 
-export const RecurringEvent = Template.bind({});
-RecurringEvent.args = {
-  event: activityEvent,
+export const RecurringEvent = {
+  render: Template,
+
+  args: {
+    event: activityEvent,
+  },
 };

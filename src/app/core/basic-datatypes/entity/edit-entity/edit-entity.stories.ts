@@ -68,10 +68,13 @@ class TestEntity extends Entity {
 const testEntity = new TestEntity();
 testEntity.relatedEntities = [testUser.getId()];
 
-export const Primary = Template.bind({});
-Primary.args = {
-  fieldGroups: [
-    { fields: [otherField, fieldConfig, fieldMultiConfig, otherField] },
-  ],
-  entity: testEntity,
+export const Primary = {
+  render: Template,
+
+  args: {
+    fieldGroups: [
+      { fields: [otherField, fieldConfig, fieldMultiConfig, otherField] },
+    ],
+    entity: testEntity,
+  },
 };

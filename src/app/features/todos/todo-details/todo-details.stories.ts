@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { TodoDetailsComponent } from "./todo-details.component";
 import { Todo } from "../model/todo";
@@ -40,11 +40,6 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<TodoDetailsComponent> = (
-  args: TodoDetailsComponent,
-) => ({
-  props: args,
-});
-
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary: StoryObj<TodoDetailsComponent> = {
+  args: {},
+};
