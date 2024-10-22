@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportEntityTypeComponent } from "./import-entity-type.component";
 import { importProvidersFrom } from "@angular/core";
@@ -17,11 +17,6 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ImportEntityTypeComponent> = (
-  args: ImportEntityTypeComponent,
-) => ({
-  props: args,
-});
-
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<ImportEntityTypeComponent> = {
+  args: {},
+};

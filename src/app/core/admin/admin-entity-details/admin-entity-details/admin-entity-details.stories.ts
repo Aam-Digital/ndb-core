@@ -28,7 +28,10 @@ const Template: StoryFn<AdminEntityDetailsComponent> = (args) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  entityType: "RecurringActivity",
+export const Primary = {
+  render: Template,
+
+  args: {
+    entityType: "RecurringActivity",
+  },
 };

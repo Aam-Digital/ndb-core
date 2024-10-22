@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportHistoryComponent } from "./import-history.component";
 import { IMPORT_SAMPLE_PREVIOUS_IMPORTS } from "../import/import-sample-raw-data";
@@ -23,11 +23,6 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ImportHistoryComponent> = (
-  args: ImportHistoryComponent,
-) => ({
-  props: args,
-});
-
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<ImportHistoryComponent> = {
+  args: {},
+};

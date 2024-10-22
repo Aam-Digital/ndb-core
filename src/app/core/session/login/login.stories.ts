@@ -21,19 +21,28 @@ const Template: StoryFn<LoginComponent> = (args: LoginComponent) => ({
   },
 });
 
-export const LoginCheck = Template.bind({});
-LoginCheck.args = {
-  loginInProgress: true,
-  offlineUsers: [{ name: "John" }, { name: "Jane" }],
+export const LoginCheck = {
+  render: Template,
+
+  args: {
+    loginInProgress: true,
+    offlineUsers: [{ name: "John" }, { name: "Jane" }],
+  },
 };
 
-export const LoginCheckWithoutLocalUsers = Template.bind({});
-LoginCheckWithoutLocalUsers.args = {
-  loginInProgress: true,
-  offlineUsers: [],
+export const LoginCheckWithoutLocalUsers = {
+  render: Template,
+
+  args: {
+    loginInProgress: true,
+    offlineUsers: [],
+  },
 };
 
-export const Offline = Template.bind({});
-Offline.args = {
-  offlineUsers: [{ name: "John" }, { name: "Jane" }],
+export const Offline = {
+  render: Template,
+
+  args: {
+    offlineUsers: [{ name: "John" }, { name: "Jane" }],
+  },
 };

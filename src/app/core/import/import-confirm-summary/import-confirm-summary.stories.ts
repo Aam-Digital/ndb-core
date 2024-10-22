@@ -68,17 +68,23 @@ const Template: StoryFn<LaunchDialogComponent> = (
   props: args,
 });
 
-export const Confirm = Template.bind({});
-Confirm.args = {
-  data: {
-    entitiesToImport: [],
+export const Confirm = {
+  render: Template,
+
+  args: {
+    data: {
+      entitiesToImport: [],
+    },
   },
 };
 
-export const Processing = Template.bind({});
-Processing.args = {
-  data: {
-    entitiesToImport: [],
+export const Processing = {
+  render: Template,
+
+  args: {
+    data: {
+      entitiesToImport: [],
+    },
+    cmpInputs: { importInProgress: true },
   },
-  cmpInputs: { importInProgress: true },
 };

@@ -3,7 +3,6 @@ import { EntityListComponent } from "./entity-list.component";
 import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
-import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 export default {
   title: "Core/Entities/Entity List",
@@ -14,13 +13,6 @@ export default {
     }),
   ],
 } as Meta;
-
-const Template: StoryFn<EntityListComponent<TestEntity>> = (
-  args: EntityListComponent<TestEntity>,
-) => ({
-  component: EntityListComponent,
-  props: args,
-});
 
 const children = new DemoChildGenerator({ count: 25 }).generateEntities();
 

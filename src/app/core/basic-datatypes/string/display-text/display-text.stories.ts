@@ -19,12 +19,18 @@ const Template: StoryFn<DisplayTextComponent> = (
   props: args,
 });
 
-export const Basic = Template.bind({});
-Basic.args = {
-  value: "foo bar",
+export const Basic = {
+  render: Template,
+
+  args: {
+    value: "foo bar",
+  },
 };
 
-export const WithoutValue = Template.bind({});
-WithoutValue.args = {
-  value: undefined,
+export const WithoutValue = {
+  render: Template,
+
+  args: {
+    value: undefined,
+  },
 };

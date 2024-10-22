@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportReviewDataComponent } from "./import-review-data.component";
 import {
@@ -17,20 +17,16 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ImportReviewDataComponent> = (
-  args: ImportReviewDataComponent,
-) => ({
-  props: args,
-});
-
-export const Preview = Template.bind({});
-Preview.args = {
-  rawData: IMPORT_SAMPLE_RAW_DATA,
-  entityType: "Child",
-  columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+export const Preview: StoryObj<ImportReviewDataComponent> = {
+  args: {
+    rawData: IMPORT_SAMPLE_RAW_DATA,
+    entityType: "Child",
+    columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+  },
 };
 
-export const Loading = Template.bind({});
-Loading.args = {
-  isLoading: true,
+export const Loading: StoryObj<ImportReviewDataComponent> = {
+  args: {
+    isLoading: true,
+  },
 };
