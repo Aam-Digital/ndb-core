@@ -90,6 +90,47 @@ describe("AttendanceWeekDashboardComponent", () => {
     ]);
   });
 
+  it("should display children also if added via activity group or manually", async () => {
+    const absentChild = new TestEntity();
+    const mondayLastWeek = moment().startOf("isoWeek").subtract(7, "days");
+    const e1 = EventNote.create(mondayLastWeek.toDate());
+    const e2 = EventNote.create(moment(e1.date).add(1, "day").toDate());
+    const absentStatus = defaultAttendanceStatusTypes.find(
+      (s) => s.countAs === AttendanceLogicalStatus.ABSENT,
+    );
+    [e1, e2].forEach((e) => {
+      e.addChild(absentChild);
+      e.getAttendance(absentChild).status = absentStatus;
+    });
+    const activity = new RecurringActivity();
+    delete activity.participants; // no participants set directly on RecurringActivity
+    const attendance = ActivityAttendance.create(new Date(), [e1, e2]);
+    attendance.activity = activity;
+    mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([
+      attendance,
+    ]);
+
+    await component.ngOnInit();
+
+    expect(component.entries).toEqual([
+      [
+        {
+          childId: absentChild.getId(),
+          activity: activity,
+          attendanceDays: [
+            // sundays are excluded
+            e1.getAttendance(absentChild),
+            e2.getAttendance(absentChild),
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+        },
+      ],
+    ]);
+  });
+
   function expectTimePeriodCalled(from: moment.Moment, to: moment.Moment) {
     mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
 

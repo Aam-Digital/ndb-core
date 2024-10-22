@@ -140,7 +140,7 @@ export class AttendanceWeekDashboardComponent
     }
 
     const results: AttendanceWeekRow[] = [];
-    for (const participant of att.activity.participants) {
+    for (const participant of att.participants) {
       const eventAttendances = [];
 
       let day = moment(from);
