@@ -21,4 +21,6 @@ const Template: StoryFn = (args) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
+export const Primary = {
+  render: Template,
+};

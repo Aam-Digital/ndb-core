@@ -59,13 +59,19 @@ const Template: StoryFn<AttendanceCalendarComponent> = (
   props: args,
 });
 
-export const ForIndividualChild = Template.bind({});
-ForIndividualChild.args = {
-  records: demoEvents,
-  highlightForChild: "1",
+export const ForIndividualChild = {
+  render: Template,
+
+  args: {
+    records: demoEvents,
+    highlightForChild: "1",
+  },
 };
 
-export const ForActivityOverall = Template.bind({});
-ForActivityOverall.args = {
-  records: demoEvents,
+export const ForActivityOverall = {
+  render: Template,
+
+  args: {
+    records: demoEvents,
+  },
 };

@@ -31,7 +31,10 @@ const filterConfig: FilterConfig = {
   ],
 };
 
-export const Default = Template.bind({});
-Default.args = {
-  filterConfig,
+export const Default = {
+  render: Template,
+
+  args: {
+    filterConfig,
+  },
 };

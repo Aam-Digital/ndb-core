@@ -227,7 +227,10 @@ const demoData: ReportRow[] = JSON.parse(`
   }
 ]`);
 
-export const WithData = Template.bind({});
-WithData.args = {
-  rows: demoData,
+export const WithData = {
+  render: Template,
+
+  args: {
+    rows: demoData,
+  },
 };

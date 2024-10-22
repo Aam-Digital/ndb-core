@@ -19,22 +19,28 @@ const Template: StoryFn<DisplayCalculatedValueComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  entity: { allDays: 110, presentDays: 17 },
-  config: {
-    actual: "presentDays",
-    total: "allDays",
-    decimalPlaces: 3,
+export const Primary = {
+  render: Template,
+
+  args: {
+    entity: { allDays: 110, presentDays: 17 },
+    config: {
+      actual: "presentDays",
+      total: "allDays",
+      decimalPlaces: 3,
+    },
   },
 };
 
-export const Zero = Template.bind({});
-Zero.args = {
-  entity: { allDays: 110, presentDays: 0 },
-  config: {
-    actual: "presentDays",
-    total: "allDays",
-    decimalPlaces: 3,
+export const Zero = {
+  render: Template,
+
+  args: {
+    entity: { allDays: 110, presentDays: 0 },
+    config: {
+      actual: "presentDays",
+      total: "allDays",
+      decimalPlaces: 3,
+    },
   },
 };
