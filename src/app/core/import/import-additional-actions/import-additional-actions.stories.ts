@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportAdditionalActionsComponent } from "./import-additional-actions.component";
 import {
@@ -21,22 +21,19 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ImportAdditionalActionsComponent> = (
-  args: ImportAdditionalActionsComponent,
-) => ({
-  props: args,
-});
-
-export const Basic = Template.bind({});
-Basic.args = {
-  entityType: "Child",
+export const Basic: StoryObj<ImportAdditionalActionsComponent> = {
+  args: {
+    entityType: "Child",
+  },
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {};
+export const Disabled: StoryObj<ImportAdditionalActionsComponent> = {
+  args: {},
+};
 
-export const WithExistingActions = Template.bind({});
-WithExistingActions.args = {
-  entityType: "Child",
-  importActions: IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
+export const WithExistingActions: StoryObj<ImportAdditionalActionsComponent> = {
+  args: {
+    entityType: "Child",
+    importActions: IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
+  },
 };

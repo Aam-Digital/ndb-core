@@ -1,6 +1,5 @@
 import { Config } from "./config";
 import { EntityConfig } from "../entity/entity-config";
-import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 
 export function migrateAddMissingEntityAttributes(config: Config): Config {
   for (let entityType of Object.keys(DEFAULT_ENTITIES)) {

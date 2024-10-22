@@ -87,8 +87,11 @@ const Template: StoryFn<AttendanceWeekDashboardComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  daysOffset: 7,
-  periodLabel: "since last week",
+export const Primary = {
+  render: Template,
+
+  args: {
+    daysOffset: 7,
+    periodLabel: "since last week",
+  },
 };
