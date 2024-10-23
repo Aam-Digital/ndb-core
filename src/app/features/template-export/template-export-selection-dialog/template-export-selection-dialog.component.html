@@ -1,0 +1,45 @@
+<mat-dialog-content>
+  <h2 i18n>Generate File from Template</h2>
+  <p i18n>
+    Select the template based on which to generate a file for the current record
+    or
+    <a
+      [routerLink]="TemplateExport.route"
+      *appDisabledEntityOperation="{
+        entity: TemplateExport,
+        operation: 'update',
+      }"
+      matDialogClose
+      >configure available templates</a
+    >.
+  </p>
+
+  <app-entity-select
+    [entityType]="TemplateExport.ENTITY_TYPE"
+    [additionalFilter]="templateEntityFilter"
+    [multi]="false"
+    label="Template"
+    i18n-label
+    placeholder="Select a file template"
+    i18n-placeholder
+    [form]="templateSelectionForm"
+    [disableCreateNew]="true"
+  ></app-entity-select>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="accent"
+    [disabled]="!templateSelectionForm.value || loadingRequestedFile"
+    (click)="requestFile()"
+  >
+    <span i18n>Generate File</span>
+
+    @if (loadingRequestedFile) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+  </button>
+
+  <button mat-stroked-button i18n [matDialogClose]="false">Cancel</button>
+</mat-dialog-actions>

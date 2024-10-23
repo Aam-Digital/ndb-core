@@ -16,7 +16,7 @@
     <button
       mat-icon-button
       matTooltip="Previous Grouping"
-      i18n-matTooltip~
+      i18n-matTooltip
       caption="Previous"
       aria-label="Previous grouping"
       (click)="getPrev()"
@@ -27,7 +27,7 @@
     </button>
 
     <span style="margin: 0 1em" i18n>
-      by {{ groupBy[currentGroupIndex] }}
+      by <app-entity-field-label [entityType]="_entity" [field]="groupBy[currentGroupIndex]"></app-entity-field-label>
     </span>
 
     <button

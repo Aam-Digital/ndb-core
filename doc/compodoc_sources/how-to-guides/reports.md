@@ -28,6 +28,8 @@ There are different modes for `ReportConfig`:
 ### sql
 Requirements: SQS
 
+Some useful SQL query snippets for Aam Digital contexts are collected here: [Aam Digital SQL Snippets](https://docs.google.com/document/d/14JqS6xgZzC1xHUogDho5n1kyNLzX1Eoyv6MeZtRejuM/edit?usp=sharing)
+
 #### Simple SQL Report
 
 ```json

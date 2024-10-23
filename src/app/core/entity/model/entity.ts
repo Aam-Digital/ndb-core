@@ -25,6 +25,7 @@ import {
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { UpdateMetadata } from "./update-metadata";
 import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * This represents a static class of type <T>.
@@ -149,8 +150,14 @@ export class Entity {
    * @param id An entity's id including prefix.
    */
   static extractEntityIdFromId(id: string): string {
-    const split = id.indexOf(":");
-    return id.substring(split + 1);
+    let type: string = undefined;
+    try {
+      const split = id.indexOf(":");
+      type = id.substring(split + 1);
+    } catch (e) {
+      Logging.debug("Error extracting entityId from id", id, e);
+    }
+    return type;
   }
 
   /**

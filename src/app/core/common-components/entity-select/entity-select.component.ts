@@ -80,6 +80,11 @@ export class EntitySelectComponent<
   @Input() multi: boolean = true;
 
   /**
+   * Disable the option to type any text into the selection field and use a "Create new ..." link to open the form for a new entity.
+   */
+  @Input() disableCreateNew: boolean;
+
+  /**
    * The label is what is seen above the list. For example when used
    * in the note-details-view, this is "Children"
    */
@@ -133,13 +138,13 @@ export class EntitySelectComponent<
   private async loadAvailableEntities() {
     this.loading.next(true);
 
-    this.allEntities = [];
+    const entities = [];
     for (const type of this._entityType) {
-      this.allEntities.push(
-        ...(await this.entityMapperService.loadType<E>(type)),
-      );
+      entities.push(...(await this.entityMapperService.loadType<E>(type)));
     }
-    this.allEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
+    this.allEntities = entities
+      .filter((e) => this.additionalFilter(e))
+      .sort((a, b) => a.toString().localeCompare(b.toString()));
 
     await this.updateAvailableOptions();
 
