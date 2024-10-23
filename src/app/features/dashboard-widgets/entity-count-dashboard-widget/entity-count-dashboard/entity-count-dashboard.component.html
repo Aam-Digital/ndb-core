@@ -5,14 +5,7 @@
   [subtitle]="label"
   [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
 >
-  <div
-    style="
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0.5em;
-    "
-  >
+  <div class="flex-row">
     <button
       mat-icon-button
       matTooltip="Previous Grouping"
@@ -26,8 +19,13 @@
       <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
     </button>
 
-    <span style="margin: 0 1em" i18n>
-      by <app-entity-field-label [entityType]="_entity" [field]="groupBy[currentGroupIndex]"></app-entity-field-label>
+    <span class="flex-grow groupby-label" i18n>
+      by
+      <app-entity-field-label
+        [entityType]="_entity"
+        [field]="groupBy[currentGroupIndex]"
+      >
+      </app-entity-field-label>
     </span>
 
     <button
