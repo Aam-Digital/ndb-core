@@ -9,6 +9,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SessionSubject } from "../../session/auth/session-info";
+import { EntityCountDashboardConfig } from "app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component";
 
 describe("DashboardComponent", () => {
   let component: DashboardComponent;
@@ -38,7 +39,10 @@ describe("DashboardComponent", () => {
       { component: "EntityCountDashboard" },
       {
         component: "EntityCountDashboard",
-        config: { entity: "School", groupBy: "language" },
+        config: {
+          entityType: "School",
+          groupBy: ["language"],
+        } as EntityCountDashboardConfig,
       },
       { component: "ShortcutDashboard", config: { shortcuts: [] } },
     ];

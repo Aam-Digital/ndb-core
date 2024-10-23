@@ -72,6 +72,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migratePhotoDatatype,
       migratePercentageDatatype,
       migrateEntityBlock,
+      migrateGroupByConfig,
       addDefaultNoteDetailsConfig,
     ];
 
@@ -393,5 +394,19 @@ const addDefaultNoteDetailsConfig: ConfigMigration = (key, configPart) => {
     };
   }
 
+  return configPart;
+};
+
+const migrateGroupByConfig: ConfigMigration = (key, configPart) => {
+  // Check if we are working with the EntityCountDashboard component and within the 'config' object
+  if (
+    configPart?.component === "EntityCountDashboard" &&
+    typeof configPart?.config?.groupBy === "string"
+  ) {
+    configPart.config.groupBy = [configPart.config.groupBy]; // Wrap groupBy as an array
+    return configPart;
+  }
+
+  // Return the unchanged part if no modification is needed
   return configPart;
 };
