@@ -51,8 +51,11 @@ const Template: StoryFn<EntityDetailsComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  id: demoEntity.getId(true),
-  ...config,
+export const Primary = {
+  render: Template,
+
+  args: {
+    id: demoEntity.getId(true),
+    ...config,
+  },
 };

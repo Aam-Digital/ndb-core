@@ -27,20 +27,34 @@ const Template: StoryFn<DisplayPercentageComponent> = (
   props: args,
 });
 
-export const Low = Template.bind({});
-Low.args = {
-  value: 0,
-};
-export const Medium = Template.bind({});
-Medium.args = {
-  value: 49,
-};
-export const High = Template.bind({});
-High.args = {
-  value: 100,
+export const Low = {
+  render: Template,
+
+  args: {
+    value: 0,
+  },
 };
 
-export const WithoutValue = Template.bind({});
-WithoutValue.args = {
-  value: undefined,
+export const Medium = {
+  render: Template,
+
+  args: {
+    value: 49,
+  },
+};
+
+export const High = {
+  render: Template,
+
+  args: {
+    value: 100,
+  },
+};
+
+export const WithoutValue = {
+  render: Template,
+
+  args: {
+    value: undefined,
+  },
 };

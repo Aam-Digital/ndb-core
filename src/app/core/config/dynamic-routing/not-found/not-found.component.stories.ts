@@ -18,4 +18,6 @@ const Template: StoryFn<NotFoundComponent> = (args: NotFoundComponent) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
+export const Primary = {
+  render: Template,
+};

@@ -105,13 +105,19 @@ const Template: StoryFn<ActivityAttendanceSectionComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  activity: demoActivity,
+export const Primary = {
+  render: Template,
+
+  args: {
+    activity: demoActivity,
+  },
 };
 
-export const ForIndividualChild = Template.bind({});
-ForIndividualChild.args = {
-  activity: demoActivity,
-  forChild: "1",
+export const ForIndividualChild = {
+  render: Template,
+
+  args: {
+    activity: demoActivity,
+    forChild: "1",
+  },
 };

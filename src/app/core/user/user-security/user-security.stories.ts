@@ -47,7 +47,10 @@ const Template: StoryFn<UserSecurityComponent> = (
   props: args,
 });
 
-export const NotRegistered = Template.bind({});
-NotRegistered.args = {
-  entity: new Entity(),
+export const NotRegistered = {
+  render: Template,
+
+  args: {
+    entity: new Entity(),
+  },
 };

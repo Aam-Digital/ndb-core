@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportColumnMappingComponent } from "./import-column-mapping.component";
 import {
@@ -17,24 +17,20 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<ImportColumnMappingComponent> = (
-  args: ImportColumnMappingComponent,
-) => ({
-  props: args,
-});
-
-export const Basic = Template.bind({});
-Basic.args = {
-  rawData: IMPORT_SAMPLE_RAW_DATA,
-  entityType: "Child",
-  columnMapping: Object.keys(IMPORT_SAMPLE_RAW_DATA[0]).map((column) => ({
-    column,
-  })),
+export const Basic: StoryObj<ImportColumnMappingComponent> = {
+  args: {
+    rawData: IMPORT_SAMPLE_RAW_DATA,
+    entityType: "Child",
+    columnMapping: Object.keys(IMPORT_SAMPLE_RAW_DATA[0]).map((column) => ({
+      column,
+    })),
+  },
 };
 
-export const WithSampleMapping = Template.bind({});
-WithSampleMapping.args = {
-  rawData: IMPORT_SAMPLE_RAW_DATA,
-  entityType: "Child",
-  columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+export const WithSampleMapping: StoryObj<ImportColumnMappingComponent> = {
+  args: {
+    rawData: IMPORT_SAMPLE_RAW_DATA,
+    entityType: "Child",
+    columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+  },
 };

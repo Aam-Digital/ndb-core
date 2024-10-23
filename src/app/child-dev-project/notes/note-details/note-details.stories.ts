@@ -47,9 +47,12 @@ const Template: StoryFn<NoteDetailsComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  entity: new Note(),
+export const Primary = {
+  render: Template,
+
+  args: {
+    entity: new Note(),
+  },
 };
 
 const eventNote = Note.create(new Date(), "Coaching today");
@@ -57,7 +60,10 @@ eventNote.category = { id: "COACHING", label: "Coaching", isMeeting: true };
 eventNote.addChild(demoChildren[0].getId());
 eventNote.addChild(demoChildren[1].getId());
 
-export const EventWithAttendance = Template.bind({});
-EventWithAttendance.args = {
-  entity: eventNote,
+export const EventWithAttendance = {
+  render: Template,
+
+  args: {
+    entity: eventNote,
+  },
 };

@@ -19,20 +19,29 @@ const Template: StoryFn<DisplayUnitComponent> = (
   props: args,
 });
 
-export const Basic = Template.bind({});
-Basic.args = {
-  value: 5,
-  config: "kg",
+export const Basic = {
+  render: Template,
+
+  args: {
+    value: 5,
+    config: "kg",
+  },
 };
 
-export const Zero = Template.bind({});
-Zero.args = {
-  value: 0,
-  config: "kg",
+export const Zero = {
+  render: Template,
+
+  args: {
+    value: 0,
+    config: "kg",
+  },
 };
 
-export const WithoutValue = Template.bind({});
-WithoutValue.args = {
-  value: undefined,
-  config: "kg",
+export const WithoutValue = {
+  render: Template,
+
+  args: {
+    value: undefined,
+    config: "kg",
+  },
 };

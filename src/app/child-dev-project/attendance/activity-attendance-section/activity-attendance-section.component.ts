@@ -1,4 +1,12 @@
-import { Component, Inject, Input, LOCALE_ID, OnInit } from "@angular/core";
+import {
+  Component,
+  Inject,
+  Input,
+  LOCALE_ID,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from "@angular/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";
@@ -32,7 +40,7 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
   ],
   standalone: true,
 })
-export class ActivityAttendanceSectionComponent implements OnInit {
+export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   @Input() entity: RecurringActivity;
   @Input() forChild?: string;
 
@@ -86,6 +94,12 @@ export class ActivityAttendanceSectionComponent implements OnInit {
 
   ngOnInit() {
     return this.init();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.entity) {
+      this.init();
+    }
   }
 
   async init(loadAll: boolean = false) {
