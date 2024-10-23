@@ -25,7 +25,7 @@ import { EntityFieldLabelComponent } from "../../../../core/common-components/en
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
  */
-interface EntityCountDashboardConfig {
+export interface EntityCountDashboardConfig {
   entityType?: string;
   groupBy?: string[];
 }
