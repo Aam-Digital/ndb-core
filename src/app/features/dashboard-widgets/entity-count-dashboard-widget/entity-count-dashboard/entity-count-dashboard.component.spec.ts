@@ -34,7 +34,7 @@ describe("EntityCountDashboardComponent", () => {
     component = fixture.componentInstance;
 
     component.entityType = TestEntity.ENTITY_TYPE;
-    component.groupBy = "category";
+    component.groupBy = ["category", "other", "ref"];
 
     fixture.detectChanges();
   });
@@ -62,16 +62,22 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.entityGroupCounts)
+    const currentlyShownGroupCounts =
+      component.entityGroupCounts[
+        component.groupBy[component.currentGroupIndex]
+      ];
+    expect(currentlyShownGroupCounts.length)
       .withContext("unexpected number of centersWithProbability")
-      .toHaveSize(2);
-    const actualCenterAEntry = component.entityGroupCounts.filter(
+      .toBe(2);
+
+    const actualCenterAEntry = currentlyShownGroupCounts.filter(
       (e) => e.label === centerA.label,
     )[0];
     expect(actualCenterAEntry.value)
       .withContext("child count of CenterA not correct")
       .toBe(2);
-    const actualCenterBEntry = component.entityGroupCounts.filter(
+
+    const actualCenterBEntry = currentlyShownGroupCounts.filter(
       (e) => e.label === centerB.label,
     )[0];
     expect(actualCenterBEntry.value)
@@ -82,7 +88,7 @@ describe("EntityCountDashboardComponent", () => {
   it("should groupBy enum values and display label", async () => {
     const testGroupBy = "test";
     TestEntity.schema.set(testGroupBy, { dataType: "configurable-enum" });
-    component.groupBy = testGroupBy;
+    component.groupBy = [testGroupBy];
 
     const children = [
       new TestEntity(),
@@ -99,16 +105,23 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.entityGroupCounts).toHaveSize(3);
-    expect(component.entityGroupCounts).toContain({
+    const currentlyShownGroupCounts =
+      component.entityGroupCounts[
+        component.groupBy[component.currentGroupIndex]
+      ];
+
+    expect(currentlyShownGroupCounts).toHaveSize(3);
+    expect(currentlyShownGroupCounts).toContain({
       label: c1.label,
       value: 2,
       id: c1.id,
+      groupedByEntity: undefined,
     });
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toContain({
       label: c2.label,
       value: 1,
       id: c2.id,
+      groupedByEntity: undefined,
     });
 
     TestEntity.schema.delete(testGroupBy);
@@ -116,7 +129,7 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy entity references and display an entity-block", async () => {
     const testGroupBy = "ref";
-    component.groupBy = testGroupBy;
+    component.groupBy = [testGroupBy];
     component.entityType = TestEntity.ENTITY_TYPE;
 
     const c1 = new Entity("ref-1");
@@ -128,23 +141,29 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.groupedByEntity).toBe(TestEntity.ENTITY_TYPE);
-    expect(component.entityGroupCounts).toHaveSize(2);
-    expect(component.entityGroupCounts).toContain({
+    const currentlyShownGroupCounts =
+      component.entityGroupCounts[
+        component.groupBy[component.currentGroupIndex]
+      ];
+
+    expect(currentlyShownGroupCounts).toHaveSize(2);
+    expect(currentlyShownGroupCounts).toContain({
       label: "",
       value: 1,
       id: "",
+      groupedByEntity: TestEntity.ENTITY_TYPE,
     });
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toContain({
       label: c1.getId(),
       value: 1,
       id: c1.getId(),
+      groupedByEntity: TestEntity.ENTITY_TYPE,
     });
   });
 
   it("should groupBy arrays, split and summarized for individual array elements", async () => {
     const testGroupBy = "children";
-    component.groupBy = testGroupBy;
+    component.groupBy = [testGroupBy];
     component.entityType = Note.ENTITY_TYPE;
 
     const x0 = new Note();
@@ -157,21 +176,29 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.entityGroupCounts).toHaveSize(3);
-    expect(component.entityGroupCounts).toContain({
+    const currentlyShownGroupCounts =
+      component.entityGroupCounts[
+        component.groupBy[component.currentGroupIndex]
+      ];
+
+    expect(currentlyShownGroupCounts).toHaveSize(3);
+    expect(currentlyShownGroupCounts).toContain({
       label: "",
       value: 1,
       id: "",
+      groupedByEntity: "Child",
     });
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toContain({
       label: "link-1",
       value: 2,
       id: "link-1",
+      groupedByEntity: "Child",
     });
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toContain({
       label: "link-2",
       value: 1,
       id: "link-2",
+      groupedByEntity: "Child",
     });
   });
 });

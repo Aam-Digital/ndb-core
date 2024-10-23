@@ -18,10 +18,36 @@ import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/das
 import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { NgIf } from "@angular/common";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatIconButton } from "@angular/material/button";
+import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
 
-interface EntityCountDashboardConfig {
-  entity?: string;
-  groupBy?: string;
+/**
+ * Configuration (stored in Config document in the DB) for the dashboard widget.
+ */
+export interface EntityCountDashboardConfig {
+  entityType?: string;
+  groupBy?: string[];
+}
+
+/**
+ * Details of one row of disaggregated counts (e.g. for a specific category value) to be displayed.
+ */
+interface GroupCountRow {
+  label: string;
+  id: string;
+
+  /**
+   * The count of entities part of this group
+   */
+  value: number;
+
+  /**
+   * if the groupBy field is an entity reference this holds the related entity type,
+   * so that the entity block will be displayed instead of an id string,
+   * otherwise undefined, to display simply the group label.
+   */
+  groupedByEntity: string;
 }
 
 @DynamicComponent("ChildrenCountDashboard")
@@ -37,6 +63,9 @@ interface EntityCountDashboardConfig {
     DashboardListWidgetComponent,
     EntityBlockComponent,
     NgIf,
+    MatTooltipModule,
+    MatIconButton,
+    EntityFieldLabelComponent,
   ],
   standalone: true,
 })
@@ -44,8 +73,17 @@ export class EntityCountDashboardComponent
   extends DashboardWidget
   implements EntityCountDashboardConfig, OnInit
 {
+  getPrev() {
+    this.currentGroupIndex =
+      (this.currentGroupIndex - 1 + this.groupBy.length) % this.groupBy.length;
+  }
+
+  getNext() {
+    this.currentGroupIndex = (this.currentGroupIndex + 1) % this.groupBy.length;
+  }
+
   static override getRequiredEntities(config: EntityCountDashboardConfig) {
-    return config?.entity || "Child";
+    return config?.entityType || "Child";
   }
 
   /**
@@ -56,23 +94,30 @@ export class EntityCountDashboardComponent
     this._entity = this.entities.get(value);
   }
 
-  private _entity: EntityConstructor;
+  protected _entity: EntityConstructor;
+
   /**
-   * The property of the Child entities to group counts by.
+   * The property of the entities to group counts by.
    *
    * Default is "center".
    */
-  @Input() groupBy = "center";
+  @Input() groupBy: string[] = ["center", "gender"];
 
   /**
-   * if the groupBy field is an entity reference this holds the related entity type,
-   * so that the entity block will be displayed instead of an id string,
-   * otherwise undefined, to display simply the group label.
-   * */
-  groupedByEntity: string;
+   * The counts of entities for each of the groupBy fields.
+   */
+  entityGroupCounts: { [groupBy: string]: GroupCountRow[] } = {};
+
+  /**
+   * Index of the currently displayed groupBy field / entityGroupCounts entry.
+   */
+  currentGroupIndex = 0;
 
   totalEntities: number;
-  entityGroupCounts: { label: string; value: number; id: string }[] = [];
+
+  /**
+   * The label of the entity type (displayed as an overall dashboard widget subtitle)
+   */
   label: string;
   entityIcon: IconName;
 
@@ -88,37 +133,45 @@ export class EntityCountDashboardComponent
     if (!this._entity) {
       this.entityType = "Child";
     }
-
-    const groupByType = this._entity.schema.get(this.groupBy);
-    this.groupedByEntity =
-      groupByType.dataType === EntityDatatype.dataType
-        ? groupByType.additional
-        : undefined;
-
-    const entities = await this.entityMapper.loadType(this._entity);
-    this.updateCounts(entities.filter((e) => e.isActive));
     this.label = this._entity.labelPlural;
     this.entityIcon = this._entity.icon;
-  }
 
-  goToChildrenList(filterId: string) {
-    const params = {};
-    params[this.groupBy] = filterId;
-
-    this.router.navigate([this._entity.route], { queryParams: params });
-  }
-
-  private updateCounts(entities: Entity[]) {
+    const entities = await this.entityMapper.loadType(this._entity);
     this.totalEntities = entities.length;
-    const groups = groupBy(entities, this.groupBy as keyof Entity);
-    this.entityGroupCounts = groups.map(([group, entities]) => {
+    for (const groupByField of this.groupBy) {
+      this.entityGroupCounts[groupByField] = this.calculateGroupCounts(
+        entities.filter((e) => e.isActive),
+        groupByField,
+      );
+    }
+  }
+
+  private calculateGroupCounts(
+    entities: Entity[],
+    groupByField: string,
+  ): GroupCountRow[] {
+    const groupByType = this._entity.schema.get(groupByField);
+    const groups = groupBy(entities, groupByField as keyof Entity);
+    return groups.map(([group, entities]) => {
       const label = extractHumanReadableLabel(group);
+      const groupedByEntity =
+        groupByType.dataType === EntityDatatype.dataType
+          ? groupByType.additional
+          : undefined;
       return {
         label: label,
         value: entities.length,
         id: group?.["id"] || label,
+        groupedByEntity: groupedByEntity,
       };
     });
+  }
+
+  goToEntityList(filterId: string) {
+    const params = {};
+    params[this.groupBy[this.currentGroupIndex]] = filterId;
+
+    this.router.navigate([this._entity.route], { queryParams: params });
   }
 }
 
