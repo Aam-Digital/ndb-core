@@ -85,7 +85,7 @@
       <tr
         mat-row
         *matRowDef="let row; let i = index; columns: ['label', 'value', 'link']"
-        (click)="goToChildrenList(row.id)"
+        (click)="goToEntityList(row.id)"
         class="pointer"
         angulartics2On="click"
         angularticsCategory="Navigation"

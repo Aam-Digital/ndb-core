@@ -22,15 +22,31 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
 
+/**
+ * Configuration (stored in Config document in the DB) for the dashboard widget.
+ */
 interface EntityCountDashboardConfig {
   entity?: string;
   groupBy?: string[];
 }
 
+/**
+ * Details of one row of disaggregated counts (e.g. for a specific category value) to be displayed.
+ */
 interface GroupCountRow {
   label: string;
-  value: number;
   id: string;
+
+  /**
+   * The count of entities part of this group
+   */
+  value: number;
+
+  /**
+   * if the groupBy field is an entity reference this holds the related entity type,
+   * so that the entity block will be displayed instead of an id string,
+   * otherwise undefined, to display simply the group label.
+   */
   groupedByEntity: string;
 }
 
@@ -81,21 +97,27 @@ export class EntityCountDashboardComponent
   protected _entity: EntityConstructor;
 
   /**
-   * The property of the Child entities to group counts by.
+   * The property of the entities to group counts by.
    *
    * Default is "center".
    */
   @Input() groupBy: string[] = ["center", "gender"];
 
   /**
-   * if the groupBy field is an entity reference this holds the related entity type,
-   * so that the entity block will be displayed instead of an id string,
-   * otherwise undefined, to display simply the group label.
-   * */
+   * The counts of entities for each of the groupBy fields.
+   */
+  entityGroupCounts: { [groupBy: string]: GroupCountRow[] } = {};
+
+  /**
+   * Index of the currently displayed groupBy field / entityGroupCounts entry.
+   */
   currentGroupIndex = 0;
 
   totalEntities: number;
-  entityGroupCounts: { [groupBy: string]: GroupCountRow[] } = {};
+
+  /**
+   * The label of the entity type (displayed as an overall dashboard widget subtitle)
+   */
   label: string;
   entityIcon: IconName;
 
@@ -111,46 +133,45 @@ export class EntityCountDashboardComponent
     if (!this._entity) {
       this.entityType = "Child";
     }
-
-    for (const groupByField of this.groupBy) {
-      await this.loadDataForGroupBy(groupByField);
-    }
     this.label = this._entity.labelPlural;
     this.entityIcon = this._entity.icon;
-  }
 
-  async loadDataForGroupBy(groupByField: string) {
     const entities = await this.entityMapper.loadType(this._entity);
-    this.updateCounts(
-      entities.filter((e) => e.isActive),
-      groupByField,
-    );
-  }
-
-  goToChildrenList(filterId: string) {
-    const params = {};
-    params[this.groupBy[0]] = filterId;
-
-    this.router.navigate([this._entity.route], { queryParams: params });
-  }
-
-  private updateCounts(entities: Entity[], groupByField: string) {
-    const groupByType = this._entity.schema.get(groupByField);
     this.totalEntities = entities.length;
+    for (const groupByField of this.groupBy) {
+      this.entityGroupCounts[groupByField] = this.calculateGroupCounts(
+        entities.filter((e) => e.isActive),
+        groupByField,
+      );
+    }
+  }
 
+  private calculateGroupCounts(
+    entities: Entity[],
+    groupByField: string,
+  ): GroupCountRow[] {
+    const groupByType = this._entity.schema.get(groupByField);
     const groups = groupBy(entities, groupByField as keyof Entity);
-    this.entityGroupCounts[groupByField] = groups.map(([group, entities]) => {
+    return groups.map(([group, entities]) => {
       const label = extractHumanReadableLabel(group);
+      const groupedByEntity =
+        groupByType.dataType === EntityDatatype.dataType
+          ? groupByType.additional
+          : undefined;
       return {
         label: label,
         value: entities.length,
         id: group?.["id"] || label,
-        groupedByEntity:
-          groupByType.dataType === EntityDatatype.dataType
-            ? groupByType.additional
-            : undefined,
+        groupedByEntity: groupedByEntity,
       };
     });
+  }
+
+  goToEntityList(filterId: string) {
+    const params = {};
+    params[this.groupBy[this.currentGroupIndex]] = filterId;
+
+    this.router.navigate([this._entity.route], { queryParams: params });
   }
 }
 
