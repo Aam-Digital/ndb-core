@@ -27,6 +27,13 @@ interface EntityCountDashboardConfig {
   groupBy?: string[];
 }
 
+interface GroupCountRow {
+  label: string;
+  value: number;
+  id: string;
+  groupedByEntity: string;
+}
+
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
 @Component({
@@ -42,8 +49,8 @@ interface EntityCountDashboardConfig {
     NgIf,
     MatTooltipModule,
     MatIconButton,
-    EntityFieldLabelComponent
-],
+    EntityFieldLabelComponent,
+  ],
   standalone: true,
 })
 export class EntityCountDashboardComponent
@@ -86,12 +93,9 @@ export class EntityCountDashboardComponent
    * otherwise undefined, to display simply the group label.
    * */
   currentGroupIndex = 0;
-  groupedByEntity: string;
 
   totalEntities: number;
-  entityGroupCounts: {
-    [groupBy: string]: { label: string; value: number; id: string }[];
-  } = {};
+  entityGroupCounts: { [groupBy: string]: GroupCountRow[] } = {};
   label: string;
   entityIcon: IconName;
 
@@ -132,10 +136,6 @@ export class EntityCountDashboardComponent
 
   private updateCounts(entities: Entity[], groupByField: string) {
     const groupByType = this._entity.schema.get(groupByField);
-    this.groupedByEntity =
-      groupByType.dataType === EntityDatatype.dataType
-        ? groupByType.additional
-        : undefined;
     this.totalEntities = entities.length;
 
     const groups = groupBy(entities, groupByField as keyof Entity);
@@ -145,6 +145,10 @@ export class EntityCountDashboardComponent
         label: label,
         value: entities.length,
         id: group?.["id"] || label,
+        groupedByEntity:
+          groupByType.dataType === EntityDatatype.dataType
+            ? groupByType.additional
+            : undefined,
       };
     });
   }

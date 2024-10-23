@@ -115,17 +115,19 @@ fdescribe("EntityCountDashboardComponent", () => {
       label: c1.label,
       value: 2,
       id: c1.id,
+      groupedByEntity: undefined,
     });
     expect(currentlyShownGroupCounts).toContain({
       label: c2.label,
       value: 1,
       id: c2.id,
+      groupedByEntity: undefined,
     });
 
     TestEntity.schema.delete(testGroupBy);
   });
 
-  fit("should groupBy entity references and display an entity-block", async () => {
+  it("should groupBy entity references and display an entity-block", async () => {
     const testGroupBy = "ref";
     component.groupBy = [testGroupBy];
     component.entityType = TestEntity.ENTITY_TYPE;
@@ -144,17 +146,18 @@ fdescribe("EntityCountDashboardComponent", () => {
         component.groupBy[component.currentGroupIndex]
       ];
 
-    expect(component.groupedByEntity).toBe(TestEntity.ENTITY_TYPE);
     expect(currentlyShownGroupCounts).toHaveSize(2);
     expect(currentlyShownGroupCounts).toContain({
       label: "",
       value: 1,
       id: "",
+      groupedByEntity: TestEntity.ENTITY_TYPE,
     });
     expect(currentlyShownGroupCounts).toContain({
       label: c1.getId(),
       value: 1,
       id: c1.getId(),
+      groupedByEntity: TestEntity.ENTITY_TYPE,
     });
   });
 
@@ -183,16 +186,19 @@ fdescribe("EntityCountDashboardComponent", () => {
       label: "",
       value: 1,
       id: "",
+      groupedByEntity: "Child",
     });
     expect(currentlyShownGroupCounts).toContain({
       label: "link-1",
       value: 2,
       id: "link-1",
+      groupedByEntity: "Child",
     });
     expect(currentlyShownGroupCounts).toContain({
       label: "link-2",
       value: 1,
       id: "link-2",
+      groupedByEntity: "Child",
     });
   });
 });
