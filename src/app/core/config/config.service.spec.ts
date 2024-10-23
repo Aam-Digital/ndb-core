@@ -8,7 +8,7 @@ import { EntityConfig } from "../entity/entity-config";
 import { FieldGroup } from "../entity-details/form/field-group";
 import { NavigationMenuConfig } from "../ui/navigation/menu-item";
 
-fdescribe("ConfigService", () => {
+describe("ConfigService", () => {
   let service: ConfigService;
   let entityMapper: jasmine.SpyObj<EntityMapperService>;
   const updateSubject = new Subject<UpdatedEntity<Config>>();
