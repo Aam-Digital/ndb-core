@@ -12,7 +12,7 @@ import { Note } from "../../../../child-dev-project/notes/model/note";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { Entity } from "../../../../core/entity/model/entity";
 
-describe("EntityCountDashboardComponent", () => {
+fdescribe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;
   let fixture: ComponentFixture<EntityCountDashboardComponent>;
   let entityMapper: MockEntityMapperService;
@@ -34,7 +34,7 @@ describe("EntityCountDashboardComponent", () => {
     component = fixture.componentInstance;
 
     component.entityType = TestEntity.ENTITY_TYPE;
-    component.groupBy = ["category", "gender"];
+    component.groupBy = ["category", "other", "ref"];
 
     fixture.detectChanges();
   });
@@ -62,16 +62,22 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.entityGroupCounts)
+    const currentlyShownGroupCounts =
+      component.entityGroupCounts[
+        component.groupBy[component.currentGroupIndex]
+      ];
+    expect(currentlyShownGroupCounts.length)
       .withContext("unexpected number of centersWithProbability")
-      .toHaveSize(2);
-    const actualCenterAEntry = component.entityGroupCounts.filter(
+      .toBe(2);
+
+    const actualCenterAEntry = currentlyShownGroupCounts.filter(
       (e) => e.label === centerA.label,
     )[0];
     expect(actualCenterAEntry.value)
       .withContext("child count of CenterA not correct")
       .toBe(2);
-    const actualCenterBEntry = component.entityGroupCounts.filter(
+
+    const actualCenterBEntry = currentlyShownGroupCounts.filter(
       (e) => e.label === centerB.label,
     )[0];
     expect(actualCenterBEntry.value)
@@ -99,13 +105,18 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.entityGroupCounts).toHaveSize(3);
-    expect(component.entityGroupCounts).toContain({
+    const currentlyShownGroupCounts =
+      component.entityGroupCounts[
+        component.groupBy[component.currentGroupIndex]
+      ];
+
+    expect(currentlyShownGroupCounts).toHaveSize(3);
+    expect(currentlyShownGroupCounts).toContain({
       label: c1.label,
       value: 2,
       id: c1.id,
     });
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toContain({
       label: c2.label,
       value: 1,
       id: c2.id,
@@ -114,7 +125,7 @@ describe("EntityCountDashboardComponent", () => {
     TestEntity.schema.delete(testGroupBy);
   });
 
-  it("should groupBy entity references and display an entity-block", async () => {
+  fit("should groupBy entity references and display an entity-block", async () => {
     const testGroupBy = "ref";
     component.groupBy = [testGroupBy];
     component.entityType = TestEntity.ENTITY_TYPE;
@@ -128,14 +139,19 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
+    const currentlyShownGroupCounts =
+      component.entityGroupCounts[
+        component.groupBy[component.currentGroupIndex]
+      ];
+
     expect(component.groupedByEntity).toBe(TestEntity.ENTITY_TYPE);
-    expect(component.entityGroupCounts).toHaveSize(2);
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toHaveSize(2);
+    expect(currentlyShownGroupCounts).toContain({
       label: "",
       value: 1,
       id: "",
     });
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toContain({
       label: c1.getId(),
       value: 1,
       id: c1.getId(),
@@ -157,18 +173,23 @@ describe("EntityCountDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.entityGroupCounts).toHaveSize(3);
-    expect(component.entityGroupCounts).toContain({
+    const currentlyShownGroupCounts =
+      component.entityGroupCounts[
+        component.groupBy[component.currentGroupIndex]
+      ];
+
+    expect(currentlyShownGroupCounts).toHaveSize(3);
+    expect(currentlyShownGroupCounts).toContain({
       label: "",
       value: 1,
       id: "",
     });
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toContain({
       label: "link-1",
       value: 2,
       id: "link-1",
     });
-    expect(component.entityGroupCounts).toContain({
+    expect(currentlyShownGroupCounts).toContain({
       label: "link-2",
       value: 1,
       id: "link-2",

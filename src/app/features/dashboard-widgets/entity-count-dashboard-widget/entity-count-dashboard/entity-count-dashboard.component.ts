@@ -18,9 +18,6 @@ import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/das
 import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { NgIf } from "@angular/common";
-import { MatButtonToggleGroup } from "@angular/material/button-toggle";
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 
@@ -42,9 +39,6 @@ interface EntityCountDashboardConfig {
     DashboardListWidgetComponent,
     EntityBlockComponent,
     NgIf,
-    MatButtonToggleGroup,
-    CommonModule,
-    FormsModule,
     MatTooltipModule,
     MatIconButton,
   ],
