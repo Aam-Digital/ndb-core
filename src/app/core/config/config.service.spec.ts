@@ -699,8 +699,10 @@ describe("ConfigService", () => {
     // should not change other configs that have a groupBy property
     const otherConfig = {
       "view:X": {
-        columns: {
-          groupBy: "foo",
+        config: {
+          columns: {
+            groupBy: "foo",
+          },
         },
       },
     };

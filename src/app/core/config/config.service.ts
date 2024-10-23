@@ -400,14 +400,11 @@ const addDefaultNoteDetailsConfig: ConfigMigration = (key, configPart) => {
 const migrateGroupByConfig: ConfigMigration = (key, configPart) => {
   // Check if we are working with the EntityCountDashboard component and within the 'config' object
   if (
-    key === "config" &&
-    configPart?.groupBy &&
-    typeof configPart.groupBy === "string"
+    configPart?.component === "EntityCountDashboard" &&
+    typeof configPart?.config?.groupBy === "string"
   ) {
-    return {
-      ...configPart,
-      groupBy: [configPart.groupBy], // Wrap groupBy as an array
-    };
+    configPart.config.groupBy = [configPart.config.groupBy]; // Wrap groupBy as an array
+    return configPart;
   }
 
   // Return the unchanged part if no modification is needed
