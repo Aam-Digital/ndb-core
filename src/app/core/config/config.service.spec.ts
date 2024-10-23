@@ -8,7 +8,7 @@ import { EntityConfig } from "../entity/entity-config";
 import { FieldGroup } from "../entity-details/form/field-group";
 import { NavigationMenuConfig } from "../ui/navigation/menu-item";
 
-describe("ConfigService", () => {
+fdescribe("ConfigService", () => {
   let service: ConfigService;
   let entityMapper: jasmine.SpyObj<EntityMapperService>;
   const updateSubject = new Subject<UpdatedEntity<Config>>();
@@ -681,7 +681,7 @@ describe("ConfigService", () => {
     const oldConfig = {
       component: "EntityCountDashboard",
       config: {
-        entity: "Child",
+        entityType: "Child",
         groupBy: "center", // groupBy is a string
       },
     };
@@ -689,11 +689,21 @@ describe("ConfigService", () => {
     const expectedNewConfig = {
       component: "EntityCountDashboard",
       config: {
-        entity: "Child",
+        entityType: "Child",
         groupBy: ["center"], // groupBy should be wrapped as an array
       },
     };
 
     testConfigMigration(oldConfig, expectedNewConfig);
+
+    // should not change other configs that have a groupBy property
+    const otherConfig = {
+      "view:X": {
+        columns: {
+          groupBy: "foo",
+        },
+      },
+    };
+    testConfigMigration(otherConfig, otherConfig);
   }));
 });

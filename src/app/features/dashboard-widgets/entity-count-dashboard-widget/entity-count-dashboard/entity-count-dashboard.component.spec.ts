@@ -12,7 +12,7 @@ import { Note } from "../../../../child-dev-project/notes/model/note";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { Entity } from "../../../../core/entity/model/entity";
 
-fdescribe("EntityCountDashboardComponent", () => {
+describe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;
   let fixture: ComponentFixture<EntityCountDashboardComponent>;
   let entityMapper: MockEntityMapperService;

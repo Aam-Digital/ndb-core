@@ -26,7 +26,7 @@ import { EntityFieldLabelComponent } from "../../../../core/common-components/en
  * Configuration (stored in Config document in the DB) for the dashboard widget.
  */
 interface EntityCountDashboardConfig {
-  entity?: string;
+  entityType?: string;
   groupBy?: string[];
 }
 
@@ -83,7 +83,7 @@ export class EntityCountDashboardComponent
   }
 
   static override getRequiredEntities(config: EntityCountDashboardConfig) {
-    return config?.entity || "Child";
+    return config?.entityType || "Child";
   }
 
   /**
