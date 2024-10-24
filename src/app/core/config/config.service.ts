@@ -74,6 +74,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityBlock,
       migrateGroupByConfig,
       addDefaultNoteDetailsConfig,
+      migratePublicFormConfig,
     ];
 
     // TODO: execute this on server via ndb-admin
@@ -117,6 +118,20 @@ const migrateEntityAttributesWithId: ConfigMigration = (key, configPart) => {
 
   return configPart;
 };
+
+// Add a new migration method for remove prefilled from publicformconfig
+const migratePublicFormConfig: ConfigMigration = (key, configPart) => {
+  if (key !== "PublicFormConfig") {
+    return configPart;
+  }
+
+  if (configPart?.prefilled) {
+    delete configPart.prefilled;
+  }
+
+  return configPart;
+};
+
 
 /**
  * Transform legacy "view:...Form" config format to have form field group headers with the fields rather than as separate array.

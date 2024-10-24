@@ -86,13 +86,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     this.entityType = this.entities.get(
       this.formConfig.entity,
     ) as EntityConstructor<E>;
-    // if (this.formConfig.prefilled) {
-    //   this.prefilled = this.entitySchemaService.transformDatabaseToEntityFormat(
-    //     this.formConfig.prefilled,
-    //     this.entityType.schema,
-    //   );
-    // }
-    // this.fieldGroups = this.formConfig.columns.map((row) => ({ fields: row }));
+
+    this.fieldGroups = [this.formConfig.columns];
     await this.initForm();
   }
 
@@ -101,9 +96,13 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     Object.entries(this.prefilled).forEach(([prop, value]) => {
       this.entity[prop] = value;
     });
-    this.form = await this.entityFormService.createEntityForm(
-      [].concat(...this.fieldGroups.map((group) => group.fields)),
-      this.entity,
-    );
+    this.entityFormService
+      .createEntityForm(
+        [].concat(...this.fieldGroups.map((group) => group.fields)),
+        this.entity,
+      )
+      .then((value) => {
+        this.form = value;
+      });
   }
 }
