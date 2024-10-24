@@ -395,10 +395,14 @@ export const defaultJsonConfig = {
         "name",
         { id: "DisplayParticipantsCount", viewComponent: "DisplayParticipantsCount", label: $localize`Children` },
         "privateSchool",
-        "language"
+        "language",
+        "numberOfTeachers"
       ],
       "filters": [
-        { "id": "privateSchool" }
+        { "id": "privateSchool"},
+        {  "id": "numberOfTeachers",          "type": "numbers",
+          "label": "Number of Teachers"
+         }
       ]
     }
   },
@@ -418,7 +422,7 @@ export const defaultJsonConfig = {
                   { "fields": ["name", "privateSchool", "parentSchool"] },
                   { "fields": ["address", "phone"] },
                   { "fields": ["language", "timing"] },
-                  { "fields": ["remarks"] }
+                  { "fields": ["remarks", "numberOfTeachers"] }
                 ]
               }
             }
@@ -1089,6 +1093,10 @@ export const defaultJsonConfig = {
       "timing": {
         "dataType": "string",
         "label": $localize`:Label for the timing of a school:School Timing`
+      },
+      "numberOfTeachers": {
+        "dataType": "number",
+        "label": $localize`:Label for a school attribute:Number of Teachers`
       },
       "remarks": {
         "dataType": "string",
