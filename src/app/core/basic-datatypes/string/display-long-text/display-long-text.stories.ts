@@ -19,11 +19,14 @@ const Template: StoryFn<DisplayLongTextComponent> = (
   props: args,
 });
 
-export const Basic = Template.bind({});
-Basic.args = {
-  value: `Lorem ipsum dolor sit amet,
+export const Basic = {
+  render: Template,
 
-  consectetur adipiscing elit. Nullam nec
-  purus nec nunc ultricies ultricies.
-  `,
+  args: {
+    value: `Lorem ipsum dolor sit amet,
+
+    consectetur adipiscing elit. Nullam nec
+    purus nec nunc ultricies ultricies.
+    `,
+  },
 };

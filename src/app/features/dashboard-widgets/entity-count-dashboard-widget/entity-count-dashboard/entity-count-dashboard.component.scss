@@ -1,1 +1,8 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
+
+.groupby-label {
+  margin: auto;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

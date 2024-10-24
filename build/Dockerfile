@@ -20,7 +20,7 @@
 # Just relevant for the stage "app"
 ARG DIST_TYPE="build"
 
-FROM node:lts-slim AS base
+FROM node:lts AS base
 COPY package.json ./opt/app/package.json
 COPY package-lock.json ./opt/app/package-lock.json
 

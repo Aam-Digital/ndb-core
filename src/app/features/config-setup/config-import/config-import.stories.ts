@@ -20,5 +20,7 @@ const Template: StoryFn<ConfigImportComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = {
+  render: Template,
+  args: {},
+};

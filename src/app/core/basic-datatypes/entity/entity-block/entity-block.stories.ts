@@ -25,13 +25,21 @@ const Template: StoryFn<EntityBlockComponent> = (
 const testChild = createEntityOfType("Child");
 testChild.name = "Test Name";
 testChild.projectNumber = "10";
-export const ChildComponent = Template.bind({});
-ChildComponent.args = {
-  entityToDisplay: testChild,
+
+export const ChildComponent = {
+  render: Template,
+
+  args: {
+    entityToDisplay: testChild,
+  },
 };
 
 const testEntity = new Entity();
-export const DefaultComponent = Template.bind({});
-DefaultComponent.args = {
-  entityToDisplay: testEntity,
+
+export const DefaultComponent = {
+  render: Template,
+
+  args: {
+    entityToDisplay: testEntity,
+  },
 };

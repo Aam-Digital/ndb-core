@@ -21,18 +21,21 @@ const Template: StoryFn<ShortcutDashboardComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  shortcuts: [
-    {
-      label: "Record Attendance",
-      icon: "calendar-check-o",
-      link: "/attendance/add-day",
-    },
-    {
-      label: "All Notes",
-      icon: "file-text",
-      link: "/note",
-    },
-  ] as MenuItem[],
+export const Primary = {
+  render: Template,
+
+  args: {
+    shortcuts: [
+      {
+        label: "Record Attendance",
+        icon: "calendar-check-o",
+        link: "/attendance/add-day",
+      },
+      {
+        label: "All Notes",
+        icon: "file-text",
+        link: "/note",
+      },
+    ] as MenuItem[],
+  },
 };

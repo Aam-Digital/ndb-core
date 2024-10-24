@@ -1,11 +1,13 @@
 import { Config } from "./config";
 import { EntityConfig } from "../entity/entity-config";
-import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 
 export function migrateAddMissingEntityAttributes(config: Config): Config {
   for (let entityType of Object.keys(DEFAULT_ENTITIES)) {
     // TODO: just blindly save all hard-coded fields into the entity config? or scan which ones are actually used?!
-    if (!JSON.stringify(config).includes(`"${entityType}"`)) {
+    if (
+      !JSON.stringify(config).includes(`"${entityType}"`) ||
+      ["Note", "User"].includes(entityType)
+    ) {
       // don't add config if the entity is never explicitly used or referenced
       continue;
     }
