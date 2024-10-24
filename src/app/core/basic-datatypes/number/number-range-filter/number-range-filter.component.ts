@@ -1,12 +1,7 @@
-import { Component, Input, SimpleChanges } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import {
-  FormControl,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-} from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import {
   NumericRange,
   RangeInputComponent,
