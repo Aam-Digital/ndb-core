@@ -56,7 +56,7 @@ export class DemoSchoolGenerator extends DemoDataGenerator<Entity> {
         $localize`:School demo timing:11 a.m. - 4 p.m.`,
         $localize`:School demo timing:6:30-11:00 and 11:30-16:00`,
       ]);
-
+      school["numberOfTeachers"] = faker.number.int({ min: 3, max: 75 });
       school["address"] = faker.geoAddress();
 
       data.push(school);

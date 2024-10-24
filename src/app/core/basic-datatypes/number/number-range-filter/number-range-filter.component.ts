@@ -27,29 +27,12 @@ export class NumberRangeFilterComponent<T extends Entity> {
   from: number;
   to: number;
 
-  // private validatorFunction: ValidatorFn = (): ValidationErrors | null => {
-  //   if (
-  //     this.formControl.value.from &&
-  //     this.formControl.value.to &&
-  //     this.formControl.value.from === this.formControl.value.to
-  //   ) {
-  //     return {
-  //       sameValue: "The from value is the same as the to value.",
-  //     };
-  //   } else {
-  //     return null;
-  //   }
-  // };
-
   ngOnInit() {
-    console.log("filterConfig", this.filterConfig);
     this.formControl = new FormControl<NumericRange>({
       from: Number(this.filterConfig.selectedOptionValues[0]),
       to: Number(this.filterConfig.selectedOptionValues[1]),
     });
     this.formControl.valueChanges.subscribe((value) => {
-      console.log(this.formControl.valid, this.formControl.errors);
-
       this.filterConfig.selectedOptionValues = [
         this.formControl.value.from?.toString() ?? "",
         this.formControl.value.to?.toString() ?? "",

@@ -395,10 +395,14 @@ export const defaultJsonConfig = {
         "name",
         { id: "DisplayParticipantsCount", viewComponent: "DisplayParticipantsCount", label: $localize`Children` },
         "privateSchool",
-        "language"
+        "language",
+        "numberOfTeachers"
       ],
       "filters": [
-        { "id": "privateSchool" }
+        { "id": "privateSchool"},
+        {  "id": "numberOfTeachers",          "type": "numbers",
+          "label": "Number of Teachers"
+         }
       ]
     }
   },
@@ -418,7 +422,7 @@ export const defaultJsonConfig = {
                   { "fields": ["name", "privateSchool", "parentSchool"] },
                   { "fields": ["address", "phone"] },
                   { "fields": ["language", "timing"] },
-                  { "fields": ["remarks"] }
+                  { "fields": ["remarks", "numberOfTeachers"] }
                 ]
               }
             }
@@ -503,7 +507,6 @@ export const defaultJsonConfig = {
               "name",
               "age",
               "gender",
-              "shoeSize",
               "schoolClass",
               "schoolId",
               "center",
@@ -565,11 +568,6 @@ export const defaultJsonConfig = {
           "id": "schoolId",
           "type": "School",
           "label": $localize`:Label of schools filter:School`
-        },
-        {
-          "id": "shoeSize",
-          "type": "numbers",
-          "label": "Shoe Size"
         }
       ],
       "exportConfig": [
@@ -600,7 +598,7 @@ export const defaultJsonConfig = {
                     "header": $localize`:Header for form section:Personal Information`
                   },
                   {
-                    "fields": ["dateOfBirth", "birth_certificate", "gender", "motherTongue","shoeSize"],
+                    "fields": ["dateOfBirth", "birth_certificate", "gender", "motherTongue"],
                     "header": $localize`:Header for form section:Additional`
                   },
                   {
@@ -1036,10 +1034,6 @@ export const defaultJsonConfig = {
         "dataType": "location",
         "label": $localize`:Label for the address of a child:Address`
       },
-      "shoeSize": {
-        "dataType": "number",
-        "label": $localize`:Label for a child attribute:Shoe Size`
-      },
       "health_bloodGroup": {
         "dataType": "string",
         "label": $localize`:Label for a child attribute:Blood Group`
@@ -1099,6 +1093,10 @@ export const defaultJsonConfig = {
       "timing": {
         "dataType": "string",
         "label": $localize`:Label for the timing of a school:School Timing`
+      },
+      "numberOfTeachers": {
+        "dataType": "number",
+        "label": $localize`:Label for a school attribute:Number of Teachers`
       },
       "remarks": {
         "dataType": "string",

@@ -74,22 +74,40 @@ describe("Filters", () => {
     testFilter(filter, [recordFalse, recordTrue], [recordFalse, recordTrue]);
   });
 
-  fit("should support a numbers filter", async () => {
+  it("should support a numbers filter", async () => {
     const filter = new NumberFilter("value", "My Filter");
 
-    const record_5 = { value: -5 };
+    const recordMinus5 = { value: -5 };
     const record0 = { value: 0 };
     const record1 = { value: 1 };
+    const record1_6 = { value: 1.6 };
     const record2 = { value: 2 };
     const record3 = { value: 3 };
     const record10 = { value: 10 };
-    const records = [record_5, record0, record1, record2, record3, record10];
+    const records = [
+      recordMinus5,
+      record0,
+      record1,
+      record1_6,
+      record2,
+      record3,
+      record10,
+    ];
 
     filter.selectedOptionValues = ["2", "3"];
     testFilter(filter, records, [record2, record3]);
 
+    filter.selectedOptionValues = ["0", "3"];
+    testFilter(filter, records, [
+      record0,
+      record1,
+      record1_6,
+      record2,
+      record3,
+    ]);
+
     filter.selectedOptionValues = ["-8", "1"];
-    testFilter(filter, records, [record_5, record0, record1]);
+    testFilter(filter, records, [recordMinus5, record0, record1]);
 
     filter.selectedOptionValues = ["10", "10"];
     testFilter(filter, records, [record10]);
@@ -98,7 +116,7 @@ describe("Filters", () => {
     testFilter(filter, records, [record10]);
 
     filter.selectedOptionValues = ["", "-1"];
-    testFilter(filter, records, [record_5]);
+    testFilter(filter, records, [recordMinus5]);
 
     filter.selectedOptionValues = ["", ""];
     testFilter(filter, records, records);

@@ -17,8 +17,6 @@ export class NumberFilter<T extends Entity> extends Filter<T> {
   }
 
   getFilter(): DataFilter<T> {
-    console.log("Peter this.selectedOptionValues", this.selectedOptionValues);
-
     const filterObject: { $gte?; $lte?: number } = {};
     if (this.selectedOptionValues[0]) {
       filterObject.$gte = Number(this.selectedOptionValues[0]);
@@ -27,9 +25,6 @@ export class NumberFilter<T extends Entity> extends Filter<T> {
       filterObject.$lte = Number(this.selectedOptionValues[1]);
     }
     if (filterObject.$gte || filterObject.$lte) {
-      console.log("Peter data filter", {
-        [this.name]: filterObject,
-      } as DataFilter<T>);
       return {
         [this.name]: filterObject,
       } as DataFilter<T>;

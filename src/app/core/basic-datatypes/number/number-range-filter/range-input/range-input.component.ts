@@ -42,7 +42,7 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
   }
 
   @Input()
-  deactivateValidation: boolean = false;
+  activateValidation: boolean = true;
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
@@ -67,7 +67,11 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
   }
 
   private validatorFunction: ValidatorFn = (): ValidationErrors | null => {
-    if (this.value.from && this.value.to && this.value.from > this.value.to) {
+    if (
+      this.value.from != undefined &&
+      this.value.to != undefined &&
+      this.value.from > this.value.to
+    ) {
       return {
         fromGreaterThanTo: "The 'from' value is greater than the 'to' value.",
       };
@@ -77,7 +81,7 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
   };
 
   ngAfterViewInit() {
-    if (!this.deactivateValidation) {
+    if (this.activateValidation) {
       this.formControlDirective.form.addValidators([this.validatorFunction]);
     }
   }
