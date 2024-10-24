@@ -17,7 +17,10 @@ const Template: StoryFn<HelpButtonComponent> = (args) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  text: "This text provides additional, contextual descriptions to the user if needed.",
+export const Primary = {
+  render: Template,
+
+  args: {
+    text: "This text provides additional, contextual descriptions to the user if needed.",
+  },
 };

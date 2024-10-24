@@ -34,10 +34,13 @@ const Template: StoryFn<RelatedEntitiesComponent<Note>> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  entity: child,
-  entityType: Note.ENTITY_TYPE,
-  property: "children",
-  columns: ["date", "subject", "children"],
+export const Primary = {
+  render: Template,
+
+  args: {
+    entity: child,
+    entityType: Note.ENTITY_TYPE,
+    property: "children",
+    columns: ["date", "subject", "children"],
+  },
 };

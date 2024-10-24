@@ -19,17 +19,26 @@ const Template: StoryFn<DisplayCheckmarkComponent> = (
   props: args,
 });
 
-export const True = Template.bind({});
-True.args = {
-  value: true,
+export const True = {
+  render: Template,
+
+  args: {
+    value: true,
+  },
 };
 
-export const False = Template.bind({});
-False.args = {
-  value: false,
+export const False = {
+  render: Template,
+
+  args: {
+    value: false,
+  },
 };
 
-export const WithoutValue = Template.bind({});
-WithoutValue.args = {
-  value: undefined,
+export const WithoutValue = {
+  render: Template,
+
+  args: {
+    value: undefined,
+  },
 };

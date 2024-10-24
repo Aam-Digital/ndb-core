@@ -44,10 +44,14 @@ const attendanceRecord = ActivityAttendance.create(new Date("2021-01-01"), [
   ]),
 ]);
 attendanceRecord.activity = RecurringActivity.create("Demo Activity");
-export const CriticalAttendance = Template.bind({});
-CriticalAttendance.args = {
-  attendanceData: attendanceRecord,
-  forChild: "1",
+
+export const CriticalAttendance = {
+  render: Template,
+
+  args: {
+    attendanceData: attendanceRecord,
+    forChild: "1",
+  },
 };
 
 const attendanceRecord2 = ActivityAttendance.create(new Date("2021-01-01"), [
@@ -56,20 +60,28 @@ const attendanceRecord2 = ActivityAttendance.create(new Date("2021-01-01"), [
   generateEventWithAttendance([["1", AttendanceLogicalStatus.ABSENT]]),
 ]);
 attendanceRecord2.activity = RecurringActivity.create("Demo Activity");
-export const MediocreAttendance = Template.bind({});
-MediocreAttendance.args = {
-  attendanceData: attendanceRecord2,
-  forChild: "1",
+
+export const MediocreAttendance = {
+  render: Template,
+
+  args: {
+    attendanceData: attendanceRecord2,
+    forChild: "1",
+  },
 };
 
 const attendanceRecord3 = ActivityAttendance.create(new Date("2021-01-01"), [
   generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
 ]);
 attendanceRecord3.activity = RecurringActivity.create("Demo Activity");
-export const GoodAttendance = Template.bind({});
-GoodAttendance.args = {
-  attendanceData: attendanceRecord3,
-  forChild: "1",
+
+export const GoodAttendance = {
+  render: Template,
+
+  args: {
+    attendanceData: attendanceRecord3,
+    forChild: "1",
+  },
 };
 
 const attendanceRecordEmpty = ActivityAttendance.create(
@@ -77,8 +89,12 @@ const attendanceRecordEmpty = ActivityAttendance.create(
   [],
 );
 attendanceRecordEmpty.activity = RecurringActivity.create("Demo Activity");
-export const PeriodWithoutEvents = Template.bind({});
-PeriodWithoutEvents.args = {
-  attendanceData: attendanceRecordEmpty,
-  forChild: "1",
+
+export const PeriodWithoutEvents = {
+  render: Template,
+
+  args: {
+    attendanceData: attendanceRecordEmpty,
+    forChild: "1",
+  },
 };

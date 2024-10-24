@@ -20,12 +20,18 @@ const Template: StoryFn<EntityArchivedInfoComponent> = (
   props: args,
 });
 
-export const Archived = Template.bind({});
-Archived.args = {
-  entity: Object.assign(new Entity(), { inactive: true }),
+export const Archived = {
+  render: Template,
+
+  args: {
+    entity: Object.assign(new Entity(), { inactive: true }),
+  },
 };
 
-export const Anonymized = Template.bind({});
-Anonymized.args = {
-  entity: Object.assign(new Entity(), { inactive: true, anonymized: true }),
+export const Anonymized = {
+  render: Template,
+
+  args: {
+    entity: Object.assign(new Entity(), { inactive: true, anonymized: true }),
+  },
 };

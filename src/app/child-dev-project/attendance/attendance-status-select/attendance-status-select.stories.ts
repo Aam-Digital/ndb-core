@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn, StoryObj } from "@storybook/angular";
 import { AttendanceStatusSelectComponent } from "./attendance-status-select.component";
 import { ConfigurableEnumService } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
@@ -25,13 +25,8 @@ export default {
   },
 } as Meta;
 
-const Template: StoryFn<AttendanceStatusSelectComponent> = (
-  args: AttendanceStatusSelectComponent,
-) => ({
-  props: args,
-});
-
-export const Primary = Template.bind({});
-Primary.args = {
-  value: defaultAttendanceStatusTypes[0],
+export const Primary: StoryObj<AttendanceStatusSelectComponent> = {
+  args: {
+    value: defaultAttendanceStatusTypes[0],
+  },
 };

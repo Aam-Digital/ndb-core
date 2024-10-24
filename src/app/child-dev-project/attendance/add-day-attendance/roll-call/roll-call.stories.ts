@@ -1,6 +1,6 @@
 import { RollCallComponent } from "./roll-call.component";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { Note } from "../../../notes/model/note";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
@@ -25,19 +25,16 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<RollCallComponent> = (args: RollCallComponent) => ({
-  component: RollCallComponent,
-  props: args,
-});
-
-export const Primary = Template.bind({});
-Primary.args = {
-  eventEntity: demoEvent,
-  children: demoChildren,
+export const Primary: StoryObj<RollCallComponent> = {
+  args: {
+    eventEntity: demoEvent,
+    children: demoChildren,
+  },
 };
 
-export const Finished = Template.bind({});
-Finished.args = {
-  eventEntity: new Note(),
-  children: [],
+export const Finished: StoryObj<RollCallComponent> = {
+  args: {
+    eventEntity: new Note(),
+    children: [],
+  },
 };

@@ -26,7 +26,10 @@ const Template: StoryFn<PwaInstallComponent> = (args: PwaInstallComponent) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  showPWAInstallButton: true,
+export const Primary = {
+  render: Template,
+
+  args: {
+    showPWAInstallButton: true,
+  },
 };

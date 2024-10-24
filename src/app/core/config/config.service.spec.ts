@@ -676,4 +676,36 @@ describe("ConfigService", () => {
       },
     );
   }));
+
+  it("should wrap groupBy as an array if it is a string", fakeAsync(() => {
+    const oldConfig = {
+      component: "EntityCountDashboard",
+      config: {
+        entityType: "Child",
+        groupBy: "center", // groupBy is a string
+      },
+    };
+
+    const expectedNewConfig = {
+      component: "EntityCountDashboard",
+      config: {
+        entityType: "Child",
+        groupBy: ["center"], // groupBy should be wrapped as an array
+      },
+    };
+
+    testConfigMigration(oldConfig, expectedNewConfig);
+
+    // should not change other configs that have a groupBy property
+    const otherConfig = {
+      "view:X": {
+        config: {
+          columns: {
+            groupBy: "foo",
+          },
+        },
+      },
+    };
+    testConfigMigration(otherConfig, otherConfig);
+  }));
 });
