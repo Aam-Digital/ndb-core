@@ -29,7 +29,7 @@ describe("PublicFormComponent", () => {
     testFormConfig = new PublicFormConfig("form-id");
     testFormConfig.title = "test form";
     testFormConfig.entity = "TestEntity";
-    testFormConfig.columns = [["name"], ["category"]];
+    // testFormConfig.columns = [["name"], ["category"]];
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
@@ -74,7 +74,7 @@ describe("PublicFormComponent", () => {
   }));
 
   it("should prefill entity with transformed values", fakeAsync(() => {
-    testFormConfig.prefilled = { name: "new", category: "M" };
+    // testFormConfig.prefilled = { name: "new", category: "M" };
     initComponent();
     tick();
 

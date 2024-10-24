@@ -86,13 +86,13 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     this.entityType = this.entities.get(
       this.formConfig.entity,
     ) as EntityConstructor<E>;
-    if (this.formConfig.prefilled) {
-      this.prefilled = this.entitySchemaService.transformDatabaseToEntityFormat(
-        this.formConfig.prefilled,
-        this.entityType.schema,
-      );
-    }
-    this.fieldGroups = this.formConfig.columns.map((row) => ({ fields: row }));
+    // if (this.formConfig.prefilled) {
+    //   this.prefilled = this.entitySchemaService.transformDatabaseToEntityFormat(
+    //     this.formConfig.prefilled,
+    //     this.entityType.schema,
+    //   );
+    // }
+    // this.fieldGroups = this.formConfig.columns.map((row) => ({ fields: row }));
     await this.initForm();
   }
 
