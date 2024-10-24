@@ -44,3 +44,16 @@ export const Zero = {
     },
   },
 };
+
+export const Percentage = {
+  render: Template,
+  args: {
+    entity: { presentDays: 20, workingDays: 100 },
+    config: {
+      actual: "presentDays",
+      total: "workingDays",
+      calculation: "percentage",
+      decimalPlaces: 0,
+    },
+  },
+};
