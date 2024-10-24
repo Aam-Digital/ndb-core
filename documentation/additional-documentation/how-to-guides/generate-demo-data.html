@@ -1,0 +1,243 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>How to generate demo data</h1>
+<p>If the app is run in the &quot;useTemporaryDatabase&quot; mode, realistic demo data is generated on each startup.</p>
+<p>This Guide walks you through the steps to add data to this demo mode for your own Entity type.</p>
+<h2>The Basics</h2>
+<ol>
+<li>Create a service that <code>extends DemoDataGenerator</code>.</li>
+<li>Make sure you call <code>super()</code> in your constructor to execute the parent class&#39; constructor.</li>
+<li>Implement the <code>generateEntities(): Entity[]</code> method so that it returns an array of demo entities.<ul>
+<li>Try to create objects that are similar to real data. That will make it more useful during for testing and demo.</li>
+<li>The most simple implementation could be to return an array of a few hard-coded instances.</li>
+</ul>
+</li>
+<li>To actually make the DemoDataModule generate your demo entities you need to add your service to its config.
+In the AppModule (or wherever you import the DemoDataModule) add your service provider:
+_ e.g. <code>DemoDataModule.forRoot([{ provide: DemoUserGeneratorService, useClass: DemoUserGeneratorService }])</code>
+_ When the DemoDataModule is loaded your generator is then also triggered.</li>
+<li>Change your <code>config.json</code> and set <code>demo_mode: true</code> to start the app with in demo mode
+and get your data generated on startup.</li>
+</ol>
+<h2>Creating realistic, random data</h2>
+<p>Your generator service is a standard Angular Service that can become as complex as you need it to be.</p>
+<ul>
+<li><p>You can import our (customized) <a href="https://github.com/marak/Faker.js/">faker.js</a>
+to easily generate realistic property values like names or dates.
+_ import <code>import {faker} from &#39;../demo-data/faker&#39;;</code> (Faker is not an Angular service just a simple JavaScript module)
+_ use <code>child.name = faker.name.firstName() + &#39; &#39; + faker.name.lastName()</code> for example to generate realistic random names</p>
+</li>
+<li><p>You can use Angular&#39;s dependency injection to inject any other services that you may rely on to generate meaningful demo data.
+This way you can also inject other DemoDataGenerators if you need to generate entities related to other types of entities.
+_ inject <code>demoChildren: DemoChildGenerator</code> in your constructor
+_ use <code>this.demoChildren.entities</code> to access all demo child entities that have been generated by the DemoChildGenerator * generate your demo entities relating to the demo child entities as needed</p>
+</li>
+</ul>
+<h2>Making the generator configurable</h2>
+<p>If you want to make your generator more flexible, an important step is to receive some configuration.
+This can be passed into your service through dependency injection as well.</p>
+<p>(1.) Create a simple class to hold your config.
+For example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">export class DemoChildConfig {
+  count: number;
+}</code></pre></div><p><em>Use a real class and not an interface for this.
+Interfaces only exist in TypeScript before transpilation to Javascript and are not available during runtime,
+therefore an interface cannot be used as a provider key for Angular dependency injection.</em></p>
+<p>(2.) Add your config class to the constructor of your service to make it available within your generator:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">  constructor(public config: DemoChildConfig) {
+    super();
+  }</code></pre></div><p>(3.) Add a static method called <code>provider()</code> to your service class.
+The provider method will accept an instance of your config class and return a array of Angular providers.
+This makes it much easier to register your service together with its config.
+(Our pattern for this is inspired by the <code>forRoot()</code> pattern of Angular Modules.)</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">  /**
+   * This function returns a provider object to be used in an Angular Module configuration:
+   *   `providers: [DemoUserProvider.provider({count: 150})]`
+   * &#64;param config The configuration specifying the number of entities the service should generate.
+   */
+  static provider(config: DemoChildConfig) {
+    return [
+      { provide: DemoChildGenerator, useClass: DemoChildGenerator },
+      { provide: DemoChildConfig, useValue: config },
+    ];
+  }</code></pre></div><p>(4.) Use the <code>provider()</code> method when registering your service with the DemoDataModule
+and set your config there at the same time:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">DemoDataModule.forRoot([
+  ...DemoChildGenerator.provider({count: 150}),
+])</code></pre></div><p>Note that the spread operator (the <code>...</code> in front of the call to <code>.provider()</code>) is required.
+As the <code>provider()</code> method returns an array of providers, the <code>...</code> &quot;flattens&quot; that array
+and simply makes all providers directly items of the primary array that is passed into <code>DemoDataModule.forRoot()</code>.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'generate-demo-data.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

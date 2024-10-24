@@ -1,0 +1,783 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  TableRow</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/common-components/entities-table/entities-table.component.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Wrapper to keep additional form data for each row of an entity, required for inline editing.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#formGroup" 
+>
+                                            formGroup
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#record" 
+>
+                                            record
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="formGroup"></a>
+                                        <span class="name "><b>formGroup</b>
+                                            <a href="#formGroup">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>formGroup:         <code><a href="../interfaces/EntityForm.html" target="_self" >EntityFormGroup&lt;T&gt;</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../interfaces/EntityForm.html" target="_self" >EntityFormGroup&lt;T&gt;</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="record"></a>
+                                        <span class="name "><b>record</b>
+                                            <a href="#record">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>record:     <code>T</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>T</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from &quot;@angular/core&quot;;
+import { CommonModule } from &quot;@angular/common&quot;;
+import { EntityFieldEditComponent } from &quot;../entity-field-edit/entity-field-edit.component&quot;;
+import { EntityFieldLabelComponent } from &quot;../entity-field-label/entity-field-label.component&quot;;
+import { EntityFieldViewComponent } from &quot;../entity-field-view/entity-field-view.component&quot;;
+import { ListPaginatorComponent } from &quot;./list-paginator/list-paginator.component&quot;;
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from &quot;@angular/material/checkbox&quot;;
+import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
+import { MatSlideToggleModule } from &quot;@angular/material/slide-toggle&quot;;
+import {
+  MatSort,
+  MatSortModule,
+  Sort,
+  SortDirection,
+} from &quot;@angular/material/sort&quot;;
+import { MatTableDataSource, MatTableModule } from &quot;@angular/material/table&quot;;
+import { Entity, EntityConstructor } from &quot;../../entity/model/entity&quot;;
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from &quot;../entity-form/FormConfig&quot;;
+import {
+  EntityFormGroup,
+  EntityFormService,
+} from &quot;../entity-form/entity-form.service&quot;;
+import { tableSort } from &quot;./table-sort/table-sort&quot;;
+import { UntilDestroy } from &quot;@ngneat/until-destroy&quot;;
+import { entityFilterPredicate } from &quot;../../filter/filter-generator/filter-predicate&quot;;
+import { FormDialogService } from &quot;../../form-dialog/form-dialog.service&quot;;
+import { Router } from &quot;@angular/router&quot;;
+import { FilterService } from &quot;../../filter/filter.service&quot;;
+import { DataFilter } from &quot;../../filter/filters/filters&quot;;
+import { EntityInlineEditActionsComponent } from &quot;./entity-inline-edit-actions/entity-inline-edit-actions.component&quot;;
+import { EntityCreateButtonComponent } from &quot;../entity-create-button/entity-create-button.component&quot;;
+import { DateDatatype } from &quot;../../basic-datatypes/date/date.datatype&quot;;
+import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+import { EntityDatatype } from &quot;../../basic-datatypes/entity/entity.datatype&quot;;
+
+/**
+ * A simple display component (no logic and transformations) to display a table of entities.
+ */
+@UntilDestroy()
+@Component({
+  selector: &quot;app-entities-table&quot;,
+  standalone: true,
+  imports: [
+    CommonModule,
+    EntityFieldEditComponent,
+    EntityFieldLabelComponent,
+    EntityFieldViewComponent,
+    ListPaginatorComponent,
+    MatCheckboxModule,
+    MatProgressBarModule,
+    MatSlideToggleModule,
+    MatSortModule,
+    MatTableModule,
+    EntityInlineEditActionsComponent,
+    EntityCreateButtonComponent,
+  ],
+  templateUrl: &quot;./entities-table.component.html&quot;,
+  styleUrl: &quot;./entities-table.component.scss&quot;,
+})
+export class EntitiesTableComponent&lt;T extends Entity&gt; {
+  @Input() set records(value: T[]) {
+    if (!value) {
+      return;
+    }
+    this._records &#x3D; value;
+
+    this.updateFilteredData();
+    this.isLoading &#x3D; false;
+  }
+  private lastSelectedIndex: number &#x3D; null;
+  private lastSelection: boolean &#x3D; null;
+  _records: T[] &#x3D; [];
+  /** data displayed in the template&#x27;s table */
+  recordsDataSource: MatTableDataSource&lt;TableRow&lt;T&gt;&gt;;
+  isLoading: boolean &#x3D; true;
+
+  /**
+   * Additional or overwritten field configurations for columns
+   * @param value
+   */
+  @Input() set customColumns(value: ColumnConfig[]) {
+    this._customColumns &#x3D; (value ?? []).map((c) &#x3D;&gt;
+      this._entityType
+        ? this.entityFormService.extendFormFieldConfig(c, this._entityType)
+        : toFormFieldConfig(c),
+    );
+    const entityColumns &#x3D; this._entityType?.schema
+      ? [...this._entityType.schema.entries()].map(
+          ([id, field]) &#x3D;&gt; ({ ...field, id }) as FormFieldConfig,
+        )
+      : [];
+
+    this._columns &#x3D; [
+      ...entityColumns.filter(
+        // if there is a customColumn for a field from entity config, don&#x27;t add the base schema field
+        (c) &#x3D;&gt; !this._customColumns.some((customCol) &#x3D;&gt; customCol.id &#x3D;&#x3D;&#x3D; c.id),
+      ),
+      ...this._customColumns,
+    ];
+    this._columns.forEach((c) &#x3D;&gt; this.disableSortingHeaderForAdvancedFields(c));
+
+    if (!this.columnsToDisplay) {
+      this.columnsToDisplay &#x3D; this._customColumns
+        .filter((c) &#x3D;&gt; !c.hideFromTable)
+        .map((c) &#x3D;&gt; c.id);
+    }
+
+    this.idForSavingPagination &#x3D; this._customColumns
+      .map((col) &#x3D;&gt; col.id)
+      .join(&quot;&quot;);
+  }
+  _customColumns: FormFieldConfig[];
+  _columns: FormFieldConfig[] &#x3D; [];
+
+  /**
+   * Manually define the columns to be shown.
+   *
+   * @param value
+   */
+  @Input() set columnsToDisplay(value: string[]) {
+    if (!value || value.length &#x3D;&#x3D;&#x3D; 0) {
+      value &#x3D; (this._customColumns ?? this._columns).map((c) &#x3D;&gt; c.id);
+    }
+    value &#x3D; value.filter((c) &#x3D;&gt; !c.startsWith(&quot;__&quot;)); // remove internal action columns
+
+    const cols &#x3D; [];
+    if (this._selectable) {
+      cols.push(this.ACTIONCOLUMN_SELECT);
+    }
+    if (this._editable) {
+      cols.push(this.ACTIONCOLUMN_EDIT);
+    }
+    cols.push(...value);
+    this._columnsToDisplay &#x3D; cols;
+
+    if (this.sortIsInferred) {
+      this.sortBy &#x3D; this.inferDefaultSort();
+      this.sortIsInferred &#x3D; true;
+    }
+  }
+  _columnsToDisplay: string[];
+
+  @Input() set entityType(value: EntityConstructor&lt;T&gt;) {
+    this._entityType &#x3D; value;
+    this.customColumns &#x3D; this._customColumns;
+  }
+  _entityType: EntityConstructor&lt;T&gt;;
+
+  /** how to sort data by default during initialization */
+  @Input() set sortBy(value: Sort) {
+    if (!value) {
+      return;
+    }
+
+    this._sortBy &#x3D; value;
+    this.sortIsInferred &#x3D; false;
+  }
+
+  _sortBy: Sort;
+
+  @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
+    this.recordsDataSource.sort &#x3D; sort;
+  }
+
+  private sortIsInferred: boolean &#x3D; true;
+
+  /**
+   * Adds a filter for the displayed data.
+   * Only data, that passes the filter will be shown in the table.
+   */
+  @Input() set filter(value: DataFilter&lt;T&gt;) {
+    this._filter &#x3D; value ?? {};
+    this.updateFilteredData();
+  }
+  _filter: DataFilter&lt;T&gt; &#x3D; {};
+  /** output the currently displayed records, whenever filters for the user change */
+  @Output() filteredRecordsChange &#x3D; new EventEmitter&lt;T[]&gt;(true);
+
+  private updateFilteredData() {
+    this.addActiveInactiveFilter(this._filter);
+    const filterPredicate &#x3D; this.filterService.getFilterPredicate(this._filter);
+    const filteredData &#x3D; this._records.filter(filterPredicate);
+    this.recordsDataSource.data &#x3D; filteredData.map((record) &#x3D;&gt; ({ record }));
+
+    this.filteredRecordsChange.emit(filteredData);
+  }
+
+  @Input() set filterFreetext(value: string) {
+    this.recordsDataSource.filter &#x3D; value;
+  }
+
+  /** function returns the background color for each row*/
+  @Input() getBackgroundColor?: (rec: T) &#x3D;&gt; string &#x3D; (rec: T) &#x3D;&gt; rec.getColor();
+  idForSavingPagination: string;
+
+  @Input() clickMode: &quot;popup&quot; | &quot;navigate&quot; | &quot;none&quot; &#x3D; &quot;popup&quot;;
+  /**
+   * Emits the entity being clicked in the table - or the newly created entity from the &quot;create&quot; button.
+   */
+  @Output() entityClick &#x3D; new EventEmitter&lt;T&gt;();
+
+  /**
+   * BULK SELECT
+   * User can use checkboxes to select multiple rows, so that parent components can execute bulk actions on them.
+   */
+  @Input() set selectable(v: boolean) {
+    this._selectable &#x3D; v;
+    this.columnsToDisplay &#x3D; this._columnsToDisplay;
+  }
+  _selectable: boolean &#x3D; false;
+
+  readonly ACTIONCOLUMN_SELECT &#x3D; &quot;__select&quot;;
+
+  /**
+   * outputs an event containing an array of currently selected records (checkmarked by the user)
+   * Checkboxes to select rows are only displayed if you set &quot;selectable&quot; also.
+   */
+  @Output() selectedRecordsChange: EventEmitter&lt;T[]&gt; &#x3D; new EventEmitter&lt;T[]&gt;();
+  @Input() selectedRecords: T[] &#x3D; [];
+
+  selectRow(row: TableRow&lt;T&gt;, checked: boolean) {
+    if (checked) {
+      this.selectedRecords.push(row.record);
+    } else {
+      const index &#x3D; this.selectedRecords.indexOf(row.record);
+      if (index &gt; -1) {
+        this.selectedRecords.splice(index, 1);
+      }
+    }
+    this.selectedRecordsChange.emit(this.selectedRecords);
+  }
+
+  /**
+   * INLINE EDIT
+   * User can switch a row into edit mode to change and save field values directly from within the table
+   */
+  @Input() set editable(v: boolean) {
+    this._editable &#x3D; v;
+    this.columnsToDisplay &#x3D; this._columnsToDisplay;
+  }
+  _editable: boolean &#x3D; true;
+  readonly ACTIONCOLUMN_EDIT &#x3D; &quot;__edit&quot;;
+  /**
+   * factory method to create a new instance of the displayed Entity type
+   * used when the user adds a new entity to the list.
+   */
+  @Input() newRecordFactory: () &#x3D;&gt; T;
+
+  /**
+   * Show one record&#x27;s details in a modal dialog (if configured).
+   * @param row The entity whose details should be displayed.
+   */
+  onRowClick(row: TableRow&lt;T&gt;) {
+    if (row.formGroup &amp;&amp; !row.formGroup.disabled) {
+      return;
+    }
+    if (this._selectable) {
+      this.selectRow(row, !this.selectedRecords?.includes(row.record));
+      return;
+    }
+
+    this.showEntity(row.record);
+    this.entityClick.emit(row.record);
+  }
+
+  onRowMouseDown(event: MouseEvent, row: TableRow&lt;T&gt;) {
+    if (!this._selectable) {
+      this.onRowClick(row);
+      return;
+    }
+
+    // Find the index of the row in the sorted and filtered data
+    const sortedData &#x3D; this.recordsDataSource.sortData(
+      this.recordsDataSource.data,
+      this.recordsDataSource.sort,
+    );
+    const currentIndex &#x3D; sortedData.indexOf(row);
+
+    const isCheckboxClick &#x3D;
+      event.target instanceof HTMLInputElement &amp;&amp;
+      event.target.type &#x3D;&#x3D;&#x3D; &quot;checkbox&quot;;
+
+    if (event.shiftKey &amp;&amp; this.lastSelectedIndex !&#x3D;&#x3D; null) {
+      const start &#x3D; Math.min(this.lastSelectedIndex, currentIndex);
+      const end &#x3D; Math.max(this.lastSelectedIndex, currentIndex);
+      const shouldCheck &#x3D;
+        this.lastSelection !&#x3D;&#x3D; null
+          ? !this.lastSelection
+          : !this.selectedRecords.includes(row.record);
+
+      for (let i &#x3D; start; i &lt;&#x3D; end; i++) {
+        const rowToSelect &#x3D; sortedData[i];
+        const isSelected &#x3D; this.selectedRecords.includes(rowToSelect.record);
+
+        if (shouldCheck &amp;&amp; !isSelected) {
+          this.selectedRecords.push(rowToSelect.record);
+        } else if (!shouldCheck &amp;&amp; isSelected) {
+          this.selectedRecords &#x3D; this.selectedRecords.filter(
+            (record) &#x3D;&gt; record !&#x3D;&#x3D; rowToSelect.record,
+          );
+        }
+      }
+      this.selectedRecordsChange.emit(this.selectedRecords);
+    } else {
+      const isSelected &#x3D; this.selectedRecords.includes(row.record);
+      this.selectRow(row, !isSelected);
+      this.lastSelectedIndex &#x3D; currentIndex;
+      this.lastSelection &#x3D; isSelected;
+    }
+
+    if (isCheckboxClick) {
+      this.onRowClick(row);
+    }
+  }
+
+  onRowSelect(event: MatCheckboxChange, row: TableRow&lt;T&gt;) {
+    this.selectRow(row, event.checked);
+  }
+
+  selectAllRows(event: MatCheckboxChange) {
+    if (event.checked) {
+      this.selectedRecords &#x3D; this.recordsDataSource.data.map(
+        (row) &#x3D;&gt; row.record,
+      );
+    } else {
+      this.selectedRecords &#x3D; [];
+    }
+    this.selectedRecordsChange.emit(this.selectedRecords);
+  }
+
+  isAllSelected() {
+    return this.selectedRecords.length &#x3D;&#x3D;&#x3D; this.recordsDataSource.data.length;
+  }
+
+  isIndeterminate() {
+    return this.selectedRecords.length &gt; 0 &amp;&amp; !this.isAllSelected();
+  }
+
+  showEntity(entity: T) {
+    switch (this.clickMode) {
+      case &quot;popup&quot;:
+        this.formDialog.openFormPopup(entity, this._customColumns);
+        break;
+      case &quot;navigate&quot;:
+        this.router.navigate([
+          entity.getConstructor().route,
+          entity.isNew ? &quot;new&quot; : entity.getId(true),
+        ]);
+        break;
+    }
+  }
+
+  constructor(
+    private entityFormService: EntityFormService,
+    private formDialog: FormDialogService,
+    private router: Router,
+    private filterService: FilterService,
+    private schemaService: EntitySchemaService,
+  ) {
+    this.recordsDataSource &#x3D; this.createDataSource();
+  }
+
+  private createDataSource() {
+    const dataSource &#x3D; new MatTableDataSource&lt;TableRow&lt;T&gt;&gt;();
+    dataSource.sortData &#x3D; (data, sort) &#x3D;&gt;
+      tableSort(data, {
+        active: sort.active as keyof Entity | &quot;&quot;,
+        direction: sort.direction,
+      });
+    dataSource.filterPredicate &#x3D; (data, filter) &#x3D;&gt;
+      entityFilterPredicate(data.record, filter);
+    return dataSource;
+  }
+
+  private inferDefaultSort(): Sort {
+    // initial sorting by first column, ensure that not the &#x27;action&#x27; column is used
+    const sortBy &#x3D; (this._columnsToDisplay ?? []).filter(
+      (c) &#x3D;&gt; !c.startsWith(&quot;__&quot;),
+    )[0];
+    const sortByColumn &#x3D; this._columns.find((c) &#x3D;&gt; c.id &#x3D;&#x3D;&#x3D; sortBy);
+
+    let sortDirection: SortDirection &#x3D; &quot;asc&quot;;
+    if (
+      sortByColumn?.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayDate&quot; ||
+      sortByColumn?.viewComponent &#x3D;&#x3D;&#x3D; &quot;DisplayMonth&quot; ||
+      this.schemaService.getDatatypeOrDefault(sortByColumn?.dataType) instanceof
+        DateDatatype
+    ) {
+      // flip default sort order for dates (latest first)
+      sortDirection &#x3D; &quot;desc&quot;;
+    }
+
+    return sortBy ? { active: sortBy, direction: sortDirection } : undefined;
+  }
+
+  /**
+   * Advanced fields like entity references cannot be sorted sensibly yet - disable sort for them.
+   * @param c
+   * @private
+   */
+  private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
+    // if no dataType is defined, these are dynamic, display-only components
+    if (c.isArray || c.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType || !c.dataType) {
+      c.noSorting &#x3D; true;
+    }
+  }
+
+  /**
+   * FILTER ARCHIVED RECORDS
+   * User can hide / show inactive records through a toggle
+   */
+  @Input() set showInactive(value: boolean) {
+    if (value &#x3D;&#x3D;&#x3D; this._showInactive) {
+      return;
+    }
+
+    this._showInactive &#x3D; value;
+    this.updateFilteredData();
+    this.showInactiveChange.emit(value);
+  }
+  _showInactive: boolean &#x3D; false;
+  @Output() showInactiveChange &#x3D; new EventEmitter&lt;boolean&gt;();
+
+  addActiveInactiveFilter(filter: DataFilter&lt;T&gt;) {
+    if (this._showInactive) {
+      delete filter[&quot;isActive&quot;];
+    } else {
+      filter[&quot;isActive&quot;] &#x3D; true;
+    }
+  }
+}
+
+/**
+ * Wrapper to keep additional form data for each row of an entity, required for inline editing.
+ */
+export interface TableRow&lt;T extends Entity&gt; {
+  record: T;
+  formGroup?: EntityFormGroup&lt;T&gt;;
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'TableRow.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
