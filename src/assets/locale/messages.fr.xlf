@@ -127,6 +127,22 @@
           <context context-type="linenumber">1230</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="4960954872484116356" datatype="html">
+        <source> This section displays historical activities that have been archived. </source>
+        <target state="new"> This section displays historical activities that have been archived. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/child-details/grouped-child-attendance/grouped-child-attendance.component.html</context>
+          <context context-type="linenumber">15,17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8041465698820171995" datatype="html">
+        <source>Select activity</source>
+        <target state="new">Select activity</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/children/child-details/grouped-child-attendance/grouped-child-attendance.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="7508893828342265603" datatype="html">
         <source>Nothing</source>
         <target state="translated">Aucune compétence</target>
@@ -218,7 +234,7 @@
         <note priority="1" from="description">The month something took place</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="521390001853856745" datatype="html">
@@ -228,7 +244,7 @@
         <note priority="1" from="meaning">How many children are present at a meeting</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5729418620241283277" datatype="html">
@@ -237,7 +253,7 @@
         <note priority="1" from="description">Events of an attendance</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">70</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
@@ -250,7 +266,7 @@
         <note priority="1" from="description">Percentage of people that attended an event</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">76</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.ts</context>
@@ -3718,41 +3734,71 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="1490294985710298290" datatype="html">
+        <source>Previous Grouping</source>
+        <target state="new">Previous Grouping</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4365094046219613303" datatype="html">
+        <source> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label
+        [entityType]=&quot;_entity&quot;
+        [field]=&quot;groupBy[currentGroupIndex]&quot;
+      >"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label>"/></source>
+        <target state="new"> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label
+        [entityType]=&quot;_entity&quot;
+        [field]=&quot;groupBy[currentGroupIndex]&quot;
+      >"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label>"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
+          <context context-type="linenumber">22,32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1009687839872857475" datatype="html">
+        <source>Next Grouping</source>
+        <target state="new">Next Grouping</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="2899243136914024639" datatype="html">
         <source>Table showing disaggregation of the beneficiaries</source>
         <target state="translated">Table showing disaggregation of the beneficiaries</target>
+        <note priority="1" from="description">Label for children count dashboard</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">12</context>
+          <context context-type="linenumber">49</context>
         </context-group>
-        <note priority="1" from="description">Label for children count dashboard</note>
       </trans-unit>
       <trans-unit id="357973413193006010" datatype="html">
         <source> Center </source>
         <target state="translated">Centre</target>
+        <note priority="1" from="description">The center that a partiipant belongs to, e.g. a city</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">38,40</context>
+          <context context-type="linenumber">75</context>
         </context-group>
-        <note priority="1" from="description">The center that a partiipant belongs to, e.g. a city</note>
       </trans-unit>
       <trans-unit id="4295196190359383942" datatype="html">
         <source> Count of children </source>
         <target state="translated">Count of children</target>
+        <note priority="1" from="description">The amount of children that study at one school</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">41,43</context>
+          <context context-type="linenumber">78</context>
         </context-group>
-        <note priority="1" from="description">The amount of children that study at one school</note>
       </trans-unit>
       <trans-unit id="2981219928115418649" datatype="html">
         <source>Link</source>
         <target state="translated">Link</target>
+        <note priority="1" from="description">A link that takes a user to a center</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">81</context>
         </context-group>
-        <note priority="1" from="description">A link that takes a user to a center</note>
       </trans-unit>
       <trans-unit id="1330646976582013113" datatype="html">
         <source>dismiss</source>
