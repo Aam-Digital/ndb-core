@@ -90,26 +90,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
  */
 type ConfigMigration = (key: string, configPart: any) => any;
 
-/**
- * Transform legacy "entity:" config format into the flattened structure containing id directly.
- */
-const migrateEntityAttributesWithId: ConfigMigration = (key, configPart) => {
-  if (!(key.startsWith("entity") && Array.isArray(configPart.attributes))) {
-    return configPart;
-  }
-
-  configPart.attributes = configPart.attributes.reduce(
-    (acc, attr: { name: string; schema: EntitySchemaField }) => ({
-      ...acc,
-      [attr.name]: attr.schema,
-      // id inside the field schema config (FieldConfig) is added by EntityConfigService and does not need migration
-    }),
-    {},
-  );
-
-  return configPart;
-};
-
 // Add a new migration method for remove prefilled from publicformconfig
 const migratePublicFormConfig: ConfigMigration = (key, configPart) => {
   if (key !== "PublicFormConfig") {
@@ -120,40 +100,6 @@ const migratePublicFormConfig: ConfigMigration = (key, configPart) => {
     delete configPart.prefilled;
   }
 
-  return configPart;
-};
-
-
-/**
- * Transform legacy "view:...Form" config format to have form field group headers with the fields rather than as separate array.
- */
-const migrateFormHeadersIntoFieldGroups: ConfigMigration = (
-  key,
-  configPart,
-) => {
-  if (!(configPart?.component === "Form" && configPart?.config?.cols)) {
-    return configPart;
-  }
-
-  const formConfig = configPart.config;
-
-  // change .cols and .headers into .fieldGroups
-  const newFormConfig = { ...formConfig };
-  delete newFormConfig.cols;
-  delete newFormConfig.headers;
-
-  newFormConfig.fieldGroups = formConfig.cols?.map(
-    (colGroup) => ({ fields: colGroup }) as FieldGroup,
-  );
-  if (formConfig.headers) {
-    newFormConfig.fieldGroups.forEach((group, i) => {
-      if (formConfig.headers[i]) {
-        group.header = formConfig.headers[i];
-      }
-    });
-  }
-
-  configPart.config = newFormConfig;
   return configPart;
 };
 
