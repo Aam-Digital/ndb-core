@@ -7,11 +7,9 @@ import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../entity/schema/entity-schema-field";
-import { FieldGroup } from "../entity-details/form/field-group";
 import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
-import { migrateAddMissingEntityAttributes } from "./migrate-add-entity-attributes";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 
 /**
@@ -60,10 +58,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   private applyMigrations(config: Config): Config {
     const migrations: ConfigMigration[] = [
-      migrateEntityAttributesWithId,
-      migrateFormHeadersIntoFieldGroups,
-      migrateFormFieldConfigView2ViewComponent,
-      migrateMenuItemConfig,
       migrateEntityDetailsInputEntityType,
       migrateEntityArrayDatatype,
       migrateEntitySchemaDefaultValue,
@@ -76,9 +70,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
       addDefaultNoteDetailsConfig,
       migratePublicFormConfig,
     ];
-
-    // TODO: execute this on server via ndb-admin
-    config = migrateAddMissingEntityAttributes(config);
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
       let configPart = rawValue;
