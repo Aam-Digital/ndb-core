@@ -1,29 +1,17 @@
 import { Inject, Injectable } from "@angular/core";
-import {
-  HttpClient,
-  HttpEvent,
-  HttpEventType,
-  HttpProgressEvent,
-  HttpResponse,
-  HttpStatusCode,
-} from "@angular/common/http";
+import { HttpStatusCode } from "@angular/common/http";
 import {
   catchError,
   concatMap,
-  filter,
   last,
   map,
   shareReplay,
   tap,
 } from "rxjs/operators";
 import { from, Observable, of, throwError } from "rxjs";
-import { MatDialog } from "@angular/material/dialog";
-import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { FileService } from "./file.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { Logging } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
@@ -49,9 +37,6 @@ export class CouchdbFileService extends FileService {
 
   constructor(
     private sanitizer: DomSanitizer,
-    private http: HttpClient,
-    private dialog: MatDialog,
-    private snackbar: MatSnackBar,
     private syncService: SyncService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
@@ -83,7 +68,7 @@ export class CouchdbFileService extends FileService {
     return this.ensureDocIsSynced().pipe(
       concatMap(() => this.getAttachmentsDocument(attachmentPath)),
       concatMap(({ _rev }) =>
-        this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, file, {
+        this.httpClient.put(`${attachmentPath}/${property}?rev=${_rev}`, file, {
           headers: { "ngsw-bypass": "" },
           reportProgress: true,
           observe: "events",
@@ -106,16 +91,18 @@ export class CouchdbFileService extends FileService {
   private getAttachmentsDocument(
     attachmentPath: string,
   ): Observable<{ _rev: string }> {
-    return this.http.get<{ _id: string; _rev: string }>(attachmentPath).pipe(
-      catchError((err) => {
-        if (err.status === HttpStatusCode.NotFound) {
-          return this.http
-            .put<{ rev: string }>(attachmentPath, {})
-            .pipe(map((res) => ({ _rev: res.rev })));
-        }
-        throw err;
-      }),
-    );
+    return this.httpClient
+      .get<{ _id: string; _rev: string }>(attachmentPath)
+      .pipe(
+        catchError((err) => {
+          if (err.status === HttpStatusCode.NotFound) {
+            return this.httpClient
+              .put<{ rev: string }>(attachmentPath, {})
+              .pipe(map((res) => ({ _rev: res.rev })));
+          }
+          throw err;
+        }),
+      );
   }
 
   removeFile(entity: Entity, property: string) {
@@ -128,11 +115,11 @@ export class CouchdbFileService extends FileService {
 
   private runFileRemoval(entity: Entity, property: string) {
     const path = `${entity.getId()}/${property}`;
-    return this.http
+    return this.httpClient
       .get<{ _rev: string }>(`${this.attachmentsUrl}/${entity.getId()}`)
       .pipe(
         concatMap(({ _rev }) =>
-          this.http.delete(`${this.attachmentsUrl}/${path}?rev=${_rev}`),
+          this.httpClient.delete(`${this.attachmentsUrl}/${path}?rev=${_rev}`),
         ),
         tap(() => delete this.cache[path]),
         catchError((err) => {
@@ -151,35 +138,17 @@ export class CouchdbFileService extends FileService {
 
   private runAllFilesRemoval(entity: Entity) {
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId()}`;
-    return this.http
+    return this.httpClient
       .get<{ _rev: string }>(attachmentPath)
       .pipe(
         concatMap(({ _rev }) =>
-          this.http.delete(`${attachmentPath}?rev=${_rev}`),
+          this.httpClient.delete(`${attachmentPath}?rev=${_rev}`),
         ),
       );
   }
 
-  showFile(entity: Entity, property: string) {
-    const obs = this.http
-      .get(`${this.attachmentsUrl}/${entity.getId()}/${property}`, {
-        responseType: "blob",
-        reportProgress: true,
-        observe: "events",
-        headers: { "ngsw-bypass": "" },
-      })
-      .pipe(shareReplay());
-    this.reportProgress($localize`Loading "${entity[property]}"`, obs);
-    obs
-      .pipe(filter((e) => e.type === HttpEventType.Response))
-      .subscribe((e: HttpResponse<Blob>) => {
-        const fileURL = URL.createObjectURL(e.body);
-        const win = window.open(fileURL, "_blank");
-        if (!win || win.closed || typeof win.closed == "undefined") {
-          // When it takes more than a few (2-5) seconds to open the file, the browser might block the popup
-          this.dialog.open(ShowFileComponent, { data: fileURL });
-        }
-      });
+  protected override getShowFileUrl(entity: Entity, property: string): string {
+    return `${this.attachmentsUrl}/${entity.getId()}/${property}`;
   }
 
   loadFile(
@@ -189,7 +158,7 @@ export class CouchdbFileService extends FileService {
   ): Observable<SafeUrl> {
     const path = `${entity.getId()}/${property}`;
     if (!this.cache[path]) {
-      this.cache[path] = this.http
+      this.cache[path] = this.httpClient
         .get(`${this.attachmentsUrl}/${path}`, {
           responseType: "blob",
         })
@@ -210,26 +179,5 @@ export class CouchdbFileService extends FileService {
     return this.cache[path].pipe(
       map((url) => this.sanitizer.bypassSecurityTrustUrl(url)),
     );
-  }
-
-  private reportProgress(
-    message: string,
-    obs: Observable<HttpEvent<any> | any>,
-  ) {
-    const progress = obs.pipe(
-      filter(
-        (e) =>
-          e.type === HttpEventType.DownloadProgress ||
-          e.type === HttpEventType.UploadProgress,
-      ),
-      map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total))),
-    );
-    const ref = this.snackbar.openFromComponent(ProgressComponent, {
-      data: { message, progress },
-    });
-    progress.subscribe({
-      complete: () => ref.dismiss(),
-      error: () => ref.dismiss(),
-    });
   }
 }

@@ -202,5 +202,7 @@ const Template: StoryFn<ReportingComponent> = (args: ReportingComponent) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = {
+  render: Template,
+  args: {},
+};

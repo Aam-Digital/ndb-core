@@ -11,12 +11,12 @@
       [display]="showEntities ? 'chips' : 'none'"
       [options]="availableOptions | async"
       [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
-      [createOption]="createNewEntity"
+      [createOption]="disableCreateNew ? null : createNewEntity"
     >
       <ng-template let-item>
         <app-entity-block
           style="margin: auto"
-          [entityToDisplay]="item"
+          [entity]="item"
           [linkDisabled]="form.enabled"
         ></app-entity-block>
       </ng-template>

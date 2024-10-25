@@ -35,6 +35,14 @@ export class RouterService {
   }
 
   /**
+   * Add additional routes to the existing routing configuration, e.g. registering view configs for a new module.
+   * @param viewConfigs
+   */
+  addRoutes(viewConfigs: ViewConfig[]) {
+    this.reloadRouting(viewConfigs, this.router.config);
+  }
+
+  /**
    * Reset the routing config and reload it from the global config.
    *
    * @param viewConfigs The configs loaded from the ConfigService
@@ -71,7 +79,11 @@ export class RouterService {
   }
 
   private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
-    const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
+    const path = view._id
+      .substring(PREFIX_VIEW_CONFIG.length)
+      // remove leading slash if present
+      .replace(/^\//, "");
+
     const existingRoute = additionalRoutes.find((r) => r.path === path);
 
     if (existingRoute) {

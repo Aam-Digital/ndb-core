@@ -60,6 +60,7 @@ import {
   EntitySpecialLoaderService,
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
+import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -181,6 +182,7 @@ export class EntityListComponent<T extends Entity>
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
     private entityActionsService: EntityActionsService,
+    private entityEditService: EntityEditService,
     @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
   ) {
     this.screenWidthObserver
@@ -319,6 +321,13 @@ export class EntityListComponent<T extends Entity>
     this.selectedRows = undefined;
   }
 
+  async editRecords() {
+    await this.entityEditService.edit(
+      this.selectedRows,
+      this.entityConstructor,
+    );
+    this.selectedRows = undefined;
+  }
   async deleteRecords() {
     await this.entityActionsService.delete(this.selectedRows);
     this.selectedRows = undefined;

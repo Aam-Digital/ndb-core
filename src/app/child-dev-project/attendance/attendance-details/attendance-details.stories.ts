@@ -71,17 +71,24 @@ const Template: StoryFn<AttendanceDetailsComponent> = (
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  entity: activityAttendance,
+export const Primary = {
+  render: Template,
+
+  args: {
+    entity: activityAttendance,
+  },
 };
 
 const activityAttendanceIndividual = Object.assign(
   new ActivityAttendance(),
   activityAttendance,
 );
-export const ForIndividualChild = Template.bind({});
-ForIndividualChild.args = {
-  entity: activityAttendanceIndividual,
-  focusedChild: "1",
+
+export const ForIndividualChild = {
+  render: Template,
+
+  args: {
+    entity: activityAttendanceIndividual,
+    focusedChild: "1",
+  },
 };

@@ -47,12 +47,18 @@ const Template: StoryFn<DisplayEntityComponent> = (
   props: args,
 });
 
-export const FewEntities = Template.bind({});
-FewEntities.args = {
-  value: [child1, child2].map((x) => x.getId()),
+export const FewEntities = {
+  render: Template,
+
+  args: {
+    value: [child1, child2].map((x) => x.getId()),
+  },
 };
 
-export const ManyEntities = Template.bind({});
-ManyEntities.args = {
-  value: [child1, child2, child3, child4, child5].map((x) => x.getId()),
+export const ManyEntities = {
+  render: Template,
+
+  args: {
+    value: [child1, child2, child3, child4, child5].map((x) => x.getId()),
+  },
 };

@@ -286,7 +286,7 @@ export class EntityActionsService {
     return true;
   }
 
-  private generateMessageForConfirmationWithUndo(
+  public generateMessageForConfirmationWithUndo(
     entities: Entity[],
     action: string,
   ): string {

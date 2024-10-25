@@ -10,7 +10,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
-import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
 import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
 import { EntityConfigService } from "../../entity/entity-config.service";
 import { Config } from "../../config/config";
@@ -33,6 +32,7 @@ import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature/beta-feature.component";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
 @Component({
   selector: "app-admin-entity",
@@ -63,8 +63,8 @@ export class AdminEntityComponent implements OnInit {
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
-  configDetailsView: EntityDetailsConfig;
-  configListView: EntityListConfig;
+  configDetailsView: DynamicComponentConfig<EntityDetailsConfig>;
+  configListView: DynamicComponentConfig<EntityListConfig>;
   configEntitySettings: EntityConfig;
   protected mode: "details" | "list" | "general" = "details";
 
@@ -93,23 +93,43 @@ export class AdminEntityComponent implements OnInit {
     );
 
     this.configDetailsView = this.loadViewConfig(
-      EntityConfigService.getDetailsViewId(this.entityConstructor),
-    ) ?? { entityType: this.entityType, panels: [] };
-    this.configListView = this.loadViewConfig(
-      EntityConfigService.getListViewId(this.entityConstructor),
-    ) ?? { entityType: this.entityType };
+      this.entityConstructor,
+      "details",
+    );
+    this.configListView = this.loadViewConfig(this.entityConstructor, "list");
+
     this.configEntitySettings = this.entityConstructor;
   }
 
-  private loadViewConfig<
-    C = EntityDetailsConfig | EntityListConfig | undefined,
-  >(viewId: string): C | undefined {
-    const viewConfig: ViewConfig<C> = this.configService.getConfig(viewId);
+  private loadViewConfig(
+    entityType: EntityConstructor,
+    viewType: "details" | "list",
+  ): DynamicComponentConfig {
+    const viewId =
+      viewType === "details"
+        ? EntityConfigService.getDetailsViewId(entityType)
+        : EntityConfigService.getListViewId(entityType);
+    const viewConfig: DynamicComponentConfig =
+      this.configService.getConfig(viewId);
 
+    if (!viewConfig) {
+      // return default view config
+      if (viewType === "details") {
+        return {
+          component: "EntityDetails",
+          config: { entityType: this.entityType, panels: [] },
+        };
+      } else {
+        return {
+          component: "EntityList",
+          config: { entityType: this.entityType },
+        };
+      }
+    }
+
+    viewConfig.config = viewConfig.config ?? { entityType: this.entityType };
     // work on a deep copy as we are editing in place (for titles, sections, etc.)
-    return viewConfig?.config
-      ? JSON.parse(JSON.stringify(viewConfig.config))
-      : undefined;
+    return JSON.parse(JSON.stringify(viewConfig));
   }
 
   cancel() {
@@ -124,18 +144,11 @@ export class AdminEntityComponent implements OnInit {
     );
     const newConfig = originalConfig.copy();
 
-    this.setViewConfig(
-      newConfig,
-      EntityConfigService.getDetailsViewId(this.entityConstructor),
-      this.configDetailsView,
-      "EntityDetails",
-    );
-    this.setViewConfig(
-      newConfig,
-      EntityConfigService.getListViewId(this.entityConstructor),
-      this.configListView,
-      "EntityList",
-    );
+    newConfig.data[
+      EntityConfigService.getDetailsViewId(this.entityConstructor)
+    ] = this.configDetailsView;
+    newConfig.data[EntityConfigService.getListViewId(this.entityConstructor)] =
+      this.configListView;
     this.setEntityConfig(newConfig);
 
     await this.entityMapper.save(newConfig);
@@ -166,27 +179,10 @@ export class AdminEntityComponent implements OnInit {
       entitySchemaConfig.label = this.configEntitySettings.label;
       entitySchemaConfig.labelPlural = this.configEntitySettings.labelPlural;
       entitySchemaConfig.icon = this.configEntitySettings.icon;
+      entitySchemaConfig.color = this.configEntitySettings.color;
       entitySchemaConfig.toStringAttributes =
         this.configEntitySettings.toStringAttributes;
       entitySchemaConfig.hasPII = this.configEntitySettings.hasPII;
-    }
-  }
-
-  private setViewConfig(
-    targetConfig,
-    detailsViewId: string,
-    viewConfig: EntityDetailsConfig | EntityListConfig,
-    componentForNewConfig: string,
-  ) {
-    if (targetConfig.data[detailsViewId]) {
-      targetConfig.data[detailsViewId].config = viewConfig;
-    } else {
-      // create new config
-      viewConfig.entityType = this.entityType;
-      targetConfig.data[detailsViewId] = {
-        component: componentForNewConfig,
-        config: viewConfig,
-      } as ViewConfig<EntityDetailsConfig | EntityListConfig>;
     }
   }
 }

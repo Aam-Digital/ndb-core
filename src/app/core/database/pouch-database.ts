@@ -154,7 +154,7 @@ export class PouchDatabase extends Database {
       Logging.debug("navigator.onLine", navigator.onLine);
       throw new DatabaseException({
         error: "Failed to fetch from DB",
-        actualResponse: JSON.stringify(result.headers),
+        actualResponse: JSON.stringify(result),
         actualResponseBody: await result?.text(),
       });
     }

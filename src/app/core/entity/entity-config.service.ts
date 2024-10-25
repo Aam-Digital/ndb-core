@@ -135,6 +135,9 @@ export class EntityConfigService {
     // TODO: shall we just assign all properties that are present in the config object?
     entityType.toStringAttributes =
       entityConfig.toStringAttributes ?? entityType.toStringAttributes;
+    entityType.toBlockDetailsAttributes =
+      entityConfig.toBlockDetailsAttributes ??
+      entityType.toBlockDetailsAttributes;
     entityType.label = entityConfig.label ?? entityType.label;
     entityType.labelPlural = entityConfig.labelPlural ?? entityType.labelPlural;
     entityType.icon = (entityConfig.icon as IconName) ?? entityType.icon;

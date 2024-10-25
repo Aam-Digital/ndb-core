@@ -26,6 +26,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
 describe("AdminEntityComponent", () => {
   let component: AdminEntityComponent;
@@ -35,7 +36,7 @@ describe("AdminEntityComponent", () => {
   let entityMapper: MockEntityMapperService;
 
   let config;
-  let viewConfig: EntityDetailsConfig;
+  let viewConfig: DynamicComponentConfig<EntityDetailsConfig>;
   let viewConfigId, entityConfigId;
 
   @DatabaseEntity("AdminTest")
@@ -50,11 +51,14 @@ describe("AdminEntityComponent", () => {
     viewConfigId = `view:${AdminTestEntity.route.substring(1)}/:id`;
     entityConfigId = `entity:${AdminTestEntity.ENTITY_TYPE}`;
     viewConfig = {
-      entityType: AdminTestEntity.ENTITY_TYPE,
-      panels: [{ title: "Tab 1", components: [] }],
+      component: "EntityDetails",
+      config: {
+        entityType: AdminTestEntity.ENTITY_TYPE,
+        panels: [{ title: "Tab 1", components: [] }],
+      },
     };
     config = {
-      [viewConfigId]: { component: "EntityDetails", config: viewConfig },
+      [viewConfigId]: viewConfig,
       [entityConfigId]: {},
     };
     const mockActivatedRoute = {
@@ -137,7 +141,7 @@ describe("AdminEntityComponent", () => {
       title: "New Panel",
       components: [],
     };
-    component.configDetailsView.panels.push(newPanel);
+    component.configDetailsView.config.panels.push(newPanel);
 
     await component.save();
 
@@ -152,6 +156,7 @@ describe("AdminEntityComponent", () => {
       label: "Admin Test",
       labelPlural: "Admin Test",
       icon: undefined,
+      color: undefined,
       toStringAttributes: ["entityId"],
       hasPII: false,
       attributes: jasmine.objectContaining({

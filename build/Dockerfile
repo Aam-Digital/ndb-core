@@ -20,7 +20,7 @@
 # Just relevant for the stage "app"
 ARG DIST_TYPE="build"
 
-FROM node:lts-slim AS base
+FROM node:lts AS base
 COPY package.json ./opt/app/package.json
 COPY package-lock.json ./opt/app/package-lock.json
 
@@ -35,8 +35,8 @@ COPY --from=base-with-dependencies /opt/app /opt/app
 
 RUN apt-get update && apt-get install -y curl
 WORKDIR /tmp
-# 121.0.6167.139-1~deb12u1 -> 2024-02-01
-ARG CHROMIUM_VERSION=121.0.6167.139-1~deb12u1
+# 128.0.6613.84-1~deb12u1 -> 2024-08-23
+ARG CHROMIUM_VERSION=128.0.6613.84-1~deb12u1
 RUN curl -o chromium-common.deb https://ftp.debian.org/debian/pool/main/c/chromium/chromium-common_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
 RUN curl -o chromium.deb https://ftp.debian.org/debian/pool/main/c/chromium/chromium_${CHROMIUM_VERSION}_$(dpkg --print-architecture).deb
 RUN apt-get install -y ./chromium-common.deb ./chromium.deb build-essential git libssl-dev
@@ -99,9 +99,8 @@ RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environment
 RUN node build/prepare-translation-files.js
 RUN npm run build
 
-RUN if [ "$INJECT_DEBUG_INFORMATION" = true ] ; then \
-    npm install -g @sentry/cli && \
-    sentry-cli sourcemaps inject ./dist ; fi
+RUN npm install -g @sentry/cli && sentry-cli sourcemaps inject ./dist
+RUN ./node_modules/.bin/ngsw-config dist ngsw-config.json
 
 
 FROM scratch AS dist-build

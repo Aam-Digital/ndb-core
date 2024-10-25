@@ -19,12 +19,18 @@ const Template: StoryFn<DisplayMonthComponent> = (
   props: args,
 });
 
-export const Basic = Template.bind({});
-Basic.args = {
-  value: new Date("2023-06-19"),
+export const Basic = {
+  render: Template,
+
+  args: {
+    value: new Date("2023-06-19"),
+  },
 };
 
-export const WithoutValue = Template.bind({});
-WithoutValue.args = {
-  value: undefined,
+export const WithoutValue = {
+  render: Template,
+
+  args: {
+    value: undefined,
+  },
 };

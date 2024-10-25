@@ -3,8 +3,45 @@
   theme="child"
   [title]="totalEntities"
   [subtitle]="label"
-  [entries]="entityGroupCounts"
+  [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
 >
+  <div class="flex-row">
+    <button
+      mat-icon-button
+      matTooltip="Previous Grouping"
+      i18n-matTooltip
+      caption="Previous"
+      aria-label="Previous grouping"
+      (click)="getPrev()"
+      *ngIf="groupBy?.length > 1"
+      [style.transform]="'scale(0.75)'"
+    >
+      <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
+    </button>
+
+    <span class="flex-grow groupby-label" i18n>
+      by
+      <app-entity-field-label
+        [entityType]="_entity"
+        [field]="groupBy[currentGroupIndex]"
+      >
+      </app-entity-field-label>
+    </span>
+
+    <button
+      mat-icon-button
+      matTooltip="Next Grouping"
+      i18n-matTooltip
+      caption="Next"
+      aria-label="Next grouping"
+      (click)="getNext()"
+      *ngIf="groupBy?.length > 1"
+      [style.transform]="'scale(0.75)'"
+    >
+      <fa-icon icon="circle-chevron-right"></fa-icon>
+    </button>
+  </div>
+
   <div class="table-wrapper">
     <table
       mat-table
@@ -13,9 +50,9 @@
     >
       <ng-container matColumnDef="label">
         <td *matCellDef="let group">
-          <span *ngIf="!groupedByEntity">{{ group.label }}</span>
+          <span *ngIf="!group.groupedByEntity">{{ group.label }}</span>
           <app-entity-block
-            *ngIf="groupedByEntity"
+            *ngIf="group.groupedByEntity"
             [entityId]="group.id"
           ></app-entity-block>
         </td>
@@ -46,7 +83,7 @@
       <tr
         mat-row
         *matRowDef="let row; let i = index; columns: ['label', 'value', 'link']"
-        (click)="goToChildrenList(row.id)"
+        (click)="goToEntityList(row.id)"
         class="pointer"
         angulartics2On="click"
         angularticsCategory="Navigation"

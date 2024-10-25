@@ -55,21 +55,23 @@ describe("DisplayEntityComponent", () => {
     component.entityId = entity.getId();
     await component.ngOnInit();
 
-    expect(component.entityToDisplay).toEqual(entity);
+    expect(component.entity).toEqual(entity);
   });
 
-  it("should use the block component when available", async () => {
+  it("should load the block config for tooltip when available", async () => {
     const entity = new TestEntity();
     entityMapper.add(entity);
 
-    component.entityToDisplay = entity;
+    component.entity = entity;
     await component.ngOnInit();
 
-    expect(component.entityBlockComponent).toEqual(TestEntity.blockComponent);
+    expect(component.entityBlockConfig).toEqual(
+      TestEntity.toBlockDetailsAttributes,
+    );
   });
 
   it("should navigate to the details page of the entity", () => {
-    component.entityToDisplay = new TestEntity("1");
+    component.entity = new TestEntity("1");
 
     component.showDetailsPage();
 
@@ -88,6 +90,6 @@ describe("DisplayEntityComponent", () => {
       child.getId(),
       jasmine.anything(),
     );
-    expect(component.entityToDisplay).toBeUndefined();
+    expect(component.entity).toBeUndefined();
   });
 });

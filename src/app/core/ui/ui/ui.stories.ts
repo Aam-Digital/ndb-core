@@ -17,5 +17,7 @@ const Template: StoryFn<UiComponent> = (args: UiComponent) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {};
+export const Primary = {
+  render: Template,
+  args: {},
+};

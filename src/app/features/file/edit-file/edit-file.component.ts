@@ -22,6 +22,19 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { FileFieldConfig } from "../file.datatype";
+
+export const EditFileComponent_IMPORTS = [
+  MatFormFieldModule,
+  NgClass,
+  MatInputModule,
+  ReactiveFormsModule,
+  MatTooltipModule,
+  NgIf,
+  MatButtonModule,
+  FontAwesomeModule,
+  ErrorHintComponent,
+];
 
 /**
  * This component should be used as a `editComponent` when a property should store files.
@@ -32,17 +45,7 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
   selector: "app-edit-file",
   templateUrl: "./edit-file.component.html",
   styleUrls: ["./edit-file.component.scss"],
-  imports: [
-    MatFormFieldModule,
-    NgClass,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatTooltipModule,
-    NgIf,
-    MatButtonModule,
-    FontAwesomeModule,
-    ErrorHintComponent,
-  ],
+  imports: EditFileComponent_IMPORTS,
   standalone: true,
 })
 export class EditFileComponent extends EditComponent<string> implements OnInit {
@@ -50,6 +53,18 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   private selectedFile: File;
   private removeClicked = false;
   initialValue: string;
+
+  /**
+   * config for the given form field / entity attribute, containing special settings for this component.
+   * (re-declared here for better typing)
+   */
+  declare additional: FileFieldConfig;
+
+  /**
+   * The accepted file types for file selection dialog.
+   * If not defined, allows any file.
+   */
+  acceptedFileTypes: string = "*";
 
   constructor(
     protected fileService: FileService,
@@ -63,6 +78,10 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   override ngOnInit() {
     super.ngOnInit();
     this.initialValue = this.formControl.value;
+
+    this.acceptedFileTypes =
+      this.additional?.acceptedFileTypes ?? this.acceptedFileTypes;
+
     this.formControl.statusChanges
       .pipe(
         distinctUntilChanged(),
@@ -85,6 +104,12 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
         }
       });
   }
+
+  /**
+   * Template method to allow easy override of mapping the initialValue from the formControl.
+   * @protected
+   */
+  protected setInitialValue() {}
 
   async onFileSelected(file: File) {
     // directly reset input so subsequent selections with the same name also trigger the change event
@@ -142,7 +167,9 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     if (this.initialValue && this.formControl.value === this.initialValue) {
       this.showFile();
     } else {
-      this.fileUploadInput.nativeElement.click();
+      if (this.formControl.enabled) {
+        this.fileUploadInput.nativeElement.click();
+      }
     }
   }
 
