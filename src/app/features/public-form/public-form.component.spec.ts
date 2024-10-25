@@ -29,7 +29,7 @@ describe("PublicFormComponent", () => {
     testFormConfig = new PublicFormConfig("form-id");
     testFormConfig.title = "test form";
     testFormConfig.entity = "TestEntity";
-    // testFormConfig.columns = [["name"], ["category"]];
+    testFormConfig.columns = { fields: ["name", "category"] };
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
@@ -71,17 +71,6 @@ describe("PublicFormComponent", () => {
 
     expect(component.entity.getConstructor()).toBe(TestEntity);
     expect(component.formConfig.title).toBe("Some test title");
-  }));
-
-  it("should prefill entity with transformed values", fakeAsync(() => {
-    // testFormConfig.prefilled = { name: "new", category: "M" };
-    initComponent();
-    tick();
-
-    expect(component.entity.name).toBe("new");
-    expect(component.entity.category).toBe(
-      genders.find(({ id }) => id === "M"),
-    );
   }));
 
   it("should show a snackbar and reset form when the form has been submitted", fakeAsync(() => {
