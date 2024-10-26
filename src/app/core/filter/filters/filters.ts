@@ -78,13 +78,15 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     valuesToMatchAsOptions: (string | number)[],
     attributeName: string,
   ): FilterSelectionOption<T>[] {
+    let keys = new Set();
     return valuesToMatchAsOptions
       .filter((k) => !!k)
       .map((k) => ({
         key: k.toString().toLowerCase(),
         label: k.toString(),
         filter: { [attributeName]: k } as DataFilter<T>,
-      }));
+      }))
+      .filter((value) => !keys.has(value.key) && keys.add(value.key));
   }
 
   /**
