@@ -1,0 +1,17 @@
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+
+  <ng-container *ngIf="formControl.disabled; else inputField">
+    <a [href]="formControl.value" target="_blank" matInput>
+      {{ formControl.value || "No URL available" }}
+    </a>
+  </ng-container>
+  <ng-template #inputField>
+    <input [formControl]="formControl" matInput [title]="label" type="url" />
+  </ng-template>
+
+  <mat-error *ngIf="formControl.invalid && formControl.touched">
+    <span *ngIf="formControl.errors?.['pattern']">Invalid URL format</span>
+    <app-error-hint [form]="formControl"></app-error-hint>
+  </mat-error>
+</mat-form-field>
