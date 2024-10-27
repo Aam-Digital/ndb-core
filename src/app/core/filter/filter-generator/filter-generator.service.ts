@@ -67,7 +67,7 @@ export class FilterGeneratorService {
           label,
           filterConfig as BooleanFilterConfig,
         );
-      } else if (type == "numbers") {
+      } else if (type == "number-range") {
         filter = new NumberFilter(
           filterConfig.id,
           filterConfig.label || schema.label,

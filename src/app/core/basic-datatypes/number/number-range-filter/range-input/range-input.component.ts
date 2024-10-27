@@ -30,7 +30,6 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
     from: new FormControl(),
     to: new FormControl(),
   });
-  formControlDirective: FormControlDirective;
 
   @Input() override set value(value: NumericRange) {
     // update the internal formGroup when the value changes from the outside
@@ -54,7 +53,7 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
     @Optional() @Self() ngControl: NgControl,
     @Optional() parentForm: NgForm,
     @Optional() parentFormGroup: FormGroupDirective,
-    @Optional() formControlDirective: FormControlDirective,
+    @Optional() private formControlDirective: FormControlDirective,
   ) {
     super(
       elementRef,
@@ -64,7 +63,6 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
       parentFormGroup,
     );
 
-    this.formControlDirective = formControlDirective;
     this.formGroup.valueChanges.subscribe((value) => {
       this.value = value;
     });

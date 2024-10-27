@@ -393,7 +393,7 @@ export const defaultJsonConfig = {
         { id: "privateSchool" },
         {
           id: "numberOfTeachers",
-          type: "numbers",
+          type: "number-range",
           label: "Number of Teachers",
         },
       ],
