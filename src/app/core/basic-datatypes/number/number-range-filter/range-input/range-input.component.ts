@@ -41,8 +41,12 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
     return super.value;
   }
 
-  @Input()
-  activateValidation: boolean = true;
+  /**
+   * Validation (activated by default) ensures the component has a sensible range
+   * (e.g. "from" <= "to")
+   * or otherwise marks the formControl invalid
+   */
+  @Input() activateValidation: boolean = true;
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
