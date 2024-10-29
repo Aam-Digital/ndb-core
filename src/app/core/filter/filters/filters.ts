@@ -86,6 +86,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
         label: k.toString(),
         filter: { [attributeName]: k } as DataFilter<T>,
       }))
+      // remove duplicates:
       .filter((value) => !keys.has(value.key) && keys.add(value.key));
   }
 
