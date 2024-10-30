@@ -10,4 +10,5 @@ export class UrlDatatype extends StringDatatype {
   static override label: string = $localize`:datatype-label:URL`;
 
   override viewComponent = "DisplayUrl";
+  override editComponent = "EditUrl";
 }

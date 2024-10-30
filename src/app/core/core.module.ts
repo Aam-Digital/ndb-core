@@ -19,6 +19,7 @@ import { UpdateMetadataDatatype } from "./entity/model/update-metadata.datatype"
 import { CurrentUserSubject } from "./session/current-user-subject";
 import { SessionSubject } from "./session/auth/session-info";
 import { PercentageDatatype } from "./basic-datatypes/number/display-percentage/percentage.datatype";
+import { UrlDatatype } from "./basic-datatypes/string/url.datatype";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -39,6 +40,7 @@ import { PercentageDatatype } from "./basic-datatypes/number/display-percentage/
     { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
     { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
     { provide: DefaultDatatype, useClass: PercentageDatatype, multi: true },
+    { provide: DefaultDatatype, useClass: UrlDatatype, multi: true },
   ],
   imports: [CommonModule],
 })
