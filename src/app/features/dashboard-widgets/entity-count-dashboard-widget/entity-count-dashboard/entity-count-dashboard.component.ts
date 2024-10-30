@@ -21,8 +21,7 @@ import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
-import { CommonModule } from "@angular/common";
-import { MatPaginatorModule } from "@angular/material/paginator";
+
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
  */
@@ -67,8 +66,6 @@ interface GroupCountRow {
     MatTooltipModule,
     MatIconButton,
     EntityFieldLabelComponent,
-    CommonModule,
-    MatPaginatorModule,
   ],
   standalone: true,
 })
