@@ -1,0 +1,33 @@
+<table
+  mat-table
+  [dataSource]="dataSource"
+  class="data-table"
+  i18n-aria-label="Label for table showing report result"
+  aria-label="Table showing the report results"
+>
+  <ng-container matColumnDef="Name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td
+      mat-cell
+      *matCellDef="let row"
+      [style.padding-left.px]="16 + row.level * 20"
+    >
+      {{ row.key }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Anzahl">
+    <th mat-header-cell *matHeaderCellDef>Anzahl</th>
+    <td mat-cell *matCellDef="let row">
+      {{ row.value }}
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns; index as i"></tr>
+  <tr
+    mat-row
+    class="row"
+    *matRowDef="let row; columns: columns; index as i"
+    [ngClass]="{ 'bg-even': i % 2 === 0 }"
+  ></tr>
+</table>

@@ -19,6 +19,7 @@ import {
 } from "../sql-report/sql-report.service";
 import { RouteTarget } from "../../../route-target";
 import { firstValueFrom } from "rxjs";
+import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
 
 @RouteTarget("Reporting")
 @Component({
@@ -33,12 +34,16 @@ import { firstValueFrom } from "rxjs";
     ObjectTableComponent,
     DatePipe,
     JsonPipe,
+    SqlV2TableComponent,
   ],
   standalone: true,
 })
 export class ReportingComponent {
   reports: ReportEntity[];
   mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
+
+  currentReport: ReportEntity;
+
   isLoading: boolean;
   isError: boolean = false;
   errorDetails: string | null = null;
@@ -79,6 +84,8 @@ export class ReportingComponent {
       this.errorDetails = reason.message || reason;
       return Promise.reject(reason.message || reason);
     });
+
+    this.currentReport = selectedReport;
 
     this.mode = selectedReport.mode ?? "reporting";
     this.exportableData =

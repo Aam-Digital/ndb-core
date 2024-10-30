@@ -43,6 +43,14 @@
   [rows]="data"
 ></app-report-row>
 <app-object-table
-  *ngIf="data?.length > 0 && (mode === 'exporting' || mode === 'sql')"
+  *ngIf="
+    data?.length > 0 &&
+    (mode === 'exporting' || (mode === 'sql' && currentReport?.version === 1))
+  "
   [objects]="data"
 ></app-object-table>
+
+<app-sql-v2-table
+  *ngIf="mode === 'sql' && currentReport?.version === 2"
+  [reportData]="data"
+></app-sql-v2-table>
