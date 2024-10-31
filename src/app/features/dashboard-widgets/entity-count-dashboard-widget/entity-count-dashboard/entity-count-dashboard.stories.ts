@@ -18,6 +18,10 @@ export default {
             TestEntity.create({ category: genders[1], other: "otherC" }),
             TestEntity.create({ category: genders[1], other: "otherD" }),
             TestEntity.create({ category: genders[2], other: "otherE" }),
+            TestEntity.create({ category: genders[2], other: "otherF" }),
+            TestEntity.create({ category: genders[2], other: "otherG" }),
+            TestEntity.create({ category: genders[2], other: "otherH" }),
+            TestEntity.create({ category: genders[2], other: "otherI" }),
           ]),
         ),
       ],
@@ -35,6 +39,6 @@ const Template: StoryFn<EntityCountDashboardComponent> = (
 export const Primary = {
   args: {
     entityType: "TestEntity",
-    groupBy: ["category", "other"],
+    groupBy: ["other"],
   },
 };

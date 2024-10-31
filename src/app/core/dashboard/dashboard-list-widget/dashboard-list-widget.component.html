@@ -22,9 +22,12 @@
 
     <mat-paginator
       #paginator
-      [style.display]="dataSource.data.length <= 5 ? 'none' : ''"
-      [pageSizeOptions]="[5]"
+      [style.display]="
+        dataSource.data.length <= paginationPageSize ? 'none' : ''
+      "
+      [pageSizeOptions]="[paginationPageSize]"
       [hidePageSize]="true"
+      [pageSize]="paginationPageSize"
     >
     </mat-paginator>
   </app-widget-content>
