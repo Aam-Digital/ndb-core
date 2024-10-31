@@ -21,4 +21,10 @@ import { NgIf } from "@angular/common";
   ],
   standalone: true,
 })
-export class EditUrlComponent extends EditComponent<string> {}
+export class EditUrlComponent extends EditComponent<string> {
+  openLinkIfDisabled() {
+    if (this.formControl.disabled && this.formControl.value) {
+      window.open(this.formControl.value, "_blank");
+    }
+  }
+}

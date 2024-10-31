@@ -1,17 +1,20 @@
 <mat-form-field>
   <mat-label>{{ label }}</mat-label>
 
-  <ng-container *ngIf="formControl.disabled; else inputField">
-    <a [href]="formControl.value" target="_blank" matInput>
-      {{ formControl.value || "No URL available" }}
-    </a>
-  </ng-container>
-  <ng-template #inputField>
-    <input [formControl]="formControl" matInput [title]="label" type="url" />
-  </ng-template>
+  <!-- Single input field for both editable and disabled states -->
+  <input
+    [formControl]="formControl"
+    matInput
+    [title]="label"
+    type="url"
+    [readonly]="formControl.disabled"
+    (click)="openLinkIfDisabled()"
+    [class.disabled-link]="formControl.disabled"
+  />
 
+  <!-- Error message for invalid URL format -->
   <mat-error *ngIf="formControl.invalid && formControl.touched">
-    <span *ngIf="formControl.errors?.['pattern']" i18n>Invalid URL format</span>
+    <span *ngIf="formControl.errors?.['pattern']">Invalid URL format</span>
     <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
 </mat-form-field>
