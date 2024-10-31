@@ -69,7 +69,7 @@ export class EntitySelectComponent<
     }
 
     this._entityType = Array.isArray(type) ? type : [type];
-    this.loadAvailableEntities();
+    this.loadAvailableEntities().then((_) => {});
   }
 
   private _entityType: string[];
@@ -91,7 +91,7 @@ export class EntitySelectComponent<
   @Input() label: string;
 
   /**
-   * The placeholder is what is seen when someone clicks into the input-
+   * The placeholder is what is seen when someone clicks into the input
    * field and adds new entities.
    * In the note-details-view, this is "Add children..."
    * The placeholder is only displayed if `loading === false`
@@ -174,7 +174,7 @@ export class EntitySelectComponent<
    * @private
    */
   private async alignAvailableAndSelectedEntities(availableEntities: E[]) {
-    if (this.form.value === null || this.form.value === undefined) {
+    if (this.form?.value === null || this.form?.value === undefined) {
       return;
     }
 
@@ -245,7 +245,7 @@ export class EntitySelectComponent<
     if (this._entityType?.length < 1) {
       return;
     }
-    if (this._entityType.length > 1) {
+    if (this._entityType?.length > 1) {
       Logging.warn(
         "EntitySelect with multiple types is always creating a new entity of the first listed type only.",
       );
