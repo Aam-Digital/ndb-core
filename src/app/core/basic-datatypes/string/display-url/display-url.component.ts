@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
   selector: "app-display-url",
   template: `
     <a *ngIf="value" [href]="value" target="_blank">{{ value }}</a>
-    <span *ngIf="!value">No URL available</span>
+    <span *ngIf="!value">-</span>
   `,
   standalone: true,
   imports: [CommonModule],
