@@ -11,7 +11,7 @@
   </ng-template>
 
   <mat-error *ngIf="formControl.invalid && formControl.touched">
-    <span *ngIf="formControl.errors?.['pattern']">Invalid URL format</span>
+    <span *ngIf="formControl.errors?.['pattern']" i18n>Invalid URL format</span>
     <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
 </mat-form-field>
