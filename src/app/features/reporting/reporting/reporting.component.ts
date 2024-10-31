@@ -154,4 +154,9 @@ export class ReportingComponent {
     }
     return { label: resultLabel, result: header.result };
   }
+
+  selectedReportChanged() {
+    this.reportCalculation = null;
+    this.data = [];
+  }
 }

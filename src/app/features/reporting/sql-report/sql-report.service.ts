@@ -76,7 +76,13 @@ export class SqlReportService {
             }
           }),
         ),
-    );
+    ).catch((error) => {
+      if (!forceCalculation) {
+        return this.query(report, from, to, true);
+      } else {
+        throw error;
+      }
+    });
   }
 
   private getLastReports(

@@ -13,7 +13,7 @@
   [loading]="isLoading"
   [exportableData]="exportableData"
   (calculateClick)="calculateResults($event.report, $event.from, $event.to)"
-  (dataChanged)="reportCalculation = null; data = null"
+  (dataChanged)="selectedReportChanged()"
   class="view-section"
 ></app-select-report>
 
@@ -42,15 +42,16 @@
   *ngIf="data?.length > 0 && mode === 'reporting'"
   [rows]="data"
 ></app-report-row>
+
 <app-object-table
   *ngIf="
     data?.length > 0 &&
-    (mode === 'exporting' || (mode === 'sql' && currentReport?.version === 1))
+    (mode === 'exporting' || (mode === 'sql' && currentReport?.version !== 2))
   "
   [objects]="data"
 ></app-object-table>
 
 <app-sql-v2-table
-  *ngIf="mode === 'sql' && currentReport?.version === 2"
+  *ngIf="data?.length > 0 && mode === 'sql' && currentReport?.version === 2"
   [reportData]="data"
 ></app-sql-v2-table>
