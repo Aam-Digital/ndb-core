@@ -46,7 +46,6 @@ export class EditAttendanceComponent
   mobile = false;
 
   @Input() declare entity: Note;
-  attendanceForm: FormControl<Map<string, EventAttendance>>;
 
   constructor(screenWithObserver: ScreenWidthObserver) {
     super();
@@ -65,23 +64,22 @@ export class EditAttendanceComponent
       category.valueChanges.pipe(startWith(category.value)).subscribe((val) => {
         this.showAttendance = !!val?.isMeeting;
         if (this.showAttendance) {
-          this.attendanceForm = new FormControl(
+          let childrenAttendanceForm = new FormControl(
             this.entity.copy()["childrenAttendance"],
           );
-          this.parent.addControl("childrenAttendance", this.attendanceForm);
+          this.parent.addControl("childrenAttendance", childrenAttendanceForm);
         } else {
           this.parent.removeControl("childrenAttendance");
-          this.attendanceForm = undefined;
         }
       });
     }
   }
 
   getAttendance(childId: string) {
-    let attendance = this.attendanceForm.value.get(childId);
+    let attendance = this.parent.get("childrenAttendance").value.get(childId);
     if (!attendance) {
       attendance = new EventAttendance();
-      this.attendanceForm.value.set(childId, attendance);
+      this.parent.get("childrenAttendance").value.set(childId, attendance);
     }
     return attendance;
   }
@@ -90,7 +88,7 @@ export class EditAttendanceComponent
     const children = this.formControl.value;
     const index = children.indexOf(id);
     children.splice(index, 1);
-    this.attendanceForm.value.delete(id);
+    this.parent.get("childrenAttendance").value.delete(id);
     this.formControl.markAsDirty();
     this.formControl.setValue([...children]);
   }
@@ -98,6 +96,5 @@ export class EditAttendanceComponent
   updateAttendanceValue(childId, property: "status" | "remarks", newValue) {
     this.formControl.markAsDirty();
     this.getAttendance(childId)[property] = newValue;
-    this.attendanceForm.setValue(this.attendanceForm.value);
   }
 }
