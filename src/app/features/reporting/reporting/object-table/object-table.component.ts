@@ -19,6 +19,7 @@ export class ObjectTableComponent implements OnInit {
   columns: string[];
 
   ngOnInit() {
+    this.objects = this.objects.flatMap((value) => value);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.columns = Object.keys(this.objects[0]);
