@@ -87,7 +87,10 @@ export class SelectReportComponent implements OnChanges {
   private checkDateRangeReport(): void {
     if (this.selectedReport.mode !== "sql") {
       this.isDateRangeReport = true;
-    } else if (this.selectedReport.version == 1) {
+    } else if (
+      this.selectedReport.version == 1 ||
+      this.selectedReport.version == undefined
+    ) {
       this.isDateRangeReport =
         this.selectedReport.neededArgs.indexOf("from") !== -1 ||
         this.selectedReport.neededArgs.indexOf("to") !== -1;

@@ -27,7 +27,7 @@ export class SqlV2TableComponent implements OnInit {
   isError = false;
 
   dataSource = new MatTableDataSource();
-  columns: string[] = ["Name", "Anzahl"]; // todo translate?
+  columns: string[] = ["Name", "Count"];
 
   data: SqlReportRow[] = [];
 

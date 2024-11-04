@@ -61,9 +61,14 @@ class ReportConfig extends Entity {
 }
 
 export interface ReportDefinitionDto {
+  /** an SQL query */
   query?: string;
+
+  /** title (human-readable) for a set of hierarchically grouped sub-items */
   groupTitle?: String;
-  items: ReportDefinitionDto[];
+
+  /** hierarchical child items, building a recursive set of report groups display in an indented way */
+  items?: ReportDefinitionDto[];
 }
 
 /**
@@ -117,22 +122,14 @@ export interface SqlReport extends ReportConfig {
   neededArgs: string[];
 
   /**
-   *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
-   *  example: {startDate: ["SQL_FROM_DATE"], endDate: ["SQL_TO_DATE"]}
+   * see ReportConfig docs
    */
   transformations: {
     [key: string]: string[];
   };
 
   /**
-   *  (sql v2 only) ReportDefinitionItem, ether ReportQuery or ReportGroup
-   *
-   *  Can be ReportQuery:
-   *  {query: "SELECT * FROM foo"}
-   *
-   *  Can be ReportGroup:
-   *  {groupTitle: "This is a group", items: [...]}
-   *
+   *  see ReportConfig docs
    */
   reportDefinition: ReportDefinitionDto[];
 }
