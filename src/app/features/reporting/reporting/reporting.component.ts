@@ -51,7 +51,7 @@ export class ReportingComponent {
   reportCalculation: ReportCalculation | null = null;
 
   data: any[];
-  exportableData: any[];
+  exportableData: any;
 
   constructor(
     private dataAggregationService: DataAggregationService,
@@ -88,8 +88,20 @@ export class ReportingComponent {
     this.currentReport = selectedReport;
 
     this.mode = selectedReport.mode ?? "reporting";
-    this.exportableData =
-      this.mode === "reporting" ? this.flattenReportRows() : this.data;
+
+    switch (this.mode) {
+      case "reporting":
+        this.exportableData = this.flattenReportRows();
+        break;
+      case "sql":
+        this.exportableData = this.sqlReportService.getCsv(
+          this.sqlReportService.flattenData(this.data),
+        );
+        break;
+      default:
+        this.exportableData = this.data;
+    }
+
     this.isLoading = false;
   }
 

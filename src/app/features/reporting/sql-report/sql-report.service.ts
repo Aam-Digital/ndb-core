@@ -5,6 +5,15 @@ import moment from "moment";
 import { map, switchMap, takeWhile } from "rxjs/operators";
 import { firstValueFrom, interval, lastValueFrom, Observable } from "rxjs";
 
+/**
+ * represents a TableRow of a SqlReportDataEntry
+ */
+export interface SqlReportRow {
+  key: string;
+  value: any[] | object | string | number;
+  level: number;
+}
+
 export interface ReportData {
   id: string;
   report: {
@@ -83,6 +92,137 @@ export class SqlReportService {
         throw error;
       }
     });
+  }
+
+  /**
+   * Handle ReportCalculation data and transform into ReportRow.
+   *
+   * example data:
+   * [
+   *   [
+   *     {
+   *       "Patenschaften neu verknüpft": 6
+   *     }
+   *   ],
+   *   [
+   *     {
+   *       "Patenschaften Aktiv": 0
+   *     }
+   *   ],
+   *   [
+   *     {
+   *       "Mentees neu aufgenommen": 2
+   *     }
+   *   ],
+   *   {
+   *     "Mentoren erreicht": [
+   *       [
+   *         {
+   *           "junge Erwachsene 20 bis 29 Jahren": 4
+   *         }
+   *       ],
+   *       [
+   *         {
+   *           "Erwachsene 30 bis 49 Jahren": 4
+   *         }
+   *       ]
+   *     ]
+   *   },
+   *   [
+   *     {
+   *       "anzahl": 3,
+   *       "status": "BEENDET",
+   *       "foerderungDurch": null
+   *     },
+   *     {
+   *       "anzahl": 1,
+   *       "status": "MATCHING_LÄUFT",
+   *       "foerderungDurch": null
+   *     },
+   *     {
+   *       "anzahl": 1,
+   *       "status": "MATCHING_LÄUFT",
+   *       "foerderungDurch": "Menschen stärken Menschen"
+   *     },
+   *     {
+   *       "anzahl": 1,
+   *       "status": "PATENSCHAFT",
+   *       "foerderungDurch": null
+   *     }
+   *   ]
+   * ]
+   *
+   * @param data raw ReportCalculationData or sub-array
+   * @param level each level will add some left-padding to visualize hierarchy
+   */
+  flattenData(data: any[], level = 0): SqlReportRow[] {
+    const result: SqlReportRow[] = [];
+
+    data.forEach((item: any[] | object) => {
+      if (Array.isArray(item)) {
+        result.push(...this.flattenData(item, level));
+      } else if (typeof item === "object") {
+        let keys: string[] = Object.keys(item);
+
+        if (keys.length === 1) {
+          const key = keys[0];
+          const value = item[key];
+          if (Array.isArray(value)) {
+            result.push({
+              key,
+              value: this.sumChildValues(value),
+              level,
+            });
+
+            result.push(...this.flattenData(value, level + 1));
+          } else {
+            result.push({ key, value, level });
+          }
+        }
+
+        if (keys.length > 1) {
+          // assume a GROUP BY statement
+          result.push(...this.mapGroupByRow(item, level));
+        }
+      }
+    });
+
+    return result;
+  }
+
+  /**
+   * sum of all number values of this item
+   *
+   * @param value any object array
+   */
+  private sumChildValues(value: any[]): number {
+    return value
+      .flatMap((it) => it)
+      .flatMap((it) => Object.values(it))
+      .filter((valueType) => typeof valueType === "number")
+      .reduce((p, n) => p + n);
+  }
+
+  /**
+   * map a multi value object to a ReportRow.
+   * Attention: assumes, that the first key is the numeric value of this block.
+   *
+   * @param item object to transform
+   * @param level current hierarchy level of this row
+   * @private
+   */
+  private mapGroupByRow(item: object, level: number) {
+    let keys = Object.keys(item);
+    return [
+      {
+        key: keys
+          .slice(1)
+          .map((key) => key + ": " + (item[key] || "N/A"))
+          .join(", "),
+        value: Object.values(item)[0],
+        level,
+      },
+    ];
   }
 
   private getLastReports(
@@ -190,5 +330,30 @@ export class SqlReportService {
       moment(argTo.toString()).format("YYYY-MM-DD") ==
         moment(to).format("YYYY-MM-DD")
     );
+  }
+
+  getCsv(sqlData: SqlReportRow[]): any {
+    let deepestLevel: number = sqlData.reduce(
+      (previousValue, currentValue) =>
+        Math.max(previousValue, currentValue.level),
+      0,
+    );
+
+    let csv = "";
+
+    csv += "Name" + ",".repeat(deepestLevel + 1) + "Value\n";
+
+    for (const row of sqlData) {
+      csv +=
+        ",".repeat(row.level) +
+        '"' +
+        row.key +
+        '"' +
+        ",".repeat(deepestLevel + 1 - row.level) +
+        row.value +
+        "\n";
+    }
+
+    return csv;
   }
 }
