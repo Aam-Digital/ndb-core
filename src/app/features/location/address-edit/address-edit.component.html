@@ -65,7 +65,12 @@
 </div>
 
 @if (!disabled) {
-  <app-address-search
-    (locationSelected)="updateFromAddressSearch($event)"
-  ></app-address-search>
+  <div class="margin-bottom-regular container">
+    <div class="flex-row gap-regular align-start full-width">
+      <app-address-search (locationSelected)="updateFromAddressSearch($event)" class="full-width"></app-address-search>
+      <button mat-icon-button (click)="useGps()" matTooltip="Use the GPS to get the current location" i18n-matTooltip>
+        <fa-icon icon="location-crosshairs"></fa-icon>
+      </button>
+    </div>
+  </div>
 }

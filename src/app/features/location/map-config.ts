@@ -14,3 +14,5 @@ export interface MapConfig {
    */
   start?: [number, number];
 }
+
+export const FIXED_THROUGH_GPS = "fixed through GPS";

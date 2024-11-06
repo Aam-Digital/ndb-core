@@ -8,6 +8,7 @@ import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { GpsService } from "../gps.service";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -46,7 +47,9 @@ export class AddressEditComponent {
 
   manualAddressEnabled: boolean;
 
-  constructor(private confirmationDialog: ConfirmationDialogService) {}
+  constructor(private confirmationDialog: ConfirmationDialogService, private gpsService: GpsService) {}
+  location: { latitude: number; longitude: number; accuracy: number } | null = null;
+  error: string | null = null;
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;
@@ -72,6 +75,28 @@ export class AddressEditComponent {
       locationString: manualAddress,
       geoLookup: this.selectedLocation?.geoLookup,
     });
+  }
+
+  useGps() {
+    this.gpsService.getGpsLocationCoordinates()
+      .then(location => {
+        this.location = location;
+        
+        return this.gpsService.getGpsLocationAddress().then(address => {
+          this.updateLocation({
+            locationString: address,
+            geoLookup: {
+              lat: location.latitude,
+              lon: location.longitude,
+              display_name: address,
+            },
+          });
+        });
+      })
+      .catch(error => {
+        this.error = error;
+        this.location = null;
+      });
   }
 
   async updateFromAddressSearch(
