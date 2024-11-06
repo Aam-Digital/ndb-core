@@ -19,7 +19,19 @@ export class DemoPublicFormGeneratorService extends DemoDataGenerator<PublicForm
     form.description = $localize`This is a form that can be shared as a link or embedded in a website. It can be filled by users without having an account. For example you can let participants self-register their details and just review the records within Aam Digital.`;
     form.entity = "Child";
     form.columns = {
-      fields: ["name", "phone", "gender", "dateOfBirth", "center"],
+      fields: [
+        {
+          id: "name",
+          defaultValue: {
+            mode: "static",
+            value: "static name Testtt",
+          },
+        },
+        "phone",
+        "gender",
+        "dateOfBirth",
+        "center",
+      ],
     };
 
     return [form];

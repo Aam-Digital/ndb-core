@@ -87,6 +87,10 @@ export class EntityFormService {
     forTable = false,
   ): FormFieldConfig {
     const fullField = toFormFieldConfig(formField);
+
+    if (fullField.defaultValue) {
+      entityType.schema.get(fullField.id).defaultValue = fullField.defaultValue;
+    }
     try {
       return this.addSchemaToFormField(
         fullField,
