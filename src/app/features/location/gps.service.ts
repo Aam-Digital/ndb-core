@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { GeoService } from './geo.service';
+import { Injectable } from "@angular/core";
+import { GeoService } from "./geo.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class GpsService {
 
@@ -11,7 +11,7 @@ export class GpsService {
 
   getGpsLocationCoordinates(): Promise<{ latitude: number; longitude: number; accuracy: number }> {
     return new Promise((resolve, reject) => {
-      if ('geolocation' in navigator) {
+      if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
           (position) => resolve(this.handleGpsLocationPosition(position)),
           (error) => {
@@ -24,7 +24,7 @@ export class GpsService {
           }
         );
       } else {
-        reject('Geolocation is not supported by this browser.');
+        reject("Geolocation is not supported by this browser.");
       }
     });
   }
