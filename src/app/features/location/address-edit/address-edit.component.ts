@@ -9,6 +9,8 @@ import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GpsService } from "../gps.service";
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { NgIf } from "@angular/common";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -17,6 +19,7 @@ import { GpsService } from "../gps.service";
   selector: "app-address-edit",
   standalone: true,
   imports: [
+    NgIf,
     MatButton,
     AddressSearchComponent,
     MatFormField,
@@ -26,6 +29,7 @@ import { GpsService } from "../gps.service";
     MatTooltip,
     MatIconButton,
     FaIconComponent,
+    MatProgressSpinnerModule,
   ],
   templateUrl: "./address-edit.component.html",
   styleUrl: "./address-edit.component.scss",
@@ -48,6 +52,7 @@ export class AddressEditComponent {
   manualAddressEnabled: boolean;
 
   constructor(private confirmationDialog: ConfirmationDialogService, private gpsService: GpsService) {}
+  public gpsLoading = false;
   error: string | null = null;
 
   updateLocation(selected: GeoLocation | undefined) {
@@ -77,6 +82,7 @@ export class AddressEditComponent {
   }
 
   useGps() {
+    this.gpsLoading = true;
     this.gpsService.getGpsLocationCoordinates()
       .then(location => {
         return this.gpsService.getGpsLocationAddress().then(address => {
@@ -88,9 +94,11 @@ export class AddressEditComponent {
               display_name: address,
             },
           });
+          this.gpsLoading = false;
         });
       })
       .catch(error => {
+        this.gpsLoading = false;
         this.error = error;
       });
   }
