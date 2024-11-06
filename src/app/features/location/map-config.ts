@@ -14,7 +14,3 @@ export interface MapConfig {
    */
   start?: [number, number];
 }
-
-export const LOCATION_PERMISSION_STATUS_GRANTED = "granted";
-
-export const LOCATION_PERMISSION_STATUS_PROMPT = "prompt";
