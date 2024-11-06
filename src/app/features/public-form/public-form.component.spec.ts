@@ -19,7 +19,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 
-fdescribe("PublicFormComponent", () => {
+describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
   let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
   let initRemoteDBSpy: jasmine.Spy;
