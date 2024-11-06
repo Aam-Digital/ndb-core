@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { GpsService } from './gps.service';
 import { GeoService } from './geo.service';
 
