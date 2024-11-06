@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { GeoService } from "./geo.service";
+import { LOCATION_PERMISSION_STATUS_GRANTED, LOCATION_PERMISSION_STATUS_PROMPT } from "./map-config";
 
 @Injectable({
   providedIn: "root",
@@ -14,18 +15,27 @@ export class GpsService {
     accuracy: number;
   }> {
     return new Promise((resolve, reject) => {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => resolve(this.handleGpsLocationPosition(position)),
-          (error) => {
-            reject(`Geolocation error: ${error.message}`);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 30000,
-          },
-        );
+      if ("permissions" in navigator && "geolocation" in navigator) {
+        navigator.permissions
+          .query({ name: "geolocation" })
+          .then((permissionStatus) => {
+            if (permissionStatus.state === LOCATION_PERMISSION_STATUS_GRANTED || permissionStatus.state === LOCATION_PERMISSION_STATUS_PROMPT) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => resolve(this.handleGpsLocationPosition(position)),
+                (error) => reject(`Geolocation error: ${error.message}`),
+                {
+                  enableHighAccuracy: true,
+                  timeout: 10000,
+                  maximumAge: 30000,
+                }
+              );
+            } else {
+              reject("Location permission denied by the user.");
+            }
+          })
+          .catch(() => {
+            reject("Unable to query geolocation permissions.");
+          });
       } else {
         reject("Geolocation is not supported by this browser.");
       }
