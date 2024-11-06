@@ -3,6 +3,23 @@ import { of } from "rxjs";
 import { GpsService } from "./gps.service";
 import { GeoService } from "./geo.service";
 
+function mockGeolocationPosition(): GeolocationPosition {
+  return {
+    coords: {
+      latitude: 51.5074,
+      longitude: -0.1278,
+      accuracy: 10,
+      altitude: null,
+      altitudeAccuracy: null,
+      heading: null,
+      speed: null,
+      toJSON: () => ({})
+    },
+    timestamp: Date.now(),
+    toJSON: () => ({})
+  };
+}
+
 describe("GpsService", () => {
   let service: GpsService;
   let geoService: jasmine.SpyObj<GeoService>;
@@ -26,20 +43,8 @@ describe("GpsService", () => {
 
   describe("getGpsLocationCoordinates", () => {
     it("should resolve with location coordinates if geolocation is available", async () => {
-      spyOn(navigator.geolocation, "getCurrentPosition").and.callFake((successCallback) => successCallback({
-        coords: {
-          latitude: 51.5074,
-          longitude: -0.1278,
-          accuracy: 10,
-          altitude: null,
-          altitudeAccuracy: null,
-          heading: null,
-          speed: null,
-          toJSON: () => ({})
-        },
-        timestamp: Date.now(),
-        toJSON: () => ({})
-      }));
+      spyOn(navigator.geolocation, "getCurrentPosition").and.callFake((successCallback) => successCallback(mockGeolocationPosition()));
+      
       const result = await service.getGpsLocationCoordinates();
       expect(result).toEqual({
         latitude: 51.5074,
@@ -98,20 +103,7 @@ describe("GpsService", () => {
 
   describe("handleGpsLocationPosition", () => {
     it("should update location and return position data", () => {
-      const position: GeolocationPosition = {
-        coords: {
-          latitude: 51.5074,
-          longitude: -0.1278,
-          accuracy: 10,
-          altitude: null,
-          altitudeAccuracy: null,
-          heading: null,
-          speed: null,
-          toJSON: () => ({})
-        },
-        timestamp: Date.now(),
-        toJSON: () => ({})
-      };
+      const position = mockGeolocationPosition();
 
       const result = service.handleGpsLocationPosition(position);
       expect(service.location).toEqual({ lat: 51.5074, lon: -0.1278 });
