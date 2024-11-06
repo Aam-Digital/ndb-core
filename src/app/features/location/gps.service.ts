@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import 'leaflet';
 import { GeoService } from './geo.service';
 
 @Injectable({
@@ -7,25 +6,14 @@ import { GeoService } from './geo.service';
 })
 export class GpsService {
 
-  constructor(private geoService: GeoService) {}
+  constructor(private readonly geoService: GeoService) {}
   location: { lat: number; lon: number; } | null = null;
 
   getGpsLocationCoordinates(): Promise<{ latitude: number; longitude: number; accuracy: number }> {
     return new Promise((resolve, reject) => {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
-          (position) => {
-            console.log({position}, "==>position")
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy,
-            });
-            this.location = {
-              lat: position.coords.latitude,
-              lon: position.coords.longitude
-            };
-          },
+          (position) => resolve(this.handlePosition(position)),
           (error) => {
             reject(`Geolocation error: ${error.message}`);
           },
@@ -42,18 +30,29 @@ export class GpsService {
   }
 
   getGpsLocationAddress(): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.location) {
         this.geoService.lookup(`${this.location.lat}, ${this.location.lon}`)
           .subscribe((results) => {
-            console.log({results}, "==>results")
             if (results.length > 0) {
               resolve(results[0].display_name);
             } else {
-              reject('No results found');
+              resolve(`Lat: ${this.location.lat}, Lon: ${this.location.lon}`);
             }
           });
         }
       });
-    }
+  }
+
+  private handlePosition(position: GeolocationPosition): { latitude: number; longitude: number; accuracy: number } {
+    this.location = {
+      lat: position.coords.latitude,
+      lon: position.coords.longitude
+    };
+    return {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      accuracy: position.coords.accuracy
+    };
+  }
 }

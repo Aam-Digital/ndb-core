@@ -48,7 +48,6 @@ export class AddressEditComponent {
   manualAddressEnabled: boolean;
 
   constructor(private confirmationDialog: ConfirmationDialogService, private gpsService: GpsService) {}
-  location: { latitude: number; longitude: number; accuracy: number } | null = null;
   error: string | null = null;
 
   updateLocation(selected: GeoLocation | undefined) {
@@ -80,8 +79,6 @@ export class AddressEditComponent {
   useGps() {
     this.gpsService.getGpsLocationCoordinates()
       .then(location => {
-        this.location = location;
-        
         return this.gpsService.getGpsLocationAddress().then(address => {
           this.updateLocation({
             locationString: address,
@@ -95,7 +92,6 @@ export class AddressEditComponent {
       })
       .catch(error => {
         this.error = error;
-        this.location = null;
       });
   }
 
