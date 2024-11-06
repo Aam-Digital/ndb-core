@@ -93,9 +93,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   private async initForm() {
     this.entity = new this.entityType();
-    Object.entries(this.prefilled).forEach(([prop, value]) => {
-      this.entity[prop] = value;
-    });
     this.entityFormService
       .createEntityForm(
         [].concat(...this.fieldGroups.map((group) => group.fields)),
