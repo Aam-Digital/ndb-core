@@ -24,7 +24,7 @@ export class DemoPublicFormGeneratorService extends DemoDataGenerator<PublicForm
           id: "name",
           defaultValue: {
             mode: "static",
-            value: "static name Testtt",
+            value: "static name example",
           },
         },
         "phone",
