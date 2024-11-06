@@ -12,8 +12,8 @@ export class GpsService {
   getGpsLocationCoordinates(): Promise<{ latitude: number; longitude: number; accuracy: number }> {
     return new Promise((resolve, reject) => {
       if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => resolve(this.handlePosition(position)),
+      navigator.geolocation.getCurrentPosition(
+          (position) => resolve(this.handleGpsLocationPosition(position)),
           (error) => {
             reject(`Geolocation error: ${error.message}`);
           },
@@ -44,7 +44,7 @@ export class GpsService {
       });
   }
 
-  private handlePosition(position: GeolocationPosition): { latitude: number; longitude: number; accuracy: number } {
+  public handleGpsLocationPosition(position: GeolocationPosition): { latitude: number; longitude: number; accuracy: number } {
     this.location = {
       lat: position.coords.latitude,
       lon: position.coords.longitude
