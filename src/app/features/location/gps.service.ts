@@ -32,7 +32,8 @@ export class GpsService {
           return;
         }
 
-        navigator.geolocation.getCurrentPosition( //NOSONAR geolocation is necessary
+        navigator.geolocation.getCurrentPosition(
+          //NOSONAR geolocation is necessary
           (position) => resolve(this.handleGpsLocationPosition(position)),
           (error) => reject(`Geolocation error: ${error.message}`),
         );
