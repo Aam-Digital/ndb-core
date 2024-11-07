@@ -13,21 +13,31 @@ export class GpsService {
     longitude: number;
     accuracy: number;
   }> {
-    return new Promise((resolve, reject) => {
-      if ("geolocation" in navigator) {
+    return new Promise(async (resolve, reject) => {
+      if (!("geolocation" in navigator)) {
+        reject("Geolocation is not supported by this browser.");
+        return;
+      }
+
+      try {
+        const permissionStatus = await navigator.permissions.query({
+          name: "geolocation",
+        });
+
+        if (
+          permissionStatus.state !== "granted" &&
+          permissionStatus.state !== "prompt"
+        ) {
+          reject("Geolocation permission is not granted.");
+          return;
+        }
+
         navigator.geolocation.getCurrentPosition(
           (position) => resolve(this.handleGpsLocationPosition(position)),
-          (error) => {
-            reject(`Geolocation error: ${error.message}`);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 30000,
-          },
+          (error) => reject(`Geolocation error: ${error.message}`),
         );
-      } else {
-        reject("Geolocation is not supported by this browser.");
+      } catch (error) {
+        reject("Failed to check geolocation permissions.");
       }
     });
   }

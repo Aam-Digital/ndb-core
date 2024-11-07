@@ -9,7 +9,7 @@ import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GpsService } from "../gps.service";
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NgIf } from "@angular/common";
 
 /**
@@ -51,7 +51,10 @@ export class AddressEditComponent {
 
   manualAddressEnabled: boolean;
 
-  constructor(private confirmationDialog: ConfirmationDialogService, private gpsService: GpsService) {}
+  constructor(
+    private confirmationDialog: ConfirmationDialogService,
+    private gpsService: GpsService,
+  ) {}
   public gpsLoading = false;
   error: string | null = null;
 
@@ -83,9 +86,10 @@ export class AddressEditComponent {
 
   useGps() {
     this.gpsLoading = true;
-    this.gpsService.getGpsLocationCoordinates()
-      .then(location => {
-        return this.gpsService.getGpsLocationAddress().then(address => {
+    this.gpsService
+      .getGpsLocationCoordinates()
+      .then((location) => {
+        return this.gpsService.getGpsLocationAddress().then((address) => {
           this.updateLocation({
             locationString: address,
             geoLookup: {
@@ -97,7 +101,7 @@ export class AddressEditComponent {
           this.gpsLoading = false;
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.gpsLoading = false;
         this.error = error;
       });
