@@ -83,27 +83,25 @@ export class AddressEditComponent {
     });
   }
 
-  updateLocationFromGps() {
+  async updateLocationFromGps() {
     this.gpsLoading = true;
-    this.gpsService
-      .getGpsLocationCoordinates()
-      .then((location) => {
-        return this.gpsService.getGpsLocationAddress().then((address) => {
-          this.updateLocation({
-            locationString: address,
-            geoLookup: {
-              lat: location.latitude,
-              lon: location.longitude,
-              display_name: address,
-            },
-          });
-          this.gpsLoading = false;
-        });
-      })
-      .catch((error) => {
-        this.gpsLoading = false;
-        return;
+    try {
+      const location = await this.gpsService.getGpsLocationCoordinates();
+      const address = await this.gpsService.getGpsLocationAddress();
+
+      this.updateLocation({
+        locationString: address,
+        geoLookup: {
+          lat: location.latitude,
+          lon: location.longitude,
+          display_name: address,
+        },
       });
+    } catch (error) {
+      console.error("Error updating location:", error);
+    } finally {
+      this.gpsLoading = false;
+    }
   }
 
   async updateFromAddressSearch(

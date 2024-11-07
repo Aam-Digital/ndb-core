@@ -8,44 +8,38 @@ export class GpsService {
   constructor(private readonly geoService: GeoService) {}
   location: { lat: number; lon: number } | null = null;
 
-  getGpsLocationCoordinates(): Promise<{
+  async getGpsLocationCoordinates(): Promise<{
     latitude: number;
     longitude: number;
     accuracy: number;
   }> {
-    return new Promise(async (resolve, reject) => {
-      if (!("geolocation" in navigator)) {
-        reject("Geolocation is not supported by this browser.");
-        return;
-      }
+    if (!("geolocation" in navigator)) {
+      return;
+    }
 
-      try {
-        const permissionStatus = await navigator.permissions.query({
-          name: "geolocation", //NOSONAR geolocation is necessary
-        });
+    const permissionStatus = await navigator.permissions.query({
+      // eslint-disable-next-line prettier/prettier
+      name: "geolocation", //NOSONAR geolocation is necessary
+    });
+    if (
+      permissionStatus.state !== "granted" &&
+      permissionStatus.state !== "prompt"
+    ) {
+      return;
+    }
 
-        if (
-          permissionStatus.state !== "granted" &&
-          permissionStatus.state !== "prompt"
-        ) {
-          reject("Geolocation permission is not granted.");
-          return;
-        }
-
-        // eslint-disable-next-line prettier/prettier
-        navigator.geolocation.getCurrentPosition( //NOSONAR geolocation is necessary
-          (position) => resolve(this.handleGpsLocationPosition(position)),
-          (error) => reject(`Geolocation error: ${error.message}`),
-        );
-      } catch (error) {
-        reject("Failed to check geolocation permissions.");
-      }
+    return new Promise((resolve, reject) => {
+      // eslint-disable-next-line prettier/prettier
+      navigator.geolocation.getCurrentPosition( //NOSONAR geolocation is necessary
+        (position) => resolve(this.handleGpsLocationPosition(position)),
+        (error) => reject(`Geolocation error: ${error.message}`),
+      );
     });
   }
 
-  getGpsLocationAddress(): Promise<string> {
-    return new Promise((resolve) => {
-      if (this.location) {
+  async getGpsLocationAddress(): Promise<string> {
+    if (this.location) {
+      return new Promise((resolve) => {
         this.geoService
           .lookup(`${this.location.lat}, ${this.location.lon}`)
           .subscribe((results) => {
@@ -55,11 +49,12 @@ export class GpsService {
               resolve(`Lat: ${this.location.lat}, Lon: ${this.location.lon}`);
             }
           });
-      }
-    });
+      });
+    }
+    return;
   }
 
-  public handleGpsLocationPosition(position: GeolocationPosition): {
+  handleGpsLocationPosition(position: GeolocationPosition): {
     latitude: number;
     longitude: number;
     accuracy: number;
