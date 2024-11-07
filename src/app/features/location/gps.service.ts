@@ -8,11 +8,6 @@ export class GpsService {
   constructor(private readonly geoService: GeoService) {}
   location: { lat: number; lon: number } | null = null;
 
-  /**
-   * Retrieves the user's GPS location coordinates.
-   * This feature is essential for field workers to provide their current address,
-   * which requires accurate GPS data for the application.
-   */
   getGpsLocationCoordinates(): Promise<{
     latitude: number;
     longitude: number;
@@ -26,7 +21,7 @@ export class GpsService {
 
       try {
         const permissionStatus = await navigator.permissions.query({
-          name: "geolocation",
+          name: "geolocation", //NOSONAR geolocation is necessary
         });
 
         if (
@@ -37,7 +32,7 @@ export class GpsService {
           return;
         }
 
-        navigator.geolocation.getCurrentPosition(
+        navigator.geolocation.getCurrentPosition( //NOSONAR geolocation is necessary
           (position) => resolve(this.handleGpsLocationPosition(position)),
           (error) => reject(`Geolocation error: ${error.message}`),
         );

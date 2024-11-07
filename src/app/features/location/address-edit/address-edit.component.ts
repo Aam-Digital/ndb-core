@@ -103,9 +103,7 @@ export class AddressEditComponent {
       })
       .catch((error) => {
         this.gpsLoading = false;
-        this.error =
-          "GPS access is necessary to retrieve your current address.";
-        console.error("Error retrieving GPS coordinates:", error);
+        this.error = error;
       });
   }
 
