@@ -73,8 +73,8 @@
       ></app-address-search>
       <button
         mat-icon-button
-        (click)="useGps()"
-        matTooltip="Use the GPS to get the current location"
+        (click)="updateLocationFromGps()"
+        matTooltip="To accurately log your current address, please allow GPS access."
         i18n-matTooltip
       >
         <fa-icon *ngIf="!gpsLoading" icon="location-crosshairs"></fa-icon>

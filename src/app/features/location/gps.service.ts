@@ -8,6 +8,11 @@ export class GpsService {
   constructor(private readonly geoService: GeoService) {}
   location: { lat: number; lon: number } | null = null;
 
+  /**
+   * Retrieves the user's GPS location coordinates.
+   * This feature is essential for field workers to provide their current address,
+   * which requires accurate GPS data for the application.
+   */
   getGpsLocationCoordinates(): Promise<{
     latitude: number;
     longitude: number;
