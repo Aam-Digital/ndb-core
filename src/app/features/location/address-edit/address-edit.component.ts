@@ -56,7 +56,6 @@ export class AddressEditComponent {
     private gpsService: GpsService,
   ) {}
   public gpsLoading = false;
-  error: string | null = null;
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;
@@ -103,7 +102,7 @@ export class AddressEditComponent {
       })
       .catch((error) => {
         this.gpsLoading = false;
-        this.error = error;
+        return;
       });
   }
 

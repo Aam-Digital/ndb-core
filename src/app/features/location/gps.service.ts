@@ -32,6 +32,7 @@ export class GpsService {
           return;
         }
 
+        // eslint-disable-next-line prettier/prettier
         navigator.geolocation.getCurrentPosition( //NOSONAR geolocation is necessary
           (position) => resolve(this.handleGpsLocationPosition(position)),
           (error) => reject(`Geolocation error: ${error.message}`),
