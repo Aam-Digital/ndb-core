@@ -204,4 +204,15 @@ export class SessionManagerService {
       db.initIndexedDB(dbName);
     }
   }
+
+  isUserStatus(): boolean {
+    const isNetworkOnline = navigator.onLine;
+  
+    const isRemoteLoggedIn = this.remoteLoggedIn && isNetworkOnline;
+  
+    const isUserLoggedIn =
+      this.loginStateSubject.getValue() === LoginState.LOGGED_IN;
+
+    return isUserLoggedIn && isRemoteLoggedIn;
+  }
 }

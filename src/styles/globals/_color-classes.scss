@@ -46,6 +46,14 @@
   color: white;
 }
 
+.success {
+  color: green;
+}
+
+.danger {
+  color: red;
+}
+
 @each $level, $color in colors.$w-levels {
   .w-#{$level} {
     background-color: $color !important;

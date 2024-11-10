@@ -39,6 +39,8 @@ import { LoginStateSubject } from "../../session/session-type";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
+import { faWifi, faBan } from '@fortawesome/free-solid-svg-icons';
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * The main user interface component as root element for the app structure
@@ -67,6 +69,7 @@ import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizar
     PrimaryActionComponent,
     DisplayImgComponent,
     SetupWizardButtonComponent,
+    MatTooltipModule,
   ],
   standalone: true,
 })
@@ -78,11 +81,15 @@ export class UiComponent {
   /** latest version of the site settings*/
   siteSettings = new SiteSettings();
 
+  faCloudOff = faBan;
+  faCloudOn = faWifi;
+
   constructor(
     private screenWidthObserver: ScreenWidthObserver,
     private siteSettingsService: SiteSettingsService,
     private loginState: LoginStateSubject,
     private sessionManager: SessionManagerService,
+    private sessionManagerService: SessionManagerService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -93,6 +100,10 @@ export class UiComponent {
     this.siteSettingsService.siteSettings.subscribe(
       (s) => (this.siteSettings = s),
     );
+  }
+
+  aapStatusIndicator() {
+    return this.sessionManagerService.isUserStatus();
   }
 
   /**
