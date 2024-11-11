@@ -48,11 +48,11 @@
 
     <app-sync-status></app-sync-status>
 
-    <button mat-icon-button *ngIf="aapStatusIndicator()" (click)="onClick()" matTooltip="You are online" i18n-matTooltip>
+    <button mat-icon-button *ngIf="aapStatusIndicator()" matTooltip="You are online" i18n-matTooltip>
       <fa-icon class="success" [icon]="faCloudOn"  ></fa-icon>
     </button>
     
-    <button mat-icon-button *ngIf="!aapStatusIndicator()" (click)="onClick()" matTooltip="You are offline" i18n-matTooltip>
+    <button mat-icon-button *ngIf="!aapStatusIndicator()" matTooltip="You are offline" i18n-matTooltip>
       <fa-icon class="danger" [icon]="faCloudOn"  ></fa-icon>
     </button>
 
@@ -144,3 +144,4 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
+<app-primary-action *ngIf="isLoggedIn()"></app-primary-action>
