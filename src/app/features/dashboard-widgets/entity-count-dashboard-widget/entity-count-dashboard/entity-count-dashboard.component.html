@@ -2,7 +2,11 @@
   [icon]="entityIcon"
   theme="child"
   [title]="totalEntities"
-  [subtitle]="label"
+  [subtitle]="subtitle ?? label"
+  [explanation]="
+    explanation ??
+    'Displays the count of entities grouped by the specified fields'
+  "
   [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
   [paginationPageSize]="4"
 >

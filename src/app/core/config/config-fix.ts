@@ -102,6 +102,13 @@ export const defaultJsonConfig = {
         },
         {
           component: "EntityCountDashboard",
+          config:{
+            subtitle: $localize`:Subtitle: Entity Group Counts`,
+            explanation: $localize`:Explanation: Displays counts of entities grouped by center and gender`,
+
+            entityType: "Child",  // Entity type to group by (e.g., "Child", "Teacher")
+            groupBy: ["center", "gender"],  // Fields to group by
+          }
         },
         {
           component: "ImportantNotesDashboard",

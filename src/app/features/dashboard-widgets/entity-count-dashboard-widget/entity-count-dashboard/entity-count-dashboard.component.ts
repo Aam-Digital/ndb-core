@@ -121,6 +121,9 @@ export class EntityCountDashboardComponent
   label: string;
   entityIcon: IconName;
 
+  @Input() subtitle: string;
+  @Input() explanation: string;
+
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
