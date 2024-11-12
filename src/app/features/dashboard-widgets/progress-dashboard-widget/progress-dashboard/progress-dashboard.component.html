@@ -2,7 +2,11 @@
   <app-dashboard-list-widget
     icon="list"
     theme="child"
-    [subtitle]="data?.title"
+    [subtitle]="subtitle ?? data.title ?? 'Progress Overview'"
+    [explanation]="
+      explanation ?? 'Shows the progress of different parts of the organization'
+    "
+    i8n-explanation
     [entries]="data?.parts"
   >
     <div class="table-wrapper">

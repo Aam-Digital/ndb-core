@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -34,6 +34,9 @@ export class TodosDashboardComponent extends DashboardWidget {
     data.filter(this.filterEntries).sort(this.sortEntries);
 
   startDateLabel: string = Todo.schema.get("startDate").label;
+
+  @Input() subtitle: string;
+  @Input() explanation: string;
 
   constructor(
     private formDialog: FormDialogService,

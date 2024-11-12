@@ -98,6 +98,8 @@ export const defaultJsonConfig = {
                 link: "/public-form/test",
               },
             ],
+             subtitle: $localize`:Shortcut dashboard subtitle:Quick Actions`, 
+        explanation: $localize`:Shortcut dashboard explanation:Shortcuts to quickly navigate to common actions.`
           },
         },
         {
@@ -114,11 +116,16 @@ export const defaultJsonConfig = {
           component: "ImportantNotesDashboard",
           config: {
             warningLevels: ["WARNING", "URGENT"],
+            subtitle: $localize`:Subtitle:Notes Needing Follow-Up`,
+            explanation: $localize`:Explanation:These notes require immediate attention or follow-up actions.`,
           },
         },
         {
           component: "TodosDashboard",
-          config: {},
+          config: {
+            subtitle: $localize`:Subtitle:Tasks Due`,
+            explanation: $localize`:Explanation:Tasks that are due and require completion soon.`,
+          },
         },
         {
           component: "NotesDashboard",
@@ -162,10 +169,16 @@ export const defaultJsonConfig = {
           component: "ProgressDashboard",
           config: {
             dashboardConfigId: "1",
+            subtitle: $localize`:Subtitle:Organization Progress`,
+            explanation: $localize`:Explanation:Shows the progress towards organizational targets.`,
           },
         },
         {
           component: "BirthdayDashboard",
+          config:{
+            subtitle: $localize`:Subtitle:Upcoming Birthdays`,
+            explanation: $localize`:Explanation:List of children who have upcoming birthdays`,
+          }
         },
       ],
     },

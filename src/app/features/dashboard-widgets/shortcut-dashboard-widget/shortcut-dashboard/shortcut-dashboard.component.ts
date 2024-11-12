@@ -44,6 +44,9 @@ export class ShortcutDashboardComponent {
   }
   _shortcuts: MenuItem[] = [];
 
+  @Input() subtitle: string;
+  @Input() explanation: string;
+
   constructor(
     private routePermissionsService: RoutePermissionsService,
     private locationStrategy: LocationStrategy,

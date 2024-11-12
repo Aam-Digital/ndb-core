@@ -43,6 +43,9 @@ export class ProgressDashboardComponent
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
 
+  @Input() subtitle: string;
+  @Input() explanation: string;
+
   constructor(
     private entityMapper: EntityMapperService,
     private dialog: MatDialog,

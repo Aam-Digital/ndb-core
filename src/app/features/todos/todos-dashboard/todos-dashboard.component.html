@@ -1,7 +1,8 @@
 <app-dashboard-list-widget
   icon="tasks"
-  subtitle="Tasks due"
+  [subtitle]="subtitle ?? 'Tasks due'"
   i18n-subtitle="subtitle|dashboard showing open todos"
+  [explanation]="explanation ?? 'Tasks that are due'"
   theme="note"
   entityType="Todo"
   [dataMapper]="dataMapper"

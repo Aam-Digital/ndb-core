@@ -55,6 +55,9 @@ export class BirthdayDashboardComponent
 
   entries: EntityWithBirthday[];
 
+  @Input() subtitle: string;
+  @Input() explanation: string;
+
   constructor(private entityMapper: EntityMapperService) {
     super();
     this.today = new Date();

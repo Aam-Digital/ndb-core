@@ -31,6 +31,9 @@ export class ImportantNotesDashboardComponent extends DashboardWidget {
     super();
   }
 
+  @Input() subtitle: string;
+  @Input() explanation: string;
+
   private noteIsRelevant(note: Note): boolean {
     return this.warningLevels.includes(note.warningLevel.id);
   }

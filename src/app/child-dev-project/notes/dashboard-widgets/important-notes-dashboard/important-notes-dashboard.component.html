@@ -1,7 +1,11 @@
 <app-dashboard-list-widget
   icon="exclamation-triangle"
-  subtitle="Notes needing follow-up"
+  [subtitle]="subtitle ?? 'Notes needing follow-up'"
   i18n-subtitle="subtitle|dashboard showing notes that require action"
+  [explanation]="
+    explanation ?? 'Notes require immediate attention or follow-up actions'
+  "
+  i18n-explanation
   theme="note"
   entityType="Note"
   [dataMapper]="dataMapper"
