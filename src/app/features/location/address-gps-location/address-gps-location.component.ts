@@ -43,7 +43,7 @@ export class AddressGpsLocationComponent {
           lon: location.longitude,
         };
         await this.mapPopupComponent.mapClicked(this.location);
-        this.alertService.addInfo("Location updated from GPS.");
+        this.alertService.addInfo("Selected address based on GPS.");
       }
     } catch (error) {
       Logging.error("Failed to get GPS location", error);
