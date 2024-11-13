@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { Logging } from 'app/core/logging/logging.service';
-import { GpsService } from '../gps.service';
-import { AddressEditComponent } from '../address-edit/address-edit.component';
+import { Component } from "@angular/core";
+import { Logging } from "app/core/logging/logging.service";
+import { GpsService } from "../gps.service";
+import { AddressEditComponent } from "../address-edit/address-edit.component";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
@@ -9,7 +9,7 @@ import { MatIconButton } from "@angular/material/button";
 import { NgIf } from "@angular/common";
 
 @Component({
-  selector: 'app-address-gps-location',
+  selector: "app-address-gps-location",
   standalone: true,
   imports: [
     MatTooltip,
@@ -19,11 +19,10 @@ import { NgIf } from "@angular/common";
     MatTooltip,
     MatIconButton,
   ],
-  templateUrl: './address-gps-location.component.html',
-  styleUrl: './address-gps-location.component.scss'
+  templateUrl: "./address-gps-location.component.html",
+  styleUrl: "./address-gps-location.component.scss",
 })
 export class AddressGpsLocationComponent {
-
   constructor(
     private gpsService: GpsService,
     private addressEditComponent: AddressEditComponent,
@@ -50,5 +49,4 @@ export class AddressGpsLocationComponent {
       this.gpsLoading = false;
     }
   }
-
 }
