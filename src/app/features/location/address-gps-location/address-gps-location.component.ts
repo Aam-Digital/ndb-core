@@ -46,8 +46,10 @@ export class AddressGpsLocationComponent {
         this.alertService.addInfo("Selected address based on GPS.");
       }
     } catch (error) {
-      Logging.error("Failed to get GPS location", error);
-      this.alertService.addAlert(error);
+      Logging.error(error);
+      this.alertService.addInfo(
+        "GPS permission denied. Please enable it in your device settings.",
+      );
     } finally {
       this.gpsLoading = false;
     }
