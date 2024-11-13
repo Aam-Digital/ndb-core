@@ -11,6 +11,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GpsService } from "../gps.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NgIf } from "@angular/common";
+import { Logging } from "app/core/logging/logging.service";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -98,7 +99,7 @@ export class AddressEditComponent {
         },
       });
     } catch (error) {
-      console.error("Error updating location:", error);
+      Logging.error("Failed to get GPS location", error);
     } finally {
       this.gpsLoading = false;
     }
