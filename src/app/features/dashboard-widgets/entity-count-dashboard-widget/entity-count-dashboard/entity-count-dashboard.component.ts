@@ -139,11 +139,16 @@ export class EntityCountDashboardComponent
     this.label = this._entity.labelPlural;
     this.entityIcon = this._entity.icon;
 
+    // Load all entities of the specified type
     const entities = await this.entityMapper.loadType(this._entity);
-    this.totalEntities = entities.length;
+
+    // Filter entities to only include active ones for the total count
+    const activeEntities = entities.filter((e) => e.isActive);
+
+    this.totalEntities = activeEntities.length;
     for (const groupByField of this.groupBy) {
       this.entityGroupCounts[groupByField] = this.calculateGroupCounts(
-        entities.filter((e) => e.isActive),
+        activeEntities,
         groupByField,
       );
     }
