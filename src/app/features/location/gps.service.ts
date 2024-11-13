@@ -11,7 +11,7 @@ export class GpsService {
     longitude: number;
     accuracy: number;
   }> {
-    if (!("geolocation" in navigator)) {
+    if (!("geolocation" in navigator) || !navigator.geolocation) {
       return;
     }
 
