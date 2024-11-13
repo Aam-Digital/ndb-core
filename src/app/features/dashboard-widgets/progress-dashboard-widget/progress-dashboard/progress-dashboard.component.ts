@@ -43,8 +43,10 @@ export class ProgressDashboardComponent
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
 
-  @Input() subtitle: string;
-  @Input() explanation: string;
+  @Input() subtitle: string =
+    $localize`:dashboard widget subtitle: Progress Overview`;
+  @Input() explanation: string =
+    $localize`:dashboard widget explanation: Shows the progress of different parts of project tasks. You can use this to track any kind of targets.`;
 
   constructor(
     private entityMapper: EntityMapperService,

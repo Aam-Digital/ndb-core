@@ -1,14 +1,12 @@
 <app-dashboard-list-widget
   icon="external-link-alt"
   theme="general"
-  [subtitle]="subtitle ?? 'Quick Actions'"
+  [subtitle]="subtitle"
   i18n-subtitle="
     Title of dashboard widget that shows a list of certain actions a user can
     click on
   "
-  [explanation]="
-    explanation ?? 'Shortcuts to quickly navigate to common actions'
-  "
+  [explanation]="explanation"
   i18n-explanation
   [entries]="_shortcuts"
 >

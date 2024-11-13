@@ -2,10 +2,8 @@
   <app-dashboard-list-widget
     icon="list"
     theme="child"
-    [subtitle]="subtitle ?? data.title ?? 'Progress Overview'"
-    [explanation]="
-      explanation ?? 'Shows the progress of different parts of project tasks. You can use this to track any kind of targets.'
-    "
+    [subtitle]="subtitle ?? data.title"
+    [explanation]="explanation"
     i8n-explanation
     [entries]="data?.parts"
   >

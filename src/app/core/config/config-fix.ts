@@ -169,15 +169,15 @@ export const defaultJsonConfig = {
           component: "ProgressDashboard",
           config: {
             dashboardConfigId: "1",
-            subtitle: $localize`:Subtitle:Organization Progress`,
-            explanation: $localize`:Explanation:Shows the progress towards organizational targets.`,
+            subtitle: $localize`:Subtitle:Progress Overview`,
+            explanation: $localize`:Explanation:Shows the progress of different parts of project tasks. You can use this to track any kind of targets.`,
           },
         },
         {
           component: "BirthdayDashboard",
           config:{
             subtitle: $localize`:Subtitle:Upcoming Birthdays`,
-            explanation: $localize`:Explanation:List of children who have upcoming birthdays`,
+            explanation: $localize`:Explanation:Shows upcoming birthdays`,
           }
         },
       ],
