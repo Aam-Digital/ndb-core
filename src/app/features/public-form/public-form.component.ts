@@ -86,9 +86,28 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     this.entityType = this.entities.get(
       this.formConfig.entity,
     ) as EntityConstructor<E>;
+    this.formConfig = this.migratePublicFormConfig(this.formConfig);
 
     this.fieldGroups = [this.formConfig.columns];
     await this.initForm();
+  }
+
+  private migratePublicFormConfig(
+    formConfig: PublicFormConfig,
+  ): PublicFormConfig {
+    if (formConfig?.prefilled) {
+      delete formConfig.prefilled;
+    }
+
+    if (formConfig?.columns && Array.isArray(formConfig.columns)) {
+      formConfig.columns = {
+        fields: formConfig.columns.flatMap((column: string[]) => {
+          return Array.isArray(column) ? column : [];
+        }),
+      };
+    }
+
+    return formConfig;
   }
 
   private async initForm() {

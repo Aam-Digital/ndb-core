@@ -67,8 +67,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migratePercentageDatatype,
       migrateEntityBlock,
       migrateGroupByConfig,
-      addDefaultNoteDetailsConfig,
-      migratePublicFormConfig,
+      addDefaultNoteDetailsConfig
     ];
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
@@ -89,19 +88,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
  * Multiple migrations are chained and can transform the same config part one after the other.
  */
 type ConfigMigration = (key: string, configPart: any) => any;
-
-// Add a new migration method for remove prefilled from publicformconfig
-const migratePublicFormConfig: ConfigMigration = (key, configPart) => {
-  if (key !== "PublicFormConfig") {
-    return configPart;
-  }
-
-  if (configPart?.prefilled) {
-    delete configPart.prefilled;
-  }
-
-  return configPart;
-};
 
 const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (
   key,
