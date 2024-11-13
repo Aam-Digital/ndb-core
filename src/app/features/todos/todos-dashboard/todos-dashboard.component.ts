@@ -37,7 +37,7 @@ export class TodosDashboardComponent extends DashboardWidget {
 
   @Input() subtitle: string = $localize`:dashboard widget subtitle:Tasks due`;
   @Input() explanation: string =
-    $localize`:dashboard widget explanation:Tasks that are due`;
+    $localize`:dashboard widget explanation:Tasks that are beyond their deadline`;
 
   constructor(
     private formDialog: FormDialogService,
