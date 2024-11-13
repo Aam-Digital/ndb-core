@@ -18,8 +18,7 @@ export class GpsService {
     }
 
     const permissionStatus = await navigator.permissions.query({
-      // eslint-disable-next-line prettier/prettier
-      name: "geolocation", //NOSONAR geolocation is necessary
+      name: "geolocation",
     });
     if (
       permissionStatus.state !== "granted" &&
@@ -29,8 +28,7 @@ export class GpsService {
     }
 
     return new Promise((resolve, reject) => {
-      // eslint-disable-next-line prettier/prettier
-      navigator.geolocation.getCurrentPosition( //NOSONAR geolocation is necessary
+      navigator.geolocation.getCurrentPosition(
         (position) => resolve(this.handleGpsLocationPosition(position)),
         (error) => reject(`Geolocation error: ${error.message}`),
       );
