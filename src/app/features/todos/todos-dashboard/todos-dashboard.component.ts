@@ -35,8 +35,9 @@ export class TodosDashboardComponent extends DashboardWidget {
 
   startDateLabel: string = Todo.schema.get("startDate").label;
 
-  @Input() subtitle: string;
-  @Input() explanation: string;
+  @Input() subtitle: string = $localize`:dashboard widget subtitle:Tasks due`;
+  @Input() explanation: string =
+    $localize`:dashboard widget explanation:Tasks that are due`;
 
   constructor(
     private formDialog: FormDialogService,
