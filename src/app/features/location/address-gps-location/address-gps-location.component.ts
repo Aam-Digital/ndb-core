@@ -48,7 +48,7 @@ export class AddressGpsLocationComponent {
     } catch (error) {
       Logging.error(error);
       this.alertService.addInfo(
-        "GPS permission denied. Please enable it in your device settings.",
+        "Location permission denied. Please enable it in your device settings.",
       );
     } finally {
       this.gpsLoading = false;
