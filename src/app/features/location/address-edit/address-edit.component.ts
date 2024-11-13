@@ -8,10 +8,8 @@ import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { GpsService } from "../gps.service";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NgIf } from "@angular/common";
-import { Logging } from "app/core/logging/logging.service";
+import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -30,7 +28,7 @@ import { Logging } from "app/core/logging/logging.service";
     MatTooltip,
     MatIconButton,
     FaIconComponent,
-    MatProgressSpinnerModule,
+    AddressGpsLocationComponent,
   ],
   templateUrl: "./address-edit.component.html",
   styleUrl: "./address-edit.component.scss",
@@ -52,11 +50,7 @@ export class AddressEditComponent {
 
   manualAddressEnabled: boolean;
 
-  constructor(
-    private confirmationDialog: ConfirmationDialogService,
-    private gpsService: GpsService,
-  ) {}
-  public gpsLoading = false;
+  constructor(private confirmationDialog: ConfirmationDialogService) {}
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;
@@ -82,27 +76,6 @@ export class AddressEditComponent {
       locationString: manualAddress,
       geoLookup: this.selectedLocation?.geoLookup,
     });
-  }
-
-  async updateLocationFromGps() {
-    this.gpsLoading = true;
-    try {
-      const location = await this.gpsService.getGpsLocationCoordinates();
-      const address = await this.gpsService.getGpsLocationAddress();
-
-      this.updateLocation({
-        locationString: address,
-        geoLookup: {
-          lat: location.latitude,
-          lon: location.longitude,
-          display_name: address,
-        },
-      });
-    } catch (error) {
-      Logging.error("Failed to get GPS location", error);
-    } finally {
-      this.gpsLoading = false;
-    }
   }
 
   async updateFromAddressSearch(
