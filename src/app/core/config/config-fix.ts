@@ -1,5 +1,7 @@
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import {
+  defaultDateFilters
+} from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
@@ -98,34 +100,19 @@ export const defaultJsonConfig = {
                 link: "/public-form/test",
               },
             ],
-             subtitle: $localize`:Shortcut dashboard subtitle:Quick Actions`, 
-        explanation: $localize`:Shortcut dashboard explanation:Shortcuts to quickly navigate to common actions.`
           },
         },
         {
           component: "EntityCountDashboard",
-          config:{
-            subtitle: $localize`:Subtitle: Entity Group Counts`,
-            explanation: $localize`:Explanation: Displays counts of entities grouped by center and gender`,
-
-            entityType: "Child",  // Entity type to group by (e.g., "Child", "Teacher")
-            groupBy: ["center", "gender"],  // Fields to group by
-          }
         },
         {
           component: "ImportantNotesDashboard",
           config: {
             warningLevels: ["WARNING", "URGENT"],
-            subtitle: $localize`:Subtitle:Notes Needing Follow-Up`,
-            explanation: $localize`:Explanation:These notes require immediate attention or follow-up actions.`,
           },
         },
         {
           component: "TodosDashboard",
-          config: {
-            subtitle: $localize`:Subtitle:Tasks Due`,
-            explanation: $localize`:Explanation:Tasks that are due and require completion soon.`,
-          },
         },
         {
           component: "NotesDashboard",
@@ -169,16 +156,10 @@ export const defaultJsonConfig = {
           component: "ProgressDashboard",
           config: {
             dashboardConfigId: "1",
-            subtitle: $localize`:Subtitle:Progress Overview`,
-            explanation: $localize`:Explanation:Shows the progress of different parts of project tasks. You can use this to track any kind of targets.`,
           },
         },
         {
           component: "BirthdayDashboard",
-          config:{
-            subtitle: $localize`:Subtitle:Upcoming Birthdays`,
-            explanation: $localize`:Explanation:Shows upcoming birthdays`,
-          }
         },
       ],
     },
