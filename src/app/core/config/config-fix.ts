@@ -1,5 +1,7 @@
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import {
+  defaultDateFilters
+} from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
@@ -387,6 +389,7 @@ export const defaultJsonConfig = {
         },
         "privateSchool",
         "language",
+        "website",
       ],
       filters: [{ id: "privateSchool" }],
     },
@@ -405,7 +408,7 @@ export const defaultJsonConfig = {
               config: {
                 fieldGroups: [
                   { fields: ["name", "privateSchool", "parentSchool"] },
-                  { fields: ["address", "phone"] },
+                  { fields: ["address", "phone", "website"] },
                   { fields: ["language", "timing"] },
                   { fields: ["remarks"] },
                 ],
@@ -1096,6 +1099,10 @@ export const defaultJsonConfig = {
       remarks: {
         dataType: "string",
         label: $localize`:Label for the remarks for a school:Remarks`,
+      },
+      website: {
+        dataType: "url",
+        label: $localize`:Label for the website of a school:Website`,
       },
     },
   },

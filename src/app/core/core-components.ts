@@ -247,4 +247,19 @@ export const coreComponents: ComponentTuple[] = [
         "./entity/edit-entity-type-dropdown/edit-entity-type-dropdown.component"
       ).then((c) => c.EditEntityTypeDropdownComponent),
   ],
+
+  [
+    "EditUrl",
+    () =>
+      import("./basic-datatypes/string/edit-url/edit-url.component").then(
+        (c) => c.EditUrlComponent,
+      ),
+  ],
+  [
+    "DisplayUrl",
+    () =>
+      import(
+        "./basic-datatypes/string/display-url/display-url.component"
+        ).then((c) => c.DisplayUrlComponent),
+  ],
 ];

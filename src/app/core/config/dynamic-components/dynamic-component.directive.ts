@@ -6,7 +6,7 @@ import {
   SimpleChange,
   SimpleChanges,
   Type,
-  ViewContainerRef,
+  ViewContainerRef
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { ComponentRegistry } from "../../../dynamic-components";
@@ -49,9 +49,7 @@ export class DynamicComponentDirective implements OnChanges {
       )();
     } catch (e) {
       Logging.error({
-        message: `Failed to load dynamic component:\n${JSON.stringify(
-          this.appDynamicComponent,
-        )}`,
+        message: `Failed to load dynamic component ${this.appDynamicComponent?.component} for ${this.appDynamicComponent?.config?.id}`,
         error: e,
       });
       // abort if component failed to load

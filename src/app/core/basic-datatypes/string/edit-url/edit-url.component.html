@@ -1,0 +1,20 @@
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+
+  <!-- Single input field for both editable and disabled states -->
+  <input
+    [formControl]="formControl"
+    matInput
+    [title]="label"
+    type="url"
+    [readonly]="formControl.disabled"
+    (click)="openLinkIfDisabled()"
+    [class.disabled-link]="formControl.disabled"
+  />
+
+  <!-- Error message for invalid URL format -->
+  <mat-error *ngIf="formControl.invalid && formControl.touched">
+    <span *ngIf="formControl.errors?.['pattern']">Invalid URL format</span>
+    <app-error-hint [form]="formControl"></app-error-hint>
+  </mat-error>
+</mat-form-field>
