@@ -1,12 +1,10 @@
 import { Injectable } from "@angular/core";
-import { GeoService } from "./geo.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class GpsService {
-  constructor(private readonly geoService: GeoService) {}
-  location: { lat: number; lon: number } | null = null;
+  constructor() {}
 
   async getGpsLocationCoordinates(): Promise<{
     latitude: number;
@@ -20,36 +18,23 @@ export class GpsService {
     const permissionStatus = await navigator.permissions.query({
       name: "geolocation",
     });
+
     if (
       permissionStatus.state !== "granted" &&
       permissionStatus.state !== "prompt"
     ) {
-      return;
+      throw new Error("GPS permission denied or blocked.");
     }
 
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
         (position) => resolve(this.handleGpsLocationPosition(position)),
-        (error) => reject(`Geolocation error: ${error.message}`),
+        (error) => {
+          const errorMessage = this.getGpsErrorMessage(error);
+          reject(errorMessage);
+        },
       );
     });
-  }
-
-  async getGpsLocationAddress(): Promise<string> {
-    if (this.location) {
-      return new Promise((resolve) => {
-        this.geoService
-          .lookup(`${this.location.lat}, ${this.location.lon}`)
-          .subscribe((results) => {
-            if (results.length > 0) {
-              resolve(results[0].display_name);
-            } else {
-              resolve(`Lat: ${this.location.lat}, Lon: ${this.location.lon}`);
-            }
-          });
-      });
-    }
-    return;
   }
 
   handleGpsLocationPosition(position: GeolocationPosition): {
@@ -57,14 +42,23 @@ export class GpsService {
     longitude: number;
     accuracy: number;
   } {
-    this.location = {
-      lat: position.coords.latitude,
-      lon: position.coords.longitude,
-    };
     return {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude,
       accuracy: position.coords.accuracy,
     };
+  }
+
+  getGpsErrorMessage(error: GeolocationPositionError): string {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        return "GPS permission denied. Please enable it in your device settings.";
+      case error.POSITION_UNAVAILABLE:
+        return "Unable to retrieve location.";
+      case error.TIMEOUT:
+        return "GPS request timed out. Please try again.";
+      default:
+        return `Geolocation error: ${error.message}`;
+    }
   }
 }
