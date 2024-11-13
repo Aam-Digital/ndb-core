@@ -67,7 +67,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migratePercentageDatatype,
       migrateEntityBlock,
       migrateGroupByConfig,
-      addDefaultNoteDetailsConfig
+      addDefaultNoteDetailsConfig,
     ];
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
