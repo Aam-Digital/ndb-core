@@ -45,9 +45,9 @@ export class ShortcutDashboardComponent {
   _shortcuts: MenuItem[] = [];
 
   @Input() subtitle: string =
-    $localize`dashboard widget subtitle:Quick Actions`;
+    $localize`:dashboard widget subtitle:Quick Actions`;
   @Input() explanation: string =
-    $localize`dashboard widget explanation:Shortcuts to quickly navigate to common actions`;
+    $localize`:dashboard widget explanation:Shortcuts to quickly navigate to common actions`;
 
   constructor(
     private routePermissionsService: RoutePermissionsService,
