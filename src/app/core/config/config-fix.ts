@@ -111,7 +111,6 @@ export const defaultJsonConfig = {
         },
         {
           component: "TodosDashboard",
-          config: {},
         },
         {
           component: "NotesDashboard",

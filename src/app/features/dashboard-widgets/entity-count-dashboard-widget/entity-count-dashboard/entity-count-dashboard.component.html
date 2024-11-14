@@ -2,7 +2,8 @@
   [icon]="entityIcon"
   theme="child"
   [title]="totalEntities"
-  [subtitle]="label"
+  [subtitle]="subtitle ?? label"
+  [explanation]="explanation"
   [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
   [paginationPageSize]="4"
 >
