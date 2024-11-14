@@ -6,14 +6,13 @@ import {
 } from "@angular/material/dialog";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
-import { BehaviorSubject, firstValueFrom, Observable, of, Subject } from "rxjs";
+import { BehaviorSubject, firstValueFrom, Observable, Subject } from "rxjs";
 import { MapComponent } from "../map/map.component";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult, GeoService } from "../geo.service";
-import { catchError, map } from "rxjs/operators";
 import { AddressEditComponent } from "../address-edit/address-edit.component";
 import { GeoLocation } from "../location.datatype";
 
@@ -95,27 +94,12 @@ export class MapPopupComponent {
       return;
     }
     const geoResult: GeoResult = await firstValueFrom(
-      this.lookupCoordinates(newCoordinates),
+      this.geoService.reverseLookup(newCoordinates),
     );
     this.updateLocation({
       geoLookup: geoResult,
       locationString: geoResult?.display_name,
     });
-  }
-
-  private lookupCoordinates(coords: Coordinates) {
-    if (!coords) {
-      return undefined;
-    }
-
-    const fallback: GeoResult = {
-      display_name: $localize`[selected on map: ${coords.lat} - ${coords.lon}]`,
-      ...coords,
-    };
-    return this.geoService.reverseLookup(coords).pipe(
-      map((res) => (res["error"] ? fallback : res)),
-      catchError(() => of(fallback)),
-    );
   }
 
   updateLocation(event: GeoLocation) {

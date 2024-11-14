@@ -8,7 +8,6 @@ import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { NgIf } from "@angular/common";
 import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
 
 /**
@@ -18,7 +17,6 @@ import { AddressGpsLocationComponent } from "../address-gps-location/address-gps
   selector: "app-address-edit",
   standalone: true,
   imports: [
-    NgIf,
     MatButton,
     AddressSearchComponent,
     MatFormField,

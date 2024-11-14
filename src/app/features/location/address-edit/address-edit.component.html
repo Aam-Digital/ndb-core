@@ -65,13 +65,11 @@
 </div>
 
 @if (!disabled) {
-  <div class="margin-bottom-regular container">
-    <div class="flex-row gap-regular align-start full-width">
-      <app-address-search
-        (locationSelected)="updateFromAddressSearch($event)"
-        class="full-width"
-      ></app-address-search>
-      <app-address-gps-location />
-    </div>
+  <div class="margin-bottom-regular flex-row gap-regular full-width">
+    <app-address-search
+      (locationSelected)="updateFromAddressSearch($event)"
+      class="full-width"
+    ></app-address-search>
+    <app-address-gps-location />
   </div>
 }

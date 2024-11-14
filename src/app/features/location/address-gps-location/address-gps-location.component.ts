@@ -6,9 +6,10 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatIconButton } from "@angular/material/button";
 import { NgIf } from "@angular/common";
-import { MapPopupComponent } from "../map-popup/map-popup.component";
 import { Coordinates } from "../coordinates";
 import { AlertService } from "app/core/alerts/alert.service";
+import { GeoResult, GeoService } from "../geo.service";
+import { firstValueFrom } from "rxjs";
 
 @Component({
   selector: "app-address-gps-location",
@@ -27,8 +28,8 @@ import { AlertService } from "app/core/alerts/alert.service";
 export class AddressGpsLocationComponent {
   constructor(
     private gpsService: GpsService,
-    private mapPopupComponent: MapPopupComponent,
     private alertService: AlertService,
+    private geoService: GeoService,
   ) {}
   location: Coordinates;
   public gpsLoading = false;
@@ -42,8 +43,12 @@ export class AddressGpsLocationComponent {
           lat: location.latitude,
           lon: location.longitude,
         };
-        await this.mapPopupComponent.mapClicked(this.location);
-        this.alertService.addInfo("Selected address based on GPS.");
+        const geoResult: GeoResult = await firstValueFrom(
+          this.geoService.reverseLookup(this.location),
+        );
+        this.alertService.addInfo(
+          `Selected address based on GPS coordinate lookup as ${geoResult?.display_name}`,
+        );
       }
     } catch (error) {
       Logging.error(error);
