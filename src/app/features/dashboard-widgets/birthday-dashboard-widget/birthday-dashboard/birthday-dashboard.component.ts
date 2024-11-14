@@ -55,6 +55,10 @@ export class BirthdayDashboardComponent
 
   entries: EntityWithBirthday[];
 
+  @Input() subtitle: string =
+    $localize`:dashboard widget subtitle:Upcoming Birthdays`;
+  @Input() explanation: string;
+
   constructor(private entityMapper: EntityMapperService) {
     super();
     this.today = new Date();

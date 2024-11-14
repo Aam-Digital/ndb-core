@@ -121,6 +121,10 @@ export class EntityCountDashboardComponent
   label: string;
   entityIcon: IconName;
 
+  @Input() subtitle: string;
+  @Input() explanation: string =
+    $localize`:dashboard widget explanation:Counting all "active" records. If configured, you can view different disaggregations by using the arrows below.`;
+
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
