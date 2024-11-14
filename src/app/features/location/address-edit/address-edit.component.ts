@@ -116,8 +116,12 @@ export class AddressEditComponent {
       geoLookup: value?.geoLookup,
     });
   }
-}
 
-function matchGeoResults(a: GeoResult, b: GeoResult) {
-  return a.lat === b.lat && a.lon === b.lon;
+  onGpsLocationSelected(geoResult: GeoResult) {
+    const newLocation: GeoLocation = {
+      locationString: geoResult.display_name,
+      geoLookup: geoResult,
+    };
+    this.updateFromAddressSearch(newLocation, true);
+  }
 }

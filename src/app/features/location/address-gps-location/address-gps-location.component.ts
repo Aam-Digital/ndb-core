@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { GpsService } from "../gps.service";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -26,13 +26,16 @@ import { firstValueFrom } from "rxjs";
   styleUrl: "./address-gps-location.component.scss",
 })
 export class AddressGpsLocationComponent {
+  @Output() locationSelected = new EventEmitter<GeoResult>();
+
+  public gpsLoading = false;
+  location: Coordinates;
+
   constructor(
     private gpsService: GpsService,
     private alertService: AlertService,
     private geoService: GeoService,
   ) {}
-  location: Coordinates;
-  public gpsLoading = false;
 
   async updateLocationFromGps() {
     this.gpsLoading = true;
@@ -46,6 +49,7 @@ export class AddressGpsLocationComponent {
         const geoResult: GeoResult = await firstValueFrom(
           this.geoService.reverseLookup(this.location),
         );
+        this.locationSelected.emit(geoResult);
         this.alertService.addInfo(
           `Selected address based on GPS coordinate lookup as ${geoResult?.display_name}`,
         );

@@ -70,6 +70,8 @@
       (locationSelected)="updateFromAddressSearch($event)"
       class="full-width"
     ></app-address-search>
-    <app-address-gps-location />
+    <app-address-gps-location
+      (locationSelected)="onGpsLocationSelected($event)"
+    ></app-address-gps-location>
   </div>
 }
