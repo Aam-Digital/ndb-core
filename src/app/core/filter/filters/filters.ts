@@ -79,15 +79,17 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     attributeName: string,
   ): FilterSelectionOption<T>[] {
     let keys = new Set();
-    return valuesToMatchAsOptions
-      .filter((k) => !!k)
-      .map((k) => ({
-        key: k.toString().toLowerCase(),
-        label: k.toString(),
-        filter: { [attributeName]: k } as DataFilter<T>,
-      }))
-      // remove duplicates:
-      .filter((value) => !keys.has(value.key) && keys.add(value.key));
+    return (
+      valuesToMatchAsOptions
+        .filter((k) => !!k)
+        .map((k) => ({
+          key: k.toString().toLowerCase(),
+          label: k.toString(),
+          filter: { [attributeName]: k } as DataFilter<T>,
+        }))
+        // remove duplicates:
+        .filter((value) => !keys.has(value.key) && keys.add(value.key))
+    );
   }
 
   /**
