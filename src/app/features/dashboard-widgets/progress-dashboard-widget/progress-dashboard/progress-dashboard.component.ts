@@ -15,9 +15,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { SyncStateSubject } from "../../../../core/session/session-type";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
-import {
-  DashboardListWidgetComponent
-} from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -68,9 +66,14 @@ export class ProgressDashboardComponent
         .catch(() => this.createDefaultConfig()),
     );
 
-    this.entityMapper.receiveUpdates(ProgressDashboardConfig)
-      .pipe(filter(entity => entity.entity.getId(true) === this.dashboardConfigId))
-      .subscribe((update) => this.updateConfig(update.entity))
+    this.entityMapper
+      .receiveUpdates(ProgressDashboardConfig)
+      .pipe(
+        filter(
+          (entity) => entity.entity.getId(true) === this.dashboardConfigId,
+        ),
+      )
+      .subscribe((update) => this.updateConfig(update.entity));
   }
 
   private updateConfig(updatedConfig: ProgressDashboardConfig) {
@@ -124,6 +127,6 @@ export class ProgressDashboardComponent
       totalTarget += entry.targetValue;
     });
 
-    return totalTarget ? (totalCurrent / totalTarget) : 0;
+    return totalTarget ? totalCurrent / totalTarget : 0;
   }
 }
