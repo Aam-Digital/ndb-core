@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
 import { PublicFormConfig } from "./public-form-config";
+import { PLACEHOLDERS } from "../../core/entity/schema/entity-schema-field";
 
 @Injectable()
 export class DemoPublicFormGeneratorService extends DemoDataGenerator<PublicFormConfig> {
@@ -20,17 +21,18 @@ export class DemoPublicFormGeneratorService extends DemoDataGenerator<PublicForm
     form.entity = "Child";
     form.columns = {
       fields: [
-        {
-          id: "name",
-          defaultValue: {
-            mode: "static",
-            value: "static name example",
-          },
-        },
+        "name",
         "phone",
         "gender",
         "dateOfBirth",
         "center",
+        {
+          id: "admissionDate",
+          defaultValue: {
+            mode: "dynamic",
+            value: PLACEHOLDERS.NOW,
+          },
+        },
       ],
     };
 
