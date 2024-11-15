@@ -23,13 +23,13 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
   styleUrls: ["./progress-dashboard.component.scss"],
   standalone: true,
   imports: [
-    PercentPipe,
     MatTableModule,
     MatProgressBarModule,
     MatButtonModule,
     FontAwesomeModule,
     DashboardListWidgetComponent,
   ],
+  providers: [PercentPipe],
 })
 @DynamicComponent("ProgressDashboard")
 export class ProgressDashboardComponent
@@ -52,6 +52,7 @@ export class ProgressDashboardComponent
     private entityMapper: EntityMapperService,
     private dialog: MatDialog,
     private syncState: SyncStateSubject,
+    private percentPipe: PercentPipe,
   ) {
     super();
   }
@@ -95,5 +96,28 @@ export class ProgressDashboardComponent
           await this.save();
         }
       });
+  }
+
+  // Method to calculate the overall progress percentage
+  getOverallProgressPercentage(): number {
+    if (!this.data?.parts || this.data.parts.length === 0) {
+      return 0;
+    }
+
+    let totalCurrent = 0;
+    let totalTarget = 0;
+
+    this.data.parts.forEach((entry) => {
+      totalCurrent += entry.currentValue;
+      totalTarget += entry.targetValue;
+    });
+
+    return totalTarget ? (totalCurrent / totalTarget) * 100 : 0;
+  }
+
+  // Method to format the overall progress percentage as a string
+  getOverallProgressPercentageString(): string {
+    const percentage = this.getOverallProgressPercentage() / 100;
+    return this.percentPipe.transform(percentage, "1.0-0") ?? "0%";
   }
 }
