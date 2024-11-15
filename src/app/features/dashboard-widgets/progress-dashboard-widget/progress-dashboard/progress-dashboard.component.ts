@@ -7,7 +7,7 @@ import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { waitForChangeTo } from "../../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../../core/session/session-states/sync-state.enum";
-import { firstValueFrom } from "rxjs";
+import { filter, firstValueFrom } from "rxjs";
 import { PercentPipe } from "@angular/common";
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -15,7 +15,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { SyncStateSubject } from "../../../../core/session/session-type";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
-import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import {
+  DashboardListWidgetComponent
+} from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -23,13 +25,13 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
   styleUrls: ["./progress-dashboard.component.scss"],
   standalone: true,
   imports: [
+    PercentPipe,
     MatTableModule,
     MatProgressBarModule,
     MatButtonModule,
     FontAwesomeModule,
     DashboardListWidgetComponent,
   ],
-  providers: [PercentPipe],
 })
 @DynamicComponent("ProgressDashboard")
 export class ProgressDashboardComponent
@@ -48,11 +50,12 @@ export class ProgressDashboardComponent
   @Input() explanation: string =
     $localize`:dashboard widget explanation: Shows the progress of different parts of project tasks. You can use this to track any kind of targets.`;
 
+  overallPercentage: number;
+
   constructor(
     private entityMapper: EntityMapperService,
     private dialog: MatDialog,
     private syncState: SyncStateSubject,
-    private percentPipe: PercentPipe,
   ) {
     super();
   }
@@ -64,12 +67,21 @@ export class ProgressDashboardComponent
         .then(() => this.loadConfigFromDatabase())
         .catch(() => this.createDefaultConfig()),
     );
+
+    this.entityMapper.receiveUpdates(ProgressDashboardConfig)
+      .pipe(filter(entity => entity.entity.getId(true) === this.dashboardConfigId))
+      .subscribe((update) => this.updateConfig(update.entity))
+  }
+
+  private updateConfig(updatedConfig: ProgressDashboardConfig) {
+    this.data = updatedConfig;
+    this.overallPercentage = this.getOverallProgressPercentage();
   }
 
   private loadConfigFromDatabase() {
     return this.entityMapper
       .load(ProgressDashboardConfig, this.dashboardConfigId)
-      .then((config) => (this.data = config));
+      .then((config) => this.updateConfig(config));
   }
 
   private createDefaultConfig() {
@@ -112,12 +124,6 @@ export class ProgressDashboardComponent
       totalTarget += entry.targetValue;
     });
 
-    return totalTarget ? (totalCurrent / totalTarget) * 100 : 0;
-  }
-
-  // Method to format the overall progress percentage as a string
-  getOverallProgressPercentageString(): string {
-    const percentage = this.getOverallProgressPercentage() / 100;
-    return this.percentPipe.transform(percentage, "1.0-0") ?? "0%";
+    return totalTarget ? (totalCurrent / totalTarget) : 0;
   }
 }

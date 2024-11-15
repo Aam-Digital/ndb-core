@@ -2,7 +2,7 @@
   <app-dashboard-list-widget
     icon="list"
     theme="child"
-    [title]="getOverallProgressPercentageString()"
+    [title]="overallPercentage | percent:'1.0-0'"
     [subtitle]="subtitle ?? data.title"
     [explanation]="explanation"
     [entries]="data?.parts"
