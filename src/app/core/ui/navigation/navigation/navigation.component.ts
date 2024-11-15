@@ -30,7 +30,8 @@ import { MatMenuModule } from "@angular/material/menu";
 import { CommonModule } from "@angular/common";
 import { MenuItemComponent } from "../menu-item.component";
 
-/* Main app menu listing.
+/**
+ * Main app menu listing.
  */
 @UntilDestroy()
 @Component({
