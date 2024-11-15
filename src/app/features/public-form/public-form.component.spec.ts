@@ -1,17 +1,10 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
 import { ActivatedRoute } from "@angular/router";
-import { genders } from "../../child-dev-project/children/model/genders";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
@@ -125,6 +118,34 @@ describe("PublicFormComponent", () => {
 
     component.reset();
     tick();
+  }));
+
+  it("should set default value for field", fakeAsync(() => {
+    const config = new PublicFormConfig();
+    config.entity = TestEntity.ENTITY_TYPE;
+    config.columns = { fields: [{ id: "name", defaultValue: { mode: "static", value: "default name" } }] };
+    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(config);
+
+    initComponent();
+    tick();
+
+    expect(component.form.formGroup.get("name")).toHaveValue("default name");
+  }));
+
+  it("should migrate old PublicFormConfig format to be backwards compatible", fakeAsync(() => {
+    const legacyConfig = {
+      _id: "PublicFormConfig:old-form",
+      title: "Old Form",
+      entity: TestEntity.ENTITY_TYPE,
+      columns: [["name"]], // string[][];
+      prefilled: { name: "default name" }, // { [key in string]: any };
+    }
+    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(legacyConfig as any);
+
+    initComponent();
+    tick();
+
+    expect(component.form.formGroup.get("name")).toHaveValue("default name");
   }));
 
   function initComponent() {
