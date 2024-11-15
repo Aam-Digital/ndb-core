@@ -1,5 +1,7 @@
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import {
+  defaultDateFilters
+} from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
@@ -53,11 +55,6 @@ export const defaultJsonConfig = {
         link: "/import",
       },
       {
-        label: $localize`:Menu item:Users`,
-        icon: "users",
-        link: "/user",
-      },
-      {
         label: $localize`:Menu item:Reports`,
         icon: "line-chart",
         link: "/report",
@@ -70,7 +67,18 @@ export const defaultJsonConfig = {
       {
         label: $localize`:Menu item:Admin`,
         icon: "wrench",
-        link: "/admin",
+        subMenu: [
+          {
+            label: $localize`:Menu item:Admin Overview`,
+            icon: "wrench",
+            link: "/admin",
+          },
+          {
+            label: $localize`:Menu item:Users`,
+            icon: "users",
+            link: "/user",
+          },
+        ]
       },
     ],
   },
