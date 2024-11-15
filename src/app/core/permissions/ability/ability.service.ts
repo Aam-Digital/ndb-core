@@ -9,7 +9,7 @@ import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { merge } from "rxjs";
+import { filter, firstValueFrom, merge } from "rxjs";
 import { map } from "rxjs/operators";
 
 /**
@@ -86,33 +86,38 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   private interpolateUser(
     rules: DatabaseRule[],
     sessionInfo: SessionInfo,
-  ): DatabaseRule[] {
-    const user = this.currentUser.value;
+  ): Promise<DatabaseRule[]> {
+    return firstValueFrom(
+      this.currentUser.pipe(
+        filter((user) => !!user),
+        map((user) => {
+          if (user && user["projects"]) {
+            sessionInfo.projects = user["projects"];
+          } else {
+            sessionInfo.projects = [];
+          }
 
-    if (user && user["projects"]) {
-      sessionInfo.projects = user["projects"];
-    } else {
-      sessionInfo.projects = [];
-    }
+          return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
+            if (rawValue[0] !== "$") {
+              return rawValue;
+            }
 
-    return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
-      if (rawValue[0] !== "$") {
-        return rawValue;
-      }
+            let name = rawValue.slice(2, -1);
+            if (name === "user.name") {
+              // the user account related entity (assured with prefix) is now stored in user.entityId
+              // mapping the previously valid ${user.name} here for backwards compatibility
+              name = "user.entityId";
+            }
+            const value = get({ user: sessionInfo }, name);
 
-      let name = rawValue.slice(2, -1);
-      if (name === "user.name") {
-        // the user account related entity (assured with prefix) is now stored in user.entityId
-        // mapping the previously valid ${user.name} here for backwards compatibility
-        name = "user.entityId";
-      }
-      const value = get({ user: sessionInfo }, name);
+            if (typeof value === "undefined") {
+              throw new ReferenceError(`Variable ${name} is not defined`);
+            }
 
-      if (typeof value === "undefined") {
-        throw new ReferenceError(`Variable ${name} is not defined`);
-      }
-
-      return value;
-    });
+            return value;
+          }) as DatabaseRule[];
+        }),
+      ),
+    );
   }
 }
