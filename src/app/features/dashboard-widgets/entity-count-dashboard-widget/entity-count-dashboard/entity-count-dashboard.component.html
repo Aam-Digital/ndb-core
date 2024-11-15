@@ -2,10 +2,20 @@
   [icon]="entityIcon"
   theme="child"
   [title]="totalEntities"
-  [subtitle]="label"
+  [subtitle]="subtitle ?? label"
+  [explanation]="explanation"
   [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
+  [paginationPageSize]="4"
 >
-  <div class="flex-row">
+  <div
+    class="flex-row"
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+    "
+  >
     <button
       mat-icon-button
       matTooltip="Previous Grouping"
@@ -13,7 +23,7 @@
       caption="Previous"
       aria-label="Previous grouping"
       (click)="getPrev()"
-      *ngIf="groupBy?.length > 1"
+      [style.visibility]="groupBy?.length > 1 ? 'visible' : 'hidden'"
       [style.transform]="'scale(0.75)'"
     >
       <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
@@ -26,6 +36,7 @@
         [field]="groupBy[currentGroupIndex]"
       >
       </app-entity-field-label>
+      :
     </span>
 
     <button
@@ -35,12 +46,14 @@
       caption="Next"
       aria-label="Next grouping"
       (click)="getNext()"
-      *ngIf="groupBy?.length > 1"
+      [style.visibility]="groupBy?.length > 1 ? 'visible' : 'hidden'"
       [style.transform]="'scale(0.75)'"
     >
       <fa-icon icon="circle-chevron-right"></fa-icon>
     </button>
   </div>
+
+  <div class="label-separator"></div>
 
   <div class="table-wrapper">
     <table
