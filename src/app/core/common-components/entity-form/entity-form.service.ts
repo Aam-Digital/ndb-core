@@ -264,9 +264,7 @@ export class EntityFormService {
 
     const updatedEntity = entity.copy() as T;
     for (const [key, value] of Object.entries(form.getRawValue())) {
-      if (value !== null) {
-        updatedEntity[key] = value;
-      }
+      updatedEntity[key] = value;
     }
 
     updatedEntity.assertValid();
