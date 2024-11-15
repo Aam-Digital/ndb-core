@@ -49,9 +49,7 @@
     }
   },
   "exclude": [
-    "e2e",
-    "./cypress.config.ts",
-    "**/*.cy.tsx"
+    "e2e"
   ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
