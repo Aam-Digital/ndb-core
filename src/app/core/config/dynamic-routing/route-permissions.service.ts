@@ -30,6 +30,7 @@ export class RoutePermissionsService {
         );
 
         if (accessibleSubItems.length > 0) {
+          // only adding the item if there is at least one accessible subMenu item
           const filteredParentItem: MenuItem = Object.assign({}, item);
           filteredParentItem.subMenu = accessibleSubItems;
           accessibleRoutes.push(filteredParentItem);
