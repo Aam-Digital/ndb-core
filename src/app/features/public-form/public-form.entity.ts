@@ -4,30 +4,30 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "../../core/basic-datatypes/string/long-text.datatype";
 import { FileFieldConfig } from "../file/file.datatype";
 import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
-import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
+import { TemplateExportFileDatatype } from "../template-export/template-export-file-datatype/template-export-file.datatype";
 
 /**
- * Represents a TemplateExport that can be used to generate PDFs via API,
+ * Represents a PublicForm that can be used to generate PDFs via API,
  * replacing placeholders in the file with data from an entity.
  *
- * A TemplateExport entity represents the meta-data of a template and can be added and manage by admin users.
+ * A PublicForm entity represents the meta-data of a template and can be added and manage by admin users.
  */
-@DatabaseEntity("TemplateExport")
-export class TemplateExport extends Entity {
-  static override label = $localize`:TemplateExport:Export Template`;
-  static override labelPlural = $localize`:TemplateExport:Export Templates`;
+@DatabaseEntity("PublicForm")
+export class PublicForm extends Entity {
+  static override label = $localize`:PublicForm:Public Forms`;
+  static override labelPlural = $localize`:PublicForm:Public Forms`;
   static override toStringAttributes = ["title"];
   static override toBlockDetailsAttributes: EntityBlockConfig = {
     title: "title",
     fields: ["description"],
   };
-  static override route = "admin/template-exports";
+  static override route = "admin/public-form";
 
   /**
    * human-readable label
    */
   @DatabaseField({
-    label: $localize`:TemplateExport:Title`,
+    label: $localize`:PublicForm:Title`,
     validators: { required: true },
   })
   title: string;
@@ -36,7 +36,7 @@ export class TemplateExport extends Entity {
    * Additional description to guide users
    */
   @DatabaseField({
-    label: $localize`:TemplateExport:Description`,
+    label: $localize`:PublicForm:Description`,
     dataType: LongTextDatatype.dataType,
   })
   description: string;
@@ -45,8 +45,8 @@ export class TemplateExport extends Entity {
    * The entity type(s) this template can be used with (i.e. placeholders matching the entity type)
    */
   @DatabaseField({
-    label: $localize`:TemplateExport:Applicable Entity Types`,
-    labelShort: $localize`:TemplateExport:Entity Types`,
+    label: $localize`:PublicForm:Applicable Entity Types`,
+    labelShort: $localize`:PublicForm:Entity Types`,
     editComponent: "EditEntityTypeDropdown",
     isArray: true,
   })
@@ -56,8 +56,8 @@ export class TemplateExport extends Entity {
    * File (storing the file name) of the template uploaded to the server.
    */
   @DatabaseField({
-    label: $localize`:TemplateExport:Template File`,
-    description: $localize`:TemplateExport:Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific entity when generating a PDF.`,
+    label: $localize`:PublicForm:Template File`,
+    description: $localize`:PublicForm:Upload a specially prepared document that contains placeholders, which will be replace with actual data from a specific entity when generating a PDF.`,
     validators: { required: true },
     dataType: TemplateExportFileDatatype.dataType,
     additional: {
@@ -80,9 +80,9 @@ export class TemplateExport extends Entity {
    * A string with the pattern including placeholders for the file name of the generated files.
    */
   @DatabaseField({
-    label: $localize`:TemplateExport:File name pattern for generated file`,
-    labelShort: $localize`:TemplateExport:File name pattern`,
-    description: $localize`:TemplateExport:The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}.pdf").`,
+    label: $localize`:PublicForm:File name pattern for generated file`,
+    labelShort: $localize`:PublicForm:File name pattern`,
+    description: $localize`:PublicForm:The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}.pdf").`,
     validators: { required: true },
   })
   targetFileName: string;

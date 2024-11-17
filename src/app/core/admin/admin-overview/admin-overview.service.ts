@@ -27,5 +27,9 @@ export class AdminOverviewService {
       label: $localize`:admin menu item:Setup Wizard`,
       link: "/admin/setup-wizard",
     },
+    {
+      label: $localize`:admin menu item:Manage Public Forms`,
+      link: "/admin/publicform",
+    },
   ];
 }

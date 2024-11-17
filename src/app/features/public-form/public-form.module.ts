@@ -9,9 +9,10 @@ import { AdminOverviewService } from "../../core/admin/admin-overview/admin-over
 import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { Entity } from "../../core/entity/model/entity";
-import { TemplateExportFileDatatype } from "./template-export-file-datatype/template-export-file.datatype";
-import { TemplateExport } from "./template-export.entity";
-import { TemplateExportService } from "./template-export-service/template-export.service";
+import { TemplateExportFileDatatype } from "../template-export/template-export-file-datatype/template-export-file.datatype";
+import { TemplateExport } from "../template-export/template-export.entity";
+import { TemplateExportService } from "../template-export/template-export-service/template-export.service";
+import { PublicForm } from "./public-form.entity";
 
 /**
  * Manage template files with placeholders that can be used to render files for export of entities.
@@ -27,8 +28,8 @@ import { TemplateExportService } from "./template-export-service/template-export
     },
   ],
 })
-export class TemplateExportModule {
-  static databaseEntities = [TemplateExport];
+export class PubliFormModule {
+  static databaseEntities = [PublicForm];
 
   constructor(
     components: ComponentRegistry,
@@ -37,7 +38,7 @@ export class TemplateExportModule {
     entityActionsMenuService: EntityActionsMenuService,
     templateExportService: TemplateExportService,
   ) {
-    components.addAll(dynamicComponents);
+    // components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
 
     entityActionsMenuService.registerActions([
@@ -52,29 +53,29 @@ export class TemplateExportModule {
     ]);
 
     adminOverviewService.menuItems.push({
-      label: $localize`:admin menu item:Manage Export Templatess`,
-      link: TemplateExport.route,
+      label: $localize`:admin menu item:Manage Public forms`,
+      link: PublicForm.route,
     });
   }
 }
 
-const dynamicComponents: [string, AsyncComponent][] = [
-  [
-    "EditTemplateExportFile",
-    () =>
-      import(
-        "./template-export-file-datatype/edit-template-export-file.component"
-      ).then((c) => c.EditTemplateExportFileComponent),
-  ],
-];
+// const dynamicComponents: [string, AsyncComponent][] = [
+//   [
+//     "EditTemplateExportFile",
+//     () =>
+//       import(
+//         "../template-export/template-export-file-datatype/edit-template-export-file.component"
+//       ).then((c) => c.EditTemplateExportFileComponent),
+//   ],
+// ];
 
 const viewConfigs: ViewConfig[] = [
   // List View
   {
-    _id: "view:" + TemplateExport.route,
+    _id: "view:" + PublicForm.route,
     component: "EntityList",
     config: {
-      entityType: TemplateExport.ENTITY_TYPE,
+      entityType: PublicForm.ENTITY_TYPE,
       columns: ["title", "description", "applicableForEntityTypes"],
       filters: [{ id: "applicableForEntityTypes" }],
     } as EntityListConfig,
@@ -82,10 +83,10 @@ const viewConfigs: ViewConfig[] = [
 
   // Details View
   {
-    _id: "view:" + TemplateExport.route + "/:id",
+    _id: "view:" + PublicForm.route + "/:id",
     component: "EntityDetails",
     config: {
-      entityType: TemplateExport.ENTITY_TYPE,
+      entityType: PublicForm.ENTITY_TYPE,
       panels: [
         {
           components: [
@@ -105,7 +106,7 @@ const viewConfigs: ViewConfig[] = [
                       {
                         id: "template_explanation",
                         editComponent: "EditDescriptionOnly",
-                        label: $localize`:TemplateExport:Upload a specially prepared template file here.
+                        label: $localize`:PublicForm:Upload a specially prepared template file here.
 The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
 For example {d.name} will be replaced with the value in the "name" field of the given entity.
 See the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.
