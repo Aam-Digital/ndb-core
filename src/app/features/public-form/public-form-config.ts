@@ -8,6 +8,5 @@ export class PublicFormConfig extends Entity {
   @DatabaseField() title: string;
   @DatabaseField() description: string;
   @DatabaseField() entity: string;
-  @DatabaseField() columns: FieldGroup;
-  @DatabaseField() prefilled: { [key in string]: any };
+  @DatabaseField() columns: FieldGroup[];
 }
