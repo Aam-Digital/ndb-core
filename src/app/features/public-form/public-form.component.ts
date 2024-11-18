@@ -98,13 +98,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       delete formConfig["prefilled"];
     }
     if (formConfig?.columns && Array.isArray(formConfig.columns)) {
-      formConfig.columns = [
-        {
-          fields: formConfig.columns.flatMap((column: FieldGroup) =>
-            Array.isArray(column) ? column : [],
-          ),
-        },
-      ];
+      formConfig.columns = formConfig.columns.map((column: FieldGroup) => ({
+        fields: Array.isArray(column) ? column : column.fields || [],
+      }));
     }
 
     return formConfig;
