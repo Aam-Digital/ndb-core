@@ -75,7 +75,7 @@ export class LocationInputComponent extends CustomFormControlDirective<GeoLocati
 
     const ref = this.dialog.open(MapPopupComponent, {
       width: "90%",
-      height: "70vh",
+      height: "100vh",
       autoFocus: ".address-search-input",
       restoreFocus: false,
       data: config,
