@@ -18,7 +18,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 
-fdescribe("PublicFormComponent", () => {
+describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
   let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
   let initRemoteDBSpy: jasmine.Spy;
@@ -88,7 +88,6 @@ fdescribe("PublicFormComponent", () => {
     const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     saveSpy.and.resolveTo();
-    console.log(component.form, "tetetettetetetetetete");
     component.form.formGroup.get("name").setValue("some name");
 
     component.submit();

@@ -18,6 +18,7 @@ import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "../../core/entity-details/form/field-group";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 @UntilDestroy()
 @Component({
@@ -95,10 +96,21 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     formConfig: PublicFormConfig,
   ): PublicFormConfig {
     if (formConfig["prefilled"]) {
+      const prefilledFields = Object.entries(formConfig["prefilled"]).map(
+        ([id, value]) => ({
+          id,
+          defaultValue: { mode: "static", value },
+        }),
+      ) as FormFieldConfig[];
+
+      formConfig.columns?.forEach((column) => {
+        column.fields = [...(column.fields || []), ...prefilledFields];
+      });
       delete formConfig["prefilled"];
     }
-    if (formConfig?.columns && Array.isArray(formConfig.columns)) {
-      formConfig.columns = formConfig.columns.map((column: FieldGroup) => ({
+
+    if (formConfig.columns) {
+      formConfig.columns = formConfig.columns.map((column) => ({
         fields: Array.isArray(column) ? column : column.fields || [],
       }));
     }
