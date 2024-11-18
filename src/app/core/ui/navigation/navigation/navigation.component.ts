@@ -24,7 +24,6 @@ import { filter, startWith } from "rxjs/operators";
 import { MatListModule } from "@angular/material/list";
 import { NgForOf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
-import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { CommonModule } from "@angular/common";
@@ -42,8 +41,6 @@ import { MenuItemComponent } from "../menu-item.component";
     MatListModule,
     NgForOf,
     Angulartics2Module,
-    RouterLink,
-    FaDynamicIconComponent,
     MatMenuModule,
     CommonModule,
     MenuItemComponent,
