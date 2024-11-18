@@ -1,4 +1,10 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
@@ -12,7 +18,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 
-describe("PublicFormComponent", () => {
+fdescribe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
   let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
   let initRemoteDBSpy: jasmine.Spy;
@@ -22,12 +28,17 @@ describe("PublicFormComponent", () => {
     testFormConfig = new PublicFormConfig("form-id");
     testFormConfig.title = "test form";
     testFormConfig.entity = "TestEntity";
-    testFormConfig.columns = {
-      fields: [
-        { id: "name", defaultValue: { mode: "static", value: "default name" } },
-        "category",
-      ],
-    };
+    testFormConfig.columns = [
+      {
+        fields: [
+          {
+            id: "name",
+            defaultValue: { mode: "static", value: "default name" },
+          },
+          "category",
+        ],
+      },
+    ];
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
@@ -77,6 +88,7 @@ describe("PublicFormComponent", () => {
     const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
     saveSpy.and.resolveTo();
+    console.log(component.form, "tetetettetetetetetete");
     component.form.formGroup.get("name").setValue("some name");
 
     component.submit();
@@ -123,7 +135,16 @@ describe("PublicFormComponent", () => {
   it("should set default value for field", fakeAsync(() => {
     const config = new PublicFormConfig();
     config.entity = TestEntity.ENTITY_TYPE;
-    config.columns = { fields: [{ id: "name", defaultValue: { mode: "static", value: "default name" } }] };
+    config.columns = [
+      {
+        fields: [
+          {
+            id: "name",
+            defaultValue: { mode: "static", value: "default name" },
+          },
+        ],
+      },
+    ];
     spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(config);
 
     initComponent();
@@ -139,8 +160,10 @@ describe("PublicFormComponent", () => {
       entity: TestEntity.ENTITY_TYPE,
       columns: [["name"]], // string[][];
       prefilled: { name: "default name" }, // { [key in string]: any };
-    }
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(legacyConfig as any);
+    };
+    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(
+      legacyConfig as any,
+    );
 
     initComponent();
     tick();
