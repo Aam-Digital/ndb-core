@@ -92,7 +92,7 @@ export class GeoService {
     }
 
     const fallback: GeoResult = {
-      display_name: $localize`[selected on map: ${coordinates.lat} - ${coordinates.lon}]`,
+      display_name: $localize`[selected coordinates: ${coordinates.lat} - ${coordinates.lon}]`,
       ...coordinates,
     };
 
