@@ -57,7 +57,7 @@ export class AddressGpsLocationComponent {
     } catch (error) {
       Logging.error(error);
       this.alertService.addInfo(
-        "Location permission denied. Please enable it in your device settings.",
+        $localize`Failed to access device location. Please check if location permission is enabled in your device settings`,
       );
     } finally {
       this.gpsLoading = false;
