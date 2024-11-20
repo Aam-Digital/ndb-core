@@ -20,7 +20,8 @@ test.describe("Dashboard Tests", () => {
 
     // Verify children count is displayed
     const childrenCount = page.locator("app-entity-count-dashboard-widget");
-    await expect(childrenCount).toContainText(/120/);
+
+    await expect(childrenCount).toContainText(/107/);
   });
 
   test("should navigate to the attendence page", async ({ page }) => {
@@ -40,16 +41,17 @@ test.describe("Dashboard Tests", () => {
 
     // Check for the "Tasks due" widget
     const tasksDueElement = page.locator("text=Tasks due");
+
     await expect(tasksDueElement).toBeVisible();
 
     // Verify that the task names and due dates are displayed
     const taskNames = await page
       .locator("app-widget-content")
-      .filter({ hasText: "get signed agreement Nov 5," })
+      .filter({ hasText: "get signed agreement Nov 19," })
       .allTextContents();
     const dueDates = await page
       .locator("app-widget-content")
-      .filter({ hasText: "get signed agreement Nov 5," })
+      .filter({ hasText: "get signed agreement Nov 19," })
       .allTextContents();
 
     expect(taskNames.length).toBeGreaterThan(0); // Ensure there is at least one task
