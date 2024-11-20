@@ -62,6 +62,15 @@ describe("MapPopupComponent", () => {
     component.markedLocations.subscribe((res) => (updatedLocations = res));
 
     const mockedClick: Coordinates = { lat: 1, lon: 2 };
+
+    mockGeoService.reverseLookup.and.returnValue(
+      of({
+        lat: mockedClick.lat,
+        lon: mockedClick.lon,
+        display_name: `[selected on map: ${mockedClick.lat} - ${mockedClick.lon}]`,
+      }),
+    );
+
     component.mapClicked(mockedClick);
     tick();
 
