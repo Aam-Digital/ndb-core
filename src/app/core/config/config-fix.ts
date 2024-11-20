@@ -1,7 +1,5 @@
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import {
-  defaultDateFilters
-} from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { todoDefaultConfigs } from "../../features/todos/model/todo-default-configs";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";

@@ -27,8 +27,7 @@ import { MatMenuModule } from "@angular/material/menu";
 })
 export class MenuItemComponent {
   @Input() item: MenuItem; // Receives each individual menu item as input
-  activeLink: string; // to keep track of the currently active link within the menu
-
+  @Input() activeLink: string; // Receives the active link as input
   isExpanded: boolean = false;
 
   toggleSubMenu(): void {
