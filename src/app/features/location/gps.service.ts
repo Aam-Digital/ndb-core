@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
+import { Coordinates } from "./coordinates";
 
+/**
+ * Access the device's GPS sensor to get the current location.
+ */
 @Injectable({
   providedIn: "root",
 })
 export class GpsService {
   constructor() {}
 
-  async getGpsLocationCoordinates(): Promise<{
-    latitude: number;
-    longitude: number;
-    accuracy: number;
-  }> {
+  async getGpsLocationCoordinates(): Promise<Coordinates> {
     if (!("geolocation" in navigator) || !navigator.geolocation) {
       return;
     }
@@ -28,23 +28,17 @@ export class GpsService {
       );
     }
 
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => resolve(this.handleGpsLocationPosition(position)),
-        (error) => reject(error),
-      );
-    });
-  }
+      const position: GeolocationPosition = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve(position),
+          (error) => reject(error),
+        );
+      });
 
-  handleGpsLocationPosition(position: GeolocationPosition): {
-    latitude: number;
-    longitude: number;
-    accuracy: number;
-  } {
-    return {
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-      accuracy: position.coords.accuracy,
-    };
+      return {
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+      };
   }
 }

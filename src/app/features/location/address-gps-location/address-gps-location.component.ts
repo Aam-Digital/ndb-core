@@ -41,10 +41,7 @@ export class AddressGpsLocationComponent {
       const location = await this.gpsService.getGpsLocationCoordinates();
       if (location) {
         const geoResult: GeoResult = await firstValueFrom(
-          this.geoService.reverseLookup({
-            lat: location.latitude,
-            lon: location.longitude,
-          }),
+          this.geoService.reverseLookup(location),
         );
         this.locationSelected.emit(geoResult);
         this.alertService.addInfo(
