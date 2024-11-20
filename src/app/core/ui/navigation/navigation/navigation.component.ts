@@ -85,14 +85,14 @@ export class NavigationComponent {
    */
   private computeActiveLink(newUrl: string): string {
     // conservative filter matching all items that could fit to the given url
-    const items: MenuItem[] = this.menuItems.filter(
-      (item) => typeof item.link === "string" && newUrl.startsWith(item.link),
+    const items: MenuItem[] = this.menuItems.filter((item) =>
+      newUrl.startsWith(item.link),
     );
     switch (items.length) {
       case 0:
         return "";
       case 1:
-        const link = items[0].link as string;
+        const link = items[0].link;
         // for root "/" only return on exact match to avoid confusing highlighting of unrelated items
         return newUrl === link || link.length > 1 ? link : "";
       default:
@@ -108,8 +108,8 @@ export class NavigationComponent {
         // both '/attendance' and '/attendance/add/day' are a prefix of '/attendance/add/day'.
         // In the latter case, the one with the longer URL should match.
         return items.reduce((i1, i2) =>
-          (i1.link as string).length > (i2.link as string).length ? i1 : i2,
-        ).link as string;
+          i1.link.length > i2.link.length ? i1 : i2,
+        ).link;
     }
   }
 
