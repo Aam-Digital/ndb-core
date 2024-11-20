@@ -112,7 +112,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         // add new field to last column
         const lastColumn: FieldGroup =
           formConfig.columns[formConfig.columns.length - 1];
-        lastColumn.fields.push({ id, defaultValue });
+        lastColumn.fields.push({ id, defaultValue, hideFromForm: true });
       } else {
         field.defaultValue = defaultValue;
       }
