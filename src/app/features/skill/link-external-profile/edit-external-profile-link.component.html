@@ -1,0 +1,23 @@
+@if (!formControl?.value) {
+  <button mat-stroked-button i18n (click)="searchMatchingProfiles()">
+    Link external profile
+  </button>
+} @else {
+  <div class="flex-row flex-wrap align-center gap-small">
+    <fa-icon icon="person-walking-arrow-right"></fa-icon>
+    <span
+      i18n
+      matTooltip="external ID: {{ formControl?.value }}"
+      i18n-matTooltip
+      >Linked to external profile</span
+    >
+
+    <button mat-stroked-button i18n (click)="unlinkExternalProfile()">
+      Unlink
+    </button>
+
+    <button mat-stroked-button i18n (click)="updateExternalData()">
+      Update external data
+    </button>
+  </div>
+}

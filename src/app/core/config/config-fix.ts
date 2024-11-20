@@ -588,6 +588,13 @@ export const defaultJsonConfig = {
                   },
                   {
                     fields: [
+                      "externalProfile",
+                      "skills"
+                    ],
+                    header: "Skill API Integration (under development)"
+                  },
+                  {
+                    fields: [
                       "dateOfBirth",
                       "birth_certificate",
                       "gender",
@@ -1061,6 +1068,16 @@ export const defaultJsonConfig = {
         additional: {
           acceptedFileTypes: ".pdf"
         }
+      },
+
+      externalProfile: {
+        dataType: "string",
+        editComponent: "EditExternalProfileLink",
+        label: "External SkillLab Profile"
+      },
+      skills: {
+        dataType: "string",
+        label: "Skills"
       }
     }
   } as EntityConfig,

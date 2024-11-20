@@ -1,0 +1,32 @@
+<h1 mat-dialog-title i18n>Match External Profile</h1>
+
+<mat-dialog-content>
+  @if (loading) {
+    <div i18n>Searching possibly matching profiles ...</div>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  } @else if (error) {
+    <p i18n>
+      There was an error loading external profiles. Please try again later.
+    </p>
+  } @else {
+    <mat-radio-group class="flex-column gap-small" [(ngModel)]="selected">
+      @for (profile of possibleMatches; track profile) {
+        <mat-radio-button [value]="profile" [matTooltip]="profile._tooltip">
+          {{ profile.fullName }} ({{ profile.email }})
+        </mat-radio-button>
+      }
+    </mat-radio-group>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
+  <button
+    mat-raised-button
+    [disabled]="!selected"
+    [mat-dialog-close]="selected"
+    i18n
+  >
+    Link External Profile
+  </button>
+</mat-dialog-actions>
