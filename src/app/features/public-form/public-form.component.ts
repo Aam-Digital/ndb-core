@@ -88,6 +88,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.formConfig.entity,
     ) as EntityConstructor<E>;
     this.formConfig = this.migratePublicFormConfig(this.formConfig);
+    console.log(this.formConfig,"tetetetetet")
 
     this.fieldGroups = this.formConfig.columns;
     await this.initForm();
@@ -147,6 +148,25 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       )
       .then((value) => {
         this.form = value;
+        const formControls = this.form.formGroup.controls;
+  
+        Object.keys(formControls).forEach((fieldName) => {
+          const fieldConfig = this.findFieldInFieldGroups(fieldName);
+      console.log(fieldConfig,"fieldConfig")
+  
+          // Check if defaultValue exists
+          if (fieldConfig && fieldConfig.defaultValue) {
+            const { mode, value } = fieldConfig.defaultValue;
+  
+            let defaultValue = null;
+              defaultValue = value;
+  
+            if (defaultValue !== null) {
+              const targetFormControl = this.form.formGroup.get(fieldName);
+              targetFormControl.setValue(defaultValue);
+            }
+          }
+        });
       });
   }
 }
