@@ -87,10 +87,6 @@ export class GeoService {
    * @param coordinates of a place (`lat` and `lon`)
    */
   reverseLookup(coordinates: Coordinates): Observable<GeoResult> {
-    if (!coordinates) {
-      return undefined;
-    }
-
     const fallback: GeoResult = {
       display_name: $localize`[selected coordinates: ${coordinates.lat} - ${coordinates.lon}]`,
       ...coordinates,

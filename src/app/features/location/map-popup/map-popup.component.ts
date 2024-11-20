@@ -1,9 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { BehaviorSubject, firstValueFrom, Observable, Subject } from "rxjs";
@@ -88,7 +84,7 @@ export class MapPopupComponent {
   }
 
   async mapClicked(newCoordinates: Coordinates) {
-    if (this.data.disabled) {
+    if (this.data.disabled || !newCoordinates) {
       return;
     }
     const geoResult: GeoResult = await firstValueFrom(
