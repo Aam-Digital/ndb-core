@@ -28,17 +28,19 @@ export class GpsService {
       );
     }
 
-      const position: GeolocationPosition = await new Promise((resolve, reject) => {
+    const position: GeolocationPosition = await new Promise(
+      (resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
           (position) => resolve(position),
           (error) => reject(error),
         );
-      });
+      },
+    );
 
-      return {
-        lat: position.coords.latitude,
-        lon: position.coords.longitude,
-        accuracy: position.coords.accuracy,
-      };
+    return {
+      lat: position.coords.latitude,
+      lon: position.coords.longitude,
+      accuracy: position.coords.accuracy,
+    };
   }
 }
