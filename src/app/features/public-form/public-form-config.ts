@@ -9,4 +9,7 @@ export class PublicFormConfig extends Entity {
   @DatabaseField() description: string;
   @DatabaseField() entity: string;
   @DatabaseField() columns: FieldGroup[];
+
+  /** @deprecated use ColumnConfig directly in the columns array instead */
+  @DatabaseField() prefilled: { [key in string]: any };
 }

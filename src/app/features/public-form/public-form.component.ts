@@ -19,6 +19,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "../../core/entity-details/form/field-group";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
 
 @UntilDestroy()
 @Component({
@@ -95,27 +96,46 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private migratePublicFormConfig(
     formConfig: PublicFormConfig,
   ): PublicFormConfig {
-    if (formConfig["prefilled"]) {
-      const prefilledFields = Object.entries(formConfig["prefilled"]).map(
-        ([id, value]) => ({
-          id,
-          defaultValue: { mode: "static", value },
-        }),
-      ) as FormFieldConfig[];
-
-      formConfig.columns?.forEach((column) => {
-        column.fields = [...(column.fields || []), ...prefilledFields];
-      });
-      delete formConfig["prefilled"];
-    }
-
     if (formConfig.columns) {
-      formConfig.columns = formConfig.columns.map((column) => ({
-        fields: Array.isArray(column) ? column : column.fields || [],
-      }));
+      formConfig.columns = formConfig.columns.map(
+        (column: FieldGroup | string[]) => ({
+          fields: Array.isArray(column) ? column : column.fields || [],
+        }),
+      );
     }
+
+    for (let [id, value] of Object.entries(formConfig["prefilled"] ?? [])) {
+      const defaultValue: DefaultValueConfig = { mode: "static", value };
+
+      const field: FormFieldConfig = this.findFieldInFieldGroups(id);
+      if (!field) {
+        // add new field to last column
+        const lastColumn: FieldGroup =
+          formConfig.columns[formConfig.columns.length - 1];
+        lastColumn.fields.push({ id, defaultValue });
+      } else {
+        field.defaultValue = defaultValue;
+      }
+    }
+    delete formConfig.prefilled;
 
     return formConfig;
+  }
+
+  private findFieldInFieldGroups(id: string): FormFieldConfig {
+    for (const column of this.formConfig.columns) {
+      for (const field of column.fields) {
+        if (typeof field === "string" && field === id) {
+          // replace the string with a field object, so that we can pass by reference
+          const newField: FormFieldConfig = { id: field };
+          column.fields[column.fields.indexOf(field)] = newField;
+          return newField;
+        } else if (typeof field === "object" && field.id === id) {
+          return field;
+        }
+      }
+    }
+    return undefined;
   }
 
   private async initForm() {
