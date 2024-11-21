@@ -1,0 +1,92 @@
+name: Sync Translations with POEditor
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  sync-translations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Extract new translation keys for all languages
+      - name: Extract i18n keys
+        run: npm run extract-i18n
+
+      # Upload translation files to POEditor
+      - name: Upload translations to POEditor
+        run: |
+          # Upload the default English file
+          curl -X POST https://api.poeditor.com/v2/projects/upload \
+            -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
+            -F "id=740876" \
+            -F "language=en" \
+            -F "updating=terms_translations" \
+            -F "file=@src/assets/locale/messages.xlf"
+
+          # Upload other language files
+          for lang in fr de it; do
+            curl -X POST https://api.poeditor.com/v2/projects/upload \
+              -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
+              -F "id=740876" \
+              -F "language=$lang" \
+              -F "updating=terms_translations" \
+              -F "file=@src/assets/locale/messages.$lang.xlf"
+          done
+
+      # Export updated translations from POEditor
+      - name: Export updated translations
+        run: |
+          response=$(curl -X POST https://api.poeditor.com/v2/projects/export \
+                -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
+                -F "id=740876" \
+                -F "language=end" \
+                -F "type=xlf")
+              url=$(echo $response | jq -r '.result.url')
+              curl -L $url -o src/assets/locale/messages.xlf
+
+          for lang in fr de it; do
+            response=$(curl -X POST https://api.poeditor.com/v2/projects/export \
+              -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
+              -F "id=740876" \
+              -F "language=$lang" \
+              -F "type=xlf")
+            url=$(echo $response | jq -r '.result.url')
+            curl -L $url -o src/assets/locale/messages.$lang.xlf
+          done
+
+      # Commit and create a new PR
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create new branch for translations
+        run: |
+          git checkout -b update-translations
+          git add src/assets/locale/messages.xlf
+          git add src/assets/locale/messages.*.xlf
+          git commit -m "Update translations from POEditor"
+
+      - name: Push changes
+        run: git push origin update-translations
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: update-translations
+          title: "Update translations from POEditor"
+          body: "This PR updates the translations exported from POEditor."
+          labels: translations
