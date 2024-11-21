@@ -11,7 +11,6 @@ import { MapComponent } from "../map/map.component";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
-import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { catchError, map } from "rxjs/operators";
 import { AddressEditComponent } from "../address-edit/address-edit.component";
@@ -49,7 +48,6 @@ export interface MapPopupConfig {
     MapComponent,
     MatButtonModule,
     AsyncPipe,
-    AddressSearchComponent,
     AddressEditComponent,
   ],
   standalone: true,

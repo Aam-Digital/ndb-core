@@ -2,7 +2,9 @@
   <app-dashboard-list-widget
     icon="list"
     theme="child"
-    [subtitle]="data?.title"
+    [title]="overallPercentage | percent: '1.0-0'"
+    [subtitle]="subtitle ?? data.title"
+    [explanation]="explanation"
     [entries]="data?.parts"
   >
     <div class="table-wrapper">

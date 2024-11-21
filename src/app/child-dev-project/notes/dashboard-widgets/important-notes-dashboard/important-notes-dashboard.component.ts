@@ -31,6 +31,11 @@ export class ImportantNotesDashboardComponent extends DashboardWidget {
     super();
   }
 
+  @Input() subtitle: string =
+    $localize`:dashboard widget subtitle:Notes needing follow-up`;
+  @Input() explanation: string =
+    $localize`:dashboard widget explanation:Notes require immediate attention or follow-up actions`;
+
   private noteIsRelevant(note: Note): boolean {
     return this.warningLevels.includes(note.warningLevel.id);
   }
