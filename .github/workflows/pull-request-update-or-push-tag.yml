@@ -57,6 +57,10 @@ jobs:
       - name: Checkout repository files
         uses: actions/checkout@v4
 
+      - name: Install docker on macos
+        if: ${{ matrix.os == 'macos-15' }}
+        run: brew install docker
+
       - name: Prepare Platform
         run: |
           platform=${{ matrix.platform }}
@@ -162,6 +166,10 @@ jobs:
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
+
+      - name: Install docker on macos
+        if: ${{ matrix.os == 'macos-15' }}
+        run: brew install docker
 
       - name: Extract tag (release)
         if: ${{ github.event.ref  != '' }}
