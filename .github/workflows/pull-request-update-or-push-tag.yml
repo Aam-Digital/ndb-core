@@ -60,8 +60,8 @@ jobs:
       - name: Install docker on macos
         if: ${{ matrix.os == 'macos-14' }}
         run: |
-          brew install docker docker-compose
-          sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock
+          brew install docker docker-compose colima docker-buildx
+          colima start
 
       - name: Prepare Platform
         run: |
@@ -172,8 +172,8 @@ jobs:
       - name: Install docker on macos
         if: ${{ matrix.os == 'macos-14' }}
         run: |
-          brew install docker docker-compose
-          sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock
+          brew install docker docker-compose colima docker-buildx
+          colima start
 
       - name: Extract tag (release)
         if: ${{ github.event.ref  != '' }}
