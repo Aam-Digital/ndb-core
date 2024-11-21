@@ -60,7 +60,7 @@ jobs:
       - name: Install docker on macos
         if: ${{ matrix.os == 'macos-14' }}
         run: |
-          brew install docker docker-compose colima docker-buildx
+          brew install docker docker-compose colima docker-buildx qemu
           LIMACTL_PATH=$(brew --prefix)/bin/limactl
           sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
           colima start --network-address --arch arm64 --vm-type=qemu
@@ -174,7 +174,7 @@ jobs:
       - name: Install docker on macos
         if: ${{ matrix.os == 'macos-14' }}
         run: |
-          brew install docker docker-compose colima docker-buildx
+          brew install docker docker-compose colima docker-buildx qemu
           LIMACTL_PATH=$(brew --prefix)/bin/limactl
           sudo curl -L -o $LIMACTL_PATH https://github.com/mikekazakov/lima-nohvf/raw/master/limactl && sudo chmod +x $LIMACTL_PATH
           colima start --network-address --arch arm64 --vm-type=qemu
