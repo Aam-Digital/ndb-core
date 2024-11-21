@@ -23,7 +23,6 @@ jobs:
       - name: Extract i18n keys
         run: npm run extract-i18n
 
-      # Upload translation files to POEditor
       - name: Upload translations to POEditor
         run: |
           # Upload the default English file
@@ -34,6 +33,9 @@ jobs:
             -F "updating=terms_translations" \
             -F "file=@src/assets/locale/messages.xlf"
 
+          echo "Waiting for 1 minutes to respect rate limit..."
+          sleep 60
+
           # Upload other language files
           for lang in fr de it; do
             curl -X POST https://api.poeditor.com/v2/projects/upload \
@@ -42,6 +44,9 @@ jobs:
               -F "language=$lang" \
               -F "updating=terms_translations" \
               -F "file=@src/assets/locale/messages.$lang.xlf"
+            
+            echo "Waiting for 1 minutes to respect rate limit..."
+            sleep 60
           done
 
       # Export updated translations from POEditor
@@ -55,6 +60,9 @@ jobs:
               url=$(echo $response | jq -r '.result.url')
               curl -L $url -o src/assets/locale/messages.xlf
 
+          echo "Waiting for 1 minutes to respect rate limit..."
+          sleep 60
+
           for lang in fr de it; do
             response=$(curl -X POST https://api.poeditor.com/v2/projects/export \
               -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
@@ -63,6 +71,9 @@ jobs:
               -F "type=xlf")
             url=$(echo $response | jq -r '.result.url')
             curl -L $url -o src/assets/locale/messages.$lang.xlf
+
+          echo "Waiting for 1 minutes to respect rate limit..."
+          sleep 60
           done
 
       # Commit and create a new PR
