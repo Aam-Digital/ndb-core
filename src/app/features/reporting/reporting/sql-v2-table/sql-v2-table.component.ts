@@ -7,11 +7,12 @@ import {
   SqlReportRow,
   SqlReportService,
 } from "../../sql-report/sql-report.service";
+import { Logging } from "../../../../core/logging/logging.service";
 
 @Component({
   selector: "app-sql-v2-table",
   standalone: true,
-  imports: [MatTableModule, NgForOf, MatSortModule, NgClass, JsonPipe],
+  imports: [MatTableModule, MatSortModule, NgClass],
   templateUrl: "./sql-v2-table.component.html",
   styleUrl: "./sql-v2-table.component.scss",
 })
@@ -40,7 +41,7 @@ export class SqlV2TableComponent implements OnInit {
     try {
       return this.sqlReportService.flattenData(value);
     } catch (error) {
-      console.log(error);
+      Logging.error(error);
       this.isError = true;
     }
   }

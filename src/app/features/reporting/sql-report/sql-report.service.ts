@@ -101,53 +101,33 @@ export class SqlReportService {
    * [
    *   [
    *     {
-   *       "Patenschaften neu verknüpft": 6
-   *     }
-   *   ],
-   *   [
-   *     {
-   *       "Patenschaften Aktiv": 0
-   *     }
-   *   ],
-   *   [
-   *     {
-   *       "Mentees neu aufgenommen": 2
+   *       "New students": 6
    *     }
    *   ],
    *   {
-   *     "Mentoren erreicht": [
+   *     "Students gender": [
    *       [
    *         {
-   *           "junge Erwachsene 20 bis 29 Jahren": 4
+   *           "male": 6
    *         }
    *       ],
    *       [
    *         {
-   *           "Erwachsene 30 bis 49 Jahren": 4
+   *           "female": 4
    *         }
    *       ]
    *     ]
    *   },
    *   [
    *     {
-   *       "anzahl": 3,
-   *       "status": "BEENDET",
-   *       "foerderungDurch": null
+   *       "count": 3,
+   *       "project": "FOO",
+   *       "school": "SchoolA"
    *     },
    *     {
    *       "anzahl": 1,
-   *       "status": "MATCHING_LÄUFT",
-   *       "foerderungDurch": null
-   *     },
-   *     {
-   *       "anzahl": 1,
-   *       "status": "MATCHING_LÄUFT",
-   *       "foerderungDurch": "Menschen stärken Menschen"
-   *     },
-   *     {
-   *       "anzahl": 1,
-   *       "status": "PATENSCHAFT",
-   *       "foerderungDurch": null
+   *       "project": "BAR",
+   *       "school": "SchoolB"
    *     }
    *   ]
    * ]
@@ -350,7 +330,9 @@ export class SqlReportService {
         row.key +
         '"' +
         ",".repeat(deepestLevel + 1 - row.level) +
+        '"' +
         row.value +
+        '"' +
         "\n";
     }
 
