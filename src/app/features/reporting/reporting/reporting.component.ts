@@ -19,6 +19,7 @@ import {
 } from "../sql-report/sql-report.service";
 import { RouteTarget } from "../../../route-target";
 import { firstValueFrom } from "rxjs";
+import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
 
 @RouteTarget("Reporting")
 @Component({
@@ -33,12 +34,16 @@ import { firstValueFrom } from "rxjs";
     ObjectTableComponent,
     DatePipe,
     JsonPipe,
+    SqlV2TableComponent,
   ],
   standalone: true,
 })
 export class ReportingComponent {
   reports: ReportEntity[];
   mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
+
+  currentReport: ReportEntity;
+
   isLoading: boolean;
   isError: boolean = false;
   errorDetails: string | null = null;
@@ -46,7 +51,7 @@ export class ReportingComponent {
   reportCalculation: ReportCalculation | null = null;
 
   data: any[];
-  exportableData: any[];
+  exportableData: any;
 
   constructor(
     private dataAggregationService: DataAggregationService,
@@ -80,9 +85,23 @@ export class ReportingComponent {
       return Promise.reject(reason.message || reason);
     });
 
+    this.currentReport = selectedReport;
+
     this.mode = selectedReport.mode ?? "reporting";
-    this.exportableData =
-      this.mode === "reporting" ? this.flattenReportRows() : this.data;
+
+    switch (this.mode) {
+      case "reporting":
+        this.exportableData = this.flattenReportRows();
+        break;
+      case "sql":
+        this.exportableData = this.sqlReportService.getCsv(
+          this.sqlReportService.flattenData(this.data),
+        );
+        break;
+      default:
+        this.exportableData = this.data;
+    }
+
     this.isLoading = false;
   }
 
@@ -146,5 +165,10 @@ export class ReportingComponent {
       resultLabel += " " + groupByString;
     }
     return { label: resultLabel, result: header.result };
+  }
+
+  selectedReportChanged() {
+    this.reportCalculation = null;
+    this.data = [];
   }
 }
