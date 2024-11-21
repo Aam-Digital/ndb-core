@@ -36,6 +36,10 @@ export interface FormFieldConfig extends EntitySchemaField {
 
   /**
    * If true, the field will only be shown in tables and excluded from forms and popups.
+   * You can also use this to include a hidden form in a Public Form.
+   *
+   * The form field is still generated but hidden in the UI,
+   * so default values can be applied to such hidden fields.
    */
   hideFromForm?: boolean;
 

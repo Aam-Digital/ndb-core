@@ -1,6 +1,7 @@
 <div
   *ngIf="_field && form && _field.editComponent; else displayComponent"
   class="flex-row"
+  [ngClass]="{ hidden: _field?.hideFromForm }"
 >
   <div class="flex-grow">
     <ng-container
