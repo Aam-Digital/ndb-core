@@ -5,9 +5,9 @@
   [angularticsLabel]="item.label"
   [routerLink]="[item.link]"
   [class.matched-background]="item.link === activeLink"
-  onclick="this.blur();"
+  (click)="toggleSubMenu()"
 >
-  <a class="flex-row gap-small" (click)="toggleSubMenu()">
+  <a class="flex-row gap-small">
     <app-fa-dynamic-icon
       class="nav-icon"
       [icon]="item.icon"
@@ -24,6 +24,7 @@
 <!-- Render submenus if they exist and are expanded -->
 <div *ngIf="isExpanded" class="submenu">
   <ng-container *ngFor="let subItem of item.subMenu">
-    <app-menu-item [item]="subItem"></app-menu-item>
+    <!-- Pass activeLink to each submenu item to highlight the active submenu -->
+    <app-menu-item [item]="subItem" [activeLink]="activeLink"></app-menu-item>
   </ng-container>
 </div>

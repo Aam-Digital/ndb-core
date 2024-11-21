@@ -21,6 +21,19 @@ export const defaultJsonConfig = {
         label: $localize`:Menu item:Dashboard`,
         icon: "home",
         link: "/",
+        subMenu: [
+          {
+            "label": $localize`:Submenu item:Dashboard Overview`,
+            "icon": "dashboard",
+            "link": "/dashboard-overview"
+          },
+          {
+            "label": $localize`:Submenu item:Dashboard Settings`,
+            "icon": "settings",
+            "link": "/dashboard-settings"
+          }
+        ]
+  
       },
       {
         label: $localize`:Menu item:Children`,

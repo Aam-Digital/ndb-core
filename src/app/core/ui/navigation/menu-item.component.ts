@@ -37,4 +37,13 @@ export class MenuItemComponent {
   hasSubMenu(item: MenuItem): boolean {
     return !!item.subMenu && item.subMenu.length > 0;
   }
+
+  // Method to check if a submenu item is active
+  isSubMenuActive(item: MenuItem): boolean {
+    return (
+      item.link === this.activeLink || // check if the main item is active
+      (item.subMenu &&
+        item.subMenu.some((subItem) => subItem.link === this.activeLink)) // check if any submenu item is active
+    );
+  }
 }
