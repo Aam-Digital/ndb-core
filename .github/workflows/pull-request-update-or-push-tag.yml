@@ -44,21 +44,21 @@ jobs:
         os:
           - ubuntu-latest
           - [ self-hosted, Linux, ARM64 ]
-          - macos-14
+          - macos-15
         exclude:
           - platform: linux/arm64
             os: ubuntu-latest
           - platform: linux/amd64
             os: [ self-hosted, Linux, ARM64 ]
           - platform: linux/amd64
-            os: macos-14
+            os: macos-15
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
 
       - name: Install docker on macos
-        if: ${{ matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'macos-15' }}
         run: |
           brew install docker docker-compose colima docker-buildx qemu
           LIMACTL_PATH=$(brew --prefix)/bin/limactl
@@ -158,21 +158,21 @@ jobs:
         os:
           - ubuntu-latest
           - [self-hosted, Linux, ARM64]
-          - macos-14
+          - macos-15
         exclude:
           - platform: linux/arm64
             os: ubuntu-latest
           - platform: linux/amd64
             os: [self-hosted, Linux, ARM64]
           - platform: linux/amd64
-            os: macos-14
+            os: macos-15
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
 
       - name: Install docker on macos
-        if: ${{ matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'macos-15' }}
         run: |
           brew install docker docker-compose colima docker-buildx qemu
           LIMACTL_PATH=$(brew --prefix)/bin/limactl
