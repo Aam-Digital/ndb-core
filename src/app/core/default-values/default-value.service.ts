@@ -34,7 +34,6 @@ export class DefaultValueService {
 
     for (const [key, entitySchemaField] of entitySchema) {
       let fieldConfig = JSON.parse(JSON.stringify(entitySchemaField));
-
       let targetFormControl = form.formGroup.get(key);
       if (
         !this.preConditionsFulfilled(
