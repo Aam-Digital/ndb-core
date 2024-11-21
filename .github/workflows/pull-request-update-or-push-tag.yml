@@ -61,7 +61,7 @@ jobs:
         if: ${{ matrix.os == 'macos-14' }}
         run: |
           brew install docker docker-compose
-          ln -s ~/.docker/run/docker.sock /var/run/docker.sock
+          sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock
 
       - name: Prepare Platform
         run: |
@@ -173,7 +173,7 @@ jobs:
         if: ${{ matrix.os == 'macos-14' }}
         run: |
           brew install docker docker-compose
-          ln -s ~/.docker/run/docker.sock /var/run/docker.sock
+          sudo ln -s ~/.docker/run/docker.sock /var/run/docker.sock
 
       - name: Extract tag (release)
         if: ${{ github.event.ref  != '' }}
