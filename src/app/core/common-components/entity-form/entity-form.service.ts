@@ -157,6 +157,14 @@ export class EntityFormService {
 
     const defaultValueConfigs =
       DefaultValueService.getDefaultValueConfigs(entity);
+    for (const field of formFields) {
+      if (typeof field === "object" && field.defaultValue) {
+        defaultValueConfigs.set(field.id, {
+          mode: field.defaultValue.mode,
+          value: field.defaultValue.value,
+        });
+      }
+    }
 
     const entityForm: EntityForm<T> = {
       formGroup: typedFormGroup,

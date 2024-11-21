@@ -43,7 +43,14 @@ export class DefaultValueService {
       ) {
         continue;
       }
-
+      const defaultValueConfig = form.defaultValueConfigs.get(key);
+      if (defaultValueConfig) {
+        // Override entitySchemaField's defaultValue with the value from defaultValueConfigs
+        entitySchemaField.defaultValue = {
+          mode: defaultValueConfig.mode,
+          value: defaultValueConfig.value,
+        };
+      }
       switch (entitySchemaField.defaultValue?.mode) {
         case "static":
           this.handleStaticMode(targetFormControl, entitySchemaField);
