@@ -88,8 +88,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.formConfig.entity,
     ) as EntityConstructor<E>;
     this.formConfig = this.migratePublicFormConfig(this.formConfig);
-    console.log(this.formConfig, "tetetetetet");
-
     this.fieldGroups = this.formConfig.columns;
     await this.initForm();
   }

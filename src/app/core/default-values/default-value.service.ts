@@ -33,12 +33,14 @@ export class DefaultValueService {
     this.enableChangeListener(form);
 
     for (const [key, entitySchemaField] of entitySchema) {
+      let fieldConfig = JSON.parse(JSON.stringify(entitySchemaField));
+
       let targetFormControl = form.formGroup.get(key);
       if (
         !this.preConditionsFulfilled(
           entity.isNew,
           targetFormControl,
-          entitySchemaField,
+          fieldConfig,
         )
       ) {
         continue;
@@ -46,25 +48,25 @@ export class DefaultValueService {
       const defaultValueConfig = form.defaultValueConfigs.get(key);
       if (defaultValueConfig) {
         // Override entitySchemaField's defaultValue with the value from defaultValueConfigs
-        entitySchemaField.defaultValue = {
+        fieldConfig.defaultValue = {
           mode: defaultValueConfig.mode,
           value: defaultValueConfig.value,
         };
       }
-      switch (entitySchemaField.defaultValue?.mode) {
+      switch (fieldConfig.defaultValue?.mode) {
         case "static":
-          this.handleStaticMode(targetFormControl, entitySchemaField);
+          this.handleStaticMode(targetFormControl, fieldConfig);
           break;
         case "dynamic":
           this.dynamicPlaceholderValueService.setDefaultValue(
             targetFormControl,
-            entitySchemaField,
+            fieldConfig,
           );
           break;
         case "inherited":
           this.inheritedValueService.setDefaultValue(
             targetFormControl,
-            entitySchemaField,
+            fieldConfig,
             form,
           );
           break;
