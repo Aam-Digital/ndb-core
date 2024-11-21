@@ -44,11 +44,14 @@ jobs:
         os:
           - ubuntu-latest
           - [ self-hosted, Linux, ARM64 ]
+          - macos-15
         exclude:
           - platform: linux/arm64
             os: ubuntu-latest
           - platform: linux/amd64
             os: [ self-hosted, Linux, ARM64 ]
+          - platform: linux/amd64
+            os: macos-15
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
@@ -147,11 +150,14 @@ jobs:
         os:
           - ubuntu-latest
           - [self-hosted, Linux, ARM64]
+          - macos-15
         exclude:
           - platform: linux/arm64
             os: ubuntu-latest
           - platform: linux/amd64
             os: [self-hosted, Linux, ARM64]
+          - platform: linux/amd64
+            os: macos-15
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
