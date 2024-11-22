@@ -1,0 +1,117 @@
+name: Sync Translations with POEditor
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-translations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+
+      - name: Upload translations to POEditor
+        run: |
+          declare -A files
+          # Populate file mappings dynamically
+
+          # files["en"]="src/assets/locale/messages.en.xlf"
+          # files["fr"]="src/assets/locale/messages.fr.xlf"
+          # files["de"]="src/assets/locale/messages.de.xlf"
+          files["it"]="src/assets/locale/messages.it.xlf"
+
+          for lang in "${!files[@]}"; do
+            echo "Uploading ${files[$lang]} for language $lang"
+            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
+              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+              -F "language=$lang" \
+              -F "updating=terms_translations" \
+              -F "file=@$files[$lang]}")
+            status=$(echo $response | jq -r '.response.status')
+            if [ "$status" != "success" ]; then
+              echo "Error uploading file for $lang: $response"
+              exit 1
+            fi
+            echo "Waiting for 1 minute to respect rate limits..."
+            sleep 60
+          done
+
+      - name: Export translations from POEditor
+        run: |
+          # languages=("en" "fr" "de" "it")
+          languages=("it")
+          mkdir -p src/assets/translated/
+          for lang in "${languages[@]}"; do
+            echo "Exporting translations for language $lang"
+            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
+              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+              -F "language=$lang" \
+              -F "type=xlf")
+            status=$(echo $response | jq -r '.response.status')
+            if [ "$status" == "success" ]; then
+              url=$(echo $response | jq -r '.result.url')
+              if [ -n "$url" ]; then
+                echo "Downloading translations for $lang from $url"
+                curl -s -o src/assets/translated/messages.$lang.xlf $url
+                if [ ! -f "src/assets/translated/messages.$lang.xlf" ]; then
+                  echo "Failed to download translations for $lang"
+                  exit 1
+                fi
+                echo "Downloaded translations for $lang"
+              else
+                echo "No URL found for downloading translations for $lang"
+                exit 1
+              fi
+            else
+              echo "Error exporting translations for $lang: $response"
+              exit 1
+            fi
+          done
+        shell: /usr/bin/bash -e {0}
+
+      - name: Configure Git
+        run: |
+          git config user.name ${{ secrets.GIT_USERNAME }}
+          git config user.email ${{ secrets.GIT_EMAIL }}
+          git remote set-url origin https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@${{ secrets.REPO_URL }}
+
+      - name: Create new branch for translations
+        run: |
+          git checkout master
+          git checkout -b update-translation-messages
+          if git diff --quiet; then
+            echo "No changes to commit. Skipping PR creation."
+            exit 0
+          fi
+          git add src/assets/translated/*.xlf
+          git commit -m "Update translations from POEditor"
+
+      - name: Push changes
+        run: git push origin update-translation-messages
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: update-translation-messages
+          base: master
+          title: "Update translations from POEditor"
+          body: |
+            This PR updates the translations exported from POEditor.
