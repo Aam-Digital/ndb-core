@@ -47,6 +47,8 @@ export interface FormFieldConfig extends EntitySchemaField {
    * An internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
    */
   forTable?: boolean;
+
+  value?: string;
 }
 
 /**
