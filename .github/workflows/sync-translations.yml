@@ -26,14 +26,37 @@ jobs:
       - name: Extract i18n keys
         run: npm run extract-i18n
 
+      - name: Configure Git
+        run: |
+          git config user.name ${{ secrets.GIT_BOT_USERNAME }}
+          git config user.email ${{ secrets.GIT_BOT_EMAIL }}
+          git remote set-url origin https://${{ secrets.GIT_BOT_ACCESS_TOKEN }}@github.com/Aam-Digital/ndb-core.git
+
+      - name: Create or update branch for translations
+        run: |
+          branch_name="update-translations-messages"
+
+          # Check if branch exists on remote
+          if git ls-remote --exit-code origin $branch_name; then
+            echo "Branch $branch_name already exists. Fetching it..."
+            git fetch origin $branch_name:$branch_name
+
+            git checkout $branch_name
+            git pull origin $branch_name
+          else
+            echo "Creating new branch $branch_name..."
+            git checkout -b $branch_name
+          fi
+
       - name: Upload translations to POEditor
         run: |
           declare -A files
+
           # Populate file mappings dynamically
           files["en"]="src/assets/locale/messages.xlf"
-          # files["de"]="src/assets/locale/messages.de.xlf"
-          # files["it"]="src/assets/locale/messages.it.xlf"
-          # files["fr"]="src/assets/locale/messages.fr.xlf"
+          files["de"]="src/assets/locale/messages.de.xlf"
+          files["it"]="src/assets/locale/messages.it.xlf"
+          files["fr"]="src/assets/locale/messages.fr.xlf"
 
           for lang in "${!files[@]}"; do
             echo "Uploading ${files[$lang]} for language $lang"
@@ -54,8 +77,7 @@ jobs:
 
       - name: Export translations from POEditor
         run: |
-          # languages=("en" "fr" "de" "it")
-          languages=("en")
+          languages=("en" "fr" "it" "de")
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
@@ -73,7 +95,6 @@ jobs:
                 else
                   curl -s -o src/assets/locale/messages.$lang.xlf $url
                 fi
-                curl -s -o src/assets/locale/messages.$lang.xlf $url
               else
                 echo "No URL found for downloading translations for $lang"
                 exit 1
@@ -86,15 +107,8 @@ jobs:
             sleep 60
           done
 
-      - name: Configure Git
+      - name: Commit file changes
         run: |
-          git config user.name ${{ secrets.GIT_BOT_USERNAME }}
-          git config user.email ${{ secrets.GIT_BOT_EMAIL }}
-          git remote set-url origin https://${{ secrets.GIT_BOT_ACCESS_TOKEN }}@github.com/Aam-Digital/ndb-core.git
-
-      - name: Create new branch for translations
-        run: |
-          git checkout -b update-translations-messages
           if git diff --quiet; then
             echo "No changes to commit. Exiting."
             exit 0
@@ -103,7 +117,8 @@ jobs:
           git commit -m "Update translations from POEditor"
 
       - name: Push changes
-        run: git push origin HEAD
+        run: |
+          git push origin HEAD
 
       - name: Create Pull Request
         uses: actions/github-script@v6
@@ -113,7 +128,16 @@ jobs:
             const headBranch = 'update-translations-messages';
             const baseBranch = 'master';
 
-            const diff = await github.rest.repos.compareCommits({
+            const pulls = await github.rest.pulls.list({
+              owner: owner,
+              repo: repo,
+              head: headBranch,
+              base: baseBranch,
+              state: 'open',
+            });
+
+            if (pulls.data.length < 1) {
+              const diff = await github.rest.repos.compareCommits({
               owner,
               repo,
               base: baseBranch,
@@ -142,3 +166,16 @@ jobs:
               issue_number: result.data.number,
               labels: ['feature', 'automated pr'],
             });
+
+            } else {
+              const existingPR = pulls.data[0];
+              await github.rest.pulls.update({
+                owner: owner,
+                repo: repo,
+                pull_number: existingPR.number,
+                body: [
+                  existingPR.body,
+                  `Updated by Job ${context.job}`,
+                ].join('\n'),
+              });
+            }
