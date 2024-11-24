@@ -23,18 +23,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Set up node
-        uses: actions/setup-node@v4
+      - name: Extract i18n keys
+        run: npm run extract-i18n
 
       - name: Upload translations to POEditor
         run: |
           declare -A files
           # Populate file mappings dynamically
-
-          # files["en"]="src/assets/locale/messages.en.xlf"
-          # files["fr"]="src/assets/locale/messages.fr.xlf"
+          files["en"]="src/assets/locale/messages.xlf"
           # files["de"]="src/assets/locale/messages.de.xlf"
-          files["it"]="src/assets/locale/messages.it.xlf"
+          # files["it"]="src/assets/locale/messages.it.xlf"
+          # files["fr"]="src/assets/locale/messages.fr.xlf"
 
           for lang in "${!files[@]}"; do
             echo "Uploading ${files[$lang]} for language $lang"
@@ -43,7 +42,7 @@ jobs:
               -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
               -F "language=$lang" \
               -F "updating=terms_translations" \
-              -F "file=@$files[$lang]}")
+              -F "file=@${files[$lang]}")
             status=$(echo $response | jq -r '.response.status')
             if [ "$status" != "success" ]; then
               echo "Error uploading file for $lang: $response"
@@ -56,8 +55,7 @@ jobs:
       - name: Export translations from POEditor
         run: |
           # languages=("en" "fr" "de" "it")
-          languages=("it")
-          mkdir -p src/assets/translated/
+          languages=("en")
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
@@ -70,12 +68,12 @@ jobs:
               url=$(echo $response | jq -r '.result.url')
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                curl -s -o src/assets/translated/messages.$lang.xlf $url
-                if [ ! -f "src/assets/translated/messages.$lang.xlf" ]; then
-                  echo "Failed to download translations for $lang"
-                  exit 1
+                if [ "$lang" == "en" ]; then
+                  curl -s -o src/assets/locale/messages.xlf $url
+                else
+                  curl -s -o src/assets/locale/messages.$lang.xlf $url
                 fi
-                echo "Downloaded translations for $lang"
+                curl -s -o src/assets/locale/messages.$lang.xlf $url
               else
                 echo "No URL found for downloading translations for $lang"
                 exit 1
@@ -84,34 +82,63 @@ jobs:
               echo "Error exporting translations for $lang: $response"
               exit 1
             fi
+            echo "Waiting for 1 minute to respect rate limits..."
+            sleep 60
           done
-        shell: /usr/bin/bash -e {0}
 
       - name: Configure Git
         run: |
-          git config user.name ${{ secrets.GIT_USERNAME }}
-          git config user.email ${{ secrets.GIT_EMAIL }}
-          git remote set-url origin https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@${{ secrets.REPO_URL }}
+          git config user.name ${{ secrets.GIT_BOT_USERNAME }}
+          git config user.email ${{ secrets.GIT_BOT_EMAIL }}
+          git remote set-url origin https://${{ secrets.GIT_BOT_ACCESS_TOKEN }}@github.com/Aam-Digital/ndb-core.git
 
       - name: Create new branch for translations
         run: |
-          git checkout master
-          git checkout -b update-translation-messages
+          git checkout -b update-translations-messages
           if git diff --quiet; then
-            echo "No changes to commit. Skipping PR creation."
+            echo "No changes to commit. Exiting."
             exit 0
           fi
-          git add src/assets/translated/*.xlf
+          git add src/assets/locale/*.xlf
           git commit -m "Update translations from POEditor"
 
       - name: Push changes
-        run: git push origin update-translation-messages
+        run: git push origin HEAD
 
-      - name: Create pull request
-        uses: peter-evans/create-pull-request@v5
+      - name: Create Pull Request
+        uses: actions/github-script@v6
         with:
-          branch: update-translation-messages
-          base: master
-          title: "Update translations from POEditor"
-          body: |
-            This PR updates the translations exported from POEditor.
+          script: |
+            const { repo, owner } = context.repo;
+            const headBranch = 'update-translations-messages';
+            const baseBranch = 'master';
+
+            const diff = await github.rest.repos.compareCommits({
+              owner,
+              repo,
+              base: baseBranch,
+              head: headBranch,
+            });
+
+            if (diff.data.commits.length === 0) {
+              return;
+            }
+
+            const result = await github.rest.pulls.create({
+              title: 'Update translations',
+              owner,
+              repo,
+              head: headBranch,
+              base: baseBranch,
+              body: [
+                'This PR updates translations from POEditor.',
+                'Generated by GitHub Actions.'
+              ].join('\n'),
+            });
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: result.data.number,
+              labels: ['feature', 'automated pr'],
+            });
