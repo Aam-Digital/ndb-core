@@ -386,8 +386,16 @@ export const defaultJsonConfig = {
         },
         "privateSchool",
         "language",
+        "numberOfTeachers",
       ],
-      filters: [{ id: "privateSchool" }],
+      filters: [
+        { id: "privateSchool" },
+        {
+          id: "numberOfTeachers",
+          type: "number-range",
+          label: "Number of Teachers",
+        },
+      ],
     },
   },
   "view:school/:id": {
@@ -406,7 +414,7 @@ export const defaultJsonConfig = {
                   { fields: ["name", "privateSchool", "parentSchool"] },
                   { fields: ["address", "phone"] },
                   { fields: ["language", "timing"] },
-                  { fields: ["remarks"] },
+                  { fields: ["remarks", "numberOfTeachers"] },
                 ],
               },
             },
@@ -1091,6 +1099,10 @@ export const defaultJsonConfig = {
       timing: {
         dataType: "string",
         label: $localize`:Label for the timing of a school:School Timing`,
+      },
+      numberOfTeachers: {
+        dataType: "number",
+        label: $localize`:Label for a school attribute:Number of Teachers`,
       },
       remarks: {
         dataType: "string",

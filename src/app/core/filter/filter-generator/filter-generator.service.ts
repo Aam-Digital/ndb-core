@@ -22,6 +22,7 @@ import { DateFilter } from "../filters/dateFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
+import { NumberFilter } from "../filters/numberFilter";
 
 @Injectable({
   providedIn: "root",
@@ -65,6 +66,12 @@ export class FilterGeneratorService {
           filterConfig.id,
           label,
           filterConfig as BooleanFilterConfig,
+        );
+      } else if (type == "number-range") {
+        filter = new NumberFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          // filterConfig as NumberFilterConfig,
         );
       } else if (type == "prebuilt") {
         filter = new SelectableFilter(
