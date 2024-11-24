@@ -3,7 +3,7 @@ name: Sync Translations with POEditor
 on:
   push:
     branches:
-      - master
+      - feat/translation-poeditor-integration
 
 permissions:
   contents: write
