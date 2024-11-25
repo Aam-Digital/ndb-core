@@ -67,14 +67,16 @@ jobs:
               -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
               -F "language=$lang" \
               -F "updating=terms_translations" \
+              -F "overwrite=1" \
+              -F "sync_terms=1" \
               -F "file=@${files[$lang]}")
             status=$(echo $response | jq -r '.response.status')
             if [ "$status" != "success" ]; then
               echo "Error uploading file for $lang: $response"
               exit 1
             fi
-            echo "Waiting for 1 minute to respect rate limits..."
-            sleep 60
+            echo "Waiting for 30 second to respect rate limits..."
+            sleep 30
           done
 
       - name: Export translations from POEditor
@@ -105,8 +107,8 @@ jobs:
               echo "Error exporting translations for $lang: $response"
               exit 1
             fi
-            echo "Waiting for 1 minute to respect rate limits..."
-            sleep 60
+            echo "Waiting for 30 second to respect rate limits..."
+            sleep 30
           done
 
       - name: Commit file changes
