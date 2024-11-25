@@ -205,7 +205,7 @@ export const defaultJsonConfig = {
         label: $localize`:Label for the actual notes of a note:Notes`
       },
       authors: {
-        label: $localize`:Label for the social worker(s) who created the note:SW`,
+        label: $localize`:Label for the social worker(s) who created the note:Team involved`,
         dataType: "entity",
         isArray: true,
         additional: "User",
@@ -1162,9 +1162,13 @@ export const defaultJsonConfig = {
     hasPII: true,
 
     attributes: {
+      name: {
+        dataType: "string",
+        label: $localize`:Label of user field:Name`
+      },
       phone: {
         dataType: "string",
-        label: $localize`:Label of user phone:Contact`
+        label: $localize`:Label of user field:Contact`
       }
     }
   },
