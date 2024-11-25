@@ -1312,16 +1312,6 @@
           <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8885659285721046826" datatype="html">
-        <source>Notes needing follow-up</source>
-        <target>Notes needing follow-up</target>
-        <note priority="1" from="description">dashboard showing notes that require action</note>
-        <note priority="1" from="meaning">subtitle</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.html</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7252022468002751385" datatype="html">
         <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;entityNoteInfo.moreThanDaysSince&quot;&gt;"/> &gt;  <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/> <x id="INTERPOLATION" equiv-text="{{ entityNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/></source>
         <target><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&gt;"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;entityNoteInfo.moreThanDaysSince&quot;&gt;"/> &gt;  <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/> <x id="INTERPOLATION" equiv-text="{{ entityNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/></target>
@@ -7274,14 +7264,6 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4365094046219613303" datatype="html">
-        <source> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [entityType]=&quot;_entity&quot;         [field]=&quot;groupBy[currentGroupIndex]&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label&gt;"/></source>
-        <target> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [entityType]=&quot;_entity&quot;         [field]=&quot;groupBy[currentGroupIndex]&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label&gt;"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">22,32</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="1009687839872857475" datatype="html">
         <source>Next Grouping</source>
         <target>Next Grouping</target>
@@ -7529,16 +7511,6 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
           <context context-type="linenumber">94</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4992070016855324399" datatype="html">
-        <source>Quick actions</source>
-        <target>Quick actions</target>
-        <note priority="1" from="description">Title of dashboard widget that shows a list of certain actions a user can
-    click on</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.html</context>
-          <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3368872344309403072" datatype="html">
@@ -7827,14 +7799,6 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
           <context context-type="linenumber">56</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2431348544249283790" datatype="html">
-        <source>[selected on map: <x id="PH" equiv-text="coords.lat"/> - <x id="PH_1" equiv-text="coords.lon"/>]</source>
-        <target>[selected on map: <x id="PH" equiv-text="coords.lat"/> - <x id="PH_1" equiv-text="coords.lon"/>]</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
-          <context context-type="linenumber">112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5615009935382672786" datatype="html">
@@ -8811,16 +8775,6 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo.service.ts</context>
           <context context-type="linenumber">42</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8676280608137974418" datatype="html">
-        <source>Tasks due</source>
-        <target>Tasks due</target>
-        <note priority="1" from="description">dashboard showing open todos</note>
-        <note priority="1" from="meaning">subtitle</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todos-dashboard/todos-dashboard.component.html</context>
-          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5834379825186536704" datatype="html">
