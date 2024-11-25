@@ -101,19 +101,22 @@ export class SessionManagerService {
     await this.initializeDatabaseForCurrentUser(session);
     this.sessionInfo.next(session);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
-    if (session.entityId) {
-      this.configService.configUpdates.pipe(take(1)).subscribe(() =>
-        // requires initial config to be loaded first!
-        this.initUserEntity(session.entityId),
-      );
-    }
+    this.configService.configUpdates.pipe(take(1)).subscribe(() =>
+      // requires initial config to be loaded first!
+      this.initUserEntity(session.entityId),
+    );
   }
 
   private initUserEntity(entityId: string) {
+    if (!entityId) {
+      this.currentUser.next(null);
+      return;
+    }
+
     const entityType = Entity.extractTypeFromId(entityId);
     this.entityMapper
       .load(entityType, entityId)
-      .catch(() => undefined)
+      .catch(() => null) // see CurrentUserSubject: emits "null" for non-existing user entity
       .then((res) => this.currentUser.next(res));
     this.updateSubscription = this.entityMapper
       .receiveUpdates(entityType)
