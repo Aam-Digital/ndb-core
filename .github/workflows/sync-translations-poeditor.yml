@@ -48,8 +48,7 @@ jobs:
       - name: Extract i18n keys
         run: npm run extract-i18n
 
-      - name: Check if files were changed
-        id: check_changes
+      - name: Check if any files changed
         run: |
           if git diff --quiet; then
             echo "No changes detected."
@@ -57,6 +56,7 @@ jobs:
           else
             echo "Changes detected."
             echo "changed=true" >> $GITHUB_ENV
+          fi
 
       - name: Commit file changes
         if: env.changed == 'true'
