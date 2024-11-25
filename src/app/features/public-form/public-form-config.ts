@@ -2,6 +2,7 @@ import { Entity } from "../../core/entity/model/entity";
 import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "app/core/basic-datatypes/string/long-text.datatype";
+import { FieldGroup } from "app/core/entity-details/form/field-group";
 
 @DatabaseEntity("PublicFormConfig")
 export class PublicFormConfig extends Entity {
@@ -22,6 +23,7 @@ export class PublicFormConfig extends Entity {
   @DatabaseField({
     label: $localize`:PublicFormConfig:Columns`,
     isArray: true,
-}) columns: string[][];
+}) columns: FieldGroup[];
+  /** @deprecated use ColumnConfig directly in the columns array instead */
   @DatabaseField() prefilled: { [key in string]: any };
 }

@@ -47,7 +47,7 @@ describe("InheritedValueService", () => {
         field1: new FormControl(),
       }),
       entity: entity,
-      defaultValueConfigs: new Map(),
+      fieldConfigs: [],
       watcher: new Map(),
       inheritedParentValues: new Map(),
     };
@@ -86,7 +86,7 @@ describe("InheritedValueService", () => {
         field2: new FormControl(),
       }),
       entity: entity,
-      defaultValueConfigs: new Map(),
+      fieldConfigs: [],
       watcher: new Map(),
       inheritedParentValues: new Map(),
     };
@@ -129,7 +129,7 @@ describe("InheritedValueService", () => {
         field2: new FormControl(),
       }),
       entity: entity,
-      defaultValueConfigs: new Map(),
+      fieldConfigs: [],
       watcher: new Map(),
       inheritedParentValues: new Map(),
     };
