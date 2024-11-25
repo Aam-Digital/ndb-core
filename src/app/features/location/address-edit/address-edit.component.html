@@ -65,7 +65,13 @@
 </div>
 
 @if (!disabled) {
-  <app-address-search
-    (locationSelected)="updateFromAddressSearch($event)"
-  ></app-address-search>
+  <div class="margin-bottom-regular flex-row gap-regular full-width">
+    <app-address-search
+      (locationSelected)="updateFromAddressSearch($event)"
+      class="full-width"
+    ></app-address-search>
+    <app-address-gps-location
+      (locationSelected)="onGpsLocationSelected($event)"
+    ></app-address-gps-location>
+  </div>
 }
