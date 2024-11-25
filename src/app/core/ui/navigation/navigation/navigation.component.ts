@@ -67,9 +67,10 @@ export class NavigationComponent {
    */
   private computeActiveLink(newUrl: string): string {
     // conservative filter matching all items that could fit to the given url
-    const items: MenuItem[] = this.menuItems.filter((item) =>
-      newUrl.startsWith(item.link),
-    );
+    // flatten nested submenu items to parse all
+    const items: MenuItem[] = this.menuItems
+      .reduce((acc, item) => acc.concat(item, item.subMenu || []), [])
+      .filter((item) => newUrl.startsWith(item.link));
     switch (items.length) {
       case 0:
         return "";
