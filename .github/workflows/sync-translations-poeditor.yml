@@ -159,6 +159,7 @@ jobs:
               state: 'open',
             });
 
+            console.log(pulls.data.length, "==> pulls data length");
             if (pulls.data.length < 1) {
               const diff = await github.rest.repos.compareCommits({
               owner,
@@ -166,6 +167,7 @@ jobs:
               base: baseBranch,
               head: headBranch,
             });
+            console.log(diff.data.commits.length, "==> diff data commits length");
             if (diff.data.commits.length === 0) {
               return;
             }
