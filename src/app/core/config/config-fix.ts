@@ -205,7 +205,7 @@ export const defaultJsonConfig = {
         label: $localize`:Label for the actual notes of a note:Notes`
       },
       authors: {
-        label: $localize`:Label for the social worker(s) who created the note:SW`,
+        label: $localize`:Label for the social worker(s) who created the note:Team involved`,
         dataType: "entity",
         isArray: true,
         additional: "User",
