@@ -37,6 +37,8 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 @DatabaseEntity("Note")
 export class Note extends Entity {
   static override toStringAttributes = ["subject"];
+  static override label = $localize`:label for entity:Note`;
+  static override labelPlural = $localize`:label (plural) for entity:Notes`;
   static override hasPII = true;
 
   static create(
@@ -73,6 +75,7 @@ export class Note extends Entity {
   // TODO: remove these special properties (children, schools) and use relatedEntities instead once the attendance system is generalized (#1364)
   /** IDs of Child entities linked with this note */
   @DatabaseField({
+    label: $localize`:Label for the participants field of a note:Participants`,
     dataType: "entity",
     isArray: true,
     additional: "Child",
@@ -91,6 +94,7 @@ export class Note extends Entity {
   private childrenAttendance: EventAttendanceMap = new EventAttendanceMap();
 
   @DatabaseField({
+    label: $localize`:Label for the date of a note:Date`,
     dataType: "date-only",
     defaultValue: {
       mode: "dynamic",
@@ -100,14 +104,20 @@ export class Note extends Entity {
   })
   date: Date;
 
-  @DatabaseField()
+  @DatabaseField({
+    label: $localize`:Label for the subject of a note:Subject`,
+  })
   subject: string;
 
-  @DatabaseField({ dataType: "long-text" })
+  @DatabaseField({
+    label: $localize`:Label for the actual notes of a note:Notes`,
+    dataType: "long-text",
+  })
   text: string;
 
   /** IDs of users that authored this note */
   @DatabaseField({
+    label: $localize`:Label for the social worker(s) who created the note:Team involved`,
     dataType: "entity",
     isArray: true,
     additional: "User",
@@ -120,6 +130,7 @@ export class Note extends Entity {
   authors: string[] = [];
 
   @DatabaseField({
+    label: $localize`:Label for the category of a note:Category`,
     dataType: "configurable-enum",
     additional: INTERACTION_TYPE_CONFIG_ID,
     anonymize: "retain",
@@ -127,6 +138,7 @@ export class Note extends Entity {
   category: InteractionType;
 
   @DatabaseField({
+    label: $localize`Attachment`,
     dataType: "file",
   })
   attachment: string;
@@ -158,6 +170,7 @@ export class Note extends Entity {
    * related school ids (e.g. to infer participants for event roll calls)
    */
   @DatabaseField({
+    label: $localize`:label for the linked schools:Groups`,
     dataType: "entity",
     isArray: true,
     additional: "School",
@@ -167,6 +180,7 @@ export class Note extends Entity {
   schools: string[] = [];
 
   @DatabaseField({
+    label: $localize`:Status of a note:Status`,
     dataType: "configurable-enum",
     additional: "warning-levels",
     anonymize: "retain",

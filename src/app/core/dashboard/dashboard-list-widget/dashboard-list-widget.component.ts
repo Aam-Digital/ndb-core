@@ -63,6 +63,7 @@ export class DashboardListWidgetComponent<E>
   /** optional tooltip to explain detailed meaning of this widget / statistic */
   @Input() explanation: string;
   @Input() headline: string;
+  @Input() paginationPageSize: number = 5; // Default to 5 entries per page
 
   /**
    * array of items to be displayed in paginated widget table.

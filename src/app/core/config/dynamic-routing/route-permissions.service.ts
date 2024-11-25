@@ -20,15 +20,28 @@ export class RoutePermissionsService {
    */
   async filterPermittedRoutes(items: MenuItem[]): Promise<MenuItem[]> {
     const accessibleRoutes: MenuItem[] = [];
+
     for (const item of items) {
-      if (await this.isAccessibleRouteForUser(item.link)) {
+      if (item.link && (await this.isAccessibleRouteForUser(item.link))) {
         accessibleRoutes.push(item);
+      } else if (item.subMenu) {
+        const accessibleSubItems: MenuItem[] = await this.filterPermittedRoutes(
+          item.subMenu,
+        );
+
+        if (accessibleSubItems.length > 0) {
+          // only adding the item if there is at least one accessible subMenu item
+          const filteredParentItem: MenuItem = Object.assign({}, item);
+          filteredParentItem.subMenu = accessibleSubItems;
+          accessibleRoutes.push(filteredParentItem);
+        }
       }
     }
+
     return accessibleRoutes;
   }
 
-  private async isAccessibleRouteForUser(path: string) {
+  private async isAccessibleRouteForUser(path: string): Promise<boolean> {
     return (
       (await this.roleGuard.checkRoutePermissions(path)) &&
       (await this.permissionGuard.checkRoutePermissions(path))
