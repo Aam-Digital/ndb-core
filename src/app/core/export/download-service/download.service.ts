@@ -71,7 +71,12 @@ export class DownloadService {
         result = typeof data === "string" ? data : JSON.stringify(data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = await this.createCsv(data);
+        if (Array.isArray(data)) {
+          result = await this.createCsv(data);
+        } else {
+          // assume raw csv data
+          result = data;
+        }
         return new Blob([result], { type: "text/csv" });
       case "pdf":
         return new Blob([data], { type: "application/pdf" });
