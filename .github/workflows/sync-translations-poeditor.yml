@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - feat/translation-poeditor-integration
-    paths:
-      - "src/assets/locale/**"
 
 permissions:
   contents: write
@@ -19,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up node
+      - name: Set up Node.js
         uses: actions/setup-node@v4
 
       - name: Install dependencies
@@ -50,7 +48,28 @@ jobs:
       - name: Extract i18n keys
         run: npm run extract-i18n
 
+      - name: Check if files were changed
+        id: check_changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes detected."
+            echo "changed=false" >> $GITHUB_ENV
+          else
+            echo "Changes detected."
+            echo "changed=true" >> $GITHUB_ENV
+
+      - name: Commit file changes
+        if: env.changed == 'true'
+        run: |
+          git add src/assets/locale/*.xlf
+          git commit -m "Update translations: Extracted i18n keys"
+
+      - name: Push changes to master
+        if: env.changed == 'true'
+        run: git push origin HEAD
+
       - name: Upload translations to POEditor
+        if: env.changed == 'true'
         run: |
           declare -A files
 
@@ -75,11 +94,12 @@ jobs:
               echo "Error uploading file for $lang: $response"
               exit 1
             fi
-            echo "Waiting for 30 second to respect rate limits..."
+            echo "Waiting for 30 seconds to respect rate limits..."
             sleep 30
           done
 
       - name: Export translations from POEditor
+        if: env.changed == 'true'
         run: |
           languages=("en" "fr" "it" "de")
           for lang in "${languages[@]}"; do
@@ -107,24 +127,23 @@ jobs:
               echo "Error exporting translations for $lang: $response"
               exit 1
             fi
-            echo "Waiting for 30 second to respect rate limits..."
+            echo "Waiting for 30 seconds to respect rate limits..."
             sleep 30
           done
 
-      - name: Commit file changes
+      - name: Commit updated translations
+        if: env.changed == 'true'
         run: |
-          if git diff --quiet; then
-            echo "No changes to commit. Exiting."
-            exit 0
-          fi
           git add src/assets/locale/*.xlf
           git commit -m "Update translations from POEditor"
 
       - name: Push changes
+        if: env.changed == 'true'
         run: |
           git push origin HEAD
 
       - name: Create Pull Request
+        if: env.changed == 'true'
         uses: actions/github-script@v6
         with:
           script: |
