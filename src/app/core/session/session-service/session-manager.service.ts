@@ -110,6 +110,7 @@ export class SessionManagerService {
   private initUserEntity(entityId: string) {
     if (!entityId) {
       this.currentUser.next(null);
+      return;
     }
 
     const entityType = Entity.extractTypeFromId(entityId);
