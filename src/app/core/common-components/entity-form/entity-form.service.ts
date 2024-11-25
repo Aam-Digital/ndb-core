@@ -19,7 +19,6 @@ import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value.service";
-import { DefaultValueConfig } from "../../entity/schema/default-value-config";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -35,9 +34,9 @@ export interface EntityForm<T extends Entity> {
   entity: T;
 
   /**
-   * map of field ids to the default value configuration for that field
+   * (possible overridden) field configurations for that form
    */
-  defaultValueConfigs: Map<string, DefaultValueConfig>;
+  fieldConfigs: FormFieldConfig[];
 
   /**
    * map of field ids to the current value to be inherited from the referenced parent entities' field
@@ -103,11 +102,15 @@ export class EntityFormService {
 
   private addSchemaToFormField(
     formField: FormFieldConfig,
-    propertySchema: EntitySchemaField,
+    propertySchema: EntitySchemaField | undefined,
     forTable: boolean,
   ): FormFieldConfig {
     // formField config has precedence over schema
-    const fullField = Object.assign({}, propertySchema, formField);
+    const fullField = Object.assign(
+      {},
+      JSON.parse(JSON.stringify(propertySchema ?? {})), // deep copy to avoid modifying the original schema
+      formField,
+    );
 
     fullField.editComponent =
       fullField.editComponent ||
@@ -144,28 +147,20 @@ export class EntityFormService {
     forTable = false,
     withPermissionCheck = true,
   ): Promise<EntityForm<T>> {
-    const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
-      formFields,
-      entity,
-      forTable,
-      withPermissionCheck,
+    const fields = formFields.map((f) =>
+      this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
     );
 
-    const defaultValueConfigs =
-      DefaultValueService.getDefaultValueConfigs(entity);
-    for (const field of formFields) {
-      if (typeof field === "object" && field.defaultValue) {
-        defaultValueConfigs.set(field.id, {
-          mode: field.defaultValue.mode,
-          value: field.defaultValue.value,
-        });
-      }
-    }
+    const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
+      fields,
+      entity,
+      withPermissionCheck,
+    );
 
     const entityForm: EntityForm<T> = {
       formGroup: typedFormGroup,
       entity: entity,
-      defaultValueConfigs: defaultValueConfigs,
+      fieldConfigs: fields,
       inheritedParentValues: new Map(),
       watcher: new Map(),
     };
@@ -175,10 +170,16 @@ export class EntityFormService {
     return entityForm;
   }
 
+  /**
+   *
+   * @param formFields The field configs in their final form (will not be extended by schema automatically)
+   * @param entity
+   * @param withPermissionCheck
+   * @private
+   */
   private createFormGroup<T extends Entity>(
-    formFields: ColumnConfig[],
+    formFields: FormFieldConfig[],
     entity: T,
-    forTable = false,
     withPermissionCheck = true,
   ): EntityFormGroup<T> {
     const formConfig = {};
@@ -189,7 +190,7 @@ export class EntityFormService {
     );
 
     for (const f of formFields) {
-      this.addFormControlConfig(formConfig, f, copy, forTable);
+      this.addFormControlConfig(formConfig, f, copy);
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
@@ -213,23 +214,15 @@ export class EntityFormService {
   /**
    * Add a property with form control initialization config to the given formConfig object.
    * @param formConfig
-   * @param fieldConfig
+   * @param field The final field config (will not be automatically extended by schema)
    * @param entity
-   * @param forTable
    * @private
    */
   private addFormControlConfig(
     formConfig: { [key: string]: FormControl },
-    fieldConfig: ColumnConfig,
+    field: FormFieldConfig,
     entity: Entity,
-    forTable: boolean,
   ) {
-    const field = this.extendFormFieldConfig(
-      fieldConfig,
-      entity.getConstructor(),
-      forTable,
-    );
-
     let value = entity[field.id];
 
     const controlOptions: FormControlOptions = { nonNullable: true };

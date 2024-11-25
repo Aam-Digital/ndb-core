@@ -24,17 +24,15 @@ export class DefaultValueService {
     form: EntityForm<T>,
     entity: Entity,
   ): Promise<void> {
-    if (!(form.defaultValueConfigs?.size > 0)) {
+    if (!(form.fieldConfigs?.length > 0)) {
       return;
     }
 
-    const entitySchema: EntitySchema = entity.getSchema();
     await this.inheritedValueService.initEntityForm(form);
     this.enableChangeListener(form);
 
-    for (const [key, entitySchemaField] of entitySchema) {
-      let fieldConfig = JSON.parse(JSON.stringify(entitySchemaField));
-      let targetFormControl = form.formGroup.get(key);
+    for (const fieldConfig of form.fieldConfigs) {
+      let targetFormControl = form.formGroup.get(fieldConfig.id);
       if (
         !this.preConditionsFulfilled(
           entity.isNew,
@@ -43,14 +41,6 @@ export class DefaultValueService {
         )
       ) {
         continue;
-      }
-      const defaultValueConfig = form.defaultValueConfigs.get(key);
-      if (defaultValueConfig) {
-        // Override entitySchemaField's defaultValue with the value from defaultValueConfigs
-        fieldConfig.defaultValue = {
-          mode: defaultValueConfig.mode,
-          value: defaultValueConfig.value,
-        };
       }
       switch (fieldConfig.defaultValue?.mode) {
         case "static":
@@ -63,7 +53,7 @@ export class DefaultValueService {
           );
           break;
         case "inherited":
-          this.inheritedValueService.setDefaultValue(
+          await this.inheritedValueService.setDefaultValue(
             targetFormControl,
             fieldConfig,
             form,
@@ -129,9 +119,12 @@ export class DefaultValueService {
       return;
     }
 
-    const mode = form?.defaultValueConfigs?.get(fieldId)?.mode;
-    if (mode === "inherited") {
-      return this.inheritedValueService.getDefaultValueUiHint(form, fieldId);
+    const fieldConfig = form?.fieldConfigs?.find((x) => x.id === fieldId);
+    if (fieldConfig?.defaultValue?.mode === "inherited") {
+      return this.inheritedValueService.getDefaultValueUiHint(
+        form,
+        fieldConfig,
+      );
     }
   }
 
