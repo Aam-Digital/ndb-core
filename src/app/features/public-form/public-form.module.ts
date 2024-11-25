@@ -17,13 +17,7 @@ import { PublicFormConfig } from "./public-form-config";
 @NgModule({
   declarations: [],
   imports: [CommonModule],
-  providers: [
-    {
-      provide: DefaultDatatype,
-      useClass: TemplateExportFileDatatype,
-      multi: true,
-    },
-  ],
+
 })
 export class PubliFormModule {
   static databaseEntities = [PublicFormConfig];

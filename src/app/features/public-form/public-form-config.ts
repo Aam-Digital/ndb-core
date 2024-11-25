@@ -1,12 +1,27 @@
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
+import { LongTextDatatype } from "app/core/basic-datatypes/string/long-text.datatype";
 
 @DatabaseEntity("PublicFormConfig")
 export class PublicFormConfig extends Entity {
-  @DatabaseField() title: string;
-  @DatabaseField() description: string;
-  @DatabaseField() entity: string;
-  @DatabaseField() columns: string[][];
+  static override label = $localize`:PublicFormConfig:Public Form`;
+  static override labelPlural = $localize`:PublicFormConfig:Public Forms`;
+  static override route = "admin/public-forms";
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Title`,
+}) title: string;
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Description`,
+    dataType: LongTextDatatype.dataType
+}) description: string;
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Entity`,
+}) entity: string;
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Columns`,
+    isArray: true,
+}) columns: string[][];
   @DatabaseField() prefilled: { [key in string]: any };
 }
