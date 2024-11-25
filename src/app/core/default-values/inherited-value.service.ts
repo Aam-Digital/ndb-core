@@ -11,6 +11,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { DefaultValueHint } from "./default-value.service";
 import { asArray } from "../../utils/utils";
+import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.
@@ -147,13 +148,13 @@ export class InheritedValueService extends DefaultValueStrategy {
    * Get details about the status and context of an inherited value field
    * to display to the user.
    * @param form
-   * @param fieldId
+   * @param field
    */
   getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
-    fieldId: string,
+    field: FormFieldConfig,
   ): DefaultValueHint | undefined {
-    const defaultConfig = form?.defaultValueConfigs?.get(fieldId);
+    const defaultConfig = field?.defaultValue;
     if (!defaultConfig) {
       return;
     }
@@ -172,19 +173,19 @@ export class InheritedValueService extends DefaultValueStrategy {
         ? Entity.extractTypeFromId(parentRefValue)
         : undefined,
       isInSync:
-        JSON.stringify(form.inheritedParentValues.get(fieldId)) ===
-        JSON.stringify(form.formGroup.get(fieldId)?.value),
+        JSON.stringify(form.inheritedParentValues.get(field.id)) ===
+        JSON.stringify(form.formGroup.get(field.id)?.value),
       syncFromParentField: () => {
         form.formGroup
-          .get(fieldId)
-          .setValue(form.inheritedParentValues.get(fieldId));
+          .get(field.id)
+          .setValue(form.inheritedParentValues.get(field.id));
       },
     };
   }
 
   private async updateLinkedEntities<T extends Entity>(form: EntityForm<T>) {
     let inheritedConfigs: Map<string, DefaultValueConfig> = getConfigsByMode(
-      form.defaultValueConfigs,
+      form.fieldConfigs,
       ["inherited"],
     );
 

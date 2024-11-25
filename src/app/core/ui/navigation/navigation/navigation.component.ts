@@ -1,31 +1,15 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { Component } from "@angular/core";
 import { MenuItem, NavigationMenuConfig } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { NavigationEnd, Router, RouterLink } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
 import { MatListModule } from "@angular/material/list";
-import { NgForOf } from "@angular/common";
+import { CommonModule, NgForOf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
-import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
+import { MatMenuModule } from "@angular/material/menu";
+import { MenuItemComponent } from "../menu-item/menu-item.component";
 
 /**
  * Main app menu listing.
@@ -39,8 +23,9 @@ import { RoutePermissionsService } from "../../../config/dynamic-routing/route-p
     MatListModule,
     NgForOf,
     Angulartics2Module,
-    RouterLink,
-    FaDynamicIconComponent,
+    MatMenuModule,
+    CommonModule,
+    MenuItemComponent,
   ],
   standalone: true,
 })
@@ -82,9 +67,10 @@ export class NavigationComponent {
    */
   private computeActiveLink(newUrl: string): string {
     // conservative filter matching all items that could fit to the given url
-    const items: MenuItem[] = this.menuItems.filter((item) =>
-      newUrl.startsWith(item.link),
-    );
+    // flatten nested submenu items to parse all
+    const items: MenuItem[] = this.menuItems
+      .reduce((acc, item) => acc.concat(item, item.subMenu || []), [])
+      .filter((item) => newUrl.startsWith(item.link));
     switch (items.length) {
       case 0:
         return "";

@@ -28,7 +28,9 @@ export function getDefaultInheritedForm(
 
   return {
     entity: entity,
-    defaultValueConfigs: DefaultValueService.getDefaultValueConfigs(entity),
+    fieldConfigs: Array.from(entity.getSchema().entries()).map(
+      ([key, fieldConfig]) => ({ id: key, ...fieldConfig }),
+    ),
     inheritedParentValues: new Map(),
     watcher: new Map(),
     formGroup: new FormBuilder().group<any>({
@@ -38,6 +40,7 @@ export function getDefaultInheritedForm(
     }),
   };
 }
+
 /**
  * Helper function to remove custom schema fields from Entity
  * that have been created using getDefaultInheritedForm().

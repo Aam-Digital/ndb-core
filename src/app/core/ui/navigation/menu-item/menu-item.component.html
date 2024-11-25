@@ -1,0 +1,31 @@
+<mat-list-item
+  angulartics2On="click"
+  angularticsCategory="Navigation"
+  angularticsAction="app_navigation_link_click"
+  [angularticsLabel]="item.label"
+  [routerLink]="item.link ? [item.link] : undefined"
+  [class.matched-background]="item.link === activeLink"
+  [class.indent-item]="item.link === activeLink"
+  (click)="toggleSubMenu()"
+>
+  <a class="flex-row gap-small">
+    <app-fa-dynamic-icon
+      class="nav-icon"
+      [icon]="item.icon"
+    ></app-fa-dynamic-icon>
+    <div>{{ item.label }}</div>
+
+    <fa-icon
+      *ngIf="hasSubMenu(item)"
+      [icon]="isExpanded ? 'chevron-down' : 'chevron-right'"
+    ></fa-icon>
+  </a>
+</mat-list-item>
+
+<!-- Render submenus if they exist and are expanded -->
+<div *ngIf="isExpanded" class="submenu">
+  <ng-container *ngFor="let subItem of item.subMenu">
+    <!-- Pass activeLink to each submenu item to highlight the active submenu -->
+    <app-menu-item [item]="subItem" [activeLink]="activeLink"></app-menu-item>
+  </ng-container>
+</div>
