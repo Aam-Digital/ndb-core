@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - feat/translation-poeditor-integration
+    paths:
+      - "src/assets/locale/**"
 
 permissions:
   contents: write
