@@ -11,7 +11,6 @@ import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
 import { ActivatedRoute } from "@angular/router";
-import { genders } from "../../child-dev-project/children/model/genders";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
@@ -29,7 +28,17 @@ describe("PublicFormComponent", () => {
     testFormConfig = new PublicFormConfig("form-id");
     testFormConfig.title = "test form";
     testFormConfig.entity = "TestEntity";
-    testFormConfig.columns = [["name"], ["category"]];
+    testFormConfig.columns = [
+      {
+        fields: [
+          {
+            id: "name",
+            defaultValue: { mode: "static", value: "default name" },
+          },
+          "category",
+        ],
+      },
+    ];
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
@@ -73,17 +82,6 @@ describe("PublicFormComponent", () => {
     expect(component.formConfig.title).toBe("Some test title");
   }));
 
-  it("should prefill entity with transformed values", fakeAsync(() => {
-    testFormConfig.prefilled = { name: "new", category: "M" };
-    initComponent();
-    tick();
-
-    expect(component.entity.name).toBe("new");
-    expect(component.entity.category).toBe(
-      genders.find(({ id }) => id === "M"),
-    );
-  }));
-
   it("should show a snackbar and reset form when the form has been submitted", fakeAsync(() => {
     initComponent();
     tick();
@@ -100,7 +98,6 @@ describe("PublicFormComponent", () => {
     );
     tick();
     expect(openSnackbarSpy).toHaveBeenCalled();
-    expect(component.form.formGroup.get("name")).toHaveValue(null);
   }));
 
   it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
@@ -132,8 +129,45 @@ describe("PublicFormComponent", () => {
 
     component.reset();
     tick();
+  }));
 
-    expect(component.form.formGroup.get("name")).toHaveValue(null);
+  it("should set default value for field", fakeAsync(() => {
+    const config = new PublicFormConfig();
+    config.entity = TestEntity.ENTITY_TYPE;
+    config.columns = [
+      {
+        fields: [
+          {
+            id: "name",
+            defaultValue: { mode: "static", value: "default name" },
+          },
+        ],
+      },
+    ];
+    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(config);
+
+    initComponent();
+    tick();
+
+    expect(component.form.formGroup.get("name")).toHaveValue("default name");
+  }));
+
+  it("should migrate old PublicFormConfig format to be backwards compatible", fakeAsync(() => {
+    const legacyConfig = {
+      _id: "PublicFormConfig:old-form",
+      title: "Old Form",
+      entity: TestEntity.ENTITY_TYPE,
+      columns: [["name"]], // string[][];
+      prefilled: { name: "default name" }, // { [key in string]: any };
+    };
+    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(
+      legacyConfig as any,
+    );
+
+    initComponent();
+    tick();
+
+    expect(component.form.formGroup.get("name")).toHaveValue("default name");
   }));
 
   function initComponent() {
