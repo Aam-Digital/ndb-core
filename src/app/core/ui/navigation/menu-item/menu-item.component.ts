@@ -1,12 +1,11 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, NgForOf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouterLink } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
-import { NgForOf } from "@angular/common";
-import { MenuItem } from "./menu-item";
+import { MenuItem } from "../menu-item";
 import { MatMenuModule } from "@angular/material/menu";
 
 @Component({
