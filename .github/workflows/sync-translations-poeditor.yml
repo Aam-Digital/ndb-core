@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - feat/translation-poeditor-integration
-    paths:
-      - "src/assets/locale/**"
 
 permissions:
   contents: write
@@ -33,7 +31,7 @@ jobs:
 
       - name: Create or update branch for translations
         run: |
-          branch_name="update-translations-messages"
+          branch_name="chore/update-poeditor-translations"
 
           # Check if branch exists on remote
           if git ls-remote --exit-code origin $branch_name; then
@@ -129,7 +127,7 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            const headBranch = 'update-translations-messages';
+            const headBranch = 'chore/update-poeditor-translations';
             const baseBranch = 'master';
 
             const pulls = await github.rest.pulls.list({
@@ -153,7 +151,7 @@ jobs:
               }
 
               const result = await github.rest.pulls.create({
-                title: 'Update languages translations messages',
+                title: 'Update POEditor translations messages',
                 owner,
                 repo,
                 head: headBranch,
