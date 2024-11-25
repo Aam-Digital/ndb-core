@@ -25,8 +25,17 @@ import { MatMenuModule } from "@angular/material/menu";
   standalone: true,
 })
 export class MenuItemComponent {
-  @Input() item: MenuItem; // Receives each individual menu item as input
-  @Input() activeLink: string; // Receives the active link as input
+  /**
+   * The menu item to be displayed.
+   */
+  @Input() item: MenuItem;
+
+  /**
+   * The menu item link that is currently displayed in the app
+   * in order to highlight the active menu.
+   */
+  @Input() activeLink: string;
+
   isExpanded: boolean = false;
 
   toggleSubMenu(): void {
@@ -35,14 +44,5 @@ export class MenuItemComponent {
 
   hasSubMenu(item: MenuItem): boolean {
     return !!item.subMenu && item.subMenu.length > 0;
-  }
-
-  // Method to check if a submenu item is active
-  isSubMenuActive(item: MenuItem): boolean {
-    return (
-      item.link === this.activeLink || // check if the main item is active
-      (item.subMenu &&
-        item.subMenu.some((subItem) => subItem.link === this.activeLink)) // check if any submenu item is active
-    );
   }
 }

@@ -3,7 +3,7 @@
   angularticsCategory="Navigation"
   angularticsAction="app_navigation_link_click"
   [angularticsLabel]="item.label"
-  [routerLink]="[item.link]"
+  [routerLink]="item.link ? [item.link] : undefined"
   [class.matched-background]="item.link === activeLink"
   (click)="toggleSubMenu()"
 >
