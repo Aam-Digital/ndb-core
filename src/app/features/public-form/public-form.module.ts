@@ -8,11 +8,8 @@ import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { EntityActionsMenuService } from "../../core/entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
-import { Entity } from "../../core/entity/model/entity";
 import { TemplateExportFileDatatype } from "../template-export/template-export-file-datatype/template-export-file.datatype";
-import { TemplateExport } from "../template-export/template-export.entity";
-import { TemplateExportService } from "../template-export/template-export-service/template-export.service";
-import { PublicForm } from "./public-form.entity";
+import { PublicFormConfig } from "./public-form-config";
 
 /**
  * Manage template files with placeholders that can be used to render files for export of entities.
@@ -29,64 +26,45 @@ import { PublicForm } from "./public-form.entity";
   ],
 })
 export class PubliFormModule {
-  static databaseEntities = [PublicForm];
+  static databaseEntities = [PublicFormConfig];
 
   constructor(
     components: ComponentRegistry,
     routerService: RouterService,
     adminOverviewService: AdminOverviewService,
     entityActionsMenuService: EntityActionsMenuService,
-    templateExportService: TemplateExportService,
   ) {
-    // components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
+    console.log(PublicFormConfig.ENTITY_TYPE,"PublicFormConfig.ENTITY_TYPE")
 
-    entityActionsMenuService.registerActions([
-      {
-        action: "template-export",
-        label: $localize`:entity context menu:Generate File`,
-        icon: "print",
-        tooltip: $localize`:entity context menu tooltip:Create a file based on a selected template.`,
-        permission: "read",
-        execute: async (e: Entity) => templateExportService.generateFile(e),
-      },
-    ]);
 
     adminOverviewService.menuItems.push({
       label: $localize`:admin menu item:Manage Public forms`,
-      link: PublicForm.route,
+      link: PublicFormConfig.route,
     });
   }
 }
 
-// const dynamicComponents: [string, AsyncComponent][] = [
-//   [
-//     "EditTemplateExportFile",
-//     () =>
-//       import(
-//         "../template-export/template-export-file-datatype/edit-template-export-file.component"
-//       ).then((c) => c.EditTemplateExportFileComponent),
-//   ],
-// ];
 
 const viewConfigs: ViewConfig[] = [
   // List View
   {
-    _id: "view:" + PublicForm.route,
+    
+    _id: "view:" + PublicFormConfig.route,
     component: "EntityList",
     config: {
-      entityType: PublicForm.ENTITY_TYPE,
-      columns: ["title", "description", "applicableForEntityTypes"],
-      filters: [{ id: "applicableForEntityTypes" }],
+      entityType: PublicFormConfig.ENTITY_TYPE,
+      columns: ["title", "description", "entity", "columns"],
+      filters: [{ id: "entity" }],
     } as EntityListConfig,
   },
 
   // Details View
   {
-    _id: "view:" + PublicForm.route + "/:id",
+    _id: "view:" + PublicFormConfig.route + "/:id",
     component: "EntityDetails",
     config: {
-      entityType: PublicForm.ENTITY_TYPE,
+      entityType: PublicFormConfig.ENTITY_TYPE,
       panels: [
         {
           components: [
@@ -98,28 +76,10 @@ const viewConfigs: ViewConfig[] = [
                     fields: [
                       "title",
                       "description",
-                      "applicableForEntityTypes",
+                      "entity",
+                      "columns"
                     ],
-                  },
-                  {
-                    fields: [
-                      {
-                        id: "template_explanation",
-                        editComponent: "EditDescriptionOnly",
-                        label: $localize`:PublicForm:Upload a specially prepared template file here.
-The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
-For example {d.name} will be replaced with the value in the "name" field of the given entity.
-See the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.
-
-The placeholder keys must match the field "Field ID" of the record data structure in Aam Digital.
-You can find this in the Admin UI form builder (Edit Data Structure -> Details View) and edit a specific field to view its details.
-
-Template files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF.`,
-                      },
-                      "templateFile",
-                      "targetFileName",
-                    ],
-                  },
+                  }
                 ],
               },
             },
