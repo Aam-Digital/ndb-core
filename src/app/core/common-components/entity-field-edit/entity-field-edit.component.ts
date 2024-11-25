@@ -7,7 +7,7 @@ import {
   EntityFormService,
 } from "../entity-form/entity-form.service";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
-import { NgIf } from "@angular/common";
+import { NgClass, NgIf } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { InheritedValueButtonComponent } from "../../default-values/inherited-value-button/inherited-value-button.component";
 
@@ -30,6 +30,7 @@ import { InheritedValueButtonComponent } from "../../default-values/inherited-va
     NgIf,
     EntityFieldViewComponent,
     InheritedValueButtonComponent,
+    NgClass,
   ],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>
