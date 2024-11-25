@@ -152,11 +152,10 @@ jobs:
             const baseBranch = 'master';
 
             const pulls = await github.rest.pulls.list({
-              owner: owner,
-              repo: repo,
-              head: headBranch,
-              base: baseBranch,
+              owner,
+              repo,
               state: 'open',
+              head: `${owner}:${headBranch}`,
             });
 
             console.log(pulls.data.length, "==> pulls data length");
