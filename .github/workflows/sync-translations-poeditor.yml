@@ -31,7 +31,7 @@ jobs:
 
       - name: Create or update branch for translations
         run: |
-          branch_name="feat/update-poeditor-translations"
+          branch_name="update-translations-messages"
 
           # Check if branch exists on remote
           if git ls-remote --exit-code origin $branch_name; then
@@ -127,7 +127,7 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            const headBranch = 'feat/update-poeditor-translations';
+            const headBranch = 'update-translations-messages';
             const baseBranch = 'master';
 
             const pulls = await github.rest.pulls.list({
