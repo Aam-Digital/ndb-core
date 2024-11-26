@@ -5,9 +5,15 @@
     <div i18n>Searching possibly matching profiles ...</div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   } @else if (error) {
-    <p i18n>
-      There was an error loading external profiles. Please try again later.
-    </p>
+    @if (error.message) {
+      <p>
+        {{ error.message }}
+      </p>
+    } @else {
+      <p i18n>
+        There was an error loading external profiles. Please try again later.
+      </p>
+    }
   } @else {
     <mat-radio-group class="flex-column gap-small" [(ngModel)]="selected">
       @for (profile of possibleMatches; track profile) {

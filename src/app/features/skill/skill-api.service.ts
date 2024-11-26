@@ -17,8 +17,12 @@ export class SkillApiService {
     if (forObject?.["email"]) requestParams["email"] = forObject["email"];
     if (forObject?.["phone"]) requestParams["phone"] = forObject["phone"];
 
+    let mockResults = [];
+    for (let i = 1; i <= forObject?.["externalProfileMockResults"] ?? 2; i++) {
+      mockResults.push(createDummyData(i.toString()));
+    }
     // TODO: implement actual API call and replace dummy data
-    return of([createDummyData("1"), createDummyData("2")]).pipe(delay(2000));
+    return of(mockResults).pipe(delay(2000));
   }
 
   getExternalProfileById(externalId: string): Observable<ExternalProfile> {

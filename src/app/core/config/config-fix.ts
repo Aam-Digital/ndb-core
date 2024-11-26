@@ -588,6 +588,7 @@ export const defaultJsonConfig = {
                   },
                   {
                     fields: [
+                      "externalProfileMockResults",
                       "externalProfile",
                       "skills"
                     ],
@@ -1078,6 +1079,12 @@ export const defaultJsonConfig = {
       skills: {
         dataType: "string",
         label: "Skills"
+      },
+      externalProfileMockResults: {
+        dataType: "number",
+        label: "Mock Profiles",
+        description: "Select the number of mocked results for the external profile search in order to test different UX.",
+        defaultValue: { mode: "static", value: 2 }
       }
     }
   } as EntityConfig,

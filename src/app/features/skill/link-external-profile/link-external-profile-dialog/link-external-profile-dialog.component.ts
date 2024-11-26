@@ -53,7 +53,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
 
   possibleMatches: (ExternalProfile & { _tooltip?: string })[];
   selected: ExternalProfile;
-  error: any;
+  error: { message?: string } & any;
 
   constructor(@Inject(MAT_DIALOG_DATA) data: LinkExternalProfileDialogData) {
     this.entity = data.entity;
@@ -80,6 +80,16 @@ export class LinkExternalProfileDialogComponent implements OnInit {
     } catch (e) {
       Logging.warn("SkillModule: Failed to load external profiles", e);
       this.error = e;
+    }
+
+    if (this.possibleMatches.length === 1) {
+      this.selected = this.possibleMatches[0];
+      // TODO: automatically return if exactly one result?
+    }
+    if (this.possibleMatches.length === 0) {
+      this.error = {
+        message: $localize`:external profile matching dialog:No matching external profiles found`,
+      };
     }
 
     this.loading = false;
