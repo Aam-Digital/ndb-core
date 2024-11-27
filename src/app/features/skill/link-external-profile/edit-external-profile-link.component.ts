@@ -10,7 +10,6 @@ import { EditComponent } from "../../../core/entity/default-datatype/edit-compon
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { SkillApiService } from "../skill-api.service";
-import { firstValueFrom } from "rxjs";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @Component({
@@ -69,13 +68,13 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
       return;
     }
 
-    this.externalProfile = await firstValueFrom(
-      this.skillApi.getExternalProfileById(this.formControl.value),
+    const skills = await this.skillApi.getSkillsFromExternalProfile(
+      this.formControl.value,
     );
 
     // TODO: run import / update
-    this.parent
-      .get("skills")
-      .setValue(JSON.stringify(this.externalProfile.skills));
+    const targetFormControl = this.parent.get("skills");
+    targetFormControl?.setValue(skills);
+    targetFormControl.markAsDirty();
   }
 }

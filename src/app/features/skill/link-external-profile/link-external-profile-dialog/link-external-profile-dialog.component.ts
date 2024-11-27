@@ -63,9 +63,10 @@ export class LinkExternalProfileDialogComponent implements OnInit {
     await this.searchMatches();
   }
 
-  private async searchMatches() {
+  async searchMatches() {
     this.loading = true;
     this.error = undefined;
+    this.selected = undefined;
     this.possibleMatches = [];
 
     try {
@@ -80,6 +81,9 @@ export class LinkExternalProfileDialogComponent implements OnInit {
     } catch (e) {
       Logging.warn("SkillModule: Failed to load external profiles", e);
       this.error = e;
+      return;
+    } finally {
+      this.loading = false;
     }
 
     if (this.possibleMatches.length === 1) {
@@ -91,8 +95,6 @@ export class LinkExternalProfileDialogComponent implements OnInit {
         message: $localize`:external profile matching dialog:No matching external profiles found`,
       };
     }
-
-    this.loading = false;
   }
 
   private generateTooltip(profile: ExternalProfile) {

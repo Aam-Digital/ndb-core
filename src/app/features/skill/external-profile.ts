@@ -7,8 +7,24 @@ export interface ExternalProfile {
   fullName: string;
   phone: string;
   email: string;
-  skills: any; // Array of objects (Skill)
+  skills: ExternalSkill[];
   updatedAtExternalSystem: string;
   importedAt: string;
   latestSyncAt: string;
+}
+
+/**
+ * Skill data in a profile from an external system.
+ */
+export interface ExternalSkill {
+  /**
+   * The URI representing a specific skill in the ESCO classification.
+   * see https://esco.ec.europa.eu/en/classification/skill_main
+   */
+  escoUri: string;
+
+  /**
+   * the frequency of using this skill
+   */
+  usage: "ALMOST_NEVER" | "SOMETIMES" | "OFTEN" | "ALMOST_ALWAYS" | "ALWAYS";
 }

@@ -1,23 +1,43 @@
-@if (!formControl?.value) {
-  <button mat-stroked-button i18n (click)="searchMatchingProfiles()">
-    Link external profile
-  </button>
-} @else {
-  <div class="flex-row flex-wrap align-center gap-small">
-    <fa-icon icon="person-walking-arrow-right"></fa-icon>
-    <span
-      i18n
-      matTooltip="external ID: {{ formControl?.value }}"
+<div class="margin-bottom-regular flex-column gap-small">
+  @if (!formControl?.value) {
+    <button
+      mat-stroked-button
+      matTooltip="Search and link a profile from an external system with this record to load additional data automatically."
       i18n-matTooltip
-      >Linked to external profile</span
+      i18n
+      (click)="searchMatchingProfiles()"
     >
-
-    <button mat-stroked-button i18n (click)="unlinkExternalProfile()">
-      Unlink
+      Link external profile
     </button>
+  } @else {
+    <div>
+      <fa-icon
+        icon="person-walking-arrow-right"
+        class="standard-icon-with-text"
+      ></fa-icon>
+      <span
+        i18n
+        matTooltip="external ID: {{ formControl?.value }}"
+        i18n-matTooltip
+        >Linked to external profile</span
+      >
+    </div>
 
-    <button mat-stroked-button i18n (click)="updateExternalData()">
-      Update external data
-    </button>
-  </div>
-}
+    <div class="flex-row gap-small">
+      <button mat-stroked-button i18n (click)="unlinkExternalProfile()">
+        Unlink
+      </button>
+
+      <button
+        mat-stroked-button
+        class="flex-grow"
+        i18n
+        matTooltip="Load the latest linked external profile and update the related fields of this record with the external data."
+        i18n-matTooltip
+        (click)="updateExternalData()"
+      >
+        Update data
+      </button>
+    </div>
+  }
+</div>
