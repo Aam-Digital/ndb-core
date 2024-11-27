@@ -12,18 +12,22 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Title`,
-}) title: string;
+  })
+  title: string;
   @DatabaseField({
     label: $localize`:PublicFormConfig:Description`,
-    dataType: LongTextDatatype.dataType
-}) description: string;
+    dataType: LongTextDatatype.dataType,
+  })
+  description: string;
   @DatabaseField({
     label: $localize`:PublicFormConfig:Entity`,
-}) entity: string;
+  })
+  entity: string;
   @DatabaseField({
     label: $localize`:PublicFormConfig:Columns`,
     isArray: true,
-}) columns: FieldGroup[];
+  })
+  columns: FieldGroup[];
   /** @deprecated use ColumnConfig directly in the columns array instead */
   @DatabaseField() prefilled: { [key in string]: any };
 }
