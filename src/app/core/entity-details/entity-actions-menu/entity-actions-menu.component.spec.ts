@@ -42,7 +42,7 @@ describe("EntityActionsMenuComponent", () => {
     actionsService.registerActions([testAction]);
     component.entity = new Entity();
 
-    let actionEvent;
+    let actionEvent: any;
     component.actionTriggered.subscribe((x) => (actionEvent = x));
     component.ngOnChanges({ entity: { currentValue: {} } as any });
 
