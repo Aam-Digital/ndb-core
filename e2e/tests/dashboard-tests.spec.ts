@@ -12,11 +12,11 @@ test.describe("Dashboard Tests", () => {
     const quickActionsElement = page.locator("text=Quick actions");
     await expect(quickActionsElement).toBeVisible();
 
-    // Verify that Record Attendence button exists in Quick actions widget
-    const recordAttendeceButton = page.getByRole("cell", {
+    // Verify that Record Attendance button exists in Quick actions widget
+    const recordAttendanceButton = page.getByRole("cell", {
       name: "Record Attendance",
     });
-    await expect(recordAttendeceButton).toBeVisible();
+    await expect(recordAttendanceButton).toBeVisible();
 
     // Verify children count is displayed
     const childrenCount = page.locator("app-entity-count-dashboard-widget");
