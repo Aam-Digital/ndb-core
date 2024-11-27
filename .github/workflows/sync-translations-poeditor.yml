@@ -12,6 +12,8 @@ permissions:
 jobs:
   sync-translations:
     runs-on: ubuntu-latest
+    env:
+      BASE_BRANCH: "master"
 
     steps:
       - name: Checkout repository
@@ -135,7 +137,7 @@ jobs:
         if: env.changed == 'true'
         run: |
           git add src/assets/locale/*.xlf
-          git commit -m "Update translations from POEditor"
+          git commit -m  "translations: load latest translations from POEditor"
 
       - name: Push changes
         if: env.changed == 'true'
@@ -149,7 +151,7 @@ jobs:
           script: |
             const { repo, owner } = context.repo;
             const headBranch = 'chore/update-poeditor-translations';
-            const baseBranch = 'master';
+            const baseBranch = process.env.BASE_BRANCH;
 
             const pulls = await github.rest.pulls.list({
               owner,
@@ -184,7 +186,7 @@ jobs:
               owner,
               repo,
               issue_number: result.data.number,
-              labels: ['feature', 'automated pr'],
+              labels: ['automated pr'],
             });
             } else {
               const existingPR = pulls.data[0];
