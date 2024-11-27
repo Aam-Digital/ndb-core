@@ -15,9 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { environment } from "../environments/environment";
 
 /**
  * Component as the main entry point for the app.
@@ -25,20 +27,22 @@ import { filter } from "rxjs/operators";
  */
 @Component({
   selector: "app-root",
-  template: `@if (configFullscreen) {
-      <router-outlet></router-outlet>
-    } @else {
-      <app-ui></app-ui>
-    }`,
+  templateUrl: "./app.component.html",
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   configFullscreen: boolean = false;
+  message: any = null;
 
   constructor(private router: Router) {
     this.detectConfigMode();
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.detectConfigMode());
+  }
+
+  ngOnInit(): void {
+    this.requestPermission();
+    this.listenForMessages();
   }
 
   /**
@@ -48,5 +52,36 @@ export class AppComponent {
   private detectConfigMode() {
     const currentUrl = this.router.url;
     this.configFullscreen = currentUrl.startsWith("/admin/entity/");
+  }
+
+  /**
+   * Request permission for Firebase messaging and retrieve the token.
+   */
+  private requestPermission() {
+    const messaging = getMessaging();
+    console.log("Requesting permission for Firebase messaging...");
+    getToken(messaging, { vapidKey: environment.firebase.vapidKey })
+    .then((currentToken) => {
+        console.log("==>currentToken", currentToken);
+        if (currentToken) {
+          console.log("Firebase token received:", currentToken);
+        } else {
+          console.log("No registration token available. Request permission to generate one.");
+        }
+      })
+      .catch((err) => {
+        console.error("An error occurred while retrieving token: ", err);
+      });
+  }
+
+  /**
+   * Listen for incoming Firebase messages.
+   */
+  private listenForMessages() {
+    const messaging = getMessaging();
+    onMessage(messaging, (payload) => {
+      console.log("Message received:", payload);
+      this.message = payload;
+    });
   }
 }

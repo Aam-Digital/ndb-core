@@ -1,0 +1,9 @@
+<div *ngIf="message">
+    <h1>{{ message.notification?.title }}</h1>
+    <h2>{{ message.notification?.body }}</h2>
+</div>
+<div *ngIf="!message">
+    <p>No Message Arrived</p>
+</div>
+<router-outlet *ngIf="configFullscreen"></router-outlet>
+<app-ui *ngIf="!configFullscreen"></app-ui>
