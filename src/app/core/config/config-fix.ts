@@ -1077,7 +1077,9 @@ export const defaultJsonConfig = {
         label: "External SkillLab Profile"
       },
       skills: {
-        dataType: "string",
+        dataType: "entity",
+        isArray: true,
+        additional: "Skill",
         label: "Skills"
       },
       externalProfileMockResults: {
@@ -1085,6 +1087,24 @@ export const defaultJsonConfig = {
         label: "Mock Profiles",
         description: "Select the number of mocked results for the external profile search in order to test different UX.",
         defaultValue: { mode: "static", value: 2 }
+      }
+    }
+  } as EntityConfig,
+  "entity:Skill": {
+    toStringAttributes: ["name"],
+    toBlockDetailsAttributes: { title: "name", fields: ["description", "escoUri"] },
+    attributes: {
+      escoUri: {
+        dataType: "string",
+        label: "ESCO URI"
+      },
+      name: {
+        dataType: "string",
+        label: "Skill Name"
+      },
+      description: {
+        dataType: "long-text",
+        label: "Description"
       }
     }
   } as EntityConfig,

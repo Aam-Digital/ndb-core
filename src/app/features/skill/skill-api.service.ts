@@ -1,6 +1,9 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { delay, firstValueFrom, Observable, of } from "rxjs";
 import { ExternalProfile } from "./external-profile";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "app/core/entity/model/entity";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 
 /**
  * Interaction with Aam Digital backend providing skills integration functionality.
@@ -9,6 +12,9 @@ import { ExternalProfile } from "./external-profile";
   providedIn: "root",
 })
 export class SkillApiService {
+  private entityMapper: EntityMapperService = inject(EntityMapperService);
+  private entityRegistry: EntityRegistry = inject(EntityRegistry);
+
   getExternalProfiles(forObject?: Object): Observable<ExternalProfile[]> {
     const requestParams = {};
     if (forObject?.["name"]) requestParams["fullName"] = forObject["name"];
@@ -32,12 +38,41 @@ export class SkillApiService {
     return of(createDummyData(externalId)).pipe(delay(1000));
   }
 
-  async getSkillsFromExternalProfile<S>(externalId: string): Promise<S> {
+  async getSkillsFromExternalProfile(externalId: string): Promise<string[]> {
     const profile = await firstValueFrom(
       this.getExternalProfileById(externalId),
     );
-    // TODO: map skills including loading of ESCO details?
-    return JSON.stringify(profile.skills) as S;
+
+    const skills: Entity[] = [];
+    for (const extSkill of profile.skills) {
+      const skill = await this.loadOrCreateSkill(extSkill.escoUri);
+      skills.push(skill);
+    }
+
+    return skills.map((s) => s.getId());
+  }
+
+  private async loadOrCreateSkill(escoUri: string): Promise<Entity> {
+    let entity = await this.entityMapper.load("Skill", escoUri).catch((e) => {
+      if (e.status === 404) {
+        return undefined;
+      } else {
+        throw e;
+      }
+    });
+
+    if (!entity) {
+      const ctor = this.entityRegistry.get("Skill");
+      // TODO: load actual esco skill details from API
+      entity = Object.assign(new ctor(escoUri), {
+        escoUri: escoUri,
+        name: "ESCO_NAME " + escoUri,
+        description: "Lorem Ipsum",
+      });
+      await this.entityMapper.save(entity);
+    }
+
+    return entity;
   }
 }
 

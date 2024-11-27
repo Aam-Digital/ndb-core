@@ -102,7 +102,7 @@ describe("LinkExternalProfileComponent", () => {
   }));
 
   it("should update related form field from latest external entity if user clicks 'update data'", fakeAsync(() => {
-    const mockSkills = "new skills";
+    const mockSkills = [new TestEntity(), new TestEntity()] as any;
     mockSkillApi.getSkillsFromExternalProfile.and.resolveTo(mockSkills);
     component.formControl.setValue("external-id");
 

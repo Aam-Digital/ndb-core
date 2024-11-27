@@ -76,5 +76,6 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
     const targetFormControl = this.parent.get("skills");
     targetFormControl?.setValue(skills);
     targetFormControl.markAsDirty();
+    // TODO: this is not updated immediately, only shows after reopening the details view ... why?
   }
 }
