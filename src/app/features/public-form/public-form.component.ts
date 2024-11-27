@@ -84,7 +84,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private async loadFormConfig() {
     const id = this.route.snapshot.paramMap.get("id");
     this.formConfig = await this.entityMapper.load(PublicFormConfig, id);
-    console.log(await this.entityMapper.loadType(PublicFormConfig),"nanannanana")
     this.entityType = this.entities.get(
       this.formConfig.entity,
     ) as EntityConstructor<E>;
