@@ -210,6 +210,10 @@ jobs:
         env:
           SOURCE_DATE_EPOCH: 0
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: Install Sentry CLI
         run: |
           npm install -g @sentry/cli
@@ -346,6 +350,10 @@ jobs:
       - name: Extract tag (pull request)
         if: ${{ github.event.ref == '' }}
         run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Install Sentry CLI
         run: |
