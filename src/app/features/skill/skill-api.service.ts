@@ -1,9 +1,10 @@
 import { inject, Injectable } from "@angular/core";
-import { delay, firstValueFrom, Observable, of } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { ExternalProfile } from "./external-profile";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
+import { HttpClient } from "@angular/common/http";
 
 /**
  * Interaction with Aam Digital backend providing skills integration functionality.
@@ -14,6 +15,7 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 export class SkillApiService {
   private entityMapper: EntityMapperService = inject(EntityMapperService);
   private entityRegistry: EntityRegistry = inject(EntityRegistry);
+  private http: HttpClient = inject(HttpClient);
 
   getExternalProfiles(forObject?: Object): Observable<ExternalProfile[]> {
     const requestParams = {};
@@ -21,21 +23,18 @@ export class SkillApiService {
     if (forObject?.["email"]) requestParams["email"] = forObject["email"];
     if (forObject?.["phone"]) requestParams["phone"] = forObject["phone"];
 
-    let mockResults = [];
-    const mockCount =
-      typeof forObject?.["externalProfileMockResults"] === "number"
-        ? forObject?.["externalProfileMockResults"]
-        : 2;
-    for (let i = 1; i <= mockCount; i++) {
-      mockResults.push(createDummyData(i.toString()));
-    }
-    // TODO: implement actual API call and replace dummy data
-    return of(mockResults).pipe(delay(2000));
+    return this.http.get<ExternalProfile[]>(
+      "/skill/api/v1/skill/user-profile",
+      {
+        params: requestParams,
+      },
+    );
   }
 
   getExternalProfileById(externalId: string): Observable<ExternalProfile> {
-    // TODO: implement actual API call and replace dummy data
-    return of(createDummyData(externalId)).pipe(delay(1000));
+    return this.http.get<ExternalProfile>(
+      "/skill/api/v1/skill/user-profile/" + externalId,
+    );
   }
 
   async getSkillsFromExternalProfile(externalId: string): Promise<string[]> {
