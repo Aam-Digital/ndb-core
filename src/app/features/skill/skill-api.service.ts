@@ -5,6 +5,11 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { Entity } from "app/core/entity/model/entity";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
+import { map } from "rxjs/operators";
+
+interface UserProfileResponseDto {
+  result: ExternalProfile[];
+}
 
 /**
  * Interaction with Aam Digital backend providing skills integration functionality.
@@ -23,17 +28,16 @@ export class SkillApiService {
     if (forObject?.["email"]) requestParams["email"] = forObject["email"];
     if (forObject?.["phone"]) requestParams["phone"] = forObject["phone"];
 
-    return this.http.get<ExternalProfile[]>(
-      "/skill/api/v1/skill/user-profile",
-      {
+    return this.http
+      .get<UserProfileResponseDto>("/api/v1/skill/user-profile", {
         params: requestParams,
-      },
-    );
+      })
+      .pipe(map((value) => value.result));
   }
 
   getExternalProfileById(externalId: string): Observable<ExternalProfile> {
     return this.http.get<ExternalProfile>(
-      "/skill/api/v1/skill/user-profile/" + externalId,
+      "/api/v1/skill/user-profile/" + externalId,
     );
   }
 
