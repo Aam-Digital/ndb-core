@@ -35,8 +35,16 @@
         matTooltip="Load the latest linked external profile and update the related fields of this record with the external data."
         i18n-matTooltip
         (click)="updateExternalData()"
+        [disabled]="isLoading()"
       >
-        Update data
+        @if (isLoading()) {
+          <div style="display: flex">
+            <label>loading data...</label>
+            <mat-spinner diameter="18" style="margin-left: 12px"></mat-spinner>
+          </div>
+        } @else {
+          Update data
+        }
       </button>
     </div>
   }

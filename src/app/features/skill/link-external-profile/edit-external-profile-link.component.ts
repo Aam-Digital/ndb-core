@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal, WritableSignal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import {
@@ -12,6 +12,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { SkillApiService } from "../skill-api.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ExternalProfileLinkConfig } from "./external-profile-link-config";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @Component({
   selector: "app-edit-external-profile-link",
@@ -22,6 +23,7 @@ import { ExternalProfileLinkConfig } from "./external-profile-link-config";
     MatTooltip,
     FormsModule,
     ReactiveFormsModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: "./edit-external-profile-link.component.html",
   styleUrl: "./edit-external-profile-link.component.scss",
@@ -33,10 +35,11 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
    */
   declare additional: ExternalProfileLinkConfig;
 
+  isLoading: WritableSignal<boolean> = signal(false);
+  externalProfile: ExternalProfile | undefined;
+
   private dialog: MatDialog = inject(MatDialog);
   private skillApi: SkillApiService = inject(SkillApiService);
-
-  externalProfile: ExternalProfile | undefined;
 
   async searchMatchingProfiles() {
     // TODO: should this only be enabled in "Edit" mode of form?
@@ -61,12 +64,6 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
       });
   }
 
-  private linkProfile(externalProfile: ExternalProfile) {
-    this.externalProfile = externalProfile;
-    this.formControl.setValue(externalProfile.id);
-    this.formControl.markAsDirty();
-  }
-
   unlinkExternalProfile() {
     this.externalProfile = undefined;
     this.formControl.setValue(null);
@@ -74,6 +71,8 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
   }
 
   async updateExternalData() {
+    this.isLoading.set(true);
+
     if (!this.formControl.value) {
       return;
     }
@@ -86,6 +85,14 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
     const targetFormControl = this.parent.get("skills");
     targetFormControl?.setValue(skills);
     targetFormControl.markAsDirty();
+
+    this.isLoading.set(false);
     // TODO: this is not updated immediately, only shows after reopening the details view ... why?
+  }
+
+  private linkProfile(externalProfile: ExternalProfile) {
+    this.externalProfile = externalProfile;
+    this.formControl.setValue(externalProfile.id);
+    this.formControl.markAsDirty();
   }
 }
