@@ -8,7 +8,7 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class PublicFormConfig extends Entity {
   static override label = $localize`:PublicFormConfig:Public Form`;
   static override labelPlural = $localize`:PublicFormConfig:Public Forms`;
-  static override route = "admin/public-forms";
+  static override route = "admin/public-form";
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Title`,
