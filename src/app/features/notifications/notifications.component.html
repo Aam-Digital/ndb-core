@@ -18,7 +18,7 @@
     </div>
 
     <ng-container>
-        <div *ngFor="let notification of notifications" class="notification-items">
+        <div *ngFor="let notification of notifications" class="notification-list">
             <strong>{{ notification.user }}</strong> {{ notification.message }}
             <p class="notification-time">{{ notification.time }}</p>
         </div>

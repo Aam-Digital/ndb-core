@@ -35,11 +35,9 @@ export class NotificationsComponent {
   showSettings = false;
 
   notifications = [
-    { user: 'Brigid Dawson', message: 'followed you', time: '4 hours ago', avatar: 'avatar1.jpg', isUnread: true },
-    { user: 'John Dwyer', message: 'liked your post', time: 'Yesterday', avatar: 'avatar2.jpg', isUnread: true },
-    { user: 'Tim Hellman', message: 'liked your post', time: 'Tuesday', avatar: 'avatar3.jpg', isUnread: false },
-    { user: 'System', message: 'Running low on storage space', time: 'Monday', avatar: 'system.jpg', isUnread: false },
-    { user: 'Shannon Shaw', message: 'commented on your post', time: '4 days ago', avatar: 'avatar4.jpg', isUnread: false }
+    { user: 'Brigid Dawson', message: 'update child entity.', time: '4 hours ago', avatar: 'avatar1.jpg', isUnread: true },
+    { user: 'John Dwyer', message: 'create new student.', time: 'Yesterday', avatar: 'avatar2.jpg', isUnread: true },
+    { user: 'Tim Hellman', message: 'update the config.', time: 'Tuesday', avatar: 'avatar3.jpg', isUnread: false },
   ];
 
   toggleNotifications(event: Event) {
