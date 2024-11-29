@@ -1,0 +1,30 @@
+<button mat-icon-button matTooltip="Your Notification is active" i18n-matTooltip [matMenuTriggerFor]="menu">
+    <span [matBadge]="notifications.length" matBadgeColor="accent">
+        <fa-icon class="white" icon="bell"></fa-icon>
+    </span>
+</button>
+
+<mat-menu #menu>
+    <div class="header">
+        <span>Notifications</span>
+
+        <button mat-icon-button (click)="toggleSettings($event)" *ngIf="!showSettings">
+            <fa-icon icon="cog"></fa-icon>
+        </button>
+
+        <div *ngIf="showSettings" (click)="$event.stopPropagation()">
+            <mat-slide-toggle [(ngModel)]="isEnableNotification" (click)="$event.stopPropagation()"/>
+        </div>
+    </div>
+
+    <ng-container>
+        <a *ngFor="let notification of notifications" (click)="notificationClicked(notification)" mat-menu-item>
+            <p><strong>{{ notification.user }}</strong> {{ notification.message }}</p>
+            <span class="notification-time">{{ notification.time }}</span>
+        </a>
+
+        <div class="footer">
+            <a href="#">See all recent activity</a>
+        </div>
+    </ng-container>
+</mat-menu>
