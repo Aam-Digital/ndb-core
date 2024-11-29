@@ -23,7 +23,7 @@ export class PubliFormModule {
   ) {
     routerService.addRoutes(viewConfigs);
     adminOverviewService.menuItems.push({
-      label: $localize`:admin menu item:Manage Public forms`,
+      label: $localize`:admin menu item:Manage Public Forms`,
       link: PublicFormConfig.route,
     });
   }
