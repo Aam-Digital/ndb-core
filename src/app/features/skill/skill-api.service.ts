@@ -5,7 +5,9 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { Entity } from "app/core/entity/model/entity";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
+import { Logging } from "../../core/logging/logging.service";
+import { EscoApiService, EscoSkillDto } from "./esco-api.service";
 
 interface UserProfileResponseDto {
   result: ExternalProfile[];
@@ -20,6 +22,7 @@ interface UserProfileResponseDto {
 export class SkillApiService {
   private entityMapper: EntityMapperService = inject(EntityMapperService);
   private entityRegistry: EntityRegistry = inject(EntityRegistry);
+  private escoApi: EscoApiService = inject(EscoApiService);
   private http: HttpClient = inject(HttpClient);
 
   getExternalProfiles(
@@ -69,40 +72,26 @@ export class SkillApiService {
     });
 
     if (!entity) {
+      let escoDto: EscoSkillDto = await firstValueFrom(
+        this.escoApi.getEscoSkill(escoUri).pipe(
+          catchError((err, caught) => {
+            Logging.error(err);
+            // todo error handling?
+            return caught;
+          }),
+        ),
+      );
+
       const ctor = this.entityRegistry.get("Skill");
       // TODO: load actual esco skill details from API
       entity = Object.assign(new ctor(escoUri), {
         escoUri: escoUri,
-        name: "ESCO_NAME " + escoUri,
-        description: "Lorem Ipsum",
+        name: escoDto.title,
+        description: escoDto.description["en"].literal, // todo use current language and fallback to en
       });
       await this.entityMapper.save(entity);
     }
 
     return entity;
   }
-}
-
-function createDummyData(externalId: string): ExternalProfile {
-  return {
-    id: externalId,
-    fullName: "John Doe " + externalId,
-    phone: "+1234567890",
-    email: "john@example.com",
-    skills: [
-      {
-        escoUri:
-          "http://data.europa.eu/esco/skill/0ac31705-79ff-4409-a818-c9d0a6388e84",
-        usage: "ALWAYS",
-      },
-      {
-        escoUri:
-          "http://data.europa.eu/esco/skill/2e040fb0-66b9-4529-bec6-466472b60773",
-        usage: "OFTEN",
-      },
-    ],
-    importedAt: "2021-01-01T00:00:00Z",
-    latestSyncAt: "2021-01-01T00:00:00Z",
-    updatedAtExternalSystem: "2021-01-01T00:00:00Z",
-  };
 }
