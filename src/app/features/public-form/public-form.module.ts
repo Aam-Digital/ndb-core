@@ -14,7 +14,7 @@ import { PublicFormConfig } from "./public-form-config";
   declarations: [],
   imports: [CommonModule],
 })
-export class PubliFormModule {
+export class PublicFormModule {
   static databaseEntities = [PublicFormConfig];
 
   constructor(

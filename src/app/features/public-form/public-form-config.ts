@@ -21,6 +21,7 @@ export class PublicFormConfig extends Entity {
   description: string;
   @DatabaseField({
     label: $localize`:PublicFormConfig:Entity`,
+    editComponent: "EditEntityTypeDropdown",
   })
   entity: string;
   @DatabaseField({
