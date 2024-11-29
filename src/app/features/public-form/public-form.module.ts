@@ -36,7 +36,7 @@ const viewConfigs: ViewConfig[] = [
     component: "EntityList",
     config: {
       entityType: PublicFormConfig.ENTITY_TYPE,
-      columns: ["title", "description", "entity", "columns"],
+      columns: ["title", "description", "entity"],
       filters: [{ id: "entity" }],
     } as EntityListConfig,
   },
