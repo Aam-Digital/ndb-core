@@ -9,6 +9,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-notifications',
@@ -24,6 +25,7 @@ import { FormsModule } from '@angular/forms';
     MatMenuModule,
     MatSlideToggle,
     FormsModule,
+    MatTooltipModule,
   ],
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.scss'
@@ -53,5 +55,9 @@ export class NotificationsComponent {
   notificationClicked(notification) {
     notification.isUnread = false;
     console.log(notification.user + ' clicked');
+  }
+
+  onNotificationBellClick() {
+    this.showSettings = false;
   }
 }

@@ -1,30 +1,27 @@
-<button mat-icon-button matTooltip="Your Notification is active" i18n-matTooltip [matMenuTriggerFor]="menu">
+<button mat-icon-button matTooltip="Your Notification is active" i18n-matTooltip [matMenuTriggerFor]="menu" (menuOpened)="onNotificationBellClick()">
     <span [matBadge]="notifications.length" matBadgeColor="accent">
         <fa-icon class="white" icon="bell"></fa-icon>
     </span>
 </button>
 
-<mat-menu #menu>
-    <div class="header">
+<mat-menu #menu class="mat-menu">
+    <div class="flex-row justify-space-between align-center header">
         <span>Notifications</span>
 
         <button mat-icon-button (click)="toggleSettings($event)" *ngIf="!showSettings">
             <fa-icon icon="cog"></fa-icon>
         </button>
 
-        <div *ngIf="showSettings" (click)="$event.stopPropagation()">
+        <div *ngIf="showSettings" (click)="$event.stopPropagation()" class="notification-toggle">
             <mat-slide-toggle [(ngModel)]="isEnableNotification" (click)="$event.stopPropagation()"/>
         </div>
     </div>
 
     <ng-container>
-        <a *ngFor="let notification of notifications" (click)="notificationClicked(notification)" mat-menu-item>
-            <p><strong>{{ notification.user }}</strong> {{ notification.message }}</p>
-            <span class="notification-time">{{ notification.time }}</span>
-        </a>
-
-        <div class="footer">
-            <a href="#">See all recent activity</a>
+        <div *ngFor="let notification of notifications" class="notification-items">
+            <strong>{{ notification.user }}</strong> {{ notification.message }}
+            <p class="notification-time">{{ notification.time }}</p>
         </div>
+        <p *ngIf="notifications.length === 0">No new notifications</p>
     </ng-container>
 </mat-menu>
