@@ -6,7 +6,7 @@ import { FormControl } from "@angular/forms";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 const meta: Meta<EditExternalProfileLinkComponent> = {
-  title: "Features/Skill Integration",
+  title: "Features/Skill Integration/EditExternalProfileLink",
   component: EditExternalProfileLinkComponent,
   decorators: [
     applicationConfig({

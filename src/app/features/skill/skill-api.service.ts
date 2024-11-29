@@ -22,11 +22,15 @@ export class SkillApiService {
   private entityRegistry: EntityRegistry = inject(EntityRegistry);
   private http: HttpClient = inject(HttpClient);
 
-  getExternalProfiles(forObject?: Object): Observable<ExternalProfile[]> {
+  getExternalProfiles(
+    searchName?: string,
+    searchEmail?: string,
+    searchPhone?: string,
+  ): Observable<ExternalProfile[]> {
     const requestParams = {};
-    if (forObject?.["name"]) requestParams["fullName"] = forObject["name"];
-    if (forObject?.["email"]) requestParams["email"] = forObject["email"];
-    if (forObject?.["phone"]) requestParams["phone"] = forObject["phone"];
+    if (searchName) requestParams["fullName"] = searchName;
+    if (searchEmail) requestParams["email"] = searchEmail;
+    if (searchPhone) requestParams["phone"] = searchPhone;
 
     return this.http
       .get<UserProfileResponseDto>("/api/v1/skill/user-profile", {

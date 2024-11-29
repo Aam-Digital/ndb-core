@@ -8,6 +8,7 @@ import { EventAttendanceMap } from "../../child-dev-project/attendance/model/eve
 import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EntityConfig } from "../entity/entity-config";
+import { ExternalProfileLinkConfig } from "../../features/skill/link-external-profile/external-profile-link-config";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -1072,9 +1073,21 @@ export const defaultJsonConfig = {
       },
 
       externalProfile: {
+        label: "External SkillLab Profile",
         dataType: "string",
         editComponent: "EditExternalProfileLink",
-        label: "External SkillLab Profile"
+        additional: {
+          searchFields: {
+            fullName: [
+              "name",
+              "fullName",
+              "firstName",
+              "lastName"
+            ],
+            email: ["email"],
+            phone: ["phoneNumber"]
+          }
+        } as ExternalProfileLinkConfig
       },
       skills: {
         dataType: "entity",

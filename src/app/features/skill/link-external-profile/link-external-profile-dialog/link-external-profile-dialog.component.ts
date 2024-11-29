@@ -16,6 +16,7 @@ import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
 import { MatTooltip } from "@angular/material/tooltip";
 import { Entity } from "../../../../core/entity/model/entity";
+import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 
 /**
  * The data passed to the MatDialog opening LinkExternalProfileDialogComponent.
@@ -25,6 +26,11 @@ export interface LinkExternalProfileDialogData {
    * The entity object for which to search and select matching external profiles.
    */
   entity: Entity;
+
+  /**
+   * The configuration including details like search field mappings.
+   */
+  config: ExternalProfileLinkConfig;
 }
 
 @Component({
@@ -48,8 +54,10 @@ export interface LinkExternalProfileDialogData {
 export class LinkExternalProfileDialogComponent implements OnInit {
   private skillApiService: SkillApiService = inject(SkillApiService);
 
-  loading: boolean = true;
   entity: Entity;
+  config: ExternalProfileLinkConfig;
+
+  loading: boolean = true;
 
   possibleMatches: (ExternalProfile & { _tooltip?: string })[];
   selected: ExternalProfile;
@@ -57,6 +65,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) data: LinkExternalProfileDialogData) {
     this.entity = data.entity;
+    this.config = data.config;
   }
 
   async ngOnInit() {
@@ -69,10 +78,16 @@ export class LinkExternalProfileDialogComponent implements OnInit {
     this.selected = undefined;
     this.possibleMatches = [];
 
+    const searchParams = this.getSearchParams();
+
     try {
       this.possibleMatches = (
         await firstValueFrom(
-          this.skillApiService.getExternalProfiles(this.entity),
+          this.skillApiService.getExternalProfiles(
+            searchParams.name,
+            searchParams.email,
+            searchParams.phone,
+          ),
         )
       ).map((profile) => ({
         ...profile,
@@ -95,6 +110,29 @@ export class LinkExternalProfileDialogComponent implements OnInit {
         message: $localize`:external profile matching dialog:No matching external profiles found`,
       };
     }
+  }
+
+  private getSearchParams(): {
+    name: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+  } {
+    // TODO:
+
+    return {
+      name: this.config.searchFields.fullName
+        .map((field) => this.entity[field])
+        .filter((value) => !!value)
+        .join(" "),
+      email: this.config.searchFields.email
+        .map((field) => this.entity[field])
+        .filter((value) => !!value)
+        .join(" "),
+      phone: this.config.searchFields.phone
+        .map((field) => this.entity[field])
+        .filter((value) => !!value)
+        .join(" "),
+    };
   }
 
   private generateTooltip(profile: ExternalProfile) {

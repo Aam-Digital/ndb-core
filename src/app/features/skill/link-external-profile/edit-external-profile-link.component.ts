@@ -11,6 +11,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { SkillApiService } from "../skill-api.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { ExternalProfileLinkConfig } from "./external-profile-link-config";
 
 @Component({
   selector: "app-edit-external-profile-link",
@@ -26,6 +27,12 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
   styleUrl: "./edit-external-profile-link.component.scss",
 })
 export class EditExternalProfileLinkComponent extends EditComponent<string> {
+  /**
+   * The configuration details for this external profile link,
+   * defined in the config field's `additional` property.
+   */
+  declare additional: ExternalProfileLinkConfig;
+
   private dialog: MatDialog = inject(MatDialog);
   private skillApi: SkillApiService = inject(SkillApiService);
 
@@ -41,7 +48,10 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
 
     this.dialog
       .open(LinkExternalProfileDialogComponent, {
-        data: { entity: this.entity } as LinkExternalProfileDialogData,
+        data: {
+          entity: this.entity,
+          config: this.additional,
+        } as LinkExternalProfileDialogData,
       })
       .afterClosed()
       .subscribe((result: ExternalProfile | undefined) => {
