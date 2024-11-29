@@ -44,11 +44,6 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
   async searchMatchingProfiles() {
     // TODO: should this only be enabled in "Edit" mode of form?
 
-    // TODO: replace mock logic
-    this.entity["externalProfileMockResults"] = this.parent.get(
-      "externalProfileMockResults",
-    )?.value;
-
     this.dialog
       .open(LinkExternalProfileDialogComponent, {
         data: {

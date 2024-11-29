@@ -1,8 +1,80 @@
 <h1 mat-dialog-title i18n>Match External Profile</h1>
 
 <mat-dialog-content>
+  <div>
+    <p i18n>
+      You can adjust the search parameters below manually to find the correct
+      profile on the external platform.
+    </p>
+
+    <div class="flex-row flex-wrap gap-regular align-center">
+      <mat-form-field>
+        <label i18n>Name</label>
+        <input
+          matInput
+          [(ngModel)]="searchParams.fullName"
+          placeholder="<ignored>"
+          i18n-placeholder
+        />
+        <button
+          mat-icon-button
+          matIconSuffix
+          [class.display-none]="!searchParams.fullName"
+          (click)="searchParams.fullName = null"
+        >
+          <fa-icon icon="times"></fa-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field>
+        <label i18n>Email</label>
+        <input
+          matInput
+          [(ngModel)]="searchParams.email"
+          placeholder="<ignored>"
+          i18n-placeholder
+        />
+        <button
+          mat-icon-button
+          matIconSuffix
+          [class.display-none]="!searchParams.email"
+          (click)="searchParams.email = null"
+        >
+          <fa-icon icon="times"></fa-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field>
+        <label i18n>Phone</label>
+        <input
+          matInput
+          [(ngModel)]="searchParams.phone"
+          placeholder="<ignored>"
+          i18n-placeholder
+        />
+        <button
+          mat-icon-button
+          matIconSuffix
+          [class.display-none]="!searchParams.phone"
+          (click)="searchParams.phone = null"
+        >
+          <fa-icon icon="times"></fa-icon>
+        </button>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        [disabled]="loading"
+        (click)="searchMatches()"
+        i18n
+      >
+        Search
+      </button>
+    </div>
+  </div>
+
   @if (loading) {
-    <div i18n>Searching possibly matching profiles ...</div>
+    <p i18n>Searching possibly matching profiles ...</p>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   } @else if (error) {
     @if (error.message) {
@@ -15,6 +87,12 @@
       </p>
     }
   } @else {
+    <h2 i18n>Possible Matching Profiles:</h2>
+    <p i18n>
+      Please select one of the results below and confirm the linking or adjust
+      the search parameters above and search again.
+    </p>
+
     <mat-radio-group class="flex-column gap-small" [(ngModel)]="selected">
       @for (profile of possibleMatches; track profile) {
         <mat-radio-button [value]="profile" [matTooltip]="profile._tooltip">

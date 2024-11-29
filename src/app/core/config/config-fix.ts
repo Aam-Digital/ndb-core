@@ -1085,7 +1085,7 @@ export const defaultJsonConfig = {
               "lastName"
             ],
             email: ["email"],
-            phone: ["phoneNumber"]
+            phone: ["phone"]
           }
         } as ExternalProfileLinkConfig
       },
