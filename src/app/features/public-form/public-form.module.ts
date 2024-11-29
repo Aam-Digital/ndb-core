@@ -8,7 +8,7 @@ import { AdminOverviewService } from "../../core/admin/admin-overview/admin-over
 import { PublicFormConfig } from "./public-form-config";
 
 /**
- * Manage template files with placeholders that can be used to render files for export of entities.
+ * Configure publicly accessible forms for users without login to record some data into the system.
  */
 @NgModule({
   declarations: [],
