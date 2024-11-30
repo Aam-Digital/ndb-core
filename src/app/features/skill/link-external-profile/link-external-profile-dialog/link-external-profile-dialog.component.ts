@@ -9,7 +9,7 @@ import {
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { ExternalProfile } from "../../external-profile";
 import { MatProgressBar } from "@angular/material/progress-bar";
-import { SkillApiService } from "../../skill-api.service";
+import { SearchParams, SkillApiService } from "../../skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
@@ -34,6 +34,12 @@ export interface LinkExternalProfileDialogData {
    * The configuration including details like search field mappings.
    */
   config: ExternalProfileLinkConfig;
+
+  /**
+   * Optionally, pass a list of already identified possible matches
+   * and skip the initial automatic search request.
+   */
+  possibleMatches?: ExternalProfile[];
 }
 
 @Component({
@@ -64,9 +70,9 @@ export class LinkExternalProfileDialogComponent implements OnInit {
   config: ExternalProfileLinkConfig;
 
   entity: Entity;
-  searchParams: SearchParams;
+  searchParams: SearchParams = {};
 
-  loading: boolean = true;
+  loading: boolean;
 
   possibleMatches: (ExternalProfile & { _tooltip?: string })[];
   selected: ExternalProfile;
@@ -75,12 +81,20 @@ export class LinkExternalProfileDialogComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) data: LinkExternalProfileDialogData) {
     this.entity = data.entity;
     this.config = data.config;
+    if (data.possibleMatches) {
+      this.possibleMatches = data.possibleMatches.map(addTooltip);
+    }
   }
 
   async ngOnInit() {
-    this.searchParams = this.getDefaultSearchParams();
+    this.searchParams = this.skillApiService.generateDefaultSearchParams(
+      this.entity,
+      this.config,
+    );
 
-    await this.searchMatches();
+    if (!this.possibleMatches) {
+      await this.searchMatches();
+    }
   }
 
   async searchMatches() {
@@ -92,16 +106,9 @@ export class LinkExternalProfileDialogComponent implements OnInit {
     try {
       this.possibleMatches = (
         await firstValueFrom(
-          this.skillApiService.getExternalProfiles(
-            this.searchParams.fullName,
-            this.searchParams.email,
-            this.searchParams.phone,
-          ),
+          this.skillApiService.getExternalProfiles(this.searchParams),
         )
-      ).map((profile) => ({
-        ...profile,
-        _tooltip: this.generateTooltip(profile),
-      }));
+      ).map((profile) => addTooltip(profile));
     } catch (e) {
       Logging.warn("SkillModule: Failed to load external profiles", e);
       this.error = e;
@@ -120,33 +127,10 @@ export class LinkExternalProfileDialogComponent implements OnInit {
       };
     }
   }
-
-  private getDefaultSearchParams(): SearchParams {
-    // TODO:
-
-    return {
-      fullName: (this.config?.searchFields.fullName ?? [])
-        .map((field) => this.entity[field])
-        .filter((value) => !!value)
-        .join(" "),
-      email: (this.config?.searchFields.email ?? [])
-        .map((field) => this.entity[field])
-        .filter((value) => !!value)
-        .join(" "),
-      phone: (this.config?.searchFields.phone ?? [])
-        .map((field) => this.entity[field])
-        .filter((value) => !!value)
-        .join(" "),
-    };
-  }
-
-  private generateTooltip(profile: ExternalProfile) {
-    return JSON.stringify(profile, null, 2);
-  }
 }
 
-interface SearchParams {
-  fullName: string | undefined;
-  email: string | undefined;
-  phone: string | undefined;
+function addTooltip(
+  profile: ExternalProfile,
+): ExternalProfile & { _tooltip?: string } {
+  return { ...profile, _tooltip: JSON.stringify(profile, null, 2) };
 }

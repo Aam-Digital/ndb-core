@@ -23,4 +23,11 @@ const dynamicComponents: [string, AsyncComponent][] = [
         "./link-external-profile/edit-external-profile-link.component"
       ).then((c) => c.EditExternalProfileLinkComponent),
   ],
+  [
+    "BulkLinkExternalProfiles",
+    () =>
+      import(
+        "./bulk-link-external-profiles/bulk-link-external-profiles.component"
+      ).then((c) => c.BulkLinkExternalProfilesComponent),
+  ],
 ];

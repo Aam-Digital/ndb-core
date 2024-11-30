@@ -8,6 +8,8 @@ import { HttpClient } from "@angular/common/http";
 import { catchError, map } from "rxjs/operators";
 import { Logging } from "../../core/logging/logging.service";
 import { EscoApiService, EscoSkillDto } from "./esco-api.service";
+import { ExternalProfileLinkConfig } from "./link-external-profile/external-profile-link-config";
+import { mockSkillApi } from "./skill-api-mock";
 
 interface UserProfileResponseDto {
   result: ExternalProfile[];
@@ -25,21 +27,58 @@ export class SkillApiService {
   private escoApi: EscoApiService = inject(EscoApiService);
   private http: HttpClient = inject(HttpClient);
 
+  /**
+   * Request to API with the given parameters
+   * to get possibly matching external profiles.
+   *
+   * @param searchParams
+   */
   getExternalProfiles(
-    searchName?: string,
-    searchEmail?: string,
-    searchPhone?: string,
+    searchParams: SearchParams,
   ): Observable<ExternalProfile[]> {
-    const requestParams = {};
-    if (searchName) requestParams["fullName"] = searchName;
-    if (searchEmail) requestParams["email"] = searchEmail;
-    if (searchPhone) requestParams["phone"] = searchPhone;
+    return mockSkillApi.getExternalProfiles(); // TODO remove
 
     return this.http
       .get<UserProfileResponseDto>("/api/v1/skill/user-profile", {
-        params: requestParams,
+        params: { ...searchParams },
       })
       .pipe(map((value) => value.result));
+  }
+
+  /**
+   * Get possibly matching external profiles for the given entity,
+   * generating search parameters based on the entity and config.
+   *
+   * @param entity
+   * @param config
+   */
+  getExternalProfilesForEntity(
+    entity: Entity,
+    config: ExternalProfileLinkConfig,
+  ): Observable<ExternalProfile[]> {
+    const params = this.generateDefaultSearchParams(entity, config);
+
+    return this.getExternalProfiles(params);
+  }
+
+  generateDefaultSearchParams(
+    entity: Entity,
+    config: ExternalProfileLinkConfig,
+  ): SearchParams {
+    return {
+      fullName: (config?.searchFields.fullName ?? [])
+        .map((field) => entity[field])
+        .filter((value) => !!value)
+        .join(" "),
+      email: (config?.searchFields.email ?? [])
+        .map((field) => entity[field])
+        .filter((value) => !!value)
+        .join(" "),
+      phone: (config?.searchFields.phone ?? [])
+        .map((field) => entity[field])
+        .filter((value) => !!value)
+        .join(" "),
+    };
   }
 
   getExternalProfileById(externalId: string): Observable<ExternalProfile> {
@@ -94,4 +133,10 @@ export class SkillApiService {
 
     return entity;
   }
+}
+
+export interface SearchParams {
+  fullName?: string | undefined;
+  email?: string | undefined;
+  phone?: string | undefined;
 }

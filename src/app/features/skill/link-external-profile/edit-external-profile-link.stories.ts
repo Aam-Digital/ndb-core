@@ -6,37 +6,7 @@ import { FormControl } from "@angular/forms";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ExternalProfileLinkConfig } from "./external-profile-link-config";
 import { SkillApiService } from "../skill-api.service";
-import { delay, of } from "rxjs";
-import { ExternalProfile } from "../external-profile";
-
-const mockSkillApi = {
-  getExternalProfiles: () =>
-    of([createDummyData("1"), createDummyData("2")]).pipe(delay(1000)),
-};
-
-function createDummyData(externalId: string): ExternalProfile {
-  return {
-    id: externalId,
-    fullName: "John Doe " + externalId,
-    phone: "+1234567890",
-    email: "john@example.com",
-    skills: [
-      {
-        escoUri:
-          "http://data.europa.eu/esco/skill/0ac31705-79ff-4409-a818-c9d0a6388e84",
-        usage: "ALWAYS",
-      },
-      {
-        escoUri:
-          "http://data.europa.eu/esco/skill/2e040fb0-66b9-4529-bec6-466472b60773",
-        usage: "OFTEN",
-      },
-    ],
-    importedAt: "2021-01-01T00:00:00Z",
-    latestSyncAt: "2021-01-01T00:00:00Z",
-    updatedAtExternalSystem: "2021-01-01T00:00:00Z",
-  };
-}
+import { mockSkillApi } from "../skill-api-mock";
 
 const meta: Meta<EditExternalProfileLinkComponent> = {
   title: "Features/Skill Integration/EditExternalProfileLink",

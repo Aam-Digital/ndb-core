@@ -54,13 +54,16 @@ import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { AbilityModule } from "@casl/angular";
-import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import {
   EntitySpecialLoaderService,
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.service";
+import {
+  DialogViewComponent,
+  DialogViewData,
+} from "../../ui/dialog-view/dialog-view.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -101,7 +104,6 @@ import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.se
     EntityCreateButtonComponent,
     AbilityModule,
     AsyncPipe,
-    EntityActionsMenuComponent,
     ViewActionsComponent,
     // WARNING: all imports here also need to be set for components extending EntityList, like ChildrenListComponent
   ],
@@ -328,6 +330,7 @@ export class EntityListComponent<T extends Entity>
     );
     this.selectedRows = undefined;
   }
+
   async deleteRecords() {
     await this.entityActionsService.delete(this.selectedRows);
     this.selectedRows = undefined;
@@ -341,6 +344,25 @@ export class EntityListComponent<T extends Entity>
   async anonymizeRecords() {
     await this.entityActionsService.anonymize(this.selectedRows);
     this.selectedRows = undefined;
+  }
+
+  linkExternalProfiles() {
+    this.dialog.open(DialogViewComponent, {
+      width: "98vw",
+      maxWidth: "100vw",
+      height: "98vh",
+      maxHeight: "100vh",
+
+      data: {
+        component: "BulkLinkExternalProfiles",
+        config: {
+          entities: this.selectedRows,
+        },
+      } as DialogViewData,
+    });
+
+    // TODO: check for cancel or just reset selection after?
+    //this.selectedRows = undefined;
   }
 
   onRowClick(row: T) {

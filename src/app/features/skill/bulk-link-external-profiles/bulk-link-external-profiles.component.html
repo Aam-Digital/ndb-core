@@ -1,0 +1,63 @@
+<app-view-title i18n>Bulk Link External Profiles</app-view-title>
+
+<app-view-actions>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="save()"
+    mat-dialog-close
+    i18n
+  >
+    Link Profiles
+  </button>
+  <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
+</app-view-actions>
+
+<table mat-table matSort [dataSource]="records">
+  <ng-container matColumnDef="entity">
+    <th mat-header-cell *matHeaderCellDef i18n>Record</th>
+    <td mat-cell *matCellDef="let element">
+      <app-entity-block [entity]="element.entity"></app-entity-block>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="selected">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>
+      Linked External Profile
+    </th>
+    <td mat-cell *matCellDef="let element">
+      @if (element.selected) {
+        {{ element.selected.fullName }} ({{ element.selected.email }})
+      }
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="possibleMatchesCount">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>
+      Possible Matches
+    </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.possibleMatchesCount }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef i18n>Action</th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-stroked-button (click)="editMatch(element)">
+        @if (!element.possibleMatches) {
+          <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        } @else if (!element.selected) {
+          <span i18n>Select external profile</span>
+        } @else {
+          <span i18n>Change linked profile</span>
+        }
+      </button>
+    </td>
+  </ng-container>
+
+  @let columnsToDisplay =
+    ["entity", "selected", "possibleMatchesCount", "action"];
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+</table>
