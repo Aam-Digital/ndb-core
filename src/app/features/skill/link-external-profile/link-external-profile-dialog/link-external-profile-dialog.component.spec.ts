@@ -10,6 +10,8 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { SkillApiService } from "../../skill-api.service";
 import { of } from "rxjs";
 import { ExternalProfile } from "../../external-profile";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("LinkExternalProfileDialogComponent", () => {
   let component: LinkExternalProfileDialogComponent;
@@ -18,13 +20,19 @@ describe("LinkExternalProfileDialogComponent", () => {
 
   beforeEach(async () => {
     mockSkillApi = jasmine.createSpyObj("SkillApiService", [
+      "generateDefaultSearchParams",
       "getExternalProfiles",
       "getExternalProfileById",
     ]);
+    mockSkillApi.generateDefaultSearchParams.and.returnValue({});
     mockSkillApi.getExternalProfiles.and.returnValue(of([]));
 
     await TestBed.configureTestingModule({
-      imports: [LinkExternalProfileDialogComponent],
+      imports: [
+        LinkExternalProfileDialogComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
       providers: [
         {
           provide: MAT_DIALOG_DATA,
@@ -51,10 +59,7 @@ describe("LinkExternalProfileDialogComponent", () => {
       { id: "2", fullName: "match 2" } as Partial<ExternalProfile> as any,
     ];
     mockSkillApi.getExternalProfiles.and.returnValue(of(mockApiResults));
-
     component.error = { message: "previous error" };
-    component.selected = { id: "previous selected" } as any;
-    component.possibleMatches = [{ id: "previous result" } as any];
 
     component.ngOnInit();
     expect(component.loading).toBeTrue();

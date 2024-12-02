@@ -14,7 +14,7 @@ import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { ExternalProfile } from "../external-profile";
 
-describe("LinkExternalProfileComponent", () => {
+describe("EditExternalProfileLinkComponent", () => {
   let component: EditExternalProfileLinkComponent;
   let fixture: ComponentFixture<EditExternalProfileLinkComponent>;
 

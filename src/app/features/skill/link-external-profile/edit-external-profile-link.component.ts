@@ -79,6 +79,7 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
     // TODO: run import / update
     const targetFormControl = this.parent.get("skills");
     targetFormControl?.setValue(skills);
+    targetFormControl.markAsDirty();
 
     this.isLoading.set(false);
   }

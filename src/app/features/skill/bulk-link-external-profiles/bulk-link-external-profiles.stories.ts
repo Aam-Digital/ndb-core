@@ -7,6 +7,7 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { mockSkillApi } from "../skill-api-mock";
 import { ExternalProfileLinkConfig } from "../link-external-profile/external-profile-link-config";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 
 const entities: Entity[] = [
   TestEntity.create({ name: "Test Entity 1" }),
@@ -40,6 +41,6 @@ const profileLinkConfig: ExternalProfileLinkConfig = {
 export const Default: Story = {
   args: {
     entities: entities,
-    config: profileLinkConfig,
+    config: { id: "ref", additional: profileLinkConfig } as FormFieldConfig,
   },
 };
