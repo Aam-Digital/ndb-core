@@ -44,13 +44,12 @@ export const environment = {
   DB_NAME: "app",
 
   firebase: {
-    apiKey: "AIzaSyC8PIhZ2VZ5sDmXHWp1V0LmhTfRghBOLGI",
-    authDomain: "push-notification-37d2a.firebaseapp.com",
-    projectId: "push-notification-37d2a",
-    storageBucket: "push-notification-37d2a.firebasestorage.app",
-    messagingSenderId: "762806445328",
-    appId: "1:762806445328:web:10800dabfd5ad8bf5c3195",
-    measurementId: "G-9Z03T96S55",
-    vapidKey: "BFgQRW-eKhlLCLl0LCNosL45V_s6H28XQj0z_7uMwka21OY6ENh3WDCCIRzwYcJemsVr-1KxdmbCVV5BfCc3BQQ"
+    apiKey: "AIzaSyAS-AmoAzv_-bRbvm1MMqKaq8t0xjZ7Wqo",
+    authDomain: "aam-digital-b8a7b.firebaseapp.com",
+    projectId: "aam-digital-b8a7b",
+    storageBucket: "aam-digital-b8a7b.firebasestorage.app",
+    messagingSenderId: "189059495005",
+    appId: "1:189059495005:web:c6bdb0c8c665864b37c9b4",
+    vapidKey: "BKkE6EgJBIwRa9-DUSKZpmkMuG7Fak2lZgxda_DPx5kYkeK8cgQM_xqurHqxRNa1b2MuW7-_t9iFbgfuXUsWF5I"
   },
 };

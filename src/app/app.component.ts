@@ -20,6 +20,7 @@ import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { environment } from "../environments/environment";
+import { Logging } from "./core/logging/logging.service";
 
 /**
  * Component as the main entry point for the app.
@@ -62,15 +63,14 @@ export class AppComponent implements OnInit {
     console.log("Requesting permission for Firebase messaging...");
     getToken(messaging, { vapidKey: environment.firebase.vapidKey })
     .then((currentToken) => {
-        console.log("==>currentToken", currentToken);
         if (currentToken) {
-          console.log("Firebase token received:", currentToken);
+          Logging.log(currentToken);
         } else {
-          console.log("No registration token available. Request permission to generate one.");
+          Logging.log("No registration token available. Request permission to generate one.");
         }
       })
       .catch((err) => {
-        console.error("An error occurred while retrieving token: ", err);
+        Logging.error("An error occurred while retrieving token: ", err);
       });
   }
 
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
   private listenForMessages() {
     const messaging = getMessaging();
     onMessage(messaging, (payload) => {
-      console.log("Message received:", payload);
+      Logging.log(payload);
       this.message = payload;
     });
   }
