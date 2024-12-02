@@ -5,16 +5,21 @@
 
 .notification-time {
     color: gray;
+    font-size: 12px;
+}
+
+.notification-item {
+    font-size: 15px;
+    text-align: center;
 }
 
 .header  {
     padding: 0px 16px;
-    background-color: #ff9800;
     margin-bottom: 20px;
 }
 
-.mat-menu {
-    padding-top: 0 !important;
+.notification-lists {
+    width: 260px;
 }
 
 .notification-toggle {
