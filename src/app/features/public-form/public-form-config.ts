@@ -14,6 +14,13 @@ export class PublicFormConfig extends Entity {
     label: $localize`:PublicFormConfig:Title`,
   })
   title: string;
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Public form Route`,
+    description: $localize`:PublicFormConfig:This will be the Public form Link from where the users can access this form`,
+  })
+  route: string;
+
   @DatabaseField({
     label: $localize`:PublicFormConfig:Description`,
     dataType: LongTextDatatype.dataType,

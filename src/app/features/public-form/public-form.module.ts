@@ -49,13 +49,29 @@ const viewConfigs: ViewConfig[] = [
       entityType: PublicFormConfig.ENTITY_TYPE,
       panels: [
         {
+          title: "General Setting",
           components: [
             {
               component: "Form",
               config: {
                 fieldGroups: [
                   {
-                    fields: ["title", "description", "entity", "columns"],
+                    fields: ["route", "title", "description", "entity"],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          title: "Configure Fields",
+          components: [
+            {
+              component: "Form",
+              config: {
+                fieldGroups: [
+                  {
+                    fields: ["columns"],
                   },
                 ],
               },
