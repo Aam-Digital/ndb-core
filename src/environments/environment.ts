@@ -42,15 +42,4 @@ export const environment = {
 
   /** Name of the database that is used */
   DB_NAME: "app",
-
-  firebase: {
-    apiKey: "AIzaSyC8PIhZ2VZ5sDmXHWp1V0LmhTfRghBOLGI",
-    authDomain: "push-notification-37d2a.firebaseapp.com",
-    projectId: "push-notification-37d2a",
-    storageBucket: "push-notification-37d2a.firebasestorage.app",
-    messagingSenderId: "762806445328",
-    appId: "1:762806445328:web:10800dabfd5ad8bf5c3195",
-    measurementId: "G-9Z03T96S55",
-    vapidKey: "BFgQRW-eKhlLCLl0LCNosL45V_s6H28XQj0z_7uMwka21OY6ENh3WDCCIRzwYcJemsVr-1KxdmbCVV5BfCc3BQQ"
-  },
 };
