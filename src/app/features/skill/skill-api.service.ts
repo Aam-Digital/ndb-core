@@ -9,7 +9,6 @@ import { catchError, map } from "rxjs/operators";
 import { Logging } from "../../core/logging/logging.service";
 import { EscoApiService, EscoSkillDto } from "./esco-api.service";
 import { ExternalProfileLinkConfig } from "./link-external-profile/external-profile-link-config";
-import { mockSkillApi } from "./skill-api-mock";
 
 interface UserProfileResponseDto {
   result: ExternalProfile[];
@@ -36,7 +35,7 @@ export class SkillApiService {
   getExternalProfiles(
     searchParams: SearchParams,
   ): Observable<ExternalProfile[]> {
-    return mockSkillApi.getExternalProfiles(); // TODO remove
+    // return mockSkillApi.getExternalProfiles(); // TODO remove; for mock UI testing only
 
     return this.http
       .get<UserProfileResponseDto>("/api/v1/skill/user-profile", {
