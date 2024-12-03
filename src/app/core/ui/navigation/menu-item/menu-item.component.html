@@ -4,8 +4,8 @@
   angularticsAction="app_navigation_link_click"
   [angularticsLabel]="item.label"
   [routerLink]="item.link ? [item.link] : undefined"
+  class="indent-item"
   [class.matched-background]="item.link === activeLink"
-  [class.indent-item]="item.link === activeLink"
   (click)="toggleSubMenu()"
 >
   <a class="flex-row gap-small">
