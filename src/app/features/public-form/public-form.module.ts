@@ -56,7 +56,10 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["route", "title", "description", "entity"],
+                    fields: ["route", "title"],
+                  },
+                  {
+                    fields: ["description", "entity"],
                   },
                 ],
               },

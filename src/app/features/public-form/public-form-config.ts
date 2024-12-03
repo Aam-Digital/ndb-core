@@ -14,13 +14,11 @@ export class PublicFormConfig extends Entity {
     label: $localize`:PublicFormConfig:Title`,
   })
   title: string;
-
   @DatabaseField({
-    label: $localize`:PublicFormConfig:Public form Route`,
-    description: $localize`:PublicFormConfig:This will be the Public form Link from where the users can access this form`,
+    label: $localize`:PublicFormConfig:Form Link ID`,
+    description: $localize`:PublicFormConfig:The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID)`,
   })
   route: string;
-
   @DatabaseField({
     label: $localize`:PublicFormConfig:Description`,
     dataType: LongTextDatatype.dataType,
@@ -28,6 +26,7 @@ export class PublicFormConfig extends Entity {
   description: string;
   @DatabaseField({
     label: $localize`:PublicFormConfig:Entity`,
+    description: $localize`:PublicFormConfig:The type of record that is created when a someone submits the form (e.g. if you select "Note" here, the form will create new entries in your "Notes List" and you can select only fields of your "Note" data structure for this form)`,
     editComponent: "EditEntityTypeDropdown",
   })
   entity: string;
