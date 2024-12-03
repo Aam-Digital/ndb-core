@@ -61,6 +61,7 @@ describe("LinkExternalProfileDialogComponent", () => {
     mockSkillApi.getExternalProfiles.and.returnValue(of(mockApiResults));
     component.error = { message: "previous error" };
 
+    component.possibleMatches = undefined; // assume no matches have passed in (or been loaded by an earlier ngOnInit call)
     component.ngOnInit();
     expect(component.loading).toBeTrue();
     tick();

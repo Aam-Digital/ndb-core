@@ -37,6 +37,11 @@ import { EntitySchema } from "../../../core/entity/schema/entity-schema";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Logging } from "../../../core/logging/logging.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { firstValueFrom, from, mergeMap, Observable } from "rxjs";
+import { map, tap } from "rxjs/operators";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatTooltip } from "@angular/material/tooltip";
+import { PercentPipe } from "@angular/common";
 
 @Component({
   selector: "app-bulk-link-external-profiles",
@@ -59,6 +64,9 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
     MatRowDef,
     MatSortModule,
     MatProgressSpinner,
+    FaIconComponent,
+    MatTooltip,
+    PercentPipe,
   ],
   templateUrl: "./bulk-link-external-profiles.component.html",
   styleUrl: "./bulk-link-external-profiles.component.scss",
@@ -74,7 +82,10 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   @Input() entities: Entity[];
   @Input() config: FormFieldConfig;
 
+  private MAX_CONCURRENT_REQUESTS = 20;
+
   records: MatTableDataSource<RecordMatching>;
+  matchedRecordsCount: number;
 
   @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
     if (this.records) {
@@ -110,23 +121,77 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
       return;
     }
 
-    this.records = new MatTableDataSource(
-      this.entities.map((entity) => {
-        const record: RecordMatching = { entity };
+    const records: RecordMatching[] = this.entities.map((entity) => ({
+      entity,
+    }));
+    this.records = new MatTableDataSource(records);
+    this.matchedRecordsCount = 0;
 
-        this.skillApi
-          .getExternalProfilesForEntity(entity, this.config.additional)
-          .subscribe((profiles) => {
-            record.possibleMatches = profiles;
-            record.possibleMatchesCount = profiles.length;
-            if (profiles?.length === 1) {
-              record.selected = profiles[0];
-            }
-          });
+    from(records)
+      .pipe(
+        mergeMap(
+          (record) => this.updateRecordWithPossibleMatches(record),
+          this.MAX_CONCURRENT_REQUESTS,
+        ),
+        tap((r) => this.recalculatedMatchedRecordsCount()),
+      )
+      .subscribe();
+  }
 
-        return record;
-      }),
-    );
+  /**
+   * fetch possible matches for each entity asynchronously and add to record
+   * @param record
+   * @private
+   */
+  private updateRecordWithPossibleMatches(
+    record: RecordMatching,
+  ): Observable<RecordMatching> {
+    return this.skillApi
+      .getExternalProfilesForEntity(record.entity, this.config.additional)
+      .pipe(
+        tap(async () => this.getCurrentlySelectedProfile(record)),
+        map((possibleMatches) => {
+          record.possibleMatches = possibleMatches;
+          record.possibleMatchesCount = possibleMatches.length;
+          if (possibleMatches?.length === 1 && !record.selected) {
+            record.selected = possibleMatches[0];
+          }
+
+          return record;
+        }),
+      );
+  }
+
+  /**
+   * Check if external profile that is currently linked in the entity still exists
+   * and add it as pre-selected match if so.
+   * @param record
+   * @private
+   */
+  private async getCurrentlySelectedProfile(record: RecordMatching) {
+    const existingExtProfileId = record.entity[this.config.id];
+    if (!existingExtProfileId) {
+      return;
+    }
+
+    const currentMatch = await firstValueFrom(
+      this.skillApi.getExternalProfileById(existingExtProfileId),
+    ).catch((err) => {
+      Logging.debug(
+        "BulkLinkExternalProfilesComponent: error fetching previously selected external profile",
+        err,
+      );
+    });
+
+    if (currentMatch) {
+      record.selected = currentMatch;
+    }
+  }
+
+  private recalculatedMatchedRecordsCount() {
+    this.matchedRecordsCount = this.records.data.filter(
+      (record) => record.selected,
+    ).length;
   }
 
   editMatch(record: RecordMatching) {
@@ -143,6 +208,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
         if (result) {
           record.selected = result;
         }
+        this.recalculatedMatchedRecordsCount();
       });
   }
 
@@ -171,6 +237,11 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
 
     // TODO: throw or log warning?
     return undefined;
+  }
+
+  unlinkMatch(element: RecordMatching) {
+    element.selected = undefined;
+    this.recalculatedMatchedRecordsCount();
   }
 }
 

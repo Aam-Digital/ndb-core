@@ -18,6 +18,11 @@ export const mockSkillApi = {
   generateDefaultSearchParams: () => ({
     fullName: "John Doe",
   }),
+
+  getExternalProfileById: (id: string) =>
+    of(createSkillApiDummyData(id)).pipe(
+      delay(faker.number.int({ min: 100, max: 900 })),
+    ),
 };
 
 export function createSkillApiDummyData(externalId: string): ExternalProfile {

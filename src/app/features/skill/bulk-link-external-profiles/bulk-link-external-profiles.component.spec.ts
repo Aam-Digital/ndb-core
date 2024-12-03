@@ -6,12 +6,23 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { of } from "rxjs";
 
 describe("BulkLinkExternalProfilesComponent", () => {
   let component: BulkLinkExternalProfilesComponent;
   let fixture: ComponentFixture<BulkLinkExternalProfilesComponent>;
 
+  let mockSkillApi: jasmine.SpyObj<SkillApiService>;
+
   beforeEach(async () => {
+    mockSkillApi = jasmine.createSpyObj("SkillApiService", [
+      "generateDefaultSearchParams",
+      "getExternalProfiles",
+      "getExternalProfileById",
+    ]);
+    mockSkillApi.generateDefaultSearchParams.and.returnValue({});
+    mockSkillApi.getExternalProfiles.and.returnValue(of([]));
+
     await TestBed.configureTestingModule({
       imports: [
         BulkLinkExternalProfilesComponent,
@@ -19,7 +30,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: SkillApiService, useValue: {} },
+        { provide: SkillApiService, useValue: mockSkillApi },
         {
           provide: EntityMapperService,
           useValue: mockEntityMapper(),
@@ -34,5 +45,11 @@ describe("BulkLinkExternalProfilesComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should init onChanges and search matches for all given entities", () => {
+    component.ngOnChanges({ entities: true as any });
+
+    // TODO: actual testing
   });
 });

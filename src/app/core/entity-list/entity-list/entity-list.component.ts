@@ -361,8 +361,7 @@ export class EntityListComponent<T extends Entity>
       } as DialogViewData,
     });
 
-    // TODO: check for cancel or just reset selection after?
-    //this.selectedRows = undefined;
+    this.selectedRows = undefined;
   }
 
   onRowClick(row: T) {
