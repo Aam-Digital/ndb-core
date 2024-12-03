@@ -92,6 +92,10 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     rules: DatabaseRule[],
   ): Promise<DatabaseRule[]> {
     const sessionInfo: SessionInfo = this.sessionInfo.value;
+    if (!sessionInfo) {
+      // for unauthenticated users, no user variables are available and interpolated
+      return rules;
+    }
 
     const user = await firstValueFrom(
       // only emit once user entity is loaded (or "null" for user account without entity)
