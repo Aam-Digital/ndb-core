@@ -22,6 +22,7 @@ import { Logging } from "./core/logging/logging.service";
 import { EntityMapperService } from "./core/entity/entity-mapper/entity-mapper.service";
 import { NotificationActivity } from "./features/notifications/model/notifications-activity";
 import { FirebaseNotificationService } from '../firebase-messaging-service.service';
+import { CurrentUserSubject } from "./core/session/current-user-subject";
 
 /**
  * Component as the main entry point for the app.
@@ -35,7 +36,7 @@ export class AppComponent implements OnInit {
   configFullscreen: boolean = false;
   message: any = null;
 
-  constructor(private router: Router, private entityMapper: EntityMapperService, private firebaseNotificationService: FirebaseNotificationService) {
+  constructor(private router: Router, private entityMapper: EntityMapperService, private firebaseNotificationService: FirebaseNotificationService, private currentUser: CurrentUserSubject,) {
     this.detectConfigMode();
     router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => this.detectConfigMode());
   }
@@ -58,11 +59,10 @@ export class AppComponent implements OnInit {
     const notification = new NotificationActivity();
     notification.title = "Dummy Notification Title";
     notification.body = "This is a dummy notification body.";
-    notification.type = "INFO";
-    notification.sentBy = JSON.stringify({ at: new Date(), by: "System", fcmToken: token });
-    notification.readStatus = JSON.stringify({ readBy: [], isRead: false });
-    notification.delivery = JSON.stringify({ delivered: false, deliveredAt: new Date(), failedAttempts: 0 });
-    notification.context = JSON.stringify({ appVersion: "1.0.0" });
+    notification.actionURL = "http://localhost:4200";
+    notification.sentBy = this.currentUser.value?.getId();
+    notification.fcmToken = token;
+    notification.readStatus = false;
 
     try {
       await this.entityMapper.save<NotificationActivity>(notification);
