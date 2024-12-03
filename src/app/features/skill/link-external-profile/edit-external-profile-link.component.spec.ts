@@ -13,6 +13,8 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Subject } from "rxjs";
 import { ExternalProfile } from "../external-profile";
+import { LinkExternalProfileDialogData } from "./link-external-profile-dialog/link-external-profile-dialog.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EditExternalProfileLinkComponent", () => {
   let component: EditExternalProfileLinkComponent;
@@ -41,7 +43,7 @@ describe("EditExternalProfileLinkComponent", () => {
     } as MatDialogRef<any>);
 
     await TestBed.configureTestingModule({
-      imports: [EditExternalProfileLinkComponent],
+      imports: [EditExternalProfileLinkComponent, FontAwesomeTestingModule],
       providers: [
         { provide: SkillApiService, useValue: mockSkillApi },
         { provide: MatDialog, useValue: mockDialog },
@@ -55,6 +57,7 @@ describe("EditExternalProfileLinkComponent", () => {
     component.parent = new FormGroup({
       testField: formControl,
       skills: new FormControl(),
+      name: new FormControl(),
     });
     component.entity = entity;
 
@@ -89,6 +92,23 @@ describe("EditExternalProfileLinkComponent", () => {
     expect(mockDialog.open).toHaveBeenCalled();
     expect(component.formControl.value).toEqual("original-id");
     expect(component.formControl.dirty).toBeFalse();
+  }));
+
+  it("should pass the current state if edited form/entity to the search dialog", fakeAsync(() => {
+    component.entity = TestEntity.create({
+      name: "original name",
+      other: "foo",
+    });
+    component.parent.get("name").setValue("new name");
+
+    component.searchMatchingProfiles();
+    tick();
+
+    const actualDialogData = mockDialog.open.calls.mostRecent().args[1]
+      .data as LinkExternalProfileDialogData;
+    expect(actualDialogData.config).toEqual(component.additional);
+    expect(actualDialogData.entity["name"]).toBe("new name");
+    expect(actualDialogData.entity["other"]).toBe("foo");
   }));
 
   it("should empty value if user clicks 'unlink'", fakeAsync(() => {

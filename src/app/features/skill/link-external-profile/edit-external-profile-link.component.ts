@@ -63,10 +63,16 @@ export class EditExternalProfileLinkComponent
   }
 
   async searchMatchingProfiles() {
+    const currentEntity = Object.assign(
+      {},
+      this.entity,
+      this.parent.getRawValue(),
+    );
+
     this.dialog
       .open(LinkExternalProfileDialogComponent, {
         data: {
-          entity: this.entity,
+          entity: currentEntity,
           config: this.additional,
         } as LinkExternalProfileDialogData,
       })
