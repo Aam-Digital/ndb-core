@@ -30,7 +30,7 @@ export interface EscoSkillDto {
   providedIn: "root",
 })
 export class EscoApiService {
-  private http: HttpClient = inject(HttpClient);
+  private readonly http: HttpClient = inject(HttpClient);
 
   getEscoSkill(uri: string): Observable<EscoSkillDto> {
     return this.http

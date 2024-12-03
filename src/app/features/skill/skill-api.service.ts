@@ -23,10 +23,11 @@ interface UserProfileResponseDto {
   providedIn: "root",
 })
 export class SkillApiService {
-  private entityMapper: EntityMapperService = inject(EntityMapperService);
-  private entityRegistry: EntityRegistry = inject(EntityRegistry);
-  private escoApi: EscoApiService = inject(EscoApiService);
-  private http: HttpClient = inject(HttpClient);
+  private readonly entityMapper: EntityMapperService =
+    inject(EntityMapperService);
+  private readonly entityRegistry: EntityRegistry = inject(EntityRegistry);
+  private readonly escoApi: EscoApiService = inject(EscoApiService);
+  private readonly http: HttpClient = inject(HttpClient);
 
   /**
    * Request to API with the given parameters

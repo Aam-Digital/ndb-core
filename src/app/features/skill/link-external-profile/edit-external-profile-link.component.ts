@@ -38,8 +38,8 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
   isLoading: WritableSignal<boolean> = signal(false);
   externalProfile: ExternalProfile | undefined;
 
-  private dialog: MatDialog = inject(MatDialog);
-  private skillApi: SkillApiService = inject(SkillApiService);
+  private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly skillApi: SkillApiService = inject(SkillApiService);
 
   async searchMatchingProfiles() {
     // TODO: should this only be enabled in "Edit" mode of form?

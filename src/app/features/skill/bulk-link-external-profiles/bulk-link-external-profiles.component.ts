@@ -72,9 +72,10 @@ import { PercentPipe } from "@angular/common";
   styleUrl: "./bulk-link-external-profiles.component.scss",
 })
 export class BulkLinkExternalProfilesComponent implements OnChanges {
-  private skillApi: SkillApiService = inject(SkillApiService);
-  private dialog: MatDialog = inject(MatDialog);
-  private entityMapper: EntityMapperService = inject(EntityMapperService);
+  private readonly skillApi: SkillApiService = inject(SkillApiService);
+  private readonly dialog: MatDialog = inject(MatDialog);
+  private readonly entityMapper: EntityMapperService =
+    inject(EntityMapperService);
 
   /**
    * The bulk-selected entities for which to search external profiles.
@@ -102,13 +103,9 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   private init() {
     if (!this.config && this.entities?.[0]) {
       // TODO: handle cases with multiple "external profile" fields (add dropdown to UI here?)
-
-      const inferredExtField = this.inferExternalProfileFieldFromEntitySchema(
+      this.config = this.inferExternalProfileFieldFromEntitySchema(
         this.entities[0].getSchema(),
       );
-      if (inferredExtField) {
-        this.config = inferredExtField;
-      }
     }
 
     if (!this.entities || !this.config) {
@@ -121,19 +118,18 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
       return;
     }
 
-    const records: RecordMatching[] = this.entities.map((entity) => ({
-      entity,
-    }));
-    this.records = new MatTableDataSource(records);
+    this.records = new MatTableDataSource(
+      this.entities.map((entity) => ({ entity }) as RecordMatching),
+    );
     this.matchedRecordsCount = 0;
 
-    from(records)
+    from(this.records.data)
       .pipe(
         mergeMap(
-          (record) => this.updateRecordWithPossibleMatches(record),
+          (r) => this.updateRecordWithMatches(r),
           this.MAX_CONCURRENT_REQUESTS,
         ),
-        tap((r) => this.recalculatedMatchedRecordsCount()),
+        tap(() => this.recalculatedMatchedRecordsCount()),
       )
       .subscribe();
   }
@@ -143,7 +139,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
    * @param record
    * @private
    */
-  private updateRecordWithPossibleMatches(
+  private updateRecordWithMatches(
     record: RecordMatching,
   ): Observable<RecordMatching> {
     return this.skillApi

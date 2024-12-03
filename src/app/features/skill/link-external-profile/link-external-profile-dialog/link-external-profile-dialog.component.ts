@@ -66,7 +66,7 @@ export interface LinkExternalProfileDialogData {
   styleUrl: "./link-external-profile-dialog.component.scss",
 })
 export class LinkExternalProfileDialogComponent implements OnInit {
-  private skillApiService: SkillApiService = inject(SkillApiService);
+  private readonly skillApiService: SkillApiService = inject(SkillApiService);
   config: ExternalProfileLinkConfig;
 
   entity: Entity;
