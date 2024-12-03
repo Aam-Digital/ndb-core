@@ -18,9 +18,10 @@
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import { environment } from "../environments/environment";
 import { Logging } from "./core/logging/logging.service";
+import { EntityMapperService } from "./core/entity/entity-mapper/entity-mapper.service";
+import { NotificationActivity } from "./features/notifications/model/notifications-activity";
+import { FirebaseNotificationService } from '../firebase-messaging-service.service';
 
 /**
  * Component as the main entry point for the app.
@@ -34,16 +35,14 @@ export class AppComponent implements OnInit {
   configFullscreen: boolean = false;
   message: any = null;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private entityMapper: EntityMapperService, private firebaseNotificationService: FirebaseNotificationService) {
     this.detectConfigMode();
-    router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => this.detectConfigMode());
+    router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => this.detectConfigMode());
   }
 
   ngOnInit(): void {
-    this.requestPermission();
-    this.listenForMessages();
+    this.firebaseNotificationService.requestPermission();
+    this.firebaseNotificationService.listenForMessages();
   }
 
   /**
@@ -55,33 +54,21 @@ export class AppComponent implements OnInit {
     this.configFullscreen = currentUrl.startsWith("/admin/entity/");
   }
 
-  /**
-   * Request permission for Firebase messaging and retrieve the token.
-   */
-  private requestPermission() {
-    const messaging = getMessaging();
-    console.log("Requesting permission for Firebase messaging...");
-    getToken(messaging, { vapidKey: environment.firebase.vapidKey })
-    .then((currentToken) => {
-        if (currentToken) {
-          Logging.log(currentToken);
-        } else {
-          Logging.log("No registration token available. Request permission to generate one.");
-        }
-      })
-      .catch((err) => {
-        Logging.error("An error occurred while retrieving token: ", err);
-      });
-  }
+  private async createAndSaveNotification(token: string) {
+    const notification = new NotificationActivity();
+    notification.title = "Dummy Notification Title";
+    notification.body = "This is a dummy notification body.";
+    notification.type = "INFO";
+    notification.sentBy = JSON.stringify({ at: new Date(), by: "System", fcmToken: token });
+    notification.readStatus = JSON.stringify({ readBy: [], isRead: false });
+    notification.delivery = JSON.stringify({ delivered: false, deliveredAt: new Date(), failedAttempts: 0 });
+    notification.context = JSON.stringify({ appVersion: "1.0.0" });
 
-  /**
-   * Listen for incoming Firebase messages.
-   */
-  private listenForMessages() {
-    const messaging = getMessaging();
-    onMessage(messaging, (payload) => {
-      Logging.log(payload);
-      this.message = payload;
-    });
+    try {
+      await this.entityMapper.save<NotificationActivity>(notification);
+      Logging.log("Notification saved successfully.");
+    } catch (error) {
+      Logging.error("Error saving notification: ", error);
+    }
   }
 }
