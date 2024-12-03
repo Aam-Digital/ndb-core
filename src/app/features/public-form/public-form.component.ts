@@ -86,14 +86,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
     const publicForms = await this.entityMapper.loadType(PublicFormConfig);
 
-    const publicForm = publicForms.find(
-      (form: PublicFormConfig) => form.route === id,
-    );
-    const publicFormId = publicForm ? publicForm["_id"] : id;
-
-    this.formConfig = await this.entityMapper.load(
-      PublicFormConfig,
-      publicFormId,
+    this.formConfig = publicForms.find(
+      (form: PublicFormConfig) => form.route === id || form.getId(true) === id,
     );
 
     this.entityType = this.entities.get(
