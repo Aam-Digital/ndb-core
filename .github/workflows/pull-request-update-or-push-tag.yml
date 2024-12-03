@@ -146,12 +146,12 @@ jobs:
           - linux/arm64
         os:
           - ubuntu-latest
-          - [self-hosted, Linux, ARM64]
+          - [ self-hosted, Linux, ARM64 ]
         exclude:
           - platform: linux/arm64
             os: ubuntu-latest
           - platform: linux/amd64
-            os: [self-hosted, Linux, ARM64]
+            os: [ self-hosted, Linux, ARM64 ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
@@ -348,6 +348,7 @@ jobs:
           npm install -g @sentry/cli
 
       - name: Create Release
+        if: ${{ github.event.ref != '' }} # only send "official" releases to Sentry
         run: |
           sentry-cli releases new "ndb-core@${{ env.TAG }}"
 
