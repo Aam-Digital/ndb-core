@@ -10,6 +10,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { FirebaseNotificationService } from '../../../firebase-messaging-service.service';
+import { Logging } from 'app/core/logging/logging.service';
 
 @Component({
   selector: 'app-notifications',
@@ -31,6 +33,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   styleUrl: './notifications.component.scss'
 })
 export class NotificationsComponent {
+
+  constructor(private firebaseNotificationService: FirebaseNotificationService) {}
   isEnableNotification = false;
   showSettings = false;
 
@@ -56,6 +60,8 @@ export class NotificationsComponent {
   }
 
   onNotificationBellClick() {
+    this.firebaseNotificationService.sendNotification();
+    Logging.log('notificationBellClicked');
     this.showSettings = false;
   }
 }

@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.firebaseNotificationService.requestPermission();
+    this.firebaseNotificationService.getFcmToken();
     this.firebaseNotificationService.listenForMessages();
   }
 
