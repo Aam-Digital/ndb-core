@@ -231,9 +231,11 @@ describe("EntityFormService", () => {
       @DatabaseField() get getterField(): string {
         return this._getterValue;
       }
+
       set getterField(value) {
         this._getterValue = value;
       }
+
       private _getterValue: string = "original value";
 
       @DatabaseField() emptyField;
@@ -371,7 +373,7 @@ describe("EntityFormService", () => {
     Entity.schema.delete("test");
   });
 
-  xit("should not save 'null' as value from empty form fields", async () => {
+  it("should not save 'null' as value from empty form fields", async () => {
     Entity.schema.set("test", { dataType: "string" });
 
     const entity = new Entity();
