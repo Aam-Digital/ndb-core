@@ -266,6 +266,9 @@ export class EntityFormService {
     for (const [key, value] of Object.entries(form.getRawValue())) {
       if (value !== null) {
         updatedEntity[key] = value;
+      } else {
+        // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
+        delete updatedEntity[key];
       }
     }
 

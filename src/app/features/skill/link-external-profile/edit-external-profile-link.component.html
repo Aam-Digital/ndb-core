@@ -1,51 +1,76 @@
 <div class="margin-bottom-regular flex-column gap-small">
-  @if (!formControl?.value) {
-    <button
-      mat-stroked-button
-      matTooltip="Search and link a profile from an external system with this record to load additional data automatically."
-      i18n-matTooltip
-      i18n
-      (click)="searchMatchingProfiles()"
-    >
-      Link external profile
-    </button>
-  } @else {
-    <div>
-      <fa-icon
-        icon="person-walking-arrow-right"
-        class="standard-icon-with-text"
-      ></fa-icon>
+  <!-- Label / Description -->
+  <div>
+    <fa-icon
+      icon="person-walking-arrow-right"
+      class="standard-icon-with-text"
+    ></fa-icon>
+
+    @if (formControl.value) {
       <span
         i18n
         matTooltip="external ID: {{ formControl?.value }}"
         i18n-matTooltip
-        >Linked to external profile</span
       >
-    </div>
-
-    <div class="flex-row gap-small">
-      <button mat-stroked-button i18n (click)="unlinkExternalProfile()">
-        Unlink
-      </button>
-
-      <button
-        mat-stroked-button
-        class="flex-grow"
+        Linked to external profile:
+        {{
+          externalProfile
+            ? externalProfile.fullName + " (" + externalProfile.email + ")"
+            : ""
+        }}
+      </span>
+    } @else {
+      <span
         i18n
-        matTooltip="Load the latest linked external profile and update the related fields of this record with the external data."
+        matTooltip='Switch to "Edit" mode to search and link an external profile.'
         i18n-matTooltip
-        (click)="updateExternalData()"
-        [disabled]="isLoading()"
+        style="font-style: italic"
       >
-        @if (isLoading()) {
-          <div style="display: flex">
-            <label>loading data...</label>
-            <mat-spinner diameter="18" style="margin-left: 12px"></mat-spinner>
-          </div>
-        } @else {
-          Update data
-        }
-      </button>
+        No external profile linked
+      </span>
+    }
+  </div>
+
+  <!-- Action Buttons -->
+  @if (formControl.enabled) {
+    <div class="flex-row gap-small">
+      @if (!formControl?.value) {
+        <button
+          mat-stroked-button
+          matTooltip="Search and link a profile from an external system with this record to load additional data automatically."
+          i18n-matTooltip
+          i18n
+          (click)="searchMatchingProfiles()"
+        >
+          Link external profile
+        </button>
+      } @else {
+        <button mat-stroked-button i18n (click)="unlinkExternalProfile()">
+          Unlink
+        </button>
+
+        <button
+          mat-stroked-button
+          class="flex-grow"
+          i18n
+          matTooltip="Load the latest linked external profile and update the related fields of this record with the external data."
+          i18n-matTooltip
+          (click)="updateExternalData()"
+          [disabled]="isLoading()"
+        >
+          @if (isLoading()) {
+            <div style="display: flex">
+              <label>loading data...</label>
+              <mat-spinner
+                diameter="18"
+                style="margin-left: 12px"
+              ></mat-spinner>
+            </div>
+          } @else {
+            Update data
+          }
+        </button>
+      }
     </div>
   }
 </div>

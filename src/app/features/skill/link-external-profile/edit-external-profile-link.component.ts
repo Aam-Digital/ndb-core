@@ -1,4 +1,10 @@
-import { Component, inject, signal, WritableSignal } from "@angular/core";
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  WritableSignal,
+} from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import {
@@ -28,7 +34,10 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
   templateUrl: "./edit-external-profile-link.component.html",
   styleUrl: "./edit-external-profile-link.component.scss",
 })
-export class EditExternalProfileLinkComponent extends EditComponent<string> {
+export class EditExternalProfileLinkComponent
+  extends EditComponent<string>
+  implements OnInit
+{
   /**
    * The configuration details for this external profile link,
    * defined in the config field's `additional` property.
@@ -41,9 +50,19 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
   private readonly dialog: MatDialog = inject(MatDialog);
   private readonly skillApi: SkillApiService = inject(SkillApiService);
 
-  async searchMatchingProfiles() {
-    // TODO: should this only be enabled in "Edit" mode of form?
+  override ngOnInit() {
+    super.ngOnInit();
 
+    if (this.formControl.value) {
+      this.skillApi
+        .getExternalProfileById(this.formControl.value)
+        .subscribe((profile) => {
+          this.externalProfile = profile;
+        });
+    }
+  }
+
+  async searchMatchingProfiles() {
     this.dialog
       .open(LinkExternalProfileDialogComponent, {
         data: {
@@ -76,7 +95,7 @@ export class EditExternalProfileLinkComponent extends EditComponent<string> {
       this.formControl.value,
     );
 
-    // TODO: run import / update
+    // TODO: run import / update automatically?
     const targetFormControl = this.parent.get("skills");
     targetFormControl?.setValue(skills);
     targetFormControl.markAsDirty();
