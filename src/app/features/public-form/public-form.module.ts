@@ -6,6 +6,7 @@ import { EntityDetailsConfig } from "../../core/entity-details/EntityDetailsConf
 import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { PublicFormConfig } from "./public-form-config";
+import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 
 /**
  * Configure publicly accessible forms for users without login to record some data into the system.
@@ -18,9 +19,11 @@ export class PublicFormModule {
   static databaseEntities = [PublicFormConfig];
 
   constructor(
+    components: ComponentRegistry,
     routerService: RouterService,
     adminOverviewService: AdminOverviewService,
   ) {
+    components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
     adminOverviewService.menuItems.push({
       label: $localize`:admin menu item:Manage Public Forms`,
@@ -28,6 +31,16 @@ export class PublicFormModule {
     });
   }
 }
+
+const dynamicComponents: [string, AsyncComponent][] = [
+  [
+    "EditPublicFormField",
+    () =>
+      import(
+        "app/features/public-form/edit-public-form-field/edit-public-form-field.component"
+      ).then((c) => c.EditPublicFormFieldComponent),
+  ],
+];
 
 const viewConfigs: ViewConfig[] = [
   // List View
@@ -74,7 +87,15 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["columns"],
+                    fields: [
+                      {
+                        id: "columns",
+                        editComponent: "EditPublicFormField",
+                        dynamicComponentInput: {
+                          entity: PublicFormConfig.ENTITY_TYPE,
+                        },
+                      },
+                    ],
                   },
                 ],
               },
