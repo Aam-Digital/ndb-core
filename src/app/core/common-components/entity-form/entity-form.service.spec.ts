@@ -231,9 +231,11 @@ describe("EntityFormService", () => {
       @DatabaseField() get getterField(): string {
         return this._getterValue;
       }
+
       set getterField(value) {
         this._getterValue = value;
       }
+
       private _getterValue: string = "original value";
 
       @DatabaseField() emptyField;
