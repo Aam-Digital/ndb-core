@@ -12,7 +12,6 @@ import {
 import { EntityFormComponent } from "../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -43,7 +42,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     private entityMapper: EntityMapperService,
     private entityFormService: EntityFormService,
     private configService: ConfigService,
-    private entitySchemaService: EntitySchemaService,
     private snackbar: MatSnackBar,
   ) {}
 
@@ -145,14 +143,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   private async initForm() {
     this.entity = new this.entityType();
-    this.entityFormService
-      .createEntityForm(
-        [].concat(...this.fieldGroups.map((group) => group.fields)),
-        this.entity,
-      )
-      .then((value) => {
-        this.form = value;
-        const formControls = this.form.formGroup.controls;
-      });
+    this.form = await this.entityFormService.createEntityForm(
+      [].concat(...this.fieldGroups.map((group) => group.fields)),
+      this.entity,
+    );
   }
 }
