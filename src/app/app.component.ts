@@ -18,11 +18,7 @@
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
-import { Logging } from "./core/logging/logging.service";
-import { EntityMapperService } from "./core/entity/entity-mapper/entity-mapper.service";
-import { NotificationActivity } from "./features/notifications/model/notifications-activity";
 import { FirebaseNotificationService } from '../firebase-messaging-service.service';
-import { CurrentUserSubject } from "./core/session/current-user-subject";
 
 /**
  * Component as the main entry point for the app.
@@ -36,7 +32,7 @@ export class AppComponent implements OnInit {
   configFullscreen: boolean = false;
   message: any = null;
 
-  constructor(private router: Router, private entityMapper: EntityMapperService, private firebaseNotificationService: FirebaseNotificationService, private currentUser: CurrentUserSubject,) {
+  constructor(private router: Router, private firebaseNotificationService: FirebaseNotificationService) {
     this.detectConfigMode();
     router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => this.detectConfigMode());
   }
@@ -53,22 +49,5 @@ export class AppComponent implements OnInit {
   private detectConfigMode() {
     const currentUrl = this.router.url;
     this.configFullscreen = currentUrl.startsWith("/admin/entity/");
-  }
-
-  private async createAndSaveNotification(token: string) {
-    const notification = new NotificationActivity();
-    notification.title = "Dummy Notification Title";
-    notification.body = "This is a dummy notification body.";
-    notification.actionURL = "http://localhost:4200";
-    notification.sentBy = this.currentUser.value?.getId();
-    notification.fcmToken = token;
-    notification.readStatus = false;
-
-    try {
-      await this.entityMapper.save<NotificationActivity>(notification);
-      Logging.log("Notification saved successfully.");
-    } catch (error) {
-      Logging.error("Error saving notification: ", error);
-    }
   }
 }

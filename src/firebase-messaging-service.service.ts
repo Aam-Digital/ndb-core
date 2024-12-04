@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { environment } from "../src/environments/environment";
+import { environment } from "./environments/environment";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/messaging';
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { Logging } from 'app/core/logging/logging.service';
 import { HttpClient } from "@angular/common/http";
+import { NotificationActivity } from './app/features/notifications/model/notifications-activity';
+import { CurrentUserSubject } from 'app/core/session/current-user-subject';
+import { EntityMapperService } from './app/core/entity/entity-mapper/entity-mapper.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +15,7 @@ import { HttpClient } from "@angular/common/http";
 export class FirebaseNotificationService {
   private messaging: any = null;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private entityMapper: EntityMapperService, private currentUser: CurrentUserSubject) {
     firebase.initializeApp(environment.firebase);
     this.messaging = firebase.messaging();
   }
@@ -79,7 +82,26 @@ export class FirebaseNotificationService {
           }
         }
     };
+    // This function added for testing purpose, to test the new notfication entity type
+    // this.createAndSaveNotification(fcmToken);
     Logging.log(JSON.stringify(body));
     return this.httpClient.post(fcmGoogleApiUrl, body, { headers });
+  }
+
+  private async createAndSaveNotification(fcmToken: string) {
+    const notification = new NotificationActivity();
+    notification.title = "Dummy Notification Title";
+    notification.body = "This is a dummy notification body.";
+    notification.actionURL = "http://localhost:4200";
+    notification.sentBy = this.currentUser.value?.getId() || "User:demo";
+    notification.fcmToken = fcmToken;
+    notification.readStatus = false;
+
+    try {
+      await this.entityMapper.save<NotificationActivity>(notification);
+      Logging.log("Notification saved successfully.");
+    } catch (error) {
+      Logging.error("Error saving notification: ", error);
+    }
   }
 }

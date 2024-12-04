@@ -1,5 +1,5 @@
 <button mat-icon-button matTooltip="Your Notification is active" i18n-matTooltip [matMenuTriggerFor]="data" (menuOpened)="onNotificationBellClick()">
-    <span [matBadge]="notifications.length" matBadgeColor="accent">
+    <span [matBadge]="notificationCount > 0 ? notificationCount : null"  matBadgeColor="accent">
         <fa-icon class="white" icon="bell"></fa-icon>
     </span>
 </button>
@@ -20,8 +20,9 @@
     
         <ng-container>
             <div *ngFor="let notification of notifications" class="notification-list">
-                <span class="notification-item"><strong>{{ notification.user }}</strong> {{ notification.message }}</span>
-                <p class="notification-time">{{ notification.time }}</p>
+                <strong class="notification-item">{{ notification.title }}</strong>
+                <p class="notification-item">{{ notification.body }}</p>
+                <p class="notification-time">{{ notification.created.at }}</p>
             </div>
             <p *ngIf="notifications.length === 0" class="notification-item">No new notifications</p>
         </ng-container>
