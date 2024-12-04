@@ -21,7 +21,17 @@ describe("BulkLinkExternalProfilesComponent", () => {
       "getExternalProfileById",
     ]);
     mockSkillApi.generateDefaultSearchParams.and.returnValue({});
-    mockSkillApi.getExternalProfiles.and.returnValue(of([]));
+    mockSkillApi.getExternalProfiles.and.returnValue(
+      of({
+        pagination: {
+          currentPage: 1,
+          pageSize: 1,
+          totalPages: 1,
+          totalElements: 1,
+        },
+        results: [],
+      }),
+    );
 
     await TestBed.configureTestingModule({
       imports: [

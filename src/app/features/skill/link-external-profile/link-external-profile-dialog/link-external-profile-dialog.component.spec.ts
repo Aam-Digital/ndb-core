@@ -25,7 +25,17 @@ describe("LinkExternalProfileDialogComponent", () => {
       "getExternalProfileById",
     ]);
     mockSkillApi.generateDefaultSearchParams.and.returnValue({});
-    mockSkillApi.getExternalProfiles.and.returnValue(of([]));
+    mockSkillApi.getExternalProfiles.and.returnValue(
+      of({
+        pagination: {
+          currentPage: 1,
+          pageSize: 1,
+          totalPages: 1,
+          totalElements: 1,
+        },
+        results: [],
+      }),
+    );
 
     await TestBed.configureTestingModule({
       imports: [
@@ -58,7 +68,17 @@ describe("LinkExternalProfileDialogComponent", () => {
       { id: "1", fullName: "match 1" } as Partial<ExternalProfile> as any,
       { id: "2", fullName: "match 2" } as Partial<ExternalProfile> as any,
     ];
-    mockSkillApi.getExternalProfiles.and.returnValue(of(mockApiResults));
+    mockSkillApi.getExternalProfiles.and.returnValue(
+      of({
+        pagination: {
+          currentPage: 1,
+          pageSize: 1,
+          totalPages: 1,
+          totalElements: 1,
+        },
+        results: mockApiResults,
+      }),
+    );
     component.error = { message: "previous error" };
 
     component.possibleMatches = undefined; // assume no matches have passed in (or been loaded by an earlier ngOnInit call)
@@ -90,7 +110,17 @@ describe("LinkExternalProfileDialogComponent", () => {
   }));
 
   it("should show 'no results' error if API returns empty", fakeAsync(() => {
-    mockSkillApi.getExternalProfiles.and.returnValue(of([]));
+    mockSkillApi.getExternalProfiles.and.returnValue(
+      of({
+        pagination: {
+          currentPage: 1,
+          pageSize: 1,
+          totalPages: 1,
+          totalElements: 1,
+        },
+        results: [],
+      }),
+    );
 
     component.searchMatches();
     tick();
@@ -104,7 +134,17 @@ describe("LinkExternalProfileDialogComponent", () => {
 
   it("should automatically select if API returns only a single result", fakeAsync(() => {
     const mockResult: ExternalProfile = { id: "1", fullName: "match 1" } as any;
-    mockSkillApi.getExternalProfiles.and.returnValue(of([mockResult]));
+    mockSkillApi.getExternalProfiles.and.returnValue(
+      of({
+        pagination: {
+          currentPage: 1,
+          pageSize: 1,
+          totalPages: 1,
+          totalElements: 1,
+        },
+        results: [mockResult],
+      }),
+    );
 
     component.searchMatches();
     tick();
