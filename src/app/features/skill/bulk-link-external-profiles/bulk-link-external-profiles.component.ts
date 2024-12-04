@@ -147,9 +147,10 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
       .pipe(
         tap(async () => this.getCurrentlySelectedProfile(record)),
         map((possibleMatches) => {
-          record.possibleMatches = possibleMatches;
-          record.possibleMatchesCount = possibleMatches.length;
-          if (possibleMatches?.length === 1 && !record.selected) {
+          record.possibleMatches = possibleMatches.results;
+          record.possibleMatchesCount =
+            possibleMatches.pagination.totalElements;
+          if (possibleMatches?.results.length === 1 && !record.selected) {
             record.selected = possibleMatches[0];
           }
 

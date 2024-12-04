@@ -4,9 +4,15 @@ import { faker } from "@faker-js/faker";
 
 export const mockSkillApi = {
   getExternalProfiles: () =>
-    of([createSkillApiDummyData("1"), createSkillApiDummyData("2")]).pipe(
-      delay(faker.number.int({ min: 100, max: 900 })),
-    ),
+    of({
+      pagination: {
+        currentPage: 1,
+        pageSize: 10,
+        totalPages: 1,
+        totalElements: 2,
+      },
+      results: [createSkillApiDummyData("1"), createSkillApiDummyData("2")],
+    }).pipe(delay(faker.number.int({ min: 100, max: 900 }))),
 
   getExternalProfilesForEntity: () =>
     of(

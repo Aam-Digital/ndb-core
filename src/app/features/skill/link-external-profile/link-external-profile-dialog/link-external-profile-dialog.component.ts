@@ -20,6 +20,7 @@ import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { MatFormField, MatSuffix } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { map } from "rxjs/operators";
 
 /**
  * The data passed to the MatDialog opening LinkExternalProfileDialogComponent.
@@ -106,7 +107,9 @@ export class LinkExternalProfileDialogComponent implements OnInit {
     try {
       this.possibleMatches = (
         await firstValueFrom(
-          this.skillApiService.getExternalProfiles(this.searchParams),
+          this.skillApiService
+            .getExternalProfiles(this.searchParams)
+            .pipe(map((profiles) => profiles.results)),
         )
       ).map((profile) => addTooltip(profile));
     } catch (e) {

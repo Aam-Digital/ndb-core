@@ -13,7 +13,13 @@ import { environment } from "../../../environments/environment";
 import { mockSkillApi } from "./skill-api-mock";
 
 interface UserProfileResponseDto {
-  result: ExternalProfile[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalPages: number;
+    totalElements: number;
+  };
+  results: ExternalProfile[];
 }
 
 /**
@@ -37,7 +43,7 @@ export class SkillApiService {
    */
   getExternalProfiles(
     searchParams: SearchParams,
-  ): Observable<ExternalProfile[]> {
+  ): Observable<UserProfileResponseDto> {
     if (!environment.production) {
       // TODO remove? for mock UI testing only
       return mockSkillApi.getExternalProfiles();
@@ -47,7 +53,7 @@ export class SkillApiService {
       .get<UserProfileResponseDto>("/api/v1/skill/user-profile", {
         params: { ...searchParams },
       })
-      .pipe(map((value) => value.result));
+      .pipe(map((value) => value));
   }
 
   /**
@@ -60,7 +66,7 @@ export class SkillApiService {
   getExternalProfilesForEntity(
     entity: Entity,
     config: ExternalProfileLinkConfig,
-  ): Observable<ExternalProfile[]> {
+  ): Observable<UserProfileResponseDto> {
     const params = this.generateDefaultSearchParams(entity, config);
 
     return this.getExternalProfiles(params);
