@@ -33,7 +33,12 @@ export class EditPublicFormFieldComponent<T extends Entity = Entity>
     if (this.entity) {
       this.entityConstructor = this.entities.get(this.entity["entity"]); // Use the passed entity
     }
-    const columns = this.entity?.["columns"] ?? [];
+console.log(this.entity,"entity")
+    if(!this.entity["columns"]){
+      this.entity["columns"] = []
+    }
+    const columns = this.entity?.["columns"];
+
     this.publicConfigDetailsView = {
       component: "Form",
       config: {
