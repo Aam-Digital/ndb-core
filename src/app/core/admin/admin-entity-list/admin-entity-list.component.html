@@ -13,19 +13,13 @@
 <div>
   <div
     cdkDropListGroup
+    appDraggableGrid
+    [arrayElements]="config.filters"
+    (arrayElementsChange)="onConfigChange($event)"
     class="drop-list flex-row gap-regular flex-wrap gap-large"
   >
-    <div
-      cdkDropList
-      (cdkDropListEntered)="onDropListEntered($event)"
-      (cdkDropListDropped)="onDropListDropped()"
-    ></div>
-    <div
-      cdkDropList
-      (cdkDropListEntered)="onDropListEntered($event)"
-      (cdkDropListDropped)="onDropListDropped()"
-      *ngFor="let filter of config?.filters"
-    >
+    <div cdkDropList></div>
+    <div cdkDropList class="flex-row" *ngFor="let filter of config.filters">
       <div cdkDrag class="filter-field drop-item flex-row gap-small">
         <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
         <mat-form-field appearance="fill">
@@ -61,10 +55,10 @@
 
 <div class="mat-elevation-z1">
   <app-admin-tabs
-    [tabs]="config?.columnGroups?.groups"
+    [tabs]="config.columnGroups?.groups"
     [newTabFactory]="newColumnGroupFactory"
   >
-    <ng-template [appAdminTabTemplate]="config?.columnGroups?.groups" let-item>
+    <ng-template [appAdminTabTemplate]="config.columnGroups?.groups" let-item>
       <div
         class="table-header drop-list flex-row"
         cdkDropList
