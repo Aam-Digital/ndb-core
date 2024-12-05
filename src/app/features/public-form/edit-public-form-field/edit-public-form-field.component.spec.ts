@@ -1,52 +1,60 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditPublicFormFieldComponent } from "./edit-public-form-field.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { AdminEntityComponent } from "app/core/admin/admin-entity/admin-entity.component";
-import { AdminEntityDetailsComponent } from "app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component";
-import { RouterLink } from "@angular/router";
-import { AdminEntityFormComponent } from "app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity } from "app/core/entity/model/entity";
+import { FormControl } from "@angular/forms";
 import { Database } from "app/core/database/database";
+import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import { TestEntity } from "app/utils/test-utils/TestEntity";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
-fdescribe("EditPublicFormFieldComponent", () => {
+describe("EditPublicFormFieldComponent", () => {
   let component: EditPublicFormFieldComponent;
   let fixture: ComponentFixture<EditPublicFormFieldComponent>;
+  let mockEntityRegistry: Partial<EntityRegistry>;
+  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
 
-  // Mock EntityRegistry, EntityFormService, EntityMapperService, and Database
-  const mockEntityRegistry = {
-    get: jasmine.createSpy("get").and.returnValue({}),
-  };
+  const testColumns = [
+    {
+      fields: ["name", "phone"],
+    },
+  ];
+  beforeEach(() => {
+    let mockDatabase: jasmine.SpyObj<Database>;
+    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
+      "createEntityForm",
+      "extendFormFieldConfig",
+    ]);
+    mockEntityRegistry = {
+      get: jasmine.createSpy("get").and.returnValue(Entity),
+    };
 
-  const mockEntityFormService = {};
-  const mockEntityMapperService = {};
-  const mockDatabaseService = {};
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
+      declarations: [],
       imports: [
         EditPublicFormFieldComponent,
-        AdminEntityComponent,
-        AdminEntityDetailsComponent,
-        FontAwesomeModule,
-        RouterLink,
-        AdminEntityFormComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
       ],
       providers: [
-        { provide: EntityRegistry, useValue: mockEntityRegistry }, // Mock the EntityRegistry
-        { provide: EntityFormService, useValue: mockEntityFormService }, // Mock the EntityFormService
-        { provide: EntityMapperService, useValue: mockEntityMapperService }, // Mock the EntityMapperService
-        { provide: Database, useValue: mockDatabaseService }, // Mock the Database service
+        { provide: Database, useValue: mockDatabase },
+        { provide: EntityRegistry, useValue: mockEntityRegistry },
+        { provide: EntityFormService, useValue: mockEntityFormService },
       ],
     }).compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(EditPublicFormFieldComponent);
     component = fixture.componentInstance;
+    component.entity = new TestEntity();
+    component.entity["columns"] = testColumns;
+    component.formControl = new FormControl();
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it("should create the component", () => {
     expect(component).toBeTruthy();
   });
 });
