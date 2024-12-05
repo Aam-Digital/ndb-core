@@ -215,17 +215,22 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   }
 
   async save() {
-    const newlyLinkedEntities = this.records.data
-      .filter((record) => record.selected)
-      .map((record) =>
-        Object.assign(record.entity, {
-          [this.config.id]: record.selected.id,
-        }),
+    const newlyLinkedRecords = this.records.data.filter(
+      (record) => record.selected,
+    );
+
+    for (const record of newlyLinkedRecords) {
+      const updatedEntity: Entity = record.entity;
+      updatedEntity[this.config.id] = record.selected.id;
+
+      // TODO: avoid re-requesting the external profile again?
+      const skills = await this.skillApi.getSkillsFromExternalProfile(
+        record.selected.id,
       );
+      updatedEntity["skills"] = skills;
+    }
 
-    await this.entityMapper.saveAll(newlyLinkedEntities);
-
-    // TODO: update/import skills for all those newly linked bulk also?
+    await this.entityMapper.saveAll(newlyLinkedRecords.map((r) => r.entity));
   }
 
   private inferExternalProfileFieldFromEntitySchema(
