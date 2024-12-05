@@ -143,7 +143,12 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
     record: RecordMatching,
   ): Observable<RecordMatching> {
     return this.skillApi
-      .getExternalProfilesForEntity(record.entity, this.config.additional)
+      .getExternalProfiles(
+        this.skillApi.generateDefaultSearchParams(
+          record.entity,
+          this.config.additional,
+        ),
+      )
       .pipe(
         tap(async () => this.getCurrentlySelectedProfile(record)),
         map((possibleMatches) => {

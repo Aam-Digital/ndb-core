@@ -1,43 +1,28 @@
 import { inject, Injectable } from "@angular/core";
 import { firstValueFrom, Observable } from "rxjs";
 import { ExternalProfile } from "./external-profile";
-import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
-import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
-import { catchError, map } from "rxjs/operators";
-import { Logging } from "../../core/logging/logging.service";
-import { EscoApiService, EscoSkillDto } from "./esco-api.service";
+import { map } from "rxjs/operators";
+import { EscoApiService } from "./esco-api.service";
 import { ExternalProfileLinkConfig } from "./link-external-profile/external-profile-link-config";
 import { environment } from "../../../environments/environment";
 import { mockSkillApi } from "./skill-api-mock";
 
-interface UserProfileResponseDto {
-  pagination: {
-    currentPage: number;
-    pageSize: number;
-    totalPages: number;
-    totalElements: number;
-  };
-  results: ExternalProfile[];
-}
-
 /**
- * Interaction with Aam Digital backend providing skills integration functionality.
+ * Interaction with Aam Digital backend providing access to external profiles
+ * for skills integration.
  */
 @Injectable({
   providedIn: "root",
 })
 export class SkillApiService {
-  private readonly entityMapper: EntityMapperService =
-    inject(EntityMapperService);
-  private readonly entityRegistry: EntityRegistry = inject(EntityRegistry);
-  private readonly escoApi: EscoApiService = inject(EscoApiService);
-  private readonly http: HttpClient = inject(HttpClient);
+  private readonly http = inject(HttpClient);
+  private readonly escoApi = inject(EscoApiService);
 
   /**
-   * Request to API with the given parameters
-   * to get possibly matching external profiles.
+   * Fetch possibly matching external profiles
+   * from the API with the given search parameters.
    *
    * @param searchParams
    */
@@ -57,21 +42,11 @@ export class SkillApiService {
   }
 
   /**
-   * Get possibly matching external profiles for the given entity,
-   * generating search parameters based on the entity and config.
+   * Generate default search parameters for the given entity.
    *
-   * @param entity
-   * @param config
+   * @param entity The entity for which to find matching external profiles
+   * @param config The configuration for the external profile link field
    */
-  getExternalProfilesForEntity(
-    entity: Entity,
-    config: ExternalProfileLinkConfig,
-  ): Observable<UserProfileResponseDto> {
-    const params = this.generateDefaultSearchParams(entity, config);
-
-    return this.getExternalProfiles(params);
-  }
-
   generateDefaultSearchParams(
     entity: Entity,
     config: ExternalProfileLinkConfig,
@@ -92,6 +67,10 @@ export class SkillApiService {
     };
   }
 
+  /**
+   * Fetch an external profile by its ID from the API.
+   * @param externalId
+   */
   getExternalProfileById(externalId: string): Observable<ExternalProfile> {
     if (!environment.production) {
       // TODO remove? for mock UI testing only
@@ -103,6 +82,12 @@ export class SkillApiService {
     );
   }
 
+  /**
+   * Get entity IDs of skills for an external profile,
+   * ensuring that these Skill entities exist in the database
+   * and create them, if necessary.
+   * @param externalId
+   */
   async getSkillsFromExternalProfile(externalId: string): Promise<string[]> {
     const profile = await firstValueFrom(
       this.getExternalProfileById(externalId),
@@ -110,47 +95,29 @@ export class SkillApiService {
 
     const skills: Entity[] = [];
     for (const extSkill of profile.skills) {
-      const skill = await this.loadOrCreateSkill(extSkill.escoUri);
+      const skill = await this.escoApi.loadOrCreateSkillEntity(
+        extSkill.escoUri,
+      );
       skills.push(skill);
     }
 
     return skills.map((s) => s.getId());
   }
-
-  private async loadOrCreateSkill(escoUri: string): Promise<Entity> {
-    let entity = await this.entityMapper.load("Skill", escoUri).catch((e) => {
-      if (e.status === 404) {
-        return undefined;
-      } else {
-        throw e;
-      }
-    });
-
-    if (!entity) {
-      let escoDto: EscoSkillDto = await firstValueFrom(
-        this.escoApi.getEscoSkill(escoUri).pipe(
-          catchError((err, caught) => {
-            Logging.error(err);
-            // todo error handling?
-            return caught;
-          }),
-        ),
-      );
-
-      const ctor = this.entityRegistry.get("Skill");
-      // TODO: load actual esco skill details from API
-      entity = Object.assign(new ctor(escoUri), {
-        escoUri: escoUri,
-        name: escoDto.title,
-        description: escoDto.description["en"].literal, // todo use current language and fallback to en
-      });
-      await this.entityMapper.save(entity);
-    }
-
-    return entity;
-  }
 }
 
+interface UserProfileResponseDto {
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalPages: number;
+    totalElements: number;
+  };
+  results: ExternalProfile[];
+}
+
+/**
+ * Search parameters to find matching external profiles through the API.
+ */
 export interface SearchParams {
   fullName?: string | undefined;
   email?: string | undefined;

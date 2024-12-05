@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
+import { Skill } from "./skill";
 
 /**
  * Integration with external Skill Tagging services via API.
@@ -10,6 +11,8 @@ import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
   imports: [CommonModule],
 })
 export class SkillModule {
+  static databaseEntities = [Skill];
+
   constructor(components: ComponentRegistry) {
     components.addAll(dynamicComponents);
   }

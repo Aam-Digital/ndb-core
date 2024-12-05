@@ -1103,24 +1103,6 @@ export const defaultJsonConfig = {
       }
     }
   } as EntityConfig,
-  "entity:Skill": {
-    toStringAttributes: ["name"],
-    toBlockDetailsAttributes: { title: "name", fields: ["description", "escoUri"] },
-    attributes: {
-      escoUri: {
-        dataType: "string",
-        label: "ESCO URI"
-      },
-      name: {
-        dataType: "string",
-        label: "Skill Name"
-      },
-      description: {
-        dataType: "long-text",
-        label: "Description"
-      }
-    }
-  } as EntityConfig,
   "entity:School": {
     toStringAttributes: ["name"],
     icon: "university",

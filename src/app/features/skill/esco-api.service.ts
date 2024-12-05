@@ -1,9 +1,11 @@
 import { inject, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { firstValueFrom, Observable, timer } from "rxjs";
+import { map, retry } from "rxjs/operators";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { Skill } from "./skill";
 
-interface EscoSkillResponseDto {
+export interface EscoSkillResponseDto {
   count: number;
   language: string;
   _embedded: Map<string, EscoSkillDto>;
@@ -26,13 +28,25 @@ export interface EscoSkillDto {
   status: string;
 }
 
+/**
+ * Fetch Skill descriptions from the public API
+ * of the European Skills, Competences, Qualifications and Occupations (ESCO) database.
+ *
+ * see https://esco.ec.europa.eu/en/classification
+ */
 @Injectable({
   providedIn: "root",
 })
 export class EscoApiService {
-  private readonly http: HttpClient = inject(HttpClient);
+  private readonly http = inject(HttpClient);
+  private readonly entityMapper = inject(EntityMapperService);
 
-  getEscoSkill(uri: string): Observable<EscoSkillDto> {
+  /**
+   * Fetch a skill from the API.
+   * @param uri The ESCO URI of the skill
+   * @returns The ESCO API response (not parsed to a "Skill" entity)
+   */
+  fetchSkill(uri: string): Observable<EscoSkillDto> {
     return this.http
       .get<EscoSkillResponseDto>(
         "https://ec.europa.eu/esco/api/resource/skill",
@@ -43,15 +57,54 @@ export class EscoApiService {
         },
       )
       .pipe(
+        retry({
+          count: 3,
+          delay: (error: HttpErrorResponse, retryCount: number) => {
+            if (error.status >= 500) {
+              return timer(1000 * Math.pow(2, retryCount - 1)); // exponential backoff
+            } else {
+              throw error;
+            }
+          },
+        }),
         map((value) => {
-          let dto: EscoSkillDto | undefined = value._embedded[uri];
-
+          let dto: EscoSkillDto | undefined = value?._embedded?.[uri];
           if (dto == undefined) {
             throw new Error("Skill not found");
           }
-
           return dto;
         }),
       );
+  }
+
+  /**
+   * Load a Skill entity from the database
+   * or fetch it from the public API and create as new entity if it doesn't exist yet.
+   *
+   * @param uri The ESCO URI of the skill
+   * @returns The Skill entity (which is also ensured to be present in the database now)
+   */
+  async loadOrCreateSkillEntity(uri: string): Promise<Skill> {
+    let entity: Skill | undefined = await this.entityMapper
+      .load(Skill, uri)
+      .catch((e) => {
+        if (e.status === 404) {
+          return undefined;
+        } else {
+          throw e;
+        }
+      });
+
+    if (!entity) {
+      let escoDto: EscoSkillDto = await firstValueFrom(this.fetchSkill(uri));
+      entity = Skill.create(
+        uri,
+        escoDto.title,
+        escoDto.description["en"].literal, // todo use current language and fallback to en
+      );
+      await this.entityMapper.save(entity);
+    }
+
+    return entity;
   }
 }
