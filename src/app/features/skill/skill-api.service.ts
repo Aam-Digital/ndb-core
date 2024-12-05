@@ -6,8 +6,6 @@ import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { EscoApiService } from "./esco-api.service";
 import { ExternalProfileLinkConfig } from "./link-external-profile/external-profile-link-config";
-import { environment } from "../../../environments/environment";
-import { mockSkillApi } from "./skill-api-mock";
 
 /**
  * Interaction with Aam Digital backend providing access to external profiles
@@ -27,13 +25,8 @@ export class SkillApiService {
    * @param searchParams
    */
   getExternalProfiles(
-    searchParams: SearchParams,
+    searchParams: ExternalProfileSearchParams,
   ): Observable<UserProfileResponseDto> {
-    if (!environment.production) {
-      // TODO remove? for mock UI testing only
-      return mockSkillApi.getExternalProfiles();
-    }
-
     return this.http
       .get<UserProfileResponseDto>("/api/v1/skill/user-profile", {
         params: { ...searchParams },
@@ -50,7 +43,7 @@ export class SkillApiService {
   generateDefaultSearchParams(
     entity: Entity,
     config: ExternalProfileLinkConfig,
-  ): SearchParams {
+  ): ExternalProfileSearchParams {
     return {
       fullName: (config?.searchFields.fullName ?? [])
         .map((field) => entity[field])
@@ -72,11 +65,6 @@ export class SkillApiService {
    * @param externalId
    */
   getExternalProfileById(externalId: string): Observable<ExternalProfile> {
-    if (!environment.production) {
-      // TODO remove? for mock UI testing only
-      return mockSkillApi.getExternalProfileById(externalId);
-    }
-
     return this.http.get<ExternalProfile>(
       "/api/v1/skill/user-profile/" + externalId,
     );
@@ -105,7 +93,7 @@ export class SkillApiService {
   }
 }
 
-interface UserProfileResponseDto {
+export interface UserProfileResponseDto {
   pagination: {
     currentPage: number;
     pageSize: number;
@@ -118,7 +106,7 @@ interface UserProfileResponseDto {
 /**
  * Search parameters to find matching external profiles through the API.
  */
-export interface SearchParams {
+export interface ExternalProfileSearchParams {
   fullName?: string | undefined;
   email?: string | undefined;
   phone?: string | undefined;

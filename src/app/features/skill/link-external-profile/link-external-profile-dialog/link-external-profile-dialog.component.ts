@@ -9,7 +9,10 @@ import {
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { ExternalProfile } from "../../external-profile";
 import { MatProgressBar } from "@angular/material/progress-bar";
-import { SearchParams, SkillApiService } from "../../skill-api.service";
+import {
+  ExternalProfileSearchParams,
+  SkillApiService,
+} from "../../skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
@@ -71,7 +74,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
   config: ExternalProfileLinkConfig;
 
   entity: Entity;
-  searchParams: SearchParams = {};
+  searchParams: ExternalProfileSearchParams = {};
 
   loading: boolean;
 
