@@ -17,6 +17,7 @@ import moment from "moment";
 import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../entity-details/form/field-group";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { FormsModule } from "@angular/forms";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -35,7 +36,7 @@ import { EntityAbility } from "../../../permissions/ability/entity-ability";
   // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
-  imports: [NgForOf, NgIf, NgClass, EntityFieldEditComponent],
+  imports: [NgForOf, NgIf, NgClass, EntityFieldEditComponent, FormsModule],
   standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>
