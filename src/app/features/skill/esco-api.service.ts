@@ -1,9 +1,10 @@
 import { inject, Injectable } from "@angular/core";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { firstValueFrom, Observable, timer } from "rxjs";
-import { map, retry } from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
+import { firstValueFrom, Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Skill } from "./skill";
+import { retryOnServerError } from "../../utils/retry-on-server-errror.rxjs-pipe";
 
 export interface EscoSkillResponseDto {
   count: number;
@@ -57,16 +58,7 @@ export class EscoApiService {
         },
       )
       .pipe(
-        retry({
-          count: 3,
-          delay: (error: HttpErrorResponse, retryCount: number) => {
-            if (error.status >= 500) {
-              return timer(1000 * Math.pow(2, retryCount - 1)); // exponential backoff
-            } else {
-              throw error;
-            }
-          },
-        }),
+        retryOnServerError(3),
         map((value) => {
           let dto: EscoSkillDto | undefined = value?._embedded?.[uri];
           if (dto == undefined) {

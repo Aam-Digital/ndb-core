@@ -89,7 +89,7 @@ describe("EscoApiService", () => {
       status: 504,
       statusText: "Gateway Timeout",
     });
-    tick(500);
+    tick(1000);
 
     const reqRetry = httpTesting.expectOne({});
     reqRetry.flush(createApiResponseDto(mockEscoObject));

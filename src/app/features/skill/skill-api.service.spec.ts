@@ -125,17 +125,19 @@ describe("SkillApiService", () => {
     ];
 
     const result = firstValueFrom(service.getExternalProfiles(searchParams));
-    tick();
+    tick(1000);
 
     httpTesting
-      .expectOne("/api/v1/skill/user-profile")
+      .expectOne("/api/v1/skill/user-profile?fullName=John%20Doe")
       .flush(null, { status: 504, statusText: "Gateway timeout" }); // TODO: do we have auto-retries centrally somewhere? or why does this work :-D ?
 
     tick(5000);
-    httpTesting.expectOne("/api/v1/skill/user-profile").flush({
-      pagination: {},
-      results: mockResults,
-    } as UserProfileResponseDto);
+    httpTesting
+      .expectOne("/api/v1/skill/user-profile?fullName=John%20Doe")
+      .flush({
+        pagination: {},
+        results: mockResults,
+      } as UserProfileResponseDto);
 
     expectAsync(result).toBeResolvedTo(
       jasmine.objectContaining({

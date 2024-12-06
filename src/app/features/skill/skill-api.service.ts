@@ -6,6 +6,7 @@ import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { EscoApiService } from "./esco-api.service";
 import { ExternalProfileLinkConfig } from "./link-external-profile/external-profile-link-config";
+import { retryOnServerError } from "../../utils/retry-on-server-errror.rxjs-pipe";
 
 /**
  * Interaction with Aam Digital backend providing access to external profiles
@@ -31,7 +32,10 @@ export class SkillApiService {
       .get<UserProfileResponseDto>("/api/v1/skill/user-profile", {
         params: { ...searchParams },
       })
-      .pipe(map((value) => value));
+      .pipe(
+        retryOnServerError(2),
+        map((value) => value),
+      );
   }
 
   /**
@@ -65,9 +69,9 @@ export class SkillApiService {
    * @param externalId
    */
   getExternalProfileById(externalId: string): Observable<ExternalProfile> {
-    return this.http.get<ExternalProfile>(
-      "/api/v1/skill/user-profile/" + externalId,
-    );
+    return this.http
+      .get<ExternalProfile>("/api/v1/skill/user-profile/" + externalId)
+      .pipe(retryOnServerError(2));
   }
 
   /**
