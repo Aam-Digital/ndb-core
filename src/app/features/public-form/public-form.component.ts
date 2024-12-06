@@ -19,13 +19,19 @@ import { FieldGroup } from "../../core/entity-details/form/field-group";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
+import { DisplayImgComponent } from "../file/display-img/display-img.component";
 
 @UntilDestroy()
 @Component({
   selector: "app-public-form",
   templateUrl: "./public-form.component.html",
   styleUrls: ["./public-form.component.scss"],
-  imports: [EntityFormComponent, MatButtonModule, MatCardModule],
+  imports: [
+    EntityFormComponent,
+    MatButtonModule,
+    MatCardModule,
+    DisplayImgComponent,
+  ],
   standalone: true,
 })
 export class PublicFormComponent<E extends Entity> implements OnInit {

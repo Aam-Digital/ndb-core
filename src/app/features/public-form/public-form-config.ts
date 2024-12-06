@@ -11,6 +11,14 @@ export class PublicFormConfig extends Entity {
   static override route = "admin/public-form";
 
   @DatabaseField({
+    label: $localize`:PublicFormConfig:Form Logo`,
+    dataType: "file",
+    editComponent: "EditPhoto",
+    additional: 300,
+  })
+  logo: string;
+
+  @DatabaseField({
     label: $localize`:PublicFormConfig:Title`,
   })
   title: string;
