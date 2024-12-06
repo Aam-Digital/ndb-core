@@ -8,6 +8,7 @@ import { EventAttendanceMap } from "../../child-dev-project/attendance/model/eve
 import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EntityConfig } from "../entity/entity-config";
+import { ExternalProfileLinkConfig } from "../../features/skill/link-external-profile/external-profile-link-config";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -588,6 +589,14 @@ export const defaultJsonConfig = {
                   },
                   {
                     fields: [
+                      "externalProfileMockResults",
+                      "externalProfile",
+                      "skills"
+                    ],
+                    header: "Skill API Integration (under development)"
+                  },
+                  {
+                    fields: [
                       "dateOfBirth",
                       "birth_certificate",
                       "gender",
@@ -1061,6 +1070,36 @@ export const defaultJsonConfig = {
         additional: {
           acceptedFileTypes: ".pdf"
         }
+      },
+
+      externalProfile: {
+        label: "External SkillLab Profile",
+        dataType: "string",
+        editComponent: "EditExternalProfileLink",
+        additional: {
+          searchFields: {
+            fullName: [
+              "name",
+              "fullName",
+              "firstName",
+              "lastName"
+            ],
+            email: ["email"],
+            phone: ["phone"]
+          }
+        } as ExternalProfileLinkConfig
+      },
+      skills: {
+        dataType: "entity",
+        isArray: true,
+        additional: "Skill",
+        label: "Skills"
+      },
+      externalProfileMockResults: {
+        dataType: "number",
+        label: "Mock Profiles",
+        description: "Select the number of mocked results for the external profile search in order to test different UX.",
+        defaultValue: { mode: "static", value: 2 }
       }
     }
   } as EntityConfig,
