@@ -69,6 +69,9 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
+                    fields: ["logo"],
+                  },
+                  {
                     fields: ["route", "title"],
                   },
                   {
