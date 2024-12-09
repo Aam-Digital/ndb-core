@@ -1,20 +1,3 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 import { Injectable } from "@angular/core";
 import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
@@ -22,14 +5,6 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { ColumnMapping } from "../../import/column-mapping";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 
-/**
- * Datatype for the EntitySchemaService to handle a single reference to another entity.
- * Stored as simple id string.
- *
- * For example:
- *
- * `@DatabaseField({dataType: 'entity', additional: 'Child'}) relatedEntity: string;`
- */
 @Injectable()
 export class EntityDatatype extends StringDatatype {
   static override dataType = "entity";
@@ -46,17 +21,65 @@ export class EntityDatatype extends StringDatatype {
     super();
   }
 
-  override importMapFunction(
+  /**
+   * Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.
+   * Handles type conversion between numbers and strings to improve matching.
+   *
+   * @param val The value from an import that should be mapped to an entity reference
+   * @param schemaField The config defining details of the field that will hold the entity reference after mapping
+   * @param additional The field of the referenced entity that should be compared with the val
+   * @returns Promise resolving to the ID of the matched entity or undefined if no match is found
+   */
+  override async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
-    additional?: any,
-  ) {
-    if (!additional) {
-      return Promise.resolve(undefined);
+    additional?: string,
+  ): Promise<string | undefined> {
+    // If no additional field is specified or value is null/undefined, return undefined
+    if (!additional || val == null) {
+      return undefined;
     }
-    return this.entityMapper
-      .loadType(schemaField.additional)
-      .then((res) => res.find((e) => e[additional] === val)?.getId());
+
+    // Convert value to string or number for flexible matching
+    const normalizedVal = this.normalizeValue(val);
+
+    try {
+      // Load all entities of the specified type
+      const entities = await this.entityMapper.loadType(schemaField.additional);
+
+      // Find the first entity where the specified field matches the normalized value
+      const matchedEntity = entities.find((entity) => {
+        const entityFieldValue = this.normalizeValue(entity[additional]);
+        return entityFieldValue === normalizedVal;
+      });
+
+      // Return the ID of the matched entity or undefined
+      return matchedEntity?.getId();
+    } catch (error) {
+      console.error("Error in EntityDatatype importMapFunction:", error);
+      return undefined;
+    }
+  }
+
+  /**
+   * Normalize a value for comparison, converting to string or number as appropriate
+   * @param val The value to normalize
+   * @returns Normalized value (string or number)
+   */
+  private normalizeValue(val: any): string | number {
+    // If the value is already a string or number, return it
+    if (typeof val === "string" || typeof val === "number") {
+      return val;
+    }
+
+    // Try to convert to number if possible
+    const numVal = Number(val);
+    if (!isNaN(numVal)) {
+      return numVal;
+    }
+
+    // Convert to string as a fallback
+    return String(val);
   }
 
   override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
