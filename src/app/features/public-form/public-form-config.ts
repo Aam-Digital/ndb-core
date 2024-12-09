@@ -8,10 +8,6 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
  * Each entity of this type defines a new publicly accessible form
  * that can be reached through the given route even by users without being logged in.
  */
-/**
- * Each entity of this type defines a new publicly accessible form
- * that can be reached through the given route even by users without being logged in.
- */
 @DatabaseEntity("PublicFormConfig")
 export class PublicFormConfig extends Entity {
   static override label = $localize`:PublicFormConfig:Public Form`;
