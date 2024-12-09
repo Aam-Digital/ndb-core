@@ -34,11 +34,11 @@ export class PublicFormModule {
 
 const dynamicComponents: [string, AsyncComponent][] = [
   [
-    "EditPublicFormField",
+    "EditPublicFormColumns",
     () =>
       import(
         "app/features/public-form/edit-public-form-field/edit-public-form-field.component"
-      ).then((c) => c.EditPublicFormFieldComponent),
+      ).then((c) => c.EditPublicFormColumnsComponent),
   ],
 ];
 
@@ -72,7 +72,15 @@ const viewConfigs: ViewConfig[] = [
                     fields: ["route", "title"],
                   },
                   {
-                    fields: ["description", "entity"],
+                    fields: [
+                      {
+                        id: "permissions_remark",
+                        editComponent: "EditDescriptionOnly",
+                        label: $localize`:PublicFormConfig admin form:If you want external people filling this form without logging in, the Permission System also has to allow \"public\" users to create new records of this type. If you are seeing problems submitting the form, please contact your technical support team.`,
+                      },
+                      "entity",
+                      "description",
+                    ],
                   },
                 ],
               },
@@ -90,8 +98,8 @@ const viewConfigs: ViewConfig[] = [
                     fields: [
                       {
                         id: "columns",
-                        editComponent: "EditPublicFormField",
-                        dynamicComponentInput: {
+                        editComponent: "EditPublicFormColumns",
+                        additional: {
                           entity: PublicFormConfig.ENTITY_TYPE,
                         },
                       },

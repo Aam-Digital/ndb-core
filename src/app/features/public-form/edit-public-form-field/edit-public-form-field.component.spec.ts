@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditPublicFormFieldComponent } from "./edit-public-form-field.component";
+import { EditPublicFormColumnsComponent } from "./edit-public-form-field.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { FormControl } from "@angular/forms";
@@ -9,9 +9,9 @@ import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
-describe("EditPublicFormFieldComponent", () => {
-  let component: EditPublicFormFieldComponent;
-  let fixture: ComponentFixture<EditPublicFormFieldComponent>;
+describe("EditPublicFormColumnsComponent", () => {
+  let component: EditPublicFormColumnsComponent;
+  let fixture: ComponentFixture<EditPublicFormColumnsComponent>;
   let mockEntityRegistry: Partial<EntityRegistry>;
   let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
 
@@ -33,7 +33,7 @@ describe("EditPublicFormFieldComponent", () => {
     TestBed.configureTestingModule({
       declarations: [],
       imports: [
-        EditPublicFormFieldComponent,
+        EditPublicFormColumnsComponent,
         FontAwesomeTestingModule,
         NoopAnimationsModule,
       ],
@@ -46,7 +46,7 @@ describe("EditPublicFormFieldComponent", () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EditPublicFormFieldComponent);
+    fixture = TestBed.createComponent(EditPublicFormColumnsComponent);
     component = fixture.componentInstance;
     component.entity = new TestEntity();
     component.entity["columns"] = testColumns;
