@@ -33,7 +33,8 @@ import {
   ServiceWorkerModule,
   SwRegistrationOptions,
 } from "@angular/service-worker";
-import { environment, firebaseConfig } from "../environments/environment";
+import { environment } from "../environments/environment";
+import { firebaseConfig } from "../environments/environment";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ConfigurableEnumModule } from "./core/basic-datatypes/configurable-enum/configurable-enum.module";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
