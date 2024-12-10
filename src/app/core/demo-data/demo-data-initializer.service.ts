@@ -14,7 +14,6 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
 import PouchDB from "pouchdb-browser";
-import { HttpClient } from "@angular/common/http";
 
 /**
  * This service handles everything related to the demo-mode
@@ -47,7 +46,6 @@ export class DemoDataInitializerService {
     private database: Database,
     private loginState: LoginStateSubject,
     private sessionInfo: SessionSubject,
-    private http: HttpClient,
   ) {}
 
   async run() {
@@ -64,33 +62,11 @@ export class DemoDataInitializerService {
 
     this.localAuthService.saveUser(this.normalUser);
     this.localAuthService.saveUser(this.adminUser);
-
     await this.sessionManager.offlineLogin(this.normalUser);
-
-    // Load and parse the demo_entities.json file before publishing demo data
-    const demoDataFromJson = await this.loadDemoEntities();
-    if (demoDataFromJson?.docs) {
-      console.log("Loaded demo_entities.json:", demoDataFromJson);
-    } else {
-      console.log(
-        "No demo_entities.json found, proceeding with default demo setup.",
-      );
-    }
-
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();
     this.syncDatabaseOnUserChange();
-  }
-
-  private async loadDemoEntities(): Promise<any> {
-    try {
-      // Adjust the file name if you plan to have scenario-specific variants
-      return await this.http.get("assets/demo_entities.json").toPromise();
-    } catch (error) {
-      // It's okay if the file doesn't exist; proceed with defaults
-      return null;
-    }
   }
 
   private syncDatabaseOnUserChange() {

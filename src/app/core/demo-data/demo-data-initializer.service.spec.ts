@@ -1,8 +1,5 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
-import {
-  HttpClientTestingModule,
-  HttpTestingController,
-} from "@angular/common/http/testing";
+
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
@@ -35,7 +32,6 @@ describe("DemoDataInitializerService", () => {
   let mockLocalAuth: jasmine.SpyObj<LocalAuthService>;
   let sessionManager: jasmine.SpyObj<SessionManagerService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
-  let httpTestingController: HttpTestingController;
   let demoUserDBName: string;
   let adminDBName: string;
 
@@ -51,7 +47,6 @@ describe("DemoDataInitializerService", () => {
     sessionManager = jasmine.createSpyObj(["offlineLogin"]);
 
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
       providers: [
         DemoDataInitializerService,
         LoginStateSubject,
@@ -64,7 +59,6 @@ describe("DemoDataInitializerService", () => {
       ],
     });
     service = TestBed.inject(DemoDataInitializerService);
-    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   afterEach(async () => {
@@ -72,50 +66,11 @@ describe("DemoDataInitializerService", () => {
     const tmpDB = new PouchDatabase();
     await tmpDB.initInMemoryDB(demoUserDBName).destroy();
     await tmpDB.initInMemoryDB(adminDBName).destroy();
-    httpTestingController.verify();
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
-
-  it("should load demo_entities.json if available", fakeAsync(() => {
-    const mockEntities = {
-      docs: [
-        { _id: "Config:CONFIG_ENTITY", otherField: "xyz" },
-        { _id: "User:USER_ENTITY", username: "demoUser", role: "admin" },
-      ],
-    };
-
-    service.run();
-
-    const req = httpTestingController.expectOne("assets/demo_entities.json");
-    expect(req.request.method).toBe("GET");
-
-    req.flush(mockEntities);
-
-    tick();
-
-    expect(console.log).toHaveBeenCalledWith(
-      "Loaded demo_entities.json:",
-      mockEntities,
-    );
-  }));
-
-  it("should proceed without demo_entities.json if not available", fakeAsync(() => {
-    service.run();
-
-    const req = httpTestingController.expectOne("assets/demo_entities.json");
-    expect(req.request.method).toBe("GET");
-
-    req.error(new ErrorEvent("404 Not Found"), { status: 404 });
-
-    tick();
-
-    expect(console.log).toHaveBeenCalledWith(
-      "No demo_entities.json found, proceeding with default demo setup.",
-    );
-  }));
 
   it("should save the default users", () => {
     service.run();
