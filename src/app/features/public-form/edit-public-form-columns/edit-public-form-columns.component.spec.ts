@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EditPublicFormColumnsComponent } from "./edit-public-form-field.component";
+import { EditPublicFormColumnsComponent } from "./edit-public-form-columns.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { FormControl } from "@angular/forms";

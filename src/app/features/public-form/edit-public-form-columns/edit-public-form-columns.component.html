@@ -9,7 +9,9 @@
 </div>
 
 <app-admin-entity-form
-  [config]="publicConfigDetailsView.config"
+  [config]="publicFormConfig"
+  (configChange)="updateValue($event)"
   [entityType]="entityConstructor"
+  [disabled]="formControl.disabled"
 >
 </app-admin-entity-form>
