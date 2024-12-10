@@ -1,0 +1,27 @@
+{
+    "docs": [
+      {
+        "_id": "Config:NOTE",
+        "subject": "Weekly Meeting Notes",
+        "text": "Summary of weekly staff meeting.",
+        "date": "2024-12-01",
+        "authors": ["User:1"],
+        "category": "Education",
+        "warningLevel": "INFO"
+      },
+      {
+        "_id": "Child:1",
+        "name": "John Doe",
+        "gender": "Male",
+        "admissionDate": "2024-01-01",
+        "schoolId": "School:1"
+      },
+      {
+        "_id": "School:1",
+        "name": "Springfield High School",
+        "language": "English",
+        "privateSchool": false
+      }
+    ]
+  }
+  
