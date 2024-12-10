@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditDescriptionOnlyComponent } from "./edit-description-only.component";
 import { ComponentRegistry } from "app/dynamic-components";
 
-fdescribe("EditDescriptionOnlyComponent", () => {
+describe("EditDescriptionOnlyComponent", () => {
   let component: EditDescriptionOnlyComponent;
   let fixture: ComponentFixture<EditDescriptionOnlyComponent>;
 
