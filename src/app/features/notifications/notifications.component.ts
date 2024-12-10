@@ -1,22 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatMenu } from '@angular/material/menu';
-import { NgFor } from '@angular/common';
+import { MatMenu } from "@angular/material/menu";
+import { NgFor } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { MatMenuTrigger } from '@angular/material/menu';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { FormsModule } from '@angular/forms';
+import { MatMenuTrigger } from "@angular/material/menu";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatSlideToggle } from "@angular/material/slide-toggle";
+import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FirebaseNotificationService } from '../../../firebase-messaging-service.service';
-import { Logging } from 'app/core/logging/logging.service';
-import { NotificationActivity } from './model/notifications-activity';
-import { EntityMapperService } from 'app/core/entity/entity-mapper/entity-mapper.service';
+import { FirebaseNotificationService } from "../../../firebase-messaging-service.service";
+import { Logging } from "app/core/logging/logging.service";
+import { NotificationActivity } from "./model/notifications-activity";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
 @Component({
-  selector: 'app-notifications',
+  selector: "app-notifications",
   standalone: true,
   imports: [
     MatBadgeModule,
@@ -31,8 +31,8 @@ import { EntityMapperService } from 'app/core/entity/entity-mapper/entity-mapper
     FormsModule,
     MatTooltipModule,
   ],
-  templateUrl: './notifications.component.html',
-  styleUrl: './notifications.component.scss'
+  templateUrl: "./notifications.component.html",
+  styleUrl: "./notifications.component.scss"
 })
 export class NotificationsComponent implements OnInit {
   public notifications: NotificationActivity[] = [];
@@ -58,12 +58,12 @@ export class NotificationsComponent implements OnInit {
 
   notificationClicked(notification) {
     notification.isUnread = false;
-    console.log(notification.user + ' clicked');
+    console.log(notification.user + " clicked");
   }
 
   onNotificationBellClick() {
     // this.firebaseNotificationService.sendNotification();
-    Logging.log('notificationBellClicked');
+    Logging.log("notificationBellClicked");
     this.showSettings = false;
   }
 
@@ -73,7 +73,7 @@ export class NotificationsComponent implements OnInit {
   private async loadAndProcessNotifications(): Promise<void> {
     const allNotifications = await this.entityMapper.loadType<NotificationActivity>(NotificationActivity);
     // The user is hardcoded for testing purposes, need to remove this.
-    this.notifications = this.filterUserNotifications(allNotifications, 'User:demo');
+    this.notifications = this.filterUserNotifications(allNotifications, "User:demo");
     this.notificationCount = this.countUnreadNotifications(this.notifications);
   }
 

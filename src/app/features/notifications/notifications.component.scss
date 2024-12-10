@@ -1,27 +1,29 @@
-.notification-list {
-    padding: 0px 16px;
-    margin-bottom: 20px;
-}
+@use "variables/colors";
 
 .notification-time {
-    color: gray;
-    font-size: 12px;
+  color: colors.$inactive;
+  font-size: 12px;
+}
+
+.notification-list {
+  padding: 0px 16px;
+  margin-bottom: 20px;
 }
 
 .notification-item {
-    font-size: 15px;
-    margin: 0px;
+  font-size: 15px;
+  margin: 0px;
 }
 
-.header  {
-    padding: 0px 16px;
-    margin-bottom: 20px;
+.header {
+  padding: 0px 16px;
+  margin-bottom: 20px;
 }
 
 .notification-lists {
-    width: 280px;
+  width: 280px;
 }
 
 .notification-toggle {
-    padding: 12px 0px;
+  padding: 12px 0px;
 }

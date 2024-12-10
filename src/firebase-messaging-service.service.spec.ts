@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { FirebaseNotificationService } from './firebase-messaging-service.service';
+import { FirebaseNotificationService } from "./firebase-messaging-service.service";
 
-describe('FirebaseNotificationService', () => {
+describe("FirebaseNotificationService", () => {
   let service: FirebaseNotificationService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('FirebaseNotificationService', () => {
     service = TestBed.inject(FirebaseNotificationService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

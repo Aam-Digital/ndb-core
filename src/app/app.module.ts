@@ -33,7 +33,7 @@ import {
   ServiceWorkerModule,
   SwRegistrationOptions,
 } from "@angular/service-worker";
-import { environment } from "../environments/environment";
+import { environment, firebaseConfig } from "../environments/environment";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ConfigurableEnumModule } from "./core/basic-datatypes/configurable-enum/configurable-enum.module";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
@@ -89,8 +89,6 @@ import { Logging } from "./core/logging/logging.service";
 import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initializer";
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { initializeApp } from "firebase/app";
-
-initializeApp(environment.firebase);
 
 /**
  * Main entry point of the application.
@@ -176,6 +174,8 @@ initializeApp(environment.firebase);
 })
 export class AppModule {
   constructor(icons: FaIconLibrary) {
+    // Initialize the Firebase application component
+    initializeApp(firebaseConfig);
     icons.addIconPacks(fas, far);
   }
 }
