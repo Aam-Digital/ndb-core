@@ -7,16 +7,7 @@ import { MarkdownPageModule } from "app/features/markdown-page/markdown-page.mod
 @DynamicComponent("EditDescriptionOnly")
 @Component({
   selector: "app-edit-description-only",
-  template: `
-    <div class="container">
-      <label>{{ formFieldConfig?.label }}</label>
-      <div
-        class="markdown-content"
-        markdown
-        [data]="formFieldConfig?.value || ''"
-      ></div>
-    </div>
-  `,
+  template: ` <markdown>{{ formFieldConfig?.label }}</markdown> `,
   styleUrls: ["./edit-description-only.component.scss"],
   standalone: true,
   imports: [MarkdownPageModule],
