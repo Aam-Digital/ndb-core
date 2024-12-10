@@ -717,7 +717,6 @@ export const defaultJsonConfig = {
                   },
                 ],
               },
-
             },
             {
               title: $localize`:Title inside a panel:Height & Weight Tracking`,
