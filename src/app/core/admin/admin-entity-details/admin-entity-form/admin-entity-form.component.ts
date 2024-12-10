@@ -85,11 +85,6 @@ export class AdminEntityFormComponent implements OnChanges {
 
   @Output() configChange = new EventEmitter<FormConfig>();
 
-  /**
-   * Whether the UI is readonly, not allowing the user to edit things.
-   */
-  @Input() disabled: boolean;
-
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
 
