@@ -12,6 +12,7 @@
     [config]="publicFormConfig"
     (configChange)="updateValue($event)"
     [entityType]="entityConstructor"
+    [isDragDisabled]="formControl.disabled"
   >
   </app-admin-entity-form>
 </div>
