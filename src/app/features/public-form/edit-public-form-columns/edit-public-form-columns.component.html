@@ -7,11 +7,11 @@
   editor below closely resembles how the form will look for users later.
   <br />
 </div>
-
-<app-admin-entity-form
-  [config]="publicFormConfig"
-  (configChange)="updateValue($event)"
-  [entityType]="entityConstructor"
-  [disabled]="formControl.disabled"
->
-</app-admin-entity-form>
+<div [class.disabled]="formControl.disabled">
+  <app-admin-entity-form
+    [config]="publicFormConfig"
+    (configChange)="updateValue($event)"
+    [entityType]="entityConstructor"
+  >
+  </app-admin-entity-form>
+</div>

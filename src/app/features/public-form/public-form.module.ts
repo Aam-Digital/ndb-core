@@ -99,9 +99,6 @@ const viewConfigs: ViewConfig[] = [
                       {
                         id: "columns",
                         editComponent: "EditPublicFormColumns",
-                        additional: {
-                          entity: PublicFormConfig.ENTITY_TYPE,
-                        },
                       },
                     ],
                   },

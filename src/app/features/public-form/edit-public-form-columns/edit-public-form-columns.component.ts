@@ -12,6 +12,7 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
   standalone: true,
   imports: [AdminEntityFormComponent],
   templateUrl: "./edit-public-form-columns.component.html",
+  styleUrl: "./edit-public-form-columns.component.scss",
 })
 @DynamicComponent("EditPublicFormColumns")
 export class EditPublicFormColumnsComponent
