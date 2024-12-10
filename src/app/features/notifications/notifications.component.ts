@@ -32,7 +32,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
     MatTooltipModule,
   ],
   templateUrl: "./notifications.component.html",
-  styleUrl: "./notifications.component.scss"
+  styleUrl: "./notifications.component.scss",
 })
 export class NotificationsComponent implements OnInit {
   public notifications: NotificationActivity[] = [];
@@ -40,7 +40,10 @@ export class NotificationsComponent implements OnInit {
   public isEnableNotification = false;
   public showSettings = false;
 
-  constructor(private firebaseNotificationService: FirebaseNotificationService, private entityMapper: EntityMapperService) {}
+  constructor(
+    private firebaseNotificationService: FirebaseNotificationService,
+    private entityMapper: EntityMapperService,
+  ) {}
 
   ngOnInit(): void {
     this.loadAndProcessNotifications();
@@ -71,9 +74,15 @@ export class NotificationsComponent implements OnInit {
    * Loads all notifications and processes them to update the list and unread count.
    */
   private async loadAndProcessNotifications(): Promise<void> {
-    const allNotifications = await this.entityMapper.loadType<NotificationActivity>(NotificationActivity);
+    const allNotifications =
+      await this.entityMapper.loadType<NotificationActivity>(
+        NotificationActivity,
+      );
     // The user is hardcoded for testing purposes, need to remove this.
-    this.notifications = this.filterUserNotifications(allNotifications, "User:demo");
+    this.notifications = this.filterUserNotifications(
+      allNotifications,
+      "User:demo",
+    );
     this.notificationCount = this.countUnreadNotifications(this.notifications);
   }
 
@@ -82,15 +91,21 @@ export class NotificationsComponent implements OnInit {
    * @param notifications - The list of notifications.
    * @param user - The user to filter notifications by.
    */
-  private filterUserNotifications(notifications: NotificationActivity[], user: string): NotificationActivity[] {
-    return notifications.filter(notification => notification.sentBy === user);
+  private filterUserNotifications(
+    notifications: NotificationActivity[],
+    user: string,
+  ): NotificationActivity[] {
+    return notifications.filter((notification) => notification.sentBy === user);
   }
 
   /**
    * Counts unread notifications from the list.
    * @param notifications - The list of notifications.
    */
-  private countUnreadNotifications(notifications: NotificationActivity[]): number {
-    return notifications.filter(notification => !notification.readStatus).length;
+  private countUnreadNotifications(
+    notifications: NotificationActivity[],
+  ): number {
+    return notifications.filter((notification) => !notification.readStatus)
+      .length;
   }
 }

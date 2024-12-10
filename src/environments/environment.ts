@@ -51,5 +51,6 @@ export const firebaseConfig = {
   storageBucket: "aam-digital-b8a7b.firebasestorage.app",
   messagingSenderId: "189059495005",
   appId: "1:189059495005:web:c6bdb0c8c665864b37c9b4",
-  vapidKey: "BKkE6EgJBIwRa9-DUSKZpmkMuG7Fak2lZgxda_DPx5kYkeK8cgQM_xqurHqxRNa1b2MuW7-_t9iFbgfuXUsWF5I"
+  vapidKey:
+    "BKkE6EgJBIwRa9-DUSKZpmkMuG7Fak2lZgxda_DPx5kYkeK8cgQM_xqurHqxRNa1b2MuW7-_t9iFbgfuXUsWF5I",
 };

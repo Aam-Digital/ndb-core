@@ -18,7 +18,7 @@
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
-import { FirebaseNotificationService } from '../firebase-messaging-service.service';
+import { FirebaseNotificationService } from "../firebase-messaging-service.service";
 
 /**
  * Component as the main entry point for the app.
@@ -32,9 +32,14 @@ export class AppComponent implements OnInit {
   configFullscreen: boolean = false;
   message: any = null;
 
-  constructor(private router: Router, private firebaseNotificationService: FirebaseNotificationService) {
+  constructor(
+    private router: Router,
+    private firebaseNotificationService: FirebaseNotificationService,
+  ) {
     this.detectConfigMode();
-    router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => this.detectConfigMode());
+    router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe(() => this.detectConfigMode());
   }
 
   ngOnInit(): void {
