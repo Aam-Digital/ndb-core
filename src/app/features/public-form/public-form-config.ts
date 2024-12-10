@@ -16,8 +16,8 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Form Logo`,
+    description: $localize`:PublicFormConfig:Add an image to be displayed at the top of the form`,
     dataType: "file",
-    editComponent: "EditPhoto",
     additional: 300,
   })
   logo: string;
