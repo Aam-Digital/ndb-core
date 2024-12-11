@@ -1,0 +1,799 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  SelectableOption</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#asString" 
+>
+                                            asString
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#asValue" 
+>
+                                            asValue
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#initial" 
+>
+                                            initial
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#selected" 
+>
+                                            selected
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="asString"></a>
+                                        <span class="name "><b>asString</b>
+                                            <a href="#asString">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>asString:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="asValue"></a>
+                                        <span class="name "><b>asValue</b>
+                                            <a href="#asValue">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>asValue:     <code>V</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>V</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="initial"></a>
+                                        <span class="name "><b>initial</b>
+                                            <a href="#initial">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>initial:     <code>O</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>O</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="selected"></a>
+                                        <span class="name "><b>selected</b>
+                                            <a href="#selected">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>selected:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  ContentChild,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Optional,
+  Output,
+  Self,
+  signal,
+  TemplateRef,
+  TrackByFunction,
+  ViewChild,
+  WritableSignal,
+} from &quot;@angular/core&quot;;
+import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from &quot;@angular/common&quot;;
+import { MatFormFieldControl } from &quot;@angular/material/form-field&quot;;
+import {
+  FormControl,
+  FormGroupDirective,
+  NgControl,
+  NgForm,
+  ReactiveFormsModule,
+} from &quot;@angular/forms&quot;;
+import { MatInput, MatInputModule } from &quot;@angular/material/input&quot;;
+import {
+  MatAutocompleteModule,
+  MatAutocompleteTrigger,
+} from &quot;@angular/material/autocomplete&quot;;
+import { MatCheckboxModule } from &quot;@angular/material/checkbox&quot;;
+import { filter, map, startWith } from &quot;rxjs/operators&quot;;
+import { ErrorStateMatcher } from &quot;@angular/material/core&quot;;
+import { CustomFormControlDirective } from &quot;./custom-form-control.directive&quot;;
+import { coerceBooleanProperty } from &quot;@angular/cdk/coercion&quot;;
+import {
+  MatChipGrid,
+  MatChipInput,
+  MatChipRemove,
+  MatChipRow,
+} from &quot;@angular/material/chips&quot;;
+import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { MatTooltip } from &quot;@angular/material/tooltip&quot;;
+import { MatIcon } from &quot;@angular/material/icon&quot;;
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from &quot;@angular/cdk/drag-drop&quot;;
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualForOf,
+  CdkVirtualScrollViewport,
+} from &quot;@angular/cdk/scrolling&quot;;
+
+interface SelectableOption&lt;O, V&gt; {
+  initial: O;
+  asString: string;
+  asValue: V;
+  selected: boolean;
+}
+
+/** Custom &#x60;MatFormFieldControl&#x60; for any select / dropdown field. */
+@Component({
+  selector: &quot;app-basic-autocomplete&quot;,
+  templateUrl: &quot;basic-autocomplete.component.html&quot;,
+  styleUrls: [&quot;./basic-autocomplete.component.scss&quot;],
+  providers: [
+    { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
+  ],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    NgForOf,
+    MatCheckboxModule,
+    NgIf,
+    AsyncPipe,
+    NgTemplateOutlet,
+    MatChipInput,
+    MatChipGrid,
+    MatChipRow,
+    FaIconComponent,
+    MatTooltip,
+    MatIcon,
+    MatChipRemove,
+    DragDropModule,
+    CdkVirtualScrollViewport,
+    CdkVirtualForOf,
+    CdkFixedSizeVirtualScroll,
+  ],
+})
+export class BasicAutocompleteComponent&lt;O, V &#x3D; O&gt;
+  extends CustomFormControlDirective&lt;V | V[]&gt;
+  implements OnChanges, OnInit
+{
+  @ContentChild(TemplateRef) templateRef: TemplateRef&lt;any&gt;;
+  // &#x60;_elementRef&#x60; is protected in &#x60;MapInput&#x60;
+  @ViewChild(MatInput, { static: true }) inputElement: MatInput &amp; {
+    _elementRef: ElementRef&lt;HTMLElement&gt;;
+  };
+  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
+  @ViewChild(CdkVirtualScrollViewport)
+  virtualScrollViewport: CdkVirtualScrollViewport;
+
+  @Input() valueMapper &#x3D; (option: O) &#x3D;&gt; option as unknown as V;
+  @Input() optionToString &#x3D; (option: O) &#x3D;&gt; option?.toString();
+  @Input() createOption: (input: string) &#x3D;&gt; Promise&lt;O&gt;;
+  @Input() hideOption: (option: O) &#x3D;&gt; boolean &#x3D; () &#x3D;&gt; false;
+
+  /**
+   * Whether the user should be able to select multiple values.
+   */
+  @Input() multi?: boolean;
+  @Input() reorder?: boolean;
+
+  /**
+   * Whether the user can manually drag &amp; drop to reorder the selected items
+   */
+
+  autocompleteOptions: SelectableOption&lt;O, V&gt;[] &#x3D; [];
+  autocompleteForm &#x3D; new FormControl(&quot;&quot;);
+  autocompleteSuggestedOptions &#x3D; this.autocompleteForm.valueChanges.pipe(
+    filter((val) &#x3D;&gt; typeof val &#x3D;&#x3D;&#x3D; &quot;string&quot;),
+    map((val) &#x3D;&gt; this.updateAutocomplete(val)),
+    startWith([] as SelectableOption&lt;O, V&gt;[]),
+  );
+  autocompleteFilterFunction: (option: O) &#x3D;&gt; boolean;
+  @Output() autocompleteFilterChange &#x3D; new EventEmitter&lt;(o: O) &#x3D;&gt; boolean&gt;();
+
+  /** whether the &quot;add new&quot; option is logically allowed in the current context (e.g. not creating a duplicate) */
+  showAddOption &#x3D; false;
+
+  get displayText() {
+    const values: V[] &#x3D; Array.isArray(this.value) ? this.value : [this.value];
+
+    return values
+      .map((v) &#x3D;&gt; this._options.find((o) &#x3D;&gt; o.asValue &#x3D;&#x3D;&#x3D; v)?.asString)
+      .join(&quot;, &quot;);
+  }
+
+  override get disabled(): boolean {
+    return this._disabled;
+  }
+
+  override set disabled(value: boolean) {
+    this._disabled &#x3D; coerceBooleanProperty(value);
+    this._disabled
+      ? this.autocompleteForm.disable()
+      : this.autocompleteForm.enable();
+    this.stateChanges.next();
+  }
+
+  @Input() set options(options: O[]) {
+    this._options &#x3D; options.map((o) &#x3D;&gt; this.toSelectableOption(o));
+  }
+  private _options: SelectableOption&lt;O, V&gt;[] &#x3D; [];
+
+  _selectedOptions: SelectableOption&lt;O, V&gt;[] &#x3D; [];
+
+  /**
+   * Keep the search value to help users quickly multi-select multiple related options without having to type filter text again
+   */
+  retainSearchValue: string;
+
+  /**
+   * Display the selected items as simple text, as chips or not at all (if used in combination with another component)
+   */
+  @Input() display: &quot;text&quot; | &quot;chips&quot; | &quot;none&quot; &#x3D; &quot;text&quot;;
+
+  /**
+   * display the search input rather than the selected elements only
+   * (when the form field gets focused).
+   */
+  isInSearchMode: WritableSignal&lt;boolean&gt; &#x3D; signal(false);
+  trackByOptionValueFn: TrackByFunction&lt;SelectableOption&lt;O, V&gt;&gt; | undefined &#x3D; (
+    i,
+    o,
+  ) &#x3D;&gt; o?.asValue;
+
+  constructor(
+    elementRef: ElementRef&lt;HTMLElement&gt;,
+    errorStateMatcher: ErrorStateMatcher,
+    @Optional() @Self() ngControl: NgControl,
+    @Optional() parentForm: NgForm,
+    @Optional() parentFormGroup: FormGroupDirective,
+  ) {
+    super(
+      elementRef,
+      errorStateMatcher,
+      ngControl,
+      parentForm,
+      parentFormGroup,
+    );
+  }
+
+  ngOnInit() {
+    this.autocompleteSuggestedOptions.subscribe((options) &#x3D;&gt; {
+      this.autocompleteOptions &#x3D; options;
+    });
+    // Subscribe to the valueChanges observable to print the input value
+    this.autocompleteForm.valueChanges.subscribe((value) &#x3D;&gt; {
+      if (typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+        this.retainSearchValue &#x3D; value;
+      }
+    });
+  }
+
+  ngOnChanges(changes: { [key in keyof this]?: any }) {
+    if (changes.valueMapper) {
+      this._options.forEach(
+        (opt) &#x3D;&gt; (opt.asValue &#x3D; this.valueMapper(opt.initial)),
+      );
+    }
+    if (changes.optionToString) {
+      this._options.forEach(
+        (opt) &#x3D;&gt; (opt.asString &#x3D; this.optionToString(opt.initial)),
+      );
+    }
+    if (changes.value || changes.options) {
+      this.setInitialInputValue();
+
+      if (this.autocomplete?.panelOpen) {
+        // if new options have been added, make sure to update the visible autocomplete options
+        this.showAutocomplete(this.autocompleteForm.value);
+      }
+    }
+  }
+
+  drop(event: CdkDragDrop&lt;any[]&gt;) {
+    if (event.previousContainer &#x3D;&#x3D;&#x3D; event.container) {
+      moveItemInArray(
+        this.autocompleteOptions,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+    this._selectedOptions &#x3D; this.autocompleteOptions.filter((o) &#x3D;&gt; o.selected);
+    if (this.multi) {
+      this.value &#x3D; this._selectedOptions.map((o) &#x3D;&gt; o.asValue);
+    } else {
+      this.value &#x3D; undefined;
+    }
+    this.setInitialInputValue();
+    this.onChange(this.value);
+    this.showAutocomplete(this.autocompleteForm.value);
+  }
+
+  showAutocomplete(valueToRevertTo?: string) {
+    if (this.multi &amp;&amp; this.retainSearchValue) {
+      // reset the search value to previously entered text to help user selecting multiple similar options without retyping filter text
+      this.autocompleteForm.setValue(this.retainSearchValue);
+    } else {
+      // reset the search value to show all available options again
+      this.autocompleteForm.setValue(&quot;&quot;);
+    }
+    if (!this.multi) {
+      // cannot setValue to &quot;&quot; here because the current selection would be lost
+      this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
+    }
+
+    setTimeout(() &#x3D;&gt; {
+      this.inputElement.focus();
+
+      // select all text for easy overwriting when typing to search for options
+      (
+        this.inputElement._elementRef.nativeElement as HTMLInputElement
+      ).select();
+      if (valueToRevertTo) {
+        this.autocompleteForm.setValue(valueToRevertTo);
+      }
+    });
+
+    this.isInSearchMode.set(true);
+
+    // update virtual scroll as the container remains empty until the user scrolls initially
+    this.virtualScrollViewport.checkViewportSize();
+  }
+
+  private updateAutocomplete(inputText: string): SelectableOption&lt;O, V&gt;[] {
+    let filteredOptions &#x3D; this._options.filter(
+      (o) &#x3D;&gt; !this.hideOption(o.initial),
+    );
+    if (inputText) {
+      this.autocompleteFilterFunction &#x3D; (option) &#x3D;&gt;
+        this.optionToString(option)
+          .toLowerCase()
+          .includes(inputText.toLowerCase());
+      this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
+
+      filteredOptions &#x3D; filteredOptions.filter((o) &#x3D;&gt;
+        this.autocompleteFilterFunction(o.initial),
+      );
+
+      // do not allow users to create a new entry &quot;identical&quot; to an existing one:
+      this.showAddOption &#x3D; !this._options.some(
+        (o) &#x3D;&gt; o.asString.toLowerCase() &#x3D;&#x3D;&#x3D; inputText.toLowerCase(),
+      );
+    }
+    return filteredOptions;
+  }
+
+  private setInitialInputValue() {
+    this._options.forEach(
+      (o) &#x3D;&gt;
+        (o.selected &#x3D; Array.isArray(this.value)
+          ? this.value?.includes(o.asValue)
+          : this.value &#x3D;&#x3D;&#x3D; o.asValue),
+    );
+    this._selectedOptions &#x3D; this._options.filter((o) &#x3D;&gt; o.selected);
+  }
+
+  select(selected: string | SelectableOption&lt;O, V&gt;) {
+    if (typeof selected &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      this.createNewOption(selected);
+      return;
+    }
+
+    if (selected) {
+      this.selectOption(selected);
+    } else {
+      this.autocompleteForm.setValue(&quot;&quot;);
+      this._selectedOptions &#x3D; [];
+      this.value &#x3D; undefined;
+    }
+    this.onChange(this.value);
+  }
+
+  unselect(option: SelectableOption&lt;O, V&gt;) {
+    option.selected &#x3D; false;
+    this._selectedOptions &#x3D; this._options.filter((o) &#x3D;&gt; o.selected);
+
+    if (this.multi) {
+      this.value &#x3D; this._selectedOptions.map((o) &#x3D;&gt; o.asValue);
+    } else {
+      this.value &#x3D; undefined;
+    }
+    this.onChange(this.value);
+  }
+
+  async createNewOption(option: string) {
+    const createdOption &#x3D; await this.createOption(option);
+    if (createdOption) {
+      const newOption &#x3D; this.toSelectableOption(createdOption);
+      this._options.push(newOption);
+      this.select(newOption);
+    } else {
+      // continue editing
+      this.showAutocomplete();
+      this.autocompleteForm.setValue(option);
+    }
+  }
+
+  private selectOption(option: SelectableOption&lt;O, V&gt;) {
+    if (this.multi) {
+      option.selected &#x3D; !option.selected;
+      this._selectedOptions &#x3D; this._options.filter((o) &#x3D;&gt; o.selected);
+      this.value &#x3D; this._selectedOptions.map((o) &#x3D;&gt; o.asValue);
+      // re-open autocomplete to select next option
+      this.showAutocomplete();
+    } else {
+      this._selectedOptions &#x3D; [option];
+      this.value &#x3D; option.asValue;
+      this.isInSearchMode.set(false);
+    }
+  }
+
+  private toSelectableOption(opt: O): SelectableOption&lt;O, V&gt; {
+    return {
+      initial: opt,
+      asValue: this.valueMapper(opt),
+      asString: this.optionToString(opt),
+      selected: false,
+    };
+  }
+
+  onFocusOut(event: FocusEvent) {
+    if (
+      !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
+    ) {
+      if (!this.multi &amp;&amp; this.autocompleteForm.value &#x3D;&#x3D;&#x3D; &quot;&quot;) {
+        this.select(undefined);
+      }
+      this.isInSearchMode.set(false);
+    }
+  }
+
+  override onContainerClick(event: MouseEvent) {
+    if (
+      !this._disabled &amp;&amp;
+      (event.target as Element).tagName.toLowerCase() !&#x3D; &quot;input&quot;
+    ) {
+      this.showAutocomplete();
+    }
+  }
+
+  override writeValue(val: V[] | V) {
+    super.writeValue(val);
+    this.setInitialInputValue();
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'SelectableOption.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

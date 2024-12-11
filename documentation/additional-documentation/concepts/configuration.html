@@ -1,0 +1,596 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Configuration System</h1>
+<p>The config is a json object containing information about how the user interface for a specific project is displayed.
+The config is stored in the database and can be updated for a user without changing the code base.
+The default config is part of the repository in the <a href="https://github.com/Aam-Digital/ndb-core/tree/master/src/app/core/config/config-fix.json">config-fix.json file</a>.</p>
+<p>Config data is loaded by the <code>ConfigService</code> and then distributed to the relevant modules.
+This document aims to explain how cofiguration defines the rest of the application and all options that can be changed through the config.</p>
+<hr>
+<!-- TOC -->
+
+<ul>
+<li><a href="#config-service">Config Service</a><ul>
+<li><a href="#storing-config-in-db">Storing config in DB</a></li>
+</ul>
+</li>
+<li><a href="#config-file">Config File</a><ul>
+<li><a href="#navigation-menu">Navigation Menu</a></li>
+<li><a href="#views">Views</a></li>
+<li><a href="#entity">Entity</a></li>
+<li><a href="#option-lists">Option Lists</a></li>
+</ul>
+</li>
+<li><a href="#example">Full Example</a></li>
+</ul>
+<h2><!-- /TOC --></h2>
+<h2>Config Service</h2>
+<p><img src="../../images/config_service.png" alt="" class="img-responsive"></p>
+<p>The <a href="../../injectables/ConfigService.html">ConfigService</a> is an Angular service that you can inject anywhere in the code if you need to access configuration values.
+It loads the configuration from the database (or the default file if no entry is available) first thing when starting the application.</p>
+<p>Some core services use the ConfigService to dynamically set up parts of the application on startup.
+For example the <a href="../../injectables/NavigationItemsService.html">NavigationItemsService</a> creates the menu items as configured
+and the <a href="../../injectables/RouterService.html">RouterService</a> sets up Angular routing defining what components users see.
+The config service provides a behavior subject which will notify all subscribers when a new configuration was uploaded.
+This can be used for core tasks like setting up the routes or creating the navigation bar.</p>
+<p>Top-level &quot;view&quot; components (i.e. components that are used to define a whole page, not just some building block for a part or section)
+receive their config data automatically assigned as <code>@Input()</code> properties mapped from config object property name to an identical component class property.
+This is handled by the <code>RoutedViewComponent</code> internally.
+(If needed for special cases, you can also access it through the standard Angular router and can access it by injecting <code>ActivatedRoute</code>.)</p>
+<h3>Storing config in DB</h3>
+<p>Config is currently stored in the normal app database with the fixed _id <code>&quot;_id&quot;: &quot;Config:CONFIG_ENTITY&quot;</code>.
+This document in the database has to contain a single property <code>data</code> that holds the config object whose parts are described here.</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;_id&quot;: &quot;Config:CONFIG_ENTITY&quot;,
+  &quot;data&quot;: {
+    &quot;navigationMenu&quot;: {
+      &quot;items&quot;: [ ...],
+    }
+    ...
+  }
+}</code></pre></div><p>Uploading and downloading the configuration can be done by admins inside the admin view.</p>
+<hr>
+<h2>Config File</h2>
+<p>The config file is a json object containing information about what and how things are displayed in the application.
+On the top level of the config file, there are four different kinds of entries:</p>
+<ol>
+<li>The main navigation menu (<code>navigationMenu</code>)</li>
+<li>Views defining the UI of each page (<code>view:&lt;path&gt;</code>)</li>
+<li>Lists of select options for dropdown fields (<code>enum:&lt;category-id&gt;</code>, including available Note categories, etc.)</li>
+<li>Entity configuration to define [schemas](./entity-schema.html (<code>entity:&lt;entity-id&gt;</code>)</li>
+</ol>
+<p><em>also see <a href="user-roles-and-permissions.html">User Roles &amp; Permissions</a></em></p>
+<h3>Navigation Menu</h3>
+<p>The top level entry <code>navigationMenu</code> builds the visible and clickable items for the navigation menu on the left hand side of the app. Right now, the <code>navigationMenu</code> has the only subentry <code>items</code>. <code>items</code> contains an array of objects, each object representing one item within the navigation menu. The order of the entries reflects how the navigation menu items are shown in the app.</p>
+<p>Each navigation menu item object has to have the three properties <code>name</code>, <code>icon</code> and <code>link</code>. <code>name</code> hold the inscription of the item in the navigation menu in the app, <code>icon</code> indicates the little icon picture that is shown before the textual inscription of the item in the navigation menu and <code>link</code> contains the URL or view that the user is directed to when clicking on the navigation menu item. For every link given, there necessarily has to be a corresponding view-entry on the top level of the config file.</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">  &quot;navigationMenu&quot;: {
+    &quot;items&quot;: [
+      {
+        &quot;name&quot;: &quot;Dashboard&quot;,
+        &quot;icon&quot;: &quot;home&quot;,
+        &quot;link&quot;: &quot;/&quot;
+      },
+      {
+        &quot;name&quot;: &quot;Children&quot;,
+        &quot;icon&quot;: &quot;child&quot;,
+        &quot;link&quot;: &quot;/child&quot;
+      },
+      ...
+      {
+        &quot;name&quot;: &quot;Help&quot;,
+        &quot;icon&quot;: &quot;question-circle&quot;,
+        &quot;link&quot;: &quot;/help&quot;
+      }
+    ]
+  },</code></pre></div><h3>Views</h3>
+<p>The largest part of the config file are the views. Each view entry starts with <code>view:</code>.
+The part that comes after the colon is what comes after the top level / in the URL of the app.
+There has to be one view entry with nothing after the colon, thus directing to the root path that is used as a default one when the user opens the app.
+Paths can have multiple parts, e.g. <code>view:admin/conflicts</code>.
+If we append <code>:id</code>, then this is used as a parameter directly from the app, e.g. <code>view:child/:id</code> is the path for the child details view where the app provides the child entity id to be viewed to the component.</p>
+<p>The only mandatory field for each view is <code>&quot;component&quot;:</code> telling the app which component to use for the respective view.
+The component part has to refer to an existing angular component within the app. Components that are valid and may
+be used for the view have the <code>@DynamicComponent</code> decorator present</p>
+<p>The two optional fields of each view are <code>&quot;config&quot;:</code> and <code>&quot;permittedUserRoles&quot;:</code>.
+<code>&quot;permittedUserRoles&quot;</code> expects an array of user role strings.
+If one or more roles are specified, only users with these roles are able to see this menu item and visit this page in the app.</p>
+<p>What comes within the <code>&quot;config&quot;:</code> object depends on the component being used.
+The Dashboard-Component for example takes as <code>&quot;widgets:&quot;</code> an array of subcomponents, where every entry has to have a <code>&quot;component:&quot;</code> and may have an own <code>&quot;config:&quot;</code> object.
+(This &quot;config&quot; is passed to the component, which receives and handles it by implementing the <a href="../../interfaces/OnInitDynamicComponent.html">OnInitDynamicComponent</a> interface)</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;view:&quot;: {
+  &quot;component&quot;: &quot;Dashboard&quot;,
+  &quot;config&quot;: {
+    &quot;widgets&quot;: [
+      {
+        &quot;component&quot;: &quot;ChildrenCountDashboard&quot;
+      },
+      {
+        &quot;component&quot;: &quot;RecentNotesDashboard&quot;
+      },
+      {
+        &quot;component&quot;: &quot;NoRecentNotesDashboard&quot;,
+        &quot;config&quot;: {
+          &quot;sinceDays&quot;: 28,
+          &quot;fromBeginningOfWeek&quot;: false
+      }
+      },
+      ...</code></pre></div><h4>List components</h4>
+<p>List components showing data in a table (such as ChildrenList oder SchoolsList) usually have the four config objects <code>&quot;title&quot;</code>, <code>&quot;columns&quot;</code>, <code>&quot;columnGroup&quot;</code> (optional) and <code>&quot;filters&quot;</code> (optional).
+(These are implemented by the <a href="../../components/EntityListComponent.html">EntityListComponent</a>.)</p>
+<p>The <code>&quot;title&quot;</code> is the text shown in the heading of the component.</p>
+<p><code>&quot;columns&quot;</code> contains an array of the columns to be displayed.
+The configuration for the columns happens with the <a href="../../interfaces/FormFieldConfig.html">FormFieldConfiguration</a> interface.
+If all the information is available on the schema or through the datatype of a property, it is sufficient to put a string with the name of the property into the columns array.</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;view:child&quot;: {
+  &quot;component&quot;: &quot;ChildrenList&quot;,
+  &quot;config&quot;: {
+    &quot;title&quot;: &quot;Children List&quot;,
+    &quot;columns&quot;: [
+      &quot;projectNumber&quot;,
+      {
+        &quot;viewComponent&quot;: &quot;ChildBlock&quot;,
+        &quot;label&quot;: &quot;Name&quot;,
+        &quot;id&quot;: &quot;name&quot;
+      },
+        ...</code></pre></div><p>The <code>&quot;columnGroup&quot;</code> object holds the three properties <code>&quot;default&quot;</code>, <code>&quot;mobile&quot;</code> and <code>&quot;groups&quot;</code>.
+<code>&quot;default&quot;</code> and <code>&quot;mobile&quot;</code> hold the names of the group of columns being displayed by default or on a mobile device.
+If the <code>&quot;columnGroup&quot;</code> property is not defined, all columns will be displayed.
+If <code>&quot;default&quot;</code> or <code>&quot;mobile&quot;</code> is not defined, the first entry of <code>&quot;groups&quot;</code> will be used.
+<code>&quot;groups&quot;</code> consists of an array of groups of columns, where every entry has a <code>&quot;name&quot;</code> and an array of column ids within <code>&quot;columns&quot;</code>.
+Properties that are listed in any of the <code>groups</code> arrays and don&#39;t require further configurations, can be omitted from the <code>columns</code> array, the <code>EntityListComponent</code> will automatically add them.</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;columnGroup&quot;: {
+  &quot;default&quot;: &quot;School Info&quot;,
+  &quot;mobile&quot;: &quot;Mobile&quot;,
+  &quot;groups&quot;: [
+  {
+    &quot;name&quot;: &quot;Basic Info&quot;,
+    &quot;columns&quot;: [
+      &quot;projectNumber&quot;,
+      &quot;name&quot;,
+      ...
+      &quot;status&quot;
+    ]
+  },
+  {
+    &quot;name&quot;: &quot;School Info&quot;,
+    &quot;columns&quot;: [
+      &quot;projectNumber&quot;,
+      &quot;name&quot;,
+      ...
+    ]
+  },
+</code></pre></div><p>The object <code>&quot;filters&quot;</code> within the config of a list component can be used to create filter options for the list data.
+The type of filter will be automatically determined by the datatype of that property.
+The filters allow to filter the table by the possible values of a property.
+This will create a filter for boolean values with three buttons (<code>all</code>, <code>true</code>, <code>false</code>).
+The names of these buttons can be specified using the <code>&quot;true&quot;</code>, <code>&quot;false&quot;</code> and <code>&quot;all&quot;</code> option.
+The prebuilt option is used to enable or disable filters that contain more logic and are implemented inside the component which is displayed.
+This option requires the fields <code>&quot;type&quot;</code> and <code>&quot;id&quot;</code>, where <code>&quot;id&quot;</code> matched the <code>id</code> of a prebuilt filter inside a component.</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;filters&quot;: [
+  {
+    &quot;id&quot;: &quot;language&quot;
+  },
+  {
+    &quot;id&quot;: &quot;privateSchool&quot;,
+    &quot;default&quot;: &quot;all&quot;,
+    &quot;true&quot;: &quot;Private School&quot;,
+    &quot;false&quot;: &quot;Government School&quot;,
+    &quot;all&quot;: &quot;All&quot;
+  },
+  {
+    &quot;id&quot;: &quot;date&quot;,
+    &quot;type&quot;: &quot;prebuilt&quot;
+  },
+]</code></pre></div><h4>Detail components</h4>
+<p>Detail components can show data of a single entity presented in multiple sections and forms.
+(These are implemented by the <a href="../../modules/EntityDetailsModule.html">EntityDetailsModule</a>, in particular the <a href="../../components/EntityDetailsComponent.html">EntityDetailsComponent</a>.)</p>
+<p>You can find details on the config format and its sub-sections from API reference section: <a href="../../classes/EntityDetailsConfig.html">EntityDetailsConfig</a></p>
+<p>The detail component requires three attributes: <code>&quot;icon&quot;</code>, <code>&quot;entity&quot;</code> and <code>&quot;panels&quot;</code>.
+<code>&quot;icon&quot;</code> indicates a little icon that will be rendered on the top of the page.
+<code>&quot;entity&quot;</code> expects the name of an entity for which the details page should be created.
+This has to match exactly the name of the entity defined by the <code>@DatabaseEntity()</code> annotation.
+The entity will then be loaded using the entity name and the id which is read from the URL.
+The <code>&quot;panels&quot;</code> field expects an array of panel definitions.
+Each panel has a <code>&quot;title&quot;</code> and an array of <code>&quot;components&quot;</code>.
+The component configuration requires another <code>&quot;title&quot;</code>, the <code>&quot;component&quot;</code> that should be rendered (the component has to be defined here <a href="../../interfaces/OnInitDynamicComponent.html">OnInitDynamicComponent</a>) and a configuration (<code>&quot;config&quot;</code>) which is passed to this component.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">    &quot;config&quot;: {
+      &quot;icon&quot;: &quot;child&quot;,
+      &quot;entity&quot;: &quot;Child&quot;,
+      &quot;panels&quot;: [
+        {
+          &quot;title&quot;: &quot;Basic Information&quot;,
+          &quot;components&quot;: [
+            {
+              &quot;title&quot;: &quot;&quot;,
+              &quot;component&quot;: &quot;Form&quot;,
+              &quot;config&quot;: { }
+            }
+          ]
+        },
+        {
+          &quot;title&quot;: &quot;Education&quot;,
+          &quot;components&quot;: [
+            {
+              &quot;title&quot;: &quot;School History&quot;,
+              &quot;component&quot;: &quot;PreviousSchools&quot;
+            },
+            {
+              &quot;title&quot;: &quot;Literacy Test Results&quot;,
+              &quot;component&quot;: &quot;RelatedEntities&quot;,
+              &quot;config&quot;: {}
+            }
+          ]
+        }
+      ]
+    }</code></pre></div><h4>The Form Component</h4>
+<p>The form component is a flexible component that can be used inside the details component.
+It allows to dynamically create a form through configuration.
+The configuration for this component expects a single field, the <code>&quot;fieldGroups&quot;</code>.</p>
+<p>The fieldGroups should be an array of logically related fields and optionally a header displayed above the group of fields.
+Each field group is rendered next to each other (as columns).
+You can also define only a single field in each fieldGroups entry, to display them next to each other instead of one field taking up full width.
+The definitions for the fields is defined by the <a href="../../interfaces/FormFieldConfig.html">FormFieldConfiguration</a>
+However, the schema definitions of the entity should be sufficient so that only the names of the properties which should be editable in the form have to be provided.
+This means instead of placing an object in the <code>fields</code> array, simple strings do the same job.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">  &quot;config&quot;: {
+    &quot;fieldGroups&quot;: [
+      { &quot;fields&quot;: [&quot;photo&quot;] },
+      { &quot;fields&quot;: [&quot;name&quot;, &quot;projectNumber&quot;] }
+      {
+        &quot;fields&quot;: [&quot;dateOfBirth&quot;],
+        &quot;header&quot;: &quot;Demographics&quot;
+      }
+    ]
+  }</code></pre></div><h4>The PreviousSchools Component</h4>
+<p>This component shows a list of <code>ChildSchoolRelations</code> of a child in table.
+It can be configured which attributes of the <code>ChildSchoolRelation</code> are shown in the table and how the columns are named.
+Possible configurations are <code>single</code> and <code>columns</code> which are both optional.
+<code>single</code> is a boolean and if is set to <code>true</code> the component will show which (if any) school the child is currently attending.
+This should only be set to <code>true</code>, when the use-case only allows one active school per child.
+<code>columns</code> is an object and determines which columns of the <code>ChildSchoolRelation</code> are shown.
+The configuration is according to the <a href="../how-to-guides/entity-subrecord-component.md">EntitySubrecordComponent</a>;</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">  &quot;config&quot;: {
+    &quot;single&quot;: true,
+    &quot;columns&quot;: [
+      &quot;schoolId&quot;,
+      &quot;schoolClass&quot;,
+      &quot;start&quot;,
+      &quot;end&quot;,
+      &quot;result&quot;,
+    ],
+  }</code></pre></div><h3>Entity</h3>
+<p>The entity object within the config file can be used to extend and configure existing entities.
+The name of the entity to which this config refers comes after the colon in this case <code>&quot;child&quot;</code>.</p>
+<h4>Attributes</h4>
+<p>The attribute field allows to add attributes to an entity:
+Configure this as a key-value object with the property name as key and the schema as value, which refers to the entity <a href="entity-schema-system.md">schemas</a>.</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;entity:Child&quot;: {
+    &quot;attributes&quot;: {
+        &quot;address&quot;: { &quot;dataType&quot;: &quot;string&quot;, &quot;label&quot;: &quot;Address&quot; },
+        &quot;phone&quot;: { &quot;dataType&quot;: &quot;string&quot;, &quot;label&quot;: &quot;Phone number&quot; },
+        ...
+        &quot;health_lastDeworming&quot;: { &quot;dataType&quot;: &quot;Date&quot;, &quot;label&quot;: &quot;Last deworming&quot; }
+    }
+}
+</code></pre></div><h4>String representation</h4>
+<p>It is possible to overwrite, how an entity is converted to a string using the optional <code>toStringAttributes</code> key.
+This expects an array of strings referring to properties of that child which should be printed out.
+The order of these strings is also the order in which the property values are printed.</p>
+<p>E.g. while some projects use a <code>name</code> property on a child, others might use <code>firstname</code> and <code>lastname</code>.
+In this case they probably want to show both the first and the last name in the app.
+To achieve this, the configuration of the <code>Child</code> entity can be extended like this:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;entity:Child&quot;: {
+    &quot;toStringAttributes&quot;: [&quot;firstname&quot;, &quot;lastname&quot;],
+    &quot;attributes&quot;: {
+        &quot;firstname&quot;: { ... },
+        &quot;lastname&quot;: { ... },
+        ...
+    ]
+}
+</code></pre></div><h4>Icons and labels</h4>
+<p>For different organisations, entities might refer to different real life objects.
+In other words, it is not always suitable to call the entities <em>Child</em> or <em>School</em> and the icon might also be
+misleading.
+Therefore, the names and icons of entities can be changed through the config.
+This allows to change a text like <em>Participants with unhealthy BMI</em> to <em>Patients with unhealthy BMI</em>.
+To achieve this a <code>label</code> and <code>labelPlural</code> can be defined in the entity config.
+Additionally, the <code>icon</code> property allows to exchange the icon to another one from
+the <a href="https://fontawesome.com/search?o=r&m=free">FontAwesome Icon Library</a>.</p>
+<p>This also has to be adjusted when configuring in a different language.</p>
+<p>E.g.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;entity:Child&quot;: {
+  &quot;label&quot;: &quot;Patient&quot;,
+  &quot;labelPlural&quot;: &quot;Patients&quot;,
+  &quot;icon&quot;: &quot;bed&quot;,
+  ...
+}</code></pre></div><h3>Option Lists</h3>
+<p>Option lists or <code>ConfigurableEnumValue</code>s can provide a pre-set list of options for a field
+to allow users to easily select an option from a dropdown and ensure that users are not entering random, invalid values.</p>
+<p>Config entries for this purpose have a prefix <code>enum:</code> followed by an id you can freely define (e.g. <code>enum:project-status</code>).</p>
+<p>The value is an array of objects defining the options. Mandatory fields for each option are <code>&quot;id&quot;</code> and <code>&quot;label&quot;</code>.
+<code>&quot;id&quot;</code> should be written in uppercase letters without spaces (user underscore _ instead).
+The <code>&quot;id&quot;</code> should always stay the same as it is written to the database and identifies the value even if you rename the label shown to users.
+<code>&quot;label&quot;</code> holds the human-readable text for the dropdown entry or wherever the value is shown to the user.
+This text may be changed without any negative effect to data consistency and the change will instantly be visible in all saved entries of this type.</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;enum:project-status&quot;: [
+    {
+        &quot;id&quot;: &quot;ACTIVE&quot;,
+        &quot;label&quot;: &quot;active&quot;
+    },
+    {
+        &quot;id&quot;: &quot;COMPLETED&quot;,
+        &quot;label&quot;: &quot;completed the programme&quot;
+    },
+    {
+        &quot;id&quot;: &quot;DROPPED&quot;,
+        &quot;label&quot;: &quot;dropped out of the programme&quot;
+    }
+]</code></pre></div><h4>Defining configurable enum properties</h4>
+<p>In order to use such an &quot;enum&quot; in entity fields, you need to set the schema datatype and the form type in the according config objects:</p>
+<p>In the entity, set the dataType to &quot;configurable-enum&quot; and the &quot;additional&quot; to the id of the enum config:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;entity:Child&quot;: {
+  &quot;attritubtes&quot;: { &quot;status&quot;: { &quot;dataType&quot;: &quot;configurable-enum&quot;, &quot;additional&quot;: &quot;project-status&quot;  } }
+  ...</code></pre></div><h4>Display a configurable enum property in the list view</h4>
+<p>In the List View columns config, use the &quot;DisplayConfigurableEnum&quot; component for the field:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">&quot;columns&quot;: [
+  {
+    &quot;component&quot;: &quot;DisplayConfigurableEnum&quot;,
+    &quot;title&quot;: &quot;Status&quot;,
+    &quot;id&quot;: &quot;status&quot;
+  },
+  ...
+]</code></pre></div><h4>Allowing multi select</h4>
+<p>A property can also be defined in a way that multiple values can be selected.
+To allow multiple selection, additionally <code>isArray</code> should be <code>true</code>.
+The following example creates a property <code>materials</code> where multiple values from the <code>materials</code> configurable enum can be selected.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;name&quot;: &quot;materials&quot;,
+  &quot;schema&quot;: {
+    &quot;dataType&quot;: &quot;configurable-enum&quot;,
+    &quot;isArray&quot;: true,
+    &quot;additional&quot;: &quot;materials&quot;,
+    &quot;label&quot;: &quot;Materials&quot;
+  }
+}</code></pre></div><h4>Defining Note interaction types</h4>
+<p>There are a few specially built-in types of enums.
+The interaction types available for Notes are configured as the <code>enum:interaction-type</code>.</p>
+<p>In addition to <code>id</code> and <code>label</code> for the interaction types you can optionally also configure <code>&quot;color&quot;</code>and <code>&quot;isMeeting&quot;</code>.
+<code>&quot;color&quot;</code>can contain a background color for the entry in the form of the hexadecimal code, e.g. #E1F5FE.
+<code>&quot;isMeeting&quot;</code> is of the type boolean and tells whether the interaction type refers to a meeting or not.</p>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">&quot;enum:interaction-type&quot;: [
+    {
+        &quot;id&quot;: &quot;&quot;,
+        &quot;label&quot;: &quot;&quot;
+    },
+    {
+        &quot;id&quot;: &quot;HOME_VISIT&quot;,
+        &quot;label&quot;: &quot;Home Visit&quot;
+    },
+    {
+        &quot;id&quot;: &quot;ANNUAL_SURVEY&quot;,
+        &quot;label&quot;: &quot;Annual Survey&quot;,
+        &quot;color&quot;: &quot;#FFFDE7&quot;
+    },
+    {
+        &quot;id&quot;: &quot;RATION_DISTRIBUTION&quot;,
+        &quot;label&quot;: &quot;Ration Distribution&quot;,
+        &quot;color&quot;: &quot;#E1F5FE&quot;,
+        &quot;isMeeting&quot;: true
+    }
+}</code></pre></div><h4>Defining attendance status types</h4>
+<p>Another specially built-in type of enums is the attendance status options that can be tracked.
+These are configured as the <code>enum:attendance-type</code>.</p>
+<p>Apart from to <code>id</code> and <code>label</code> attendance status types have to also define a few additional properties:</p>
+<ul>
+<li><code>shortName</code>: a one letter representation to display to the user</li>
+<li><code>label</code>: a longer, human-readable name of the status</li>
+<li><code>style</code>: string defining a css class to style this attendance status (especially the background-color)</li>
+<li><code>countAs</code>: the logical type of this status for analysis, there are three categories for this: &quot;PRESENT&quot;, &quot;ABSENT&quot; and &quot;IGNORE&quot;</li>
+</ul>
+<p>Example:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">&quot;enum:attendance-status&quot;: [
+
+    {
+      &quot;id&quot;: &quot;PRESENT&quot;,
+      &quot;shortName&quot;: &quot;P&quot;,
+      &quot;label&quot;: &quot;Present&quot;,
+      &quot;style&quot;: &quot;attendance-P&quot;,
+      &quot;countAs&quot;: &quot;PRESENT&quot;
+    },
+    {
+      &quot;id&quot;: &quot;ABSENT&quot;,
+      &quot;shortName&quot;: &quot;A&quot;,
+      &quot;label&quot;: &quot;Absent&quot;,
+      &quot;style&quot;: &quot;attendance-A&quot;,
+      &quot;countAs&quot;: &quot;ABSENT&quot;
+    },
+    {
+      &quot;id&quot;: &quot;EXCUSED&quot;,
+      &quot;shortName&quot;: &quot;E&quot;,
+      &quot;label&quot;: &quot;Excused&quot;,
+      &quot;style&quot;: &quot;attendance-E&quot;,
+      &quot;countAs&quot;: &quot;IGNORE&quot;
+    }</code></pre></div>
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'configuration.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
