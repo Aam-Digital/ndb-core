@@ -15,9 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
+import { FirebaseNotificationService } from "../firebase-messaging-service.service";
 
 /**
  * Component as the main entry point for the app.
@@ -25,20 +26,25 @@ import { filter } from "rxjs/operators";
  */
 @Component({
   selector: "app-root",
-  template: `@if (configFullscreen) {
-      <router-outlet></router-outlet>
-    } @else {
-      <app-ui></app-ui>
-    }`,
+  templateUrl: "./app.component.html",
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   configFullscreen: boolean = false;
+  message: any = null;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private firebaseNotificationService: FirebaseNotificationService,
+  ) {
     this.detectConfigMode();
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.detectConfigMode());
+  }
+
+  ngOnInit(): void {
+    this.firebaseNotificationService.getFcmToken();
+    this.firebaseNotificationService.listenForMessages();
   }
 
   /**
