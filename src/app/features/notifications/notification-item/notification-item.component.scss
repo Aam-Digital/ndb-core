@@ -20,7 +20,7 @@
 }
 
 .notification-time {
-    color: gray;
+    color: colors.$inactive;
     font-size: 12px;
 }
 
@@ -33,13 +33,6 @@
     display: inline-block;
     margin-right: 8px;
     cursor: pointer;
-}
-
-.read-indicator {
-    width: 10px;
-    height: 10px;
-    border: 1px solid gray;
-    border-radius: 50%;
 }
 
 .menu-option {

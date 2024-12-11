@@ -16,19 +16,12 @@
     aria-label="Unread notification"
   ></span>
 
-  <!-- Empty circle for read notifications -->
-  <span
-    *ngIf="notification.readStatus"
-    class="read-indicator"
-    aria-label="Read notification"
-  ></span>
-
   <mat-menu #notificationMenu="matMenu">
-    <button mat-menu-item (click)="markAsRead()">
+    <button mat-menu-item (click)="markAsRead(); $event.stopPropagation();">
       <fa-icon icon="check"></fa-icon>
       <span class="menu-option">Mark as Read</span>
     </button>
-    <button mat-menu-item (click)="deleteNotification()">
+    <button mat-menu-item (click)="deleteNotification(); $event.stopPropagation();">
       <fa-icon icon="trash"></fa-icon>
       <span class="menu-option">Delete Notification</span>
     </button>

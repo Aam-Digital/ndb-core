@@ -6,7 +6,7 @@
   (menuOpened)="onNotificationBellClick()"
 >
   <span
-    [matBadge]="allNotifications.length > 0 ? allNotifications.length : null"
+    [matBadge]="hasUnreadNotificationCount > 0 ? hasUnreadNotificationCount : null"
     matBadgeColor="accent"
   >
     <fa-icon class="white" icon="bell"></fa-icon>
@@ -58,7 +58,7 @@
           *ngFor="let notification of allNotifications"
           [notification]="notification"
           [onMarkAsRead]="markAsRead"
-          [onDeleteNotification]="deleteNotification"
+          [onDeleteNotification]="deleteNotification.bind(this, notification)"
         ></app-notification-item>
       <div
         class="no-notification-message"
@@ -71,10 +71,10 @@
 
     <ng-container *ngIf="selectedTab === 1">
       <app-notification-item
-        *ngFor="let notification of allNotifications"
-        [notification]="notification"
+        *ngFor="let unreadNotification of unreadNotifications"
+        [notification]="unreadNotification"
         [onMarkAsRead]="markAsRead"
-        [onDeleteNotification]="deleteNotification"
+        [onDeleteNotification]="deleteNotification.bind(this, unreadNotification)"
       ></app-notification-item>
       <div
         class="no-notification-message"

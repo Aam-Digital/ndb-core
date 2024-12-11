@@ -130,7 +130,7 @@ export class NotificationsComponent implements OnInit {
     Logging.log("Notification marked as read");
   }
 
-  deleteNotification(notification: NotificationActivity): void {
+  deleteNotification(notification: NotificationActivity) {
     // Need to add/update this logic to delete the notification from the CouchDB
     this.allNotifications = this.allNotifications.filter(
       (n) => n !== notification,
