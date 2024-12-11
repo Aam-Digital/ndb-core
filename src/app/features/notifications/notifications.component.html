@@ -93,7 +93,7 @@
     <fa-icon icon="check"></fa-icon>
     <span class="menu-option">Mark all as read</span>
   </button>
-  <button mat-menu-item (click)="markAllUnread()">
+  <button mat-menu-item (click)="$event.stopPropagation()">
     <fa-icon icon="gear"></fa-icon>
     <span class="menu-option">Notification settings</span>
   </button>

@@ -56,11 +56,6 @@ export class NotificationsComponent implements OnInit {
     this.loadAndProcessNotifications();
   }
 
-  notificationClicked(notification) {
-    notification.isUnread = false;
-    Logging.log(notification.user + " clicked");
-  }
-
   onNotificationBellClick() {
     // this.firebaseNotificationService.sendNotification();
     Logging.log("notificationBellClicked");
@@ -114,16 +109,9 @@ export class NotificationsComponent implements OnInit {
     Logging.log("All notifications marked as read");
   }
 
-  markAllUnread(): void {
-    Logging.log("All notifications marked as unread");
-  }
-
-  markAsRead(notification): void {
+  markAsRead(notification: NotificationActivity): void {
     // Need to add/update this logic to mark as read the notification from the CouchDB
     notification.readStatus = true;
-    this.unreadNotifications = this.unreadNotifications.filter(
-      (n) => n !== notification,
-    );
     this.hasUnreadNotificationCount = this.countUnreadNotifications(
       this.allNotifications,
     );
