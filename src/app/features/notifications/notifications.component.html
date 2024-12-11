@@ -51,11 +51,15 @@
         <p class="notification-time">{{ notification.created.at }}</p>
       </div>
       <div class="no-notification-container">
-        <fa-icon *ngIf="notifications.length === 0" class="no-notification-icon" icon="bell"></fa-icon>
+        <fa-icon
+          *ngIf="notifications.length === 0"
+          class="no-notification-icon"
+          icon="bell"
+        ></fa-icon>
         <span *ngIf="notifications.length === 0" class="no-notification-text">
           You have no notifications
         </span>
-    </div>
+      </div>
     </ng-container>
   </div>
 </mat-menu>
