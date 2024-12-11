@@ -15,13 +15,13 @@
 
 <mat-menu #data>
   <div class="notification-panel">
-    <div class="flex-row justify-space-between align-center header">
+    <div class="flex-row justify-space-between align-center notification-panel-header">
       <h1 class="notification-title">Notifications</h1>
 
       <button
         mat-icon-button
         [matMenuTriggerFor]="settingsMenu"
-        (click)="$event.stopPropagation();"
+        (click)="$event.stopPropagation()"
         *ngIf="!showSettings"
         icon-button
       >
@@ -44,35 +44,42 @@
     </div>
 
     <!-- Tabs -->
-    <mat-tab-group [(selectedIndex)]="selectedTab" (click)="$event.stopPropagation()">
+    <mat-tab-group
+      [(selectedIndex)]="selectedTab"
+      (click)="$event.stopPropagation()"
+    >
       <mat-tab label="All"></mat-tab>
       <mat-tab label="Unread"></mat-tab>
     </mat-tab-group>
 
     <ng-container *ngIf="selectedTab === 0">
       <!-- All Notifications -->
-      <div class="notification-list-container">
-        <div *ngFor="let notification of allNotifications" class="notification-list">
-          <strong class="notification-item">{{ notification.title }}</strong>
-          <p class="notification-item">{{ notification.body }}</p>
-          <p class="notification-time">{{ notification.created.at }}</p>
-        </div>
-      </div>
-      <div class="no-notification-message" *ngIf="allNotifications.length === 0">
+        <app-notification-item
+          *ngFor="let notification of allNotifications"
+          [notification]="notification"
+          [onMarkAsRead]="markAsRead"
+          [onDeleteNotification]="deleteNotification"
+        ></app-notification-item>
+      <div
+        class="no-notification-message"
+        *ngIf="allNotifications.length === 0"
+      >
         <fa-icon class="no-notification-icon" icon="bell"></fa-icon>
         <span class="no-notification-text">You have no notifications</span>
       </div>
     </ng-container>
 
     <ng-container *ngIf="selectedTab === 1">
-      <div class="notification-list-container">
-        <div *ngFor="let notification of unreadNotifications" class="notification-list">
-          <strong class="notification-item">{{ notification.title }}</strong>
-          <p class="notification-item">{{ notification.body }}</p>
-          <p class="notification-time">{{ notification.created.at }}</p>
-        </div>
-      </div>
-      <div class="no-notification-message" *ngIf="hasUnreadNotificationCount === 0">
+      <app-notification-item
+        *ngFor="let notification of allNotifications"
+        [notification]="notification"
+        [onMarkAsRead]="markAsRead"
+        [onDeleteNotification]="deleteNotification"
+      ></app-notification-item>
+      <div
+        class="no-notification-message"
+        *ngIf="unreadNotifications.length === 0"
+      >
         <fa-icon class="no-notification-icon" icon="bell"></fa-icon>
         <span class="no-notification-text">You have no notifications</span>
       </div>
@@ -82,12 +89,12 @@
 
 <!-- New mat-menu for ellipsis -->
 <mat-menu #settingsMenu>
-  <button mat-menu-item (click)="markAllRead()"> 
+  <button mat-menu-item (click)="markAllRead()">
     <fa-icon icon="check"></fa-icon>
-    <span class="settings-menu-option">Mark all as read</span>
+    <span class="menu-option">Mark all as read</span>
   </button>
   <button mat-menu-item (click)="markAllUnread()">
     <fa-icon icon="gear"></fa-icon>
-    <span class="settings-menu-option">Notification settings</span>
+    <span class="menu-option">Notification settings</span>
   </button>
 </mat-menu>

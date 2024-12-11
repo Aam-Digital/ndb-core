@@ -7,26 +7,20 @@
 
 .notification-time {
   color: colors.$inactive;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .notification-list {
   padding: 0px 16px;
-  margin-bottom: 20px;
-}
-
-.notification-item {
-  font-size: 15px;
-  margin: 0px;
 }
 
 .no-notification-text {
   color: colors.$inactive;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
 }
 
-.header {
+.notification-panel-header {
   padding: 0px 10px;
 }
 
@@ -51,10 +45,6 @@
   color: colors.$inactive;
 }
 
-.settings-menu-option {
+.menu-option {
   margin-left: 12px;
-}
-
-.notification-list-container {
-  margin-top: 20px;
 }
