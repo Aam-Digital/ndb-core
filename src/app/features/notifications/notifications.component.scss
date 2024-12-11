@@ -1,5 +1,10 @@
 @use "variables/colors";
 
+.notification-title {
+  font-weight: 700;
+  margin: 0px;
+}
+
 .notification-time {
   color: colors.$inactive;
   font-size: 12px;
@@ -12,13 +17,17 @@
 
 .notification-item {
   font-size: 15px;
-  padding: 0px 16px;
   margin: 0px;
 }
 
+.no-notification-text {
+  color: colors.$inactive;
+  font-size: 15px;
+  font-weight: 700;
+}
+
 .header {
-  padding: 0px 16px;
-  margin-bottom: 20px;
+  padding: 0px 8px;
 }
 
 .notification-lists {
@@ -27,4 +36,17 @@
 
 .notification-toggle {
   padding: 12px 0px;
+}
+
+.no-notification-container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 24px;
+}
+
+.no-notification-icon {
+  font-size: 112px;
+  margin-bottom: 20px;
+  color: colors.$inactive;
 }

@@ -1,6 +1,6 @@
 <button
   mat-icon-button
-  matTooltip="Your Notification is active"
+  matTooltip="Notifications"
   i18n-matTooltip
   [matMenuTriggerFor]="data"
   (menuOpened)="onNotificationBellClick()"
@@ -16,7 +16,7 @@
 <mat-menu #data>
   <div class="notification-lists">
     <div class="flex-row justify-space-between align-center header">
-      <strong>Notifications</strong>
+      <h1 class="notification-title">Notifications</h1>
 
       <button
         mat-icon-button
@@ -26,7 +26,7 @@
         matTooltip="Update your notification status"
         i18n-matTooltip
       >
-        <fa-icon icon="cog"></fa-icon>
+        <fa-icon icon="ellipsis"></fa-icon>
       </button>
 
       <div
@@ -50,9 +50,12 @@
         <p class="notification-item">{{ notification.body }}</p>
         <p class="notification-time">{{ notification.created.at }}</p>
       </div>
-      <p *ngIf="notifications.length === 0" class="notification-item">
-        No new notifications
-      </p>
+      <div class="no-notification-container">
+        <fa-icon *ngIf="notifications.length === 0" class="no-notification-icon" icon="bell"></fa-icon>
+        <span *ngIf="notifications.length === 0" class="no-notification-text">
+          You have no notifications
+        </span>
+    </div>
     </ng-container>
   </div>
 </mat-menu>
