@@ -61,7 +61,7 @@
           [onDeleteNotification]="deleteNotification.bind(this, notification)"
         ></app-notification-item>
       <div
-        class="no-notification-message"
+        class="flex-column no-notification-message"
         *ngIf="allNotifications.length === 0"
       >
         <fa-icon class="no-notification-icon" icon="bell"></fa-icon>
@@ -77,7 +77,7 @@
         [onDeleteNotification]="deleteNotification.bind(this, unreadNotification)"
       ></app-notification-item>
       <div
-        class="no-notification-message"
+        class="flex-column no-notification-message"
         *ngIf="unreadNotifications.length === 0"
       >
         <fa-icon class="no-notification-icon" icon="bell"></fa-icon>
