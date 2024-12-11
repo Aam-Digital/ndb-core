@@ -120,7 +120,7 @@ export class NotificationsComponent implements OnInit {
   }
 
   markAsRead(notification): void {
-    // Need to update this logic, need to also mark as read the notification from the CouchDB
+    // Need to add/update this logic to mark as read the notification from the CouchDB
     notification.readStatus = true;
     this.unreadNotifications = this.unreadNotifications.filter(
       (n) => n !== notification,
@@ -132,7 +132,7 @@ export class NotificationsComponent implements OnInit {
   }
 
   deleteNotification(notification: NotificationActivity): void {
-    // Need to update this logic, need to also delete the notification from the CouchDB
+    // Need to add/update this logic to delete the notification from the CouchDB
     this.allNotifications = this.allNotifications.filter(
       (n) => n !== notification,
     );
