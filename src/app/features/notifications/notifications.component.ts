@@ -14,6 +14,7 @@ import { FirebaseNotificationService } from "../../../firebase-messaging-service
 import { Logging } from "app/core/logging/logging.service";
 import { NotificationActivity } from "./model/notifications-activity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { MatTabsModule } from "@angular/material/tabs";
 
 @Component({
   selector: "app-notifications",
@@ -30,15 +31,19 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
     MatSlideToggle,
     FormsModule,
     MatTooltipModule,
+    MatTabsModule,
   ],
   templateUrl: "./notifications.component.html",
   styleUrl: "./notifications.component.scss",
 })
 export class NotificationsComponent implements OnInit {
-  public notifications: NotificationActivity[] = [];
-  public notificationCount = 0;
+  public allNotifications: NotificationActivity[] = [];
+  public unreadNotifications: NotificationActivity[] = [];
+  public hasUnreadNotificationCount = 0;
   public isEnableNotification = false;
   public showSettings = false;
+  public selectedTab = 0;
+menuTrigger: MatMenuTrigger;
 
   constructor(
     private firebaseNotificationService: FirebaseNotificationService,
@@ -47,16 +52,6 @@ export class NotificationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAndProcessNotifications();
-  }
-
-  toggleNotifications(event: Event) {
-    event.stopPropagation();
-    this.isEnableNotification = !this.isEnableNotification;
-  }
-
-  toggleSettings(event: Event) {
-    event.stopPropagation();
-    this.showSettings = !this.showSettings;
   }
 
   notificationClicked(notification) {
@@ -74,16 +69,16 @@ export class NotificationsComponent implements OnInit {
    * Loads all notifications and processes them to update the list and unread count.
    */
   private async loadAndProcessNotifications(): Promise<void> {
-    const allNotifications =
+    const notifications =
       await this.entityMapper.loadType<NotificationActivity>(
         NotificationActivity,
       );
     // The user is hardcoded for testing purposes, need to remove this.
-    this.notifications = this.filterUserNotifications(
-      allNotifications,
+    this.filterUserNotifications(
+      notifications,
       "User:demo",
     );
-    this.notificationCount = this.countUnreadNotifications(this.notifications);
+    this.hasUnreadNotificationCount = this.countUnreadNotifications(this.allNotifications);
   }
 
   /**
@@ -94,8 +89,9 @@ export class NotificationsComponent implements OnInit {
   private filterUserNotifications(
     notifications: NotificationActivity[],
     user: string,
-  ): NotificationActivity[] {
-    return notifications.filter((notification) => notification.sentBy === user);
+  ) {
+    this.allNotifications = notifications.filter((notification) => notification.sentBy === user);
+    this.unreadNotifications = notifications.filter((notification) => (notification.sentBy === user && notification.readStatus === false));
   }
 
   /**
@@ -104,8 +100,15 @@ export class NotificationsComponent implements OnInit {
    */
   private countUnreadNotifications(
     notifications: NotificationActivity[],
-  ): number {
-    return notifications.filter((notification) => !notification.readStatus)
-      .length;
+  ) {
+    return notifications.filter((notification) => notification.readStatus === false).length;
+  }
+
+  markAllRead(): void {
+    Logging.log('All notifications marked as read');
+  }
+  
+  markAllUnread(): void {
+    Logging.log('All notifications marked as unread');
   }
 }

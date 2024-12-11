@@ -27,18 +27,18 @@
 }
 
 .header {
-  padding: 0px 8px;
+  padding: 0px 10px;
 }
 
-.notification-lists {
+.notification-panel {
   width: 280px;
 }
 
-.notification-toggle {
+.notification-toggle-button {
   padding: 12px 0px;
 }
 
-.no-notification-container {
+.no-notification-message {
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -49,4 +49,12 @@
   font-size: 112px;
   margin-bottom: 20px;
   color: colors.$inactive;
+}
+
+.settings-menu-option {
+  margin-left: 12px;
+}
+
+.notification-list-container {
+  margin-top: 20px;
 }
