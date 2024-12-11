@@ -1,0 +1,41 @@
+@use "variables/colors";
+
+.notification-item-wrapper {
+    padding: 8px 10px 0px;
+}
+
+.notification-details {
+    flex: 1;
+    text-align: left;
+    line-height: 21px;
+}
+
+.notification-item {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 0;
+}
+
+.notification-time {
+    color: colors.$inactive;
+    font-size: 12px;
+}
+
+.unread-indicator {
+    height: 12px;
+    width: 12px;
+    background-color: blue;
+    border-radius: 50%;
+    box-sizing: border-box;
+    display: inline-block;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.menu-option {
+    margin-left: 12px;
+}
+
+.read-notification {
+    color: colors.$inactive;
+}

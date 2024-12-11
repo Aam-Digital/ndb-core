@@ -14,6 +14,8 @@ import { FirebaseNotificationService } from "../../../firebase-messaging-service
 import { Logging } from "app/core/logging/logging.service";
 import { NotificationActivity } from "./model/notifications-activity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { MatTabsModule } from "@angular/material/tabs";
+import { NotificationItemComponent } from "./notification-item/notification-item.component";
 
 @Component({
   selector: "app-notifications",
@@ -30,15 +32,20 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
     MatSlideToggle,
     FormsModule,
     MatTooltipModule,
+    MatTabsModule,
+    NotificationItemComponent
   ],
   templateUrl: "./notifications.component.html",
   styleUrl: "./notifications.component.scss",
 })
 export class NotificationsComponent implements OnInit {
-  public notifications: NotificationActivity[] = [];
-  public notificationCount = 0;
+  public allNotifications: NotificationActivity[] = [];
+  public unreadNotifications: NotificationActivity[] = [];
+  public hasUnreadNotificationCount = 0;
   public isEnableNotification = false;
   public showSettings = false;
+  public selectedTab = 0;
+  menuTrigger: MatMenuTrigger;
 
   constructor(
     private firebaseNotificationService: FirebaseNotificationService,
@@ -47,21 +54,6 @@ export class NotificationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAndProcessNotifications();
-  }
-
-  toggleNotifications(event: Event) {
-    event.stopPropagation();
-    this.isEnableNotification = !this.isEnableNotification;
-  }
-
-  toggleSettings(event: Event) {
-    event.stopPropagation();
-    this.showSettings = !this.showSettings;
-  }
-
-  notificationClicked(notification) {
-    notification.isUnread = false;
-    console.log(notification.user + " clicked");
   }
 
   onNotificationBellClick() {
@@ -74,16 +66,15 @@ export class NotificationsComponent implements OnInit {
    * Loads all notifications and processes them to update the list and unread count.
    */
   private async loadAndProcessNotifications(): Promise<void> {
-    const allNotifications =
+    const notifications =
       await this.entityMapper.loadType<NotificationActivity>(
         NotificationActivity,
       );
     // The user is hardcoded for testing purposes, need to remove this.
-    this.notifications = this.filterUserNotifications(
-      allNotifications,
-      "User:demo",
+    this.filterUserNotifications(notifications, "User:demo");
+    this.hasUnreadNotificationCount = this.countUnreadNotifications(
+      this.allNotifications,
     );
-    this.notificationCount = this.countUnreadNotifications(this.notifications);
   }
 
   /**
@@ -94,18 +85,51 @@ export class NotificationsComponent implements OnInit {
   private filterUserNotifications(
     notifications: NotificationActivity[],
     user: string,
-  ): NotificationActivity[] {
-    return notifications.filter((notification) => notification.sentBy === user);
+  ) {
+    this.allNotifications = notifications.filter(
+      (notification) => notification.sentBy === user,
+    );
+    this.unreadNotifications = notifications.filter(
+      (notification) =>
+        notification.sentBy === user && notification.readStatus === false,
+    );
   }
 
   /**
    * Counts unread notifications from the list.
    * @param notifications - The list of notifications.
    */
-  private countUnreadNotifications(
-    notifications: NotificationActivity[],
-  ): number {
-    return notifications.filter((notification) => !notification.readStatus)
-      .length;
+  private countUnreadNotifications(notifications: NotificationActivity[]) {
+    return notifications.filter(
+      (notification) => notification.readStatus === false,
+    ).length;
+  }
+
+  markAllRead($event: Event) {
+    $event.stopPropagation();
+    Logging.log("All notifications marked as read");
+  }
+
+  markAsRead(notification: NotificationActivity): void {
+    // Need to add/update this logic to mark as read the notification from the CouchDB
+    notification.readStatus = true;
+    this.hasUnreadNotificationCount = this.countUnreadNotifications(
+      this.allNotifications,
+    );
+    Logging.log("Notification marked as read");
+  }
+
+  deleteNotification(notification: NotificationActivity) {
+    // Need to add/update this logic to delete the notification from the CouchDB
+    this.allNotifications = this.allNotifications.filter(
+      (n) => n !== notification,
+    );
+    this.unreadNotifications = this.unreadNotifications.filter(
+      (n) => n !== notification,
+    );
+    this.hasUnreadNotificationCount = this.countUnreadNotifications(
+      this.allNotifications,
+    );
+    Logging.log("Notification deleted");
   }
 }

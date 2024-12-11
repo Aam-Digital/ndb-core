@@ -1,0 +1,29 @@
+<div class="flex-row justify-space-between align-center notification-item-wrapper" [ngClass]="{ 'read-notification': notification.readStatus }">
+  <div class="notification-details">
+    <strong class="notification-item">{{ notification.title }}</strong>
+    <p class="notification-item">{{ notification.body }}</p>
+    <p class="notification-time">{{ notification.created.at }}</p>
+  </div>
+
+  <!-- Blue indicator for unread notifications -->
+  <span
+    *ngIf="!notification.readStatus"
+    class="unread-indicator"
+    matTooltip="Unread notification"
+    matBadgeColor="accent"
+    [matMenuTriggerFor]="notificationMenu"
+    (click)="$event.stopPropagation()"
+    aria-label="Unread notification"
+  ></span>
+
+  <mat-menu #notificationMenu="matMenu">
+    <button mat-menu-item (click)="markAsRead(); $event.stopPropagation();">
+      <fa-icon icon="check"></fa-icon>
+      <span class="menu-option">Mark as Read</span>
+    </button>
+    <button mat-menu-item (click)="deleteNotification(); $event.stopPropagation();">
+      <fa-icon icon="trash"></fa-icon>
+      <span class="menu-option">Delete Notification</span>
+    </button>
+  </mat-menu>
+</div>
