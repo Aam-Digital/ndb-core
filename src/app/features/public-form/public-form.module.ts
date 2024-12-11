@@ -37,7 +37,7 @@ const dynamicComponents: [string, AsyncComponent][] = [
     "EditPublicFormColumns",
     () =>
       import(
-        "app/features/public-form/edit-public-form-field/edit-public-form-field.component"
+        "app/features/public-form/edit-public-form-columns/edit-public-form-columns.component"
       ).then((c) => c.EditPublicFormColumnsComponent),
   ],
 ];
@@ -81,6 +81,7 @@ const viewConfigs: ViewConfig[] = [
                       "entity",
                       "description",
                       "logo",
+
                     ],
                   },
                 ],
@@ -100,9 +101,6 @@ const viewConfigs: ViewConfig[] = [
                       {
                         id: "columns",
                         editComponent: "EditPublicFormColumns",
-                        additional: {
-                          entity: PublicFormConfig.ENTITY_TYPE,
-                        },
                       },
                     ],
                   },

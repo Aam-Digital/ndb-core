@@ -27,6 +27,7 @@
         <app-admin-entity-form
           *ngIf="componentConfig.component === 'Form'; else otherComponent"
           [config]="componentConfig.config"
+          (configChange)="componentConfig.config = $event"
           [entityType]="entityConstructor"
         >
         </app-admin-entity-form>

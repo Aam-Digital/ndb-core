@@ -13,6 +13,7 @@ export class PublicFormConfig extends Entity {
   static override label = $localize`:PublicFormConfig:Public Form`;
   static override labelPlural = $localize`:PublicFormConfig:Public Forms`;
   static override route = "admin/public-form";
+  static override toStringAttributes = ["title"];
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Form Logo`,
