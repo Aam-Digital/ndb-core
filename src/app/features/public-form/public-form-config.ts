@@ -16,6 +16,14 @@ export class PublicFormConfig extends Entity {
   static override toStringAttributes = ["title"];
 
   @DatabaseField({
+    label: $localize`:PublicFormConfig:Form Logo`,
+    description: $localize`:PublicFormConfig:Add an image to be displayed at the top of the form`,
+    dataType: "file",
+    additional: 300,
+  })
+  logo: string;
+
+  @DatabaseField({
     label: $localize`:PublicFormConfig:Title`,
   })
   title: string;
