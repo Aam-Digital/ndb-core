@@ -1,4 +1,5 @@
-.disabled {
-    pointer-events: none;
-    opacity: 0.5;
+@use "variables/sizes";
+
+.public-form-detail-hint-banner{
+    margin-bottom: sizes.$regular;
 }

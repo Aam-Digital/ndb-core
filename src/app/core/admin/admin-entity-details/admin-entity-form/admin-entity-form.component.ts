@@ -86,9 +86,9 @@ export class AdminEntityFormComponent implements OnChanges {
   @Output() configChange = new EventEmitter<FormConfig>();
 
   /**
-   * Whether the Drag action is readonly, not allowing the user to drag things.
+   * Whether the UI is readonly, not allowing the user to drag or edit things.
    */
-  @Input() isDragDisabled: boolean = false;
+  @Input() isDisabled: boolean = false;
 
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
