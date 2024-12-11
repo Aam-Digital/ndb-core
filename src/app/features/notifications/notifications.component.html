@@ -89,9 +89,9 @@
 
 <!-- New mat-menu for ellipsis -->
 <mat-menu #settingsMenu>
-  <button mat-menu-item (click)="markAllRead()">
-    <fa-icon icon="check"></fa-icon>
-    <span class="menu-option">Mark all as read</span>
+  <button mat-menu-item (click)="markAllRead($event)">
+    <fa-icon icon="bell"></fa-icon>
+    <span class="menu-option">Mark as notification active</span>
   </button>
   <button mat-menu-item (click)="$event.stopPropagation()">
     <fa-icon icon="gear"></fa-icon>
