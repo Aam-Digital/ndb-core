@@ -58,7 +58,7 @@ export class NotificationsComponent implements OnInit {
 
   notificationClicked(notification) {
     notification.isUnread = false;
-    console.log(notification.user + " clicked");
+    Logging.log(notification.user + " clicked");
   }
 
   onNotificationBellClick() {
@@ -77,7 +77,6 @@ export class NotificationsComponent implements OnInit {
       );
     // The user is hardcoded for testing purposes, need to remove this.
     this.filterUserNotifications(notifications, "User:demo");
-    console.log(notifications, "==>notifications");
     this.hasUnreadNotificationCount = this.countUnreadNotifications(
       this.allNotifications,
     );
