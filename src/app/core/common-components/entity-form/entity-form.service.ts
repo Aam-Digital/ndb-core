@@ -267,6 +267,7 @@ export class EntityFormService {
       if (value !== null) {
         updatedEntity[key] = value;
       } else {
+        // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
         delete updatedEntity[key];
       }
     }
