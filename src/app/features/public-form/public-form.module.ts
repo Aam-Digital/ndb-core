@@ -80,6 +80,7 @@ const viewConfigs: ViewConfig[] = [
                       },
                       "entity",
                       "description",
+                      "logo",
                     ],
                   },
                 ],
