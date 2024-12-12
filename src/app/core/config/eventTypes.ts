@@ -1,4 +1,5 @@
 // Event Types Configuration
+// TODO: Need to make the changes on this event types configuration according to the logic implementation
 
 export interface EventType {
   id: string;
