@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { NgIf, CommonModule } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -9,10 +9,10 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTabsModule } from "@angular/material/tabs";
-import { NotificationActivity } from '../model/notifications-activity';
+import { NotificationActivity } from "../model/notifications-activity";
 
 @Component({
-  selector: 'app-notification-item',
+  selector: "app-notification-item",
   standalone: true,
   imports: [
     MatBadgeModule,
@@ -27,8 +27,8 @@ import { NotificationActivity } from '../model/notifications-activity';
     MatTabsModule,
     CommonModule,
   ],
-  templateUrl: './notification-item.component.html',
-  styleUrl: './notification-item.component.scss'
+  templateUrl: "./notification-item.component.html",
+  styleUrl: "./notification-item.component.scss",
 })
 export class NotificationItemComponent {
   @Input() notification: NotificationActivity;

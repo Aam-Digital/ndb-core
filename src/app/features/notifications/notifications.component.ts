@@ -33,7 +33,7 @@ import { NotificationItemComponent } from "./notification-item/notification-item
     FormsModule,
     MatTooltipModule,
     MatTabsModule,
-    NotificationItemComponent
+    NotificationItemComponent,
   ],
   templateUrl: "./notifications.component.html",
   styleUrl: "./notifications.component.scss",

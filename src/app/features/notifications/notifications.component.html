@@ -6,7 +6,9 @@
   (menuOpened)="onNotificationBellClick()"
 >
   <span
-    [matBadge]="hasUnreadNotificationCount > 0 ? hasUnreadNotificationCount : null"
+    [matBadge]="
+      hasUnreadNotificationCount > 0 ? hasUnreadNotificationCount : null
+    "
     matBadgeColor="accent"
   >
     <fa-icon class="white" icon="bell"></fa-icon>
@@ -15,7 +17,9 @@
 
 <mat-menu #data>
   <div class="notification-panel">
-    <div class="flex-row justify-space-between align-center notification-panel-header">
+    <div
+      class="flex-row justify-space-between align-center notification-panel-header"
+    >
       <h1 class="notification-title">Notifications</h1>
 
       <button
@@ -54,12 +58,12 @@
 
     <ng-container *ngIf="selectedTab === 0">
       <!-- All Notifications -->
-        <app-notification-item
-          *ngFor="let notification of allNotifications"
-          [notification]="notification"
-          [onMarkAsRead]="markAsRead"
-          [onDeleteNotification]="deleteNotification.bind(this, notification)"
-        ></app-notification-item>
+      <app-notification-item
+        *ngFor="let notification of allNotifications"
+        [notification]="notification"
+        [onMarkAsRead]="markAsRead"
+        [onDeleteNotification]="deleteNotification.bind(this, notification)"
+      ></app-notification-item>
       <div
         class="flex-column no-notification-message"
         *ngIf="allNotifications.length === 0"
@@ -74,7 +78,9 @@
         *ngFor="let unreadNotification of unreadNotifications"
         [notification]="unreadNotification"
         [onMarkAsRead]="markAsRead"
-        [onDeleteNotification]="deleteNotification.bind(this, unreadNotification)"
+        [onDeleteNotification]="
+          deleteNotification.bind(this, unreadNotification)
+        "
       ></app-notification-item>
       <div
         class="flex-column no-notification-message"
