@@ -30,8 +30,12 @@ import { eventTypes, EventType } from "app/core/config/eventTypes";
 export class UserNotificationSettingComponent {
   eventTypes: EventType[] = eventTypes;
 
-  onOptionToggle(eventTypeId: string, option: string) {
+  onEventOptionToggle(eventTypeId: string, option: string) {
     // TODO: Implement your logic to handle option toggle
     Logging.log(`Toggled option: ${option} for event type: ${eventTypeId}`);
+  }
+
+  onEnableNotification() {
+    // TODO: Implement your logic to handle browser toggle
   }
 }

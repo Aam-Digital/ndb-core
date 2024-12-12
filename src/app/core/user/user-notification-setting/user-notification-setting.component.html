@@ -23,13 +23,13 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
           <div class="mat-expansion-panel-body">
-            <strong>{{ eventType.description }}</strong>
+            <strong>Where you receive these notifications</strong>
             <div class="event-type-options">
                 <ng-container *ngFor="let option of eventType.options">
                 <div class="flex-row align-center event-type-option">
                     <span>{{ option }}</span>
                     <mat-slide-toggle
-                    (change)="onOptionToggle(eventType.id, option)"
+                    (change)="onEventOptionToggle(eventType.id, option)"
                     class="notification-toggle"
                     />
                 </div>
@@ -50,8 +50,8 @@
         <p class="notification-toggle">Browser</p>
       </div>
       <div class="flex-row justify-space-between browser-notification-list mat-expansion-panel-body">
-        <span>Chrome push notifications</span>
-        <mat-slide-toggle />
+        <span>Push notifications</span>
+        <mat-slide-toggle (change)="onEnableNotification()" />
       </div>
     </div>
   </div>
