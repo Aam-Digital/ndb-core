@@ -1,0 +1,48 @@
+.notifications-setting-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.notifications-container {
+  padding: 16px;
+}
+
+.notification-types-container {
+  margin-top: 16px;
+}
+
+.browser-notifications-container {
+  margin-top: 32px;
+}
+
+.notification-setting-title {
+  margin-bottom: 10px;
+}
+
+.notification-types {
+  margin-bottom: 20px;
+}
+
+.receive-notifications-container {
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 16px;
+  background-color: white;
+}
+
+.browser-notification-list {
+  margin-top: 16px;
+}
+
+.notification-toggle {
+  margin-left: 10px;
+}
+
+.event-type-options {
+  margin-top: 20px;
+}
+
+.event-type-option {
+  margin-bottom: 10px;
+}

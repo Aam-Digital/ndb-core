@@ -1,0 +1,55 @@
+<div class="notifications-container">
+  <h1 class="notification-setting-title">
+    <strong>Notifications settings</strong>
+  </h1>
+  <p>
+    Aam Digital may still send you important notifications about your account
+    and content outside of your preferred notification settings.
+  </p>
+  <div class="notification-types-container">
+    <h3><strong>What notifications you receive</strong></h3>
+
+    <!-- Dynamically Render Notification Types -->
+    <ng-container *ngFor="let eventType of eventTypes">
+      <div class="notification-types">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ eventType.name }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ eventType.options.join(", ") }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <strong>{{ eventType.description }}</strong>
+          <div class="event-type-options">
+            <ng-container *ngFor="let option of eventType.options">
+              <div class="flex-row align-center event-type-option">
+                <span>{{ option }}</span>
+                <mat-slide-toggle
+                  (change)="onOptionToggle(eventType.id, option)"
+                  class="notification-toggle"
+                />
+              </div>
+            </ng-container>
+          </div>
+        </mat-expansion-panel>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Browser Notifications -->
+  <div class="browser-notifications-container">
+    <h3><strong>Where you receive notifications</strong></h3>
+    <div class="receive-notifications-container">
+      <div class="flex-row">
+        <fa-icon icon="window-maximize"></fa-icon>
+        <p class="notification-toggle">Browser</p>
+      </div>
+      <div class="flex-row justify-space-between browser-notification-list">
+        <span>Chrome push notifications</span>
+        <mat-slide-toggle />
+      </div>
+    </div>
+  </div>
+</div>

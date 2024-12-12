@@ -28,16 +28,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { SessionSubject } from "../../session/auth/session-info";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
-import {
-  MatExpansionPanel,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-} from "@angular/material/expansion";
-import { eventTypes, EventType } from "app/core/config/eventTypes";
-import { NgFor } from "@angular/common";
-import { Logging } from "app/core/logging/logging.service";
+import { UserNotificationSettingComponent } from "../user-notification-setting/user-notification-setting.component";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -56,19 +47,13 @@ import { Logging } from "app/core/logging/logging.service";
     AsyncPipe,
     EntityBlockComponent,
     NgIf,
-    MatSlideToggle,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
-    NgFor,
+    UserNotificationSettingComponent,
   ],
   standalone: true,
 })
 export class UserAccountComponent implements OnInit {
   passwordChangeDisabled = false;
   tooltipText: string;
-  eventTypes: EventType[] = eventTypes;
 
   constructor(
     protected currentUser: CurrentUserSubject,
@@ -89,10 +74,5 @@ export class UserAccountComponent implements OnInit {
     } else if (!navigator.onLine) {
       this.tooltipText = $localize`:Password reset disabled tooltip:Password change is not possible while being offline.`;
     }
-  }
-
-  onOptionToggle(eventTypeId: string, option: string) {
-    // TODO: Implement your logic to handle option toggle
-    Logging.log(`Toggled option: ${option} for event type: ${eventTypeId}`);
   }
 }

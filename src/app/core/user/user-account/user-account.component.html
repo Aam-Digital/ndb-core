@@ -48,51 +48,6 @@
     i18n-label="Notifications settings label"
     label="Notifications settings"
   >
-    <div class="notifications-container">
-      <h1 class="notification-setting-title">
-        <strong>Notifications settings</strong>
-      </h1>
-      <p>
-        Aam Digital may still send you important notifications about your
-        account and content outside of your preferred notification settings.
-      </p>
-      <div class="notification-types-container">
-        <h3><strong>What notifications you receive</strong></h3>
-
-        <!-- Dynamically Render Notification Types -->
-        <ng-container *ngFor="let eventType of eventTypes">
-          <div class="notification-types">
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  {{ eventType.name }}
-                </mat-panel-title>
-                <mat-panel-description>
-                  {{ eventType.options.join(", ") }}
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              <p>{{ eventType.description }}</p>
-              <div>
-                <mat-slide-toggle
-                  *ngFor="let option of eventType.options"
-                  (change)="onOptionToggle(eventType.id, option)"
-                >
-                  {{ option }}
-                </mat-slide-toggle>
-              </div>
-            </mat-expansion-panel>
-          </div>
-        </ng-container>
-      </div>
-
-      <!-- Browser Notifications -->
-      <div class="browser-notifications">
-        <h3>Where you receive notifications</h3>
-        <div>
-          <p>Browser</p>
-          <mat-slide-toggle>Chrome push notifications</mat-slide-toggle>
-        </div>
-      </div>
-    </div>
+    <app-user-notification-setting />
   </mat-tab>
 </mat-tab-group>

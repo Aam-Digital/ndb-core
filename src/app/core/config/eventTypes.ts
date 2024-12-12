@@ -1,3 +1,5 @@
+// Event Types Configuration
+
 export interface EventType {
   id: string;
   name: string;
@@ -9,21 +11,21 @@ export interface EventType {
 export const eventTypes: EventType[] = [
   {
     id: "student",
-    name: "Student Notifications",
+    name: "Student",
     description: "Get notified about updates on students.",
     options: ["Push", "Email"],
     conditions: [],
   },
   {
     id: "school",
-    name: "School Notifications",
+    name: "School",
     description: "Get updates about school events or changes.",
     options: ["Push", "Email"],
     conditions: [],
   },
   {
     id: "attendance",
-    name: "Attendance Notifications",
+    name: "Attendance",
     description: "Stay informed about attendance updates.",
     options: ["Push", "Email"],
     conditions: [],
