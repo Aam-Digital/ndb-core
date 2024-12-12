@@ -15,23 +15,26 @@
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
-              {{ eventType.name }}
+                <fa-icon [icon]="eventType.icon" *ngIf="eventType.icon"></fa-icon>
+                <span class="event-type-name">{{ eventType.name }}</span>
             </mat-panel-title>
             <mat-panel-description>
               {{ eventType.options.join(", ") }}
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <strong>{{ eventType.description }}</strong>
-          <div class="event-type-options">
-            <ng-container *ngFor="let option of eventType.options">
-              <div class="flex-row align-center event-type-option">
-                <span>{{ option }}</span>
-                <mat-slide-toggle
-                  (change)="onOptionToggle(eventType.id, option)"
-                  class="notification-toggle"
-                />
-              </div>
-            </ng-container>
+          <div class="mat-expansion-panel-body">
+            <strong>{{ eventType.description }}</strong>
+            <div class="event-type-options">
+                <ng-container *ngFor="let option of eventType.options">
+                <div class="flex-row align-center event-type-option">
+                    <span>{{ option }}</span>
+                    <mat-slide-toggle
+                    (change)="onOptionToggle(eventType.id, option)"
+                    class="notification-toggle"
+                    />
+                </div>
+                </ng-container>
+            </div>
           </div>
         </mat-expansion-panel>
       </div>
@@ -46,7 +49,7 @@
         <fa-icon icon="window-maximize"></fa-icon>
         <p class="notification-toggle">Browser</p>
       </div>
-      <div class="flex-row justify-space-between browser-notification-list">
+      <div class="flex-row justify-space-between browser-notification-list mat-expansion-panel-body">
         <span>Chrome push notifications</span>
         <mat-slide-toggle />
       </div>
