@@ -16,6 +16,7 @@ import { NotificationActivity } from "./model/notifications-activity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-notifications",
@@ -49,7 +50,7 @@ export class NotificationsComponent implements OnInit {
 
   constructor(
     private firebaseNotificationService: FirebaseNotificationService,
-    private entityMapper: EntityMapperService,
+    private entityMapper: EntityMapperService, private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -131,5 +132,10 @@ export class NotificationsComponent implements OnInit {
       this.allNotifications,
     );
     Logging.log("Notification deleted");
+  }
+
+  onRedirectToNotificationsSetting(event: Event) {
+    event.stopPropagation();
+    this.router.navigate(['/user-account'], { queryParams: { tabIndex: 1 } });
   }
 }
