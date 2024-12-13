@@ -43,9 +43,7 @@ export class NotificationsComponent implements OnInit {
   public unreadNotifications: NotificationActivity[] = [];
   public hasUnreadNotificationCount = 0;
   public isEnableNotification = false;
-  public showSettings = false;
   public selectedTab = 0;
-  menuTrigger: MatMenuTrigger;
 
   constructor(
     private firebaseNotificationService: FirebaseNotificationService,
@@ -59,7 +57,6 @@ export class NotificationsComponent implements OnInit {
   onNotificationBellClick() {
     // this.firebaseNotificationService.sendNotification();
     Logging.log("notificationBellClicked");
-    this.showSettings = false;
   }
 
   /**
