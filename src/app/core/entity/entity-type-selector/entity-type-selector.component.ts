@@ -20,6 +20,7 @@ export class EntityTypeSelectorComponent implements OnInit {
   entityTypes: EntityConstructor[];
   optionToLabel = (option: EntityConstructor) => option.label;
   optionToId = (option: EntityConstructor) => option.ENTITY_TYPE;
+  placeholder = "Select an entity type";
 
   constructor(private entityRegistry: EntityRegistry) {}
 
