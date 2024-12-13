@@ -12,6 +12,7 @@ import { MatProgressBar } from "@angular/material/progress-bar";
 import {
   ExternalProfileSearchParams,
   SkillApiService,
+  UserProfileResponseDto,
 } from "../../skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
@@ -23,7 +24,6 @@ import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { MatFormField, MatSuffix } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { map } from "rxjs/operators";
 
 /**
  * The data passed to the MatDialog opening LinkExternalProfileDialogComponent.
@@ -78,6 +78,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
 
   loading: boolean;
 
+  searchResult: UserProfileResponseDto;
   possibleMatches: (ExternalProfile & { _tooltip?: string })[];
   selected: ExternalProfile;
   error: { message?: string } & any;
@@ -102,36 +103,60 @@ export class LinkExternalProfileDialogComponent implements OnInit {
   }
 
   async searchMatches() {
-    this.loading = true;
-    this.error = undefined;
     this.selected = undefined;
-    this.possibleMatches = [];
+    this.possibleMatches = undefined;
 
-    try {
-      this.possibleMatches = (
-        await firstValueFrom(
-          this.skillApiService
-            .getExternalProfiles(this.searchParams)
-            .pipe(map((profiles) => profiles.results)),
-        )
-      ).map((profile) => addTooltip(profile));
-    } catch (e) {
-      Logging.warn("SkillModule: Failed to load external profiles", e);
-      this.error = e;
+    this.possibleMatches = await this.loadResults();
+    if (!this.possibleMatches) {
       return;
-    } finally {
-      this.loading = false;
     }
 
     if (this.possibleMatches.length === 1) {
       this.selected = this.possibleMatches[0];
-      // TODO: automatically return if exactly one result?
     }
     if (this.possibleMatches.length === 0) {
       this.error = {
         message: $localize`:external profile matching dialog:No matching external profiles found`,
       };
     }
+  }
+
+  async loadResults(page?: number): Promise<ExternalProfile[]> {
+    this.loading = true;
+    this.error = undefined;
+
+    try {
+      this.searchResult = await firstValueFrom(
+        this.skillApiService.getExternalProfiles(this.searchParams, page),
+      );
+    } catch (e) {
+      Logging.warn("SkillModule: Failed to load external profiles", e);
+
+      if (e.status === 403) {
+        this.error = {
+          message: $localize`:external profile matching dialog:You do not have permission to access external profiles.`,
+        };
+        return;
+      }
+
+      this.error = e;
+      return;
+    } finally {
+      this.loading = false;
+    }
+
+    if (!this.searchResult?.results) {
+      return;
+    }
+
+    return this.searchResult.results.map((profile) => addTooltip(profile));
+  }
+
+  async loadNextPage() {
+    const newResults = await this.loadResults(
+      this.searchResult.pagination.currentPage + 1,
+    );
+    this.possibleMatches = [...this.possibleMatches, ...newResults];
   }
 }
 

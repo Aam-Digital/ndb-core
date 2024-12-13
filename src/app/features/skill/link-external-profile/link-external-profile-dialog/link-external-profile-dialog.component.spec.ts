@@ -106,7 +106,7 @@ describe("LinkExternalProfileDialogComponent", () => {
 
     expect(component.error).toEqual(mockError);
     expect(component.loading).toBeFalse();
-    expect(component.possibleMatches).toEqual([]);
+    expect(component.possibleMatches).toBeUndefined();
   }));
 
   it("should show 'no results' error if API returns empty", fakeAsync(() => {
@@ -153,5 +153,48 @@ describe("LinkExternalProfileDialogComponent", () => {
       jasmine.objectContaining(mockResult),
     ]);
     expect(component.selected).toEqual(jasmine.objectContaining(mockResult));
+  }));
+
+  it("should add more results when loading next page", fakeAsync(() => {
+    const mockResult1: ExternalProfile = {
+      id: "1",
+      fullName: "match 1",
+    } as any;
+    const mockResult2: ExternalProfile = {
+      id: "2",
+      fullName: "match 2",
+    } as any;
+    mockSkillApi.getExternalProfiles.and.returnValues(
+      of({
+        pagination: {
+          currentPage: 1,
+          pageSize: 1,
+          totalPages: 2,
+          totalElements: 2,
+        },
+        results: [mockResult1],
+      }),
+      of({
+        pagination: {
+          currentPage: 2,
+          pageSize: 1,
+          totalPages: 2,
+          totalElements: 2,
+        },
+        results: [mockResult2],
+      }),
+    );
+
+    component.searchMatches();
+    tick();
+    expect(component.searchResult.pagination.currentPage).toBe(1);
+    expect(component.searchResult.pagination.totalPages).toBe(2);
+
+    component.loadNextPage();
+    tick();
+    expect(component.possibleMatches).toEqual([
+      jasmine.objectContaining(mockResult1),
+      jasmine.objectContaining(mockResult2),
+    ]);
   }));
 });

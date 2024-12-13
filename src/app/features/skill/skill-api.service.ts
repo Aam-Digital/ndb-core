@@ -22,13 +22,22 @@ export class SkillApiService {
    * from the API with the given search parameters.
    *
    * @param searchParams
+   * @param page The pagination page (optional)
    */
   getExternalProfiles(
     searchParams: ExternalProfileSearchParams,
+    page?: number,
   ): Observable<UserProfileResponseDto> {
+    const params = {
+      ...searchParams,
+    };
+    if (page) {
+      params["page"] = page;
+    }
+
     return this.http
       .get<UserProfileResponseDto>("/api/v1/skill/user-profile", {
-        params: { ...searchParams },
+        params,
       })
       .pipe(
         retryOnServerError(2),

@@ -73,10 +73,7 @@
     </div>
   </div>
 
-  @if (loading) {
-    <p i18n>Searching possibly matching profiles ...</p>
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  } @else if (error) {
+  @if (error) {
     @if (error.message) {
       <p>
         {{ error.message }}
@@ -86,7 +83,9 @@
         There was an error loading external profiles. Please try again later.
       </p>
     }
-  } @else {
+  }
+
+  @if (possibleMatches) {
     <h2 i18n>Possible Matching Profiles:</h2>
     <p i18n>
       Please select one of the results below and confirm the linking or adjust
@@ -100,6 +99,20 @@
         </mat-radio-button>
       }
     </mat-radio-group>
+  }
+
+  @if (loading) {
+    <div class="margin-top-regular margin-bottom-regular">
+      <p i18n>Searching possibly matching profiles ...</p>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  }
+  @if (
+    searchResult?.pagination?.totalPages > searchResult?.pagination?.currentPage
+  ) {
+    <button mat-stroked-button (click)="loadNextPage()" i18n>
+      Load more results
+    </button>
   }
 </mat-dialog-content>
 

@@ -8,9 +8,9 @@ export const mockSkillApi = {
     of({
       pagination: {
         currentPage: 1,
-        pageSize: 10,
-        totalPages: 1,
-        totalElements: 2,
+        pageSize: 5,
+        totalPages: 2,
+        totalElements: 6,
       },
       results: [createSkillApiDummyData("1"), createSkillApiDummyData("2")],
     }).pipe(delay(faker.number.int({ min: 500, max: 1500 }))),
