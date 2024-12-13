@@ -16,7 +16,7 @@
     </div>
 
     <div>
-      @if (records?.data) {
+      @if (records?.data?.length > 0) {
         Matched records: {{ matchedRecordsCount }} /
         {{ records.data.length }} ({{
           matchedRecordsCount / records.data.length | percent: "1.0-0"
@@ -66,7 +66,10 @@
     <td mat-cell *matCellDef="let element">
       <button mat-stroked-button (click)="editMatch(element)">
         @if (!element.possibleMatches) {
-          <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+          <mat-progress-bar
+            style="min-width: 40px"
+            mode="indeterminate"
+          ></mat-progress-bar>
         } @else if (!element.selected) {
           <span i18n>Select external profile</span>
         } @else {

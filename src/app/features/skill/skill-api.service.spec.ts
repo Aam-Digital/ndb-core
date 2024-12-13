@@ -33,6 +33,7 @@ describe("SkillApiService", () => {
 
     TestBed.configureTestingModule({
       providers: [
+        SkillApiService,
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: EntityMapperService, useValue: mockEntityMapper() },

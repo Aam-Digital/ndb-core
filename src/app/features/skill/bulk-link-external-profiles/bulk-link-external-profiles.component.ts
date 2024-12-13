@@ -32,7 +32,6 @@ import {
   LinkExternalProfileDialogComponent,
   LinkExternalProfileDialogData,
 } from "../link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component";
-import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { EntitySchema } from "../../../core/entity/schema/entity-schema";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Logging } from "../../../core/logging/logging.service";
@@ -42,6 +41,7 @@ import { map, tap } from "rxjs/operators";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { PercentPipe } from "@angular/common";
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
   selector: "app-bulk-link-external-profiles",
@@ -63,19 +63,18 @@ import { PercentPipe } from "@angular/common";
     MatRow,
     MatRowDef,
     MatSortModule,
-    MatProgressSpinner,
     FaIconComponent,
     MatTooltip,
     PercentPipe,
+    MatProgressBar,
   ],
   templateUrl: "./bulk-link-external-profiles.component.html",
   styleUrl: "./bulk-link-external-profiles.component.scss",
 })
 export class BulkLinkExternalProfilesComponent implements OnChanges {
-  private readonly skillApi: SkillApiService = inject(SkillApiService);
-  private readonly dialog: MatDialog = inject(MatDialog);
-  private readonly entityMapper: EntityMapperService =
-    inject(EntityMapperService);
+  private readonly skillApi = inject(SkillApiService);
+  private readonly dialog = inject(MatDialog);
+  private readonly entityMapper = inject(EntityMapperService);
 
   /**
    * The bulk-selected entities for which to search external profiles.

@@ -12,9 +12,7 @@ import { retryOnServerError } from "../../utils/retry-on-server-errror.rxjs-pipe
  * Interaction with Aam Digital backend providing access to external profiles
  * for skills integration.
  */
-@Injectable({
-  providedIn: "root",
-})
+@Injectable()
 export class SkillApiService {
   private readonly http = inject(HttpClient);
   private readonly escoApi = inject(EscoApiService);

@@ -1,9 +1,10 @@
-import { delay, of } from "rxjs";
+import { delay, Observable, of } from "rxjs";
 import { ExternalProfile } from "./external-profile";
 import { faker } from "@faker-js/faker";
+import { UserProfileResponseDto } from "./skill-api.service";
 
 export const mockSkillApi = {
-  getExternalProfiles: () =>
+  getExternalProfiles: (): Observable<UserProfileResponseDto> =>
     of({
       pagination: {
         currentPage: 1,
@@ -12,14 +13,7 @@ export const mockSkillApi = {
         totalElements: 2,
       },
       results: [createSkillApiDummyData("1"), createSkillApiDummyData("2")],
-    }).pipe(delay(faker.number.int({ min: 100, max: 900 }))),
-
-  getExternalProfilesForEntity: () =>
-    of(
-      faker.helpers.multiple(() => createSkillApiDummyData(""), {
-        count: { min: 0, max: 3 },
-      }),
-    ).pipe(delay(faker.number.int({ min: 100, max: 900 }))),
+    }).pipe(delay(faker.number.int({ min: 500, max: 1500 }))),
 
   generateDefaultSearchParams: () => ({
     fullName: "John Doe",
@@ -27,7 +21,7 @@ export const mockSkillApi = {
 
   getExternalProfileById: (id: string) =>
     of(createSkillApiDummyData(id)).pipe(
-      delay(faker.number.int({ min: 100, max: 900 })),
+      delay(faker.number.int({ min: 500, max: 1500 })),
     ),
 };
 
