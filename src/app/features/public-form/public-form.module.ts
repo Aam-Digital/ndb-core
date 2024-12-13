@@ -62,7 +62,7 @@ const viewConfigs: ViewConfig[] = [
       entityType: PublicFormConfig.ENTITY_TYPE,
       panels: [
         {
-          title: "General Setting",
+          title: $localize`:PublicFormConfig admin form panel:General Setting`,
           components: [
             {
               component: "Form",
@@ -89,7 +89,7 @@ const viewConfigs: ViewConfig[] = [
           ],
         },
         {
-          title: "Configure Fields",
+          title: $localize`:PublicFormConfig admin form panel:Configure Fields`,
           components: [
             {
               component: "Form",
