@@ -1,9 +1,11 @@
 <mat-form-field>
   <app-basic-autocomplete
+    [formControl]="formControl"
     [options]="entityTypes"
     [optionToString]="optionToLabel"
     [valueMapper]="optionToId"
-    [placeholder]="placeholder"
+    placeholder="Select an entity type"
     [multi]="isMulti"
+    i18n-placeholder="Select an entity type"
   ></app-basic-autocomplete>
 </mat-form-field>

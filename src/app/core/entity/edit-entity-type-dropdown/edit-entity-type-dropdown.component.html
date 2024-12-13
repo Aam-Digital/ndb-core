@@ -1,11 +1,4 @@
-<mat-form-field>
-  <mat-label>{{ label }}</mat-label>
-
-  <app-basic-autocomplete
-    [formControl]="formControl"
-    [options]="entityTypes"
-    [optionToString]="optionToLabel"
-    [valueMapper]="optionToId"
-    [multi]="multi"
-  ></app-basic-autocomplete>
-</mat-form-field>
+<app-entity-type-selector
+  [isMulti]="multi"
+  [formControl]="formControl"
+></app-entity-type-selector>
