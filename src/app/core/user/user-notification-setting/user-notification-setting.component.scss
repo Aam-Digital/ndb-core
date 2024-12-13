@@ -1,3 +1,5 @@
+@use "variables/colors";
+
 .notifications-setting-container {
   display: flex;
   justify-content: center;
@@ -35,8 +37,17 @@
   background-color: white;
 }
 
+.notifications-types-container {
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 16px;
+  background-color: colors.$background;
+  margin-top: 20px;
+}
+
 .browser-notification-list {
   margin-top: 16px;
+  margin-left: 20px;
 }
 
 .notification-toggle {
@@ -49,4 +60,12 @@
 
 .event-type-option {
   margin-bottom: 10px;
+}
+
+.new-notification-rule {
+  margin-left: 5px;
+}
+
+.no-margin {
+  margin: 0;
 }

@@ -6,37 +6,68 @@
     Aam Digital may still send you important notifications about your account
     and content outside of your preferred notification settings.
   </p>
-  <div class="notification-types-container">
-    <h3><strong>What notifications you receive</strong></h3>
 
-    <!-- Dynamically Render Notification Types -->
-    <ng-container *ngFor="let eventType of eventTypes">
-      <div class="notification-types">
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-                <fa-icon [icon]="eventType.icon" *ngIf="eventType.icon"></fa-icon>
-                <span class="event-type-name">{{ eventType.name }}</span>
-            </mat-panel-title>
-            <mat-panel-description>
-              {{ eventType.options.join(", ") }}
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <div class="mat-expansion-panel-body">
-            <strong>Where you receive these notifications</strong>
-            <div class="event-type-options">
-                <ng-container *ngFor="let option of eventType.options">
-                <div class="flex-row align-center event-type-option">
-                    <span>{{ option }}</span>
-                    <mat-slide-toggle
-                    (change)="onEventOptionToggle(eventType.id, option)"
-                    class="notification-toggle"
-                    />
-                </div>
-                </ng-container>
-            </div>
-          </div>
-        </mat-expansion-panel>
+  <!-- Updated Notification Section -->
+  <div class="notification-types-container">
+    <div class="flex-row justify-space-between align-center">
+      <h3 class="no-margin"><strong>What notifications you receive</strong></h3>
+      <button
+        mat-stroked-button
+        color="accent"
+        (click)="addNewRule()"
+        angulartics2On="click"
+        angularticsCategory="UserAction"
+        angularticsAction="list_add_entity"
+        matTooltip="Add new notification rule"
+        i18n-matTooltip
+      >
+        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+        <span i18n class="new-notification-rule"
+          >Add new notification rule</span
+        >
+      </button>
+    </div>
+
+    <!-- Dynamically Render Notification Rows -->
+    <ng-container *ngFor="let notification of notifications; let i = index">
+      <div
+        class="flex-row justify-space-between align-center notifications-types-container"
+      >
+        <mat-form-field class="dropdown-field">
+          <mat-select
+            [(value)]="notification.selectedOption"
+            placeholder="Select an option"
+          >
+            <mat-option
+              *ngFor="let option of eventTypes[i]?.options"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="input-field">
+          <input
+            matInput
+            [(ngModel)]="notification.inputValue"
+            placeholder="Enter value"
+          />
+        </mat-form-field>
+
+        <mat-slide-toggle
+          [(ngModel)]="notification.toggleValue"
+          class="notification-toggle"
+        ></mat-slide-toggle>
+
+        <button
+          mat-icon-button
+          (click)="removeRule(i)"
+          matTooltip="Remove notification rule"
+          i18n-matTooltip
+        >
+          <fa-icon icon="trash"></fa-icon>
+        </button>
       </div>
     </ng-container>
   </div>
@@ -49,7 +80,7 @@
         <fa-icon icon="window-maximize"></fa-icon>
         <p class="notification-toggle">Browser</p>
       </div>
-      <div class="flex-row justify-space-between browser-notification-list mat-expansion-panel-body">
+      <div class="flex-row justify-space-between browser-notification-list">
         <span>Push notifications</span>
         <mat-slide-toggle (change)="onEnableNotification()" />
       </div>
