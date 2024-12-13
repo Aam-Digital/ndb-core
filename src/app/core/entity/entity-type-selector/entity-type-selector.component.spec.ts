@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityTypeSelectorComponent } from "./entity-type-selector.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
-describe("EditConfigurableEnumComponent", () => {
+describe("EntityTypeSelectorComponent", () => {
   let component: EntityTypeSelectorComponent;
   let fixture: ComponentFixture<EntityTypeSelectorComponent>;
 
