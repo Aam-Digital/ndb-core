@@ -28,6 +28,13 @@
       </button>
     </div>
 
+    <div class="flex-row gap-small save-buttons justify-end">
+      <button mat-raised-button color="accent" (click)="save()" i18n>
+        Save
+      </button>
+      <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+    </div>
+
     <!-- Dynamically Render Notification Rows -->
     <ng-container *ngFor="let notification of notifications; let i = index">
       <div

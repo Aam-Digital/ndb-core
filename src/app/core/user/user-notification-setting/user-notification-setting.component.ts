@@ -60,4 +60,12 @@ export class UserNotificationSettingComponent {
   onEnableNotification() {
     Logging.log('Browser notifications toggled.');
   }
+
+  save() {
+    Logging.log('Notification settings saved.');
+  }
+
+  cancel() {
+    Logging.log('Notification settings canceled.');
+  }
 }
