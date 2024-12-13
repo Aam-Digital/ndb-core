@@ -7,7 +7,6 @@
     and content outside of your preferred notification settings.
   </p>
 
-  <!-- Updated Notification Section -->
   <div class="notification-types-container">
     <div class="flex-row justify-space-between align-center">
       <h3 class="no-margin"><strong>What notifications you receive</strong></h3>
@@ -35,7 +34,6 @@
       <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
     </div>
 
-    <!-- Dynamically Render Notification Rows -->
     <ng-container *ngFor="let notification of notifications; let i = index">
       <div
         class="flex-row justify-space-between align-center notifications-types-container"
@@ -67,7 +65,6 @@
     </ng-container>
   </div>
 
-  <!-- Browser Notifications -->
   <div class="browser-notifications-container">
     <h3><strong>Where you receive notifications</strong></h3>
     <div class="receive-notifications-container">
