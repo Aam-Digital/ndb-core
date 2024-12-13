@@ -26,25 +26,10 @@
         mat-icon-button
         [matMenuTriggerFor]="settingsMenu"
         (click)="$event.stopPropagation()"
-        *ngIf="!showSettings"
         icon-button
       >
         <fa-icon icon="ellipsis"></fa-icon>
       </button>
-
-      <div
-        *ngIf="showSettings"
-        (click)="$event.stopPropagation()"
-        class="notification-toggle-button"
-      >
-        <mat-slide-toggle
-          [(ngModel)]="isEnableNotification"
-          (click)="$event.stopPropagation()"
-          icon-button
-          matTooltip="Your Notification is active"
-          i18n-matTooltip
-        />
-      </div>
     </div>
 
     <!-- Tabs -->
