@@ -1,17 +1,20 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { NgFor } from "@angular/common";
-import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { Logging } from 'app/core/logging/logging.service';
+import {
+  FaIconComponent,
+  FontAwesomeModule,
+} from "@fortawesome/angular-fontawesome";
+import { Logging } from "app/core/logging/logging.service";
 import { eventTypes, EventType } from "app/core/config/event-types";
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from "@angular/forms";
 import { Angulartics2OnModule } from "angulartics2";
-import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { EntityTypeSelectorComponent } from 'app/core/entity/entity-type-selector/entity-type-selector.component';
+import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { EntityTypeSelectorComponent } from "app/core/entity/entity-type-selector/entity-type-selector.component";
 
 interface Notification {
   selectedOption: string;
@@ -20,7 +23,7 @@ interface Notification {
 }
 
 @Component({
-  selector: 'app-user-notification-setting',
+  selector: "app-user-notification-setting",
   standalone: true,
   imports: [
     MatSlideToggle,
@@ -39,17 +42,21 @@ interface Notification {
     MatTooltipModule,
     EntityTypeSelectorComponent,
   ],
-  templateUrl: './user-notification-setting.component.html',
-  styleUrl: './user-notification-setting.component.scss'
+  templateUrl: "./user-notification-setting.component.html",
+  styleUrl: "./user-notification-setting.component.scss",
 })
 export class UserNotificationSettingComponent {
   eventTypes: EventType[] = eventTypes;
   notifications: Notification[] = [
-    { selectedOption: '', inputValue: '', toggleValue: false }
+    { selectedOption: "", inputValue: "", toggleValue: false },
   ];
 
   addNewRule() {
-    this.notifications.push({ selectedOption: '', inputValue: '', toggleValue: false });
+    this.notifications.push({
+      selectedOption: "",
+      inputValue: "",
+      toggleValue: false,
+    });
   }
 
   removeRule(index: number) {
@@ -58,14 +65,14 @@ export class UserNotificationSettingComponent {
   }
 
   onEnableNotification() {
-    Logging.log('Browser notifications toggled.');
+    Logging.log("Browser notifications toggled.");
   }
 
   save() {
-    Logging.log('Notification settings saved.');
+    Logging.log("Notification settings saved.");
   }
 
   cancel() {
-    Logging.log('Notification settings canceled.');
+    Logging.log("Notification settings canceled.");
   }
 }

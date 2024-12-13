@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { EntityTypeSelectorComponent } from "./entity-type-selector.component";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
-import { EntityTypeSelectorComponent } from './entity-type-selector.component';
-
-describe('EntityTypeSelectorComponent', () => {
+describe("EditConfigurableEnumComponent", () => {
   let component: EntityTypeSelectorComponent;
   let fixture: ComponentFixture<EntityTypeSelectorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityTypeSelectorComponent]
-    })
-    .compileComponents();
+      imports: [EntityTypeSelectorComponent, MockedTestingModule.withState()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(EntityTypeSelectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

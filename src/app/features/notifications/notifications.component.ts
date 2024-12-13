@@ -48,7 +48,8 @@ export class NotificationsComponent implements OnInit {
 
   constructor(
     private firebaseNotificationService: FirebaseNotificationService,
-    private entityMapper: EntityMapperService, private router: Router
+    private entityMapper: EntityMapperService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -133,6 +134,6 @@ export class NotificationsComponent implements OnInit {
 
   onRedirectToNotificationsSetting(event: Event) {
     event.stopPropagation();
-    this.router.navigate(['/user-account'], { queryParams: { tabIndex: 1 } });
+    this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
   }
 }
