@@ -11,6 +11,7 @@ import { Angulartics2OnModule } from "angulartics2";
 import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { EntityTypeSelectorComponent } from 'app/core/entity/entity-type-selector/entity-type-selector.component';
 
 interface Notification {
   selectedOption: string;
@@ -36,6 +37,7 @@ interface Notification {
     MatButtonModule,
     Angulartics2OnModule,
     MatTooltipModule,
+    EntityTypeSelectorComponent,
   ],
   templateUrl: './user-notification-setting.component.html',
   styleUrl: './user-notification-setting.component.scss'

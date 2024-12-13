@@ -33,19 +33,7 @@
       <div
         class="flex-row justify-space-between align-center notifications-types-container"
       >
-        <mat-form-field class="dropdown-field">
-          <mat-select
-            [(value)]="notification.selectedOption"
-            placeholder="Select an option"
-          >
-            <mat-option
-              *ngFor="let option of eventTypes[i]?.options"
-              [value]="option"
-            >
-              {{ option }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <app-entity-type-selector [isMulti]="false" />
 
         <mat-form-field class="input-field">
           <input
