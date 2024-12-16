@@ -34,7 +34,6 @@ import {
   SwRegistrationOptions,
 } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { firebaseConfig } from "../environments/environment";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ConfigurableEnumModule } from "./core/basic-datatypes/configurable-enum/configurable-enum.module";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
@@ -89,7 +88,6 @@ import { AdminModule } from "./core/admin/admin.module";
 import { Logging } from "./core/logging/logging.service";
 import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initializer";
 import { TemplateExportModule } from "./features/template-export/template-export.module";
-import { initializeApp } from "firebase/app";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 
 /**
@@ -177,8 +175,6 @@ import { PublicFormModule } from "./features/public-form/public-form.module";
 })
 export class AppModule {
   constructor(icons: FaIconLibrary) {
-    // Initialize the Firebase application component
-    initializeApp(firebaseConfig);
     icons.addIconPacks(fas, far);
   }
 }
