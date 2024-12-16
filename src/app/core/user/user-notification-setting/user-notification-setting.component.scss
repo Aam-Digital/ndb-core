@@ -22,17 +22,19 @@
   margin-bottom: 10px;
 }
 
-.receive-notifications-container {
+.panel-wrapper {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   padding: 16px;
+}
+
+.receive-notifications-container {
+  @extend .panel-wrapper;
   background-color: white;
 }
 
 .notifications-types-container {
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  padding: 16px;
+  @extend .panel-wrapper;
   background-color: colors.$background;
   margin-top: 20px;
 }
