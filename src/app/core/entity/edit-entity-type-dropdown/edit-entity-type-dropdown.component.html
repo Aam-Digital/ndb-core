@@ -1,11 +1,7 @@
 <mat-form-field>
   <mat-label>{{ label }}</mat-label>
-
-  <app-basic-autocomplete
+  <app-entity-type-select
+    [allowMultiSelect]="multi"
     [formControl]="formControl"
-    [options]="entityTypes"
-    [optionToString]="optionToLabel"
-    [valueMapper]="optionToId"
-    [multi]="multi"
-  ></app-basic-autocomplete>
+  ></app-entity-type-select>
 </mat-form-field>

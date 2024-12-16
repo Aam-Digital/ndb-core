@@ -1,0 +1,9 @@
+<app-basic-autocomplete
+  [formControl]="formControl"
+  [options]="entityTypes"
+  [optionToString]="optionToLabel"
+  [valueMapper]="optionToId"
+  placeholder="Select an entity type"
+  [multi]="allowMultiSelect"
+  i18n-placeholder="placeholder for Entity Type dropdown input"
+></app-basic-autocomplete>
