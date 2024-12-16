@@ -90,6 +90,7 @@ import { Logging } from "./core/logging/logging.service";
 import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initializer";
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { initializeApp } from "firebase/app";
+import { PublicFormModule } from "./features/public-form/public-form.module";
 
 /**
  * Main entry point of the application.
@@ -134,6 +135,7 @@ import { initializeApp } from "firebase/app";
     TodosModule,
     AdminModule,
     TemplateExportModule,
+    PublicFormModule,
     // top level component
     UiComponent,
     // Global Angular Material modules
