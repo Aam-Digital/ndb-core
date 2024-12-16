@@ -8,7 +8,6 @@ import {
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import { eventTypes, EventType } from "app/core/config/event-types";
 import { FormsModule } from "@angular/forms";
 import { Angulartics2OnModule } from "angulartics2";
 import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
@@ -46,7 +45,6 @@ interface Notification {
   styleUrl: "./user-notification-setting.component.scss",
 })
 export class UserNotificationSettingComponent {
-  eventTypes: EventType[] = eventTypes;
   notifications: Notification[] = [
     { selectedOption: "", inputValue: "", toggleValue: false },
   ];
