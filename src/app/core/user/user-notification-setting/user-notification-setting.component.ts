@@ -7,11 +7,11 @@ import {
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, FormControl } from "@angular/forms";
 import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { EntityTypeSelectorComponent } from "app/core/entity/entity-type-selector/entity-type-selector.component";
+import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 
 interface Notification {
   selectedOption: string;
@@ -34,7 +34,7 @@ interface Notification {
     MatButtonModule,
     MatTooltipModule,
     NgIf,
-    EntityTypeSelectorComponent,
+    EntityTypeSelectComponent,
   ],
   templateUrl: "./user-notification-setting.component.html",
   styleUrl: "./user-notification-setting.component.scss",
@@ -43,6 +43,7 @@ export class UserNotificationSettingComponent {
   notificationRule: Notification[] = [
     { selectedOption: "", inputValue: "", toggleValue: false },
   ];
+  formControl = new FormControl();
 
   addNewRule() {
     this.notificationRule.push({

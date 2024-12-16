@@ -44,7 +44,10 @@
       <div
         class="flex-row justify-space-between align-center notifications-types-container"
       >
-        <app-entity-type-selector [isMulti]="false" />
+        <app-entity-type-select
+          [allowMultiSelect]="false"
+          label="Select an entity type"
+        ></app-entity-type-select>
 
         <mat-form-field>
           <mat-label i18n>Notification condition</mat-label>
