@@ -14,6 +14,7 @@ import { NotificationEvent } from "./model/notifications-event";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
+import { MockNotificationsService } from "./mock-notifications.service";
 
 @Component({
   selector: "app-notifications",
@@ -42,7 +43,10 @@ export class NotificationsComponent implements OnInit {
   public isEnableNotification = false;
   public selectedTab = 0;
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(
+    private entityMapper: EntityMapperService,
+    private mockNotificationsService: MockNotificationsService,
+  ) {}
 
   ngOnInit(): void {
     this.loadAndProcessNotifications();
@@ -57,8 +61,14 @@ export class NotificationsComponent implements OnInit {
    * Loads all notifications and processes them to update the list and unread count.
    */
   private async loadAndProcessNotifications(): Promise<void> {
+    // TODO: Need to uncomment this after the notification list UI testing is completed.
+    // const notifications =
+    // await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
+
+    // TODO: Need to remove this line once the notification list UI tests are completed.
     const notifications =
-      await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
+      this.mockNotificationsService.getNotifications() as unknown as NotificationEvent[];
+
     // The user is hardcoded for testing purposes, need to remove this.
     this.filterUserNotifications(notifications, "User:demo");
     this.hasUnreadNotificationCount = this.countUnreadNotifications(
