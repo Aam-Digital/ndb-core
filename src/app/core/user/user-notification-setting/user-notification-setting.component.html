@@ -1,15 +1,15 @@
 <div class="notifications-container">
   <h1 class="notification-setting-title">
-    <strong>Notifications settings</strong>
+    <strong i18n>Notifications settings</strong>
   </h1>
-  <p>
+  <p i18n>
     Aam Digital may still send you important notifications about your account
     and content outside of your preferred notification settings.
   </p>
 
   <div class="notification-types-container">
     <div class="flex-row justify-space-between align-center">
-      <h3 class="no-margin"><strong>What notifications you receive</strong></h3>
+      <h3 class="no-margin" i18n><strong>What notifications you receive</strong></h3>
       <button
         mat-stroked-button
         color="accent"
@@ -48,12 +48,13 @@
         <app-entity-type-selector [isMulti]="false" />
 
         <mat-form-field>
-          <mat-label>Notification condition</mat-label>
+          <mat-label i18n>Notification condition</mat-label>
           <input
             matInput
             [(ngModel)]="notification.inputValue"
             placeholder="TO BE IMPLEMENTED LATER"
             disabled="true"
+            i18n-placeholder="Notification condition placeholder"
           />
         </mat-form-field>
 
@@ -75,14 +76,14 @@
   </div>
 
   <div class="browser-notifications-container">
-    <h3><strong>Where you receive notifications</strong></h3>
+    <h3 i18n><strong>Where you receive notifications</strong></h3>
     <div class="receive-notifications-container">
       <div class="flex-row">
         <fa-icon icon="window-maximize"></fa-icon>
         <p class="notification-toggle">Browser</p>
       </div>
       <div class="flex-row justify-space-between browser-notification-list">
-        <span>Push notifications</span>
+        <span i18n>Push notifications</span>
         <mat-slide-toggle (change)="onEnableNotification()" />
       </div>
     </div>

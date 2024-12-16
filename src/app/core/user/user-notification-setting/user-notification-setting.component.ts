@@ -26,13 +26,11 @@ interface Notification {
   standalone: true,
   imports: [
     MatSlideToggle,
-    MatSelect,
     MatInputModule,
     NgFor,
     FontAwesomeModule,
     FormsModule,
     MatFormFieldModule,
-    MatOption,
     Angulartics2OnModule,
     MatTooltip,
     FaIconComponent,
