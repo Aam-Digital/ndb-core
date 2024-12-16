@@ -14,8 +14,7 @@ export class MockNotificationsService {
       body: "This is a dummy notification body.",
       actionURL: "http://localhost:4200",
       sentBy: "User:demo",
-      fcmToken:
-        "f6dmHHeKUM1Q_DfSCLmtl9:APA91bEgFmu2yUcMTzOr8CusfjWHTUPPvsVivuOX5pGAInhmPsLrEdAWsuPFBHjwNaLnrQWAjBXohvn1Mkb_fYHwIpIi3aBiOy9HudBWzytXDwwlbLwd66o",
+      fcmToken: "",
       readStatus: true,
       created: {
         at: "2024-12-03T19:21:19.130Z",
@@ -30,8 +29,7 @@ export class MockNotificationsService {
       title: "Dummy Notification Title",
       body: "This is a dummy notification body.",
       actionURL: "http://localhost:4200",
-      fcmToken:
-        "f6dmHHeKUM1Q_DfSCLmtl9:APA91bEgFmu2yUcMTzOr8CusfjWHTUPPvsVivuOX5pGAInhmPsLrEdAWsuPFBHjwNaLnrQWAjBXohvn1Mkb_fYHwIpIi3aBiOy9HudBWzytXDwwlbLwd66o",
+      fcmToken: "",
       readStatus: false,
       sentBy: "User:demo",
       created: {
