@@ -40,7 +40,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   entity: E;
   fieldGroups: FieldGroup[];
   form: EntityForm<E>;
-
+  publicFormExists: boolean = false;
   constructor(
     private database: PouchDatabase,
     private route: ActivatedRoute,
@@ -86,20 +86,25 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   private async loadFormConfig() {
-    const id = this.route.snapshot.paramMap.get("id");
+    try {
+      const id = this.route.snapshot.paramMap.get("id");
 
-    const publicForms = await this.entityMapper.loadType(PublicFormConfig);
+      const publicForms = await this.entityMapper.loadType(PublicFormConfig);
 
-    this.formConfig = publicForms.find(
-      (form: PublicFormConfig) => form.route === id || form.getId(true) === id,
-    );
+      this.formConfig = publicForms.find(
+        (form: PublicFormConfig) =>
+          form.route === id || form.getId(true) === id,
+      );
 
-    this.entityType = this.entities.get(
-      this.formConfig.entity,
-    ) as EntityConstructor<E>;
-    this.formConfig = this.migratePublicFormConfig(this.formConfig);
-    this.fieldGroups = this.formConfig.columns;
-    await this.initForm();
+      this.entityType = this.entities.get(
+        this.formConfig.entity,
+      ) as EntityConstructor<E>;
+      this.formConfig = this.migratePublicFormConfig(this.formConfig);
+      this.fieldGroups = this.formConfig.columns;
+      await this.initForm();
+    } catch (error) {
+      this.publicFormExists = true;
+    }
   }
 
   private migratePublicFormConfig(
