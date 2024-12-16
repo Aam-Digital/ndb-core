@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatInputModule } from "@angular/material/input";
-import { NgFor } from "@angular/common";
+import { NgFor, NgIf } from "@angular/common";
 import {
   FaIconComponent,
   FontAwesomeModule,
@@ -33,18 +33,19 @@ interface Notification {
     FaIconComponent,
     MatButtonModule,
     MatTooltipModule,
+    NgIf,
     EntityTypeSelectorComponent,
   ],
   templateUrl: "./user-notification-setting.component.html",
   styleUrl: "./user-notification-setting.component.scss",
 })
 export class UserNotificationSettingComponent {
-  notifications: Notification[] = [
+  notificationRule: Notification[] = [
     { selectedOption: "", inputValue: "", toggleValue: false },
   ];
 
   addNewRule() {
-    this.notifications.push({
+    this.notificationRule.push({
       selectedOption: "",
       inputValue: "",
       toggleValue: false,
@@ -52,7 +53,7 @@ export class UserNotificationSettingComponent {
   }
 
   removeRule(index: number) {
-    this.notifications.splice(index, 1);
+    this.notificationRule.splice(index, 1);
     // TODO: Need to add the logic to remove the rule from the backend
   }
 

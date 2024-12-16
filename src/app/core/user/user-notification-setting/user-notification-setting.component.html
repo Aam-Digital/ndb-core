@@ -9,7 +9,9 @@
 
   <div class="notification-types-container">
     <div class="flex-row justify-space-between align-center">
-      <h3 class="no-margin" i18n><strong>What notifications you receive</strong></h3>
+      <h3 class="no-margin" i18n>
+        <strong>What notifications you receive</strong>
+      </h3>
       <button
         mat-stroked-button
         color="accent"
@@ -38,7 +40,7 @@
       </button>
     </div>
 
-    <ng-container *ngFor="let notification of notifications; let i = index">
+    <ng-container *ngFor="let notification of notificationRule; let i = index">
       <div
         class="flex-row justify-space-between align-center notifications-types-container"
       >
@@ -61,6 +63,7 @@
         ></mat-slide-toggle>
 
         <button
+          *ngIf="notificationRule.length > 1"
           mat-icon-button
           (click)="removeRule(i)"
           matTooltip="Remove notification rule"
