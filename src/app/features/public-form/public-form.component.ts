@@ -42,6 +42,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   fieldGroups: FieldGroup[];
   form: EntityForm<E>;
   publicFormNotFound: boolean = false;
+
   constructor(
     private database: PouchDatabase,
     private route: ActivatedRoute,
@@ -87,32 +88,25 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   }
 
   private async loadFormConfig() {
-    try {
-      const id = this.route.snapshot.paramMap.get("id");
+    const id = this.route.snapshot.paramMap.get("id");
 
-      const publicForms = await this.entityMapper.loadType(PublicFormConfig);
+    const publicForms = await this.entityMapper.loadType(PublicFormConfig);
 
-      this.formConfig = publicForms.find(
-        (form: PublicFormConfig) =>
-          form.route === id || form.getId(true) === id,
-      );
-      if (!this.formConfig) {
-        this.publicFormNotFound = true;
-        return;
-      }
-
-      this.entityType = this.entities.get(
-        this.formConfig.entity,
-      ) as EntityConstructor<E>;
-      this.formConfig = this.migratePublicFormConfig(this.formConfig);
-      this.fieldGroups = this.formConfig.columns;
-      await this.initForm();
-    } catch (error) {
-      Logging.debug(
-        "Unexpected error while loading public-form configuration",
-        error,
-      );
+    this.formConfig = publicForms.find(
+      (form: PublicFormConfig) =>
+        form.route === id || form.getId(true) === id,
+    );
+    if (!this.formConfig) {
+      this.publicFormNotFound = true;
+      return;
     }
+
+    this.entityType = this.entities.get(
+      this.formConfig.entity,
+    ) as EntityConstructor<E>;
+    this.formConfig = this.migratePublicFormConfig(this.formConfig);
+    this.fieldGroups = this.formConfig.columns;
+    await this.initForm();
   }
 
   private migratePublicFormConfig(
