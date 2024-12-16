@@ -20,6 +20,7 @@ import { InvalidFormFieldError } from "../../core/common-components/entity-form/
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
+import { Logging } from "app/core/logging/logging.service";
 
 @UntilDestroy()
 @Component({
@@ -40,7 +41,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   entity: E;
   fieldGroups: FieldGroup[];
   form: EntityForm<E>;
-  publicFormExists: boolean = false;
+  publicFormNotFound: boolean = false;
   constructor(
     private database: PouchDatabase,
     private route: ActivatedRoute,
@@ -95,6 +96,10 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         (form: PublicFormConfig) =>
           form.route === id || form.getId(true) === id,
       );
+      if (!this.formConfig) {
+        this.publicFormNotFound = true;
+        return;
+      }
 
       this.entityType = this.entities.get(
         this.formConfig.entity,
@@ -103,7 +108,10 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.fieldGroups = this.formConfig.columns;
       await this.initForm();
     } catch (error) {
-      this.publicFormExists = true;
+      Logging.debug(
+        "Unexpected error while loading public-form configuration",
+        error,
+      );
     }
   }
 
