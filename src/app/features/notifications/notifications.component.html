@@ -1,7 +1,7 @@
 <button
   mat-icon-button
   matTooltip="Notifications"
-  i18n-matTooltip
+  i18n-matTooltip="Notifications"
   [matMenuTriggerFor]="data"
   (menuOpened)="onNotificationBellClick()"
 >
@@ -20,7 +20,7 @@
     <div
       class="flex-row justify-space-between align-center notification-panel-header"
     >
-      <h1 class="notification-title">Notifications</h1>
+      <h1 class="notification-title" i18n>Notifications</h1>
 
       <button
         mat-icon-button
@@ -37,8 +37,8 @@
       [(selectedIndex)]="selectedTab"
       (click)="$event.stopPropagation()"
     >
-      <mat-tab label="All"></mat-tab>
-      <mat-tab label="Unread"></mat-tab>
+      <mat-tab label="All" i18n-label></mat-tab>
+      <mat-tab label="Unread" i18n-label></mat-tab>
     </mat-tab-group>
 
     <ng-container *ngIf="selectedTab === 0">
@@ -54,7 +54,7 @@
         *ngIf="allNotifications.length === 0"
       >
         <fa-icon class="no-notification-icon" icon="bell"></fa-icon>
-        <span class="no-notification-text">You have no notifications</span>
+        <span class="no-notification-text" i18n>You have no notifications</span>
       </div>
     </ng-container>
 
@@ -72,7 +72,7 @@
         *ngIf="unreadNotifications.length === 0"
       >
         <fa-icon class="no-notification-icon" icon="bell"></fa-icon>
-        <span class="no-notification-text">You have no notifications</span>
+        <span class="no-notification-text" i18n>You have no notifications</span>
       </div>
     </ng-container>
   </div>
@@ -82,10 +82,10 @@
 <mat-menu #settingsMenu>
   <button mat-menu-item (click)="markAllRead($event)">
     <fa-icon icon="bell"></fa-icon>
-    <span class="menu-option">Mark as notification active</span>
+    <span class="menu-option" i18n>Mark as notification active</span>
   </button>
   <button mat-menu-item (click)="onRedirectToNotificationsSetting()">
     <fa-icon icon="gear"></fa-icon>
-    <span class="menu-option">Notification settings</span>
+    <span class="menu-option" i18n>Notification settings</span>
   </button>
 </mat-menu>
