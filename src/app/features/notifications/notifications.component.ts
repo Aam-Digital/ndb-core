@@ -10,7 +10,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Logging } from "app/core/logging/logging.service";
-import { NotificationEvent } from "./model/notifications-event";
+import { NotificationEvent } from "./model/notification-event";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
