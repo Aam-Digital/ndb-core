@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { UserNotificationSettingComponent } from './user-notification-setting.component';
+import { UserNotificationSettingComponent } from "./user-notification-setting.component";
 
-describe('UserNotificationSettingComponent', () => {
+describe("UserNotificationSettingComponent", () => {
   let component: UserNotificationSettingComponent;
   let fixture: ComponentFixture<UserNotificationSettingComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserNotificationSettingComponent]
-    })
-    .compileComponents();
+      imports: [UserNotificationSettingComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(UserNotificationSettingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
