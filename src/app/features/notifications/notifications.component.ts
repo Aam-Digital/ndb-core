@@ -7,10 +7,8 @@ import { NgFor } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuTrigger } from "@angular/material/menu";
 import { MatMenuModule } from "@angular/material/menu";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FirebaseNotificationService } from "../../../firebase-messaging-service.service";
 import { Logging } from "app/core/logging/logging.service";
 import { NotificationActivity } from "./model/notifications-activity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
@@ -30,7 +28,6 @@ import { Router } from "@angular/router";
     MatButtonModule,
     MatMenuTrigger,
     MatMenuModule,
-    MatSlideToggle,
     FormsModule,
     MatTooltipModule,
     MatTabsModule,
@@ -47,7 +44,6 @@ export class NotificationsComponent implements OnInit {
   public selectedTab = 0;
 
   constructor(
-    private firebaseNotificationService: FirebaseNotificationService,
     private entityMapper: EntityMapperService,
     private router: Router,
   ) {}
