@@ -29,7 +29,6 @@ import { filter } from "rxjs/operators";
 })
 export class AppComponent {
   configFullscreen: boolean = false;
-  message: any = null;
 
   constructor(private router: Router) {
     this.detectConfigMode();

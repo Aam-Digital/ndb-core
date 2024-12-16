@@ -10,11 +10,12 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Logging } from "app/core/logging/logging.service";
-import { NotificationActivity } from "./model/notifications-activity";
+import { NotificationEvent } from "./model/notifications-event";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
 import { Router } from "@angular/router";
+import { MockNotificationsService } from "./mock-notifications.service";
 
 @Component({
   selector: "app-notifications",
@@ -37,8 +38,8 @@ import { Router } from "@angular/router";
   styleUrl: "./notifications.component.scss",
 })
 export class NotificationsComponent implements OnInit {
-  public allNotifications: NotificationActivity[] = [];
-  public unreadNotifications: NotificationActivity[] = [];
+  public allNotifications: NotificationEvent[] = [];
+  public unreadNotifications: NotificationEvent[] = [];
   public hasUnreadNotificationCount = 0;
   public isEnableNotification = false;
   public selectedTab = 0;
@@ -46,6 +47,7 @@ export class NotificationsComponent implements OnInit {
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
+    private mockNotificationsService: MockNotificationsService,
   ) {}
 
   ngOnInit(): void {
@@ -61,10 +63,14 @@ export class NotificationsComponent implements OnInit {
    * Loads all notifications and processes them to update the list and unread count.
    */
   private async loadAndProcessNotifications(): Promise<void> {
+    // TODO: Need to uncomment this after the notification list UI testing is completed.
+    // const notifications =
+    // await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
+
+    // TODO: Need to remove this line once the notification list UI tests are completed.
     const notifications =
-      await this.entityMapper.loadType<NotificationActivity>(
-        NotificationActivity,
-      );
+      this.mockNotificationsService.getNotifications() as unknown as NotificationEvent[];
+
     // The user is hardcoded for testing purposes, need to remove this.
     this.filterUserNotifications(notifications, "User:demo");
     this.hasUnreadNotificationCount = this.countUnreadNotifications(
@@ -78,7 +84,7 @@ export class NotificationsComponent implements OnInit {
    * @param user - The user to filter notifications by.
    */
   private filterUserNotifications(
-    notifications: NotificationActivity[],
+    notifications: NotificationEvent[],
     user: string,
   ) {
     this.allNotifications = notifications.filter(
@@ -86,7 +92,7 @@ export class NotificationsComponent implements OnInit {
     );
     this.unreadNotifications = notifications.filter(
       (notification) =>
-        notification.sentBy === user && notification.readStatus === false,
+        notification.sentBy === user && !notification.readStatus,
     );
   }
 
@@ -94,10 +100,9 @@ export class NotificationsComponent implements OnInit {
    * Counts unread notifications from the list.
    * @param notifications - The list of notifications.
    */
-  private countUnreadNotifications(notifications: NotificationActivity[]) {
-    return notifications.filter(
-      (notification) => notification.readStatus === false,
-    ).length;
+  private countUnreadNotifications(notifications: NotificationEvent[]) {
+    return notifications.filter((notification) => !notification.readStatus)
+      .length;
   }
 
   markAllRead($event: Event) {
@@ -105,16 +110,12 @@ export class NotificationsComponent implements OnInit {
     Logging.log("All notifications marked as read");
   }
 
-  markAsRead(notification: NotificationActivity): void {
-    // Need to add/update this logic to mark as read the notification from the CouchDB
+  async markAsRead(notification: NotificationEvent) {
     notification.readStatus = true;
-    this.hasUnreadNotificationCount = this.countUnreadNotifications(
-      this.allNotifications,
-    );
-    Logging.log("Notification marked as read");
+    await this.entityMapper.save(notification);
   }
 
-  deleteNotification(notification: NotificationActivity) {
+  deleteNotification(notification: NotificationEvent) {
     // Need to add/update this logic to delete the notification from the CouchDB
     this.allNotifications = this.allNotifications.filter(
       (n) => n !== notification,

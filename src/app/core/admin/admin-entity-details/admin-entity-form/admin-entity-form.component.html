@@ -1,4 +1,8 @@
-<div cdkDropListGroup class="overall-container flex-row">
+<div
+  cdkDropListGroup
+  class="overall-container flex-row"
+  [class.disabled]="isDisabled"
+>
   <!-- FORM PREVIEW -->
   <div class="flex-grow admin-grid-layout padding-right-regular">
     <!-- FIELD GROUPS -->
@@ -16,6 +20,7 @@
         cdkDropList
         [cdkDropListData]="group.fields"
         (cdkDropListDropped)="drop($event)"
+        [cdkDropListDisabled]="isDisabled"
         class="fields-group-list drop-list"
       >
         <!-- FIELD [start] -->
