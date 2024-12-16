@@ -9,7 +9,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTabsModule } from "@angular/material/tabs";
-import { NotificationActivity } from "../model/notifications-activity";
+import { NotificationEvent } from "../model/notifications-event";
 
 @Component({
   selector: "app-notification-item",
@@ -31,7 +31,7 @@ import { NotificationActivity } from "../model/notifications-activity";
   styleUrl: "./notification-item.component.scss",
 })
 export class NotificationItemComponent {
-  @Input() notification: NotificationActivity;
+  @Input() notification: NotificationEvent;
   @Input() onMarkAsRead: Function;
   @Input() onDeleteNotification: Function;
 
