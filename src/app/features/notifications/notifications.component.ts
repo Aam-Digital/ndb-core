@@ -42,9 +42,7 @@ export class NotificationsComponent implements OnInit {
   public isEnableNotification = false;
   public selectedTab = 0;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-  ) {}
+  constructor(private entityMapper: EntityMapperService) {}
 
   ngOnInit(): void {
     this.loadAndProcessNotifications();
@@ -60,9 +58,7 @@ export class NotificationsComponent implements OnInit {
    */
   private async loadAndProcessNotifications(): Promise<void> {
     const notifications =
-      await this.entityMapper.loadType<NotificationEvent>(
-        NotificationEvent,
-      );
+      await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
     // The user is hardcoded for testing purposes, need to remove this.
     this.filterUserNotifications(notifications, "User:demo");
     this.hasUnreadNotificationCount = this.countUnreadNotifications(
