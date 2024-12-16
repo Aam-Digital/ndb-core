@@ -90,7 +90,7 @@ export class NotificationsComponent implements OnInit {
     );
     this.unreadNotifications = notifications.filter(
       (notification) =>
-        notification.sentBy === user && notification.readStatus === false,
+        notification.sentBy === user && !notification.readStatus,
     );
   }
 
@@ -99,9 +99,8 @@ export class NotificationsComponent implements OnInit {
    * @param notifications - The list of notifications.
    */
   private countUnreadNotifications(notifications: NotificationEvent[]) {
-    return notifications.filter(
-      (notification) => notification.readStatus === false,
-    ).length;
+    return notifications.filter((notification) => !notification.readStatus)
+      .length;
   }
 
   markAllRead($event: Event) {
