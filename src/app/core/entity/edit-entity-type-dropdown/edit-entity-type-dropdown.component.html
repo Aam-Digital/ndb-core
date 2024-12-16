@@ -1,4 +1,7 @@
-<app-entity-type-selector
-  [isMulti]="multi"
-  [formControl]="formControl"
-></app-entity-type-selector>
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+  <app-entity-type-select
+    [allowMultiSelect]="multi"
+    [formControl]="formControl"
+  ></app-entity-type-select>
+</mat-form-field>

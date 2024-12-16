@@ -1,7 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../default-datatype/edit-component";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
-import { EntityTypeSelectorComponent } from "../entity-type-selector/entity-type-selector.component";
+import { EntityTypeSelect } from "../entity-type-select/entity-type-select.component";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
 
 /**
  * Edit component for selecting an entity type from a dropdown.
@@ -10,7 +11,7 @@ import { EntityTypeSelectorComponent } from "../entity-type-selector/entity-type
 @Component({
   selector: "app-edit-entity-type-dropdown",
   templateUrl: "./edit-entity-type-dropdown.component.html",
-  imports: [EntityTypeSelectorComponent],
+  imports: [EntityTypeSelect, MatFormField, MatLabel],
   standalone: true,
 })
 export class EditEntityTypeDropdownComponent
@@ -18,10 +19,6 @@ export class EditEntityTypeDropdownComponent
   implements OnInit
 {
   multi = false;
-
-  constructor() {
-    super();
-  }
 
   override ngOnInit() {
     super.ngOnInit();

@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
-import { MatFormField } from "@angular/material/form-field";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { EntityConstructor } from "../model/entity";
 import { EntityRegistry } from "../database-entity.decorator";
@@ -9,14 +8,14 @@ import { EntityRegistry } from "../database-entity.decorator";
  * Component for selecting an entity type from a dropdown.
  */
 @Component({
-  selector: "app-entity-type-selector",
-  templateUrl: "./entity-type-selector.component.html",
-  imports: [BasicAutocompleteComponent, MatFormField, ReactiveFormsModule],
+  selector: "app-entity-type-select",
+  templateUrl: "./entity-type-select.component.html",
+  imports: [BasicAutocompleteComponent, ReactiveFormsModule],
   standalone: true,
 })
-export class EntityTypeSelectorComponent implements OnInit {
+export class EntityTypeSelect implements OnInit {
   @Input() formControl: FormControl;
-  @Input() isMulti = false;
+  @Input() allowMultiSelect = false;
 
   entityTypes: EntityConstructor[];
   optionToLabel = (option: EntityConstructor) => option.label;
