@@ -129,8 +129,7 @@ export class NotificationsComponent implements OnInit {
     Logging.log("Notification deleted");
   }
 
-  onRedirectToNotificationsSetting(event: Event) {
-    event.stopPropagation();
+  onRedirectToNotificationsSetting() {
     this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
   }
 }

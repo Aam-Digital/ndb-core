@@ -28,10 +28,17 @@
     </div>
 
     <div class="flex-row gap-small save-buttons justify-end">
-      <button mat-raised-button color="accent" (click)="save()" i18n>
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="updateNotificationRule()"
+        i18n
+      >
         Save
       </button>
-      <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+      <button mat-stroked-button (click)="cancelNotificationRule()" i18n>
+        Cancel
+      </button>
     </div>
 
     <ng-container *ngFor="let notification of notifications; let i = index">

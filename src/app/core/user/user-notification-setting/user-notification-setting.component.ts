@@ -63,14 +63,17 @@ export class UserNotificationSettingComponent {
   }
 
   onEnableNotification() {
+    // TODO: Implement the logic to enable the notification for user and update the value in CouchDB backend.
     Logging.log("Browser notifications toggled.");
   }
 
-  save() {
+  updateNotificationRule() {
+    // TODO: Implement the logic to update the notification rule in the backend
     Logging.log("Notification settings saved.");
   }
 
-  cancel() {
+  cancelNotificationRule() {
+    // TODO: Implement the logic to cancel the notification rule and not need to do update anything
     Logging.log("Notification settings canceled.");
   }
 }
