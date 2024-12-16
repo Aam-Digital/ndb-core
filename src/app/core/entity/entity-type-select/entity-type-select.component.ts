@@ -13,7 +13,7 @@ import { EntityRegistry } from "../database-entity.decorator";
   imports: [BasicAutocompleteComponent, ReactiveFormsModule],
   standalone: true,
 })
-export class EntityTypeSelect implements OnInit {
+export class EntityTypeSelectComponent implements OnInit {
   @Input() formControl: FormControl;
   @Input() allowMultiSelect = false;
 

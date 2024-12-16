@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../default-datatype/edit-component";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
-import { EntityTypeSelect } from "../entity-type-select/entity-type-select.component";
+import { EntityTypeSelectComponent } from "../entity-type-select/entity-type-select.component";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 
 /**
@@ -11,7 +11,7 @@ import { MatFormField, MatLabel } from "@angular/material/form-field";
 @Component({
   selector: "app-edit-entity-type-dropdown",
   templateUrl: "./edit-entity-type-dropdown.component.html",
-  imports: [EntityTypeSelect, MatFormField, MatLabel],
+  imports: [EntityTypeSelectComponent, MatFormField, MatLabel],
   standalone: true,
 })
 export class EditEntityTypeDropdownComponent
