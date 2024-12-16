@@ -42,10 +42,14 @@ export class DateOnlyDatatype extends DateDatatype<string> {
   }
 
   override transformToObjectFormat(
-    value: string,
+    value: any,
     schemaField?: EntitySchemaField,
     parent?: any,
   ): Date {
+    if (typeof value !== "string") {
+      return undefined;
+    }
+
     value = migrateIsoDatesToInferredDateOnly(value);
 
     // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time

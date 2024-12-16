@@ -1,7 +1,18 @@
 <mat-card>
   <mat-card-header>
-    <mat-card-title>{{ formConfig?.title }}</mat-card-title>
-    <mat-card-subtitle>{{ formConfig?.description }}</mat-card-subtitle>
+    <div>
+      <mat-card-title>{{ formConfig?.title }}</mat-card-title>
+      <div class="public-form-container">
+        @if (formConfig?.logo) {
+          <app-display-img
+            [entity]="formConfig"
+            imgProperty="logo"
+            class="public-form-image"
+          ></app-display-img>
+        }
+      </div>
+      <mat-card-subtitle>{{ formConfig?.description }}</mat-card-subtitle>
+    </div>
   </mat-card-header>
 
   @if (formConfig && form) {
