@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { MatOption, MatSelect } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { NgFor } from "@angular/common";
 import {
@@ -9,7 +8,6 @@ import {
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
 import { FormsModule } from "@angular/forms";
-import { Angulartics2OnModule } from "angulartics2";
 import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -31,11 +29,9 @@ interface Notification {
     FontAwesomeModule,
     FormsModule,
     MatFormFieldModule,
-    Angulartics2OnModule,
     MatTooltip,
     FaIconComponent,
     MatButtonModule,
-    Angulartics2OnModule,
     MatTooltipModule,
     EntityTypeSelectorComponent,
   ],
