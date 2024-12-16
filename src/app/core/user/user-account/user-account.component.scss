@@ -9,30 +9,3 @@
   display: flex;
   padding: 10px;
 }
-
-.notifications-setting-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.notifications-container {
-  padding: 16px;
-}
-
-.notification-types-container {
-  margin-top: 16px;
-}
-
-.browser-notifications-container {
-  margin-top: 32px;
-}
-
-mat-panel-title mat-icon {
-  margin-right: 8px;
-}
-
-mat-slide-toggle {
-  display: block;
-  margin-top: 8px;
-}
