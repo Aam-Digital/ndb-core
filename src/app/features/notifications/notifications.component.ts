@@ -7,12 +7,10 @@ import { NgFor } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuTrigger } from "@angular/material/menu";
 import { MatMenuModule } from "@angular/material/menu";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { FirebaseNotificationService } from "../../../firebase-messaging-service.service";
 import { Logging } from "app/core/logging/logging.service";
-import { NotificationActivity } from "./model/notifications-activity";
+import { NotificationEvent } from "./model/notifications-event";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
@@ -29,7 +27,6 @@ import { NotificationItemComponent } from "./notification-item/notification-item
     MatButtonModule,
     MatMenuTrigger,
     MatMenuModule,
-    MatSlideToggle,
     FormsModule,
     MatTooltipModule,
     MatTabsModule,
@@ -39,14 +36,13 @@ import { NotificationItemComponent } from "./notification-item/notification-item
   styleUrl: "./notifications.component.scss",
 })
 export class NotificationsComponent implements OnInit {
-  public allNotifications: NotificationActivity[] = [];
-  public unreadNotifications: NotificationActivity[] = [];
+  public allNotifications: NotificationEvent[] = [];
+  public unreadNotifications: NotificationEvent[] = [];
   public hasUnreadNotificationCount = 0;
   public isEnableNotification = false;
   public selectedTab = 0;
 
   constructor(
-    private firebaseNotificationService: FirebaseNotificationService,
     private entityMapper: EntityMapperService,
   ) {}
 
@@ -64,8 +60,8 @@ export class NotificationsComponent implements OnInit {
    */
   private async loadAndProcessNotifications(): Promise<void> {
     const notifications =
-      await this.entityMapper.loadType<NotificationActivity>(
-        NotificationActivity,
+      await this.entityMapper.loadType<NotificationEvent>(
+        NotificationEvent,
       );
     // The user is hardcoded for testing purposes, need to remove this.
     this.filterUserNotifications(notifications, "User:demo");
@@ -80,7 +76,7 @@ export class NotificationsComponent implements OnInit {
    * @param user - The user to filter notifications by.
    */
   private filterUserNotifications(
-    notifications: NotificationActivity[],
+    notifications: NotificationEvent[],
     user: string,
   ) {
     this.allNotifications = notifications.filter(
@@ -96,7 +92,7 @@ export class NotificationsComponent implements OnInit {
    * Counts unread notifications from the list.
    * @param notifications - The list of notifications.
    */
-  private countUnreadNotifications(notifications: NotificationActivity[]) {
+  private countUnreadNotifications(notifications: NotificationEvent[]) {
     return notifications.filter(
       (notification) => notification.readStatus === false,
     ).length;
@@ -107,16 +103,12 @@ export class NotificationsComponent implements OnInit {
     Logging.log("All notifications marked as read");
   }
 
-  markAsRead(notification: NotificationActivity): void {
-    // Need to add/update this logic to mark as read the notification from the CouchDB
+  async markAsRead(notification: NotificationEvent) {
     notification.readStatus = true;
-    this.hasUnreadNotificationCount = this.countUnreadNotifications(
-      this.allNotifications,
-    );
-    Logging.log("Notification marked as read");
+    await this.entityMapper.save(notification);
   }
 
-  deleteNotification(notification: NotificationActivity) {
+  deleteNotification(notification: NotificationEvent) {
     // Need to add/update this logic to delete the notification from the CouchDB
     this.allNotifications = this.allNotifications.filter(
       (n) => n !== notification,
