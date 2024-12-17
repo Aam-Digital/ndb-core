@@ -16,6 +16,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
 import { Router } from "@angular/router";
 import { MockNotificationsService } from "./mock-notifications.service";
+import { CurrentUserSubject } from "app/core/session/current-user-subject";
 
 @Component({
   selector: "app-notifications",
@@ -48,6 +49,7 @@ export class NotificationsComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private router: Router,
     private mockNotificationsService: MockNotificationsService,
+    private currentUser: CurrentUserSubject,
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +74,10 @@ export class NotificationsComponent implements OnInit {
       this.mockNotificationsService.getNotifications() as unknown as NotificationEvent[];
 
     // The user is hardcoded for testing purposes, need to remove this.
-    this.filterUserNotifications(notifications, "User:demo");
+    this.filterUserNotifications(
+      notifications,
+      this.currentUser.value?.getId(),
+    );
     this.hasUnreadNotificationCount = this.countUnreadNotifications(
       this.allNotifications,
     );

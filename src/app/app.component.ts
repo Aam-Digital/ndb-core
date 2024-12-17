@@ -25,7 +25,11 @@ import { filter } from "rxjs/operators";
  */
 @Component({
   selector: "app-root",
-  templateUrl: "./app.component.html",
+  template: `@if (configFullscreen) {
+      <router-outlet></router-outlet>
+    } @else {
+      <app-ui></app-ui>
+    }`,
 })
 export class AppComponent {
   configFullscreen: boolean = false;
