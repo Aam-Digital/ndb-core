@@ -5,29 +5,37 @@
   <div class="notification-details">
     <strong i18n class="notification-item">{{ notification.title }}</strong>
     <p i18n class="notification-item">{{ notification.body }}</p>
-    <p i18n class="notification-time">{{ notification.created.at }}</p>
+    <p i18n class="notification-time">
+      {{ notification.created.at | NotificationTime }}
+    </p>
   </div>
 
   <!-- Blue indicator for unread notifications -->
   <span
-    *ngIf="!notification.readStatus"
-    class="unread-indicator"
-    matTooltip="Unread notification"
-    i18n-matTooltip="Unread notification"
-    matBadgeColor="accent"
+    [ngClass]="notification.readStatus ? 'read-indicator' : 'unread-indicator'"
+    matTooltip="{{
+      notification.readStatus ? 'Read notification' : 'Unread notification'
+    }}"
+    i18n-matTooltip
     [matMenuTriggerFor]="notificationMenu"
     (click)="$event.stopPropagation()"
-    aria-label="Unread notification"
   ></span>
 
   <mat-menu #notificationMenu="matMenu">
-    <button mat-menu-item (click)="markAsRead(); $event.stopPropagation()">
-      <fa-icon icon="check"></fa-icon>
-      <span class="menu-option" i18n>Mark as Read</span>
+    <button
+      mat-menu-item
+      (click)="handleMarkAsRead(); $event.stopPropagation()"
+    >
+      <fa-icon
+        [icon]="notification.readStatus ? 'eye-slash' : 'check'"
+      ></fa-icon>
+      <span class="menu-option" i18n>
+        {{ notification.readStatus ? "Mark as Unread" : "Mark as Read" }}
+      </span>
     </button>
     <button
       mat-menu-item
-      (click)="deleteNotification(); $event.stopPropagation()"
+      (click)="handleDeleteNotification(); $event.stopPropagation()"
     >
       <fa-icon icon="trash"></fa-icon>
       <span class="menu-option" i18n>Delete Notification</span>

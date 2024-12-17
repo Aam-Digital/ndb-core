@@ -1,13 +1,12 @@
 <button
   mat-icon-button
   matTooltip="Notifications"
-  i18n-matTooltip="Notifications"
-  [matMenuTriggerFor]="data"
-  (menuOpened)="onNotificationBellClick()"
+  i18n-matTooltip="notifications toolbar icon tooltip"
+  [matMenuTriggerFor]="notificationList"
 >
   <span
     [matBadge]="
-      hasUnreadNotificationCount > 0 ? hasUnreadNotificationCount : null
+      unreadNotifications?.length > 0 ? unreadNotifications?.length : null
     "
     matBadgeColor="accent"
   >
@@ -15,12 +14,12 @@
   </span>
 </button>
 
-<mat-menu #data>
+<mat-menu #notificationList>
   <div class="notification-panel">
     <div
       class="flex-row justify-space-between align-center notification-panel-header"
     >
-      <h1 class="notification-title" i18n>Notifications</h1>
+      <h2 class="notification-title" i18n>Notifications</h2>
 
       <button
         mat-icon-button
@@ -41,37 +40,31 @@
       <mat-tab label="Unread" i18n-label></mat-tab>
     </mat-tab-group>
 
-    <ng-container *ngIf="selectedTab === 0">
-      <!-- All Notifications -->
-      <app-notification-item
-        *ngFor="let notification of allNotifications"
-        [notification]="notification"
-        [onMarkAsRead]="markAsRead"
-        [onDeleteNotification]="deleteNotification.bind(this, notification)"
-      ></app-notification-item>
-      <div
-        class="flex-column no-notification-message"
-        *ngIf="allNotifications.length === 0"
-      >
-        <fa-icon class="no-notification-icon" icon="bell"></fa-icon>
-        <span class="no-notification-text" i18n>You have no notifications</span>
-      </div>
-    </ng-container>
+    <ng-container *ngIf="selectedTab === 0 || selectedTab === 1">
+      @for (
+        notification of selectedTab === 0
+          ? allNotifications
+          : unreadNotifications;
+        track notification
+      ) {
+        <app-notification-item
+          [notification]="notification"
+          (onDeleteNotification)="deleteNotification.bind(this, notification)"
+          (markAsRead)="selectedTab === 1 ? markAsRead(notification) : null"
+        ></app-notification-item>
+      }
 
-    <ng-container *ngIf="selectedTab === 1">
-      <app-notification-item
-        *ngFor="let unreadNotification of unreadNotifications"
-        [notification]="unreadNotification"
-        [onMarkAsRead]="markAsRead"
-        [onDeleteNotification]="
-          deleteNotification.bind(this, unreadNotification)
-        "
-      ></app-notification-item>
       <div
         class="flex-column no-notification-message"
-        *ngIf="unreadNotifications.length === 0"
+        *ngIf="
+          (selectedTab === 0 ? allNotifications : unreadNotifications)
+            .length === 0
+        "
       >
-        <fa-icon class="no-notification-icon" icon="bell"></fa-icon>
+        <fa-icon
+          class="no-notification-icon"
+          [icon]="['far', 'bell']"
+        ></fa-icon>
         <span class="no-notification-text" i18n>You have no notifications</span>
       </div>
     </ng-container>
@@ -80,9 +73,13 @@
 
 <!-- New mat-menu for ellipsis -->
 <mat-menu #settingsMenu>
-  <button mat-menu-item (click)="markAllRead($event)">
+  <button mat-menu-item (click)="enableNotificationForUser()">
     <fa-icon icon="bell"></fa-icon>
     <span class="menu-option" i18n>Mark as notification active</span>
+  </button>
+  <button mat-menu-item (click)="markAllRead($event)">
+    <fa-icon icon="check"></fa-icon>
+    <span class="menu-option" i18n>Mark all as read</span>
   </button>
   <button mat-menu-item (click)="$event.stopPropagation()">
     <fa-icon icon="gear"></fa-icon>
