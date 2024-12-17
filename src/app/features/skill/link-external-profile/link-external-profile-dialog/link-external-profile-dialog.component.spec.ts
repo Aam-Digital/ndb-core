@@ -12,6 +12,7 @@ import { of } from "rxjs";
 import { ExternalProfile } from "../../external-profile";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { HttpErrorResponse } from "@angular/common/http";
 
 describe("LinkExternalProfileDialogComponent", () => {
   let component: LinkExternalProfileDialogComponent;
@@ -95,7 +96,10 @@ describe("LinkExternalProfileDialogComponent", () => {
   }));
 
   it("should show error but not throw if API request fails", fakeAsync(() => {
-    const mockError = new Error("API error");
+    const mockError = new HttpErrorResponse({
+      status: 500,
+      statusText: "API error",
+    });
     mockSkillApi.getExternalProfiles.and.throwError(mockError);
     component.possibleMatches = [
       { id: "1", fullName: "previous result" } as any,
@@ -107,6 +111,22 @@ describe("LinkExternalProfileDialogComponent", () => {
     expect(component.error).toEqual(mockError);
     expect(component.loading).toBeFalse();
     expect(component.possibleMatches).toBeUndefined();
+  }));
+
+  it("should show error message if API rejects for missing permissions (403)", fakeAsync(() => {
+    const mockError = new HttpErrorResponse({
+      status: 403,
+      statusText: "No permissions error",
+    });
+    mockSkillApi.getExternalProfiles.and.throwError(mockError);
+
+    component.searchMatches();
+    tick();
+
+    expect(component.loading).toBeFalse();
+    expect(component.error.message).toEqual(
+      jasmine.stringContaining("permission"),
+    );
   }));
 
   it("should show 'no results' error if API returns empty", fakeAsync(() => {

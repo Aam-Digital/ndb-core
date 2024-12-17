@@ -52,3 +52,17 @@ export const LinkedProfile: Story = {
     } as ExternalProfileLinkConfig,
   },
 };
+
+export const LinkedProfileNotFound: Story = {
+  args: {
+    formControl: new FormControl("123"),
+    entity: new TestEntity(),
+    additional: {
+      searchFields: {
+        name: ["name"],
+        email: ["other"],
+      },
+    } as ExternalProfileLinkConfig,
+    externalProfileError: true,
+  },
+};

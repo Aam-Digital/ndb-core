@@ -12,7 +12,10 @@ export const mockSkillApi = {
         totalPages: 2,
         totalElements: 6,
       },
-      results: [createSkillApiDummyData("1"), createSkillApiDummyData("2")],
+      results: faker.helpers.multiple(
+        () => createSkillApiDummyData(faker.string.numeric()),
+        { count: { min: 0, max: 5 } },
+      ),
     }).pipe(delay(faker.number.int({ min: 500, max: 1500 }))),
 
   generateDefaultSearchParams: () => ({

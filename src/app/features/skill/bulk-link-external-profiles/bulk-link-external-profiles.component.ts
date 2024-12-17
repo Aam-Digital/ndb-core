@@ -36,12 +36,12 @@ import { EntitySchema } from "../../../core/entity/schema/entity-schema";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Logging } from "../../../core/logging/logging.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { firstValueFrom, from, mergeMap, Observable } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { finalize, firstValueFrom, from, mergeMap } from "rxjs";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { PercentPipe } from "@angular/common";
 import { MatProgressBar } from "@angular/material/progress-bar";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 @Component({
   selector: "app-bulk-link-external-profiles",
@@ -75,6 +75,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   private readonly skillApi = inject(SkillApiService);
   private readonly dialog = inject(MatDialog);
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly alertService = inject(AlertService);
 
   /**
    * The bulk-selected entities for which to search external profiles.
@@ -128,39 +129,60 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
           (r) => this.updateRecordWithMatches(r),
           this.MAX_CONCURRENT_REQUESTS,
         ),
-        tap(() => this.recalculatedMatchedRecordsCount()),
+        finalize(() => this.recalculatedMatchedRecordsCount()),
       )
       .subscribe();
   }
 
   /**
-   * fetch possible matches for each entity asynchronously and add to record
+   * fetch possible matches for each entity asynchronously and update the given record object
    * @param record
    * @private
    */
-  private updateRecordWithMatches(
+  private async updateRecordWithMatches(
     record: RecordMatching,
-  ): Observable<RecordMatching> {
-    return this.skillApi
-      .getExternalProfiles(
-        this.skillApi.generateDefaultSearchParams(
-          record.entity,
-          this.config.additional,
-        ),
-      )
-      .pipe(
-        tap(async () => this.getCurrentlySelectedProfile(record)),
-        map((possibleMatches) => {
-          record.possibleMatches = possibleMatches.results;
-          record.possibleMatchesCount =
-            possibleMatches.pagination.totalElements;
-          if (possibleMatches?.results.length === 1 && !record.selected) {
-            record.selected = possibleMatches[0];
-          }
+  ): Promise<RecordMatching> {
+    await this.updateRecordWithCurrentlySelected(record);
 
-          return record;
-        }),
+    try {
+      const possibleMatches = await firstValueFrom(
+        this.skillApi.getExternalProfiles(
+          this.skillApi.generateDefaultSearchParams(
+            record.entity,
+            this.config.additional,
+          ),
+        ),
       );
+
+      record.possibleMatches = possibleMatches.results;
+      record.possibleMatchesCount = possibleMatches.pagination.totalElements;
+
+      // auto-select if only one possible match
+      if (possibleMatches?.results.length === 1 && !record.selected) {
+        record.selected = possibleMatches.results[0];
+      }
+
+      // warn if selected is not part of current search results
+      if (
+        record.selected &&
+        !record.possibleMatches.find((match) => match.id === record.selected.id)
+      ) {
+        record.warning = {
+          ...(record.warning ?? {}),
+          possibleMatches: $localize`:bulk-link external profile warning:The currently linked external profile was not part of the latest default search results.`,
+        };
+      }
+    } catch (err) {
+      Logging.debug("Could not load external profiles (bulk action)", err); // TODO: should we log this to remote monitoring (i.e. "warn" level)?
+      record.warning = {
+        ...(record.warning ?? {}),
+        possibleMatches: $localize`:bulk-link external profile error:Error while fetching possible matches. Please try to manually search and select a profile to see details.`,
+      };
+      record.possibleMatchesCount = 0;
+      record.possibleMatches = [];
+    }
+
+    return record;
   }
 
   /**
@@ -169,7 +191,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
    * @param record
    * @private
    */
-  private async getCurrentlySelectedProfile(record: RecordMatching) {
+  private async updateRecordWithCurrentlySelected(record: RecordMatching) {
     const existingExtProfileId = record.entity[this.config.id];
     if (!existingExtProfileId) {
       return;
@@ -182,6 +204,11 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
         "BulkLinkExternalProfilesComponent: error fetching previously selected external profile",
         err,
       );
+
+      record.warning = {
+        ...(record.warning ?? {}),
+        selected: $localize`:bulk-link external profile error:Error while fetching currently linked external profile.`,
+      };
     });
 
     if (currentMatch) {
@@ -215,18 +242,30 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
 
   async save() {
     const newlyLinkedRecords = this.records.data.filter(
-      (record) => record.selected,
+      (r) => r.entity[this.config.id] !== r.selected?.id,
     );
 
     for (const record of newlyLinkedRecords) {
       const updatedEntity: Entity = record.entity;
-      updatedEntity[this.config.id] = record.selected.id;
+      updatedEntity[this.config.id] = record.selected?.id;
 
-      // TODO: avoid re-requesting the external profile again?
-      const skills = await this.skillApi.getSkillsFromExternalProfile(
-        record.selected.id,
-      );
-      updatedEntity["skills"] = skills;
+      if (record.selected) {
+        try {
+          // TODO: avoid re-requesting the external profile from the API again?
+          updatedEntity["skills"] =
+            await this.skillApi.getSkillsFromExternalProfile(
+              record.selected?.id,
+            );
+        } catch (err) {
+          Logging.debug("Could not load skills for external profile", err);
+          this.alertService.addWarning(
+            $localize`:bulk-action link external profile:Could not load skills for external profile of "${updatedEntity.toString()}".`,
+          );
+          updatedEntity["skills"] = [];
+        }
+      } else {
+        updatedEntity["skills"] = [];
+      }
     }
 
     await this.entityMapper.saveAll(newlyLinkedRecords.map((r) => r.entity));
@@ -256,4 +295,5 @@ interface RecordMatching {
   possibleMatches?: ExternalProfile[];
   possibleMatchesCount?: number;
   selected?: ExternalProfile;
+  warning?: { selected?: string; possibleMatches?: string };
 }

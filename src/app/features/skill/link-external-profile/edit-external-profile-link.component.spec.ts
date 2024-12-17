@@ -11,10 +11,12 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { Entity } from "../../../core/entity/model/entity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { Subject } from "rxjs";
+import { of, Subject, throwError } from "rxjs";
 import { ExternalProfile } from "../external-profile";
 import { LinkExternalProfileDialogData } from "./link-external-profile-dialog/link-external-profile-dialog.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { HttpErrorResponse } from "@angular/common/http";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 describe("EditExternalProfileLinkComponent", () => {
   let component: EditExternalProfileLinkComponent;
@@ -47,6 +49,10 @@ describe("EditExternalProfileLinkComponent", () => {
       providers: [
         { provide: SkillApiService, useValue: mockSkillApi },
         { provide: MatDialog, useValue: mockDialog },
+        {
+          provide: AlertService,
+          useValue: jasmine.createSpyObj("AlertService", ["addWarning"]),
+        },
       ],
     }).compileComponents();
 
@@ -121,6 +127,36 @@ describe("EditExternalProfileLinkComponent", () => {
     expect(component.formControl.dirty).toBeTrue();
   }));
 
+  it("should load external profile during init, if already linked", fakeAsync(() => {
+    const mockProfile: ExternalProfile = { id: "external-id" } as any;
+    component.formControl.setValue(mockProfile.id);
+    mockSkillApi.getExternalProfileById.and.returnValue(of(mockProfile));
+
+    component.ngOnInit();
+    tick();
+
+    expect(mockSkillApi.getExternalProfileById).toHaveBeenCalledWith(
+      mockProfile.id,
+    );
+    expect(component.externalProfile).toEqual(mockProfile);
+  }));
+
+  it("should show warning if linked external profile cannot be loaded", fakeAsync(() => {
+    component.formControl.setValue("broken-id");
+    mockSkillApi.getExternalProfileById.and.returnValue(
+      throwError(
+        () => new HttpErrorResponse({ status: 504, statusText: "API error" }),
+      ),
+    );
+
+    component.ngOnInit();
+    tick(10000);
+
+    expect(mockSkillApi.getExternalProfileById).toHaveBeenCalled();
+    expect(component.externalProfile).toBeUndefined();
+    expect(component.externalProfileError).toBeTrue();
+  }));
+
   it("should update related form field from latest external entity if user clicks 'update data'", fakeAsync(() => {
     const mockSkills = [new TestEntity(), new TestEntity()] as any;
     mockSkillApi.getSkillsFromExternalProfile.and.resolveTo(mockSkills);
@@ -136,5 +172,21 @@ describe("EditExternalProfileLinkComponent", () => {
     const targetFormControl = component.parent.get("skills");
     expect(targetFormControl.value).toEqual(mockSkills);
     expect(targetFormControl.dirty).toBeTrue();
+  }));
+
+  it("should show warning alert if 'updating data' from external profile via API fails", fakeAsync(() => {
+    component.formControl.setValue("external-id");
+    mockSkillApi.getSkillsFromExternalProfile.and.throwError(
+      new HttpErrorResponse({
+        status: 500,
+        statusText: "API error",
+      }),
+    );
+
+    component.updateExternalData();
+    tick();
+
+    expect(mockSkillApi.getSkillsFromExternalProfile).toHaveBeenCalled();
+    expect(TestBed.inject(AlertService).addWarning).toHaveBeenCalled();
   }));
 });

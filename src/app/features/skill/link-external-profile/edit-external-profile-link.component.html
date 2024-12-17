@@ -19,6 +19,13 @@
             : ""
         }}
       </span>
+      @if (externalProfileError) {
+        <fa-icon
+          icon="exclamation-triangle"
+          matTooltip="Could not load external profile."
+          i18n-matTooltip
+        ></fa-icon>
+      }
     } @else {
       <span
         i18n

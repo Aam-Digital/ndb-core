@@ -19,6 +19,11 @@ import { SkillApiService } from "../skill-api.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ExternalProfileLinkConfig } from "./external-profile-link-config";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { catchError } from "rxjs/operators";
+import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
+import { of } from "rxjs";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { Logging } from "../../../core/logging/logging.service";
 
 @Component({
   selector: "app-edit-external-profile-link",
@@ -46,9 +51,11 @@ export class EditExternalProfileLinkComponent
 
   isLoading: WritableSignal<boolean> = signal(false);
   externalProfile: ExternalProfile | undefined;
+  externalProfileError: boolean;
 
   private readonly dialog: MatDialog = inject(MatDialog);
   private readonly skillApi: SkillApiService = inject(SkillApiService);
+  private readonly alertService = inject(AlertService);
 
   override ngOnInit() {
     super.ngOnInit();
@@ -56,6 +63,13 @@ export class EditExternalProfileLinkComponent
     if (this.formControl.value) {
       this.skillApi
         .getExternalProfileById(this.formControl.value)
+        .pipe(
+          retryOnServerError(2),
+          catchError(() => {
+            this.externalProfileError = true;
+            return of(undefined);
+          }),
+        )
         .subscribe((profile) => {
           this.externalProfile = profile;
         });
@@ -97,9 +111,17 @@ export class EditExternalProfileLinkComponent
       return;
     }
 
-    const skills = await this.skillApi.getSkillsFromExternalProfile(
-      this.formControl.value,
-    );
+    let skills: string[] = [];
+    try {
+      skills = await this.skillApi.getSkillsFromExternalProfile(
+        this.formControl.value,
+      );
+    } catch (e) {
+      Logging.debug("EditExternalProfileLink error", e);
+      this.alertService.addWarning(
+        $localize`EditExternalProfileLink error: Could not load skills from external profile.`,
+      );
+    }
 
     // TODO: run import / update automatically?
     const targetFormControl = this.parent.get("skills");

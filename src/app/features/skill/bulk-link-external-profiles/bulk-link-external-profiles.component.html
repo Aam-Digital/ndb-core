@@ -49,6 +49,13 @@
           (click)="unlinkMatch(element)"
         ></fa-icon>
       }
+      @if (element.warning?.selected) {
+        <fa-icon
+          icon="exclamation-triangle"
+          class="error-icon"
+          [matTooltip]="element.warning.selected"
+        ></fa-icon>
+      }
     </td>
   </ng-container>
 
@@ -58,6 +65,13 @@
     </th>
     <td mat-cell *matCellDef="let element">
       {{ element.possibleMatchesCount }}
+      @if (element.warning?.possibleMatches) {
+        <fa-icon
+          icon="exclamation-triangle"
+          class="error-icon"
+          [matTooltip]="element.warning.possibleMatches"
+        ></fa-icon>
+      }
     </td>
   </ng-container>
 

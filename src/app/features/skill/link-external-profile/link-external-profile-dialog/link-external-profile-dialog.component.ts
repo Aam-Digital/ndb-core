@@ -134,7 +134,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
 
       if (e.status === 403) {
         this.error = {
-          message: $localize`:external profile matching dialog:You do not have permission to access external profiles.`,
+          message: $localize`:external profile matching dialog:Your user account does not have permission to access external profiles.`,
         };
         return;
       }

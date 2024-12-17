@@ -87,7 +87,9 @@ export class SkillApiService {
    * and create them, if necessary.
    * @param externalId
    */
-  async getSkillsFromExternalProfile(externalId: string): Promise<string[]> {
+  async getSkillsFromExternalProfile(
+    externalId: string | undefined,
+  ): Promise<string[]> {
     const profile = await firstValueFrom(
       this.getExternalProfileById(externalId),
     );
