@@ -1,0 +1,1222 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >EntityActionsService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/entity/entity-actions/entity-actions.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
+including a confirmation dialog.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#anonymize" >anonymize</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#archive" >archive</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#delete" >delete</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#generateMessageForConfirmationWithUndo" >generateMessageForConfirmationWithUndo</a>
+                            </li>
+                            <li>
+                                <a href="#showSnackbarConfirmationWithUndo" >showSnackbarConfirmationWithUndo</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#undoArchive" >undoArchive</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(confirmationDialog: <a href="../injectables/ConfirmationDialogService.html" target="_self">ConfirmationDialogService</a>, snackBar: MatSnackBar, router: Router, entityMapper: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>, entityDelete: <a href="../injectables/EntityDeleteService.html" target="_self">EntityDeleteService</a>, entityAnonymize: <a href="../injectables/EntityAnonymizeService.html" target="_self">EntityAnonymizeService</a>, entityActionsMenuService: <a href="../injectables/EntityActionsMenuService.html" target="_self">EntityActionsMenuService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/app/core/entity/entity-actions/entity-actions.service.ts:21</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>confirmationDialog</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ConfirmationDialogService.html" target="_self" >ConfirmationDialogService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>snackBar</td>
+                                                  
+                                                        <td>
+                                                                    <code>MatSnackBar</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>router</td>
+                                                  
+                                                        <td>
+                                                                    <code>Router</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityMapper</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityDelete</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityDeleteService.html" target="_self" >EntityDeleteService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityAnonymize</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityAnonymizeService.html" target="_self" >EntityAnonymizeService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityActionsMenuService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityActionsMenuService.html" target="_self" >EntityActionsMenuService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="anonymize"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>anonymize</b></span>
+                        <a href="#anonymize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>anonymize(entityParam: E | E[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="179"
+                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-actions.service.ts:179</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Anonymize the given entity,
+removing properties that are not explicitly configured in the schema to be retained.</p>
+<p>This triggers UX interactions like confirmation request dialog and snackbar message as well.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityParam</td>
+                                            <td>
+                                                        <code>E | E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="archive"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>archive</b></span>
+                        <a href="#archive"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>archive(entityParam: E | E[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="246"
+                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-actions.service.ts:246</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark the given entity as inactive.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityParam</td>
+                                            <td>
+                                                        <code>E | E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="delete"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>delete</b></span>
+                        <a href="#delete"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>delete(entityParam: E | E[], navigate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="96"
+                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-actions.service.ts:96</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Shows a confirmation dialog to the user
+and removes the entity if the user confirms.</p>
+<p>This also triggers a toast message, enabling the user to undo the action.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityParam</td>
+                                            <td>
+                                                        <code>E | E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The entity to remove</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>navigate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>whether upon delete the app will navigate back</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateMessageForConfirmationWithUndo"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>generateMessageForConfirmationWithUndo</b></span>
+                        <a href="#generateMessageForConfirmationWithUndo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>generateMessageForConfirmationWithUndo(entities: <a href="../classes/Entity.html" target="_self">Entity[]</a>, action: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="289"
+                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-actions.service.ts:289</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entities</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="showSnackbarConfirmationWithUndo"></a>
+                    <span class="name">
+                        <span ><b>showSnackbarConfirmationWithUndo</b></span>
+                        <a href="#showSnackbarConfirmationWithUndo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>showSnackbarConfirmationWithUndo(message: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, previousEntitiesForUndo: <a href="../classes/Entity.html" target="_self">Entity[]</a>, navigateBackToUrl?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-actions.service.ts:60</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>message</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>previousEntitiesForUndo</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>navigateBackToUrl</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="undoArchive"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>undoArchive</b></span>
+                        <a href="#undoArchive"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>undoArchive(entityParam: E | E[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="269"
+                                    class="link-to-prism">src/app/core/entity/entity-actions/entity-actions.service.ts:269</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Undo the archive action on the given entity or entities.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityParam</td>
+                                            <td>
+                                                        <code>E | E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { EntityMapperService } from &quot;../entity-mapper/entity-mapper.service&quot;;
+import { Entity } from &quot;../model/entity&quot;;
+import { ConfirmationDialogService } from &quot;../../common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { MatSnackBar } from &quot;@angular/material/snack-bar&quot;;
+import { Router } from &quot;@angular/router&quot;;
+import { getUrlWithoutParams } from &quot;../../../utils/utils&quot;;
+import { EntityDeleteService } from &quot;./entity-delete.service&quot;;
+import { EntityAnonymizeService } from &quot;./entity-anonymize.service&quot;;
+import { OkButton } from &quot;../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component&quot;;
+import { CascadingActionResult } from &quot;./cascading-entity-action&quot;;
+import { EntityActionsMenuService } from &quot;../../entity-details/entity-actions-menu/entity-actions-menu.service&quot;;
+
+/**
+ * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
+ * including a confirmation dialog.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class EntityActionsService {
+  constructor(
+    private confirmationDialog: ConfirmationDialogService,
+    private snackBar: MatSnackBar,
+    private router: Router,
+    private entityMapper: EntityMapperService,
+    private entityDelete: EntityDeleteService,
+    private entityAnonymize: EntityAnonymizeService,
+    entityActionsMenuService: EntityActionsMenuService,
+  ) {
+    entityActionsMenuService.registerActions([
+      {
+        action: &quot;archive&quot;,
+        execute: (e) &#x3D;&gt; this.archive(e),
+        permission: &quot;update&quot;,
+        icon: &quot;box-archive&quot;,
+        label: $localize&#x60;:entity context menu:Archive&#x60;,
+        tooltip: $localize&#x60;:entity context menu tooltip:Mark the record as inactive, hiding it from lists by default while keeping the data.&#x60;,
+        primaryAction: true,
+      },
+      {
+        action: &quot;anonymize&quot;,
+        execute: (e) &#x3D;&gt; this.anonymize(e),
+        permission: &quot;update&quot;,
+        icon: &quot;user-secret&quot;,
+        label: $localize&#x60;:entity context menu:Anonymize&#x60;,
+        tooltip: $localize&#x60;:entity context menu tooltip:Remove all personal data and keep an archived basic record for statistical reporting.&#x60;,
+      },
+      {
+        action: &quot;delete&quot;,
+        execute: (e, nav) &#x3D;&gt; this.delete(e, nav),
+        permission: &quot;delete&quot;,
+        icon: &quot;trash&quot;,
+        label: $localize&#x60;:entity context menu:Delete&#x60;,
+        tooltip: $localize&#x60;:entity context menu tooltip:Remove the record completely from the database.&#x60;,
+      },
+    ]);
+  }
+
+  showSnackbarConfirmationWithUndo(
+    message: string,
+    previousEntitiesForUndo: Entity[],
+    navigateBackToUrl?: string,
+  ) {
+    const snackBarRef &#x3D; this.snackBar.open(
+      message,
+      $localize&#x60;:Undo an entity action:Undo&#x60;,
+      {
+        duration: 8000,
+      },
+    );
+
+    // Undo Action
+    snackBarRef.onAction().subscribe(async () &#x3D;&gt; {
+      const undoProgressRef &#x3D; this.confirmationDialog.showProgressDialog(
+        $localize&#x60;:Undo entity action progress dialog: Reverting changes ...&#x60;,
+      );
+      await this.entityMapper.saveAll(previousEntitiesForUndo, true);
+      undoProgressRef.close();
+
+      if (navigateBackToUrl) {
+        await this.router.navigate([navigateBackToUrl]);
+      }
+    });
+  }
+
+  /**
+   * Shows a confirmation dialog to the user
+   * and removes the entity if the user confirms.
+   *
+   * This also triggers a toast message, enabling the user to undo the action.
+   *
+   * @param entityParam The entity to remove
+   * @param navigate whether upon delete the app will navigate back
+   */
+  async delete&lt;E extends Entity&gt;(
+    entityParam: E | E[],
+    navigate: boolean &#x3D; false,
+  ): Promise&lt;boolean&gt; {
+    let textForDeleteEntity &#x3D; &quot;&quot;;
+    let entities &#x3D; Array.isArray(entityParam) ? entityParam : [entityParam];
+    if (entities.length &gt; 1) {
+      textForDeleteEntity &#x3D;
+        $localize&#x60;:Demonstrative pronoun plural:these&#x60; +
+        &quot; &quot; +
+        entities.length +
+        &quot; &quot; +
+        entities[0].getConstructor().labelPlural;
+    } else {
+      textForDeleteEntity &#x3D;
+        $localize&#x60;:Definite article singular:the&#x60; +
+        &quot; &quot; +
+        entities[0].getConstructor().label +
+        &#x27; &quot;&#x27; +
+        entities[0].toString() +
+        &#x27;&quot;&#x27;;
+    }
+
+    if (
+      !(await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:Delete confirmation title:Delete?&#x60;,
+        $localize&#x60;:Delete confirmation dialog:
+        This will remove the data permanently as if it never existed. This cannot be undone. Statistical reports (also for past time periods) will change and not include this record anymore.\n
+        If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use &quot;anonymize&quot; or just &quot;archive&quot; instead, so that you will not lose your documentation for reports.\n
+        Are you sure you want to delete ${textForDeleteEntity}?&#x60;,
+      ))
+    ) {
+      return false;
+    }
+
+    const progressDialogRef &#x3D; this.confirmationDialog.showProgressDialog(
+      $localize&#x60;:Entity action progress dialog:Processing ...&#x60;,
+    );
+    let result &#x3D; new CascadingActionResult();
+
+    for (let entity of entities) {
+      result.mergeResults(await this.entityDelete.deleteEntity(entity, true));
+    }
+
+    progressDialogRef.close();
+
+    if (result.potentiallyRetainingPII.length &gt; 0) {
+      await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:post-delete related PII warning title:Related records may still contain personal data&#x60;,
+        $localize&#x60;:post-delete related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically deleted all records that are linked to ONLY ${textForDeleteEntity}.
+        However, there are some records that are linked to multiple records. We have not deleted these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed, if required (e.g. by looking through the linked notes and editing a note&#x27;s text).&#x60;,
+        OkButton,
+      );
+    }
+
+    let currentUrl: string;
+    if (navigate) {
+      currentUrl &#x3D; getUrlWithoutParams(this.router);
+      const parentUrl &#x3D; currentUrl.substring(0, currentUrl.lastIndexOf(&quot;/&quot;));
+      await this.router.navigate([parentUrl]);
+    }
+
+    this.showSnackbarConfirmationWithUndo(
+      this.generateMessageForConfirmationWithUndo(
+        entities.length &gt; 0
+          ? entities
+          : [result.originalEntitiesBeforeChange[0]],
+        $localize&#x60;:Entity action confirmation message verb:deleted&#x60;,
+      ),
+      result.originalEntitiesBeforeChange,
+      currentUrl,
+    );
+    return true;
+  }
+
+  /**
+   * Anonymize the given entity,
+   * removing properties that are not explicitly configured in the schema to be retained.
+   *
+   * This triggers UX interactions like confirmation request dialog and snackbar message as well.
+   *
+   * @param entityParam
+   */
+  async anonymize&lt;E extends Entity&gt;(entityParam: E | E[]) {
+    let entities &#x3D; Array.isArray(entityParam) ? entityParam : [entityParam];
+    let textForAnonymizeEntity &#x3D; &quot;&quot;;
+
+    if (entities.length &gt; 1) {
+      textForAnonymizeEntity &#x3D;
+        $localize&#x60;:Demonstrative pronoun plural:these&#x60; +
+        &quot; &quot; +
+        entities.length +
+        &quot; &quot; +
+        entities[0].getConstructor().labelPlural;
+    } else {
+      textForAnonymizeEntity &#x3D;
+        $localize&#x60;:Definite article singular:the&#x60; +
+        &quot; &quot; +
+        entities[0].getConstructor().label +
+        &#x27; &quot;&#x27; +
+        entities[0].toString() +
+        &#x27;&quot;&#x27;;
+    }
+
+    if (
+      !(await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:Anonymize confirmation dialog:Anonymize?&#x60;,
+        $localize&#x60;:Anonymize confirmation dialog:
+        This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.\n
+        If a record has only become inactive and you want to keep all details, consider to use &quot;archive&quot; instead.\n
+        Are you sure you want to anonymize ${textForAnonymizeEntity}?&#x60;,
+      ))
+    ) {
+      return false;
+    }
+
+    const progressDialogRef &#x3D; this.confirmationDialog.showProgressDialog(
+      $localize&#x60;:Entity action progress dialog:Processing ...&#x60;,
+    );
+    let result &#x3D; new CascadingActionResult();
+    for (let entity of entities) {
+      result.mergeResults(await this.entityAnonymize.anonymizeEntity(entity));
+    }
+    progressDialogRef.close();
+
+    if (result.potentiallyRetainingPII.length &gt; 0) {
+      await this.confirmationDialog.getConfirmation(
+        $localize&#x60;:post-anonymize related PII warning title:Related records may still contain personal data&#x60;,
+        $localize&#x60;:post-anonymize related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically anonymized all records that are linked to ONLY ${textForAnonymizeEntity}.
+        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note&#x27;s text).&#x60;,
+        OkButton,
+      );
+    }
+
+    this.showSnackbarConfirmationWithUndo(
+      this.generateMessageForConfirmationWithUndo(
+        entities.length &gt; 0
+          ? entities
+          : [result.originalEntitiesBeforeChange[0]],
+        $localize&#x60;:Entity action confirmation message verb:anonymized&#x60;,
+      ),
+      result.originalEntitiesBeforeChange,
+    );
+    return true;
+  }
+
+  /**
+   * Mark the given entity as inactive.
+   * @param entity
+   */
+  async archive&lt;E extends Entity&gt;(entityParam: E | E[]) {
+    let originalEntities: E[] &#x3D; Array.isArray(entityParam)
+      ? entityParam
+      : [entityParam];
+    const newEntities: E[] &#x3D; originalEntities.map((e) &#x3D;&gt; e.copy());
+    newEntities.forEach(async (e) &#x3D;&gt; {
+      e.inactive &#x3D; true;
+      await this.entityMapper.save(e);
+    });
+
+    this.showSnackbarConfirmationWithUndo(
+      this.generateMessageForConfirmationWithUndo(
+        newEntities,
+        $localize&#x60;:Entity action confirmation message verb:archived&#x60;,
+      ),
+      originalEntities,
+    );
+    return true;
+  }
+  /**
+   * Undo the archive action on the given entity or entities.
+   * @param entity
+   */
+  async undoArchive&lt;E extends Entity&gt;(entityParam: E | E[]) {
+    let newEntities: E[] &#x3D; Array.isArray(entityParam)
+      ? entityParam
+      : [entityParam];
+    const originalEntities: E[] &#x3D; newEntities.map((e) &#x3D;&gt; e.copy());
+    newEntities.forEach(async (e) &#x3D;&gt; {
+      e.inactive &#x3D; false;
+      await this.entityMapper.save(e);
+    });
+
+    this.showSnackbarConfirmationWithUndo(
+      this.generateMessageForConfirmationWithUndo(
+        newEntities,
+        $localize&#x60;:Entity action confirmation message verb:reactivated&#x60;,
+      ),
+      originalEntities,
+    );
+    return true;
+  }
+
+  public generateMessageForConfirmationWithUndo(
+    entities: Entity[],
+    action: string,
+  ): string {
+    if (entities.length &gt; 1) {
+      return $localize&#x60;:Entity action confirmation message:${entities.length} ${
+        entities[0].getConstructor().labelPlural
+      } ${action}&#x60;;
+    } else {
+      return $localize&#x60;:Entity action confirmation message:${
+        entities[0].getConstructor().label
+      } &quot;${entities.toString()}&quot; ${action}&#x60;;
+    }
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'EntityActionsService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

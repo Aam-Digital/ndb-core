@@ -1,0 +1,2062 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >Note</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/child-dev-project/notes/model/note.ts</code>
+        </p>
+
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#attachment" >attachment</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#authors" >authors</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#category" >category</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#children" >children</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#date" >date</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier"></span>
+                                <a href="#hasPII" >hasPII</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier"></span>
+                                <a href="#label" >label</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier"></span>
+                                <a href="#labelPlural" >labelPlural</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#relatedEntities" >relatedEntities</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#relatesTo" >relatesTo</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#schools" >schools</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#subject" >subject</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#text" >text</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier"></span>
+                                <a href="#toStringAttributes" >toStringAttributes</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#warningLevel" >warningLevel</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#addChild" >addChild</a>
+                            </li>
+                            <li>
+                                <a href="#addSchool" >addSchool</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#copy" >copy</a>
+                            </li>
+                            <li>
+                                <a href="#countWithStatus" >countWithStatus</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#create" >create</a>
+                            </li>
+                            <li>
+                                <a href="#getAttendance" >getAttendance</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier"></span>
+                                <a href="#getColor" >getColor</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#getColorForId" >getColorForId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#getPropertyFor" >getPropertyFor</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#getWarningLevel" >getWarningLevel</a>
+                            </li>
+                            <li>
+                                <a href="#hasUnknownAttendances" >hasUnknownAttendances</a>
+                            </li>
+                            <li>
+                                <a href="#removeChild" >removeChild</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="attachment"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>attachment</b></span>
+                        <a href="#attachment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, dataType: &#x27;file&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="144" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:144</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="authors"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>authors</b></span>
+                        <a href="#authors"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, dataType: &#x27;entity&#x27;, isArray: true, additional: &#x27;User&#x27;, defaultValue: undefined, anonymize: &#x27;retain&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="130" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:130</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>IDs of users that authored this note</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="category"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>category</b></span>
+                        <a href="#category"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/InteractionType.html" target="_self" >InteractionType</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, dataType: &#x27;configurable-enum&#x27;, additional: INTERACTION_TYPE_CONFIG_ID, anonymize: &#x27;retain&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="138" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:138</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="children"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>children</b></span>
+                        <a href="#children"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, dataType: &#x27;entity&#x27;, isArray: true, additional: &#x27;Child&#x27;, entityReferenceRole: &#x27;composite&#x27;, editComponent: &#x27;EditAttendance&#x27;, anonymize: &#x27;retain&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="86" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:86</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>IDs of Child entities linked with this note</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="date"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>date</b></span>
+                        <a href="#date"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, dataType: &#x27;date-only&#x27;, defaultValue: undefined, anonymize: &#x27;retain&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="105" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:105</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasPII"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier"></span>
+                        <span ><b>hasPII</b></span>
+                        <a href="#hasPII"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>true</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:42</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="label"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier"></span>
+                        <span ><b>label</b></span>
+                        <a href="#label"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:label for entity:Note&#x60;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:40</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="labelPlural"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier"></span>
+                        <span ><b>labelPlural</b></span>
+                        <a href="#labelPlural"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:label (plural) for entity:Notes&#x60;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:41</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="relatedEntities"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>relatedEntities</b></span>
+                        <a href="#relatedEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({dataType: &#x27;entity&#x27;, isArray: true, additional: undefined, anonymize: &#x27;retain&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="167" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:167</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>other records (e.g. a recurring activity, group membership, ...) to which this note is related in some way,
+so that notes can be displayed linked to these entities.</p>
+<p>This property saves ids including their entity type prefix.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="relatesTo"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>relatesTo</b></span>
+                        <a href="#relatesTo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({anonymize: &#x27;retain&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="152" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:152</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>id referencing a different entity (e.g. a recurring activity) this note is related to</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="schools"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>schools</b></span>
+                        <a href="#schools"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, dataType: &#x27;entity&#x27;, isArray: true, additional: &#x27;School&#x27;, entityReferenceRole: &#x27;composite&#x27;, anonymize: &#x27;retain&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="180" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:180</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>related school ids (e.g. to infer participants for event roll calls)</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="subject"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>subject</b></span>
+                        <a href="#subject"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="110" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:110</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="text"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>text</b></span>
+                        <a href="#text"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, dataType: &#x27;long-text&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="116" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:116</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toStringAttributes"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier"></span>
+                        <span ><b>toStringAttributes</b></span>
+                        <a href="#toStringAttributes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[&quot;subject&quot;]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:39</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="warningLevel"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>warningLevel</b></span>
+                        <a href="#warningLevel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EnumValue" target="_self" >Ordering.EnumValue</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @DatabaseField({label: undefined, dataType: &#x27;configurable-enum&#x27;, additional: &#x27;warning-levels&#x27;, anonymize: &#x27;retain&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="188" class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:188</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addChild"></a>
+                    <span class="name">
+                        <span ><b>addChild</b></span>
+                        <a href="#addChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>addChild(child: <a href="../classes/Entity.html" target="_self">Entity | string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="232"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:232</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>adds a new child to this note</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>child</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The child or the id of the child to add to the notes</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addSchool"></a>
+                    <span class="name">
+                        <span ><b>addSchool</b></span>
+                        <a href="#addSchool"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>addSchool(school: <a href="../classes/Entity.html" target="_self">Entity | string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="245"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:245</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>adds a new school to this note</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>school</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The school or its id to be added to the note</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="copy"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>copy</b></span>
+                        <a href="#copy"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>copy()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="322"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:322</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Performs a deep copy of the note copying all simple data
+(such as the date, author, e.t.c.) as well as copying the
+child-array</p>
+</div>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="countWithStatus"></a>
+                    <span class="name">
+                        <span ><b>countWithStatus</b></span>
+                        <a href="#countWithStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>countWithStatus(status: <a href="../undefineds/AttendanceLogicalStatus.html" target="_self">AttendanceLogicalStatus</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="310"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:310</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Counts how many children have the given attendance status.
+The status is counted based on the AttendanceLogicalStatus and the <code>AttendanceStatusType.countAs</code> attribute</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>status</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#AttendanceLogicalStatus" target="_self" >AttendanceLogicalStatus</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>which should be counted</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>number of children with this status</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="create"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>create</b></span>
+                        <a href="#create"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>create(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, subject: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, children: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="44"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:44</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>subject</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;&quot;</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>children</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>[]</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Note.html" target="_self" >Note</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAttendance"></a>
+                    <span class="name">
+                        <span ><b>getAttendance</b></span>
+                        <a href="#getAttendance"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAttendance(child: <a href="../classes/Entity.html" target="_self">string | Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="262"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:262</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Returns the event attendance details for the given child.</p>
+<p>This method returns a default object that can be used and updated even if no attendance has been recorded yet.
+Returns undefined if the child is not added to this event/note instance.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>child</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >string | Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>: The child or the id of the child to look for</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/EventAttendance.html" target="_self" >EventAttendance</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getColor"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier"></span>
+                        <span ><b>getColor</b></span>
+                        <a href="#getColor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getColor()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="198"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:198</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getColorForId"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>getColorForId</b></span>
+                        <a href="#getColorForId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getColorForId(childId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:207</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>childId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPropertyFor"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>getPropertyFor</b></span>
+                        <a href="#getPropertyFor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getPropertyFor(entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Returns the name of the Note property where entities of the given entity type are stored</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>&quot;children&quot; | &quot;schools&quot; | &quot;authors&quot; | &quot;relatedEntities&quot;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getWarningLevel"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>getWarningLevel</b></span>
+                        <a href="#getWarningLevel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getWarningLevel()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:190</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/enumerations.html#WarningLevel" target="_self" >WarningLevel</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="hasUnknownAttendances"></a>
+                    <span class="name">
+                        <span ><b>hasUnknownAttendances</b></span>
+                        <a href="#hasUnknownAttendances"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>hasUnknownAttendances(childId?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="285"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:285</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Whether the attendance context information available through <code>getAttendance</code> is missing data for some children.</p>
+<p>While getAttendance will always set and return at least a default value <code>hasUnknownAttendances</code> can be used
+to flag events with incomplete data.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>childId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeChild"></a>
+                    <span class="name">
+                        <span ><b>removeChild</b></span>
+                        <a href="#removeChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeChild(childId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="223"
+                                    class="link-to-prism">src/app/child-dev-project/notes/model/note.ts:223</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>removes a specific child from this note</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>childId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The id of the child to exclude from the notes</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DatabaseEntity } from &quot;../../../core/entity/database-entity.decorator&quot;;
+import { Entity } from &quot;../../../core/entity/model/entity&quot;;
+import { DatabaseField } from &quot;../../../core/entity/database-field.decorator&quot;;
+import {
+  INTERACTION_TYPE_CONFIG_ID,
+  InteractionType,
+} from &quot;./interaction-type.interface&quot;;
+import {
+  EventAttendance,
+  EventAttendanceMap,
+} from &quot;../../attendance/model/event-attendance&quot;;
+import {
+  AttendanceLogicalStatus,
+  NullAttendanceStatusType,
+} from &quot;../../attendance/model/attendance-status&quot;;
+import { getWarningLevelColor, WarningLevel } from &quot;../../warning-level&quot;;
+import { Ordering } from &quot;../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering&quot;;
+import { PLACEHOLDERS } from &quot;../../../core/entity/schema/entity-schema-field&quot;;
+
+@DatabaseEntity(&quot;Note&quot;)
+export class Note extends Entity {
+  static override toStringAttributes &#x3D; [&quot;subject&quot;];
+  static override label &#x3D; $localize&#x60;:label for entity:Note&#x60;;
+  static override labelPlural &#x3D; $localize&#x60;:label (plural) for entity:Notes&#x60;;
+  static override hasPII &#x3D; true;
+
+  static create(
+    date: Date,
+    subject: string &#x3D; &quot;&quot;,
+    children: string[] &#x3D; [],
+  ): Note {
+    const instance &#x3D; new Note();
+    instance.date &#x3D; date;
+    instance.subject &#x3D; subject;
+    for (const child of children) {
+      instance.addChild(child);
+    }
+    return instance;
+  }
+
+  /**
+   * Returns the name of the Note property where entities of the given entity type are stored
+   * @param entityType
+   */
+  static getPropertyFor(entityType: string) {
+    switch (entityType) {
+      case &quot;Child&quot;:
+        return &quot;children&quot;;
+      case &quot;School&quot;:
+        return &quot;schools&quot;;
+      case &quot;User&quot;:
+        return &quot;authors&quot;;
+      default:
+        return &quot;relatedEntities&quot;;
+    }
+  }
+
+  // TODO: remove these special properties (children, schools) and use relatedEntities instead once the attendance system is generalized (#1364)
+  /** IDs of Child entities linked with this note */
+  @DatabaseField({
+    label: $localize&#x60;:Label for the participants field of a note:Participants&#x60;,
+    dataType: &quot;entity&quot;,
+    isArray: true,
+    additional: &quot;Child&quot;,
+    entityReferenceRole: &quot;composite&quot;,
+    editComponent: &quot;EditAttendance&quot;,
+    anonymize: &quot;retain&quot;,
+  })
+  children: string[] &#x3D; [];
+
+  /**
+   * optional additional information about attendance at this event for each of the linked children
+   *
+   * No direct access to change this property. Use the &#x60;.getAttendance()&#x60; method to have safe access.
+   */
+  @DatabaseField({ anonymize: &quot;retain&quot; })
+  private childrenAttendance: EventAttendanceMap &#x3D; new EventAttendanceMap();
+
+  @DatabaseField({
+    label: $localize&#x60;:Label for the date of a note:Date&#x60;,
+    dataType: &quot;date-only&quot;,
+    defaultValue: {
+      mode: &quot;dynamic&quot;,
+      value: PLACEHOLDERS.NOW,
+    },
+    anonymize: &quot;retain&quot;,
+  })
+  date: Date;
+
+  @DatabaseField({
+    label: $localize&#x60;:Label for the subject of a note:Subject&#x60;,
+  })
+  subject: string;
+
+  @DatabaseField({
+    label: $localize&#x60;:Label for the actual notes of a note:Notes&#x60;,
+    dataType: &quot;long-text&quot;,
+  })
+  text: string;
+
+  /** IDs of users that authored this note */
+  @DatabaseField({
+    label: $localize&#x60;:Label for the social worker(s) who created the note:Team involved&#x60;,
+    dataType: &quot;entity&quot;,
+    isArray: true,
+    additional: &quot;User&quot;,
+    defaultValue: {
+      mode: &quot;dynamic&quot;,
+      value: PLACEHOLDERS.CURRENT_USER,
+    },
+    anonymize: &quot;retain&quot;,
+  })
+  authors: string[] &#x3D; [];
+
+  @DatabaseField({
+    label: $localize&#x60;:Label for the category of a note:Category&#x60;,
+    dataType: &quot;configurable-enum&quot;,
+    additional: INTERACTION_TYPE_CONFIG_ID,
+    anonymize: &quot;retain&quot;,
+  })
+  category: InteractionType;
+
+  @DatabaseField({
+    label: $localize&#x60;Attachment&#x60;,
+    dataType: &quot;file&quot;,
+  })
+  attachment: string;
+
+  /**
+   * id referencing a different entity (e.g. a recurring activity) this note is related to
+   */
+  @DatabaseField({
+    anonymize: &quot;retain&quot;,
+  })
+  relatesTo: string;
+
+  /**
+   * other records (e.g. a recurring activity, group membership, ...) to which this note is related in some way,
+   * so that notes can be displayed linked to these entities.
+   *
+   * This property saves ids including their entity type prefix.
+   */
+  @DatabaseField({
+    dataType: &quot;entity&quot;,
+    isArray: true,
+    // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: &quot;ChildSchoolRelation&quot;)
+    additional: undefined,
+    anonymize: &quot;retain&quot;,
+  })
+  relatedEntities: string[] &#x3D; [];
+
+  /**
+   * related school ids (e.g. to infer participants for event roll calls)
+   */
+  @DatabaseField({
+    label: $localize&#x60;:label for the linked schools:Groups&#x60;,
+    dataType: &quot;entity&quot;,
+    isArray: true,
+    additional: &quot;School&quot;,
+    entityReferenceRole: &quot;composite&quot;,
+    anonymize: &quot;retain&quot;,
+  })
+  schools: string[] &#x3D; [];
+
+  @DatabaseField({
+    label: $localize&#x60;:Status of a note:Status&#x60;,
+    dataType: &quot;configurable-enum&quot;,
+    additional: &quot;warning-levels&quot;,
+    anonymize: &quot;retain&quot;,
+  })
+  warningLevel: Ordering.EnumValue;
+
+  override getWarningLevel(): WarningLevel {
+    if (this.warningLevel) {
+      return WarningLevel[this.warningLevel.id];
+    } else {
+      return WarningLevel.NONE;
+    }
+  }
+
+  public override getColor() {
+    const actualLevel &#x3D; this.getWarningLevel();
+    if (actualLevel &#x3D;&#x3D;&#x3D; WarningLevel.OK || actualLevel &#x3D;&#x3D;&#x3D; WarningLevel.NONE) {
+      return this.category?.color;
+    } else {
+      return super.getColor();
+    }
+  }
+
+  public getColorForId(childId: string): string {
+    if (
+      this.category?.isMeeting &amp;&amp;
+      this.childrenAttendance.get(childId)?.status.countAs &#x3D;&#x3D;&#x3D;
+        AttendanceLogicalStatus.ABSENT
+    ) {
+      // child is absent, highlight the entry
+      return getWarningLevelColor(WarningLevel.URGENT);
+    }
+    return this.getColor();
+  }
+
+  /**
+   * removes a specific child from this note
+   * @param childId The id of the child to exclude from the notes
+   */
+  removeChild(childId: string) {
+    this.children &#x3D; this.children.filter((c) &#x3D;&gt; c !&#x3D;&#x3D; childId);
+    this.childrenAttendance.delete(childId);
+  }
+
+  /**
+   * adds a new child to this note
+   * @param child The child or the id of the child to add to the notes
+   */
+  addChild(child: Entity | string) {
+    const childId &#x3D; typeof child &#x3D;&#x3D;&#x3D; &quot;string&quot; ? child : child?.getId();
+    if (!childId || this.children.includes(childId)) {
+      return;
+    }
+
+    this.children &#x3D; this.children.concat(childId);
+  }
+
+  /**
+   * adds a new school to this note
+   * @param school The school or its id to be added to the note
+   */
+  addSchool(school: Entity | string) {
+    const schoolId &#x3D; typeof school &#x3D;&#x3D;&#x3D; &quot;string&quot; ? school : school.getId();
+    if (this.schools.includes(schoolId)) {
+      return;
+    }
+
+    this.schools &#x3D; this.schools.concat(schoolId);
+  }
+
+  /**
+   * Returns the event attendance details for the given child.
+   *
+   * This method returns a default object that can be used and updated even if no attendance has been recorded yet.
+   * Returns undefined if the child is not added to this event/note instance.
+   *
+   * @param child: The child or the id of the child to look for
+   */
+  getAttendance(child: string | Entity): EventAttendance {
+    const childId &#x3D; typeof child &#x3D;&#x3D;&#x3D; &quot;string&quot; ? child : child.getId();
+    if (!this.children.includes(childId)) {
+      return undefined;
+    }
+
+    let attendance &#x3D; this.childrenAttendance.get(childId);
+    if (!attendance) {
+      attendance &#x3D; new EventAttendance();
+      this.childrenAttendance.set(childId, attendance);
+    }
+    if (!(attendance instanceof EventAttendance)) {
+      attendance &#x3D; Object.assign(new EventAttendance(), attendance);
+    }
+    return attendance;
+  }
+
+  /**
+   * Whether the attendance context information available through &#x60;getAttendance&#x60; is missing data for some children.
+   *
+   * While getAttendance will always set and return at least a default value &#x60;hasUnknownAttendances&#x60; can be used
+   * to flag events with incomplete data.
+   */
+  hasUnknownAttendances(childId?: string): boolean {
+    if (childId) {
+      return (
+        this.getAttendance(childId).status.id &#x3D;&#x3D;&#x3D; NullAttendanceStatusType.id
+      );
+    }
+
+    if (this.childrenAttendance.size &lt; this.children.length) {
+      return true;
+    } else {
+      for (const v of this.childrenAttendance.values()) {
+        if (v.status.id &#x3D;&#x3D;&#x3D; NullAttendanceStatusType.id) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Counts how many children have the given attendance status.
+   * The status is counted based on the AttendanceLogicalStatus and the &#x60;AttendanceStatusType.countAs&#x60; attribute
+   * @param status which should be counted
+   * @returns number of children with this status
+   */
+  countWithStatus(status: AttendanceLogicalStatus): number {
+    const attendanceValues &#x3D; this.childrenAttendance.values();
+    return [...attendanceValues].filter(
+      (attendance) &#x3D;&gt; attendance.status.countAs &#x3D;&#x3D;&#x3D; status,
+    ).length;
+  }
+
+  /**
+   * Performs a deep copy of the note copying all simple data
+   * (such as the date, author, e.t.c.) as well as copying the
+   * child-array
+   */
+  override copy(): this {
+    const note &#x3D; super.copy();
+    note.children &#x3D; [...this.children];
+    note.schools &#x3D; [...this.schools];
+    note.relatedEntities &#x3D; [...this.relatedEntities];
+    note.authors &#x3D; [...this.authors];
+    note.childrenAttendance &#x3D; new EventAttendanceMap();
+    this.childrenAttendance.forEach((value, key) &#x3D;&gt; {
+      note.childrenAttendance.set(key, value.copy());
+    });
+    return note;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'Note.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
