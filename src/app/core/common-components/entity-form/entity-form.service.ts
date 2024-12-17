@@ -266,6 +266,8 @@ export class EntityFormService {
     for (const [key, value] of Object.entries(form.getRawValue())) {
       if (value !== null) {
         updatedEntity[key] = value;
+      } else {
+        delete updatedEntity[key];
       }
     }
 

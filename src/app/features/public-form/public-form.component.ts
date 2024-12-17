@@ -12,7 +12,6 @@ import {
 import { EntityFormComponent } from "../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -20,13 +19,19 @@ import { FieldGroup } from "../../core/entity-details/form/field-group";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
+import { DisplayImgComponent } from "../file/display-img/display-img.component";
 
 @UntilDestroy()
 @Component({
   selector: "app-public-form",
   templateUrl: "./public-form.component.html",
   styleUrls: ["./public-form.component.scss"],
-  imports: [EntityFormComponent, MatButtonModule, MatCardModule],
+  imports: [
+    EntityFormComponent,
+    MatButtonModule,
+    MatCardModule,
+    DisplayImgComponent,
+  ],
   standalone: true,
 })
 export class PublicFormComponent<E extends Entity> implements OnInit {
@@ -43,7 +48,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     private entityMapper: EntityMapperService,
     private entityFormService: EntityFormService,
     private configService: ConfigService,
-    private entitySchemaService: EntitySchemaService,
     private snackbar: MatSnackBar,
   ) {}
 
@@ -83,7 +87,13 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   private async loadFormConfig() {
     const id = this.route.snapshot.paramMap.get("id");
-    this.formConfig = await this.entityMapper.load(PublicFormConfig, id);
+
+    const publicForms = await this.entityMapper.loadType(PublicFormConfig);
+
+    this.formConfig = publicForms.find(
+      (form: PublicFormConfig) => form.route === id || form.getId(true) === id,
+    );
+
     this.entityType = this.entities.get(
       this.formConfig.entity,
     ) as EntityConstructor<E>;
@@ -139,14 +149,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   private async initForm() {
     this.entity = new this.entityType();
-    this.entityFormService
-      .createEntityForm(
-        [].concat(...this.fieldGroups.map((group) => group.fields)),
-        this.entity,
-      )
-      .then((value) => {
-        this.form = value;
-        const formControls = this.form.formGroup.controls;
-      });
+    this.form = await this.entityFormService.createEntityForm(
+      [].concat(...this.fieldGroups.map((group) => group.fields)),
+      this.entity,
+    );
   }
 }
