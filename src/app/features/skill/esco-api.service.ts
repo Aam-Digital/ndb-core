@@ -4,7 +4,7 @@ import { firstValueFrom, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Skill } from "./skill";
-import { retryOnServerError } from "../../utils/retry-on-server-errror.rxjs-pipe";
+import { retryOnServerError } from "../../utils/retry-on-server-error.rxjs-pipe";
 
 export interface EscoSkillResponseDto {
   count: number;

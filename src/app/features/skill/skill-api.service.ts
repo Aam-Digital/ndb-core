@@ -6,7 +6,7 @@ import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { EscoApiService } from "./esco-api.service";
 import { ExternalProfileLinkConfig } from "./link-external-profile/external-profile-link-config";
-import { retryOnServerError } from "../../utils/retry-on-server-errror.rxjs-pipe";
+import { retryOnServerError } from "../../utils/retry-on-server-error.rxjs-pipe";
 
 /**
  * Interaction with Aam Digital backend providing access to external profiles
