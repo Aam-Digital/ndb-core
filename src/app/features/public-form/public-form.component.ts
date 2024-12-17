@@ -21,7 +21,6 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
 import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
-import { AlertService } from "app/core/alerts/alert.service";
 
 @UntilDestroy()
 @Component({
@@ -42,7 +41,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   entity: E;
   fieldGroups: FieldGroup[];
   form: EntityForm<E>;
-  publicFormNotFound: boolean = false;
+  publicFormNotFound: { error: string } = null;
 
   constructor(
     private database: PouchDatabase,
@@ -53,7 +52,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     private configService: ConfigService,
     private snackbar: MatSnackBar,
     private ability: EntityAbility,
-    private alertService: AlertService,
   ) {}
 
   ngOnInit() {
@@ -99,7 +97,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       (form: PublicFormConfig) => form.route === id || form.getId(true) === id,
     );
     if (!this.formConfig) {
-      this.publicFormNotFound = true;
+      this.publicFormNotFound = {
+        error: $localize`The form you are looking for is either unavailable or doesn't exist. Please check the link and try again.`,
+      };
       return;
     }
 
@@ -107,9 +107,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.formConfig.entity,
     ) as EntityConstructor<E>;
     if (this.ability.cannot("create", this.entityType)) {
-      this.alertService.addDanger(
-        "You do not have the required permissions to submit this form. Please log in or contact your system administrator",
-      );
+      this.publicFormNotFound = {
+        error: $localize`You do not have the required permissions to submit this form. Please log in or contact your system administrator.`,
+      };
       return;
     }
     this.formConfig = this.migratePublicFormConfig(this.formConfig);
