@@ -20,7 +20,8 @@ import { InvalidFormFieldError } from "../../core/common-components/entity-form/
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
-import { Logging } from "app/core/logging/logging.service";
+import { EntityAbility } from "app/core/permissions/ability/entity-ability";
+import { AlertService } from "app/core/alerts/alert.service";
 
 @UntilDestroy()
 @Component({
@@ -51,6 +52,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     private entityFormService: EntityFormService,
     private configService: ConfigService,
     private snackbar: MatSnackBar,
+    private ability: EntityAbility,
+    private alertService: AlertService,
   ) {}
 
   ngOnInit() {
@@ -93,8 +96,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     const publicForms = await this.entityMapper.loadType(PublicFormConfig);
 
     this.formConfig = publicForms.find(
-      (form: PublicFormConfig) =>
-        form.route === id || form.getId(true) === id,
+      (form: PublicFormConfig) => form.route === id || form.getId(true) === id,
     );
     if (!this.formConfig) {
       this.publicFormNotFound = true;
@@ -104,6 +106,12 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     this.entityType = this.entities.get(
       this.formConfig.entity,
     ) as EntityConstructor<E>;
+    if (this.ability.cannot("create", this.entityType)) {
+      this.alertService.addDanger(
+        "You do not have the required permissions to submit this form. Please log in or contact your system administrator",
+      );
+      return;
+    }
     this.formConfig = this.migratePublicFormConfig(this.formConfig);
     this.fieldGroups = this.formConfig.columns;
     await this.initForm();
