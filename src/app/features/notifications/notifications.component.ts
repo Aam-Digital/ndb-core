@@ -1,9 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
-import { NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenu } from "@angular/material/menu";
-import { NgFor } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuTrigger } from "@angular/material/menu";
 import { MatMenuModule } from "@angular/material/menu";
@@ -16,17 +14,15 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
 import { Router } from "@angular/router";
 import { MockNotificationsService } from "./mock-notifications.service";
-import { CurrentUserSubject } from "app/core/session/current-user-subject";
+import { SessionSubject } from "app/core/session/auth/session-info";
 
 @Component({
   selector: "app-notifications",
   standalone: true,
   imports: [
     MatBadgeModule,
-    NgIf,
     FontAwesomeModule,
     MatMenu,
-    NgFor,
     MatButtonModule,
     MatMenuTrigger,
     MatMenuModule,
@@ -41,24 +37,17 @@ import { CurrentUserSubject } from "app/core/session/current-user-subject";
 export class NotificationsComponent implements OnInit {
   public allNotifications: NotificationEvent[] = [];
   public unreadNotifications: NotificationEvent[] = [];
-  public hasUnreadNotificationCount = 0;
-  public isEnableNotification = false;
   public selectedTab = 0;
 
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
     private mockNotificationsService: MockNotificationsService,
-    private currentUser: CurrentUserSubject,
+    private sessionInfo: SessionSubject,
   ) {}
 
   ngOnInit(): void {
     this.loadAndProcessNotifications();
-  }
-
-  onNotificationBellClick() {
-    // this.firebaseNotificationService.sendNotification();
-    Logging.log("notificationBellClicked");
   }
 
   /**
@@ -76,10 +65,7 @@ export class NotificationsComponent implements OnInit {
     // The user is hardcoded for testing purposes, need to remove this.
     this.filterUserNotifications(
       notifications,
-      this.currentUser.value?.getId(),
-    );
-    this.hasUnreadNotificationCount = this.countUnreadNotifications(
-      this.allNotifications,
+      this.sessionInfo.value?.entityId,
     );
   }
 
@@ -101,22 +87,18 @@ export class NotificationsComponent implements OnInit {
     );
   }
 
-  /**
-   * Counts unread notifications from the list.
-   * @param notifications - The list of notifications.
-   */
-  private countUnreadNotifications(notifications: NotificationEvent[]) {
-    return notifications.filter((notification) => !notification.readStatus)
-      .length;
-  }
-
   markAllRead($event: Event) {
     $event.stopPropagation();
     Logging.log("All notifications marked as read");
   }
 
+  enableNotificationForUser() {
+    // TODO: Need to implement the logic so that the notification is enabled corresponding to the user.
+    Logging.log("Notification enabled");
+  }
+
   async markAsRead(notification: NotificationEvent) {
-    notification.readStatus = true;
+    notification.readStatus = notification.readStatus;
     await this.entityMapper.save(notification);
   }
 
@@ -127,9 +109,6 @@ export class NotificationsComponent implements OnInit {
     );
     this.unreadNotifications = this.unreadNotifications.filter(
       (n) => n !== notification,
-    );
-    this.hasUnreadNotificationCount = this.countUnreadNotifications(
-      this.allNotifications,
     );
     Logging.log("Notification deleted");
   }

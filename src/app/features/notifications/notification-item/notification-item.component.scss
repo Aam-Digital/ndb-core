@@ -1,41 +1,51 @@
 @use "variables/colors";
 
 .notification-item-wrapper {
-    padding: 8px 10px 0px;
+  padding: 8px 10px 0px;
 }
 
 .notification-details {
-    flex: 1;
-    text-align: left;
-    line-height: 21px;
+  flex: 1;
+  text-align: left;
+  line-height: 21px;
 }
 
 .notification-item {
-    font-weight: bold;
-    font-size: 14px;
-    margin: 0;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0;
 }
 
 .notification-time {
-    color: colors.$inactive;
-    font-size: 12px;
+  color: colors.$inactive;
+  font-size: 12px;
+}
+
+.indicator {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: inline-block;
+  margin-right: 8px;
+  cursor: pointer;
 }
 
 .unread-indicator {
-    height: 12px;
-    width: 12px;
-    background-color: blue;
-    border-radius: 50%;
-    box-sizing: border-box;
-    display: inline-block;
-    margin-right: 8px;
-    cursor: pointer;
+  @extend .indicator;
+  background-color: blue;
+}
+
+.read-indicator {
+  @extend .indicator;
+  background-color: transparent;
+  border: 2px solid colors.$inactive;
 }
 
 .menu-option {
-    margin-left: 12px;
+  margin-left: 12px;
 }
 
 .read-notification {
-    color: colors.$inactive;
+  color: colors.$inactive;
 }
