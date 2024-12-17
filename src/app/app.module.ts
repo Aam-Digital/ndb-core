@@ -177,7 +177,6 @@ import { PublicFormModule } from "./features/public-form/public-form.module";
 })
 export class AppModule {
   constructor(icons: FaIconLibrary) {
-    // Initialize the Firebase application component
     initializeApp(firebaseConfig);
     icons.addIconPacks(fas, far);
   }

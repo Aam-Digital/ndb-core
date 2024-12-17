@@ -26,7 +26,11 @@ import { FirebaseNotificationService } from "../firebase-messaging-service.servi
  */
 @Component({
   selector: "app-root",
-  templateUrl: "./app.component.html",
+  template: `@if (configFullscreen) {
+      <router-outlet></router-outlet>
+    } @else {
+      <app-ui></app-ui>
+    }`,
 })
 export class AppComponent implements OnInit {
   configFullscreen: boolean = false;
