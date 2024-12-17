@@ -9,7 +9,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTabsModule } from "@angular/material/tabs";
-import { NotificationEvent } from "../model/notifications-event";
+import { NotificationEvent } from "../model/notification-event";
 
 @Component({
   selector: "app-notification-item",
