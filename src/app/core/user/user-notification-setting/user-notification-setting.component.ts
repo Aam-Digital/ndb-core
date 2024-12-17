@@ -46,6 +46,7 @@ export class UserNotificationSettingComponent {
   formControl = new FormControl();
 
   addNewRule() {
+    // TODO: Implement the logic to update the new field and save all the field value in the form control and update in the backend.
     this.notificationRule.push({
       selectedOption: "",
       inputValue: "",
