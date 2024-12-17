@@ -10,7 +10,11 @@ import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
-import { ActivatedRoute } from "@angular/router";
+import {
+  ActivatedRoute,
+  ActivatedRouteSnapshot,
+  Router,
+} from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
@@ -18,12 +22,15 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
+import { createEntityOfType } from "app/core/demo-data/create-entity-of-type";
+import { Entity } from "app/core/entity/model/entity";
 
-describe("PublicFormComponent", () => {
+fdescribe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
   let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
   let initRemoteDBSpy: jasmine.Spy;
   let testFormConfig: PublicFormConfig;
+  let entityMapper: EntityMapperService;
 
   beforeEach(waitForAsync(() => {
     testFormConfig = new PublicFormConfig("form-id");
@@ -50,9 +57,11 @@ describe("PublicFormComponent", () => {
               paramMap: new Map([["id", testFormConfig.getId(true)]]),
             },
           },
+          EntityMapperService,
         },
       ],
     }).compileComponents();
+    entityMapper = TestBed.inject(EntityMapperService);
   }));
 
   beforeEach(() => {
@@ -178,14 +187,32 @@ describe("PublicFormComponent", () => {
         action: "create",
       },
     ]);
-    (testFormConfig.entity = "School"),
-      (testFormConfig.title = "Some test title");
+    testFormConfig.entity = "School";
+    testFormConfig.title = "Some test title";
+
     initComponent();
     tick();
+
     expect(component).toBeDefined();
     expect(component.publicFormNotFound.error).toBe(
       "You do not have the required permissions to submit this form. Please log in or contact your system administrator.",
     );
+  }));
+
+  it("should display not found error when config does not exist", fakeAsync(() => {
+    const entityMapperSpy = spyOn(
+      TestBed.inject(EntityMapperService),
+      "loadType",
+    ).and.resolveTo([]);
+
+    initComponent();
+    tick();
+
+    expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
+    expect(component.publicFormNotFound).toEqual({
+      error:
+        "The form you are looking for is either unavailable or doesn't exist. Please check the link and try again.",
+    });
   }));
 
   function initComponent() {
