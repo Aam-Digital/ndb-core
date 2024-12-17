@@ -17,6 +17,7 @@ import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -168,6 +169,23 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(component.form.formGroup.get("name")).toHaveValue("default name");
+  }));
+
+  it("should throw an error when do not have permissions to submit the form", fakeAsync(() => {
+    TestBed.inject(EntityAbility).update([
+      {
+        subject: "Child",
+        action: "create",
+      },
+    ]);
+    (testFormConfig.entity = "School"),
+      (testFormConfig.title = "Some test title");
+    initComponent();
+    tick();
+    expect(component).toBeDefined();
+    expect(component.publicFormNotFound.error).toBe(
+      "You do not have the required permissions to submit this form. Please log in or contact your system administrator.",
+    );
   }));
 
   function initComponent() {
