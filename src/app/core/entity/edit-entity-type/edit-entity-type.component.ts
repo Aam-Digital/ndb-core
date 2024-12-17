@@ -2,16 +2,15 @@ import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../default-datatype/edit-component";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityTypeSelectComponent } from "../entity-type-select/entity-type-select.component";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
 
 /**
  * Edit component for selecting an entity type from a dropdown.
  */
 @DynamicComponent("EditEntityType")
 @Component({
-  selector: "app-edit-entity-type-dropdown",
+  selector: "app-edit-entity-type",
   templateUrl: "./edit-entity-type.component.html",
-  imports: [EntityTypeSelectComponent, MatFormField, MatLabel],
+  imports: [EntityTypeSelectComponent],
   standalone: true,
 })
 export class EditEntityTypeComponent
