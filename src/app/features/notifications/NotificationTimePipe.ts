@@ -1,3 +1,7 @@
+/**
+ * Converts a timestamp into a human-readable time format,
+ * such as "Just Now", "5m", "2h", "Yesterday", "3d", or the day of the week.
+ */
 import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
