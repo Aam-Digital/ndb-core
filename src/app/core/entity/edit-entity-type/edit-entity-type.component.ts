@@ -7,14 +7,14 @@ import { MatFormField, MatLabel } from "@angular/material/form-field";
 /**
  * Edit component for selecting an entity type from a dropdown.
  */
-@DynamicComponent("EditEntityTypeDropdown")
+@DynamicComponent("EditEntityType")
 @Component({
   selector: "app-edit-entity-type-dropdown",
-  templateUrl: "./edit-entity-type-dropdown.component.html",
+  templateUrl: "./edit-entity-type.component.html",
   imports: [EntityTypeSelectComponent, MatFormField, MatLabel],
   standalone: true,
 })
-export class EditEntityTypeDropdownComponent
+export class EditEntityTypeComponent
   extends EditComponent<string | string[]>
   implements OnInit
 {
