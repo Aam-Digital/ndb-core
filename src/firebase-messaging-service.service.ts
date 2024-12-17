@@ -91,7 +91,7 @@ export class FirebaseNotificationService {
   sendNotificationToUser(fcmPayload: Object) {
     // TODO: Implement the FIREBASE_ACCESS_TOKEN from backend service
     const headers = {
-      Authorization: `Bearer YOUR_SERVER_KEY_HERE`,
+      Authorization: `Bearer <FIREBASE_ACCESS_TOKEN>`,
       "Content-Type": "application/json",
     };
 
