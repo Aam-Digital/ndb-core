@@ -14,7 +14,7 @@ export class NotificationEvent extends Entity {
 
   @DatabaseField() sentBy: string;
   @DatabaseField() fcmToken: string;
-  @DatabaseField() readStatus: boolean;
+  @DatabaseField() readStatus: boolean = false;
 
   public override toString(): string {
     return `Notification: ${this.title} - ${this.body}`;
