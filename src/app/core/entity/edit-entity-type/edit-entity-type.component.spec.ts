@@ -1,22 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditEntityTypeDropdownComponent } from "./edit-entity-type-dropdown.component";
+import { EditEntityTypeComponent } from "./edit-entity-type.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { setupEditComponent } from "../default-datatype/edit-component.spec";
 
 describe("EditConfigurableEnumComponent", () => {
-  let component: EditEntityTypeDropdownComponent;
-  let fixture: ComponentFixture<EditEntityTypeDropdownComponent>;
+  let component: EditEntityTypeComponent;
+  let fixture: ComponentFixture<EditEntityTypeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        EditEntityTypeDropdownComponent,
-        MockedTestingModule.withState(),
-      ],
+      imports: [EditEntityTypeComponent, MockedTestingModule.withState()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EditEntityTypeDropdownComponent);
+    fixture = TestBed.createComponent(EditEntityTypeComponent);
     component = fixture.componentInstance;
     setupEditComponent(component);
     fixture.detectChanges();
