@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
-import { NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenu } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
@@ -21,7 +20,6 @@ import { SessionSubject } from "app/core/session/auth/session-info";
   standalone: true,
   imports: [
     MatBadgeModule,
-    NgIf,
     FontAwesomeModule,
     MatMenu,
     MatButtonModule,

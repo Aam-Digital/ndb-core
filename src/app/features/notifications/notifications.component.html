@@ -55,7 +55,8 @@
       }
 
       @if (
-        selectedTab === 0 ? allNotifications : unreadNotifications.length === 0
+        (selectedTab === 0 ? allNotifications : unreadNotifications).length ===
+        0
       ) {
         <div class="flex-column no-notification-message">
           <fa-icon
