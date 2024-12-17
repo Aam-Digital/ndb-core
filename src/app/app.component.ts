@@ -34,7 +34,6 @@ import { FirebaseNotificationService } from "../firebase-messaging-service.servi
 })
 export class AppComponent implements OnInit {
   configFullscreen: boolean = false;
-  message: any = null;
 
   constructor(
     private router: Router,
