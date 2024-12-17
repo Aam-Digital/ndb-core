@@ -5,7 +5,11 @@
   <div class="notification-details">
     <strong i18n class="notification-item">{{ notification.title }}</strong>
     <p i18n class="notification-item">{{ notification.body }}</p>
-    <p i18n class="notification-time">
+    <p
+      i18n
+      class="notification-time"
+      [matTooltip]="notification.created.at | date: 'yyyy-MM-dd HH:mm:ss'"
+    >
       {{ notification.created.at | NotificationTime }}
     </p>
   </div>
