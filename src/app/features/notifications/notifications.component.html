@@ -40,7 +40,7 @@
       <mat-tab label="Unread" i18n-label></mat-tab>
     </mat-tab-group>
 
-    <ng-container *ngIf="selectedTab === 0 || selectedTab === 1">
+    @if (selectedTab === 0 || selectedTab === 1) {
       @for (
         notification of selectedTab === 0
           ? allNotifications
@@ -54,20 +54,20 @@
         ></app-notification-item>
       }
 
-      <div
-        class="flex-column no-notification-message"
-        *ngIf="
-          (selectedTab === 0 ? allNotifications : unreadNotifications)
-            .length === 0
-        "
-      >
-        <fa-icon
-          class="no-notification-icon"
-          [icon]="['far', 'bell']"
-        ></fa-icon>
-        <span class="no-notification-text" i18n>You have no notifications</span>
-      </div>
-    </ng-container>
+      @if (
+        selectedTab === 0 ? allNotifications : unreadNotifications.length === 0
+      ) {
+        <div class="flex-column no-notification-message">
+          <fa-icon
+            class="no-notification-icon"
+            [icon]="['far', 'bell']"
+          ></fa-icon>
+          <span class="no-notification-text" i18n
+            >You have no notifications</span
+          >
+        </div>
+      }
+    }
   </div>
 </mat-menu>
 
