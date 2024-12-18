@@ -64,7 +64,7 @@ export class NotificationService {
           30,
         );
 
-        this.registerTokenWithBackend(notificationToken);
+        this.registerNotificationToken(notificationToken);
 
         return notificationToken;
       }
@@ -79,7 +79,7 @@ export class NotificationService {
    * @param deviceName - The name of the device.
    */
 
-  private registerTokenWithBackend(
+  private registerNotificationToken(
     notificationToken: string,
     deviceName: string = "web",
   ) {
