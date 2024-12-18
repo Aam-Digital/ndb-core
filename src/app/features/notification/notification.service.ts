@@ -19,13 +19,6 @@ export class NotificationService {
     this.messaging = firebase.messaging();
   }
 
-  async initializeFirebaseApp() {
-    initializeApp(firebaseConfig);
-    this.messaging = firebase.messaging();
-    await this.getFcmToken();
-    this.listenForMessages();
-  }
-
   /**
    * Generates a consistent FCM payload.
    * @param payload - Custom data payload.
@@ -50,6 +43,7 @@ export class NotificationService {
       const notificationToken = await getToken(this.messaging, {
         vapidKey: firebaseConfig.vapidKey,
       });
+      console.log({notificationToken})
       if (notificationToken) {
         // TODO: Need to Implement the logic to save the FCM token in the Cookie and update in the backend API.
         return notificationToken;

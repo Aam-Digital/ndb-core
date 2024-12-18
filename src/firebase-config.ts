@@ -8,3 +8,6 @@ export const firebaseConfig = {
   vapidKey:
     "<vapidKey>",
 };
+
+// Attach config to the global `window` object
+(window as any).firebaseConfig = firebaseConfig;
