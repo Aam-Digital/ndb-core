@@ -1,16 +1,16 @@
 import { TestBed } from "@angular/core/testing";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { provideHttpClient } from "@angular/common/http";
-import { FirebaseNotificationService } from "./firebase-messaging-service.service";
+import { NotificationService } from "./notification.service";
 
-describe("FirebaseNotificationService", () => {
-  let service: FirebaseNotificationService;
+describe("NotificationService", () => {
+  let service: NotificationService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
-    service = TestBed.inject(FirebaseNotificationService);
+    service = TestBed.inject(NotificationService);
   });
 
   it("should be created", () => {

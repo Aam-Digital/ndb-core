@@ -18,7 +18,7 @@
 import { Component, OnInit } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
-import { FirebaseNotificationService } from "../firebase-messaging-service.service";
+import { NotificationService } from "./notifications/notification.service";
 
 /**
  * Component as the main entry point for the app.
@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private firebaseNotificationService: FirebaseNotificationService,
+    private firebaseNotificationService: NotificationService,
   ) {
     this.detectConfigMode();
     router.events
