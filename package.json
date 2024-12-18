@@ -23,7 +23,7 @@
     "stream": "./node_modules/stream-browserify"
   },
   "dependencies": {
-    "@angular/animations": "^18.2.8",
+    "@angular/animations": "^18.2.13",
     "@angular/cdk": "^18.2.9",
     "@angular/common": "^18.2.8",
     "@angular/compiler": "^18.2.8",
