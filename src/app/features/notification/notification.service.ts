@@ -7,10 +7,10 @@ import { environment } from "../../../environments/environment";
 import firebase from "firebase/compat/app";
 
 /**
- * Handles the interaction with Firebase Cloud Messaging (FCM).
- * It manages the retrieval of FCM tokens, listens for incoming messages, and sends notifications
- * to users. The service also provides methods to create FCM payloads and communicate with the
- * Firebase Cloud Messaging HTTP API for sending notifications.
+ * Handles the interaction with Cloud Messaging.
+ * It manages the retrieval of Cloud Messaging Notification token, listens for incoming messages, and sends notifications
+ * to users. The service also provides methods to create cloud messaging payloads and communicate with the
+ * cloud messaging HTTP API for sending notifications.
  */
 @Injectable({
   providedIn: "root",
