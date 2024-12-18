@@ -1,21 +1,29 @@
 import { Injectable } from "@angular/core";
-import { firebaseConfig } from "./environments/environment";
-import firebase from "firebase/compat/app";
 import "firebase/compat/messaging";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "firebase-config";
+import firebase from "firebase/compat/app";
 
 @Injectable({
   providedIn: "root",
 })
-export class FirebaseNotificationService {
+export class NotificationService {
   private messaging: any = null;
   readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${firebaseConfig.projectId}/messages:send`;
 
   constructor(private httpClient: HttpClient) {
     firebase.initializeApp(firebaseConfig);
     this.messaging = firebase.messaging();
+  }
+
+  async initializeFirebaseApp() {
+    initializeApp(firebaseConfig);
+    this.messaging = firebase.messaging();
+    await this.getFcmToken();
+    this.listenForMessages();
   }
 
   /**
@@ -26,7 +34,9 @@ export class FirebaseNotificationService {
     return {
       message: {
         token,
-        ...payload,
+        notification: {
+          ...payload,
+        }
       },
     };
   }
@@ -37,12 +47,12 @@ export class FirebaseNotificationService {
    */
   async getFcmToken(): Promise<any> {
     try {
-      const currentToken = await getToken(this.messaging, {
+      const notificationToken = await getToken(this.messaging, {
         vapidKey: firebaseConfig.vapidKey,
       });
-      if (currentToken) {
+      if (notificationToken) {
         // TODO: Need to Implement the logic to save the FCM token in the Cookie and update in the backend API.
-        return currentToken;
+        return notificationToken;
       } else {
         Logging.log(
           "No registration token available. Request permission to generate one.",
@@ -75,9 +85,9 @@ export class FirebaseNotificationService {
    * First retrieves the FCM token and then calls the notification sending function.
    */
   async sendNotification(payload: Record<string, any> = {}) {
-    const fcmToken = await this.getFcmToken();
-    if (fcmToken) {
-      const fcmPayload = this.createFcmPayload(fcmToken, payload);
+    const notificationToken = await this.getFcmToken();
+    if (notificationToken) {
+      const fcmPayload = this.createFcmPayload(notificationToken, payload);
       this.sendNotificationToUser(fcmPayload);
     } else {
       Logging.error("FCM Token is undefined. Notification not sent.");
