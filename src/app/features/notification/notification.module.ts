@@ -12,7 +12,6 @@ export class NotificationModule {
   constructor(private notificationService: NotificationService) {
     if (environment.firebaseConfig?.enabled) {
       this.notificationService.init();
-      initializeApp(environment.firebaseConfig);
       this.notificationService.getFcmToken();
       this.notificationService.listenForMessages();
     }
