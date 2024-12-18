@@ -198,5 +198,5 @@ fabric.properties
 ./e2e/screenshots
 ./e2e/videos
 
-# # firebase configuration
+# firebase configuration
 src/firebase-config.ts
