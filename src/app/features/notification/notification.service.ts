@@ -49,25 +49,24 @@ export class NotificationService {
   async getFcmToken(): Promise<string> {
     try {
       const existingNotificationToken = this.getNotificationTokenFromCookie();
-      if (existingNotificationToken) {
-        return existingNotificationToken;
-      }
 
       const notificationToken = await getToken(this.messaging, {
         vapidKey: environment.firebaseConfig.vapidKey,
       });
 
-      if (notificationToken !== existingNotificationToken) {
-        this.setCookie(
-          this.NOTIFICATION_TOKEN_COOKIE_NAME,
-          notificationToken,
-          30,
-        );
-
-        this.registerNotificationToken(notificationToken);
-
-        return notificationToken;
+      if (notificationToken === existingNotificationToken) {
+        return existingNotificationToken;
       }
+
+      this.setCookie(
+        this.NOTIFICATION_TOKEN_COOKIE_NAME,
+        notificationToken,
+        30,
+      );
+
+      this.registerNotificationToken(notificationToken);
+
+      return notificationToken;
     } catch (err) {
       Logging.error("An error occurred while retrieving token: ", err);
     }
