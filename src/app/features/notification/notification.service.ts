@@ -103,8 +103,10 @@ export class NotificationService {
       "Content-Type": "application/json",
     };
 
-    this.httpClient.post(this.FIREBASE_CLOUD_MESSAGING_URL, fcmPayload, {
-      headers,
-    });
+    this.httpClient
+      .post(this.FIREBASE_CLOUD_MESSAGING_URL, fcmPayload, {
+        headers,
+      })
+      .subscribe();
   }
 }
