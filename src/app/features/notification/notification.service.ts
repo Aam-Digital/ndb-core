@@ -76,9 +76,13 @@ export class NotificationService {
   /**
    * Registers the device with the backend using the FCM token.
    * @param notificationToken - The FCM token for the device.
+   * @param deviceName - The name of the device.
    */
 
-  private registerTokenWithBackend(notificationToken: string, deviceName: string = "web") {
+  private registerTokenWithBackend(
+    notificationToken: string,
+    deviceName: string = "web",
+  ) {
     const payload = { fcmToken: notificationToken, deviceName };
 
     try {
