@@ -5,8 +5,7 @@ export const firebaseConfig = {
   storageBucket: "<StorageBucket>",
   messagingSenderId: "<MessageId>",
   appId: "<AppId>",
-  vapidKey:
-    "<vapidKey>",
+  vapidKey: "<vapidKey>",
 };
 
 // Attach config to the global `window` object
