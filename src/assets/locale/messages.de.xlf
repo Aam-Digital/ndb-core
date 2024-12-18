@@ -9,42 +9,42 @@
         <target state="translated">Aktivieren, um auch Aktivitäten anzuzeigen, bei denen diese Person nicht anwesend
           war
         </target>
+        <note priority="1" from="description">Tooltip that will appear when hovered over the
+          show-unrelated button
+        </note>
+        <note priority="1" from="meaning">Show unrelated tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html
           </context>
           <context context-type="linenumber">42</context>
         </context-group>
-        <note priority="1" from="description">Tooltip that will appear when hovered over the
-          show-unrelated button
-        </note>
-        <note priority="1" from="meaning">Show unrelated tooltip</note>
       </trans-unit>
       <trans-unit id="2984847329463942935" datatype="html">
         <source>Also show unrelated</source>
         <target state="translated">Auch Aktivitäten ohne diese:n Schüler:in anzeigen</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html
-          </context>
-          <context context-type="linenumber">43,45</context>
-        </context-group>
         <note priority="1" from="description">show unrelated attendance-entries for an activity that are not
           linked to the child of interest
         </note>
         <note priority="1" from="meaning">slider</note>
-      </trans-unit>
-      <trans-unit id="953209080950673058" datatype="html">
-        <source>Load all records</source>
-        <target state="translated">Lade alle Aufzeichnungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html
           </context>
-          <context context-type="linenumber">53,55</context>
+          <context context-type="linenumber">43</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="953209080950673058" datatype="html">
+        <source>Load all records</source>
+        <target state="translated">Lade alle Aufzeichnungen</target>
         <note priority="1" from="description">load all records, not only the ones from the last 6 months</note>
         <note priority="1" from="meaning">load-all button</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/activity-attendance-section/activity-attendance-section.component.html
+          </context>
+          <context context-type="linenumber">53</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5403684285319082289" datatype="html">
         <source>Month</source>
@@ -149,38 +149,38 @@
       <trans-unit id="3310085137629451539" datatype="html">
         <source>Attendance completed.</source>
         <target state="translated">Anwesenheits-Aufzeichnung beendet.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html
-          </context>
-          <context context-type="linenumber">119,121</context>
-        </context-group>
         <note priority="1" from="description">shows when the user has registered the attendance
           of all children
         </note>
         <note priority="1" from="meaning">Attendance completed</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html
+          </context>
+          <context context-type="linenumber">119</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5227018528149815658" datatype="html">
         <source>Review Details</source>
         <target state="translated">Details anzeigen</target>
+        <note priority="1" from="description">Open details of recorded event for review</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html
           </context>
-          <context context-type="linenumber">129,131</context>
+          <context context-type="linenumber">129</context>
         </context-group>
-        <note priority="1" from="description">Open details of recorded event for review</note>
       </trans-unit>
       <trans-unit id="200985446354555594" datatype="html">
         <source>Back to Overview</source>
         <target state="translated">Zurück zur Übersicht</target>
+        <note priority="1" from="description">Back to overview button after finishing a roll call</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html
           </context>
-          <context context-type="linenumber">139,141</context>
+          <context context-type="linenumber">139</context>
         </context-group>
-        <note priority="1" from="description">Back to overview button after finishing a roll call</note>
       </trans-unit>
       <trans-unit id="6006342624356570730" datatype="html">
         <source>Also include archived participants?</source>
@@ -215,16 +215,16 @@
           <x id="INTERPOLATION" equiv-text="{{attendanceDescription}}"/>
           events teilgenommen
         </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html
-          </context>
-          <context context-type="linenumber">26,28</context>
-        </context-group>
         <note priority="1" from="description">How many attendees were present / how many attendees
           were absent
         </note>
         <note priority="1" from="meaning">Attended Tooltip</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html
+          </context>
+          <context context-type="linenumber">26</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5262656323908784944" datatype="html">
         <source>(excluding
@@ -235,28 +235,28 @@
                                                           equiv-text="{{ logicalCount[LStatus.IGNORE] }}"/>;
           entschuldigt oder unbekannt)
         </target>
+        <note priority="1" from="description">How many events were excluded</note>
+        <note priority="1" from="meaning">Attended Tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-block/attendance-block.component.html
           </context>
-          <context context-type="linenumber">33,35</context>
+          <context context-type="linenumber">33</context>
         </context-group>
-        <note priority="1" from="description">How many events were excluded</note>
-        <note priority="1" from="meaning">Attended Tooltip</note>
       </trans-unit>
       <trans-unit id="3216180006022397597" datatype="html">
         <source>Remarks</source>
         <target state="translated">Vermerk</target>
+        <note priority="1" from="description">Placeholder if no remarks for the attendance of a child are
+          given
+        </note>
+        <note priority="1" from="meaning">Remarks</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
           </context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <note priority="1" from="description">Placeholder if no remarks for the attendance of a child are
-          given
-        </note>
-        <note priority="1" from="meaning">Remarks</note>
       </trans-unit>
       <trans-unit id="4942664025620181200" datatype="html">
         <source>All excused (out of
@@ -272,16 +272,16 @@
           <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>
           )
         </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
-          </context>
-          <context context-type="linenumber">48,56</context>
-        </context-group>
         <note priority="1" from="description">How many participants attended at an event (in
           percent)
         </note>
         <note priority="1" from="meaning">Event participants</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
+          </context>
+          <context context-type="linenumber">48</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="678258264214451087" datatype="html">
         <source>
@@ -304,7 +304,7 @@
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
           </context>
-          <context context-type="linenumber">57,66</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6998523433750901307" datatype="html">
@@ -322,54 +322,54 @@
              equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other {participants} }"/>
           ohne aufgenommenen Status
         </target>
+        <note priority="1" from="description">How many children are without a status</note>
+        <note priority="1" from="meaning">Unknown status</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
           </context>
-          <context context-type="linenumber">71,78</context>
+          <context context-type="linenumber">71</context>
         </context-group>
-        <note priority="1" from="description">How many children are without a status</note>
-        <note priority="1" from="meaning">Unknown status</note>
       </trans-unit>
       <trans-unit id="2261332142688946159" datatype="html">
         <source>Details</source>
         <target state="translated">Details</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
-          </context>
-          <context context-type="linenumber">90,92</context>
-        </context-group>
         <note priority="1" from="description">Allows the user to see details of an event that took
           place at a particular day
         </note>
         <note priority="1" from="meaning">Show Details Button</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
+          </context>
+          <context context-type="linenumber">90</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="552369028311447917" datatype="html">
         <source>no events on this date</source>
         <target state="translated">Keine Events</target>
+        <note priority="1" from="description">Informs the user that there are no events at a particular date</note>
+        <note priority="1" from="meaning">No Events</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
           </context>
-          <context context-type="linenumber">100,102</context>
+          <context context-type="linenumber">100</context>
         </context-group>
-        <note priority="1" from="description">Informs the user that there are no events at a particular date</note>
-        <note priority="1" from="meaning">No Events</note>
       </trans-unit>
       <trans-unit id="4769456747178481829" datatype="html">
         <source>Add new event</source>
         <target state="translated">Neues Event hinzufügen</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
-          </context>
-          <context context-type="linenumber">114,116</context>
-        </context-group>
         <note priority="1" from="description">Allows the user to create a new event for the
           selected date
         </note>
         <note priority="1" from="meaning">Add New Event Button</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
+          </context>
+          <context context-type="linenumber">114</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="3580318546691057460" datatype="html">
         <source>Attendance:
@@ -388,92 +388,92 @@
           ) | percent: &quot;1.0-0&quot;
         }}"/>
         </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html
-          </context>
-          <context context-type="linenumber">30,38</context>
-        </context-group>
         <note priority="1" from="description">Attendance of a child (in percent) or the average of the event
           (in percent)
         </note>
         <note priority="1" from="meaning">Attendance</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html
+          </context>
+          <context context-type="linenumber">30</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="2497404297115785767" datatype="html">
         <source>days present</source>
         <target state="translated">Tage anwesend</target>
+        <note priority="1" from="description">How many days a child was present</note>
+        <note priority="1" from="meaning">days present</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html
           </context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <note priority="1" from="description">How many days a child was present</note>
-        <note priority="1" from="meaning">days present</note>
       </trans-unit>
       <trans-unit id="5517671597268327274" datatype="html">
         <source>days absent</source>
         <target state="translated">Tage abwesend</target>
+        <note priority="1" from="description">How many days a child was absent</note>
+        <note priority="1" from="meaning">days absent</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html
           </context>
           <context context-type="linenumber">57</context>
         </context-group>
-        <note priority="1" from="description">How many days a child was absent</note>
-        <note priority="1" from="meaning">days absent</note>
       </trans-unit>
       <trans-unit id="7723630947724387583" datatype="html">
         <source>unknown status</source>
         <target state="translated">Status unklar</target>
+        <note priority="1" from="description">How many days the presence or absence of a child is
+          unknown
+        </note>
+        <note priority="1" from="meaning">days absent</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html
           </context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <note priority="1" from="description">How many days the presence or absence of a child is
-          unknown
-        </note>
-        <note priority="1" from="meaning">days absent</note>
       </trans-unit>
       <trans-unit id="4789279733333067112" datatype="html">
         <source>Total present</source>
         <target state="translated">Summe anwesend</target>
+        <note priority="1" from="description">How many children were present</note>
+        <note priority="1" from="meaning">Total present</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html
           </context>
           <context context-type="linenumber">84</context>
         </context-group>
-        <note priority="1" from="description">How many children were present</note>
-        <note priority="1" from="meaning">Total present</note>
       </trans-unit>
       <trans-unit id="5455238556719888052" datatype="html">
         <source>Total absent</source>
         <target state="translated">Summe abwesend</target>
+        <note priority="1" from="description">How many children were absent</note>
+        <note priority="1" from="meaning">Total absent</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html
           </context>
           <context context-type="linenumber">95</context>
         </context-group>
-        <note priority="1" from="description">How many children were absent</note>
-        <note priority="1" from="meaning">Total absent</note>
       </trans-unit>
       <trans-unit id="22966286471554890" datatype="html">
         <source>Total unknown</source>
         <target state="translated">Summe unklar</target>
+        <note priority="1" from="description">How many children have an unknown presence or absence
+          status
+        </note>
+        <note priority="1" from="meaning">Total unknown</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html
           </context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <note priority="1" from="description">How many children have an unknown presence or absence
-          status
-        </note>
-        <note priority="1" from="meaning">Total unknown</note>
       </trans-unit>
       <trans-unit id="3304972143698843178" datatype="html">
         <source>Event</source>
@@ -489,62 +489,62 @@
         <source>Managing Attendance
         </source>
         <target state="translated">Anwesenheit verwalten</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
-          </context>
-          <context context-type="linenumber">6,8</context>
-        </context-group>
         <note priority="1" from="description">The heading for the view showing the
           Attendance Register
         </note>
         <note priority="1" from="meaning">Heading for Attendance Register</note>
-      </trans-unit>
-      <trans-unit id="5611104017447845738" datatype="html">
-        <source>Record Attendance</source>
-        <target state="translated">Anwesenheiten aufnehmen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">13,15</context>
+          <context context-type="linenumber">6</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="5611104017447845738" datatype="html">
+        <source>Record Attendance</source>
+        <target state="translated">Anwesenheiten aufnehmen</target>
         <note priority="1" from="description">Record attendance title</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
+          </context>
+          <context context-type="linenumber">13</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="1164303567465442885" datatype="html">
         <source>Record attendance for an activity on a certain day. Optimized for smartphones.</source>
         <target state="translated">Nehmen Sie Anwesenheit auf für eine Aktivität an einem bestimmten Tag. Optimiert für
           Smartphones.
         </target>
+        <note priority="1" from="description">Record attendance content</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">18,21</context>
+          <context context-type="linenumber">18</context>
         </context-group>
-        <note priority="1" from="description">Record attendance content</note>
       </trans-unit>
       <trans-unit id="640022366211466001" datatype="html">
         <source>Record</source>
         <target state="translated">Aufzeichnen</target>
+        <note priority="1" from="description">Record attendance button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">26,28</context>
+          <context context-type="linenumber">26</context>
         </context-group>
-        <note priority="1" from="description">Record attendance button</note>
       </trans-unit>
       <trans-unit id="6059762292147098647" datatype="html">
         <source>Recurring Activities</source>
         <target state="translated">Wiederkehrende Aktivitäten</target>
+        <note priority="1" from="description">Manage Activities title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">34,36</context>
+          <context context-type="linenumber">34</context>
         </context-group>
-        <note priority="1" from="description">Manage Activities title</note>
       </trans-unit>
       <trans-unit id="7296311640397262557" datatype="html">
         <source>Manage "recurring activities" for which you regularly record attendance. You can assign participants and
@@ -553,70 +553,70 @@
         <target state="translated">Verwalten Sie "wiederkehrende Aktivitäten", für die regelmäßig Anwesenheit
           aufgezeichnet wird. Sie können Teilnehmende und Nutzer zuweisen und die langfristige Anwesenheit analysieren.
         </target>
+        <note priority="1" from="description">Manage Activities content</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">39,43</context>
+          <context context-type="linenumber">39</context>
         </context-group>
-        <note priority="1" from="description">Manage Activities content</note>
       </trans-unit>
       <trans-unit id="5696596438568978479" datatype="html">
         <source>Manage Activities</source>
         <target state="translated">Aktivitäten verwalten</target>
+        <note priority="1" from="description">Manage activities button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">48,50</context>
+          <context context-type="linenumber">48</context>
         </context-group>
-        <note priority="1" from="description">Manage activities button</note>
       </trans-unit>
       <trans-unit id="7330736653981247591" datatype="html">
         <source>Monthly Attendance</source>
         <target state="translated">Monatliche Anwesenheit</target>
+        <note priority="1" from="description">Monthly attendance title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">56,58</context>
+          <context context-type="linenumber">56</context>
         </context-group>
-        <note priority="1" from="description">Monthly attendance title</note>
       </trans-unit>
       <trans-unit id="5284821566470924892" datatype="html">
         <source>Document attendance totals for a whole month that were collected on paper.</source>
         <target state="translated">Dokumentieren Sie die gesammelte Anwesenheit eines ganzen Monats, die zunächst auf
           Papier aufgezeichnet wurde.
         </target>
+        <note priority="1" from="description">Monthly attendance content</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">61,64</context>
+          <context context-type="linenumber">61</context>
         </context-group>
-        <note priority="1" from="description">Monthly attendance content</note>
       </trans-unit>
       <trans-unit id="5632763853988842213" datatype="html">
         <source>Document Month</source>
         <target state="translated">Monat dokumentieren</target>
+        <note priority="1" from="description">Enter attendance button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html
           </context>
-          <context context-type="linenumber">69,71</context>
+          <context context-type="linenumber">69</context>
         </context-group>
-        <note priority="1" from="description">Enter attendance button</note>
       </trans-unit>
       <trans-unit id="7084649392822804759" datatype="html">
         <source>Overall Attendance</source>
         <target state="translated">Anwesenheit insgesamt</target>
+        <note priority="1" from="description">Attendance summary title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-summary/attendance-summary.component.html
           </context>
-          <context context-type="linenumber">2,4</context>
+          <context context-type="linenumber">2</context>
         </context-group>
-        <note priority="1" from="description">Attendance summary title</note>
       </trans-unit>
       <trans-unit id="7206223636753108092" datatype="html">
         <source>No attendance information</source>
@@ -631,13 +631,13 @@
       <trans-unit id="6150056144994035014" datatype="html">
         <source>Cases absent multiple times in the given week</source>
         <target state="translated">Fälle, die mehrmals in der betroffenen Woche abwesend waren</target>
+        <note priority="1" from="description">Dashboard attendance component explanation tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html
           </context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <note priority="1" from="description">Dashboard attendance component explanation tooltip</note>
       </trans-unit>
       <trans-unit id="7966355111067338848" datatype="html">
         <source>cases absent multiple times</source>
@@ -652,35 +652,35 @@
       <trans-unit id="5171185103484548297" datatype="html">
         <source>Participant</source>
         <target state="translated">Teilnehmer:in</target>
+        <note priority="1" from="description">The participant of a group, e.g. a school</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html
           </context>
-          <context context-type="linenumber">13,15</context>
+          <context context-type="linenumber">13</context>
         </context-group>
-        <note priority="1" from="description">The participant of a group, e.g. a school</note>
       </trans-unit>
       <trans-unit id="1164922858866015709" datatype="html">
         <source>Attendance</source>
         <target state="translated">Anwesenheit</target>
+        <note priority="1" from="description">The attendance of a participant, e.g. a student</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html
           </context>
-          <context context-type="linenumber">16,18</context>
+          <context context-type="linenumber">16</context>
         </context-group>
-        <note priority="1" from="description">The attendance of a participant, e.g. a student</note>
       </trans-unit>
       <trans-unit id="1395331049210036921" datatype="html">
         <source>no absences recorded</source>
         <target state="translated">Keine Abwesenheit dokumentiert</target>
+        <note priority="1" from="description">Placeholder if no absences are visible in dashboar</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component.html
           </context>
-          <context context-type="linenumber">55,57</context>
+          <context context-type="linenumber">55</context>
         </context-group>
-        <note priority="1" from="description">Placeholder if no absences are visible in dashboar</note>
       </trans-unit>
       <trans-unit id="4158424023747658445" datatype="html">
         <source>Material</source>
@@ -1412,12 +1412,12 @@
       <trans-unit id="3954203536096188474" datatype="html">
         <source>Download details</source>
         <target state="translated">Details herunterladen</target>
+        <note priority="1" from="description">Download note details as CSV</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html
           </context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <note priority="1" from="description">Download note details as CSV</note>
       </trans-unit>
       <trans-unit id="8113676679316331846" datatype="html">
         <source>
@@ -1436,16 +1436,16 @@
           <x id="CLOSE_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="Include"/>
           Events einbeziehen
         </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/notes/notes-manager/notes-manager.component.html
-          </context>
-          <context context-type="linenumber">28,33</context>
-        </context-group>
         <note priority="1" from="description">events are related to a
           child
         </note>
         <note priority="1" from="meaning">Slider that allows a user to also include events</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/notes/notes-manager/notes-manager.component.html
+          </context>
+          <context context-type="linenumber">28</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="4388879716045736175" datatype="html">
         <source>Note</source>
@@ -1588,13 +1588,13 @@
       <trans-unit id="6017615317312721960" datatype="html">
         <source>Select a date range</source>
         <target state="translated">Wählen Sie einen Datumsbereich</target>
+        <note priority="1" from="description">Title of dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component.html
           </context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <note priority="1" from="description">Title of dialog</note>
       </trans-unit>
       <trans-unit id="8314156367844339509" datatype="html">
         <source>Ignore for import?</source>
@@ -1641,13 +1641,13 @@
       <trans-unit id="1526301480023862050" datatype="html">
         <source>Percentage</source>
         <target state="translated">Prozent</target>
+        <note priority="1" from="description">datatype-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/number/display-percentage/percentage.datatype.ts
           </context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <note priority="1" from="description">datatype-label</note>
       </trans-unit>
       <trans-unit id="8505625387835214066" datatype="html">
         <source>number</source>
@@ -1679,25 +1679,25 @@
       <trans-unit id="4570746415155156358" datatype="html">
         <source>Add new</source>
         <target state="translated">Neu erstellen</target>
+        <note priority="1" from="description">e.g. Add new My new Option</note>
+        <note priority="1" from="meaning">Label for adding an option in a dropdown</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html
           </context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <note priority="1" from="description">e.g. Add new My new Option</note>
-        <note priority="1" from="meaning">Label for adding an option in a dropdown</note>
       </trans-unit>
       <trans-unit id="2123171795960509943" datatype="html">
         <source>remove</source>
         <target state="translated">entfernen</target>
+        <note priority="1" from="description">tooltip for remove icon on chips of dropdown item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html
           </context>
           <context context-type="linenumber">133</context>
         </context-group>
-        <note priority="1" from="description">tooltip for remove icon on chips of dropdown item</note>
       </trans-unit>
       <trans-unit id="6120058133616490580" datatype="html">
         <source>Progress of X</source>
@@ -1723,24 +1723,24 @@
       <trans-unit id="1472120673711249850" datatype="html">
         <source>Quick Actions</source>
         <target state="translated">Schnellzugriffe</target>
+        <note priority="1" from="description">dashboard widget subtitle</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.ts
           </context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <note priority="1" from="description">dashboard widget subtitle</note>
       </trans-unit>
       <trans-unit id="1731577319426847606" datatype="html">
         <source>Shortcuts to quickly navigate to common actions</source>
         <target state="translated">Links, um einfach zu häufig benötigten Bereichen zu navigieren</target>
+        <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.ts
           </context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <note priority="1" from="description">dashboard widget explanation</note>
       </trans-unit>
       <trans-unit id="2468578017924444574" datatype="html">
         <source>Example form</source>
@@ -1786,7 +1786,7 @@
           <context context-type="sourcefile">
             src/app/features/public-form/edit-public-form-columns/edit-public-form-columns.component.html
           </context>
-          <context context-type="linenumber">1,9</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5910380241111403899" datatype="html">
@@ -1933,6 +1933,15 @@
         </context-group>
         <note priority="1" from="description">admin menu item</note>
       </trans-unit>
+      <trans-unit id="6553415034664118139" datatype="html">
+        <source>General Setting</source>
+        <target state="translated">Allgemeine Einstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+        <note priority="1" from="description">PublicFormConfig admin form panel</note>
+      </trans-unit>
       <trans-unit id="3933359702193107202" datatype="html">
         <source>If you want external people filling this form without logging in, the Permission System also has to
           allow "public" users to create new records of this type. If you are seeing problems submitting the form,
@@ -1948,6 +1957,15 @@
           <context context-type="linenumber">79</context>
         </context-group>
         <note priority="1" from="description">PublicFormConfig admin form</note>
+      </trans-unit>
+      <trans-unit id="7429211262318065236" datatype="html">
+        <source>Configure Fields</source>
+        <target state="translated">Formularfelder</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
+          <context context-type="linenumber">92</context>
+        </context-group>
+        <note priority="1" from="description">PublicFormConfig admin form panel</note>
       </trans-unit>
       <trans-unit id="339729126805226016" datatype="html">
         <source>Part</source>
@@ -2201,13 +2219,13 @@
              equiv-text="&lt;/app-entity-field-label>"/>
           :
         </target>
+        <note from="description" priority="1">category of disagregation in EntityCountDashboard</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html
           </context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <note from="description" priority="1">category of disagregation in EntityCountDashboard</note>
       </trans-unit>
       <trans-unit id="1009687839872857475" datatype="html">
         <source>Next Grouping</source>
@@ -2270,13 +2288,13 @@
         <target state="translated">Anzahl der "aktiven" Datensätze. Wenn konfiguriert, können Sie über die Pfeile
           verschiedene Disaggregationen einsehen.
         </target>
+        <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts
           </context>
           <context context-type="linenumber">126</context>
         </context-group>
-        <note priority="1" from="description">dashboard widget explanation</note>
       </trans-unit>
       <trans-unit id="1330646976582013113" datatype="html">
         <source>dismiss</source>
@@ -2299,13 +2317,13 @@
       <trans-unit id="195059181112709201" datatype="html">
         <source>dropdown option</source>
         <target state="translated">Auswahl Optionen</target>
+        <note priority="1" from="description">datatype-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.ts
           </context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <note priority="1" from="description">datatype-label</note>
       </trans-unit>
       <trans-unit id="4077530094273310479" datatype="html">
         <source>Uploading "<x id="PH" equiv-text="file.name"/>"
@@ -2499,7 +2517,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html
           </context>
-          <context context-type="linenumber">35,37</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2886766432323794907" datatype="html">
@@ -2668,7 +2686,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-search/address-search.component.html
           </context>
-          <context context-type="linenumber">30,32</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7845644545065231471" datatype="html">
@@ -2728,24 +2746,24 @@
         </source>
         <target state="translated">Wählen Sie angezeigte Orte aus
         </target>
+        <note priority="1" from="description">Title of popup to select locations that are displayed in the map</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/location/map/map-properties-popup/map-properties-popup.component.html
           </context>
-          <context context-type="linenumber">4,6</context>
+          <context context-type="linenumber">4</context>
         </context-group>
-        <note priority="1" from="description">Title of popup to select locations that are displayed in the map</note>
       </trans-unit>
       <trans-unit id="4517691647545108767" datatype="html">
         <source>Apply</source>
         <target state="translated">Anwenden</target>
+        <note priority="1" from="description">Button for closing popup and applying changes</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/location/map/map-properties-popup/map-properties-popup.component.html
           </context>
-          <context context-type="linenumber">27,29</context>
+          <context context-type="linenumber">27</context>
         </context-group>
-        <note priority="1" from="description">Button for closing popup and applying changes</note>
       </trans-unit>
       <trans-unit id="2549737213024136740" datatype="html">
         <source>
@@ -2771,13 +2789,13 @@
         <target state="translated">Diese Details werden angezeigt, um den Vergleich zu erleichtern. Dieser Datensatz
           kann hier nicht verändert werden.
         </target>
+        <note priority="1" from="description">tooltip explaining that this entity in matching is locked</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/matching-entities/matching-entities/matching-entities.component.html
           </context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <note priority="1" from="description">tooltip explaining that this entity in matching is locked</note>
       </trans-unit>
       <trans-unit id="209260392918751767" datatype="html">
         <source>Select
@@ -2787,13 +2805,13 @@
           <x id="INTERPOLATION" equiv-text="{{ side.entityType.label }}"/>
           auswählen
         </target>
+        <note priority="1" from="description">header of section with entities available for selection</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/matching-entities/matching-entities/matching-entities.component.html
           </context>
-          <context context-type="linenumber">91,93</context>
+          <context context-type="linenumber">91</context>
         </context-group>
-        <note priority="1" from="description">header of section with entities available for selection</note>
       </trans-unit>
       <trans-unit id="4566094167890982095" datatype="html">
         <source>create matching</source>
@@ -2829,13 +2847,13 @@
       <trans-unit id="7346964014646686877" datatype="html">
         <source>Conflicting Entity:</source>
         <target state="translated">Konfliktierende Entitäten:</target>
+        <note priority="1" from="description">Signals that there are conflicting database-entities</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/conflict-resolution/compare-rev/compare-rev.component.html
           </context>
-          <context context-type="linenumber">15,17</context>
+          <context context-type="linenumber">15</context>
         </context-group>
-        <note priority="1" from="description">Signals that there are conflicting database-entities</note>
       </trans-unit>
       <trans-unit id="3129066568073658794" datatype="html">
         <source>Choose conflicting version</source>
@@ -2844,7 +2862,7 @@
           <context context-type="sourcefile">
             src/app/features/conflict-resolution/compare-rev/compare-rev.component.html
           </context>
-          <context context-type="linenumber">31,33</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3925675636138344392" datatype="html">
@@ -2854,32 +2872,32 @@
           <context context-type="sourcefile">
             src/app/features/conflict-resolution/compare-rev/compare-rev.component.html
           </context>
-          <context context-type="linenumber">50,52</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3965981487459262796" datatype="html">
         <source>Current Entity:</source>
         <target state="translated">Momentane Entität:</target>
+        <note priority="1" from="description">A currently selected entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/conflict-resolution/compare-rev/compare-rev.component.html
           </context>
-          <context context-type="linenumber">56,58</context>
+          <context context-type="linenumber">56</context>
         </context-group>
-        <note priority="1" from="description">A currently selected entity</note>
       </trans-unit>
       <trans-unit id="5620370393919597582" datatype="html">
         <source>Choose current version</source>
         <target state="translated">Wählen Sie die aktuelle Version aus</target>
+        <note priority="1" from="description">Choose a current version between several conflicting versions of
+          database entries
+        </note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/conflict-resolution/compare-rev/compare-rev.component.html
           </context>
-          <context context-type="linenumber">75,77</context>
+          <context context-type="linenumber">75</context>
         </context-group>
-        <note priority="1" from="description">Choose a current version between several conflicting versions of
-          database entries
-        </note>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
         <source>Dashboard</source>
@@ -3150,13 +3168,13 @@
       <trans-unit id="7536524521722799066" datatype="html">
         <source>(no title)</source>
         <target state="translated">(kein Titel)</target>
+        <note priority="1" from="description">Placeholder for entering a title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/admin/building-blocks/admin-section-header/admin-section-header.component.html
           </context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <note priority="1" from="description">Placeholder for entering a title</note>
       </trans-unit>
       <trans-unit id="6309181788204949218" datatype="html">
         <source>User Information</source>
@@ -3243,13 +3261,13 @@
         </source>
         <target state="translated">Dieses Feld kann nicht verändert werden. Ändern Sie stattdessen das Geburtsdatum.
         </target>
+        <note priority="1" from="description">Tooltip for the disabled age field</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/date-with-age/edit-age/edit-age.component.html
           </context>
           <context context-type="linenumber">34</context>
         </context-group>
-        <note priority="1" from="description">Tooltip for the disabled age field</note>
       </trans-unit>
       <trans-unit id="3733378544613473393" datatype="html">
         <source>Date format</source>
@@ -3281,7 +3299,7 @@
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html
           </context>
-          <context context-type="linenumber">5,13</context>
+          <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3824381489899633027" datatype="html">
@@ -3291,7 +3309,7 @@
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html
           </context>
-          <context context-type="linenumber">14,16</context>
+          <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6060964197087203006" datatype="html">
@@ -3301,13 +3319,13 @@
         <target state="translated">Definieren Sie wie ein Datum aus der importierten Datei in das System übernommen
           wird. Werte, die nicht verarbeitet werden können (rot), werden beim Import ignoriert.
         </target>
+        <note priority="1" from="description">import - value mapping (date) - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html
           </context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <note priority="1" from="description">import - value mapping (date) - help text</note>
       </trans-unit>
       <trans-unit id="1706683980499618052" datatype="html">
         <source>Save &amp; Close</source>
@@ -3316,19 +3334,19 @@
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html
           </context>
-          <context context-type="linenumber">35,37</context>
+          <context context-type="linenumber">35</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html
           </context>
-          <context context-type="linenumber">31,33</context>
+          <context context-type="linenumber">31</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/entity/entity-import-config/entity-import-config.component.html
           </context>
-          <context context-type="linenumber">21,23</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8539945035792949854" datatype="html">
@@ -3861,50 +3879,50 @@
       <trans-unit id="8747316656326754222" datatype="html">
         <source>Date</source>
         <target state="translated">Datum</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html
-          </context>
-          <context context-type="linenumber">8,9</context>
-        </context-group>
         <note priority="1" from="description">Record an event for a particular date that is to be
           inputted
         </note>
         <note priority="1" from="meaning">Event-Record label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html
+          </context>
+          <context context-type="linenumber">8</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="2049913543296309259" datatype="html">
         <source>Show less</source>
         <target state="translated">Weniger anzeigen</target>
+        <note priority="1" from="description">Show less entries of a list</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html
           </context>
-          <context context-type="linenumber">63,65</context>
+          <context context-type="linenumber">63</context>
         </context-group>
-        <note priority="1" from="description">Show less entries of a list</note>
       </trans-unit>
       <trans-unit id="8203341668775539805" datatype="html">
         <source>Show more</source>
         <target state="translated">Mehr anzeigen</target>
+        <note priority="1" from="description">Show more entries of a list</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html
           </context>
-          <context context-type="linenumber">66,68</context>
+          <context context-type="linenumber">66</context>
         </context-group>
-        <note priority="1" from="description">Show more entries of a list</note>
       </trans-unit>
       <trans-unit id="8671069183934827894" datatype="html">
         <source>My event is not listed ...</source>
         <target state="translated">Ich kann mein Event nicht finden …</target>
+        <note priority="1" from="description">Allows to create a new event</note>
+        <note priority="1" from="meaning">Not listed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.html
           </context>
-          <context context-type="linenumber">77,79</context>
+          <context context-type="linenumber">77</context>
         </context-group>
-        <note priority="1" from="description">Allows to create a new event</note>
-        <note priority="1" from="meaning">Not listed</note>
       </trans-unit>
       <trans-unit id="8104421162933956065" datatype="html">
         <source>Notes</source>
@@ -4112,7 +4130,7 @@
           <context context-type="sourcefile">
             src/app/child-dev-project/children/child-details/grouped-child-attendance/grouped-child-attendance.component.html
           </context>
-          <context context-type="linenumber">15,17</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8041465698820171995" datatype="html">
@@ -4314,7 +4332,7 @@
           <context context-type="sourcefile">
             src/app/child-dev-project/children/demo-data-generators/demo-school-generator.service.ts
           </context>
-          <context context-type="linenumber">45,47</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3975709744412444339" datatype="html">
@@ -4386,7 +4404,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html
           </context>
-          <context context-type="linenumber">1,9</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3607589273604913815" datatype="html">
@@ -4442,7 +4460,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html
           </context>
-          <context context-type="linenumber">4,6</context>
+          <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2118667939256192500" datatype="html">
@@ -4459,7 +4477,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html
           </context>
-          <context context-type="linenumber">1,7</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4861393935853819484" datatype="html">
@@ -4488,7 +4506,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html
           </context>
-          <context context-type="linenumber">50,58</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="325663236190656175" datatype="html">
@@ -4515,7 +4533,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html
           </context>
-          <context context-type="linenumber">94,101</context>
+          <context context-type="linenumber">94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="737464435153915575" datatype="html">
@@ -4529,15 +4547,14 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html
           </context>
-          <context context-type="linenumber">1,4</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3890141525539868537" datatype="html">
         <source>General Settings of "<x id="INTERPOLATION" equiv-text="{{ entityConstructor.label }}"/>" Records
         </source>
         <target state="translated">Allgemeine Einstellungen für "
-          <x id="INTERPOLATION"
-             equiv-text="{{ entityConstructor.label }}"/>
+          <x id="INTERPOLATION" equiv-text="{{ entityConstructor.label }}"/>
           "-Datensätze
         </target>
         <context-group purpose="location">
@@ -4610,7 +4627,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html
           </context>
-          <context context-type="linenumber">47,53</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9011959596901584887" datatype="html">
@@ -5088,7 +5105,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component.html
           </context>
-          <context context-type="linenumber">5,8</context>
+          <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5315885280668074846" datatype="html">
@@ -5139,7 +5156,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/setup-wizard/setup-wizard-button/setup-wizard-button.component.html
           </context>
-          <context context-type="linenumber">10,12</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4378796785985219718" datatype="html">
@@ -5270,8 +5287,7 @@
         <source>The "<x id="PH" equiv-text="startLabel"/>" date is after the "<x id="PH_1" equiv-text="endLabel"/>" date
         </source>
         <target state="translated">Das "<x id="PH" equiv-text="startLabel"/>"-Datum ist nach dem "
-          <x id="PH_1"
-             equiv-text="endLabel"/>
+          <x id="PH_1" equiv-text="endLabel"/>
           "-Datum
         </target>
         <note priority="1" from="description">Error assertValid failed</note>
@@ -5527,24 +5543,24 @@
       <trans-unit id="5834379825186536704" datatype="html">
         <source>Notes needing follow-up</source>
         <target state="translated">offene Notizen</target>
+        <note priority="1" from="description">dashboard widget subtitle</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts
           </context>
           <context context-type="linenumber">35</context>
         </context-group>
-        <note priority="1" from="description">dashboard widget subtitle</note>
       </trans-unit>
       <trans-unit id="471161806151891076" datatype="html">
         <source>Notes require immediate attention or follow-up actions</source>
         <target state="translated">Notizen, die markiert sind zur Nachbereitung</target>
+        <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts
           </context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <note priority="1" from="description">dashboard widget explanation</note>
       </trans-unit>
       <trans-unit id="7252022468002751385" datatype="html">
         <source>
@@ -5569,39 +5585,39 @@
           Tage
           <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/>
         </target>
+        <note priority="1" from="description">Format like 'Days passed > 5 days'</note>
+        <note priority="1" from="meaning">Amount of days back</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html
           </context>
-          <context context-type="linenumber">27,33</context>
+          <context context-type="linenumber">27</context>
         </context-group>
-        <note priority="1" from="description">Format like 'Days passed > 5 days'</note>
-        <note priority="1" from="meaning">Amount of days back</note>
       </trans-unit>
       <trans-unit id="150250621540120335" datatype="html">
         <source>no records without recent report</source>
         <target state="translated">keine Einträge ohne kürzliche Notiz</target>
+        <note priority="1" from="description">There are no participants that don't have a recent report to be shown
+          here
+        </note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html
           </context>
-          <context context-type="linenumber">48,50</context>
+          <context context-type="linenumber">48</context>
         </context-group>
-        <note priority="1" from="description">There are no participants that don't have a recent report to be shown
-          here
-        </note>
       </trans-unit>
       <trans-unit id="7614074067535967988" datatype="html">
         <source>no records with recent report</source>
         <target state="translated">keine Einträge mit kürzlicher Notiz</target>
+        <note priority="1" from="description">There are no participants that have a recent report to be shown here
+        </note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html
           </context>
-          <context context-type="linenumber">56,58</context>
+          <context context-type="linenumber">56</context>
         </context-group>
-        <note priority="1" from="description">There are no participants that have a recent report to be shown here
-        </note>
       </trans-unit>
       <trans-unit id="6680431077518392028" datatype="html">
         <source>Clubs visited</source>
@@ -5754,6 +5770,7 @@
       <trans-unit id="8650499415827640724" datatype="html">
         <source>Type</source>
         <target state="translated">Typ</target>
+        <note from="description" priority="1">Label for the interaction type of a recurring activity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
           <context context-type="linenumber">47</context>
@@ -5768,7 +5785,6 @@
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">865</context>
         </context-group>
-        <note from="description" priority="1">Label for the interaction type of a recurring activity</note>
       </trans-unit>
       <trans-unit id="5626190928095412575" datatype="html">
         <source>allow multiple values (multi-select)</source>
@@ -5777,7 +5793,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html
           </context>
-          <context context-type="linenumber">90,92</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8467058547593404857" datatype="html">
@@ -5801,7 +5817,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html
           </context>
-          <context context-type="linenumber">97,104</context>
+          <context context-type="linenumber">97</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4834247353465426071" datatype="html">
@@ -5839,7 +5855,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html
           </context>
-          <context context-type="linenumber">125,132</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5855341483124183158" datatype="html">
@@ -6087,35 +6103,35 @@
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
           </context>
-          <context context-type="linenumber">51,54</context>
+          <context context-type="linenumber">51</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
           </context>
-          <context context-type="linenumber">61,65</context>
+          <context context-type="linenumber">61</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html
           </context>
-          <context context-type="linenumber">73,76</context>
+          <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3428613289989595847" datatype="html">
         <source>Record Attendance
         </source>
         <target state="translated">Anwesenheiten aufnehmen</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">
-            src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.html
-          </context>
-          <context context-type="linenumber">7,9</context>
-        </context-group>
         <note priority="1" from="description">Title when recording the attendance at a particular stage
           (e.g. selecting the event, recording it)
         </note>
         <note priority="1" from="meaning">Record Attendance</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">
+            src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.html
+          </context>
+          <context context-type="linenumber">7</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="8890553633144307762" datatype="html">
         <source>Back</source>
@@ -6235,38 +6251,38 @@
       <trans-unit id="6635507938917056225" datatype="html">
         <source>Title</source>
         <target state="translated">Titel</target>
+        <note priority="1" from="description">Edit the progress of one or multiple tasks</note>
+        <note priority="1" from="meaning">Title Progress</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <note priority="1" from="description">Edit the progress of one or multiple tasks</note>
-        <note priority="1" from="meaning">Title Progress</note>
       </trans-unit>
       <trans-unit id="5973592888121667115" datatype="html">
         <source>Task</source>
         <target state="translated">Aufgabe</target>
+        <note priority="1" from="description">The label of a process or task</note>
+        <note priority="1" from="meaning">Process Label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <note priority="1" from="description">The label of a process or task</note>
-        <note priority="1" from="meaning">Process Label</note>
       </trans-unit>
       <trans-unit id="2704281763797837762" datatype="html">
         <source>Current</source>
         <target state="translated">Aktuell</target>
+        <note priority="1" from="description">The Current value of a process or task</note>
+        <note priority="1" from="meaning">Current process</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <note priority="1" from="description">The Current value of a process or task</note>
-        <note priority="1" from="meaning">Current process</note>
       </trans-unit>
       <trans-unit id="884964718664110145" datatype="html">
         <source>Must be greater than 0</source>
@@ -6275,61 +6291,61 @@
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
-          <context context-type="linenumber">61,63</context>
+          <context context-type="linenumber">61</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
-          <context context-type="linenumber">92,94</context>
+          <context context-type="linenumber">92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6809868834576630900" datatype="html">
         <source>Must not be greater than target</source>
         <target state="translated">Darf nicht größer als das Ziel sein</target>
+        <note priority="1" from="description">The number entered in this form is less than another field but should
+          not be
+        </note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
-          <context context-type="linenumber">70,72</context>
+          <context context-type="linenumber">70</context>
         </context-group>
-        <note priority="1" from="description">The number entered in this form is less than another field but should
-          not be
-        </note>
       </trans-unit>
       <trans-unit id="3637329860742247234" datatype="html">
         <source>Target</source>
         <target state="translated">Ziel</target>
+        <note priority="1" from="description">The target amount of a process</note>
+        <note priority="1" from="meaning">Target process</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
           <context context-type="linenumber">81</context>
         </context-group>
-        <note priority="1" from="description">The target amount of a process</note>
-        <note priority="1" from="meaning">Target process</note>
       </trans-unit>
       <trans-unit id="8932699518643236987" datatype="html">
         <source>Add New Task</source>
         <target state="translated">Neue Aufgabe hinzufügen</target>
+        <note priority="1" from="description">Add a task to the progress dashboard list</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
-          <context context-type="linenumber">105,107</context>
+          <context context-type="linenumber">105</context>
         </context-group>
-        <note priority="1" from="description">Add a task to the progress dashboard list</note>
       </trans-unit>
       <trans-unit id="7843641624832453743" datatype="html">
         <source>Fix the errors to save the form</source>
         <target state="translated">Beheben Sie die Fehler um das Formular zu speichern</target>
+        <note priority="1" from="description">Shown when there are errors that prevent saving</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
           <context context-type="linenumber">119</context>
         </context-group>
-        <note priority="1" from="description">Shown when there are errors that prevent saving</note>
       </trans-unit>
       <trans-unit id="4137119971596288330" datatype="html">
         <source>Progress Widget</source>
@@ -6377,13 +6393,13 @@
       <trans-unit id="5982161170147334984" datatype="html">
         <source>Progress Overview</source>
         <target state="translated">Fortschitts-Übersicht</target>
+        <note priority="1" from="description">dashboard widget subtitle</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts
           </context>
           <context context-type="linenumber">47</context>
         </context-group>
-        <note priority="1" from="description">dashboard widget subtitle</note>
       </trans-unit>
       <trans-unit id="2807559716241592762" datatype="html">
         <source>Shows the progress of different parts of project tasks. You can use this to track any kind of targets.
@@ -6391,13 +6407,13 @@
         <target state="translated">Fortschritt verschiedener Teile von Projektaufgaben. Sie können damit beliebige Ziele
           dokumentieren.
         </target>
+        <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts
           </context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <note priority="1" from="description">dashboard widget explanation</note>
       </trans-unit>
       <trans-unit id="7686955204733532706" datatype="html">
         <source>Coaching Class</source>
@@ -6613,24 +6629,24 @@
       <trans-unit id="692389461533836103" datatype="html">
         <source>Building application</source>
         <target state="translated">Bereite Applikation vor</target>
+        <note priority="1" from="description">Sync notification line 1</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/config/dynamic-routing/empty/application-loading.component.html
           </context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <note priority="1" from="description">Sync notification line 1</note>
       </trans-unit>
       <trans-unit id="4753559457281797116" datatype="html">
         <source>The application will be ready in a moment</source>
         <target state="translated">Gleich können Sie loslegen</target>
+        <note priority="1" from="description">Sync notification line 2</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/config/dynamic-routing/empty/application-loading.component.html
           </context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <note priority="1" from="description">Sync notification line 2</note>
       </trans-unit>
       <trans-unit id="6578397717654172779" datatype="html">
         <source>Page Not Found</source>
@@ -6649,7 +6665,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/dynamic-routing/not-found/not-found.component.html
           </context>
-          <context context-type="linenumber">4,7</context>
+          <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="178520337056147266" datatype="html">
@@ -6664,13 +6680,13 @@
       <trans-unit id="4539028983981856321" datatype="html">
         <source>no current entries</source>
         <target state="translated">keine aktuellen Einträge</target>
+        <note priority="1" from="description">Description that are no items in generic dashboard list widget</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/dashboard/dashboard-list-widget/dashboard-list-widget.component.html
           </context>
-          <context context-type="linenumber">18,20</context>
+          <context context-type="linenumber">18</context>
         </context-group>
-        <note priority="1" from="description">Description that are no items in generic dashboard list widget</note>
       </trans-unit>
       <trans-unit id="3894950702316166331" datatype="html">
         <source>Loading...</source>
@@ -6702,7 +6718,7 @@
           <context context-type="sourcefile">
             src/app/core/default-values/inherited-value-button/inherited-value-button.component.html
           </context>
-          <context context-type="linenumber">22,29</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="327620190326214331" datatype="html">
@@ -6714,7 +6730,7 @@
           <context context-type="sourcefile">
             src/app/core/default-values/inherited-value-button/inherited-value-button.component.html
           </context>
-          <context context-type="linenumber">34,37</context>
+          <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5998191529183627089" datatype="html">
@@ -6743,7 +6759,7 @@
           <context context-type="sourcefile">
             src/app/core/default-values/inherited-value-button/inherited-value-button.component.html
           </context>
-          <context context-type="linenumber">41,46</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1155564940038634158" datatype="html">
@@ -6787,7 +6803,7 @@
           <context context-type="sourcefile">
             src/app/core/entity-details/entity-archived-info/entity-archived-info.component.html
           </context>
-          <context context-type="linenumber">13,17</context>
+          <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="25259759361939873" datatype="html">
@@ -6799,7 +6815,7 @@
           <context context-type="sourcefile">
             src/app/core/entity-details/entity-archived-info/entity-archived-info.component.html
           </context>
-          <context context-type="linenumber">19,22</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8476438488721160420" datatype="html">
@@ -6807,12 +6823,12 @@
           <x id="INTERPOLATION" equiv-text="{{ this.entityConstructor?.label }}"/>
         </source>
         <target state="translated">Neuer Eintrag</target>
+        <note priority="1" from="description">Title when adding a new entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/entity-details/entity-details.component.html
           </context>
-          <context context-type="linenumber">6,8</context>
+          <context context-type="linenumber">6</context>
         </context-group>
-        <note priority="1" from="description">Title when adding a new entity</note>
       </trans-unit>
       <trans-unit id="204820817867304170" datatype="html">
         <source>Edit Data Structure</source>
@@ -6834,12 +6850,12 @@
       <trans-unit id="8062293593030116402" datatype="html">
         <source>Save the new record to create it before accessing other details</source>
         <target state="translated">Speichere den neuen Eintrag bevor weitere Details angezeigt werden können</target>
+        <note priority="1" from="description">Tooltip explaining disabled sections when creating new entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/entity-details/entity-details.component.html
           </context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <note priority="1" from="description">Tooltip explaining disabled sections when creating new entity</note>
       </trans-unit>
       <trans-unit id="2330577642930707695" datatype="html">
         <source>Cancel</source>
@@ -6927,13 +6943,13 @@
         </source>
         <target state="translated">Bearbeite Auswahl-Optionen
         </target>
+        <note priority="1" from="description">title of dropdown options popup dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.html
           </context>
-          <context context-type="linenumber">1,3</context>
+          <context context-type="linenumber">1</context>
         </context-group>
-        <note priority="1" from="description">title of dropdown options popup dialog</note>
       </trans-unit>
       <trans-unit id="8025963579466502575" datatype="html">
         <source>Add new option</source>
@@ -6948,6 +6964,7 @@
       <trans-unit id="7819314041543176992" datatype="html">
         <source>Close</source>
         <target state="translated">Schließen</target>
+        <note priority="1" from="description">Close popup</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.html
@@ -6962,7 +6979,6 @@
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <note priority="1" from="description">Close popup</note>
       </trans-unit>
       <trans-unit id="3448462145758383019" datatype="html">
         <source>Total</source>
@@ -7158,7 +7174,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.html
           </context>
-          <context context-type="linenumber">27,29</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1418835982942849229" datatype="html">
@@ -7178,7 +7194,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.html
           </context>
-          <context context-type="linenumber">37,38</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8720439697022058640" datatype="html">
@@ -7202,7 +7218,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.html
           </context>
-          <context context-type="linenumber">47,49</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7291192693025322331" datatype="html">
@@ -7298,7 +7314,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html
           </context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9092645085005527863" datatype="html">
@@ -7319,7 +7335,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html
           </context>
-          <context context-type="linenumber">59,61</context>
+          <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
       <trans-unit id="325266169130845418" datatype="html">
@@ -7369,13 +7385,13 @@
       <trans-unit id="3453820570447962676" datatype="html">
         <source>Select default value or clear default value mode</source>
         <target state="translated">Bitte Standard-Wert auswählen oder Standardwert-Typ löschen</target>
+        <note priority="1" from="description">error message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html
           </context>
           <context context-type="linenumber">123</context>
         </context-group>
-        <note priority="1" from="description">error message</note>
       </trans-unit>
       <trans-unit id="3942266656992195970" datatype="html">
         <source>Edit Field</source>
@@ -7768,8 +7784,7 @@
         </source>
         <target state="translated">Einige verknüpfte Einträge können noch persönliche Daten enthalten (z.B. Notizen in
           ihrem Text). Wir haben automatisch alle Datensätze anonymisiert, die NUR mit diesem
-          <x id="PH"
-             equiv-text="textForAnonymizeEntity"/>
+          <x id="PH" equiv-text="textForAnonymizeEntity"/>
           -Datensatz verknüpft waren.
           Es existieren allerdings einige Datensätze, die mit mehreren Einträgen verknüpft sind. Wir haben diese nicht
           anonymisiert, damit Sie keine relevanten Daten verlieren. Bitte überprüfen Sie diese selbst, um
@@ -7856,7 +7871,7 @@
           <context context-type="sourcefile">
             src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html
           </context>
-          <context context-type="linenumber">1,3</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2803306445942692791" datatype="html">
@@ -7877,7 +7892,7 @@
           <context context-type="sourcefile">
             src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html
           </context>
-          <context context-type="linenumber">7,13</context>
+          <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4008663713017944853" datatype="html">
@@ -8008,35 +8023,35 @@
         <source>Save
         </source>
         <target state="translated">Speichern</target>
+        <note priority="1" from="description">Form save button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.html
           </context>
-          <context context-type="linenumber">10,12</context>
+          <context context-type="linenumber">10</context>
         </context-group>
-        <note priority="1" from="description">Form save button</note>
       </trans-unit>
       <trans-unit id="1293084960403366485" datatype="html">
         <source>Cancel
         </source>
         <target state="translated">Abbrechen</target>
+        <note priority="1" from="description">Form cancel button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.html
           </context>
-          <context context-type="linenumber">22,24</context>
+          <context context-type="linenumber">22</context>
         </context-group>
-        <note priority="1" from="description">Form cancel button</note>
       </trans-unit>
       <trans-unit id="6616328110991879503" datatype="html">
         <source>Go to details
         </source>
         <target state="translated">Gehe zu Details
         </target>
+        <note priority="1" from="description">Form button to navigate to details page of entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/dialog-buttons/dialog-buttons.component.html
           </context>
-          <context context-type="linenumber">33,35</context>
+          <context context-type="linenumber">33</context>
         </context-group>
-        <note priority="1" from="description">Form button to navigate to details page of entity</note>
       </trans-unit>
       <trans-unit id="2537586018484710780" datatype="html">
         <source>Link all imported records to
@@ -8049,19 +8064,19 @@
           <context context-type="sourcefile">
             src/app/core/import/import-additional-actions/import-additional-actions.component.html
           </context>
-          <context context-type="linenumber">13,15</context>
+          <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6918624301819409780" datatype="html">
         <source>no additional actions selected</source>
         <target state="translated">keine zusätzlichen Aktionen ausgewählt</target>
+        <note priority="1" from="description">import additional actions</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/import/import-additional-actions/import-additional-actions.component.html
           </context>
-          <context context-type="linenumber">29,31</context>
+          <context context-type="linenumber">29</context>
         </context-group>
-        <note priority="1" from="description">import additional actions</note>
       </trans-unit>
       <trans-unit id="8473821892708857122" datatype="html">
         <source>Select an Import Target Type before defining additional actions.</source>
@@ -8070,30 +8085,30 @@
           <context context-type="sourcefile">
             src/app/core/import/import-additional-actions/import-additional-actions.component.html
           </context>
-          <context context-type="linenumber">37,39</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1140547785796775819" datatype="html">
         <source>Linked record type</source>
         <target state="translated">Verlinkter Datentyp</target>
+        <note priority="1" from="description">Label for linked entity type input</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/import/import-additional-actions/import-additional-actions.component.html
           </context>
-          <context context-type="linenumber">45,46</context>
+          <context context-type="linenumber">45</context>
         </context-group>
-        <note priority="1" from="description">Label for linked entity type input</note>
       </trans-unit>
       <trans-unit id="5713019593199658334" datatype="html">
         <source>Linked record</source>
         <target state="translated">Verlinkter Eintrag</target>
+        <note priority="1" from="description">Label for linked entity input</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/import/import-additional-actions/import-additional-actions.component.html
           </context>
           <context context-type="linenumber">55</context>
         </context-group>
-        <note priority="1" from="description">Label for linked entity input</note>
       </trans-unit>
       <trans-unit id="7993462052811163222" datatype="html">
         <source>Add Action</source>
@@ -8102,7 +8117,7 @@
           <context context-type="sourcefile">
             src/app/core/import/import-additional-actions/import-additional-actions.component.html
           </context>
-          <context context-type="linenumber">77,79</context>
+          <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3683326409419427569" datatype="html">
@@ -8128,25 +8143,25 @@
           Bei spezielleren Datentypen erlaubt ein Knopf neben der Zuweisung eine genauere Einstellung wie die Werte der
           Spalte ins System übertragen werden.
         </target>
+        <note priority="1" from="description">import - column mapping - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/import/import-column-mapping/import-column-mapping.component.html
           </context>
-          <context context-type="linenumber">6,9</context>
+          <context context-type="linenumber">6</context>
         </context-group>
-        <note priority="1" from="description">import - column mapping - help text</note>
       </trans-unit>
       <trans-unit id="4693047272620662085" datatype="html">
         <source>Configure value mapping</source>
         <target state="translated">Werte-Zuweisung konfigurieren</target>
+        <note priority="1" from="description">import - column mapping - configure additional transformation button
+        </note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/import/import-column-mapping/import-column-mapping.component.html
           </context>
-          <context context-type="linenumber">39,41</context>
+          <context context-type="linenumber">39</context>
         </context-group>
-        <note priority="1" from="description">import - column mapping - configure additional transformation button
-        </note>
       </trans-unit>
       <trans-unit id="2302014745600966288" datatype="html">
         <source>Start Import?</source>
@@ -8201,7 +8216,7 @@
           <context context-type="sourcefile">
             src/app/core/import/import-confirm-summary/import-confirm-summary.component.html
           </context>
-          <context context-type="linenumber">22,24</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6048892649018070225" datatype="html">
@@ -8282,24 +8297,24 @@
       <trans-unit id="1854059228407793522" datatype="html">
         <source>Imported values</source>
         <target state="translated">Importierte Werte</target>
+        <note priority="1" from="description">Import mapping header</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html
           </context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <note priority="1" from="description">Import mapping header</note>
       </trans-unit>
       <trans-unit id="9025866945269409823" datatype="html">
         <source>Assigned values</source>
         <target state="translated">Zugewiesene Werte</target>
+        <note priority="1" from="description">Import mapping header</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html
           </context>
           <context context-type="linenumber">5</context>
         </context-group>
-        <note priority="1" from="description">Import mapping header</note>
       </trans-unit>
       <trans-unit id="1089978064726290096" datatype="html">
         <source>For each unique value from your imported data (left), select the category value from the system's data
@@ -8309,13 +8324,13 @@
         <target state="translated">Für jeden importierten Wert (links) weisen Sie einen Wert aus der im System
           hinterlegten Datenstruktur (rechts) zu. Werte, die keine Zuweisung haben, werden beim Importieren ignoriert.
         </target>
+        <note priority="1" from="description">import - value mapping (enum) - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html
           </context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <note priority="1" from="description">import - value mapping (enum) - help text</note>
       </trans-unit>
       <trans-unit id="5906162393521861676" datatype="html">
         <source>
@@ -8326,14 +8341,14 @@
           <x id="INTERPOLATION" equiv-text="{{ entity[property]?.length }}"/>
           insgesamt
         </target>
+        <note priority="1" from="description">context 10 in total</note>
+        <note priority="1" from="meaning">Displaying the amount of involved entities</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/entity/display-entity/display-entity.component.html
           </context>
-          <context context-type="linenumber">8,10</context>
+          <context context-type="linenumber">8</context>
         </context-group>
-        <note priority="1" from="description">context 10 in total</note>
-        <note priority="1" from="meaning">Displaying the amount of involved entities</note>
       </trans-unit>
       <trans-unit id="8454211630052123531" datatype="html">
         <source>Add
@@ -8358,13 +8373,13 @@
         </source>
         <target state="translated">Wähle zugeordnetes Feld von "<x id="INTERPOLATION" equiv-text="{{ entity.label }}"/>"
         </target>
+        <note priority="1" from="description">Label for property selection</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/entity/entity-import-config/entity-import-config.component.html
           </context>
-          <context context-type="linenumber">2,4</context>
+          <context context-type="linenumber">2</context>
         </context-group>
-        <note priority="1" from="description">Label for property selection</note>
       </trans-unit>
       <trans-unit id="3009225232782609010" datatype="html">
         <source>Select which property of the target entity is matching with the values of this column. E.g. if your
@@ -8374,13 +8389,13 @@
           Werte abgeglichen werden soll. z.B. wenn Ihre importierte Spalte die Telefonnummern als Identifikator für
           Schüler:innen enthält, wählen Sie "Telefonnummer"
         </target>
+        <note priority="1" from="description">import - value mapping (entity) - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/basic-datatypes/entity/entity-import-config/entity-import-config.component.html
           </context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <note priority="1" from="description">import - value mapping (entity) - help text</note>
       </trans-unit>
       <trans-unit id="5432260252143962374" datatype="html">
         <source>Create new option</source>
@@ -8485,24 +8500,24 @@
           Beginnen Sie einen bestehenden Namen einzutippen und wählen Sie dann aus der Auswahllist einen Eintrag um
           diesen zu bearbeiten. Tippen Sie einen beliebigen Text um einen neuen Eintrag zu erstellen.
         </target>
+        <note priority="1" from="description">Tooltip help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/common-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component.html
           </context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <note priority="1" from="description">Tooltip help text</note>
       </trans-unit>
       <trans-unit id="7366057463489552193" datatype="html">
         <source>Unload existing record and reset form.</source>
         <target state="translated">Trennen vom bestehenden Eintrag und Formular zurücksetzen.</target>
+        <note priority="1" from="description">Tooltip for button to reset form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/common-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component.html
           </context>
           <context context-type="linenumber">48</context>
         </context-group>
-        <note priority="1" from="description">Tooltip for button to reset form</note>
       </trans-unit>
       <trans-unit id="2159130950882492111" datatype="html">
         <source>Cancel</source>
@@ -8595,7 +8610,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html
           </context>
-          <context context-type="linenumber">5,9</context>
+          <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2288101943814243419" datatype="html">
@@ -8657,7 +8672,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html
           </context>
-          <context context-type="linenumber">22,29</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3302047227207916068" datatype="html">
@@ -8695,7 +8710,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html
           </context>
-          <context context-type="linenumber">38,45</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5291875200400669498" datatype="html">
@@ -8733,7 +8748,7 @@
           <context context-type="sourcefile">
             src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html
           </context>
-          <context context-type="linenumber">56,63</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4966731542639558667" datatype="html">
@@ -8776,14 +8791,14 @@
       <trans-unit id="1305831959756474040" datatype="html">
         <source>Include archived records</source>
         <target state="translated">Archivierte Datensätze anzeigen</target>
+        <note priority="1" from="description">also show entries that are archived</note>
+        <note priority="1" from="meaning">slider</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/common-components/entities-table/entities-table.component.html
           </context>
-          <context context-type="linenumber">114,116</context>
+          <context context-type="linenumber">114</context>
         </context-group>
-        <note priority="1" from="description">also show entries that are archived</note>
-        <note priority="1" from="meaning">slider</note>
       </trans-unit>
       <trans-unit id="6863594440224190141" datatype="html">
         <source>Create a new
@@ -8836,16 +8851,17 @@
       <trans-unit id="718249813093322951" datatype="html">
         <source>Select file</source>
         <target state="translated">Datei wählen</target>
+        <note priority="1" from="description">Label for file select input</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/input-file/input-file.component.html
           </context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <note priority="1" from="description">Label for file select input</note>
       </trans-unit>
       <trans-unit id="4267980179189609192" datatype="html">
         <source>No file selected</source>
         <target state="translated">Keine Datei ausgewählt</target>
+        <note priority="1" from="description">placeholder for file-input</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/input-file/input-file.component.html
           </context>
@@ -8855,7 +8871,10 @@
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <note priority="1" from="description">placeholder for file-input</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="7532581571486706488" datatype="html">
         <source>Preparing data (Indexing)</source>
@@ -8962,12 +8981,12 @@
       <trans-unit id="1886271369587224373" datatype="html">
         <source>date of birth (date + age)</source>
         <target state="translated">Geburtsdatum (Datum + Alter)</target>
+        <note priority="1" from="description">datatype-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date-with-age/date-with-age.datatype.ts
           </context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <note priority="1" from="description">datatype-label</note>
       </trans-unit>
       <trans-unit id="1115283280221159212" datatype="html">
         <source>Discard Changes?</source>
@@ -9111,19 +9130,19 @@
           <context context-type="sourcefile">
             src/app/core/ui/sync-status/background-processing-indicator/background-processing-indicator.component.html
           </context>
-          <context context-type="linenumber">19,22</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7844839672877990404" datatype="html">
         <source>Continue in background</source>
         <target state="translated">Im Hintergrund fortsetzen</target>
+        <note priority="1" from="description">Hide sync details</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/ui/sync-status/background-processing-indicator/background-processing-indicator.component.html
           </context>
-          <context context-type="linenumber">47,49</context>
+          <context context-type="linenumber">47</context>
         </context-group>
-        <note priority="1" from="description">Hide sync details</note>
       </trans-unit>
       <trans-unit id="8160928187400055629" datatype="html">
         <source>Your account does not have the required permission for this action.</source>
@@ -9194,46 +9213,46 @@
         <source>Change Password
         </source>
         <target state="translated">Passwort ändern</target>
+        <note priority="1" from="description">Button which opens password reset page</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/session/auth/keycloak/account-page/account-page.component.html
           </context>
-          <context context-type="linenumber">9,11</context>
+          <context context-type="linenumber">9</context>
         </context-group>
-        <note priority="1" from="description">Button which opens password reset page</note>
       </trans-unit>
       <trans-unit id="4616894645263562158" datatype="html">
         <source>Your email address</source>
         <target state="translated">Email Adresse</target>
+        <note priority="1" from="description">Email address input field</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/session/auth/keycloak/account-page/account-page.component.html
           </context>
           <context context-type="linenumber">19</context>
         </context-group>
-        <note priority="1" from="description">Email address input field</note>
       </trans-unit>
       <trans-unit id="7418188192717050175" datatype="html">
         <source>Please provide a valid email</source>
         <target state="translated">Bitte eine gültige Email Adresse angeben</target>
+        <note priority="1" from="description">Error message if email format is invalid</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/session/auth/keycloak/account-page/account-page.component.html
           </context>
-          <context context-type="linenumber">25,27</context>
+          <context context-type="linenumber">25</context>
         </context-group>
-        <note priority="1" from="description">Error message if email format is invalid</note>
       </trans-unit>
       <trans-unit id="7703027023112056914" datatype="html">
         <source>Update email</source>
         <target state="translated">Email speichern</target>
+        <note priority="1" from="description">Button which updates the user's email</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/core/session/auth/keycloak/account-page/account-page.component.html
           </context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="linenumber">40</context>
         </context-group>
-        <note priority="1" from="description">Button which updates the user's email</note>
       </trans-unit>
       <trans-unit id="5842860125411594339" datatype="html">
         <source>Site name</source>
@@ -9573,35 +9592,35 @@
         <target state="translated">Dieses Feld ist erforderlich</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">101,103</context>
+          <context context-type="linenumber">101</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">131,133</context>
+          <context context-type="linenumber">131</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
-          <context context-type="linenumber">12,14</context>
+          <context context-type="linenumber">12</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
-          <context context-type="linenumber">34,36</context>
+          <context context-type="linenumber">34</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
-          <context context-type="linenumber">58,60</context>
+          <context context-type="linenumber">58</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html
           </context>
-          <context context-type="linenumber">86,88</context>
+          <context context-type="linenumber">86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="795890916060309463" datatype="html">
@@ -9670,13 +9689,13 @@
           <x id="INTERPOLATION" equiv-text="{{ inactiveFilteredEntities.length }}"/>
           inaktive anzeigen
         </target>
+        <note priority="1" from="description">e.g. include inactive children</note>
+        <note priority="1" from="meaning">Label for checkbox</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-select/entity-select.component.html
           </context>
-          <context context-type="linenumber">29,30</context>
+          <context context-type="linenumber">29</context>
         </context-group>
-        <note priority="1" from="description">e.g. include inactive children</note>
-        <note priority="1" from="meaning">Label for checkbox</note>
       </trans-unit>
       <trans-unit id="3506248175295374215" datatype="html">
         <source>Account has been disabled, user will not be able to login anymore.</source>
@@ -9745,12 +9764,12 @@
       <trans-unit id="5488887337214961987" datatype="html">
         <source>Coming Soon</source>
         <target state="translated">Bald verfügbar</target>
+        <note priority="1" from="description">Coming Soon header</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/coming-soon/coming-soon/coming-soon.component.html
           </context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <note priority="1" from="description">Coming Soon header</note>
       </trans-unit>
       <trans-unit id="2666994589784458982" datatype="html">
         <source>Sorry, this feature isn't quite ready yet. We are working hard to make this available for you. Let us
@@ -9760,12 +9779,12 @@
           schnell wie möglich verfügbar zu machen. Wenn Sie diese Funktionalität benötigen, lassen Sie es uns bitte
           wissen!
         </target>
+        <note priority="1" from="description">Coming Soon description</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/coming-soon/coming-soon/coming-soon.component.html
           </context>
-          <context context-type="linenumber">4,7</context>
+          <context context-type="linenumber">4</context>
         </context-group>
-        <note priority="1" from="description">Coming Soon description</note>
       </trans-unit>
       <trans-unit id="4276749368621932121" datatype="html">
         <source>
@@ -9784,15 +9803,15 @@
           <x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/>
           Ich brauche dieses Feature
         </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/coming-soon/coming-soon/coming-soon.component.html
-          </context>
-          <context context-type="linenumber">21,23</context>
-        </context-group>
         <note priority="1" from="description">Indicates that the user needs this feature and can send a
           feature-request
         </note>
         <note priority="1" from="meaning">Feature Button</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/coming-soon/coming-soon/coming-soon.component.html
+          </context>
+          <context context-type="linenumber">21</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="5374856425398858883" datatype="html">
         <source>I can tell you about my use case</source>
@@ -9800,7 +9819,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/coming-soon/coming-soon/coming-soon.component.html
           </context>
-          <context context-type="linenumber">34,36</context>
+          <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2392488717875840729" datatype="html">
@@ -9889,22 +9908,22 @@
         <target state="translated">Was für eine Art von Daten möchten Sie importieren? Wählen Sie den Datentyp (z.B.
           möchten Sie Kinder, Events oder Nutzer:innen importieren?)
         </target>
+        <note priority="1" from="description">import - select type - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-entity-type/import-entity-type.component.html
           </context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <note priority="1" from="description">import - select type - help text</note>
       </trans-unit>
       <trans-unit id="793619946657035541" datatype="html">
         <source>Expert Mode</source>
         <target state="translated">Experten Modus</target>
+        <note priority="1" from="description">Toggle label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-entity-type/import-entity-type.component.html
           </context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <note priority="1" from="description">Toggle label</note>
       </trans-unit>
       <trans-unit id="4518357326640436030" datatype="html">
         <source>Select a .csv file with data to import:</source>
@@ -10058,7 +10077,7 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html
           </context>
-          <context context-type="linenumber">10,12</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3609313416980556585" datatype="html">
@@ -10072,12 +10091,12 @@
           Nur Spalten, die eine Zuweisung haben, werden importiert und sind hier sichtbar.
           Falls nötig, können Sie zum vorherigen Schritt zurückgehen und Änderungen vornehmen.
         </target>
+        <note priority="1" from="description">import - review data - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html
           </context>
-          <context context-type="linenumber">15,17</context>
+          <context context-type="linenumber">15</context>
         </context-group>
-        <note priority="1" from="description">import - review data - help text</note>
       </trans-unit>
       <trans-unit id="4347553215219271086" datatype="html">
         <source>Select File</source>
@@ -10277,12 +10296,12 @@
       <trans-unit id="8778616811237742446" datatype="html">
         <source>Name</source>
         <target state="translated">Name</target>
+        <note priority="1" from="description">Table report header</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/report-row/report-row.component.html
           </context>
           <context context-type="linenumber">4</context>
         </context-group>
-        <note priority="1" from="description">Table report header</note>
       </trans-unit>
       <trans-unit id="8177873832400820695" datatype="html">
         <source>Count</source>
@@ -10361,13 +10380,13 @@
       <trans-unit id="4657707440349610057" datatype="html">
         <source>Ask for a setup call</source>
         <target state="translated">Um einen Termin zur Hilfe bei der Einrichtung bitten</target>
+        <note priority="1" from="description">Button if no reports are configured yet</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/reporting/reporting/select-report/select-report.component.html
           </context>
-          <context context-type="linenumber">7,9</context>
+          <context context-type="linenumber">7</context>
         </context-group>
-        <note priority="1" from="description">Button if no reports are configured yet</note>
       </trans-unit>
       <trans-unit id="3425748923175925415" datatype="html">
         <source>Select Report</source>
@@ -10402,24 +10421,24 @@
       <trans-unit id="4435527043283877614" datatype="html">
         <source>Calculate</source>
         <target state="translated">Berechnen</target>
+        <note priority="1" from="description">Calculate the results for a report</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/reporting/reporting/select-report/select-report.component.html
           </context>
-          <context context-type="linenumber">74,76</context>
+          <context context-type="linenumber">74</context>
         </context-group>
-        <note priority="1" from="description">Calculate the results for a report</note>
       </trans-unit>
       <trans-unit id="3690261887763048230" datatype="html">
         <source>Download</source>
         <target state="translated">Herunterladen</target>
+        <note priority="1" from="description">Button to download data</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/reporting/reporting/select-report/select-report.component.html
           </context>
           <context context-type="linenumber">97</context>
         </context-group>
-        <note priority="1" from="description">Button to download data</note>
       </trans-unit>
       <trans-unit id="7799372078125125090" datatype="html">
         <source>Generate File from Template</source>
@@ -10459,7 +10478,7 @@
           <context context-type="sourcefile">
             src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html
           </context>
-          <context context-type="linenumber">3,15</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5610425955750546094" datatype="html">
@@ -10816,13 +10835,13 @@
       <trans-unit id="2671827835175438409" datatype="html">
         <source>Set</source>
         <target state="translated">Setzen</target>
+        <note priority="1" from="description">custom time interval dialog action</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/todos/recurring-interval/custom-interval/custom-interval.component.html
           </context>
-          <context context-type="linenumber">28,30</context>
+          <context context-type="linenumber">28</context>
         </context-group>
-        <note priority="1" from="description">custom time interval dialog action</note>
       </trans-unit>
       <trans-unit id="5034747390718755858" datatype="html">
         <source>
@@ -10837,13 +10856,13 @@
           <x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/>
           anderes Interval definieren
         </target>
+        <note priority="1" from="description">recurring interval option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/todos/recurring-interval/edit-recurring-interval/edit-recurring-interval.component.html
           </context>
-          <context context-type="linenumber">20,22</context>
+          <context context-type="linenumber">20</context>
         </context-group>
-        <note priority="1" from="description">recurring interval option</note>
       </trans-unit>
       <trans-unit id="4794411980618038310" datatype="html">
         <source>
@@ -10858,13 +10877,13 @@
           <x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/>
           wiederholt sich nicht
         </target>
+        <note priority="1" from="description">recurring interval option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/todos/recurring-interval/edit-recurring-interval/edit-recurring-interval.component.html
           </context>
-          <context context-type="linenumber">30,32</context>
+          <context context-type="linenumber">30</context>
         </context-group>
-        <note priority="1" from="description">recurring interval option</note>
       </trans-unit>
       <trans-unit id="5100904759598062584" datatype="html">
         <source>weekly</source>
@@ -10891,12 +10910,12 @@
       <trans-unit id="7102691293586506862" datatype="html">
         <source>time interval</source>
         <target state="translated">Zeitintervall</target>
+        <note priority="1" from="description">datatype-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/recurring-interval/time-interval.datatype.ts
           </context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <note priority="1" from="description">datatype-label</note>
       </trans-unit>
       <trans-unit id="628521769441120149" datatype="html">
         <source>every
@@ -10997,7 +11016,7 @@
           <context context-type="sourcefile">
             src/app/features/todos/todo-completion/display-todo-completion/display-todo-completion.component.html
           </context>
-          <context context-type="linenumber">6,8</context>
+          <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8900345964300256590" datatype="html">
@@ -11013,13 +11032,13 @@
       <trans-unit id="6886527816549158871" datatype="html">
         <source>mark as incomplete again</source>
         <target state="translated">wieder als "nicht erledigt" markieren</target>
+        <note priority="1" from="description">todo uncomplete button tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">
             src/app/features/todos/todo-completion/todo-completion/todo-completion.component.html
           </context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <note priority="1" from="description">todo uncomplete button tooltip</note>
       </trans-unit>
       <trans-unit id="5086653948161610675" datatype="html">
         <source>Creating new item
@@ -11106,12 +11125,12 @@
       <trans-unit id="4400789756391088642" datatype="html">
         <source>Tasks that are beyond their deadline</source>
         <target state="translated">Aufgaben, die bereits ihre Deadline überschritten haben</target>
+        <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todos-dashboard/todos-dashboard.component.ts
           </context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <note priority="1" from="description">dashboard widget explanation</note>
       </trans-unit>
       <trans-unit id="4210747844204240754" datatype="html">
         <source>Please click the link in the email we sent you to verify your email address.</source>
