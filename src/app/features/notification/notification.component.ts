@@ -12,7 +12,7 @@ import { NotificationEvent } from "./model/notification-event";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
-import { MockNotificationsService } from "./mock-notifications.service";
+import { MockNotificationsService } from "./mock-notification.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
 
 @Component({
@@ -30,10 +30,10 @@ import { SessionSubject } from "app/core/session/auth/session-info";
     MatTabsModule,
     NotificationItemComponent,
   ],
-  templateUrl: "./notifications.component.html",
-  styleUrl: "./notifications.component.scss",
+  templateUrl: "./notification.component.html",
+  styleUrl: "./notification.component.scss",
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationComponent implements OnInit {
   public allNotifications: NotificationEvent[] = [];
   public unreadNotifications: NotificationEvent[] = [];
   public selectedTab = 0;
