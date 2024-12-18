@@ -19,7 +19,9 @@ export class NotificationService {
   private messaging: any = null;
   readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${environment.firebaseConfig.projectId}/messages:send`;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient) {}
+
+  init() {
     firebase.initializeApp(environment.firebaseConfig);
     this.messaging = firebase.messaging();
   }

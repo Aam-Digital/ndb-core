@@ -10,8 +10,11 @@ import { NotificationService } from "./notification.service";
 })
 export class NotificationModule {
   constructor(private notificationService: NotificationService) {
-    initializeApp(environment.firebaseConfig);
-    this.notificationService.getFcmToken();
-    this.notificationService.listenForMessages();
+    if (environment.firebaseConfig?.enabled) {
+      this.notificationService.init();
+      initializeApp(environment.firebaseConfig);
+      this.notificationService.getFcmToken();
+      this.notificationService.listenForMessages();
+    }
   }
 }
