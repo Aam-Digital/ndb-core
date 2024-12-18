@@ -48,16 +48,16 @@ export class NotificationService {
    */
   async getFcmToken(): Promise<string> {
     try {
-      const existingToken = this.getNotificationTokenFromCookie();
-      if (existingToken) {
-        return existingToken;
+      const existingNotificationToken = this.getNotificationTokenFromCookie();
+      if (existingNotificationToken) {
+        return existingNotificationToken;
       }
 
       const notificationToken = await getToken(this.messaging, {
         vapidKey: environment.firebaseConfig.vapidKey,
       });
 
-      if (notificationToken !== existingToken) {
+      if (notificationToken !== existingNotificationToken) {
         this.setCookie(
           this.NOTIFICATION_TOKEN_COOKIE_NAME,
           notificationToken,
