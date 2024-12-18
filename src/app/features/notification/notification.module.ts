@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "firebase-config";
+import { environment } from "../../../environments/environment";
 import { NotificationService } from "./notification.service";
 
 @NgModule({
@@ -10,7 +10,7 @@ import { NotificationService } from "./notification.service";
 })
 export class NotificationModule {
   constructor(private notificationService: NotificationService) {
-    initializeApp(firebaseConfig);
+    initializeApp(environment.firebaseConfig);
     this.notificationService.getFcmToken();
     this.notificationService.listenForMessages();
   }

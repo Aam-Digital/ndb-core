@@ -199,4 +199,4 @@ fabric.properties
 ./e2e/videos
 
 # firebase configuration
-src/firebase-config.ts
+src/assets/firebase-config.json

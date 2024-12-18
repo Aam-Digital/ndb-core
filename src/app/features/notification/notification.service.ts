@@ -3,8 +3,7 @@ import "firebase/compat/messaging";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "firebase-config";
+import { environment } from "../../../environments/environment";
 import firebase from "firebase/compat/app";
 
 @Injectable({
@@ -12,10 +11,10 @@ import firebase from "firebase/compat/app";
 })
 export class NotificationService {
   private messaging: any = null;
-  readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${firebaseConfig.projectId}/messages:send`;
+  readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${environment.firebaseConfig.projectId}/messages:send`;
 
   constructor(private httpClient: HttpClient) {
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(environment.firebaseConfig);
     this.messaging = firebase.messaging();
   }
 
@@ -41,7 +40,7 @@ export class NotificationService {
   async getFcmToken(): Promise<any> {
     try {
       const notificationToken = await getToken(this.messaging, {
-        vapidKey: firebaseConfig.vapidKey,
+        vapidKey: environment.firebaseConfig.vapidKey,
       });
       console.log({ notificationToken });
       if (notificationToken) {

@@ -42,4 +42,5 @@ export const environment = {
 
   /** Name of the database that is used */
   DB_NAME: "app",
+  firebaseConfig: {} as any,
 };
