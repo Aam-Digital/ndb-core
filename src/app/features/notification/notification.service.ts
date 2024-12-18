@@ -21,7 +21,9 @@ export class NotificationService {
   private readonly NOTIFICATION_TOKEN_COOKIE_NAME = "notification_token";
   private readonly DEVICE_NOTIFICATION_API_URL = "/api/v1/notification/device";
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient) {}
+
+  init() {
     firebase.initializeApp(environment.firebaseConfig);
     this.messaging = firebase.messaging();
   }
