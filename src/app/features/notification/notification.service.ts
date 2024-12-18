@@ -51,10 +51,6 @@ export class NotificationService {
       if (notificationToken) {
         // TODO: Need to Implement the logic to save the FCM token in the Cookie and update in the backend API.
         return notificationToken;
-      } else {
-        Logging.log(
-          "No registration token available. Request permission to generate one.",
-        );
       }
     } catch (err) {
       Logging.error("An error occurred while retrieving token: ", err);
