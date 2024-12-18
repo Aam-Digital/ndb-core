@@ -17,7 +17,7 @@ import { MockNotificationsService } from "./mock-notification.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
 
 @Component({
-  selector: "app-notifications",
+  selector: "app-notification",
   standalone: true,
   imports: [
     MatBadgeModule,
