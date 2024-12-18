@@ -6,6 +6,12 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 import firebase from "firebase/compat/app";
 
+/**
+ * Handles the interaction with Firebase Cloud Messaging (FCM).
+ * It manages the retrieval of FCM tokens, listens for incoming messages, and sends notifications
+ * to users. The service also provides methods to create FCM payloads and communicate with the
+ * Firebase Cloud Messaging HTTP API for sending notifications.
+ */
 @Injectable({
   providedIn: "root",
 })
