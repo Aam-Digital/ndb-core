@@ -67,10 +67,6 @@ export class NotificationService {
         this.registerTokenWithBackend(notificationToken);
 
         return notificationToken;
-      } else {
-        Logging.log(
-          "No registration token available. Request permission to generate one.",
-        );
       }
     } catch (err) {
       Logging.error("An error occurred while retrieving token: ", err);
@@ -142,7 +138,7 @@ export class NotificationService {
       const fcmPayload = this.createFcmPayload(notificationToken, payload);
       this.sendNotificationToUser(fcmPayload);
     } else {
-      Logging.error("FCM Token is undefined. Notification not sent.");
+      Logging.error("FCM Token is undefined. Notification not sent. ");
     }
   }
 
