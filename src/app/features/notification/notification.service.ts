@@ -84,7 +84,7 @@ export class NotificationService {
       const fcmPayload = this.createFcmPayload(notificationToken, payload);
       this.sendNotificationToUser(fcmPayload);
     } else {
-      Logging.error("FCM Token is undefined. Notification not sent.");
+      Logging.error("FCM Token is undefined. Notification not sent. ");
     }
   }
 
