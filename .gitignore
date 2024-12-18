@@ -197,3 +197,6 @@ fabric.properties
 # video and screenshot of the tests from Cypress
 ./e2e/screenshots
 ./e2e/videos
+
+# firebase configuration
+src/assets/firebase-config.json

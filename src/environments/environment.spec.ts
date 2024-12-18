@@ -14,4 +14,5 @@ export const environment = {
   email: undefined,
   DB_PROXY_PREFIX: "/db",
   DB_NAME: "app",
+  firebaseConfig: {} as any,
 };

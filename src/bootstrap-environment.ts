@@ -7,13 +7,21 @@ import { Logging } from "./app/core/logging/logging.service";
  **/
 export async function initEnvironmentConfig() {
   const CONFIG_FILE = "assets/config.json";
+  const FIREBASE_CONFIG_FILE = "assets/firebase-config.json";
 
   let config: Object;
+  let firebaseConfig: Object;
   try {
     const configResponse = await fetch(CONFIG_FILE);
     config = await configResponse.json();
     if (typeof config !== "object") {
       throw new Error("config.json must be an object");
+    }
+
+    const firebaseConfigResponse = await fetch(FIREBASE_CONFIG_FILE);
+    firebaseConfig = await firebaseConfigResponse.json();
+    if (typeof firebaseConfig !== "object") {
+      throw new Error("firebase-config.json must be an object");
     }
   } catch (err) {
     if (
@@ -37,5 +45,5 @@ export async function initEnvironmentConfig() {
     window.location.reload();
   }
 
-  Object.assign(environment, config);
+  Object.assign(environment, config, { firebaseConfig });
 }
