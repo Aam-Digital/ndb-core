@@ -42,7 +42,6 @@ export class NotificationService {
       const notificationToken = await getToken(this.messaging, {
         vapidKey: environment.firebaseConfig.vapidKey,
       });
-      console.log({ notificationToken });
       if (notificationToken) {
         // TODO: Need to Implement the logic to save the FCM token in the Cookie and update in the backend API.
         return notificationToken;
