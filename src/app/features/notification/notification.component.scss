@@ -1,0 +1,35 @@
+@use "variables/colors";
+
+.notification-title {
+  font-weight: 700;
+  margin: 0px;
+}
+
+.no-notification-text {
+  color: colors.$inactive;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.notification-panel-header {
+  padding: 0px 10px;
+}
+
+.notification-panel {
+  width: 280px;
+}
+
+.no-notification-message {
+  text-align: center;
+  padding: 24px;
+}
+
+.no-notification-icon {
+  font-size: 56px;
+  margin-bottom: 20px;
+  color: colors.$inactive;
+}
+
+.menu-option {
+  margin-left: 12px;
+}
