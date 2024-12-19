@@ -68,7 +68,7 @@ export class NotificationComponent implements OnInit {
   /**
    * Filters notifications based on the sender.
    * @param notifications - The list of notifications.
-   * @param user - The user to filter notifications by.
+   * @param user - The user to filter notifications.
    */
   private filterUserNotifications(
     notifications: NotificationEvent[],
