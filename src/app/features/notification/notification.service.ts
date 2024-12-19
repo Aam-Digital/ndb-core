@@ -67,7 +67,7 @@ export class NotificationService {
         this.setCookie(this.NOTIFICATION_TOKEN_COOKIE_NAME, "", null);
         return null;
       }
-      
+
       this.setCookie(
         this.NOTIFICATION_TOKEN_COOKIE_NAME,
         notificationToken,
