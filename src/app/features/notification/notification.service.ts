@@ -61,18 +61,18 @@ export class NotificationService {
         return existingNotificationToken;
       }
 
-      this.setCookie(
-        this.NOTIFICATION_TOKEN_COOKIE_NAME,
-        notificationToken,
-        this.COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN,
-      );
-
       try {
         this.registerNotificationToken(notificationToken);
       } catch {
         this.setCookie(this.NOTIFICATION_TOKEN_COOKIE_NAME, "", null);
         return null;
       }
+      
+      this.setCookie(
+        this.NOTIFICATION_TOKEN_COOKIE_NAME,
+        notificationToken,
+        this.COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN,
+      );
 
       return notificationToken;
     } catch (err) {
