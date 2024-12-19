@@ -12,6 +12,7 @@ import { NotificationEvent } from "./model/notification-event";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
+import { Router } from "@angular/router";
 import { MockNotificationsService } from "./mock-notification.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
 
@@ -41,6 +42,7 @@ export class NotificationComponent implements OnInit {
 
   constructor(
     private entityMapper: EntityMapperService,
+    private router: Router,
     private mockNotificationsService: MockNotificationsService,
     private sessionInfo: SessionSubject,
   ) {}
@@ -108,6 +110,10 @@ export class NotificationComponent implements OnInit {
       (n) => n !== notification,
     );
     Logging.log("Notification deleted");
+  }
+
+  onRedirectToNotificationsSetting() {
+    this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
   }
 
   stopEventPropagation(event: Event): void {
