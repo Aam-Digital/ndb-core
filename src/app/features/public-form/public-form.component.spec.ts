@@ -189,7 +189,7 @@ describe("PublicFormComponent", () => {
 
     expect(component).toBeDefined();
     expect(component.publicFormNotFound.error).toBe(
-      "You do not have the required permissions to submit this form. Please log in or contact your system administrator.",
+      "Unfortunately, access has been denied due to insufficient permissions to access this Public Form. Please contact your system administrator.",
     );
   }));
 
