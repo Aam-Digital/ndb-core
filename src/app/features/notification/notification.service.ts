@@ -49,7 +49,7 @@ export class NotificationService {
    * Requests permission for Firebase messaging and retrieves the token.
    * Logs the token if successful, otherwise logs an error or info message.
    */
-  async getFcmToken(): Promise<string> {
+  async getFcmToken(): Promise<string | null> {
     try {
       const existingNotificationToken = this.getNotificationTokenFromCookie();
 
@@ -67,11 +67,17 @@ export class NotificationService {
         this.COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN,
       );
 
-      this.registerNotificationToken(notificationToken);
+      try {
+        this.registerNotificationToken(notificationToken);
+      } catch {
+        this.setCookie(this.NOTIFICATION_TOKEN_COOKIE_NAME, "", -1);
+        return null;
+      }
 
       return notificationToken;
     } catch (err) {
       Logging.error("An error occurred while retrieving token: ", err);
+      return null;
     }
   }
 
@@ -93,6 +99,7 @@ export class NotificationService {
         .subscribe();
     } catch (err) {
       Logging.error("Failed to register device: ", err);
+      throw new Error("Device registration failed");
     }
   }
 
