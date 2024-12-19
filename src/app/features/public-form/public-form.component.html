@@ -1,46 +1,60 @@
-<mat-card>
-  <mat-card-header>
-    <div>
-      <mat-card-title>{{ formConfig?.title }}</mat-card-title>
-      <div class="public-form-container">
-        @if (formConfig?.logo) {
-          <app-display-img
-            [entity]="formConfig"
-            imgProperty="logo"
-            class="public-form-image"
-          ></app-display-img>
-        }
+@if (publicFormNotFound) {
+  <div class="flex-column place-center error-container">
+    <fa-icon
+      icon="triangle-exclamation"
+      class="margin-bottom-regular"
+      size="6x"
+    ></fa-icon>
+    <h1 i18n>{{ publicFormNotFound.title }}</h1>
+    <p i18n>
+      {{ publicFormNotFound.error }}
+    </p>
+  </div>
+} @else {
+  <mat-card>
+    <mat-card-header>
+      <div>
+        <mat-card-title>{{ formConfig?.title }}</mat-card-title>
+        <div class="public-form-container">
+          @if (formConfig?.logo) {
+            <app-display-img
+              [entity]="formConfig"
+              imgProperty="logo"
+              class="public-form-image"
+            ></app-display-img>
+          }
+        </div>
+        <mat-card-subtitle>{{ formConfig?.description }}</mat-card-subtitle>
       </div>
-      <mat-card-subtitle>{{ formConfig?.description }}</mat-card-subtitle>
-    </div>
-  </mat-card-header>
+    </mat-card-header>
 
-  @if (formConfig && form) {
-    <mat-card-content>
-      <app-entity-form
-        [entity]="entity"
-        [fieldGroups]="fieldGroups"
-        [form]="form"
-        [gridLayout]="false"
-      ></app-entity-form>
-    </mat-card-content>
+    @if (formConfig && form) {
+      <mat-card-content>
+        <app-entity-form
+          [entity]="entity"
+          [fieldGroups]="fieldGroups"
+          [form]="form"
+          [gridLayout]="false"
+        ></app-entity-form>
+      </mat-card-content>
 
-    <mat-card-footer>
-      <button
-        mat-raised-button
-        (click)="submit()"
-        color="accent"
-        i18n="Submit form button"
-      >
-        Submit Form
-      </button>
-      <button mat-stroked-button (click)="reset()" i18n="Reset form button">
-        Reset
-      </button>
-    </mat-card-footer>
-  } @else {
-    <mat-card-content>
-      <p i18n>Loading form ...</p>
-    </mat-card-content>
-  }
-</mat-card>
+      <mat-card-footer>
+        <button
+          mat-raised-button
+          (click)="submit()"
+          color="accent"
+          i18n="Submit form button"
+        >
+          Submit Form
+        </button>
+        <button mat-stroked-button (click)="reset()" i18n="Reset form button">
+          Reset
+        </button>
+      </mat-card-footer>
+    } @else {
+      <mat-card-content>
+        <p i18n>Loading form ...</p>
+      </mat-card-content>
+    }
+  </mat-card>
+}

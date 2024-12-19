@@ -17,12 +17,14 @@ import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
   let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
   let initRemoteDBSpy: jasmine.Spy;
   let testFormConfig: PublicFormConfig;
+  let entityMapper: EntityMapperService;
 
   beforeEach(waitForAsync(() => {
     testFormConfig = new PublicFormConfig("form-id");
@@ -49,9 +51,11 @@ describe("PublicFormComponent", () => {
               paramMap: new Map([["id", testFormConfig.getId(true)]]),
             },
           },
+          EntityMapperService,
         },
       ],
     }).compileComponents();
+    entityMapper = TestBed.inject(EntityMapperService);
   }));
 
   beforeEach(() => {
@@ -168,6 +172,40 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(component.form.formGroup.get("name")).toHaveValue("default name");
+  }));
+
+  it("should throw an error when do not have permissions to submit the form", fakeAsync(() => {
+    TestBed.inject(EntityAbility).update([
+      {
+        subject: "Child",
+        action: "create",
+      },
+    ]);
+    testFormConfig.entity = "School";
+    testFormConfig.title = "Some test title";
+
+    initComponent();
+    tick();
+
+    expect(component).toBeDefined();
+    expect(component.publicFormNotFound.error).toBe(
+      "Unfortunately, access has been denied due to insufficient permissions to access this Public Form. Please contact your system administrator.",
+    );
+  }));
+
+  it("should display not found error when config does not exist", fakeAsync(() => {
+    const entityMapperSpy = spyOn(
+      TestBed.inject(EntityMapperService),
+      "loadType",
+    ).and.resolveTo([]);
+
+    initComponent();
+    tick();
+
+    expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
+    expect(component.publicFormNotFound.error).toEqual(
+      "The form you are looking for is either unavailable or doesn't exist. Please check the link and try again.",
+    );
   }));
 
   function initComponent() {
