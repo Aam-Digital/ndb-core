@@ -1,0 +1,1299 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >EntityMapperService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/entity/entity-mapper/entity-mapper.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Handles loading and saving of data for any higher-level feature module.
+The EntityMapperService implicitly transforms objects from instances of Entity classes to the format to be written
+to the database and back - ensuring they you always receive instances of <a href="../classes/Entity.html">Entity</a> subclasses, that you can
+simply treat them as normal javascript class instances without worrying about database persistance logic.</p>
+<p>To understand more about how to use the Entity system in your own modules, refer to the How-To Guides:</p>
+<ul>
+<li><a href="/additional-documentation/how-to-guides/load-and-save-data.html">How to Load and Save Data</a></li>
+<li><a href="/additional-documentation/how-to-guides/create-a-new-entity-type.html">How to Create a new Entity Type</a></li>
+</ul>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#load" >load</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadType" >loadType</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#receiveUpdates" >receiveUpdates</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#remove" >remove</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#resolveConstructor" >resolveConstructor</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#save" >save</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#saveAll" >saveAll</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Protected</span>
+                                <a href="#setEntityMetadata" >setEntityMetadata</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(_db: <a href="../classes/Database.html" target="_self">Database</a>, entitySchemaService: <a href="../injectables/EntitySchemaService.html" target="_self">EntitySchemaService</a>, currentUser: <a href="../injectables/CurrentUserSubject.html" target="_self">CurrentUserSubject</a>, registry: <a href="../classes/EntityRegistry.html" target="_self">EntityRegistry</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:40</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>_db</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entitySchemaService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntitySchemaService.html" target="_self" >EntitySchemaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>currentUser</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/CurrentUserSubject.html" target="_self" >CurrentUserSubject</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>registry</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/EntityRegistry.html" target="_self" >EntityRegistry</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="load"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>load</b></span>
+                        <a href="#load"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>load(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>, id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:55</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load an Entity from the database with the given id or the registered name of that class.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt; | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>Class that implements Entity, which is the type of Entity the results should be transformed to</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The id of the entity to load</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A Promise resolving to an instance of entityType filled with its data.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadType"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>loadType</b></span>
+                        <a href="#loadType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadType(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="74"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:74</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load all entities from the database of the given type (for example a list of entities of the type User).
+<em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+doesn&#39;t allow strict type-checking and errors can only be discovered later</p>
+<p>or the registered name of that class.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt; | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>Class that implements Entity, which is the type of Entity the results should be transformed to
+or the registered name of that class.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A Promise resolving to an array of instances of entityType with the data of the loaded entities.</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="receiveUpdates"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>receiveUpdates</b></span>
+                        <a href="#receiveUpdates"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>receiveUpdates(entityType: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="111"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:111</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>subscribe to this observable to receive updates whenever the state of
+an entity of a certain type changes.
+The updated-parameter will return the new entity as well as a field that
+describes the type of update (either &quot;new&quot;, &quot;update&quot; or &quot;remove&quot;).
+<br>
+This can be used in collaboration with the update(UpdatedEntity, Entities)-function
+to update a list of entities
+<br></p>
+<p><em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+doesn&#39;t allow strict type-checking and errors can only be discovered later</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt; | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>the type of the entity or the registered name of that class.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/UpdatedEntity.html" target="_self" >Observable&lt;UpdatedEntity&lt;T&gt;&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="remove"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>remove</b></span>
+                        <a href="#remove"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>remove(entity: T)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="183"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:183</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Delete an entity from the database.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The entity to be deleted</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resolveConstructor"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>resolveConstructor</b></span>
+                        <a href="#resolveConstructor"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>resolveConstructor(constructible: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt; | string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="187"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:187</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>constructible</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt; | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >EntityConstructor | undefined</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="save"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>save</b></span>
+                        <a href="#save"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>save(entity: T, forceUpdate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="138"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:138</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Save an entity to the database after transforming it to its database representation.
+         if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                        <code>T</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The entity to be saved</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>forceUpdate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Optional flag whether any conflicting version in the database will be quietly overwritten.
+if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="saveAll"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>saveAll</b></span>
+                        <a href="#saveAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>saveAll(entities: <a href="../classes/Entity.html" target="_self">Entity[]</a>, forceUpdate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="161"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:161</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Saves an array of entities that are possibly heterogeneous, i.e.
+the entity-type of all the entities does not have to be the same.
+This method should be chosen whenever a bigger number of entities needs to be
+saved
+         if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entities</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The entities to save</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>forceUpdate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Optional flag whether any conflicting version in the database will be quietly overwritten.
+if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setEntityMetadata"></a>
+                    <span class="name">
+                            <span class="modifier">Protected</span>
+                        <span ><b>setEntityMetadata</b></span>
+                        <a href="#setEntityMetadata"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>setEntityMetadata(entity: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="197"
+                                    class="link-to-prism">src/app/core/entity/entity-mapper/entity-mapper.service.ts:197</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { Database } from &quot;../../database/database&quot;;
+import { Entity, EntityConstructor } from &quot;../model/entity&quot;;
+import { EntitySchemaService } from &quot;../schema/entity-schema.service&quot;;
+import { Observable } from &quot;rxjs&quot;;
+import { UpdatedEntity } from &quot;../model/entity-update&quot;;
+import { EntityRegistry } from &quot;../database-entity.decorator&quot;;
+import { map } from &quot;rxjs/operators&quot;;
+import { UpdateMetadata } from &quot;../model/update-metadata&quot;;
+import { CurrentUserSubject } from &quot;../../session/current-user-subject&quot;;
+
+/**
+ * Handles loading and saving of data for any higher-level feature module.
+ * The EntityMapperService implicitly transforms objects from instances of Entity classes to the format to be written
+ * to the database and back - ensuring they you always receive instances of {@link Entity} subclasses, that you can
+ * simply treat them as normal javascript class instances without worrying about database persistance logic.
+ *
+ * To understand more about how to use the Entity system in your own modules, refer to the How-To Guides:
+ * - [How to Load and Save Data]{@link /additional-documentation/how-to-guides/load-and-save-data.html}
+ * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class EntityMapperService {
+  constructor(
+    private _db: Database,
+    private entitySchemaService: EntitySchemaService,
+    private currentUser: CurrentUserSubject,
+    private registry: EntityRegistry,
+  ) {}
+
+  /**
+   * Load an Entity from the database with the given id or the registered name of that class.
+   *
+   * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
+   * @param id The id of the entity to load
+   * @returns A Promise resolving to an instance of entityType filled with its data.
+   */
+  public async load&lt;T extends Entity&gt;(
+    entityType: EntityConstructor&lt;T&gt; | string,
+    id: string,
+  ): Promise&lt;T&gt; {
+    const ctor &#x3D; this.resolveConstructor(entityType);
+    const entityId &#x3D; Entity.createPrefixedId(ctor.ENTITY_TYPE, id);
+    const result &#x3D; await this._db.get(entityId);
+    return this.transformToEntityFormat(result, ctor);
+  }
+
+  /**
+   * Load all entities from the database of the given type (for example a list of entities of the type User).
+   * &lt;em&gt;Important:&lt;/em&gt; Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn&#x27;t allow strict type-checking and errors can only be discovered later
+   *
+   * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
+   * or the registered name of that class.
+   * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
+   */
+  public async loadType&lt;T extends Entity&gt;(
+    entityType: EntityConstructor&lt;T&gt; | string,
+  ): Promise&lt;T[]&gt; {
+    const ctor &#x3D; this.resolveConstructor(entityType);
+    const records &#x3D; await this._db.getAll(ctor.ENTITY_TYPE + &quot;:&quot;);
+    return records.map((rec) &#x3D;&gt; this.transformToEntityFormat(rec, ctor));
+  }
+
+  private transformToEntityFormat&lt;T extends Entity&gt;(
+    record: any,
+    ctor: EntityConstructor&lt;T&gt;,
+  ): T {
+    const entity &#x3D; new ctor(&quot;&quot;);
+    try {
+      this.entitySchemaService.loadDataIntoEntity(entity, record);
+    } catch (e) {
+      // add _id information to error message
+      e.message &#x3D; &#x60;Could not transform entity &quot;${record._id}&quot;: ${e.message}&#x60;;
+      throw e;
+    }
+    return entity;
+  }
+
+  /**
+   * subscribe to this observable to receive updates whenever the state of
+   * an entity of a certain type changes.
+   * The updated-parameter will return the new entity as well as a field that
+   * describes the type of update (either &quot;new&quot;, &quot;update&quot; or &quot;remove&quot;).
+   * &lt;br&gt;
+   * This can be used in collaboration with the update(UpdatedEntity, Entities)-function
+   * to update a list of entities
+   * &lt;br&gt;
+   *
+   * &lt;em&gt;Important:&lt;/em&gt; Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn&#x27;t allow strict type-checking and errors can only be discovered later
+   * @param entityType the type of the entity or the registered name of that class.
+   */
+  public receiveUpdates&lt;T extends Entity&gt;(
+    entityType: EntityConstructor&lt;T&gt; | string,
+  ): Observable&lt;UpdatedEntity&lt;T&gt;&gt; {
+    const ctor &#x3D; this.resolveConstructor(entityType);
+    const type &#x3D; new ctor().getType();
+    return this._db.changes(type + &quot;:&quot;).pipe(
+      map((doc) &#x3D;&gt; {
+        const entity &#x3D; new ctor();
+        this.entitySchemaService.loadDataIntoEntity(entity, doc);
+        if (doc._deleted) {
+          return { type: &quot;remove&quot;, entity: entity };
+        } else if (doc._rev.startsWith(&quot;1-&quot;)) {
+          // This does not cover all the cases as docs with higher rev-number might be synchronized for the first time
+          return { type: &quot;new&quot;, entity: entity };
+        } else {
+          return { type: &quot;update&quot;, entity: entity };
+        }
+      }),
+    );
+  }
+
+  /**
+   * Save an entity to the database after transforming it to its database representation.
+   * @param entity The entity to be saved
+   * @param forceUpdate Optional flag whether any conflicting version in the database will be quietly overwritten.
+   *          if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.
+   */
+  public async save&lt;T extends Entity&gt;(
+    entity: T,
+    forceUpdate: boolean &#x3D; false,
+  ): Promise&lt;any&gt; {
+    this.setEntityMetadata(entity);
+    const rawData &#x3D;
+      this.entitySchemaService.transformEntityToDatabaseFormat(entity);
+    const result &#x3D; await this._db.put(rawData, forceUpdate);
+    if (result?.ok) {
+      entity._rev &#x3D; result.rev;
+    }
+    return result;
+  }
+
+  /**
+   * Saves an array of entities that are possibly heterogeneous, i.e.
+   * the entity-type of all the entities does not have to be the same.
+   * This method should be chosen whenever a bigger number of entities needs to be
+   * saved
+   * @param entities The entities to save
+   * @param forceUpdate Optional flag whether any conflicting version in the database will be quietly overwritten.
+   *          if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.
+   */
+  public async saveAll(
+    entities: Entity[],
+    forceUpdate: boolean &#x3D; false,
+  ): Promise&lt;any[]&gt; {
+    entities.forEach((e) &#x3D;&gt; this.setEntityMetadata(e));
+    const rawData &#x3D; entities.map((e) &#x3D;&gt;
+      this.entitySchemaService.transformEntityToDatabaseFormat(e),
+    );
+    const results &#x3D; await this._db.putAll(rawData, forceUpdate);
+    results.forEach((res, idx) &#x3D;&gt; {
+      if (res.ok) {
+        const entity &#x3D; entities[idx];
+        entity._rev &#x3D; res.rev;
+      }
+    });
+    return results;
+  }
+
+  /**
+   * Delete an entity from the database.
+   * @param entity The entity to be deleted
+   */
+  public remove&lt;T extends Entity&gt;(entity: T): Promise&lt;any&gt; {
+    return this._db.remove(entity);
+  }
+
+  protected resolveConstructor&lt;T extends Entity&gt;(
+    constructible: EntityConstructor&lt;T&gt; | string,
+  ): EntityConstructor&lt;T&gt; | undefined {
+    if (typeof constructible &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      return this.registry.get(constructible) as EntityConstructor&lt;T&gt;;
+    } else {
+      return constructible;
+    }
+  }
+
+  protected setEntityMetadata(entity: Entity) {
+    const newMetadata &#x3D; new UpdateMetadata(this.currentUser.value?.getId());
+    if (entity.isNew) {
+      entity.created &#x3D; newMetadata;
+    }
+    entity.updated &#x3D; newMetadata;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'EntityMapperService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
