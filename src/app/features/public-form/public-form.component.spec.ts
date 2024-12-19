@@ -50,7 +50,6 @@ describe("PublicFormComponent", () => {
               paramMap: new Map([["id", testFormConfig.getId(true)]]),
             },
           },
-          EntityMapperService,
         },
       ],
     }).compileComponents();
