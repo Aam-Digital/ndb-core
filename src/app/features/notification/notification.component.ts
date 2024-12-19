@@ -37,6 +37,7 @@ export class NotificationComponent implements OnInit {
   public allNotifications: NotificationEvent[] = [];
   public unreadNotifications: NotificationEvent[] = [];
   public selectedTab = 0;
+  public hasNotificationEnabled = false;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -61,10 +62,7 @@ export class NotificationComponent implements OnInit {
       this.mockNotificationsService.getNotifications() as unknown as NotificationEvent[];
 
     // The user is hardcoded for testing purposes, need to remove this.
-    this.filterUserNotifications(
-      notifications,
-      this.sessionInfo.value?.entityId,
-    );
+    this.filterUserNotifications(notifications, this.sessionInfo.value?.id);
   }
 
   /**
@@ -95,7 +93,7 @@ export class NotificationComponent implements OnInit {
     Logging.log("Notification enabled");
   }
 
-  async markAsRead(notification: NotificationEvent) {
+  async updateReadStatus(notification: NotificationEvent) {
     notification.readStatus = notification.readStatus;
     await this.entityMapper.save(notification);
   }

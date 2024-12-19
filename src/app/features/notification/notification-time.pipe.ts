@@ -14,6 +14,12 @@ export class NotificationTimePipe implements PipeTransform {
 
     const currentTime = new Date();
     const notificationTime = new Date(value);
+    if (
+      !(notificationTime instanceof Date) ||
+      isNaN(notificationTime.getTime())
+    ) {
+      return "";
+    }
     const timeDifference = currentTime.getTime() - notificationTime.getTime();
 
     const seconds = Math.floor(timeDifference / 1000);

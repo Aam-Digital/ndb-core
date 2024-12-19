@@ -26,17 +26,24 @@
   ></span>
 
   <mat-menu #notificationMenu="matMenu">
-    <button
-      mat-menu-item
-      (click)="handleMarkAsRead(); $event.stopPropagation()"
-    >
-      <fa-icon
-        [icon]="notification.readStatus ? 'eye-slash' : 'check'"
-      ></fa-icon>
-      <span class="menu-option" i18n>
-        {{ notification.readStatus ? "Mark as Unread" : "Mark as Read" }}
-      </span>
-    </button>
+    @if (!notification.readStatus) {
+      <button
+        mat-menu-item
+        (click)="updateReadStatus(); $event.stopPropagation()"
+      >
+        <fa-icon icon="check"></fa-icon>
+        <span class="menu-option" i18n>Mark as Read</span>
+      </button>
+    } @else {
+      <button
+        mat-menu-item
+        (click)="updateReadStatus(); $event.stopPropagation()"
+      >
+        <fa-icon icon="eye-slash"></fa-icon>
+        <span class="menu-option" i18n>Mark as Unread</span>
+      </button>
+    }
+
     <button
       mat-menu-item
       (click)="handleDeleteNotification(); $event.stopPropagation()"
