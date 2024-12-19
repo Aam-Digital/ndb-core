@@ -10,11 +10,7 @@ import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
-import {
-  ActivatedRoute,
-  ActivatedRouteSnapshot,
-  Router,
-} from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
@@ -22,8 +18,6 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
-import { createEntityOfType } from "app/core/demo-data/create-entity-of-type";
-import { Entity } from "app/core/entity/model/entity";
 
 fdescribe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;

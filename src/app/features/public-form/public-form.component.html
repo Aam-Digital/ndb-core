@@ -1,5 +1,10 @@
 @if (publicFormNotFound) {
-  <div class="flex-column place-center">
+  <div class="flex-column place-center error-container">
+    <fa-icon
+      icon="triangle-exclamation"
+      class="margin-bottom-regular"
+      size="6x"
+    ></fa-icon>
     <h1 i18n>Public Form Not Found</h1>
     <p i18n>
       {{ publicFormNotFound.error }}
