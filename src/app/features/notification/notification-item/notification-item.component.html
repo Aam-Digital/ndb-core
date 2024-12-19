@@ -27,20 +27,20 @@
 
   <mat-menu #notificationMenu="matMenu">
     @if (!notification.readStatus) {
-      <button mat-menu-item (click)="updateReadStatus()">
+      <button mat-menu-item (click)="updateReadStatus($event)">
         <fa-icon icon="check"></fa-icon>
-        <span class="menu-option" i18n>Mark as Read</span>
+        <span class="menu-option" i18n>Mark as read</span>
       </button>
     } @else {
-      <button mat-menu-item (click)="updateReadStatus()">
+      <button mat-menu-item (click)="updateReadStatus($event)">
         <fa-icon icon="eye-slash"></fa-icon>
-        <span class="menu-option" i18n>Mark as Unread</span>
+        <span class="menu-option" i18n>Mark as unread</span>
       </button>
     }
 
-    <button mat-menu-item (click)="handleDeleteNotification()">
+    <button mat-menu-item (click)="handleDeleteNotification($event)">
       <fa-icon icon="trash"></fa-icon>
-      <span class="menu-option" i18n>Delete Notification</span>
+      <span class="menu-option" i18n>Delete notification</span>
     </button>
   </mat-menu>
 </div>

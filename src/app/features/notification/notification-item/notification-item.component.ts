@@ -37,12 +37,14 @@ export class NotificationItemComponent {
   @Output() toggleReadStatus = new EventEmitter<NotificationEvent>();
   @Output() deleteNotification = new EventEmitter<NotificationEvent>();
 
-  updateReadStatus() {
+  updateReadStatus(event: Event) {
+    this.stopEventPropagation(event);
     this.notification.readStatus = !this.notification.readStatus;
     this.toggleReadStatus.emit(this.notification);
   }
 
-  handleDeleteNotification() {
+  handleDeleteNotification(event: Event) {
+    this.stopEventPropagation(event);
     this.deleteNotification.emit(this.notification);
   }
 
