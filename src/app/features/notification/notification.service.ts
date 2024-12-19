@@ -98,7 +98,6 @@ export class NotificationService {
         .post(this.DEVICE_NOTIFICATION_API_URL, payload)
         .subscribe();
     } catch (err) {
-      Logging.error("Failed to register device: ", err);
       throw new Error("Device registration failed");
     }
   }
