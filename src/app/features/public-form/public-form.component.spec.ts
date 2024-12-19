@@ -203,10 +203,9 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
-    expect(component.publicFormNotFound).toEqual({
-      error:
-        "The form you are looking for is either unavailable or doesn't exist. Please check the link and try again.",
-    });
+    expect(component.publicFormNotFound.error).toEqual(
+      "The form you are looking for is either unavailable or doesn't exist. Please check the link and try again.",
+    );
   }));
 
   function initComponent() {

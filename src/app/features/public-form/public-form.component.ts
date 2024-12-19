@@ -43,7 +43,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   entity: E;
   fieldGroups: FieldGroup[];
   form: EntityForm<E>;
-  publicFormNotFound: { error: string } = null;
+  publicFormNotFound: { title: string; error: string } = null;
 
   constructor(
     private database: PouchDatabase,
@@ -100,6 +100,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     );
     if (!this.formConfig) {
       this.publicFormNotFound = {
+        title: $localize`Public Form Not Found`,
         error: $localize`The form you are looking for is either unavailable or doesn't exist. Please check the link and try again.`,
       };
       return;
@@ -110,7 +111,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     ) as EntityConstructor<E>;
     if (this.ability.cannot("create", this.entityType)) {
       this.publicFormNotFound = {
-        error: $localize`You do not have the required permissions to submit this form. Please log in or contact your system administrator.`,
+        title: $localize`Access Denied to Public Form - ${this.formConfig.title}`,
+        error: $localize`Unfortunately, access has been denied due to insufficient permissions to access this Public Form. Please contact your system administrator.`,
       };
       return;
     }
