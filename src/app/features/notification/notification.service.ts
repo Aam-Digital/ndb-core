@@ -70,7 +70,7 @@ export class NotificationService {
       try {
         this.registerNotificationToken(notificationToken);
       } catch {
-        this.setCookie(this.NOTIFICATION_TOKEN_COOKIE_NAME, "", -1);
+        this.setCookie(this.NOTIFICATION_TOKEN_COOKIE_NAME, "", null);
         return null;
       }
 
