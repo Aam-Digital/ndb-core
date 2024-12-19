@@ -20,3 +20,10 @@ button {
   height: 100px;
   object-fit: contain;
 }
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
