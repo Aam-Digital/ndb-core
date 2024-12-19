@@ -21,26 +21,28 @@
       notification.readStatus ? 'Read notification' : 'Unread notification'
     }}"
     i18n-matTooltip
-    [matMenuTriggerFor]="notificationMenu"
-    (click)="stopEventPropagation($event)"
+    [matMenuTriggerFor]="actionsMenu"
+    #actionsMenuTrigger="matMenuTrigger"
   ></span>
 
-  <mat-menu #notificationMenu="matMenu">
-    @if (!notification.readStatus) {
-      <button mat-menu-item (click)="updateReadStatus($event)">
-        <fa-icon icon="check"></fa-icon>
-        <span class="menu-option" i18n>Mark as read</span>
-      </button>
-    } @else {
-      <button mat-menu-item (click)="updateReadStatus($event)">
-        <fa-icon icon="eye-slash"></fa-icon>
-        <span class="menu-option" i18n>Mark as unread</span>
-      </button>
-    }
+  <mat-menu #actionsMenu="matMenu">
+    <div (click)="closeOnlySubmenu(actionsMenuTrigger, $event)">
+      @if (!notification.readStatus) {
+        <button mat-menu-item (click)="updateReadStatus(true)">
+          <fa-icon icon="check"></fa-icon>
+          <span class="menu-option" i18n>Mark as read</span>
+        </button>
+      } @else {
+        <button mat-menu-item (click)="updateReadStatus(false)">
+          <fa-icon icon="eye-slash"></fa-icon>
+          <span class="menu-option" i18n>Mark as unread</span>
+        </button>
+      }
 
-    <button mat-menu-item (click)="handleDeleteNotification($event)">
-      <fa-icon icon="trash"></fa-icon>
-      <span class="menu-option" i18n>Delete notification</span>
-    </button>
+      <button mat-menu-item (click)="handleDeleteNotification()">
+        <fa-icon icon="trash"></fa-icon>
+        <span class="menu-option" i18n>Delete notification</span>
+      </button>
+    </div>
   </mat-menu>
 </div>

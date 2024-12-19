@@ -1,10 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatMenu } from "@angular/material/menu";
+import { MatMenu, MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
-import { MatMenuTrigger } from "@angular/material/menu";
-import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Logging } from "app/core/logging/logging.service";
@@ -14,6 +12,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
 import { MockNotificationsService } from "./mock-notification.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
+import { closeOnlySubmenu } from "./close-only-submenu";
 
 @Component({
   selector: "app-notification",
@@ -83,8 +82,7 @@ export class NotificationComponent implements OnInit {
     );
   }
 
-  markAllRead($event: Event) {
-    this.stopEventPropagation($event);
+  markAllRead() {
     // TODO: Implement the logic to mark all notifications as read.
     Logging.log("All notifications marked as read");
   }
@@ -110,7 +108,5 @@ export class NotificationComponent implements OnInit {
     Logging.log("Notification deleted");
   }
 
-  stopEventPropagation(event: Event): void {
-    event.stopPropagation();
-  }
+  protected readonly closeOnlySubmenu = closeOnlySubmenu;
 }
