@@ -24,7 +24,6 @@ describe("PublicFormComponent", () => {
   let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
   let initRemoteDBSpy: jasmine.Spy;
   let testFormConfig: PublicFormConfig;
-  let entityMapper: EntityMapperService;
 
   beforeEach(waitForAsync(() => {
     testFormConfig = new PublicFormConfig("form-id");
@@ -55,7 +54,6 @@ describe("PublicFormComponent", () => {
         },
       ],
     }).compileComponents();
-    entityMapper = TestBed.inject(EntityMapperService);
   }));
 
   beforeEach(() => {
@@ -188,9 +186,7 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(component).toBeDefined();
-    expect(component.publicFormNotFound.error).toBe(
-      "Unfortunately, access has been denied due to insufficient permissions to access this Public Form. Please contact your system administrator.",
-    );
+    expect(component.error).toEqual(jasmine.stringContaining("permission"));
   }));
 
   it("should display not found error when config does not exist", fakeAsync(() => {
@@ -203,9 +199,7 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
-    expect(component.publicFormNotFound.error).toEqual(
-      "The form you are looking for is either unavailable or doesn't exist. Please check the link and try again.",
-    );
+    expect(component.error).toEqual(jasmine.stringContaining("found"));
   }));
 
   function initComponent() {

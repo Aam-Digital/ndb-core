@@ -1,14 +1,28 @@
-@if (publicFormNotFound) {
+@if (error) {
   <div class="flex-column place-center error-container">
     <fa-icon
       icon="triangle-exclamation"
       class="margin-bottom-regular"
       size="6x"
     ></fa-icon>
-    <h1 i18n>{{ publicFormNotFound.title }}</h1>
-    <p i18n>
-      {{ publicFormNotFound.error }}
-    </p>
+    @switch (error) {
+      @case ("not_found") {
+        <h1 i18n>Public Form not found</h1>
+        <p i18n>
+          The form you are looking for is either unavailable or doesn't exist.
+          Please check the link and try again.
+        </p>
+      }
+      @case ("no_permissions") {
+        <h1 i18n>No access to public form "{{ formConfig?.title }}"</h1>
+        <p i18n>
+          Unfortunately, you do not have the required permissions to submit data
+          through this form. Please contact the person who shared this link with
+          you. In case you have a user account, please make sure you are logged
+          in.
+        </p>
+      }
+    }
   </div>
 } @else {
   <mat-card>
