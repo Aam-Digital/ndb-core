@@ -45,4 +45,8 @@ export class NotificationItemComponent {
   handleDeleteNotification() {
     this.deleteNotification.emit(this.notification);
   }
+
+  stopEventPropagation(event: Event): void {
+    event.stopPropagation();
+  }
 }

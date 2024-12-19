@@ -24,7 +24,7 @@
       <button
         mat-icon-button
         [matMenuTriggerFor]="settingsMenu"
-        (click)="$event.stopPropagation()"
+        (click)="stopEventPropagation($event)"
         icon-button
       >
         <fa-icon icon="ellipsis"></fa-icon>
@@ -34,7 +34,7 @@
     <!-- Tabs -->
     <mat-tab-group
       [(selectedIndex)]="selectedTab"
-      (click)="$event.stopPropagation()"
+      (click)="stopEventPropagation($event)"
     >
       <mat-tab label="All" i18n-label></mat-tab>
       <mat-tab label="Unread" i18n-label></mat-tab>
@@ -77,7 +77,7 @@
     <fa-icon icon="check"></fa-icon>
     <span class="menu-option" i18n>Mark all as read</span>
   </button>
-  <button mat-menu-item (click)="$event.stopPropagation()">
+  <button mat-menu-item (click)="stopEventPropagation($event)">
     <fa-icon icon="gear"></fa-icon>
     <span class="menu-option" i18n>Notification settings</span>
   </button>

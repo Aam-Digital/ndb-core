@@ -84,7 +84,7 @@ export class NotificationComponent implements OnInit {
   }
 
   markAllRead($event: Event) {
-    $event.stopPropagation();
+    this.stopEventPropagation($event);
     Logging.log("All notifications marked as read");
   }
 
@@ -107,5 +107,9 @@ export class NotificationComponent implements OnInit {
       (n) => n !== notification,
     );
     Logging.log("Notification deleted");
+  }
+
+  stopEventPropagation(event: Event): void {
+    event.stopPropagation();
   }
 }
