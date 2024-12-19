@@ -10,7 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationEvent } from "../model/notification-event";
-import { NotificationTimePipe } from "../NotificationTimePipe";
+import { NotificationTimePipe } from "../notification-time.pipe";
 
 @Component({
   selector: "app-notification-item",
@@ -34,15 +34,19 @@ import { NotificationTimePipe } from "../NotificationTimePipe";
 export class NotificationItemComponent {
   @Input() notification: NotificationEvent;
 
-  @Output() markAsRead = new EventEmitter<NotificationEvent>();
+  @Output() toggleReadStatus = new EventEmitter<NotificationEvent>();
   @Output() deleteNotification = new EventEmitter<NotificationEvent>();
 
-  handleMarkAsRead() {
+  updateReadStatus() {
     this.notification.readStatus = !this.notification.readStatus;
-    this.markAsRead.emit(this.notification);
+    this.toggleReadStatus.emit(this.notification);
   }
 
   handleDeleteNotification() {
     this.deleteNotification.emit(this.notification);
+  }
+
+  stopEventPropagation(event: Event): void {
+    event.stopPropagation();
   }
 }

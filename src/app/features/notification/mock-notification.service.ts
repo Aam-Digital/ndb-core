@@ -13,7 +13,7 @@ export class MockNotificationsService {
       title: "Dummy Notification Title",
       body: "This is a dummy notification body.",
       actionURL: "http://localhost:4200",
-      sentBy: "User:demo",
+      sentBy: "demo",
       fcmToken: "",
       readStatus: true,
       created: {
@@ -31,7 +31,7 @@ export class MockNotificationsService {
       actionURL: "http://localhost:4200",
       fcmToken: "",
       readStatus: false,
-      sentBy: "User:demo",
+      sentBy: "demo",
       created: {
         at: "2024-12-03T19:07:47.538Z",
       },

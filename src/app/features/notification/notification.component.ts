@@ -38,6 +38,7 @@ export class NotificationComponent implements OnInit {
   public allNotifications: NotificationEvent[] = [];
   public unreadNotifications: NotificationEvent[] = [];
   public selectedTab = 0;
+  public hasNotificationEnabled = false;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -63,16 +64,13 @@ export class NotificationComponent implements OnInit {
       this.mockNotificationsService.getNotifications() as unknown as NotificationEvent[];
 
     // The user is hardcoded for testing purposes, need to remove this.
-    this.filterUserNotifications(
-      notifications,
-      this.sessionInfo.value?.entityId,
-    );
+    this.filterUserNotifications(notifications, this.sessionInfo.value?.id);
   }
 
   /**
    * Filters notifications based on the sender.
    * @param notifications - The list of notifications.
-   * @param user - The user to filter notifications by.
+   * @param user - The user to filter notifications.
    */
   private filterUserNotifications(
     notifications: NotificationEvent[],
@@ -88,7 +86,8 @@ export class NotificationComponent implements OnInit {
   }
 
   markAllRead($event: Event) {
-    $event.stopPropagation();
+    this.stopEventPropagation($event);
+    // TODO: Implement the logic to mark all notifications as read.
     Logging.log("All notifications marked as read");
   }
 
@@ -97,7 +96,7 @@ export class NotificationComponent implements OnInit {
     Logging.log("Notification enabled");
   }
 
-  async markAsRead(notification: NotificationEvent) {
+  async updateReadStatus(notification: NotificationEvent) {
     notification.readStatus = notification.readStatus;
     await this.entityMapper.save(notification);
   }
@@ -115,5 +114,9 @@ export class NotificationComponent implements OnInit {
 
   onRedirectToNotificationsSetting() {
     this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
+  }
+
+  stopEventPropagation(event: Event): void {
+    event.stopPropagation();
   }
 }

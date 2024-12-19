@@ -24,7 +24,7 @@
       <button
         mat-icon-button
         [matMenuTriggerFor]="settingsMenu"
-        (click)="$event.stopPropagation()"
+        (click)="stopEventPropagation($event)"
         icon-button
       >
         <fa-icon icon="ellipsis"></fa-icon>
@@ -34,40 +34,33 @@
     <!-- Tabs -->
     <mat-tab-group
       [(selectedIndex)]="selectedTab"
-      (click)="$event.stopPropagation()"
+      (click)="stopEventPropagation($event)"
     >
       <mat-tab label="All" i18n-label></mat-tab>
       <mat-tab label="Unread" i18n-label></mat-tab>
     </mat-tab-group>
 
-    @if (selectedTab === 0 || selectedTab === 1) {
-      @for (
-        notification of selectedTab === 0
-          ? allNotifications
-          : unreadNotifications;
-        track notification
-      ) {
-        <app-notification-item
-          [notification]="notification"
-          (onDeleteNotification)="deleteNotification.bind(this, notification)"
-          (markAsRead)="selectedTab === 1 ? markAsRead(notification) : null"
-        ></app-notification-item>
-      }
-
-      @if (
-        (selectedTab === 0 ? allNotifications : unreadNotifications).length ===
-        0
-      ) {
-        <div class="flex-column no-notification-message">
-          <fa-icon
-            class="no-notification-icon"
-            [icon]="['far', 'bell']"
-          ></fa-icon>
-          <span class="no-notification-text" i18n
-            >You have no notifications</span
-          >
-        </div>
-      }
+    @for (
+      notification of selectedTab === 0
+        ? allNotifications
+        : unreadNotifications;
+      track notification
+    ) {
+      <app-notification-item
+        [notification]="notification"
+        (onDeleteNotification)="deleteNotification.bind(this, notification)"
+        (toggleReadStatus)="
+          selectedTab === 1 ? updateReadStatus(notification) : null
+        "
+      ></app-notification-item>
+    } @empty {
+      <div class="flex-column no-notification-message">
+        <fa-icon
+          class="no-notification-icon"
+          [icon]="['far', 'bell']"
+        ></fa-icon>
+        <span class="no-notification-text" i18n>You have no notifications</span>
+      </div>
     }
   </div>
 </mat-menu>
@@ -75,8 +68,10 @@
 <!-- New mat-menu for ellipsis -->
 <mat-menu #settingsMenu>
   <button mat-menu-item (click)="enableNotificationForUser()">
-    <fa-icon icon="bell"></fa-icon>
-    <span class="menu-option" i18n>Mark as notification active</span>
+    <fa-icon [icon]="hasNotificationEnabled ? 'bell-slash' : 'bell'"></fa-icon>
+    <span class="menu-option" i18n>{{
+      hasNotificationEnabled ? "Disable notifications" : "Enable notifications"
+    }}</span>
   </button>
   <button mat-menu-item (click)="markAllRead($event)">
     <fa-icon icon="check"></fa-icon>
