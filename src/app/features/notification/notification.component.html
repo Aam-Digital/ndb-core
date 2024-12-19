@@ -75,10 +75,12 @@
 <!-- New mat-menu for ellipsis -->
 <mat-menu #settingsMenu>
   <button mat-menu-item (click)="enableNotificationForUser()">
-    <fa-icon icon="bell"></fa-icon>
-    <span class="menu-option" i18n>Mark as notification active</span>
+    <fa-icon [icon]="hasNotificationEnabled ? 'bell-slash' : 'bell'"></fa-icon>
+    <span class="menu-option" i18n>{{
+      hasNotificationEnabled ? "Disable Notifications" : "Enable notifications"
+    }}</span>
   </button>
-  <button mat-menu-item (click)="markAllRead($event)">
+  <button mat-menu-item (click)="markAllRead()">
     <fa-icon icon="check"></fa-icon>
     <span class="menu-option" i18n>Mark all as read</span>
   </button>
