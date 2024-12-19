@@ -33,6 +33,7 @@ import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entit
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature/beta-feature.component";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
 
 @Component({
   selector: "app-admin-entity",
@@ -54,6 +55,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
     AdminEntityDetailsComponent,
     AdminEntityGeneralSettingsComponent,
     BetaFeatureComponent,
+    AdminEntityPublicFormsComponent,
   ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
@@ -66,7 +68,7 @@ export class AdminEntityComponent implements OnInit {
   configDetailsView: DynamicComponentConfig<EntityDetailsConfig>;
   configListView: DynamicComponentConfig<EntityListConfig>;
   configEntitySettings: EntityConfig;
-  protected mode: "details" | "list" | "general" = "details";
+  protected mode: "details" | "list" | "general" | "publicForm" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
