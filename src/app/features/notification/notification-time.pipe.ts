@@ -1,6 +1,6 @@
 /**
  * Converts a timestamp into a human-readable time format,
- * such as "Just Now", "5m", "2h", "Yesterday", "3d", or the day of the week.
+ * such as "Just Now", "5m", "2h", "Yesterday", "3d", or "Jan 2024".
  */
 import { Pipe, PipeTransform } from "@angular/core";
 
@@ -37,13 +37,14 @@ export class NotificationTimePipe implements PipeTransform {
       return "Yesterday";
     } else if (days < 7) {
       return `${days}d`;
-    } else if (days >= 7) {
-      const dayOfWeek = notificationTime.toLocaleString("en-US", {
-        weekday: "short",
+    } else if (days >= 7 && days < 30) {
+      return `${days}d`;
+    } else {
+      const monthYear = notificationTime.toLocaleString("en-US", {
+        month: "short",
+        year: "numeric",
       });
-      return dayOfWeek;
+      return monthYear;
     }
-
-    return "";
   }
 }
