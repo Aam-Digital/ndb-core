@@ -185,7 +185,7 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(component).toBeDefined();
-    expect(component.error).toEqual(jasmine.stringContaining("permission"));
+    expect(component.error).toBe("no_permissions");
   }));
 
   it("should display not found error when config does not exist", fakeAsync(() => {
@@ -198,7 +198,7 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
-    expect(component.error).toEqual(jasmine.stringContaining("found"));
+    expect(component.error).toBe("not_found");
   }));
 
   function initComponent() {

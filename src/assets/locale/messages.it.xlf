@@ -5952,6 +5952,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="8218189824229731794" datatype="html">
+        <source>Select an entity type</source>
+        <target state="new">Select an entity type</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity/entity-type-select/entity-type-select.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <note priority="1" from="description">placeholder for Entity Type dropdown input</note>
+      </trans-unit>
       <trans-unit id="5775346636203685655" datatype="html">
         <source>Undo</source>
         <target state="translated">Annullare</target>
@@ -7611,15 +7620,19 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       <trans-unit id="8605421971099461066" datatype="html">
         <source>Upload file</source>
         <target state="translated">Upload file</target>
+        <note priority="1" from="description">Tooltip upload file button</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">33</context>
         </context-group>
-        <note priority="1" from="description">Tooltip upload file button</note>
       </trans-unit>
       <trans-unit id="878939938766774780" datatype="html">
         <source>Changes to files are not possible offline.</source>
@@ -7629,8 +7642,12 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">52</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
-          <context context-type="linenumber">6</context>
+          <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5207928085441628335" datatype="html">
@@ -7668,6 +7685,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
           <context context-type="linenumber">195</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="6281284727431074654" datatype="html">
+        <source>Remove file</source>
+        <target state="new">Remove file</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <note priority="1" from="description">Tooltip remove file</note>
       </trans-unit>
       <trans-unit id="1974607876357286691" datatype="html">
         <source>file attachment</source>
@@ -8466,13 +8492,45 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <note priority="1" from="description">PublicFormConfig</note>
       </trans-unit>
+      <trans-unit id="2202615822095431007" datatype="html">
+        <source>Public Form not found</source>
+        <target state="new">Public Form not found</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5740753227827335262" datatype="html">
+        <source> The form you are looking for is either unavailable or doesn't exist. Please check the link and try again. </source>
+        <target state="new"> The form you are looking for is either unavailable or doesn't exist. Please check the link and try again. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
+          <context context-type="linenumber">11,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6554740241518051906" datatype="html">
+        <source>No access to public form "<x id="INTERPOLATION" equiv-text="{{ formConfig?.title }}"/>"</source>
+        <target state="new">No access to public form "<x id="INTERPOLATION" equiv-text="{{ formConfig?.title }}"/>"</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7114971223705169687" datatype="html">
+        <source> Unfortunately, you do not have the required permissions to submit data through this form. Please contact the person who shared this link with you. In case you have a user account, please make sure you are logged in. </source>
+        <target state="new"> Unfortunately, you do not have the required permissions to submit data through this form. Please contact the person who shared this link with you. In case you have a user account, please make sure you are logged in. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
+          <context context-type="linenumber">18,23</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="9219817993698356392" datatype="html">
         <source> Submit Form </source>
         <target state="translated"> Submit Form </target>
         <note priority="1" from="description">Submit form button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5478121364779850827" datatype="html">
@@ -8481,7 +8539,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Reset form button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5917146390813770507" datatype="html">
@@ -8489,7 +8547,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target state="translated">Loading form ...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">70</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6410985429772619439" datatype="html">
@@ -8497,7 +8555,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target state="new">Successfully submitted form</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7643347378573807612" datatype="html">
@@ -8505,7 +8563,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target state="new">Some fields are invalid, please check the form and submit again.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1443706528095929876" datatype="html">
