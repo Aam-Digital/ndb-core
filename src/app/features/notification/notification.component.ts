@@ -85,6 +85,7 @@ export class NotificationComponent implements OnInit {
 
   markAllRead($event: Event) {
     this.stopEventPropagation($event);
+    // TODO: Implement the logic to mark all notifications as read.
     Logging.log("All notifications marked as read");
   }
 
