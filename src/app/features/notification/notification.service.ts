@@ -17,7 +17,7 @@ import firebase from "firebase/compat/app";
 })
 export class NotificationService {
   private messaging: any = null;
-  readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${environment.firebaseConfig.projectId}/messages:send`;
+  readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${environment.notificationsConfig.projectId}/messages:send`;
   private readonly NOTIFICATION_TOKEN_COOKIE_NAME = "notification_token";
   private readonly DEVICE_NOTIFICATION_API_URL = "/api/v1/notification/device";
   private readonly COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN = 30;
@@ -25,7 +25,7 @@ export class NotificationService {
   constructor(private httpClient: HttpClient) {}
 
   init() {
-    firebase.initializeApp(environment.firebaseConfig);
+    firebase.initializeApp(environment.notificationsConfig);
     this.messaging = firebase.messaging();
   }
 
@@ -54,7 +54,7 @@ export class NotificationService {
       const existingNotificationToken = this.getNotificationTokenFromCookie();
 
       const notificationToken = await getToken(this.messaging, {
-        vapidKey: environment.firebaseConfig.vapidKey,
+        vapidKey: environment.notificationsConfig.vapidKey,
       });
 
       if (notificationToken === existingNotificationToken) {

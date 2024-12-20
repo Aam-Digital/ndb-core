@@ -1,5 +1,6 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+src/assets/firebase-config.json
 /src/assets/config.json
 /src/assets/child-photos
 release.sh
@@ -198,5 +199,3 @@ fabric.properties
 ./e2e/screenshots
 ./e2e/videos
 
-# firebase configuration
-src/assets/firebase-config.json

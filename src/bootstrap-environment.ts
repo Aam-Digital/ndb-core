@@ -10,7 +10,7 @@ export async function initEnvironmentConfig() {
   const FIREBASE_CONFIG_FILE = "assets/firebase-config.json";
 
   let config: Object;
-  let firebaseConfig: Object;
+  let notificationsConfig: Object;
   try {
     const configResponse = await fetch(CONFIG_FILE);
     config = await configResponse.json();
@@ -19,8 +19,8 @@ export async function initEnvironmentConfig() {
     }
 
     const firebaseConfigResponse = await fetch(FIREBASE_CONFIG_FILE);
-    firebaseConfig = await firebaseConfigResponse.json();
-    if (typeof firebaseConfig !== "object") {
+    notificationsConfig = await firebaseConfigResponse.json();
+    if (typeof notificationsConfig !== "object") {
       throw new Error("firebase-config.json must be an object");
     }
   } catch (err) {
@@ -45,5 +45,5 @@ export async function initEnvironmentConfig() {
     window.location.reload();
   }
 
-  Object.assign(environment, config, { firebaseConfig });
+  Object.assign(environment, config, { notificationsConfig });
 }
