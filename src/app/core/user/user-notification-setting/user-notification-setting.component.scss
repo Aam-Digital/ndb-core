@@ -1,0 +1,70 @@
+@use "variables/colors";
+
+.notifications-setting-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.notifications-container {
+  padding: 16px;
+}
+
+.notification-types-container {
+  margin-top: 16px;
+}
+
+.browser-notifications-container {
+  margin-top: 32px;
+}
+
+.notification-setting-title {
+  margin-bottom: 10px;
+}
+
+.panel-wrapper {
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.receive-notifications-container {
+  @extend .panel-wrapper;
+  background-color: white;
+}
+
+.notifications-types-container {
+  @extend .panel-wrapper;
+  background-color: colors.$background;
+  margin-top: 20px;
+}
+
+.browser-notification-list {
+  margin-top: 16px;
+  margin-left: 20px;
+}
+
+.notification-toggle {
+  margin-left: 10px;
+}
+
+.new-notification-rule {
+  margin-left: 5px;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.add-new-notification-rule {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.add-new-rule-button {
+  width: 50%;
+  border-radius: 20px;
+  padding: 22px;
+  background-color: aliceblue;
+}
