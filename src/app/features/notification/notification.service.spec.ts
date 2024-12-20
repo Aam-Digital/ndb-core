@@ -9,7 +9,7 @@ import firebase from "firebase/compat/app";
 import { provideHttpClient } from "@angular/common/http";
 import { NotificationConfig } from "./notification-config.interface";
 
-fdescribe("NotificationService", () => {
+describe("NotificationService", () => {
   let service: NotificationService;
   let httpMock: HttpTestingController;
   let notificationConfig: NotificationConfig;
@@ -55,7 +55,7 @@ fdescribe("NotificationService", () => {
   describe("getFcmToken", () => {
     it("should return the token from the cookie if available", async () => {
       environment.notificationsConfig = notificationConfig;
-
+      spyOn(service, "getNotificationTokenFromCookie").and.returnValue(null);
       spyOn(service, "getFcmToken").and.callFake(async () => {
         const token = service.getNotificationTokenFromCookie();
         return token || "existing_token";
