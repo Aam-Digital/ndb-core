@@ -8,7 +8,7 @@ import { EventAttendanceMap } from "../../child-dev-project/attendance/model/eve
 import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EntityConfig } from "../entity/entity-config";
-import { ExternalProfileLinkConfig } from "../../features/skill/link-external-profile/external-profile-link-config";
+import { ExternalProfileLinkConfig } from "../../features/skill/external-profile-link-config";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -718,8 +718,8 @@ export const defaultJsonConfig = {
                       {
                         id: "_description_health",
                         editComponent: "EditDescriptionOnly",
-                        label: $localize`:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines. 
-                        Make sure to visit the [Health Guidelines](https://example.com/guidelines) for detailed recommendations and procedures.`,
+                        label: $localize`:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines.
+                        Make sure to visit the [Health Guidelines](https://example.com/guidelines) for detailed recommendations and procedures.`
                       },
                       "health_lastDentalCheckup"
                     ]
@@ -1087,7 +1087,12 @@ export const defaultJsonConfig = {
             ],
             email: ["email"],
             phone: ["phone"]
-          }
+          },
+          applyData: [{
+            from: "skills",
+            to: "skills",
+            transformation: "escoSkill"
+          }]
         } as ExternalProfileLinkConfig
       },
       skills: {

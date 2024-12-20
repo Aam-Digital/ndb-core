@@ -6,17 +6,19 @@ import {
 } from "@angular/core/testing";
 
 import { BulkLinkExternalProfilesComponent } from "./bulk-link-external-profiles.component";
-import { SkillApiService, UserProfileResponseDto } from "../skill-api.service";
+import {
+  ExternalProfileResponseDto,
+  SkillApiService,
+} from "../skill-api.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { of, throwError } from "rxjs";
-import { ExternalProfileLinkConfig } from "../link-external-profile/external-profile-link-config";
+import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { HttpErrorResponse } from "@angular/common/http";
 import { MatDialog } from "@angular/material/dialog";
-import { AlertService } from "../../../core/alerts/alert.service";
 
 describe("BulkLinkExternalProfilesComponent", () => {
   let component: BulkLinkExternalProfilesComponent;
@@ -29,7 +31,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
       "generateDefaultSearchParams",
       "getExternalProfiles",
       "getExternalProfileById",
-      "getSkillsFromExternalProfile",
+      "applyDataFromExternalProfile",
     ]);
     mockSkillApi.generateDefaultSearchParams.and.returnValue({});
     mockSkillApi.getExternalProfiles.and.returnValue(
@@ -270,7 +272,11 @@ describe("BulkLinkExternalProfilesComponent", () => {
     component.entities = [entity1, entity2, entity3, entity4];
     component.ngOnChanges({ entities: true as any });
     tick();
-    mockSkillApi.getSkillsFromExternalProfile.and.resolveTo(["skill-1"]);
+    mockSkillApi.applyDataFromExternalProfile.and.callFake(
+      async (x, config, target) => {
+        target["skills"] = !!x ? ["skill-1"] : undefined;
+      },
+    );
 
     component.records.data.find((r) => r.entity === entity1).selected = {
       id: "new-1",
@@ -291,39 +297,44 @@ describe("BulkLinkExternalProfilesComponent", () => {
       jasmine.objectContaining({
         name: "link to be added",
         externalProfile: "new-1",
+        skills: ["skill-1"],
       }),
     );
     expect(savedEntities).toContain(
       jasmine.objectContaining({
         name: "link to be removed",
         externalProfile: undefined,
+        skills: undefined,
       }),
     );
     expect(savedEntities).toContain(
       jasmine.objectContaining({
         name: "link to be changed",
         externalProfile: "new-2",
+        skills: ["skill-1"],
       }),
     );
 
     // TODO: should the unchanged entity also receive an update of its skills data or leave unchanged?
   }));
 
-  it("should skip only the affected record and show warning if loading skills data fails", fakeAsync(() => {
-    mockSkillApi.getSkillsFromExternalProfile.and.callFake(async (id) => {
-      if (id === "broken") {
-        throw "API error";
-      } else {
-        return ["skill-1"];
-      }
-    });
+  it("should skip record if API throws error and continue with other records without aborting", fakeAsync(() => {
+    mockSkillApi.applyDataFromExternalProfile.and.callFake(
+      async (extProfile, c, target) => {
+        if (extProfile === "broken" || extProfile?.["id"] === "broken") {
+          throw "API error";
+        } else {
+          target["skills"] = ["skill-1"];
+        }
+      },
+    );
 
     component.ngOnChanges({ entities: true as any });
     tick();
     component.records.data[0].selected = { id: "broken" } as any;
+    component.records.data[0].entity["skills"] = ["old-skill"];
     component.records.data[1].selected = { id: "good-link" } as any;
 
-    const spyAlert = spyOn(TestBed.inject(AlertService), "addWarning");
     const spySave = spyOn(TestBed.inject(EntityMapperService), "saveAll");
     component.save();
     tick();
@@ -337,18 +348,16 @@ describe("BulkLinkExternalProfilesComponent", () => {
       }),
     );
 
-    // TODO: should previous skills value be kept in case the API request fails?
     expect(savedEntities).toContain(
       jasmine.objectContaining({
         externalProfile: "broken",
-        skills: [],
+        skills: ["old-skill"], // TODO: should previous skills value be removed in case the API request fails?
       }),
     );
-    expect(spyAlert).toHaveBeenCalled();
   }));
 });
 
-function createPaginatedResult(results: any[]): UserProfileResponseDto {
+function createPaginatedResult(results: any[]): ExternalProfileResponseDto {
   return {
     pagination: {
       currentPage: 1,

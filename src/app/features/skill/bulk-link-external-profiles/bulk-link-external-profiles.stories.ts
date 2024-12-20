@@ -6,13 +6,13 @@ import { SkillApiService } from "../skill-api.service";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { mockSkillApi } from "../skill-api-mock";
-import { ExternalProfileLinkConfig } from "../link-external-profile/external-profile-link-config";
+import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 
 const entities: Entity[] = [
   TestEntity.create({ name: "Test Entity 1" }),
   TestEntity.create({ name: "Test Entity 2" }),
-  TestEntity.create({ name: "Test Entity 3" }),
+  TestEntity.create({ name: "Test Entity 3" })
 ];
 
 export default {
@@ -22,11 +22,11 @@ export default {
     applicationConfig({
       providers: [
         importProvidersFrom(StorybookBaseModule),
-        { provide: SkillApiService, useValue: mockSkillApi },
+        { provide: SkillApiService, useValue: mockSkillApi }
         // importProvidersFrom(StorybookBaseModule.withData([...entities])),
-      ],
-    }),
-  ],
+      ]
+    })
+  ]
 } as Meta<BulkLinkExternalProfilesComponent>;
 
 type Story = StoryObj<BulkLinkExternalProfilesComponent>;
@@ -34,13 +34,13 @@ type Story = StoryObj<BulkLinkExternalProfilesComponent>;
 const profileLinkConfig: ExternalProfileLinkConfig = {
   searchFields: {
     fullName: ["name"],
-    email: ["other"],
-  },
+    email: ["other"]
+  }
 };
 
 export const Default: Story = {
   args: {
     entities: entities,
-    config: { id: "ref", additional: profileLinkConfig } as FormFieldConfig,
-  },
+    config: { id: "ref", additional: profileLinkConfig } as FormFieldConfig
+  }
 };

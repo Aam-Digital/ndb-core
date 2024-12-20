@@ -4,7 +4,7 @@ import { importProvidersFrom } from "@angular/core";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { FormControl } from "@angular/forms";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { ExternalProfileLinkConfig } from "./external-profile-link-config";
+import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { SkillApiService } from "../skill-api.service";
 import { mockSkillApi } from "../skill-api-mock";
 
@@ -36,6 +36,7 @@ export const FindProfile: Story = {
         fullName: ["name"],
         email: ["other"],
       },
+      applyData: [],
     } as ExternalProfileLinkConfig,
   },
 };
@@ -49,6 +50,7 @@ export const LinkedProfile: Story = {
         name: ["name"],
         email: ["other"],
       },
+      applyData: [],
     } as ExternalProfileLinkConfig,
   },
 };
@@ -62,6 +64,7 @@ export const LinkedProfileNotFound: Story = {
         name: ["name"],
         email: ["other"],
       },
+      applyData: [],
     } as ExternalProfileLinkConfig,
     externalProfileError: true,
   },

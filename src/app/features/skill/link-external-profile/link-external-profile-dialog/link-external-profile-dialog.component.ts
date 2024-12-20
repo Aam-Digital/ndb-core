@@ -4,23 +4,19 @@ import {
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
-  MatDialogTitle,
+  MatDialogTitle
 } from "@angular/material/dialog";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { ExternalProfile } from "../../external-profile";
 import { MatProgressBar } from "@angular/material/progress-bar";
-import {
-  ExternalProfileSearchParams,
-  SkillApiService,
-  UserProfileResponseDto,
-} from "../../skill-api.service";
+import { ExternalProfileResponseDto, ExternalProfileSearchParams, SkillApiService } from "../../skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";
 import { FormsModule } from "@angular/forms";
 import { MatTooltip } from "@angular/material/tooltip";
 import { Entity } from "../../../../core/entity/model/entity";
-import { ExternalProfileLinkConfig } from "../external-profile-link-config";
+import { ExternalProfileLinkConfig } from "../../external-profile-link-config";
 import { MatFormField, MatSuffix } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -64,10 +60,10 @@ export interface LinkExternalProfileDialogData {
     MatInput,
     MatIconButton,
     FaIconComponent,
-    MatSuffix,
+    MatSuffix
   ],
   templateUrl: "./link-external-profile-dialog.component.html",
-  styleUrl: "./link-external-profile-dialog.component.scss",
+  styleUrl: "./link-external-profile-dialog.component.scss"
 })
 export class LinkExternalProfileDialogComponent implements OnInit {
   private readonly skillApiService: SkillApiService = inject(SkillApiService);
@@ -78,7 +74,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
 
   loading: boolean;
 
-  searchResult: UserProfileResponseDto;
+  searchResult: ExternalProfileResponseDto;
   possibleMatches: (ExternalProfile & { _tooltip?: string })[];
   selected: ExternalProfile;
   error: { message?: string } & any;
@@ -94,7 +90,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
   async ngOnInit() {
     this.searchParams = this.skillApiService.generateDefaultSearchParams(
       this.entity,
-      this.config,
+      this.config
     );
 
     if (!this.possibleMatches) {
@@ -116,7 +112,7 @@ export class LinkExternalProfileDialogComponent implements OnInit {
     }
     if (this.possibleMatches.length === 0) {
       this.error = {
-        message: $localize`:external profile matching dialog:No matching external profiles found`,
+        message: $localize`:external profile matching dialog:No matching external profiles found`
       };
     }
   }
@@ -127,14 +123,14 @@ export class LinkExternalProfileDialogComponent implements OnInit {
 
     try {
       this.searchResult = await firstValueFrom(
-        this.skillApiService.getExternalProfiles(this.searchParams, page),
+        this.skillApiService.getExternalProfiles(this.searchParams, page)
       );
     } catch (e) {
       Logging.warn("SkillModule: Failed to load external profiles", e);
 
       if (e.status === 403) {
         this.error = {
-          message: $localize`:external profile matching dialog:Your user account does not have permission to access external profiles.`,
+          message: $localize`:external profile matching dialog:Your user account does not have permission to access external profiles.`
         };
         return;
       }
@@ -154,14 +150,14 @@ export class LinkExternalProfileDialogComponent implements OnInit {
 
   async loadNextPage() {
     const newResults = await this.loadResults(
-      this.searchResult.pagination.currentPage + 1,
+      this.searchResult.pagination.currentPage + 1
     );
     this.possibleMatches = [...this.possibleMatches, ...newResults];
   }
 }
 
 function addTooltip(
-  profile: ExternalProfile,
+  profile: ExternalProfile
 ): ExternalProfile & { _tooltip?: string } {
   return { ...profile, _tooltip: JSON.stringify(profile, null, 2) };
 }

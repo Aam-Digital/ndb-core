@@ -249,22 +249,14 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
       const updatedEntity: Entity = record.entity;
       updatedEntity[this.config.id] = record.selected?.id;
 
-      if (record.selected) {
-        try {
-          // TODO: avoid re-requesting the external profile from the API again?
-          updatedEntity["skills"] =
-            await this.skillApi.getSkillsFromExternalProfile(
-              record.selected?.id,
-            );
-        } catch (err) {
-          Logging.debug("Could not load skills for external profile", err);
-          this.alertService.addWarning(
-            $localize`:bulk-action link external profile:Could not load skills for external profile of "${updatedEntity.toString()}".`,
-          );
-          updatedEntity["skills"] = [];
-        }
-      } else {
-        updatedEntity["skills"] = [];
+      try {
+        await this.skillApi.applyDataFromExternalProfile(
+          record.selected, // pass in regardless of whether it's undefined, will reset the target values if not selected
+          this.config.additional,
+          updatedEntity,
+        );
+      } catch (e) {
+        Logging.error("Could not load data for external profile", e);
       }
     }
 

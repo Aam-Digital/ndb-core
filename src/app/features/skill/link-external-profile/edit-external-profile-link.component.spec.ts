@@ -35,7 +35,7 @@ describe("EditExternalProfileLinkComponent", () => {
     mockSkillApi = jasmine.createSpyObj("SkillApiService", [
       "getExternalProfiles",
       "getExternalProfileById",
-      "getSkillsFromExternalProfile",
+      "applyDataFromExternalProfile",
     ]);
 
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
@@ -159,34 +159,18 @@ describe("EditExternalProfileLinkComponent", () => {
 
   it("should update related form field from latest external entity if user clicks 'update data'", fakeAsync(() => {
     const mockSkills = [new TestEntity(), new TestEntity()] as any;
-    mockSkillApi.getSkillsFromExternalProfile.and.resolveTo(mockSkills);
+    mockSkillApi.applyDataFromExternalProfile.and.resolveTo();
     component.formControl.setValue("external-id");
 
     component.updateExternalData();
+    expect(component.isLoading()).toBeTrue();
     tick();
 
-    expect(mockSkillApi.getSkillsFromExternalProfile).toHaveBeenCalledWith(
+    expect(mockSkillApi.applyDataFromExternalProfile).toHaveBeenCalledWith(
       "external-id",
+      component.additional,
+      component.parent,
     );
-    // TODO: implement actual logic and configurable target field
-    const targetFormControl = component.parent.get("skills");
-    expect(targetFormControl.value).toEqual(mockSkills);
-    expect(targetFormControl.dirty).toBeTrue();
-  }));
-
-  it("should show warning alert if 'updating data' from external profile via API fails", fakeAsync(() => {
-    component.formControl.setValue("external-id");
-    mockSkillApi.getSkillsFromExternalProfile.and.throwError(
-      new HttpErrorResponse({
-        status: 500,
-        statusText: "API error",
-      }),
-    );
-
-    component.updateExternalData();
-    tick();
-
-    expect(mockSkillApi.getSkillsFromExternalProfile).toHaveBeenCalled();
-    expect(TestBed.inject(AlertService).addWarning).toHaveBeenCalled();
+    expect(component.isLoading()).toBeFalse();
   }));
 });

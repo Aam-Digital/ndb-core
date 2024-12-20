@@ -1,10 +1,10 @@
 import { delay, Observable, of } from "rxjs";
 import { ExternalProfile } from "./external-profile";
 import { faker } from "@faker-js/faker";
-import { UserProfileResponseDto } from "./skill-api.service";
+import { ExternalProfileResponseDto } from "./skill-api.service";
 
 export const mockSkillApi = {
-  getExternalProfiles: (): Observable<UserProfileResponseDto> =>
+  getExternalProfiles: (): Observable<ExternalProfileResponseDto> =>
     of({
       pagination: {
         currentPage: 1,

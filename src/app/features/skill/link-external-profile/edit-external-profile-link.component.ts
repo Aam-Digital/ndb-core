@@ -1,15 +1,9 @@
-import {
-  Component,
-  inject,
-  OnInit,
-  signal,
-  WritableSignal,
-} from "@angular/core";
+import { Component, inject, OnInit, signal, WritableSignal } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import {
   LinkExternalProfileDialogComponent,
-  LinkExternalProfileDialogData,
+  LinkExternalProfileDialogData
 } from "./link-external-profile-dialog/link-external-profile-dialog.component";
 import { ExternalProfile } from "../external-profile";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
@@ -17,13 +11,11 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { SkillApiService } from "../skill-api.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { ExternalProfileLinkConfig } from "./external-profile-link-config";
+import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { catchError } from "rxjs/operators";
 import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
 import { of } from "rxjs";
-import { AlertService } from "../../../core/alerts/alert.service";
-import { Logging } from "../../../core/logging/logging.service";
 
 @Component({
   selector: "app-edit-external-profile-link",
@@ -34,15 +26,14 @@ import { Logging } from "../../../core/logging/logging.service";
     MatTooltip,
     FormsModule,
     ReactiveFormsModule,
-    MatProgressSpinnerModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: "./edit-external-profile-link.component.html",
-  styleUrl: "./edit-external-profile-link.component.scss",
+  styleUrl: "./edit-external-profile-link.component.scss"
 })
 export class EditExternalProfileLinkComponent
   extends EditComponent<string>
-  implements OnInit
-{
+  implements OnInit {
   /**
    * The configuration details for this external profile link,
    * defined in the config field's `additional` property.
@@ -55,7 +46,6 @@ export class EditExternalProfileLinkComponent
 
   private readonly dialog: MatDialog = inject(MatDialog);
   private readonly skillApi: SkillApiService = inject(SkillApiService);
-  private readonly alertService = inject(AlertService);
 
   override ngOnInit() {
     super.ngOnInit();
@@ -68,7 +58,7 @@ export class EditExternalProfileLinkComponent
           catchError(() => {
             this.externalProfileError = true;
             return of(undefined);
-          }),
+          })
         )
         .subscribe((profile) => {
           this.externalProfile = profile;
@@ -80,15 +70,15 @@ export class EditExternalProfileLinkComponent
     const currentEntity = Object.assign(
       {},
       this.entity,
-      this.parent.getRawValue(),
+      this.parent.getRawValue()
     );
 
     this.dialog
       .open(LinkExternalProfileDialogComponent, {
         data: {
           entity: currentEntity,
-          config: this.additional,
-        } as LinkExternalProfileDialogData,
+          config: this.additional
+        } as LinkExternalProfileDialogData
       })
       .afterClosed()
       .subscribe((result: ExternalProfile | undefined) => {
@@ -111,24 +101,14 @@ export class EditExternalProfileLinkComponent
       return;
     }
 
-    let skills: string[] = [];
-    try {
-      skills = await this.skillApi.getSkillsFromExternalProfile(
-        this.formControl.value,
-      );
-    } catch (e) {
-      Logging.debug("EditExternalProfileLink error", e);
-      this.alertService.addWarning(
-        $localize`EditExternalProfileLink error: Could not load skills from external profile.`,
-      );
-    }
-
-    // TODO: run import / update automatically?
-    const targetFormControl = this.parent.get("skills");
-    targetFormControl?.setValue(skills);
-    targetFormControl.markAsDirty();
+    await this.skillApi.applyDataFromExternalProfile(
+      this.formControl.value,
+      this.additional,
+      this.parent
+    );
 
     this.isLoading.set(false);
+    // TODO: run import / update automatically?
   }
 
   private linkProfile(externalProfile: ExternalProfile) {
