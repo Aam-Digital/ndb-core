@@ -16,7 +16,11 @@ import firebase from "firebase/compat/app";
   providedIn: "root",
 })
 export class NotificationService {
-  private messaging: any = null;
+  /**
+  * A private instance of the Firebase Cloud Messaging service.
+  * This property is used to delegate messaging operations to the Firebase Cloud Messaging service.
+  */
+  private messaging: firebase.messaging.Messaging = null;
   readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${environment.notificationsConfig.projectId}/messages:send`;
   private readonly NOTIFICATION_TOKEN_COOKIE_NAME = "notification_token";
   private readonly DEVICE_NOTIFICATION_API_URL = "/api/v1/notification/device";
@@ -27,6 +31,7 @@ export class NotificationService {
   init() {
     firebase.initializeApp(environment.notificationsConfig);
     this.messaging = firebase.messaging();
+    console.log(this.messaging, "firebase.messaging()");
   }
 
   /**
