@@ -39,7 +39,13 @@
       >
         General Settings
       </mat-list-item>
-
+      <mat-list-item
+        (click)="mode = 'publicForm'"
+        [activated]="mode === 'publicForm'"
+        i18n="admin entity: nav item"
+      >
+        Public Forms
+      </mat-list-item>
       <app-beta-feature></app-beta-feature>
     </mat-nav-list>
 
@@ -73,6 +79,12 @@
             [entityConstructor]="entityConstructor"
             [(generalSettings)]="configEntitySettings"
           ></app-admin-entity-general-settings>
+        }
+        @case ("publicForm") {
+          <app-admin-entity-public-forms-component
+          [entityConstructor]="entityConstructor"
+   
+          ></app-admin-entity-public-forms-component>
         }
       }
     </div>
