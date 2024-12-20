@@ -6,7 +6,6 @@ import {
 import { NotificationService } from "./notification.service";
 import { environment } from "../../../environments/environment";
 import firebase from "firebase/compat/app";
-import { Logging } from "app/core/logging/logging.service";
 import { provideHttpClient } from "@angular/common/http";
 import { NotificationConfig } from "./notification-config.interface";
 
@@ -98,7 +97,6 @@ describe("NotificationService", () => {
   describe("sendNotification", () => {
     it("should not send notification if token is missing", () => {
       spyOn(service, "getNotificationTokenFromCookie").and.returnValue(null);
-      spyOn(Logging, "error");
 
       service.sendNotification({ title: "Test" });
       expect().nothing();
