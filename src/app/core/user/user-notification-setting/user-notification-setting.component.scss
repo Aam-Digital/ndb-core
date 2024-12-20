@@ -52,10 +52,19 @@
   margin-left: 5px;
 }
 
-.save-buttons {
-  margin-top: 20px;
-}
-
 .no-margin {
   margin: 0;
+}
+
+.add-new-notification-rule {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.add-new-rule-button {
+  width: 50%;
+  border-radius: 20px;
+  padding: 22px;
+  background-color: aliceblue;
 }

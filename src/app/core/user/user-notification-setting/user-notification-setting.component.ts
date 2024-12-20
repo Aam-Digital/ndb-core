@@ -12,6 +12,7 @@ import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
+import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 
 interface Notification {
   selectedOption: string;
@@ -35,6 +36,7 @@ interface Notification {
     MatTooltipModule,
     NgIf,
     EntityTypeSelectComponent,
+    HelpButtonComponent,
   ],
   templateUrl: "./user-notification-setting.component.html",
   styleUrl: "./user-notification-setting.component.scss",

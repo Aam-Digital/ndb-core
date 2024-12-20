@@ -1,10 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatMenu } from "@angular/material/menu";
+import { MatMenu, MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
-import { MatMenuTrigger } from "@angular/material/menu";
-import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Logging } from "app/core/logging/logging.service";
@@ -15,6 +13,7 @@ import { NotificationItemComponent } from "./notification-item/notification-item
 import { Router } from "@angular/router";
 import { MockNotificationsService } from "./mock-notification.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
+import { closeOnlySubmenu } from "./close-only-submenu";
 
 @Component({
   selector: "app-notification",
@@ -39,6 +38,7 @@ export class NotificationComponent implements OnInit {
   public unreadNotifications: NotificationEvent[] = [];
   public selectedTab = 0;
   public hasNotificationEnabled = false;
+  protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -85,8 +85,7 @@ export class NotificationComponent implements OnInit {
     );
   }
 
-  markAllRead($event: Event) {
-    this.stopEventPropagation($event);
+  markAllRead() {
     // TODO: Implement the logic to mark all notifications as read.
     Logging.log("All notifications marked as read");
   }
@@ -114,9 +113,5 @@ export class NotificationComponent implements OnInit {
 
   onRedirectToNotificationsSetting() {
     this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
-  }
-
-  stopEventPropagation(event: Event): void {
-    event.stopPropagation();
   }
 }

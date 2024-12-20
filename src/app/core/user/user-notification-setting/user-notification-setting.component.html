@@ -12,58 +12,50 @@
       <h3 class="no-margin" i18n>
         <strong>What notifications you receive</strong>
       </h3>
-      <button
-        mat-stroked-button
-        color="accent"
-        (click)="addNewRule()"
-        matTooltip="Add new notification rule"
-        i18n-matTooltip
-      >
-        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-        <span i18n class="new-notification-rule"
-          >Add new notification rule</span
-        >
-      </button>
-    </div>
-
-    <div class="flex-row gap-small save-buttons justify-end">
-      <button
-        mat-raised-button
-        color="accent"
-        (click)="updateNotificationRule()"
-        i18n
-      >
-        Save
-      </button>
-      <button mat-stroked-button (click)="cancelNotificationRule()" i18n>
-        Cancel
-      </button>
     </div>
 
     <ng-container *ngFor="let notification of notificationRule; let i = index">
       <div
         class="flex-row justify-space-between align-center notifications-types-container"
       >
-        <app-entity-type-select
-          [allowMultiSelect]="false"
-          label="Select an entity type"
-        ></app-entity-type-select>
+        <div>
+          <app-entity-type-select
+            [allowMultiSelect]="false"
+            label="Select an entity type"
+          ></app-entity-type-select>
+          <app-help-button
+            text="Select an entity type to receive notifications for."
+            i18n-text
+          ></app-help-button>
+        </div>
 
-        <mat-form-field>
-          <mat-label i18n>Notification condition</mat-label>
-          <input
-            matInput
-            [(ngModel)]="notification.inputValue"
-            placeholder="TO BE IMPLEMENTED LATER"
-            disabled="true"
-            i18n-placeholder="Notification condition placeholder"
-          />
-        </mat-form-field>
+        <div>
+          <mat-form-field>
+            <mat-label i18n>Notification condition</mat-label>
+            <input
+              matInput
+              [(ngModel)]="notification.inputValue"
+              placeholder="TO BE IMPLEMENTED LATER"
+              disabled="true"
+              i18n-placeholder="Notification condition placeholder"
+            />
+          </mat-form-field>
+          <app-help-button
+            text="Define a condition to receive notifications for."
+            i18n-text
+          ></app-help-button>
+        </div>
 
-        <mat-slide-toggle
-          [(ngModel)]="notification.toggleValue"
-          class="notification-toggle"
-        ></mat-slide-toggle>
+        <div class="flex-row align-center">
+          <mat-slide-toggle
+            [(ngModel)]="notification.toggleValue"
+            class="notification-toggle"
+          ></mat-slide-toggle>
+          <app-help-button
+            text="Enable or disable notifications for this entity type."
+            i18n-text
+          ></app-help-button>
+        </div>
 
         <button
           *ngIf="notificationRule.length > 1"
@@ -76,6 +68,21 @@
         </button>
       </div>
     </ng-container>
+    <div class="add-new-notification-rule">
+      <button
+        mat-stroked-button
+        class="add-new-rule-button"
+        color="accent"
+        (click)="addNewRule()"
+        matTooltip="Add new notification rule"
+        i18n-matTooltip
+      >
+        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+        <span i18n class="new-notification-rule"
+          >Add new notification rule</span
+        >
+      </button>
+    </div>
   </div>
 
   <div class="browser-notifications-container">
@@ -85,8 +92,16 @@
         <fa-icon icon="window-maximize"></fa-icon>
         <p class="notification-toggle" i18n>Browser</p>
       </div>
-      <div class="flex-row justify-space-between browser-notification-list">
-        <span i18n>Push notifications</span>
+      <div
+        class="flex-row align-center justify-space-between browser-notification-list"
+      >
+        <div class="flex-row align-center">
+          <span i18n>Push notifications</span>
+          <app-help-button
+            text="Enable or disable browser push notifications."
+            i18n-text
+          ></app-help-button>
+        </div>
         <mat-slide-toggle (change)="onEnableNotification()" />
       </div>
     </div>

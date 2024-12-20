@@ -15,7 +15,9 @@
 </button>
 
 <mat-menu #notificationList>
-  <div class="notification-panel">
+  <div class="notification-panel" (click)="$event.stopPropagation()">
+    <!-- stopPropagation above to avoid closing the panel upon action button clicks -->
+
     <div
       class="flex-row justify-space-between align-center notification-panel-header"
     >
@@ -24,18 +26,14 @@
       <button
         mat-icon-button
         [matMenuTriggerFor]="settingsMenu"
-        (click)="stopEventPropagation($event)"
-        icon-button
+        #settingsMenuTrigger="matMenuTrigger"
       >
         <fa-icon icon="ellipsis"></fa-icon>
       </button>
     </div>
 
     <!-- Tabs -->
-    <mat-tab-group
-      [(selectedIndex)]="selectedTab"
-      (click)="stopEventPropagation($event)"
-    >
+    <mat-tab-group [(selectedIndex)]="selectedTab">
       <mat-tab label="All" i18n-label></mat-tab>
       <mat-tab label="Unread" i18n-label></mat-tab>
     </mat-tab-group>
@@ -67,18 +65,29 @@
 
 <!-- New mat-menu for ellipsis -->
 <mat-menu #settingsMenu>
-  <button mat-menu-item (click)="enableNotificationForUser()">
-    <fa-icon [icon]="hasNotificationEnabled ? 'bell-slash' : 'bell'"></fa-icon>
-    <span class="menu-option" i18n>{{
-      hasNotificationEnabled ? "Disable notifications" : "Enable notifications"
-    }}</span>
-  </button>
-  <button mat-menu-item (click)="markAllRead($event)">
-    <fa-icon icon="check"></fa-icon>
-    <span class="menu-option" i18n>Mark all as read</span>
-  </button>
-  <button mat-menu-item (click)="onRedirectToNotificationsSetting()">
-    <fa-icon icon="gear"></fa-icon>
-    <span class="menu-option" i18n>Notification settings</span>
-  </button>
+  <div
+    class="notification-panel"
+    (click)="closeOnlySubmenu(settingsMenuTrigger, $event)"
+  >
+    <button mat-menu-item (click)="enableNotificationForUser()">
+      <fa-icon
+        [icon]="hasNotificationEnabled ? 'bell-slash' : 'bell'"
+      ></fa-icon>
+      <span class="menu-option" i18n>{{
+        hasNotificationEnabled
+          ? "Disable notifications"
+          : "Enable notifications"
+      }}</span>
+    </button>
+
+    <button mat-menu-item (click)="markAllRead()">
+      <fa-icon icon="check"></fa-icon>
+      <span class="menu-option" i18n>Mark all as read</span>
+    </button>
+
+    <button mat-menu-item (click)="onRedirectToNotificationsSetting()">
+      <fa-icon icon="gear"></fa-icon>
+      <span class="menu-option" i18n>Notification settings</span>
+    </button>
+  </div>
 </mat-menu>
