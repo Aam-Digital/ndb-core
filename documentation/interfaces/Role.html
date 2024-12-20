@@ -1,0 +1,602 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  Role</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/session/auth/keycloak/keycloak-auth.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Extract of Keycloak role object.
+See <a href="https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_rolerepresentation">https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_rolerepresentation</a></p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#description" 
+>
+                                            description
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#id" 
+>
+                                            id
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#name" 
+>
+                                            name
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="description"></a>
+                                        <span class="name "><b>description</b>
+                                            <a href="#description">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>description:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="id"></a>
+                                        <span class="name "><b>id</b>
+                                            <a href="#id">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>id:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="name"></a>
+                                        <span class="name "><b>name</b>
+                                            <a href="#name">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>name:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { HttpClient } from &quot;@angular/common/http&quot;;
+import { Observable } from &quot;rxjs&quot;;
+import { environment } from &quot;../../../../../environments/environment&quot;;
+import { SessionInfo } from &quot;../session-info&quot;;
+import { KeycloakEventType, KeycloakService } from &quot;keycloak-angular&quot;;
+import { Logging } from &quot;../../../logging/logging.service&quot;;
+import { Entity } from &quot;../../../entity/model/entity&quot;;
+import { ParsedJWT, parseJwt } from &quot;../../session-utils&quot;;
+import { RemoteLoginNotAvailableError } from &quot;./remote-login-not-available.error&quot;;
+import { switchMap } from &quot;rxjs/operators&quot;;
+
+/**
+ * Handles the remote session with keycloak
+ */
+@Injectable()
+export class KeycloakAuthService {
+  /**
+   * Users with this role can create and update other accounts.
+   */
+  static readonly ACCOUNT_MANAGER_ROLE &#x3D; &quot;account_manager&quot;;
+  static readonly LAST_AUTH_KEY &#x3D; &quot;LAST_REMOTE_LOGIN&quot;;
+  private keycloakInitialised &#x3D; false;
+  accessToken: string;
+
+  constructor(
+    private httpClient: HttpClient,
+    private keycloak: KeycloakService,
+  ) {}
+
+  /**
+   * Check for an existing session or forward to the login page.
+   */
+  async login(): Promise&lt;SessionInfo&gt; {
+    if (!this.keycloakInitialised) {
+      await this.initKeycloak();
+    }
+
+    await this.keycloak.updateToken();
+    let token &#x3D; await this.keycloak.getToken();
+    if (!token) {
+      // Forward to the keycloak login page.
+      await this.keycloak.login({ redirectUri: location.href });
+      token &#x3D; await this.keycloak.getToken();
+    }
+
+    return this.processToken(token);
+  }
+
+  private async initKeycloak() {
+    try {
+      await this.keycloak.init({
+        config: window.location.origin + &quot;/assets/keycloak.json&quot;,
+        initOptions: {
+          onLoad: &quot;check-sso&quot;,
+          silentCheckSsoRedirectUri:
+            window.location.origin + &quot;/assets/silent-check-sso.html&quot;,
+        },
+        // GitHub API rejects if non GitHub bearer token is present
+        shouldAddToken: ({ url }) &#x3D;&gt; !url.includes(&quot;api.github.com&quot;),
+      });
+    } catch (err) {
+      if (
+        err?.error &#x3D;&#x3D;&#x3D;
+        &quot;Timeout when waiting for 3rd party check iframe message.&quot;
+      ) {
+        // this is actually an expected scenario, user&#x27;s internet is slow or not available
+        err &#x3D; new RemoteLoginNotAvailableError();
+      } else {
+        Logging.error(&quot;Keycloak init failed&quot;, err);
+      }
+
+      this.keycloakInitialised &#x3D; false;
+      throw err;
+    }
+
+    // auto-refresh expiring tokens, as suggested by https://github.com/mauriciovigolo/keycloak-angular?tab&#x3D;readme-ov-file#keycloak-js-events
+    this.keycloak.keycloakEvents$.subscribe((event) &#x3D;&gt; {
+      if (event.type &#x3D;&#x3D; KeycloakEventType.OnTokenExpired) {
+        this.login().catch((err) &#x3D;&gt;
+          Logging.debug(&quot;automatic token refresh failed&quot;, err),
+        );
+      }
+    });
+
+    this.keycloakInitialised &#x3D; true;
+  }
+
+  private processToken(token: string): SessionInfo {
+    if (!token) {
+      throw new Error(&quot;No token received from Keycloak&quot;);
+    }
+
+    this.accessToken &#x3D; token;
+    this.logSuccessfulAuth();
+    const parsedToken: ParsedJWT &#x3D; parseJwt(this.accessToken);
+
+    const sessionInfo: SessionInfo &#x3D; {
+      name: parsedToken.username ?? parsedToken.sub,
+      id: parsedToken.sub,
+      roles: parsedToken[&quot;_couchdb.roles&quot;],
+      email: parsedToken.email,
+    };
+
+    if (parsedToken.username) {
+      sessionInfo.entityId &#x3D; parsedToken.username.includes(&quot;:&quot;)
+        ? parsedToken.username
+        : // fallback for legacy config: manually add &quot;User&quot; entity prefix
+          Entity.createPrefixedId(&quot;User&quot;, parsedToken.username);
+    } else {
+      Logging.debug(
+        &#x60;User not linked with an entity (userId: ${sessionInfo.id} | ${sessionInfo.name})&#x60;,
+      );
+    }
+
+    if (parsedToken.email) {
+      sessionInfo.email &#x3D; parsedToken.email;
+    }
+
+    return sessionInfo;
+  }
+
+  /**
+   * Add the Bearer auth header to a existing header object.
+   * @param headers
+   */
+  addAuthHeader(headers: any) {
+    if (this.accessToken) {
+      if (headers.set &amp;&amp; typeof headers.set &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
+        // PouchDB headers are set as a map
+        headers.set(&quot;Authorization&quot;, &quot;Bearer &quot; + this.accessToken);
+      } else {
+        // Interceptor headers are set as a simple object
+        headers[&quot;Authorization&quot;] &#x3D; &quot;Bearer &quot; + this.accessToken;
+      }
+    }
+  }
+
+  /**
+   * Forward to the keycloak logout endpoint to clear the session.
+   */
+  async logout() {
+    return await this.keycloak.logout(location.href);
+  }
+
+  /**
+   * Open password reset page in browser.
+   * Only works with internet connection.
+   */
+  changePassword(): Promise&lt;any&gt; {
+    return this.keycloak.login({
+      action: &quot;UPDATE_PASSWORD&quot;,
+      redirectUri: location.href,
+    });
+  }
+
+  async getUserinfo(): Promise&lt;KeycloakUserDto&gt; {
+    const user &#x3D; await this.keycloak.getKeycloakInstance().loadUserInfo();
+    return user as KeycloakUserDto;
+  }
+
+  setEmail(email: string): Observable&lt;any&gt; {
+    return this.httpClient.put(&#x60;${environment.account_url}/account/set-email&#x60;, {
+      email,
+    });
+  }
+
+  createUser(user: Partial&lt;KeycloakUserDto&gt;): Observable&lt;any&gt; {
+    return this.httpClient.post(&#x60;${environment.account_url}/account&#x60;, user);
+  }
+
+  deleteUser(username: string): Observable&lt;any&gt; {
+    return this.getUser(username).pipe(
+      switchMap((value) &#x3D;&gt;
+        this.httpClient.delete(
+          &#x60;${environment.account_url}/account/${value.id}&#x60;,
+        ),
+      ),
+    );
+  }
+
+  updateUser(userId: string, user: Partial&lt;KeycloakUserDto&gt;): Observable&lt;any&gt; {
+    return this.httpClient.put(
+      &#x60;${environment.account_url}/account/${userId}&#x60;,
+      user,
+    );
+  }
+
+  getUser(username: string): Observable&lt;KeycloakUserDto&gt; {
+    return this.httpClient.get&lt;KeycloakUserDto&gt;(
+      &#x60;${environment.account_url}/account/${username}&#x60;,
+    );
+  }
+
+  /**
+   * Get a list of all roles generally available in the user management system.
+   */
+  getRoles(): Observable&lt;Role[]&gt; {
+    return this.httpClient.get&lt;Role[]&gt;(
+      &#x60;${environment.account_url}/account/roles&#x60;,
+    );
+  }
+
+  /**
+   * Log timestamp of last successful authentication
+   */
+  logSuccessfulAuth() {
+    localStorage.setItem(
+      KeycloakAuthService.LAST_AUTH_KEY,
+      new Date().toISOString(),
+    );
+  }
+}
+
+/**
+ * Extract of Keycloak role object.
+ * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_rolerepresentation}
+ */
+export interface Role {
+  id: string;
+  name: string;
+  description: string;
+}
+
+/**
+ * Extract of Keycloak user object as provided by the external Keycloak Service.
+ * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_userrepresentation}
+ *
+ * These fields overlap with our internal &#x60;SessionInfo&#x60; interface that is seen as abstracted from Keycloak.
+ */
+export interface KeycloakUserDto {
+  id: string;
+  username: string;
+  email: string;
+  roles: Role[];
+  enabled: boolean;
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'Role.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
