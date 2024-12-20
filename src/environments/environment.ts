@@ -15,6 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { NotificationConfig } from "app/features/notification/notification-config.interface";
 import { SessionType } from "../app/core/session/session-type";
 
 /**
@@ -42,4 +43,5 @@ export const environment = {
 
   /** Name of the database that is used */
   DB_NAME: "app",
+  notificationsConfig: {} as NotificationConfig,
 };
