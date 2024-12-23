@@ -1,5 +1,11 @@
 @use "variables/colors";
 
+.notification-list-header {
+  position: sticky;
+  top: 8px;
+  background-color: colors.$background;
+}
+
 .notification-title {
   font-weight: 700;
   margin: 0px;
