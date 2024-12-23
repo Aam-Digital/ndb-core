@@ -1,0 +1,15 @@
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+  <mat-select
+    [(ngModel)]="selectedOption"
+    (ngModelChange)="onSelectionChange()"
+    placeholder="Choose notification centers"
+    multiple
+    [disabled]="disabled"
+    i18n-placeholder="Choose notification centers"
+  >
+    <mat-option *ngFor="let option of options" [value]="option">
+      {{ option }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

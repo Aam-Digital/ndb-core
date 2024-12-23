@@ -13,6 +13,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
+import { NotificationCenterSelectComponent } from "app/features/notification/notification-center-select/notification-center-select.component";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 interface Notification {
   selectedOption: string;
@@ -37,6 +39,7 @@ interface Notification {
     NgIf,
     EntityTypeSelectComponent,
     HelpButtonComponent,
+    NotificationCenterSelectComponent,
   ],
   templateUrl: "./user-notification-setting.component.html",
   styleUrl: "./user-notification-setting.component.scss",
@@ -45,7 +48,9 @@ export class UserNotificationSettingComponent {
   notificationRule: Notification[] = [
     { selectedOption: "", inputValue: "", toggleValue: false },
   ];
-  formControl = new FormControl();
+  notificationOptions = ["Push", "Email"];
+
+  constructor(private confirmationDialog: ConfirmationDialogService) {}
 
   addNewRule() {
     // TODO: Implement the logic to update the new field and save all the field value in the form control and update in the backend.
@@ -56,9 +61,23 @@ export class UserNotificationSettingComponent {
     });
   }
 
-  removeRule(index: number) {
+  /**
+   * Opens a confirmation dialog, and removes the notification
+   * rule at the specified index.
+   * @param index The index of the notification rule to remove
+   */
+  async confirmRemoveNotificationRule(index: number) {
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      `Delete notification rule`,
+      `Are you sure you want to remove this notification rule?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     this.notificationRule.splice(index, 1);
-    // TODO: Need to add the logic to remove the rule from the backend
+    return true;
   }
 
   onEnableNotification() {
@@ -66,13 +85,8 @@ export class UserNotificationSettingComponent {
     Logging.log("Browser notifications toggled.");
   }
 
-  updateNotificationRule() {
-    // TODO: Implement the logic to update the notification rule in the backend
-    Logging.log("Notification settings saved.");
-  }
-
-  cancelNotificationRule() {
-    // TODO: Implement the logic to cancel the notification rule and not need to do update anything
-    Logging.log("Notification settings canceled.");
+  testNotification() {
+    // TODO: Implement the logic to test the notification setting.
+    Logging.log("Notification settings test successful.");
   }
 }
