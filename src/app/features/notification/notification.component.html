@@ -47,10 +47,8 @@
       ) {
         <app-notification-item
           [notification]="notification"
-          (onDeleteNotification)="deleteNotification.bind(this, notification)"
-          (toggleReadStatus)="
-            selectedTab === 1 ? updateReadStatus(notification) : null
-          "
+          (deleteClick)="deleteNotification(notification)"
+          (readStatusChange)="updateReadStatus(notification, $event)"
         ></app-notification-item>
       } @empty {
         <div class="flex-column no-notification-message">
