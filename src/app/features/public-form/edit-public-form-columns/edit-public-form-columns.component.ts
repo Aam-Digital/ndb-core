@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { EditComponent } from "app/core/entity/default-datatype/edit-component";
 import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 
