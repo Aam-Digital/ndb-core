@@ -8,41 +8,41 @@
     <p
       i18n
       class="notification-time"
-      [matTooltip]="notification.created.at | date: 'yyyy-MM-dd HH:mm:ss'"
+      [matTooltip]="notification.created.at | date: 'short'"
     >
       {{ notification.created.at | NotificationTime }}
     </p>
   </div>
 
-  <!-- Blue indicator for unread notifications -->
+  <!-- Blue indicator for unread/read notifications -->
   <span
     [ngClass]="notification.readStatus ? 'read-indicator' : 'unread-indicator'"
     matTooltip="{{
       notification.readStatus ? 'Read notification' : 'Unread notification'
     }}"
     i18n-matTooltip
-    [matMenuTriggerFor]="notificationMenu"
-    (click)="$event.stopPropagation()"
+    [matMenuTriggerFor]="actionsMenu"
+    #actionsMenuTrigger="matMenuTrigger"
   ></span>
 
-  <mat-menu #notificationMenu="matMenu">
-    <button
-      mat-menu-item
-      (click)="handleMarkAsRead(); $event.stopPropagation()"
-    >
-      <fa-icon
-        [icon]="notification.readStatus ? 'eye-slash' : 'check'"
-      ></fa-icon>
-      <span class="menu-option" i18n>{{
-        notification.readStatus ? "Mark as Unread" : "Mark as Read"
-      }}</span>
-    </button>
-    <button
-      mat-menu-item
-      (click)="handleDeleteNotification(); $event.stopPropagation()"
-    >
-      <fa-icon icon="trash"></fa-icon>
-      <span class="menu-option" i18n>Delete Notification</span>
-    </button>
+  <mat-menu #actionsMenu="matMenu">
+    <div (click)="closeOnlySubmenu(actionsMenuTrigger, $event)">
+      @if (!notification.readStatus) {
+        <button mat-menu-item (click)="updateReadStatus(true)">
+          <fa-icon icon="check"></fa-icon>
+          <span class="menu-option" i18n>Mark as read</span>
+        </button>
+      } @else {
+        <button mat-menu-item (click)="updateReadStatus(false)">
+          <fa-icon icon="eye-slash"></fa-icon>
+          <span class="menu-option" i18n>Mark as unread</span>
+        </button>
+      }
+
+      <button mat-menu-item (click)="handleDeleteNotification()">
+        <fa-icon icon="trash"></fa-icon>
+        <span class="menu-option" i18n>Delete notification</span>
+      </button>
+    </div>
   </mat-menu>
 </div>

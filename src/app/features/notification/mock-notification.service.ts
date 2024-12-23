@@ -13,14 +13,14 @@ export class MockNotificationsService {
       title: "Dummy Notification Title",
       body: "This is a dummy notification body.",
       actionURL: "http://localhost:4200",
-      sentBy: "User:demo",
+      sentBy: "demo",
       fcmToken: "",
       readStatus: true,
       created: {
-        at: "2024-12-03T19:21:19.130Z",
+        at: "2024-12-20T09:30:42.001Z",
       },
       updated: {
-        at: "2024-12-03T19:21:19.130Z",
+        at: "2024-12-20T09:30:42.001Z",
       },
     },
     {
@@ -31,12 +31,12 @@ export class MockNotificationsService {
       actionURL: "http://localhost:4200",
       fcmToken: "",
       readStatus: false,
-      sentBy: "User:demo",
+      sentBy: "demo",
       created: {
-        at: "2024-12-03T19:07:47.538Z",
+        at: "2024-12-20T09:30:42.001Z",
       },
       updated: {
-        at: "2024-12-03T19:07:47.538Z",
+        at: "2024-12-20T09:30:42.001Z",
       },
     },
   ];

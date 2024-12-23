@@ -1,10 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatMenu } from "@angular/material/menu";
+import { MatMenu, MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
-import { MatMenuTrigger } from "@angular/material/menu";
-import { MatMenuModule } from "@angular/material/menu";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Logging } from "app/core/logging/logging.service";
@@ -14,6 +12,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
 import { MockNotificationsService } from "./mock-notification.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
+import { closeOnlySubmenu } from "./close-only-submenu";
 
 @Component({
   selector: "app-notification",
@@ -61,16 +60,14 @@ export class NotificationComponent implements OnInit {
     const notifications =
       this.mockNotificationsService.getNotifications() as unknown as NotificationEvent[];
 
-    this.filterUserNotifications(
-      notifications,
-      this.sessionInfo.value?.entityId,
-    );
+    // The user is hardcoded for testing purposes, need to remove this.
+    this.filterUserNotifications(notifications, this.sessionInfo.value?.id);
   }
 
   /**
    * Filters notifications based on the sender.
    * @param notifications - The list of notifications.
-   * @param user - The user to filter notifications by.
+   * @param user - The user to filter notifications.
    */
   private filterUserNotifications(
     notifications: NotificationEvent[],
@@ -100,7 +97,7 @@ export class NotificationComponent implements OnInit {
     Logging.log("Notification enabled");
   }
 
-  async markAsRead(notification: NotificationEvent) {
+  async updateReadStatus(notification: NotificationEvent) {
     notification.readStatus = notification.readStatus;
     await this.entityMapper.save(notification);
   }
@@ -115,4 +112,6 @@ export class NotificationComponent implements OnInit {
     );
     Logging.log("Notification deleted");
   }
+
+  protected readonly closeOnlySubmenu = closeOnlySubmenu;
 }
