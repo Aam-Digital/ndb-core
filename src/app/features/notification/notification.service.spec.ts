@@ -8,6 +8,13 @@ import { environment } from "../../../environments/environment";
 import firebase from "firebase/compat/app";
 import { provideHttpClient } from "@angular/common/http";
 import { NotificationConfig } from "./notification-config.interface";
+import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
+
+class MockKeycloakAuthService {
+  addAuthHeader(headers: Record<string, string>) {
+    headers["Authorization"] = "Bearer mock-token";
+  }
+}
 
 describe("NotificationService", () => {
   let service: NotificationService;
@@ -16,7 +23,11 @@ describe("NotificationService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClientTesting(), provideHttpClient()],
+      providers: [
+        provideHttpClientTesting(),
+        provideHttpClient(),
+        { provide: KeycloakAuthService, useClass: MockKeycloakAuthService },
+      ],
     });
     service = TestBed.inject(NotificationService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -52,15 +63,15 @@ describe("NotificationService", () => {
     });
   });
 
-  describe("getFcmToken", () => {
+  describe("getNotificationToken", () => {
     it("should return the token from the cookie if available", async () => {
       environment.notificationsConfig = notificationConfig;
       spyOn(service, "getNotificationTokenFromCookie").and.returnValue(null);
-      spyOn(service, "getFcmToken").and.callFake(async () => {
+      spyOn(service, "getNotificationToken").and.callFake(async () => {
         const token = service.getNotificationTokenFromCookie();
         return token || "existing_token";
       });
-      const token = await service.getFcmToken();
+      const token = await service.getNotificationToken();
       expect(token).toBe("existing_token");
     });
 
@@ -71,7 +82,7 @@ describe("NotificationService", () => {
       spyOn(service, "setCookie").and.callThrough();
 
       spyOn(firebase.messaging(), "getToken").and.resolveTo("new_token");
-      spyOn(service, "getFcmToken").and.callFake(async () => {
+      spyOn(service, "getNotificationToken").and.callFake(async () => {
         const token = service.getNotificationTokenFromCookie();
         if (!token) {
           const newToken = await firebase.messaging().getToken();
@@ -85,7 +96,7 @@ describe("NotificationService", () => {
         return token;
       });
 
-      const token = await service.getFcmToken();
+      const token = await service.getNotificationToken();
       expect(token).toBe("new_token");
       expect(service.setCookie).toHaveBeenCalledWith(
         "notification_token",
@@ -103,7 +114,7 @@ describe("NotificationService", () => {
         new Error("Token error"),
       );
 
-      const token = await service.getFcmToken();
+      const token = await service.getNotificationToken();
       expect(token).toBeNull();
       expect().nothing();
     });

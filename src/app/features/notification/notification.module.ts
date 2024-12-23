@@ -15,7 +15,6 @@ export class NotificationModule {
   constructor(private notificationService: NotificationService) {
     if (environment.notificationsConfig?.enabled) {
       this.notificationService.init();
-      this.notificationService.getFcmToken();
       this.notificationService.listenForMessages();
     }
   }
