@@ -52,7 +52,7 @@ export class UserNotificationSettingComponent {
   constructor(private confirmationDialog: ConfirmationDialogService) {}
 
   addNewRule() {
-    // TODO: Implement the logic to update the new field and save all the field value in the form control and update in the backend.
+    // TODO: Implement the logic to update the field and save all the field value in the CouchDB backend.
     this.notificationRules.push({
       selectedOption: "",
       inputValue: "",
