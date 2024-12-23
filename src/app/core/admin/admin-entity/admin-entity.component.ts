@@ -33,6 +33,7 @@ import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entit
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature/beta-feature.component";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { AdminEntityService } from "../admin-entity.service";
 
 @Component({
   selector: "app-admin-entity",
@@ -75,6 +76,7 @@ export class AdminEntityComponent implements OnInit {
     private configService: ConfigService,
     private location: Location,
     private entityMapper: EntityMapperService,
+    private adminEntity: AdminEntityService,
     private entityActionsService: EntityActionsService,
     private routes: ActivatedRoute,
   ) {}
@@ -149,7 +151,12 @@ export class AdminEntityComponent implements OnInit {
     ] = this.configDetailsView;
     newConfig.data[EntityConfigService.getListViewId(this.entityConstructor)] =
       this.configListView;
-    this.setEntityConfig(newConfig);
+
+    this.adminEntity.setEntityConfig(
+      newConfig,
+      this.entityConstructor,
+      this.configEntitySettings,
+    );
 
     await this.entityMapper.save(newConfig);
     this.entityActionsService.showSnackbarConfirmationWithUndo(
