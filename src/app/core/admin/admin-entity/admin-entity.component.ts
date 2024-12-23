@@ -166,30 +166,4 @@ export class AdminEntityComponent implements OnInit {
 
     this.location.back();
   }
-
-  private setEntityConfig(newConfig: Config) {
-    const entityConfigKey =
-      EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType;
-
-    // init config if not present
-    newConfig.data[entityConfigKey] =
-      newConfig.data[entityConfigKey] ?? ({ attributes: {} } as EntityConfig);
-    newConfig.data[entityConfigKey].attributes =
-      newConfig.data[entityConfigKey].attributes ?? {};
-
-    const entitySchemaConfig: EntityConfig = newConfig.data[entityConfigKey];
-
-    for (const [fieldId, field] of this.entityConstructor.schema.entries()) {
-      entitySchemaConfig.attributes[fieldId] = field;
-    }
-    if (this.configEntitySettings) {
-      entitySchemaConfig.label = this.configEntitySettings.label;
-      entitySchemaConfig.labelPlural = this.configEntitySettings.labelPlural;
-      entitySchemaConfig.icon = this.configEntitySettings.icon;
-      entitySchemaConfig.color = this.configEntitySettings.color;
-      entitySchemaConfig.toStringAttributes =
-        this.configEntitySettings.toStringAttributes;
-      entitySchemaConfig.hasPII = this.configEntitySettings.hasPII;
-    }
-  }
 }
