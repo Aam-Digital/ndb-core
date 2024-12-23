@@ -8,9 +8,9 @@
     <div
       i18n
       class="notification-time"
-      [matTooltip]="notification.created.at | date: 'short'"
+      [matTooltip]="notification.created?.at | date: 'short'"
     >
-      {{ notification.created.at | notificationTime }}
+      {{ notification.created?.at | notificationTime }}
     </div>
   </div>
 
