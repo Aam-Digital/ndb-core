@@ -1,0 +1,48 @@
+<div
+  class="flex-row justify-space-between align-center notification-item-wrapper"
+  [ngClass]="{ 'read-notification': notification.readStatus }"
+>
+  <div class="notification-details">
+    <div i18n class="notification-title">{{ notification.title }}</div>
+    <div i18n class="notification-body">{{ notification.body }}</div>
+    <div
+      i18n
+      class="notification-time"
+      [matTooltip]="notification.created?.at | date: 'short'"
+    >
+      {{ notification.created?.at | notificationTime }}
+    </div>
+  </div>
+
+  <!-- Blue indicator for unread/read notifications -->
+  <span
+    [ngClass]="notification.readStatus ? 'read-indicator' : 'unread-indicator'"
+    matTooltip="{{
+      notification.readStatus ? 'Read notification' : 'Unread notification'
+    }}"
+    i18n-matTooltip
+    [matMenuTriggerFor]="actionsMenu"
+    #actionsMenuTrigger="matMenuTrigger"
+  ></span>
+
+  <mat-menu #actionsMenu="matMenu">
+    <div (click)="closeOnlySubmenu(actionsMenuTrigger, $event)">
+      @if (!notification.readStatus) {
+        <button mat-menu-item (click)="updateReadStatus(true)">
+          <fa-icon icon="check"></fa-icon>
+          <span class="menu-option" i18n>Mark as read</span>
+        </button>
+      } @else {
+        <button mat-menu-item (click)="updateReadStatus(false)">
+          <fa-icon icon="eye-slash"></fa-icon>
+          <span class="menu-option" i18n>Mark as unread</span>
+        </button>
+      }
+
+      <button mat-menu-item (click)="handleDeleteNotification()">
+        <fa-icon icon="trash"></fa-icon>
+        <span class="menu-option" i18n>Delete notification</span>
+      </button>
+    </div>
+  </mat-menu>
+</div>
