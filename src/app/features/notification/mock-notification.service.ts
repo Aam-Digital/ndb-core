@@ -10,7 +10,7 @@ import { v4 as uuid } from "uuid";
 export class MockNotificationsService {
   mockNotifications = [
     createDummyNotification(true, moment().subtract(1, "hour").toDate()),
-    createDummyNotification(false, moment().subtract(1, "day").toDate()),
+    createDummyNotification(true, moment().subtract(1, "day").toDate()),
     createDummyNotification(true, moment().subtract(1, "week").toDate()),
     createDummyNotification(true, moment().subtract(1, "month").toDate()),
     createDummyNotification(true, moment().subtract(1, "year").toDate()),

@@ -38,28 +38,32 @@
       <mat-tab label="Unread" i18n-label></mat-tab>
     </mat-tab-group>
 
-    @for (
-      notification of selectedTab === 0
-        ? allNotifications
-        : unreadNotifications;
-      track notification
-    ) {
-      <app-notification-item
-        [notification]="notification"
-        (onDeleteNotification)="deleteNotification.bind(this, notification)"
-        (toggleReadStatus)="
-          selectedTab === 1 ? updateReadStatus(notification) : null
-        "
-      ></app-notification-item>
-    } @empty {
-      <div class="flex-column no-notification-message">
-        <fa-icon
-          class="no-notification-icon"
-          [icon]="['far', 'bell']"
-        ></fa-icon>
-        <span class="no-notification-text" i18n>You have no notifications</span>
-      </div>
-    }
+    <div class="flex-column gap-small">
+      @for (
+        notification of selectedTab === 0
+          ? allNotifications
+          : unreadNotifications;
+        track notification
+      ) {
+        <app-notification-item
+          [notification]="notification"
+          (onDeleteNotification)="deleteNotification.bind(this, notification)"
+          (toggleReadStatus)="
+            selectedTab === 1 ? updateReadStatus(notification) : null
+          "
+        ></app-notification-item>
+      } @empty {
+        <div class="flex-column no-notification-message">
+          <fa-icon
+            class="no-notification-icon"
+            [icon]="['far', 'bell']"
+          ></fa-icon>
+          <span class="no-notification-text" i18n
+            >You have no notifications</span
+          >
+        </div>
+      }
+    </div>
   </div>
 </mat-menu>
 
