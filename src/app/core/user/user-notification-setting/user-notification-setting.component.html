@@ -14,14 +14,20 @@
       </h3>
     </div>
 
-    <ng-container *ngFor="let notification of notificationRule; let i = index">
+    @for (
+      notificationRule of notificationRules;
+      track notificationRule;
+      let index = $index
+    ) {
       <div
         class="flex-column justify-space-between align-center notifications-options-container"
       >
         <div
           class="flex-column justify-space-between align-center notification-options-wrapper"
         >
-          <div class="flex-row justify-content-center align-center notification-item">
+          <div
+            class="flex-row justify-content-center align-center notification-item"
+          >
             <app-entity-type-select
               [allowMultiSelect]="false"
               label="Select an entity type"
@@ -37,7 +43,7 @@
               <mat-label i18n>Notification condition</mat-label>
               <input
                 matInput
-                [(ngModel)]="notification.inputValue"
+                [(ngModel)]="notificationRule.inputValue"
                 placeholder="TO BE IMPLEMENTED LATER"
                 disabled="true"
                 i18n-placeholder="Notification condition placeholder"
@@ -49,7 +55,9 @@
             ></app-help-button>
           </div>
 
-          <div class="flex-row justify-content-center align-center notification-item">
+          <div
+            class="flex-row justify-content-center align-center notification-item"
+          >
             <app-notification-center-select
               [selectedOption]="['Push']"
               [options]="notificationOptions"
@@ -66,7 +74,7 @@
         <div class="flex-row notification-rule-actions">
           <div class="flex-row align-center">
             <mat-slide-toggle
-              [(ngModel)]="notification.toggleValue"
+              [(ngModel)]="notificationRule.toggleValue"
               class="notification-toggle"
               matTooltip="Enable or disable notification rule"
               i18n-matTooltip
@@ -74,9 +82,9 @@
           </div>
 
           <button
-            *ngIf="notificationRule.length > 1"
+            *ngIf="notificationRules.length > 1"
             mat-icon-button
-            (click)="confirmRemoveNotificationRule(i)"
+            (click)="confirmRemoveNotificationRule(index)"
             matTooltip="Remove notification rule"
             i18n-matTooltip
           >
@@ -93,7 +101,7 @@
           </button>
         </div>
       </div>
-    </ng-container>
+    }
     <div class="add-new-notification-rule">
       <button
         mat-stroked-button

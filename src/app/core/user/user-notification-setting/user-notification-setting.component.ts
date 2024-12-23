@@ -1,13 +1,13 @@
 import { Component } from "@angular/core";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatInputModule } from "@angular/material/input";
-import { NgFor, NgIf } from "@angular/common";
+import { NgIf } from "@angular/common";
 import {
   FaIconComponent,
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import { FormsModule, FormControl } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -28,7 +28,6 @@ interface Notification {
   imports: [
     MatSlideToggle,
     MatInputModule,
-    NgFor,
     FontAwesomeModule,
     FormsModule,
     MatFormFieldModule,
@@ -45,7 +44,7 @@ interface Notification {
   styleUrl: "./user-notification-setting.component.scss",
 })
 export class UserNotificationSettingComponent {
-  notificationRule: Notification[] = [
+  notificationRules: Notification[] = [
     { selectedOption: "", inputValue: "", toggleValue: false },
   ];
   notificationOptions = ["Push", "Email"];
@@ -54,7 +53,7 @@ export class UserNotificationSettingComponent {
 
   addNewRule() {
     // TODO: Implement the logic to update the new field and save all the field value in the form control and update in the backend.
-    this.notificationRule.push({
+    this.notificationRules.push({
       selectedOption: "",
       inputValue: "",
       toggleValue: false,
@@ -76,7 +75,7 @@ export class UserNotificationSettingComponent {
       return;
     }
 
-    this.notificationRule.splice(index, 1);
+    this.notificationRules.splice(index, 1);
     return true;
   }
 
