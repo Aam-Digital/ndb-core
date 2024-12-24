@@ -29,7 +29,7 @@
 
 .receive-notifications-container {
   @extend .panel-wrapper;
-  background-color: white;
+  background-color: colors.$background;
 }
 
 .notifications-options-container {
@@ -97,7 +97,7 @@ app-notification-center-select {
   @extend app-entity-type-select;
 }
 
-.notification-item {
+.notification-rule-option {
   width: 80%;
 }
 
