@@ -38,15 +38,18 @@ export class EditPublicFormColumnsComponent
     this.originalEntitySchemaFields = JSON.parse(
       JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
     );
-
-    this.entityForm.onFormStateChange.subscribe((event) => {
-      if (event === "saved")
-        this.adminEntityService.setAndSaveEntityConfig(this.entityConstructor);
-      if (event === "cancelled")
-        this.entityConstructor.schema = new Map(
-          this.originalEntitySchemaFields,
-        );
-    });
+    if (this.entityForm) {
+      this.entityForm.onFormStateChange.subscribe((event) => {
+        if (event === "saved")
+          this.adminEntityService.setAndSaveEntityConfig(
+            this.entityConstructor,
+          );
+        if (event === "cancelled")
+          this.entityConstructor.schema = new Map(
+            this.originalEntitySchemaFields,
+          );
+      });
+    }
   }
 
   updateValue(newConfig: FormConfig) {

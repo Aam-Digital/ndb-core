@@ -94,7 +94,7 @@ describe("PublicFormComponent", () => {
     component.submit();
 
     expect(saveSpy).toHaveBeenCalledWith(
-      component.form.formGroup,
+      component.form,
       component.entity,
     );
     tick();
@@ -112,7 +112,7 @@ describe("PublicFormComponent", () => {
     component.submit();
 
     expect(saveSpy).toHaveBeenCalledWith(
-      component.form.formGroup,
+      component.form,
       component.entity,
     );
     tick();

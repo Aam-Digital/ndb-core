@@ -11,6 +11,7 @@ import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.serv
 import { FormControl, FormGroup } from "@angular/forms";
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
 import { DefaultValueService } from "./default-value.service";
+import { EventEmitter } from "@angular/core";
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
@@ -46,6 +47,7 @@ describe("InheritedValueService", () => {
       formGroup: new FormGroup<any>({
         field1: new FormControl(),
       }),
+      onFormStateChange: new EventEmitter<"saved" | "cancelled">(),
       entity: entity,
       fieldConfigs: [],
       watcher: new Map(),
@@ -85,6 +87,7 @@ describe("InheritedValueService", () => {
         field1: new FormControl(),
         field2: new FormControl(),
       }),
+      onFormStateChange: new EventEmitter<"saved" | "cancelled">(),
       entity: entity,
       fieldConfigs: [],
       watcher: new Map(),
@@ -128,6 +131,7 @@ describe("InheritedValueService", () => {
         field1: new FormControl(),
         field2: new FormControl(),
       }),
+      onFormStateChange: new EventEmitter<"saved" | "cancelled">(),
       entity: entity,
       fieldConfigs: [],
       watcher: new Map(),
