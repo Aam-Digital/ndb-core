@@ -8,11 +8,9 @@ import {
 import { CommonModule, Location } from "@angular/common";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
 import { EntityConfigService } from "../../entity/entity-config.service";
-import { Config } from "../../config/config";
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
@@ -75,8 +73,7 @@ export class AdminEntityComponent implements OnInit {
     private entities: EntityRegistry,
     private configService: ConfigService,
     private location: Location,
-    private entityMapper: EntityMapperService,
-    private adminEntity: AdminEntityService,
+    private adminEntityService: AdminEntityService,
     private entityActionsService: EntityActionsService,
     private routes: ActivatedRoute,
   ) {}
@@ -140,28 +137,16 @@ export class AdminEntityComponent implements OnInit {
   }
 
   async save() {
-    const originalConfig = await this.entityMapper.load(
-      Config,
-      Config.CONFIG_KEY,
-    );
-    const newConfig = originalConfig.copy();
-
-    newConfig.data[
-      EntityConfigService.getDetailsViewId(this.entityConstructor)
-    ] = this.configDetailsView;
-    newConfig.data[EntityConfigService.getListViewId(this.entityConstructor)] =
-      this.configListView;
-
-    this.adminEntity.setEntityConfig(
-      newConfig,
+    const result = await this.adminEntityService.setAndSaveEntityConfig(
       this.entityConstructor,
       this.configEntitySettings,
+      this.configListView,
+      this.configDetailsView,
     );
 
-    await this.entityMapper.save(newConfig);
     this.entityActionsService.showSnackbarConfirmationWithUndo(
       $localize`:Save config confirmation message:Configuration updated`,
-      [originalConfig],
+      [result.previous],
     );
 
     this.location.back();

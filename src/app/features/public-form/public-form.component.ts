@@ -69,7 +69,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   async submit() {
     try {
       await this.entityFormService.saveChanges(
-        this.form.formGroup,
+        this.form,
         this.entity,
       );
       this.snackbar.open($localize`Successfully submitted form`);

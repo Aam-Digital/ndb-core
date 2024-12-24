@@ -68,7 +68,7 @@ export class TodoDetailsComponent implements OnInit {
     if (this.form.formGroup.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
       await this.entityFormService.saveChanges(
-        this.form.formGroup,
+        this.form,
         this.entity,
       );
     }
