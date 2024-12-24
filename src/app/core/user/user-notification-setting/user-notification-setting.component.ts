@@ -1,13 +1,13 @@
 import { Component } from "@angular/core";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatInputModule } from "@angular/material/input";
-import { NgIf } from "@angular/common";
+import { NgFor, NgIf } from "@angular/common";
 import {
   FaIconComponent,
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -15,12 +15,7 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { NotificationCenterSelectComponent } from "app/features/notification/notification-center-select/notification-center-select.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-
-interface Notification {
-  selectedOption: string;
-  inputValue: string;
-  toggleValue: boolean;
-}
+import { FormControl, FormGroup } from "@angular/forms";
 
 @Component({
   selector: "app-user-notification-setting",
@@ -39,25 +34,41 @@ interface Notification {
     EntityTypeSelectComponent,
     HelpButtonComponent,
     NotificationCenterSelectComponent,
+    ReactiveFormsModule,
+    NgFor,
   ],
   templateUrl: "./user-notification-setting.component.html",
   styleUrl: "./user-notification-setting.component.scss",
 })
 export class UserNotificationSettingComponent {
-  notificationRules: Notification[] = [
-    { selectedOption: "", inputValue: "", toggleValue: false },
+  notificationRules = [
+    {
+      notificationRuleCondition: "",
+      notificationMethod: "Push",
+      enabled: false,
+    },
   ];
   notificationOptions = ["Push", "Email"];
 
+  notificationSetting = new FormGroup({
+    entityType: new FormControl<string>(""),
+    notificationRuleCondition: new FormControl<string>(""),
+    notificationMethod: new FormControl<string>("Push"),
+    enabled: new FormControl<boolean>(false),
+  });
+
   constructor(private confirmationDialog: ConfirmationDialogService) {}
 
+  /**
+   * Adds a new notification rule and initializes its default values.
+   */
   addNewRule() {
-    // TODO: Implement the logic to update the field and save all the field value in the CouchDB backend.
-    this.notificationRules.push({
-      selectedOption: "",
-      inputValue: "",
-      toggleValue: false,
-    });
+    const newRule = {
+      notificationRuleCondition: "",
+      notificationMethod: "Push",
+      enabled: false,
+    };
+    this.notificationRules.push(newRule);
   }
 
   /**
@@ -67,8 +78,8 @@ export class UserNotificationSettingComponent {
    */
   async confirmRemoveNotificationRule(index: number) {
     const confirmed = await this.confirmationDialog.getConfirmation(
-      `Delete notification rule`,
-      `Are you sure you want to remove this notification rule?`,
+      "Delete notification rule",
+      "Are you sure you want to remove this notification rule?",
     );
 
     if (!confirmed) {
@@ -79,11 +90,18 @@ export class UserNotificationSettingComponent {
     return true;
   }
 
+  /**
+   * Enables or disables notifications and updates the backend.
+   * @param index The index of the notification rule being toggled.
+   */
   onEnableNotification() {
     // TODO: Implement the logic to enable the notification for user and update the value in CouchDB backend.
     Logging.log("Browser notifications toggled.");
   }
 
+  /**
+   * Sends a test notification.
+   */
   testNotification() {
     // TODO: Implement the logic to test the notification setting.
     Logging.log("Notification settings test successful.");

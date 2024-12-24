@@ -5,6 +5,7 @@ import {
   entityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("UserNotificationSettingComponent", () => {
   let component: UserNotificationSettingComponent;
@@ -12,7 +13,11 @@ describe("UserNotificationSettingComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserNotificationSettingComponent, FontAwesomeTestingModule],
+      imports: [
+        UserNotificationSettingComponent,
+        FontAwesomeTestingModule,
+        BrowserAnimationsModule,
+      ],
       providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
     }).compileComponents();
 
