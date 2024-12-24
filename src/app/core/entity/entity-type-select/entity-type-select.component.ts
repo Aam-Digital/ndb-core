@@ -31,6 +31,8 @@ import { MatFormField, MatLabel } from "@angular/material/form-field";
   ],
   standalone: true,
 })
+
+// TODO: Need to use the CustomFormControlDirective abstract class instead of ControlValueAccessor.
 export class EntityTypeSelectComponent implements ControlValueAccessor {
   @Input() formControl: FormControl;
   @Input() allowMultiSelect = false;

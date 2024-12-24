@@ -17,7 +17,11 @@
       activities in the application
     </div>
 
-    <div *ngFor="let notificationRule of notificationRules; let index = index">
+    @for (
+      notificationRule of notificationRules;
+      track notificationRule;
+      let index = $index
+    ) {
       <div
         class="flex-column justify-space-between align-center notifications-options-container"
       >
@@ -101,7 +105,7 @@
           </button>
         </div>
       </div>
-    </div>
+    }
     <div class="add-new-notification-rule">
       <button
         mat-stroked-button

@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatInputModule } from "@angular/material/input";
-import { NgFor, NgIf } from "@angular/common";
+import { NgIf } from "@angular/common";
 import {
   FaIconComponent,
   FontAwesomeModule,
@@ -35,7 +35,6 @@ import { FormControl, FormGroup } from "@angular/forms";
     HelpButtonComponent,
     NotificationCenterSelectComponent,
     ReactiveFormsModule,
-    NgFor,
   ],
   templateUrl: "./user-notification-setting.component.html",
   styleUrl: "./user-notification-setting.component.scss",
@@ -46,10 +45,11 @@ export class UserNotificationSettingComponent {
       notificationRuleCondition: "",
       notificationMethod: "Push",
       enabled: false,
+      entityType: "",
     },
   ];
   notificationOptions = ["Push", "Email"];
-
+  // TODO: Update this Form Group when we implement the logic to dynamically update the notification rules.
   notificationSetting = new FormGroup({
     entityType: new FormControl<string>(""),
     notificationRuleCondition: new FormControl<string>(""),
@@ -67,6 +67,7 @@ export class UserNotificationSettingComponent {
       notificationRuleCondition: "",
       notificationMethod: "Push",
       enabled: false,
+      entityType: "",
     };
     this.notificationRules.push(newRule);
   }
