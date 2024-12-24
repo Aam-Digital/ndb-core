@@ -81,9 +81,14 @@ export class NotificationComponent implements OnInit {
     );
   }
 
-  markAllRead() {
-    // TODO: Implement the logic to mark all notifications as read.
-    Logging.log("All notifications marked as read");
+  async markAllRead() {
+    this.allNotifications.forEach((notification) => {
+      if (!notification.readStatus) {
+        notification.readStatus = true;
+        this.entityMapper.save(notification);
+      }
+    });
+    this.loadAndProcessNotifications();
   }
 
   enableNotificationForUser() {
