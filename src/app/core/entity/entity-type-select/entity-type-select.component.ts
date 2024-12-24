@@ -1,7 +1,6 @@
 import { Component, Input, forwardRef } from "@angular/core";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import {
-  ControlValueAccessor,
   NG_VALUE_ACCESSOR,
   FormControl,
   ReactiveFormsModule,
@@ -33,7 +32,7 @@ import { MatFormField, MatLabel } from "@angular/material/form-field";
 })
 
 // TODO: Need to use the CustomFormControlDirective abstract class instead of ControlValueAccessor.
-export class EntityTypeSelectComponent implements ControlValueAccessor {
+export class EntityTypeSelectComponent {
   @Input() formControl: FormControl;
   @Input() allowMultiSelect = false;
   @Input() label: string;
