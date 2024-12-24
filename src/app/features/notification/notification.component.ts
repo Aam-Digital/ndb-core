@@ -10,6 +10,7 @@ import { NotificationEvent } from "./model/notification-event";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
+import { Router } from "@angular/router";
 import { MockNotificationsService } from "./mock-notification.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { closeOnlySubmenu } from "./close-only-submenu";
@@ -37,9 +38,11 @@ export class NotificationComponent implements OnInit {
   public unreadNotifications: NotificationEvent[] = [];
   public selectedTab = 0;
   public hasNotificationEnabled = false;
+  protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
   constructor(
     private entityMapper: EntityMapperService,
+    private router: Router,
     private mockNotificationsService: MockNotificationsService,
     private sessionInfo: SessionSubject,
   ) {}
@@ -110,5 +113,7 @@ export class NotificationComponent implements OnInit {
     this.filterUserNotifications(this.allNotifications);
   }
 
-  protected readonly closeOnlySubmenu = closeOnlySubmenu;
+  onRedirectToNotificationsSetting() {
+    this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
+  }
 }

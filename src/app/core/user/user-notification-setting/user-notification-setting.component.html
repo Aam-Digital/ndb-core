@@ -1,0 +1,165 @@
+<div class="notifications-container">
+  <h1 class="notification-setting-title">
+    <strong i18n>Notifications settings</strong>
+  </h1>
+  <div i18n>
+    You can set up and customize notifications to get timely updates about
+    beneficiaries, tasks, or notes. You can choose how you want to receive these
+    notifications, either through email or alerts in the app.
+  </div>
+
+  <div class="notification-types-container">
+    <h3 class="no-margin" i18n>
+      <strong>What notifications you receive</strong>
+    </h3>
+    <div i18n>
+      Customize and configure notifications to receive updates about various
+      activities in the application
+    </div>
+
+    @for (
+      notificationRule of notificationRules.controls;
+      track notificationRule;
+      let index = $index
+    ) {
+      <div
+        class="flex-column justify-space-between align-center notifications-options-container"
+      >
+        <div
+          class="flex-column justify-space-between align-center notification-options-wrapper"
+        >
+          <div
+            class="flex-row justify-content-center align-center notification-rule-option"
+          >
+            <app-entity-type-select
+              [allowMultiSelect]="false"
+              label="Select an entity type"
+              [formControl]="getFormField(index, 'entityType')"
+            ></app-entity-type-select>
+            <app-help-button
+              text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
+              i18n-text
+            ></app-help-button>
+          </div>
+
+          <div class="flex-row justify-content-center align-center full-width">
+            <mat-form-field class="notification-rule-option">
+              <mat-label i18n>Notification condition</mat-label>
+              <input
+                matInput
+                placeholder="TO BE IMPLEMENTED LATER"
+                disabled="true"
+                i18n-placeholder="Notification condition placeholder"
+              />
+            </mat-form-field>
+            <app-help-button
+              text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
+              i18n-text
+            ></app-help-button>
+          </div>
+
+          <div
+            class="flex-row justify-content-center align-center notification-rule-option"
+          >
+            <app-notification-center-select
+              [selectedNotificationMethod]="['Push']"
+              [notificationMethods]="notificationMethods"
+              [disabled]="true"
+              label="Notification Method"
+            ></app-notification-center-select>
+            <app-help-button
+              text="Define a notification method to receive notifications"
+              i18n-text
+            ></app-help-button>
+          </div>
+        </div>
+
+        <div class="flex-row notification-rule-actions">
+          <div class="flex-row align-center">
+            <mat-slide-toggle
+              [formControl]="getFormField(index, 'enabled')"
+              class="notification-toggle"
+              matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
+              i18n-matTooltip
+            ></mat-slide-toggle>
+          </div>
+
+          <button
+            *ngIf="notificationRules.controls.length > 1"
+            mat-icon-button
+            (click)="confirmRemoveNotificationRule(index)"
+            matTooltip="Remove notification rule"
+            i18n-matTooltip
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            (click)="testNotification()"
+            matTooltip="Test notification"
+            i18n-matTooltip
+          >
+            <fa-icon icon="paper-plane"></fa-icon>
+          </button>
+        </div>
+      </div>
+    }
+    <div class="add-new-notification-rule">
+      <button
+        mat-stroked-button
+        class="add-new-rule-button"
+        color="accent"
+        (click)="addNewRule()"
+        matTooltip="Add new notification rule"
+        i18n-matTooltip
+      >
+        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+        <span i18n class="new-notification-rule"
+          >Add new notification rule</span
+        >
+      </button>
+    </div>
+  </div>
+
+  <div class="browser-notifications-container">
+    <div class="browser-notifications-title">
+      <h3 i18n class="no-margin">
+        <strong>Where you receive notifications</strong>
+      </h3>
+      <div i18n>Decide where you want to get notifications.</div>
+    </div>
+    <div class="receive-notifications-container">
+      <div class="flex-row">
+        <fa-icon icon="window-maximize"></fa-icon>
+        <p class="notification-toggle" i18n>Browser</p>
+      </div>
+      <div
+        class="flex-row align-center justify-space-between browser-notification-list"
+      >
+        <div class="flex-row align-center">
+          <span i18n>Push notifications</span>
+          <app-help-button
+            text="You can receive real-time alerts directly on your device or app. These alerts keep you updated about messages, events, or changes without needing to open the app."
+            i18n-text
+          ></app-help-button>
+        </div>
+        <mat-slide-toggle (change)="onEnableNotification()" />
+      </div>
+
+      <div class="flex-row">
+        <fa-icon icon="envelope"></fa-icon>
+        <p class="notification-toggle" i18n>Email</p>
+      </div>
+      <div
+        class="flex-row align-center justify-space-between browser-notification-list"
+      >
+        <div class="flex-row align-center">
+          <span i18n>Email notifications</span>
+          <span class="coming-soon-label" i18n>Coming Soon</span>
+        </div>
+        <mat-slide-toggle disabled></mat-slide-toggle>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { NotificationItemComponent } from "./notification-item.component";
 import { NotificationEvent } from "../model/notification-event";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -20,7 +19,6 @@ describe("NotificationItemComponent", () => {
 
     fixture = TestBed.createComponent(NotificationItemComponent);
     component = fixture.componentInstance;
-
     component.notification = new NotificationEvent();
 
     fixture.detectChanges();
