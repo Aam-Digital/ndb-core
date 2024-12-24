@@ -7,13 +7,14 @@
 .notification-details {
   flex: 1;
   text-align: left;
-  line-height: 21px;
 }
 
-.notification-item {
+.notification-title {
   font-weight: bold;
-  font-size: 14px;
-  margin: 0;
+}
+
+.notification-body {
+  font-size: 0.85em;
 }
 
 .notification-time {
