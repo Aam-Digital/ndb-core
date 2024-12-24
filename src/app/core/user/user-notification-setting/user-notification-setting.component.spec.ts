@@ -1,17 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { Database } from "app/core/database/database";
 import { UserNotificationSettingComponent } from "./user-notification-setting.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "app/core/entity/database-entity.decorator";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("UserNotificationSettingComponent", () => {
   let component: UserNotificationSettingComponent;
   let fixture: ComponentFixture<UserNotificationSettingComponent>;
 
   beforeEach(async () => {
-    let mockDatabase: jasmine.SpyObj<Database>;
     await TestBed.configureTestingModule({
-      imports: [UserNotificationSettingComponent, FontAwesomeModule],
-      providers: [{ provide: Database, useValue: mockDatabase }],
+      imports: [UserNotificationSettingComponent, FontAwesomeTestingModule],
+      providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(UserNotificationSettingComponent);
