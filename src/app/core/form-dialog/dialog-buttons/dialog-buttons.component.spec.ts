@@ -17,10 +17,11 @@ import { FormGroup } from "@angular/forms";
 import { firstValueFrom, Subject } from "rxjs";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-
+import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EventEmitter } from "@angular/core";
 describe("DialogButtonsComponent", () => {
-  let component: DialogButtonsComponent;
-  let fixture: ComponentFixture<DialogButtonsComponent>;
+  let component: DialogButtonsComponent<Entity>;
+  let fixture: ComponentFixture<DialogButtonsComponent<Entity>>;
   let dialogRef: jasmine.SpyObj<MatDialogRef<any>>;
   let backdropClick = new Subject<any>();
   let closed = new Subject<void>();
@@ -39,7 +40,16 @@ describe("DialogButtonsComponent", () => {
     fixture = TestBed.createComponent(DialogButtonsComponent);
     component = fixture.componentInstance;
     component.entity = new Entity();
-    component.form = new FormGroup({});
+
+    let mockEntityForm: EntityForm<any> = {
+      formGroup: new FormGroup({}),
+      onFormStateChange: new EventEmitter<"saved" | "cancelled">(),
+      entity: new Entity(),
+      fieldConfigs: [],
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
+    component.form = mockEntityForm;
     fixture.detectChanges();
   });
 
@@ -77,7 +87,7 @@ describe("DialogButtonsComponent", () => {
   }));
 
   it("should not disable the form when creating a new entity", () => {
-    expect(component.form.disabled).toBeFalsy();
+    expect(component.form.formGroup.disabled).toBeFalsy();
   });
 
   it("should create the details route", () => {

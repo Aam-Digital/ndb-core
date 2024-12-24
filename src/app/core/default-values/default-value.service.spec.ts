@@ -7,6 +7,7 @@ import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { DefaultValueService } from "./default-value.service";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
 import { InheritedValueService } from "./inherited-value.service";
+import { EventEmitter } from "@angular/core";
 
 /**
  * Helper function to add some custom schema fields to Entity for testing.
@@ -33,6 +34,7 @@ export function getDefaultInheritedForm(
     ),
     inheritedParentValues: new Map(),
     watcher: new Map(),
+    onFormStateChange: new EventEmitter<"saved" | "cancelled">(),
     formGroup: new FormBuilder().group<any>({
       field: new FormControl(),
       field2: new FormControl(),

@@ -10,6 +10,8 @@ import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 
 describe("AdminEntityGeneralSettingsComponent", () => {
   let component: AdminEntityGeneralSettingsComponent;
@@ -40,6 +42,12 @@ describe("AdminEntityGeneralSettingsComponent", () => {
         FontAwesomeTestingModule,
         ReactiveFormsModule,
         FormsModule,
+      ],
+      providers: [
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(),
+        },
       ],
     }).compileComponents();
   });

@@ -1,6 +1,10 @@
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
-import { EntityFormService } from "./entity-form.service";
+import {
+  EntityForm,
+  EntityFormGroup,
+  EntityFormService,
+} from "./entity-form.service";
 import {
   FormControl,
   UntypedFormControl,
@@ -28,6 +32,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { EventEmitter } from "@angular/core";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -48,11 +53,13 @@ describe("EntityFormService", () => {
     const copyEntity = entity.copy();
     spyOn(entity, "copy").and.returnValue(copyEntity);
     spyOn(copyEntity, "assertValid").and.throwError(new Error());
+
     const formGroup = new UntypedFormGroup({
       _id: new FormControl("newId"),
     });
+    const entityForm = createMockEntityForm(entity, formGroup);
 
-    await expectAsync(service.saveChanges(formGroup, entity)).toBeRejected();
+    await expectAsync(service.saveChanges(entityForm, entity)).toBeRejected();
     expect(entity.getId()).not.toBe(`${Entity.ENTITY_TYPE}:newId`);
   });
 
@@ -61,11 +68,12 @@ describe("EntityFormService", () => {
     const formGroup = new UntypedFormGroup({
       _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
     });
+    const entityForm = createMockEntityForm(entity, formGroup);
     TestBed.inject(EntityAbility).update([
       { subject: "Entity", action: "create" },
     ]);
 
-    await service.saveChanges(formGroup, entity);
+    await service.saveChanges(entityForm, entity);
 
     expect(entity.getId()).toBe(`${Entity.ENTITY_TYPE}:newId`);
   });
@@ -78,8 +86,9 @@ describe("EntityFormService", () => {
     TestBed.inject(EntityAbility).update([
       { subject: "Entity", action: "create" },
     ]);
+    const entityForm = createMockEntityForm(entity, formGroup);
 
-    await service.saveChanges(formGroup, entity);
+    await service.saveChanges(entityForm, entity);
 
     expect(formGroup.pristine).toBeTrue();
     // form status change is needed for EditFileComponent to start file upload, for example
@@ -101,11 +110,13 @@ describe("EntityFormService", () => {
     const formGroup = new UntypedFormGroup({
       name: new UntypedFormControl("normal school"),
     });
-    await service.saveChanges(formGroup, school);
+    const entityForm = createMockEntityForm(school, formGroup);
+
+    await service.saveChanges(entityForm, school);
     expect(school.name).toBe("normal school");
 
     formGroup.patchValue({ name: "un-permitted entity" });
-    const result = service.saveChanges(formGroup, school);
+    const result = service.saveChanges(entityForm, school);
     await expectAsync(result).toBeRejected();
     expect(school.name).toBe("normal school");
   });
@@ -195,7 +206,7 @@ describe("EntityFormService", () => {
     );
 
     return expectAsync(
-      service.saveChanges(form.formGroup, new ChildSchoolRelation()),
+      service.saveChanges(form, new ChildSchoolRelation()),
     ).toBeRejectedWith(jasmine.any(InvalidFormFieldError));
   });
 
@@ -211,7 +222,7 @@ describe("EntityFormService", () => {
     TestBed.inject(EntityAbility).update([
       { action: "manage", subject: "all" },
     ]);
-    await service.saveChanges(form.formGroup, new Entity());
+    await service.saveChanges(form, new Entity());
 
     expect(unsavedChanges.pending).toBeFalse();
 
@@ -219,7 +230,7 @@ describe("EntityFormService", () => {
     form.formGroup.get("inactive").setValue(true);
     expect(unsavedChanges.pending).toBeTrue();
 
-    service.resetForm(form.formGroup, new Entity());
+    service.resetForm(form, new Entity());
 
     expect(unsavedChanges.pending).toBeFalse();
   });
@@ -249,7 +260,7 @@ describe("EntityFormService", () => {
     form.formGroup.get("getterField").setValue("new value");
     form.formGroup.get("emptyField").setValue("value");
 
-    service.resetForm(form.formGroup, mockEntity);
+    service.resetForm(form, mockEntity);
 
     expect(form.formGroup.get("simpleField").value).toBe("original");
     expect(form.formGroup.get("getterField").value).toBe("original value");
@@ -381,7 +392,7 @@ describe("EntityFormService", () => {
     form.formGroup.get("test").reset();
     expect(form.formGroup.get("test").getRawValue()).toEqual(null);
 
-    await service.saveChanges(form.formGroup, entity);
+    await service.saveChanges(form, entity);
 
     const entityMapper = TestBed.inject(
       EntityMapperService,
@@ -444,4 +455,17 @@ describe("EntityFormService", () => {
       additional: "someAdditional",
     } as FormFieldConfig);
   });
+
+  function createMockEntityForm<T extends Entity>(
+    entity: T,
+    formGroup: UntypedFormGroup,
+  ): EntityForm<T> {
+    return {
+      formGroup: formGroup as EntityFormGroup<typeof entity>,
+      entity: entity,
+      fieldConfigs: [],
+      onFormStateChange: new EventEmitter(),
+      onSave: jasmine.createSpy(),
+    } as unknown as EntityForm<T>;
+  }
 });

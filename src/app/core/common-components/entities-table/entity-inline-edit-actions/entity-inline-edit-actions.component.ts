@@ -61,7 +61,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   async save(): Promise<void> {
     try {
       this.row.record = await this.entityFormService.saveChanges(
-        this.row.formGroup,
+        this.form,
         this.row.record,
       );
       delete this.row.formGroup;

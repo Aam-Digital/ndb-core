@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, EventEmitter } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -37,6 +37,8 @@ export interface EntityForm<T extends Entity> {
    * (possible overridden) field configurations for that form
    */
   fieldConfigs: FormFieldConfig[];
+
+  onFormStateChange: EventEmitter<"saved" | "cancelled">;
 
   /**
    * map of field ids to the current value to be inherited from the referenced parent entities' field
@@ -161,6 +163,7 @@ export class EntityFormService {
       formGroup: typedFormGroup,
       entity: entity,
       fieldConfigs: fields,
+      onFormStateChange: new EventEmitter(),
       inheritedParentValues: new Map(),
       watcher: new Map(),
     };
@@ -257,9 +260,11 @@ export class EntityFormService {
    * @returns a copy of the input entity with the changes from the form group
    */
   public async saveChanges<T extends Entity>(
-    form: EntityFormGroup<T>,
+    entityForm: EntityForm<T>,
     entity: T,
   ): Promise<T> {
+    const form: EntityFormGroup<T> = entityForm.formGroup;
+
     this.checkFormValidity(form);
 
     const updatedEntity = entity.copy() as T;
@@ -284,7 +289,10 @@ export class EntityFormService {
     this.unsavedChanges.pending = false;
     form.markAsPristine();
     form.disable();
-    return Object.assign(entity, updatedEntity);
+    Object.assign(entity, updatedEntity);
+
+    entityForm.onFormStateChange.emit("saved");
+    return entity;
   }
 
   private checkFormValidity<T extends Entity>(form: EntityFormGroup<T>) {
@@ -318,12 +326,14 @@ export class EntityFormService {
     }
   }
 
-  resetForm<E extends Entity>(form: EntityFormGroup<E>, entity: E) {
+  resetForm<E extends Entity>(entityForm: EntityForm<E>, entity: E) {
+    const form = entityForm.formGroup;
     for (const key of Object.keys(form.controls)) {
       form.get(key).setValue(entity[key]);
     }
 
     form.markAsPristine();
     this.unsavedChanges.pending = false;
+    entityForm.onFormStateChange.emit("cancelled");
   }
 }
