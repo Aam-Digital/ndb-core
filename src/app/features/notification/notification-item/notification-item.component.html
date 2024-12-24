@@ -3,15 +3,15 @@
   [ngClass]="{ 'read-notification': notification.readStatus }"
 >
   <div class="notification-details">
-    <strong i18n class="notification-item">{{ notification.title }}</strong>
-    <p i18n class="notification-item">{{ notification.body }}</p>
-    <p
+    <div i18n class="notification-title">{{ notification.title }}</div>
+    <div i18n class="notification-body">{{ notification.body }}</div>
+    <div
       i18n
       class="notification-time"
-      [matTooltip]="notification.created.at | date: 'short'"
+      [matTooltip]="notification.created?.at | date: 'short'"
     >
-      {{ notification.created.at | NotificationTime }}
-    </p>
+      {{ notification.created?.at | notificationTime }}
+    </div>
   </div>
 
   <!-- Blue indicator for unread/read notifications -->

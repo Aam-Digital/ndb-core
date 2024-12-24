@@ -10,7 +10,7 @@
 }
 
 .notification-types-container {
-  margin-top: 16px;
+  margin-top: 30px;
 }
 
 .browser-notifications-container {
@@ -105,4 +105,8 @@ app-notification-center-select {
   color: colors.$inactive;
   margin-left: 10px;
   font-style: italic;
+}
+
+.browser-notifications-title {
+  margin-bottom: 20px;
 }

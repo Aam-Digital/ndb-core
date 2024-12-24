@@ -2,16 +2,19 @@
   <h1 class="notification-setting-title">
     <strong i18n>Notifications settings</strong>
   </h1>
-  <p i18n>
-    Aam Digital may still send you important notifications about your account
-    and content outside of your preferred notification settings.
-  </p>
+  <div i18n>
+    You can set up and customize notifications to get timely updates about
+    beneficiaries, tasks, or notes. You can choose how you want to receive these
+    notifications, either through email or alerts in the app.
+  </div>
 
   <div class="notification-types-container">
-    <div class="flex-row justify-space-between align-center">
-      <h3 class="no-margin" i18n>
-        <strong>What notifications you receive</strong>
-      </h3>
+    <h3 class="no-margin" i18n>
+      <strong>What notifications you receive</strong>
+    </h3>
+    <div i18n>
+      Customize and configure notifications to receive updates about various
+      activities in the application
     </div>
 
     @for (
@@ -33,7 +36,7 @@
               label="Select an entity type"
             ></app-entity-type-select>
             <app-help-button
-              text="Select an entity type to receive notifications for."
+              text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
               i18n-text
             ></app-help-button>
           </div>
@@ -50,7 +53,7 @@
               />
             </mat-form-field>
             <app-help-button
-              text="Define a condition to receive notifications for."
+              text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
               i18n-text
             ></app-help-button>
           </div>
@@ -62,10 +65,10 @@
               [selectedOption]="['Push']"
               [options]="notificationOptions"
               [disabled]="true"
-              label="Notification Center"
+              label="Notification Method"
             ></app-notification-center-select>
             <app-help-button
-              text="Define a notification center to receive notifications"
+              text="Define a notification method to receive notifications"
               i18n-text
             ></app-help-button>
           </div>
@@ -76,7 +79,7 @@
             <mat-slide-toggle
               [(ngModel)]="notificationRule.toggleValue"
               class="notification-toggle"
-              matTooltip="Enable or disable notification rule"
+              matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
               i18n-matTooltip
             ></mat-slide-toggle>
           </div>
@@ -120,7 +123,12 @@
   </div>
 
   <div class="browser-notifications-container">
-    <h3 i18n><strong>Where you receive notifications</strong></h3>
+    <div class="browser-notifications-title">
+      <h3 i18n class="no-margin">
+        <strong>Where you receive notifications</strong>
+      </h3>
+      <div i18n>Decide where you want to get notifications.</div>
+    </div>
     <div class="receive-notifications-container">
       <div class="flex-row">
         <fa-icon icon="window-maximize"></fa-icon>
@@ -132,7 +140,7 @@
         <div class="flex-row align-center">
           <span i18n>Push notifications</span>
           <app-help-button
-            text="Enable or disable browser push notifications."
+            text="You can receive real-time alerts directly on your device or app. These alerts keep you updated about messages, events, or changes without needing to open the app."
             i18n-text
           ></app-help-button>
         </div>

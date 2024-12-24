@@ -18,48 +18,52 @@
   <div class="notification-panel" (click)="$event.stopPropagation()">
     <!-- stopPropagation above to avoid closing the panel upon action button clicks -->
 
-    <div
-      class="flex-row justify-space-between align-center notification-panel-header"
-    >
-      <h2 class="notification-title" i18n>Notifications</h2>
-
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="settingsMenu"
-        #settingsMenuTrigger="matMenuTrigger"
+    <div class="notification-list-header">
+      <div
+        class="flex-row justify-space-between align-center notification-panel-header"
       >
-        <fa-icon icon="ellipsis"></fa-icon>
-      </button>
+        <h2 class="notification-title" i18n>Notifications</h2>
+
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="settingsMenu"
+          #settingsMenuTrigger="matMenuTrigger"
+        >
+          <fa-icon icon="ellipsis"></fa-icon>
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <mat-tab-group [(selectedIndex)]="selectedTab">
+        <mat-tab label="All" i18n-label></mat-tab>
+        <mat-tab label="Unread" i18n-label></mat-tab>
+      </mat-tab-group>
     </div>
 
-    <!-- Tabs -->
-    <mat-tab-group [(selectedIndex)]="selectedTab">
-      <mat-tab label="All" i18n-label></mat-tab>
-      <mat-tab label="Unread" i18n-label></mat-tab>
-    </mat-tab-group>
-
-    @for (
-      notification of selectedTab === 0
-        ? allNotifications
-        : unreadNotifications;
-      track notification
-    ) {
-      <app-notification-item
-        [notification]="notification"
-        (onDeleteNotification)="deleteNotification.bind(this, notification)"
-        (toggleReadStatus)="
-          selectedTab === 1 ? updateReadStatus(notification) : null
-        "
-      ></app-notification-item>
-    } @empty {
-      <div class="flex-column no-notification-message">
-        <fa-icon
-          class="no-notification-icon"
-          [icon]="['far', 'bell']"
-        ></fa-icon>
-        <span class="no-notification-text" i18n>You have no notifications</span>
-      </div>
-    }
+    <div class="flex-column gap-small">
+      @for (
+        notification of selectedTab === 0
+          ? allNotifications
+          : unreadNotifications;
+        track notification
+      ) {
+        <app-notification-item
+          [notification]="notification"
+          (deleteClick)="deleteNotification(notification)"
+          (readStatusChange)="updateReadStatus(notification, $event)"
+        ></app-notification-item>
+      } @empty {
+        <div class="flex-column no-notification-message">
+          <fa-icon
+            class="no-notification-icon"
+            [icon]="['far', 'bell']"
+          ></fa-icon>
+          <span class="no-notification-text" i18n
+            >You have no notifications</span
+          >
+        </div>
+      }
+    </div>
   </div>
 </mat-menu>
 
