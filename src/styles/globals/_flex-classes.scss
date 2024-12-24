@@ -87,27 +87,6 @@
 }
 
 /**
- * justifies (places the item on their main axis) items so that the space
- * between the items is maxed. This is useful, for example, when two items
- * need to be placed at opposite ends (for example left and right or top and bottom)
- *
- * + The main axis is dependent on the flex direction
- * - flex-direction = row    : main axis is x-axis
- * - flex-direction = column : main axis is y-axis
- *
- * example assuming flex-direction = row
- *
- * Without justify-end:
- * | ----- | ----- |                |
- *
- * With justify-end:
- * |                               | ----- |
- */
-.justify-end {
-  justify-content: end;
-}
-
-/**
  * aligns the items (i.e. places the items on the non main axis)
  */
 .align-start {

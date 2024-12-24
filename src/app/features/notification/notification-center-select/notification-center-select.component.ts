@@ -11,12 +11,12 @@ import { MatSelectModule } from "@angular/material/select";
 })
 export class NotificationCenterSelectComponent {
   @Input() label: string;
-  @Input() selectedOption: string[] = [];
-  @Input() options: string[] = [];
+  @Input() selectedNotificationMethod: string[] = [];
+  @Input() notificationMethods: string[] = [];
   @Input() disabled: boolean = false;
   @Output() selectionChange = new EventEmitter<string[]>();
 
   onSelectionChange() {
-    this.selectionChange.emit(this.selectedOption);
+    this.selectionChange.emit(this.selectedNotificationMethod);
   }
 }

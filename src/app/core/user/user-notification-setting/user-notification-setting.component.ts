@@ -43,7 +43,7 @@ export class UserNotificationSettingComponent {
   notificationSetting = new FormGroup({
     notificationRules: new FormArray([]),
   });
-  notificationOptions = ["Push", "Email"];
+  notificationMethods = ["Push", "Email"];
 
   constructor(private confirmationDialog: ConfirmationDialogService) {
     this.addNewRule();
@@ -75,7 +75,7 @@ export class UserNotificationSettingComponent {
   }
 
   /**
-   * Gets the FormArray of notification rules.
+   * Retrieves the FormControl for the form field at a specified index.
    * This allows accessing and manipulating the form field within a specific notification rule.
    */
   getFormField(index: number, fieldName: string): FormControl {
