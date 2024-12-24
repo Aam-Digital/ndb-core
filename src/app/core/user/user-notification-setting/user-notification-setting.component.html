@@ -18,7 +18,7 @@
     </div>
 
     @for (
-      notificationRule of notificationRules;
+      notificationRule of notificationRules.controls;
       track notificationRule;
       let index = $index
     ) {
@@ -34,7 +34,7 @@
             <app-entity-type-select
               [allowMultiSelect]="false"
               label="Select an entity type"
-              [formControl]="notificationSetting.controls.entityType"
+              [formControl]="getFormField(index, 'entityType')"
             ></app-entity-type-select>
             <app-help-button
               text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
@@ -47,7 +47,6 @@
               <mat-label i18n>Notification condition</mat-label>
               <input
                 matInput
-                [(ngModel)]="notificationRule.notificationRuleCondition"
                 placeholder="TO BE IMPLEMENTED LATER"
                 disabled="true"
                 i18n-placeholder="Notification condition placeholder"
@@ -78,7 +77,7 @@
         <div class="flex-row notification-rule-actions">
           <div class="flex-row align-center">
             <mat-slide-toggle
-              [(ngModel)]="notificationRule.enabled"
+              [formControl]="getFormField(index, 'enabled')"
               class="notification-toggle"
               matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
               i18n-matTooltip
@@ -86,7 +85,7 @@
           </div>
 
           <button
-            *ngIf="notificationRules.length > 1"
+            *ngIf="notificationRules.controls.length > 1"
             mat-icon-button
             (click)="confirmRemoveNotificationRule(index)"
             matTooltip="Remove notification rule"

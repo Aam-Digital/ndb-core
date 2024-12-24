@@ -7,7 +7,7 @@ import {
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { FormArray, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -40,36 +40,46 @@ import { FormControl, FormGroup } from "@angular/forms";
   styleUrl: "./user-notification-setting.component.scss",
 })
 export class UserNotificationSettingComponent {
-  notificationRules = [
-    {
-      notificationRuleCondition: "",
-      notificationMethod: "Push",
-      enabled: false,
-      entityType: "",
-    },
-  ];
-  notificationOptions = ["Push", "Email"];
-  // TODO: Update this Form Group when we implement the logic to dynamically update the notification rules.
   notificationSetting = new FormGroup({
-    entityType: new FormControl<string>(""),
-    notificationRuleCondition: new FormControl<string>(""),
-    notificationMethod: new FormControl<string>("Push"),
-    enabled: new FormControl<boolean>(false),
+    notificationRules: new FormArray([]),
   });
+  notificationOptions = ["Push", "Email"];
 
-  constructor(private confirmationDialog: ConfirmationDialogService) {}
+  constructor(private confirmationDialog: ConfirmationDialogService) {
+    this.addNewRule();
+  }
 
   /**
    * Adds a new notification rule and initializes its default values.
    */
   addNewRule() {
-    const newRule = {
-      notificationRuleCondition: "",
-      notificationMethod: "Push",
-      enabled: false,
-      entityType: "",
-    };
-    this.notificationRules.push(newRule);
+    // TODO: Update this Form Group when we implement the logic to dynamically update the notification notificationRules.
+    const newRule = new FormGroup({
+      entityType: new FormControl(""),
+      notificationRuleCondition: new FormControl(""),
+      notificationMethod: new FormControl("Push"),
+      enabled: new FormControl(false),
+    });
+
+    (this.notificationSetting.get("notificationRules") as FormArray).push(
+      newRule,
+    );
+  }
+
+  /**
+   * Gets the FormArray of notification rules.
+   * This is used to access the collection of individual notification rules in the form group.
+   */
+  get notificationRules(): FormArray {
+    return this.notificationSetting.get("notificationRules") as FormArray;
+  }
+
+  /**
+   * Gets the FormArray of notification rules.
+   * This allows accessing and manipulating the form field within a specific notification rule.
+   */
+  getFormField(index: number, fieldName: string): FormControl {
+    return this.notificationRules.at(index).get(fieldName) as FormControl;
   }
 
   /**
@@ -87,7 +97,9 @@ export class UserNotificationSettingComponent {
       return;
     }
 
-    this.notificationRules.splice(index, 1);
+    (this.notificationSetting.get("notificationRules") as FormArray).removeAt(
+      index,
+    );
     return true;
   }
 
