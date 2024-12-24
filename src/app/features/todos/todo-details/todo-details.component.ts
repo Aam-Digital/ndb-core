@@ -67,10 +67,7 @@ export class TodoDetailsComponent implements OnInit {
   async completeTodo() {
     if (this.form.formGroup.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
-      await this.entityFormService.saveChanges(
-        this.form,
-        this.entity,
-      );
+      await this.entityFormService.saveChanges(this.form, this.entity);
     }
     await this.todoService.completeTodo(this.entity);
     this.dialogRef.close();

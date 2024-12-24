@@ -68,10 +68,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   async submit() {
     try {
-      await this.entityFormService.saveChanges(
-        this.form,
-        this.entity,
-      );
+      await this.entityFormService.saveChanges(this.form, this.entity);
       this.snackbar.open($localize`Successfully submitted form`);
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
