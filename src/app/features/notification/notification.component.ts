@@ -61,7 +61,7 @@ export class NotificationComponent implements OnInit {
       this.mockNotificationsService.getNotifications() as unknown as NotificationEvent[];
 
     // The user is hardcoded for testing purposes, need to remove this.
-    this.filterUserNotifications(notifications, this.sessionInfo.value?.id);
+    this.filterUserNotifications(notifications);
   }
 
   /**
@@ -69,10 +69,9 @@ export class NotificationComponent implements OnInit {
    * @param notifications - The list of notifications.
    * @param user - The user to filter notifications.
    */
-  private filterUserNotifications(
-    notifications: NotificationEvent[],
-    user: string,
-  ) {
+  private filterUserNotifications(notifications: NotificationEvent[]) {
+    const user = this.sessionInfo.value?.id;
+
     this.allNotifications = notifications.filter(
       (notification) => notification.sentBy === user,
     );
@@ -97,9 +96,10 @@ export class NotificationComponent implements OnInit {
     Logging.log("Notification enabled");
   }
 
-  async updateReadStatus(notification: NotificationEvent) {
-    notification.readStatus = notification.readStatus;
+  async updateReadStatus(notification: NotificationEvent, newStatus: boolean) {
+    notification.readStatus = newStatus;
     await this.entityMapper.save(notification);
+    this.filterUserNotifications(this.allNotifications);
   }
 
   deleteNotification(notification: NotificationEvent) {
@@ -111,6 +111,8 @@ export class NotificationComponent implements OnInit {
       (n) => n !== notification,
     );
     Logging.log("Notification deleted");
+
+    this.filterUserNotifications(this.allNotifications);
   }
 
   protected readonly closeOnlySubmenu = closeOnlySubmenu;

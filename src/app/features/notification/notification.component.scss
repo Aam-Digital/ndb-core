@@ -1,5 +1,11 @@
 @use "variables/colors";
 
+.notification-list-header {
+  position: sticky;
+  top: 0px;
+  background-color: colors.$background;
+}
+
 .notification-title {
   font-weight: 700;
   margin: 0px;
@@ -7,8 +13,6 @@
 
 .no-notification-text {
   color: colors.$inactive;
-  font-size: 14px;
-  font-weight: 700;
 }
 
 .notification-panel-header {
@@ -17,6 +21,7 @@
 
 .notification-panel {
   width: 280px;
+  max-height: 95vh;
 }
 
 .no-notification-message {

@@ -5,7 +5,7 @@
 import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
-  name: "NotificationTime",
+  name: "notificationTime",
   standalone: true,
 })
 export class NotificationTimePipe implements PipeTransform {
@@ -28,17 +28,17 @@ export class NotificationTimePipe implements PipeTransform {
     const days = Math.floor(hours / 24);
 
     if (seconds < 60) {
-      return "Just Now";
+      return $localize`Just Now`;
     } else if (minutes < 60) {
-      return `${minutes}m`;
+      return $localize`${minutes}m`;
     } else if (hours < 24) {
-      return `${hours}h`;
+      return $localize`${hours}h ago`;
     } else if (days === 1) {
-      return "Yesterday";
+      return $localize`Yesterday`;
     } else if (days < 7) {
-      return `${days}d`;
+      return $localize`${days}d ago`;
     } else if (days >= 7 && days < 30) {
-      return `${days}d`;
+      return $localize`${days}d ago`;
     } else {
       const monthYear = notificationTime.toLocaleString("en-US", {
         month: "short",
