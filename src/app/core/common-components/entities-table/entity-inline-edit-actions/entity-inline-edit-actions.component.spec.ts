@@ -70,17 +70,27 @@ describe("EntityInlineEditActionsComponent", () => {
     expect(formGroup).toBeEnabled();
   });
 
-  it("should correctly save changes to an entity", fakeAsync(() => {
+  it("should correctly save changes to an entity", fakeAsync(async () => {
     spyOn(TestBed.inject(EntityAbility), "can").and.returnValue(true);
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "save").and.resolveTo();
     const fb = TestBed.inject(UntypedFormBuilder);
     const child = new InlineEditEntity();
     child.name = "Old Name";
+
+    const entityFormService = TestBed.inject(EntityFormService);
+    const entityForm = await entityFormService.createEntityForm(
+      ["name", "gender"],
+      child,
+    );
+
     const formGroup = fb.group({
       name: "New Name",
       gender: genders[2],
     });
+    entityForm.formGroup = formGroup;
+
+    component.form = entityForm;
     component.row = { record: child, formGroup: formGroup };
 
     component.save();
