@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -7,7 +7,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe, NgIf } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -34,7 +34,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
     ReactiveFormsModule,
     MatAutocompleteModule,
     MatChipsModule,
-    NgForOf,
     EntityBlockComponent,
     FontAwesomeModule,
     MatTooltipModule,
@@ -52,7 +51,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 export class EntitySelectComponent<
   E extends Entity,
   T extends string[] | string = string[],
-> {
+> implements OnChanges
+{
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
   @Input() form: FormControl<T>;
@@ -134,6 +134,14 @@ export class EntitySelectComponent<
   entityToId = (option: E) => option.getId();
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["form"]) {
+      this.form.valueChanges.subscribe((value) => {
+        this.updateAvailableOptions().then((_) => {});
+      });
+    }
+  }
 
   private async loadAvailableEntities() {
     this.loading.next(true);
