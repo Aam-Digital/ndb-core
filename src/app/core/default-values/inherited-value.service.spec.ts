@@ -13,7 +13,7 @@ import { EntityForm } from "../common-components/entity-form/entity-form.service
 import { DefaultValueService } from "./default-value.service";
 import { EventEmitter } from "@angular/core";
 
-fdescribe("InheritedValueService", () => {
+describe("InheritedValueService", () => {
   let service: InheritedValueService;
   let defaultValueService: DefaultValueService;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
