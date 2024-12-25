@@ -11,8 +11,8 @@ export class NotificationConfig extends Entity {
 
   @DatabaseField() notificationTypes: NotificationType[];
 
-  public override toString(): string {
-    return `NotificationConfig: ${this.notificationTypes}`;
+  constructor(id = null) {
+    super(id);
   }
 }
 
