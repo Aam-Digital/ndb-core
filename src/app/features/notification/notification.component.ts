@@ -10,9 +10,10 @@ import { NotificationEvent } from "./model/notification-event";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
-import { MockNotificationsService } from "./mock-notification.service";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { closeOnlySubmenu } from "./close-only-submenu";
+import { NotificationConfig } from "./model/notification-config";
+import { AlertService } from "app/core/alerts/alert.service";
 
 @Component({
   selector: "app-notification",
@@ -37,11 +38,12 @@ export class NotificationComponent implements OnInit {
   public unreadNotifications: NotificationEvent[] = [];
   public selectedTab = 0;
   public hasNotificationEnabled = false;
+  protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
   constructor(
     private entityMapper: EntityMapperService,
-    private mockNotificationsService: MockNotificationsService,
     private sessionInfo: SessionSubject,
+    private alertService: AlertService,
   ) {}
 
   ngOnInit(): void {
@@ -52,15 +54,8 @@ export class NotificationComponent implements OnInit {
    * Loads all notifications and processes them to update the list and unread count.
    */
   private async loadAndProcessNotifications(): Promise<void> {
-    // TODO: Need to uncomment this after the notification list UI testing is completed.
-    // const notifications =
-    // await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
-
-    // TODO: Need to remove this line once the notification list UI tests are completed.
     const notifications =
-      this.mockNotificationsService.getNotifications() as unknown as NotificationEvent[];
-
-    // The user is hardcoded for testing purposes, need to remove this.
+      await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
     this.filterUserNotifications(notifications);
   }
 
@@ -91,9 +86,24 @@ export class NotificationComponent implements OnInit {
     this.loadAndProcessNotifications();
   }
 
-  enableNotificationForUser() {
-    // TODO: Need to implement the logic so that the notification is enabled corresponding to the user.
-    Logging.log("Notification enabled");
+  async enableNotificationForUser() {
+    // TODO: Implement the logic to called the getToken function from the NotificationService file, Once the PR #2692 merged.
+    this.hasNotificationEnabled = !this.hasNotificationEnabled;
+    const notificationConfig = new NotificationConfig();
+
+    // TODO: Currently, email notification are disabled. Update this logic once the email notification feature is implemented.
+    notificationConfig.channels = {
+      push: this.hasNotificationEnabled,
+      email: false,
+    };
+    notificationConfig.notificationTypes = [];
+
+    try {
+      await this.entityMapper.save<NotificationConfig>(notificationConfig);
+      Logging.log("Notification saved successfully.");
+    } catch (error) {
+      throw error("Error saving notification: ", error);
+    }
   }
 
   async updateReadStatus(notification: NotificationEvent, newStatus: boolean) {
@@ -102,18 +112,9 @@ export class NotificationComponent implements OnInit {
     this.filterUserNotifications(this.allNotifications);
   }
 
-  deleteNotification(notification: NotificationEvent) {
-    // Need to add/update this logic to delete the notification from the CouchDB
-    this.allNotifications = this.allNotifications.filter(
-      (n) => n !== notification,
-    );
-    this.unreadNotifications = this.unreadNotifications.filter(
-      (n) => n !== notification,
-    );
-    Logging.log("Notification deleted");
-
-    this.filterUserNotifications(this.allNotifications);
+  async deleteNotification(notification: NotificationEvent) {
+    await this.entityMapper.remove(notification);
+    this.alertService.addInfo(`Notification deleted successfully`);
+    this.loadAndProcessNotifications();
   }
-
-  protected readonly closeOnlySubmenu = closeOnlySubmenu;
 }
