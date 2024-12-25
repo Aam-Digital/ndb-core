@@ -69,9 +69,15 @@ test('test', async ({ page }) => {
   await expect(EditStatusBtn).toBeVisible();
   await EditStatusBtn.click();
 
-  const UpdateStatus = page.getByRole('option', { name: 'Present' });
-  await expect(UpdateStatus).toBeVisible();
-  await UpdateStatus.click();
+  const statusOptions = page.getByText('Present Absent Late Excused'); 
+  const statusCount = await statusOptions.count();
+
+  // Pick a random status option
+  const randomIndex = Math.floor(Math.random() * statusCount);
+  const selectedStatus = statusOptions.nth(randomIndex);
+
+  await expect(selectedStatus).toBeVisible();
+  await selectedStatus.click();
 
   // Verify remarks are editable
   const RemarksField = page.locator('td:nth-child(4) > .mat-mdc-form-field input').first();
@@ -103,4 +109,31 @@ test('test', async ({ page }) => {
       expect(borderColor).toBe('rgb(255, 152, 0)'); // Orange
     }
   }
+
+  // Attendance Overview
+  await firstClass.evaluate((el: HTMLElement) => el?.click()); // Force the DOM click
+
+  const firstStudentName = await page.locator('app-entity-block').first().textContent(); // Get the first student name
+  if (!firstStudentName) throw new Error('First student name could not be retrieved.'); // Handle error
+
+  await page.locator('mat-list-item').filter({ hasText: 'Children' }).click();
+  await page.locator('div').filter({ hasText: 'Filter' }).nth(4).click();
+  await page.getByPlaceholder('e.g. name, age').fill(firstStudentName);
+  await page.getByRole('cell', { name: firstStudentName }).click();
+  await page.locator('span').filter({ hasText: 'Attendance' }).nth(2).click();
+
+  // Verify attendance report
+  await page.locator('mat-list-item').filter({ hasText: 'Reports' }).click();
+  await page.locator('div').filter({ hasText: 'Select Report' }).nth(4).click();
+  await page.getByRole('option', { name: 'Attendance Report' }).click();
+  await page.getByLabel('Open calendar').click();
+  await page.getByLabel('December 2,').click();
+  await page.getByLabel('December 23,').click();
+  await page.getByRole('button', { name: 'Calculate' }).click();
+
+  // Attendace Percentage
+  await page.locator('mat-list-item').filter({ hasText: 'Children' }).click();
+  await page.getByRole('tab', { name: 'School Info' }).click();
+
+  
 });
