@@ -10,6 +10,8 @@ import { provideHttpClient } from "@angular/common/http";
 import { NotificationConfig } from "./notification-config.interface";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import { MockedTestingModule } from "app/utils/mocked-testing.module";
+import { MockEntityMapperService } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
 class MockKeycloakAuthService {
   addAuthHeader(headers: Record<string, string>) {
@@ -21,6 +23,7 @@ describe("NotificationService", () => {
   let service: NotificationService;
   let httpMock: HttpTestingController;
   let notificationConfig: NotificationConfig;
+  let entityMapper: MockEntityMapperService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -29,6 +32,7 @@ describe("NotificationService", () => {
         provideHttpClientTesting(),
         provideHttpClient(),
         { provide: KeycloakAuthService, useClass: MockKeycloakAuthService },
+        { provide: EntityMapperService, useValue: entityMapper },
       ],
     });
     service = TestBed.inject(NotificationService);
