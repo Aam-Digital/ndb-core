@@ -9,6 +9,7 @@ import firebase from "firebase/compat/app";
 import { provideHttpClient } from "@angular/common/http";
 import { NotificationConfig } from "./notification-config.interface";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
+import { MockedTestingModule } from "app/utils/mocked-testing.module";
 
 class MockKeycloakAuthService {
   addAuthHeader(headers: Record<string, string>) {
@@ -23,6 +24,7 @@ describe("NotificationService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [MockedTestingModule.withState()],
       providers: [
         provideHttpClientTesting(),
         provideHttpClient(),
