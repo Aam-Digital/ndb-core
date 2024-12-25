@@ -21,6 +21,9 @@ export class AdminEntityPublicFormsComponent implements OnInit {
         entityType: "PublicFormConfig",
         property: this.entityConstructor.ENTITY_TYPE,
         columns: ["title", "description", "entity", "route"],
+        filter: {
+          entity: this.entityConstructor.ENTITY_TYPE,
+        },
       },
     };
   }
