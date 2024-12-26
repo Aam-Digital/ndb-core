@@ -45,7 +45,7 @@ function createDummyNotification(
     body: "This is a dummy notification body.",
     actionURL: "http://localhost:4200",
     sentBy: "demo",
-    fcmToken: "",
+    notificationToken: "",
     readStatus: read,
     created: {
       at: date.toISOString(),

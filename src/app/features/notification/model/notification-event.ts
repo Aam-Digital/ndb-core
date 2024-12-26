@@ -12,6 +12,6 @@ export class NotificationEvent extends Entity {
   @DatabaseField() body: string;
   @DatabaseField() actionURL: string;
   @DatabaseField() notificationFor: string;
-  @DatabaseField() fcmToken: string;
+  @DatabaseField() notificationToken: string;
   @DatabaseField() readStatus: boolean;
 }
