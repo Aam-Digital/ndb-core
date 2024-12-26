@@ -19,6 +19,10 @@ import { HelpButtonComponent } from "app/core/common-components/help-button/help
 import { NotificationCenterSelectComponent } from "app/features/notification/notification-center-select/notification-center-select.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormControl, FormGroup } from "@angular/forms";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { NotificationConfig } from "app/features/notification/model/notification-config";
+import { SessionSubject } from "app/core/session/auth/session-info";
+import { AlertService } from '../../alerts/alert.service';
 
 @Component({
   selector: "app-user-notification-setting",
@@ -48,15 +52,26 @@ export class UserNotificationSettingComponent {
   });
   notificationMethods = ["Push", "Email"];
 
-  constructor(private confirmationDialog: ConfirmationDialogService) {
+  constructor(
+    private confirmationDialog: ConfirmationDialogService,
+    private entityMapper: EntityMapperService,
+    private sessionInfo: SessionSubject,
+    private alertService: AlertService, 
+  ) {
     this.addNewRule();
+  }
+
+  /**
+   * Get the logged in user id
+   */
+  private get userId(): string | undefined {
+    return this.sessionInfo.value?.id;
   }
 
   /**
    * Adds a new notification rule and initializes its default values.
    */
   addNewRule() {
-    // TODO: Update this Form Group when we implement the logic to dynamically update the notification notificationRules.
     const newRule = new FormGroup({
       entityType: new FormControl(""),
       notificationRuleCondition: new FormControl(""),
@@ -111,7 +126,6 @@ export class UserNotificationSettingComponent {
    * @param index The index of the notification rule being toggled.
    */
   onEnableNotification() {
-    // TODO: Implement the logic to enable the notification for user and update the value in CouchDB backend.
     Logging.log("Browser notifications toggled.");
   }
 
@@ -119,12 +133,56 @@ export class UserNotificationSettingComponent {
    * Sends a test notification.
    */
   testNotification() {
-    // TODO: Implement the logic to test the notification setting.
     Logging.log("Notification settings test successful.");
   }
 
-  updateNotificationSettingField(value: string, index: number) {
-    Logging.log({ value });
+  /**
+   * Loads the user's notification configuration.
+   */
+  private async loadNotificationConfig(userId: string) {
+    try {
+      return await this.entityMapper.load<NotificationConfig>(
+        NotificationConfig,
+        userId,
+      );
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async updateNotificationSettingField(value: string, index: number) {
+    const userNotificationConfig = await this.loadNotificationConfig(
+      this.userId,
+    );
+    
+    if (userNotificationConfig) {
+      const notificationTypes = userNotificationConfig.notificationTypes || [];
+      if (notificationTypes.length) {
+        notificationTypes[index].notificationType = "entity-update";
+        notificationTypes[index].enabled = notificationTypes[index].enabled;
+        notificationTypes[index].channels = {
+          ...notificationTypes[index].channels,
+        };
+        notificationTypes[index].entityType = value.toString();
+      }
+      userNotificationConfig.notificationTypes = notificationTypes;
+      console.log({userNotificationConfig})
+      await this.entityMapper.save(userNotificationConfig);
+    } else {
+      const newNotificationConfig = new NotificationConfig(this.userId);
+      const notificationType = {
+        notificationType: "entity-update",
+        enabled: true,
+        channels: { push: true, email: true },
+        entityType: value.toString(),
+        conditions: {},
+      };
+      newNotificationConfig.notificationTypes = [];
+      newNotificationConfig.channels = { push: false, email: false };
+      newNotificationConfig.notificationTypes.push(notificationType);
+      await this.entityMapper.save(newNotificationConfig);
+    }
+    this.alertService.addInfo('Notification Settings updated');
   }
 
   enableNotificationRule(event: MatSlideToggleChange, index: number) {
