@@ -8,10 +8,12 @@
   show all fields below each other not in multiple columns, however.
   <br />
 </div>
-<app-admin-entity-form
-  [config]="publicFormConfig"
-  (configChange)="updateValue($event)"
-  [entityType]="entityConstructor"
-  [isDisabled]="formControl.disabled"
->
-</app-admin-entity-form>
+<div class="coloumn-container">
+  <app-admin-entity-form
+    [config]="publicFormConfig"
+    (configChange)="updateValue($event)"
+    [entityType]="entityConstructor"
+    [isDisabled]="formControl.disabled"
+  >
+  </app-admin-entity-form>
+</div>
