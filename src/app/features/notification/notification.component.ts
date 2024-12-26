@@ -58,14 +58,20 @@ export class NotificationComponent implements OnInit {
   }
 
   /**
+   * Get the logged in user Id
+   */
+  private get userId(): string | undefined {
+    return this.sessionInfo.value?.id;
+  }
+
+  /**
    * Loads all notifications and processes them to update the list and unread count.
    */
   private async loadAndProcessNotifications() {
     const notifications =
       await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
-    const user = this.sessionInfo.value?.id;
 
-    const notificationConfig = await this.loadNotificationConfig(user);
+    const notificationConfig = await this.loadNotificationConfig(this.userId);
     this.hasNotificationEnabled = notificationConfig?.channels.push ?? false;
 
     this.notificationsSubject.next(notifications);
@@ -74,13 +80,11 @@ export class NotificationComponent implements OnInit {
   /**
    * Loads the user's notification configuration.
    */
-  private async loadNotificationConfig(
-    user: string,
-  ): Promise<NotificationConfig | null> {
+  private async loadNotificationConfig(userId: string) {
     try {
       return await this.entityMapper.load<NotificationConfig>(
         NotificationConfig,
-        user,
+        userId,
       );
     } catch (error) {
       return null;
@@ -91,13 +95,13 @@ export class NotificationComponent implements OnInit {
    * Filters notifications based on the sender and read status.
    */
   private filterUserNotifications(notifications: NotificationEvent[]) {
-    const user = this.sessionInfo.value?.id;
     this.allNotifications = notifications.filter(
-      (notification) => notification.notificationFor === user,
+      (notification) => notification.notificationFor === this.userId,
     );
     this.unreadNotifications = notifications.filter(
       (notification) =>
-        notification.notificationFor === user && !notification.readStatus,
+        notification.notificationFor === this.userId &&
+        !notification.readStatus,
     );
   }
 
@@ -117,9 +121,8 @@ export class NotificationComponent implements OnInit {
   async enableNotificationForUser(): Promise<void> {
     // TODO: Implement the logic to called the getToken function from the NotificationService file, Once the PR #2692 merged.
     this.hasNotificationEnabled = !this.hasNotificationEnabled;
-    const user = this.sessionInfo.value?.id;
 
-    const notificationConfig = await this.loadNotificationConfig(user);
+    const notificationConfig = await this.loadNotificationConfig(this.userId);
 
     // TODO: Currently, email notification are disabled. Update this logic once the email notification feature is implemented.
     const notificationChannels = {
@@ -131,7 +134,7 @@ export class NotificationComponent implements OnInit {
       notificationConfig.channels = notificationChannels;
       await this.entityMapper.save(notificationConfig);
     } else {
-      const newNotificationConfig = new NotificationConfig(user);
+      const newNotificationConfig = new NotificationConfig(this.userId);
       newNotificationConfig.channels = notificationChannels;
       await this.entityMapper.save(newNotificationConfig);
     }
