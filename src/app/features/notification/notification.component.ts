@@ -76,11 +76,11 @@ export class NotificationComponent implements OnInit {
     const user = this.sessionInfo.value?.id;
 
     this.allNotifications = notifications.filter(
-      (notification) => notification.sentBy === user,
+      (notification) => notification.notificationFor === user,
     );
     this.unreadNotifications = notifications.filter(
       (notification) =>
-        notification.sentBy === user && !notification.readStatus,
+        notification.notificationFor === user && !notification.readStatus,
     );
   }
 
