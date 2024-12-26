@@ -119,4 +119,8 @@ export class UserNotificationSettingComponent {
     // TODO: Implement the logic to test the notification setting.
     Logging.log("Notification settings test successful.");
   }
+
+  updateNotificationSettingField(selectedEntity: string, index: number) {
+    Logging.log({ selectedEntity });
+  }
 }

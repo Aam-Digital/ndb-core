@@ -94,6 +94,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],
     });
+    console.log(this.basicSettingsForm, "==>this.basicSettingsForm");
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();
     this.initToStringAttributesOptions();

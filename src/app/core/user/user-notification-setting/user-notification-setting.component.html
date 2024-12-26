@@ -35,6 +35,7 @@
               [allowMultiSelect]="false"
               label="Select an entity type"
               [formControl]="getFormField(index, 'entityType')"
+              (selectedEntity)="updateNotificationSettingField($event, index)"
             ></app-entity-type-select>
             <app-help-button
               text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
