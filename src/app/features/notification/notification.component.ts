@@ -176,6 +176,10 @@ export class NotificationComponent implements OnInit {
     this.loadAndProcessNotifications();
   }
 
+  /**
+   * Handles notification events by redirecting the user to the corresponding action URL.
+   * @param {NotificationEvent} notification - The notification event containing the action URL.
+   */
   notificationListener(notification: NotificationEvent) {
     this.router.navigate([notification.actionURL]);
   }
