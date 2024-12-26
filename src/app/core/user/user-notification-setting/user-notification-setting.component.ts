@@ -22,7 +22,7 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { NotificationConfig } from "app/features/notification/model/notification-config";
 import { SessionSubject } from "app/core/session/auth/session-info";
-import { AlertService } from '../../alerts/alert.service';
+import { AlertService } from "../../alerts/alert.service";
 
 @Component({
   selector: "app-user-notification-setting",
@@ -56,7 +56,7 @@ export class UserNotificationSettingComponent {
     private confirmationDialog: ConfirmationDialogService,
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
-    private alertService: AlertService, 
+    private alertService: AlertService,
   ) {
     this.addNewRule();
   }
@@ -154,35 +154,58 @@ export class UserNotificationSettingComponent {
     const userNotificationConfig = await this.loadNotificationConfig(
       this.userId,
     );
-    
+
     if (userNotificationConfig) {
-      const notificationTypes = userNotificationConfig.notificationTypes || [];
-      if (notificationTypes.length) {
-        notificationTypes[index].notificationType = "entity-update";
-        notificationTypes[index].enabled = notificationTypes[index].enabled;
-        notificationTypes[index].channels = {
-          ...notificationTypes[index].channels,
-        };
-        notificationTypes[index].entityType = value.toString();
-      }
-      userNotificationConfig.notificationTypes = notificationTypes;
-      console.log({userNotificationConfig})
-      await this.entityMapper.save(userNotificationConfig);
+      this.updateExistingNotificationConfig(
+        userNotificationConfig,
+        value,
+        index,
+      );
     } else {
-      const newNotificationConfig = new NotificationConfig(this.userId);
-      const notificationType = {
-        notificationType: "entity-update",
-        enabled: true,
-        channels: { push: true, email: true },
-        entityType: value.toString(),
-        conditions: {},
-      };
-      newNotificationConfig.notificationTypes = [];
-      newNotificationConfig.channels = { push: false, email: false };
-      newNotificationConfig.notificationTypes.push(notificationType);
-      await this.entityMapper.save(newNotificationConfig);
+      this.createAndSaveNewNotificationConfig(value);
     }
-    this.alertService.addInfo('Notification Settings updated');
+
+    this.alertService.addInfo("Notification Settings updated");
+  }
+
+  private updateExistingNotificationConfig(
+    config: NotificationConfig,
+    value: string,
+    index: number,
+  ) {
+    const notificationTypes = config.notificationTypes || [];
+    const updatedNotificationType = this.createNotificationType(value);
+
+    if (notificationTypes.length) {
+      notificationTypes[index] = {
+        ...notificationTypes[index],
+        ...updatedNotificationType,
+      };
+    } else {
+      notificationTypes.push(updatedNotificationType);
+    }
+
+    config.notificationTypes = notificationTypes;
+    this.entityMapper.save(config);
+  }
+
+  private createAndSaveNewNotificationConfig(value: string) {
+    const userNotificationConfig = new NotificationConfig(this.userId);
+    userNotificationConfig.notificationTypes = [
+      this.createNotificationType(value),
+    ];
+    userNotificationConfig.channels = { push: false, email: false };
+    this.entityMapper.save(userNotificationConfig);
+  }
+
+  private createNotificationType(value: string) {
+    return {
+      notificationType: "entity-update",
+      enabled: true,
+      channels: { push: true, email: true },
+      entityType: value.toString(),
+      conditions: {},
+    };
   }
 
   enableNotificationRule(event: MatSlideToggleChange, index: number) {
