@@ -79,6 +79,7 @@
           <div class="flex-row align-center">
             <mat-slide-toggle
               [formControl]="getFormField(index, 'enabled')"
+              (change)="enableNotificationRule($event, index)"
               class="notification-toggle"
               matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
               i18n-matTooltip

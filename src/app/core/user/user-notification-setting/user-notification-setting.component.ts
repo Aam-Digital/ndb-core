@@ -1,5 +1,8 @@
 import { Component } from "@angular/core";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
+import {
+  MatSlideToggle,
+  MatSlideToggleChange,
+} from "@angular/material/slide-toggle";
 import { MatInputModule } from "@angular/material/input";
 import { NgIf } from "@angular/common";
 import {
@@ -120,7 +123,11 @@ export class UserNotificationSettingComponent {
     Logging.log("Notification settings test successful.");
   }
 
-  updateNotificationSettingField(selectedEntity: string, index: number) {
-    Logging.log({ selectedEntity });
+  updateNotificationSettingField(value: string, index: number) {
+    Logging.log({ value });
+  }
+
+  enableNotificationRule(event: MatSlideToggleChange, index: number) {
+    Logging.log(event.checked ? "Enabled" : "Disabled");
   }
 }
