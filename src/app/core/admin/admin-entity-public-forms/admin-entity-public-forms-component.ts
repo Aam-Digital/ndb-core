@@ -11,20 +11,30 @@ import { DynamicComponentDirective } from "app/core/config/dynamic-components/dy
 })
 export class AdminEntityPublicFormsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
-  config: any;
+  config: Config;
 
   ngOnInit(): void {
-    console.log(this.entityConstructor.ENTITY_TYPE, "chjebciueb");
     this.config = {
       component: "RelatedEntities",
       config: {
         entityType: "PublicFormConfig",
         property: this.entityConstructor.ENTITY_TYPE,
-        columns: ["title", "description", "entity", "route"],
+        columns: ["title", "entity", "route", "description"],
         filter: {
           entity: this.entityConstructor.ENTITY_TYPE,
         },
       },
     };
   }
+}
+interface Config {
+  component: string;
+  config: {
+    entityType: string;
+    property: string;
+    columns: string[];
+    filter: {
+      entity: string;
+    };
+  };
 }
