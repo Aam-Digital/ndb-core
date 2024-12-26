@@ -7,6 +7,7 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { AdminEntityFormComponent } from "app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component";
 import { FormConfig } from "app/core/entity-details/form/form.component";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
+
 @Component({
   selector: "app-edit-public-form-columns",
   standalone: true,
@@ -28,13 +29,28 @@ export class EditPublicFormColumnsComponent
     if (this.entity) {
       this.entityConstructor = this.entities.get(this.entity["entity"]);
 
-      this.publicFormConfig = { fieldGroups: this.formControl.getRawValue() };
+      this.publicFormConfig = this.migrateConfig({
+        fieldGroups: this.formControl.getRawValue(),
+      });
     }
   }
 
+  /**
+   * Migrates the configuration if it uses the old structure.
+   */
+  private migrateConfig(config: FormConfig): FormConfig {
+    if (
+      Array.isArray(config.fieldGroups) &&
+      config.fieldGroups.every((column) => Array.isArray(column))
+    ) {
+      const fields = config.fieldGroups.flat();
+      return { fieldGroups: [{ fields }] };
+    }
+    // Return the original config if no migration is needed
+    return config;
+  }
+
   updateValue(newConfig: FormConfig) {
-    // setTimeout needed for change detection of disabling tabs
-    // TODO: change logic to instead disable tabs upon edit mode immediately (without waiting for changes)
     setTimeout(() => this.formControl.setValue(newConfig.fieldGroups));
     this.formControl.markAsDirty();
   }
