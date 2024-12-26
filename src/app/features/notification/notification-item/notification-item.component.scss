@@ -5,8 +5,13 @@
 }
 
 .notification-details {
-  flex: 1;
   text-align: left;
+  cursor: pointer;
+}
+
+.notification-details:hover {
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .notification-title {

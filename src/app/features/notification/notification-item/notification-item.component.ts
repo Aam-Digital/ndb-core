@@ -35,6 +35,8 @@ export class NotificationItemComponent {
 
   @Output() readStatusChange = new EventEmitter<boolean>();
   @Output() deleteClick = new EventEmitter<void>();
+  @Output() notificationClick = new EventEmitter<void>();
+  protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
   updateReadStatus(newStatus: boolean) {
     this.readStatusChange.emit(newStatus);
@@ -44,5 +46,7 @@ export class NotificationItemComponent {
     this.deleteClick.emit();
   }
 
-  protected readonly closeOnlySubmenu = closeOnlySubmenu;
+  onNotificationClick(notification: any) {
+    this.notificationClick.emit(notification);
+  }
 }

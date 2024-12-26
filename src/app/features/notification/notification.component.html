@@ -51,6 +51,7 @@
           [notification]="notification"
           (deleteClick)="deleteNotification(notification)"
           (readStatusChange)="updateReadStatus(notification, $event)"
+          (notificationClick)="notificationListener(notification)"
         ></app-notification-item>
       } @empty {
         <div class="flex-column no-notification-message">
@@ -88,7 +89,7 @@
       <span class="menu-option" i18n>Mark all as read</span>
     </button>
 
-    <button mat-menu-item>
+    <button mat-menu-item (click)="onRedirectToNotificationsSetting()">
       <fa-icon icon="gear"></fa-icon>
       <span class="menu-option" i18n>Notification settings</span>
     </button>

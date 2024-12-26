@@ -14,6 +14,7 @@ import { SessionSubject } from "app/core/session/auth/session-info";
 import { closeOnlySubmenu } from "./close-only-submenu";
 import { NotificationConfig } from "./model/notification-config";
 import { AlertService } from "app/core/alerts/alert.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-notification",
@@ -45,6 +46,7 @@ export class NotificationComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
     private alertService: AlertService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +60,7 @@ export class NotificationComponent implements OnInit {
   /**
    * Loads all notifications and processes them to update the list and unread count.
    */
-  private async loadAndProcessNotifications(): Promise<void> {
+  private async loadAndProcessNotifications() {
     const notifications =
       await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
     const user = this.sessionInfo.value?.id;
@@ -91,11 +93,11 @@ export class NotificationComponent implements OnInit {
   private filterUserNotifications(notifications: NotificationEvent[]) {
     const user = this.sessionInfo.value?.id;
     this.allNotifications = notifications.filter(
-      (notification) => notification.sentBy === user,
+      (notification) => notification.notificationFor === user,
     );
     this.unreadNotifications = notifications.filter(
       (notification) =>
-        notification.sentBy === user && !notification.readStatus,
+        notification.notificationFor === user && !notification.readStatus,
     );
   }
 
@@ -113,10 +115,13 @@ export class NotificationComponent implements OnInit {
    * Toggles the notification setting for the user.
    */
   async enableNotificationForUser(): Promise<void> {
+    // TODO: Implement the logic to called the getToken function from the NotificationService file, Once the PR #2692 merged.
     this.hasNotificationEnabled = !this.hasNotificationEnabled;
     const user = this.sessionInfo.value?.id;
 
     const notificationConfig = await this.loadNotificationConfig(user);
+
+    // TODO: Currently, email notification are disabled. Update this logic once the email notification feature is implemented.
     const notificationChannels = {
       push: this.hasNotificationEnabled,
       email: false,
@@ -142,7 +147,7 @@ export class NotificationComponent implements OnInit {
   private async updateReadStatusForNotifications(
     notifications: NotificationEvent[],
     newStatus: boolean,
-  ): Promise<void> {
+  ) {
     for (const notification of notifications) {
       notification.readStatus = newStatus;
       await this.entityMapper.save(notification);
@@ -153,10 +158,7 @@ export class NotificationComponent implements OnInit {
   /**
    * Updates the read status of a single notification.
    */
-  async updateReadStatus(
-    notification: NotificationEvent,
-    newStatus: boolean,
-  ): Promise<void> {
+  async updateReadStatus(notification: NotificationEvent, newStatus: boolean) {
     notification.readStatus = newStatus;
     await this.entityMapper.save(notification);
     this.filterUserNotifications(this.allNotifications);
@@ -165,9 +167,20 @@ export class NotificationComponent implements OnInit {
   /**
    * Deletes a user notification.
    */
-  async deleteNotification(notification: NotificationEvent): Promise<void> {
+  async deleteNotification(notification: NotificationEvent) {
     await this.entityMapper.remove(notification);
     this.alertService.addInfo("Notification deleted successfully");
     this.loadAndProcessNotifications();
+  }
+
+  notificationListener(notification: NotificationEvent) {
+    this.router.navigate([notification.actionURL]);
+  }
+
+  /**
+   * Redirect the user to Notification setting page
+   */
+  onRedirectToNotificationsSetting() {
+    this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
   }
 }
