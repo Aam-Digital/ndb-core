@@ -19,6 +19,10 @@
   padding: 8px 10px;
 }
 
+.notification-list-body {
+  overflow-y: auto;
+}
+
 .notification-panel {
   width: 280px;
   max-height: 90vh;
