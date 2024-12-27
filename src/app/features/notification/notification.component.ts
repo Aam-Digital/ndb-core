@@ -211,11 +211,20 @@ export class NotificationComponent implements OnInit {
   }
 
   // TODO: remove test code before final merge
+  private testEventTypeToggle = false;
+
   async createTestEvent() {
+    this.testEventTypeToggle = !this.testEventTypeToggle;
+
     const event = new NotificationEvent();
     event.title = "Test Notification";
     event.body = "This is a test notification.";
     event.notificationFor = this.userId;
+    if (this.testEventTypeToggle) {
+      event.actionURL = "child/1";
+      event.title = event.title + " (with action)";
+    }
+
     await this.entityMapper.save(event);
   }
 }

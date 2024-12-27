@@ -20,7 +20,7 @@
 </button>
 
 <mat-menu #notificationList>
-  <div class="notification-panel" (click)="$event.stopPropagation()">
+  <div class="notification-panel flex-column" (click)="$event.stopPropagation()">
     <!-- stopPropagation above to avoid closing the panel upon action button clicks -->
 
     <div class="notification-list-header">
@@ -45,7 +45,7 @@
       </mat-tab-group>
     </div>
 
-    <div class="flex-column gap-small">
+<div class="flex-grow flex-column gap-small notification-list-body">
       @for (
         notification of selectedTab === 0
           ? allNotifications
@@ -73,6 +73,7 @@
   </div>
 </mat-menu>
 
+<!-- New mat-menu for ellipsis -->
 <mat-menu #settingsMenu>
   <div
     class="notification-panel"
