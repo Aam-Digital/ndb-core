@@ -6,7 +6,7 @@ import { DataFilter } from "app/core/filter/filters/filters";
 /**
  * Defines allowed notification channels.
  */
-type NotificationChannel = "push" | "email" | "sms";
+export type NotificationChannel = "push";
 
 /**
  * This represents one specific notification config for one specific user,
@@ -61,5 +61,5 @@ export class NotificationType {
   @DatabaseField() entityType: string;
 
   /** (for "entity_change" notifications only): conditions which changes cause notifications */
-  @DatabaseField() conditions: DataFilter<NotificationType>;
+  @DatabaseField() conditions: DataFilter<any>;
 }

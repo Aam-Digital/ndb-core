@@ -58,8 +58,8 @@
         <app-notification-item
           [notification]="notification"
           (deleteClick)="deleteNotification(notification)"
-          (readStatusChange)="updateReadStatus(notification, $event)"
-          (notificationClick)="notificationListener(notification)"
+          (readStatusChange)="updateReadStatus([notification], $event)"
+          (notificationClick)="notificationClicked(notification)"
         ></app-notification-item>
       } @empty {
         <div class="flex-column no-notification-message">

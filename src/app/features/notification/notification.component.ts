@@ -12,12 +12,9 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationItemComponent } from "./notification-item/notification-item.component";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { closeOnlySubmenu } from "./close-only-submenu";
-import { NotificationConfig } from "./model/notification-config";
-import { AlertService } from "app/core/alerts/alert.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../core/entity/model/entity-update";
-import { RouterLink } from "@angular/router";
 
 @UntilDestroy()
 @Component({
@@ -44,13 +41,11 @@ export class NotificationComponent implements OnInit {
   public unreadNotifications: NotificationEvent[] = [];
   private notificationsSubject = new Subject<NotificationEvent[]>();
   public selectedTab = 0;
-  public hasNotificationEnabled = false;
   protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
   constructor(
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
-    private alertService: AlertService,
     private router: Router,
   ) {}
 
@@ -64,7 +59,7 @@ export class NotificationComponent implements OnInit {
   }
 
   /**
-   * Get the logged in user id
+   * Get the logged-in user id
    */
   private get userId(): string | undefined {
     return this.sessionInfo.value?.id;
@@ -76,9 +71,6 @@ export class NotificationComponent implements OnInit {
   private async loadAndProcessNotifications() {
     const notifications =
       await this.entityMapper.loadType<NotificationEvent>(NotificationEvent);
-
-    const notificationConfig = await this.loadNotificationConfig(this.userId);
-    this.hasNotificationEnabled = notificationConfig?.channels.push ?? false;
 
     this.notificationsSubject.next(notifications);
   }
@@ -95,20 +87,6 @@ export class NotificationComponent implements OnInit {
             applyUpdate(this.allNotifications, next),
           );
         });
-    }
-  }
-
-  /**
-   * Loads the user's notification configuration.
-   */
-  private async loadNotificationConfig(userId: string) {
-    try {
-      return await this.entityMapper.load<NotificationConfig>(
-        NotificationConfig,
-        userId,
-      );
-    } catch (error) {
-      return null;
     }
   }
 
@@ -133,13 +111,13 @@ export class NotificationComponent implements OnInit {
     const unreadNotifications = this.allNotifications.filter(
       (notification) => !notification.readStatus,
     );
-    await this.updateReadStatusForNotifications(unreadNotifications, true);
+    await this.updateReadStatus(unreadNotifications, true);
   }
 
   /**
    * Updates the read status for multiple notifications.
    */
-  private async updateReadStatusForNotifications(
+  async updateReadStatus(
     notifications: NotificationEvent[],
     newStatus: boolean,
   ) {
@@ -151,19 +129,10 @@ export class NotificationComponent implements OnInit {
   }
 
   /**
-   * Updates the read status of a single notification.
-   */
-  async updateReadStatus(notification: NotificationEvent, newStatus: boolean) {
-    this.updateReadStatusForNotifications([notification], newStatus);
-  }
-
-  /**
    * Deletes a user notification.
    */
   async deleteNotification(notification: NotificationEvent) {
     await this.entityMapper.remove(notification);
-    this.alertService.addInfo("Notification deleted successfully");
-    this.loadAndProcessNotifications();
   }
 
   /**
@@ -171,10 +140,10 @@ export class NotificationComponent implements OnInit {
    * Handles notification events by redirecting the user to the corresponding action URL.
    * @param {NotificationEvent} notification - The notification event containing the action URL.
    */
-  notificationListener(notification: NotificationEvent) {
-    this.updateReadStatus(notification, true);
+  async notificationClicked(notification: NotificationEvent) {
+    await this.updateReadStatus([notification], true);
     if (!notification.actionURL) return;
-    this.router.navigate([notification.actionURL]);
+    await this.router.navigate([notification.actionURL]);
   }
 
   // TODO: remove test code before final merge
