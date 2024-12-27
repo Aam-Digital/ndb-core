@@ -17,6 +17,7 @@ import { AlertService } from "app/core/alerts/alert.service";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../core/entity/model/entity-update";
+import { RouterLink } from "@angular/router";
 
 @UntilDestroy()
 @Component({
@@ -33,6 +34,7 @@ import { applyUpdate } from "../../core/entity/model/entity-update";
     MatTooltipModule,
     MatTabsModule,
     NotificationItemComponent,
+    RouterLink,
   ],
   templateUrl: "./notification.component.html",
   styleUrl: "./notification.component.scss",
@@ -135,35 +137,6 @@ export class NotificationComponent implements OnInit {
   }
 
   /**
-   * Toggles the notification setting for the user.
-   */
-  async enableNotificationForUser(): Promise<void> {
-    // TODO: Implement the logic to called the getToken function from the NotificationService file, Once the PR #2692 merged.
-    this.hasNotificationEnabled = !this.hasNotificationEnabled;
-
-    const notificationConfig = await this.loadNotificationConfig(this.userId);
-
-    // TODO: Currently, email notification are disabled. Update this logic once the email notification feature is implemented.
-    const notificationChannels = {
-      push: this.hasNotificationEnabled,
-      email: false,
-    };
-
-    if (notificationConfig) {
-      notificationConfig.channels = notificationChannels;
-      await this.entityMapper.save(notificationConfig);
-    } else {
-      const newNotificationConfig = new NotificationConfig(this.userId);
-      newNotificationConfig.channels = notificationChannels;
-      await this.entityMapper.save(newNotificationConfig);
-    }
-
-    this.alertService.addInfo(
-      `Notification ${this.hasNotificationEnabled ? "enabled" : "disabled"}.`,
-    );
-  }
-
-  /**
    * Updates the read status for multiple notifications.
    */
   private async updateReadStatusForNotifications(
@@ -201,13 +174,6 @@ export class NotificationComponent implements OnInit {
    */
   notificationListener(notification: NotificationEvent) {
     this.router.navigate([notification.actionURL]);
-  }
-
-  /**
-   * Redirect the user to Notification setting page
-   */
-  onRedirectToNotificationsSetting() {
-    this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
   }
 
   // TODO: remove test code before final merge
