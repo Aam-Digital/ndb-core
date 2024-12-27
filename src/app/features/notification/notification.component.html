@@ -1,3 +1,8 @@
+<!-- Test button - remove before final merge -->
+<button mat-icon-button (click)="createTestEvent()">
+  <fa-icon class="white" icon="vial"></fa-icon>
+</button>
+
 <button
   mat-icon-button
   matTooltip="Notifications"
@@ -53,7 +58,8 @@
         <app-notification-item
           [notification]="notification"
           (deleteClick)="deleteNotification(notification)"
-          (readStatusChange)="updateReadStatus(notification, $event)"
+          (readStatusChange)="updateReadStatus([notification], $event)"
+          (notificationClick)="notificationClicked(notification)"
         ></app-notification-item>
       } @empty {
         <div class="flex-column no-notification-message">
@@ -76,23 +82,16 @@
     class="notification-panel"
     (click)="closeOnlySubmenu(settingsMenuTrigger, $event)"
   >
-    <button mat-menu-item (click)="enableNotificationForUser()">
-      <fa-icon
-        [icon]="hasNotificationEnabled ? 'bell-slash' : 'bell'"
-      ></fa-icon>
-      <span class="menu-option" i18n>{{
-        hasNotificationEnabled
-          ? "Disable notifications"
-          : "Enable notifications"
-      }}</span>
-    </button>
-
     <button mat-menu-item (click)="markAllRead()">
       <fa-icon icon="check"></fa-icon>
       <span class="menu-option" i18n>Mark all as read</span>
     </button>
 
-    <button mat-menu-item>
+    <button
+      mat-menu-item
+      [routerLink]="['/user-account']"
+      [queryParams]="{ tabIndex: 1 }"
+    >
       <fa-icon icon="gear"></fa-icon>
       <span class="menu-option" i18n>Notification settings</span>
     </button>
