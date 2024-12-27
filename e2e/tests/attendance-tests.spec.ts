@@ -131,9 +131,50 @@ test('test', async ({ page }) => {
   await page.getByLabel('December 23,').click();
   await page.getByRole('button', { name: 'Calculate' }).click();
 
+  const childNameColumn = page.getByRole('columnheader', { name: 'Name' });
+  await expect(childNameColumn).toBeVisible(); //Children list is visible
+
+  const classColumn = page.getByRole('columnheader', { name: 'Class' });
+  await expect(classColumn).toBeVisible(); //Class they are in is visible
+
+  const schoolName = page.getByRole('columnheader', { name: 'School' });
+  await expect(schoolName).toBeVisible(); //School name is visible
+
+  const totalDays = page.getByRole('columnheader', { name: 'Total' });
+  await expect(totalDays).toBeVisible(); //Total no. of days is visible
+
+  const presentDays = page.getByRole('columnheader', { name: 'Present' });
+  await expect(presentDays).toBeVisible(); //No. of days present is visible
+
+  const PresentRate = page.getByRole('columnheader', { name: 'Rate' });
+  await expect(PresentRate).toBeVisible(); //Present rate is visible
+  
+  const LateDays = page.getByRole('columnheader', { name: 'Late' });
+  await expect(LateDays).toBeVisible(); //No. of days late is visible
+
   // Attendace Percentage
   await page.locator('mat-list-item').filter({ hasText: 'Children' }).click();
   await page.getByRole('tab', { name: 'School Info' }).click();
 
-  
+  const CoachingAttendance = page.getByRole('columnheader', { name: 'Attendance (Coaching)' }).locator('app-entity-field-label');
+  const rowCount = await CoachingAttendance.count();
+
+  for (let i = 0; i < rowCount; i++) {
+    const cell = CoachingAttendance.nth(i);
+
+    // Get the percentage value as text
+    const percentageText = await cell.textContent();
+    const percentage = parseInt(percentageText?.replace('%', '').trim() || '0', 10);
+
+    if(percentage >=80){
+      const color = await cell.evaluate((el) => window.getComputedStyle(el).backgroundColor);
+      expect(color).toBe('rgb(144, 238, 144)'); // Green highlight
+    } else if (percentage >= 60 && percentage < 80) {
+      const color = await cell.evaluate((el) => window.getComputedStyle(el).backgroundColor);
+      expect(color).toBe('rgb(255, 165, 0)'); // Orange highlight
+    } else if (percentage < 60) {
+      const color = await cell.evaluate((el) => window.getComputedStyle(el).backgroundColor);
+      expect(color).toBe('rgb(255, 99, 71)'); // Red highlight
+    } 
+  }
 });
