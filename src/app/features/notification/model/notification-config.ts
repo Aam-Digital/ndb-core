@@ -32,6 +32,13 @@ export class NotificationConfig extends Entity {
   constructor(id: string) {
     super(id);
   }
+
+  /**
+   * Helper method to access the user ID for whom this config is.
+   */
+  getUserId(): string {
+    return this.getId();
+  }
 }
 
 /**
