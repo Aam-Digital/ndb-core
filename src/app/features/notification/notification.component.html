@@ -1,0 +1,100 @@
+<button
+  mat-icon-button
+  matTooltip="Notifications"
+  i18n-matTooltip="notifications toolbar icon tooltip"
+  [matMenuTriggerFor]="notificationList"
+>
+  <span
+    [matBadge]="
+      unreadNotifications?.length > 0 ? unreadNotifications?.length : null
+    "
+    matBadgeColor="accent"
+  >
+    <fa-icon class="white" icon="bell"></fa-icon>
+  </span>
+</button>
+
+<mat-menu #notificationList>
+  <div
+    class="notification-panel flex-column"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- stopPropagation above to avoid closing the panel upon action button clicks -->
+
+    <div class="notification-list-header">
+      <div
+        class="flex-row justify-space-between align-center notification-panel-header"
+      >
+        <h2 class="notification-title" i18n>Notifications</h2>
+
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="settingsMenu"
+          #settingsMenuTrigger="matMenuTrigger"
+        >
+          <fa-icon icon="ellipsis"></fa-icon>
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <mat-tab-group [(selectedIndex)]="selectedTab">
+        <mat-tab label="All" i18n-label></mat-tab>
+        <mat-tab label="Unread" i18n-label></mat-tab>
+      </mat-tab-group>
+    </div>
+
+    <div class="flex-grow flex-column gap-small notification-list-body">
+      @for (
+        notification of selectedTab === 0
+          ? allNotifications
+          : unreadNotifications;
+        track notification
+      ) {
+        <app-notification-item
+          [notification]="notification"
+          (deleteClick)="deleteNotification(notification)"
+          (readStatusChange)="updateReadStatus(notification, $event)"
+        ></app-notification-item>
+      } @empty {
+        <div class="flex-column no-notification-message">
+          <fa-icon
+            class="no-notification-icon"
+            [icon]="['far', 'bell']"
+          ></fa-icon>
+          <span class="no-notification-text" i18n
+            >You have no notifications</span
+          >
+        </div>
+      }
+    </div>
+  </div>
+</mat-menu>
+
+<!-- New mat-menu for ellipsis -->
+<mat-menu #settingsMenu>
+  <div
+    class="notification-panel"
+    (click)="closeOnlySubmenu(settingsMenuTrigger, $event)"
+  >
+    <button mat-menu-item (click)="enableNotificationForUser()">
+      <fa-icon
+        [icon]="hasNotificationEnabled ? 'bell-slash' : 'bell'"
+      ></fa-icon>
+      <span class="menu-option" i18n>{{
+        hasNotificationEnabled
+          ? "Disable notifications"
+          : "Enable notifications"
+      }}</span>
+    </button>
+
+    <button mat-menu-item (click)="markAllRead()">
+      <fa-icon icon="check"></fa-icon>
+      <span class="menu-option" i18n>Mark all as read</span>
+    </button>
+
+    <button mat-menu-item>
+      <fa-icon icon="gear"></fa-icon>
+      <span class="menu-option" i18n>Notification settings</span>
+    </button>
+  </div>
+</mat-menu>

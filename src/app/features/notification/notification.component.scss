@@ -1,0 +1,44 @@
+@use "variables/colors";
+
+.notification-list-header {
+  position: sticky;
+  top: 0px;
+  background-color: colors.$background;
+}
+
+.notification-title {
+  font-weight: 700;
+  margin: 0px;
+}
+
+.no-notification-text {
+  color: colors.$inactive;
+}
+
+.notification-panel-header {
+  padding: 8px 10px;
+}
+
+.notification-list-body {
+  overflow-y: auto;
+}
+
+.notification-panel {
+  width: 280px;
+  max-height: 90vh;
+}
+
+.no-notification-message {
+  text-align: center;
+  padding: 24px;
+}
+
+.no-notification-icon {
+  font-size: 56px;
+  margin-bottom: 20px;
+  color: colors.$inactive;
+}
+
+.menu-option {
+  margin-left: 12px;
+}
