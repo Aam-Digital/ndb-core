@@ -154,9 +154,7 @@ export class NotificationComponent implements OnInit {
    * Updates the read status of a single notification.
    */
   async updateReadStatus(notification: NotificationEvent, newStatus: boolean) {
-    notification.readStatus = newStatus;
-    await this.entityMapper.save(notification);
-    this.filterUserNotifications(this.allNotifications);
+    this.updateReadStatusForNotifications([notification], newStatus);
   }
 
   /**
@@ -169,10 +167,13 @@ export class NotificationComponent implements OnInit {
   }
 
   /**
+   * Updates the read status of a selected notification.
    * Handles notification events by redirecting the user to the corresponding action URL.
    * @param {NotificationEvent} notification - The notification event containing the action URL.
    */
   notificationListener(notification: NotificationEvent) {
+    this.updateReadStatus(notification, true);
+    if (!notification.actionURL) return;
     this.router.navigate([notification.actionURL]);
   }
 
