@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Subject } from "rxjs";
+import { Subject, Subscription } from "rxjs";
 import { MatBadgeModule } from "@angular/material/badge";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenu, MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
@@ -15,7 +15,10 @@ import { closeOnlySubmenu } from "./close-only-submenu";
 import { NotificationConfig } from "./model/notification-config";
 import { AlertService } from "app/core/alerts/alert.service";
 import { Router } from "@angular/router";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { applyUpdate } from "../../core/entity/model/entity-update";
 
+@UntilDestroy()
 @Component({
   selector: "app-notification",
   standalone: true,
@@ -55,6 +58,7 @@ export class NotificationComponent implements OnInit {
     });
 
     this.loadAndProcessNotifications();
+    this.listenToEntityUpdates();
   }
 
   /**
@@ -75,6 +79,21 @@ export class NotificationComponent implements OnInit {
     this.hasNotificationEnabled = notificationConfig?.channels.push ?? false;
 
     this.notificationsSubject.next(notifications);
+  }
+
+  private updateSubscription: Subscription;
+
+  private listenToEntityUpdates() {
+    if (!this.updateSubscription) {
+      this.updateSubscription = this.entityMapper
+        .receiveUpdates(NotificationEvent)
+        .pipe(untilDestroyed(this))
+        .subscribe((next) => {
+          this.notificationsSubject.next(
+            applyUpdate(this.allNotifications, next),
+          );
+        });
+    }
   }
 
   /**
