@@ -23,6 +23,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
 import { NotificationConfig } from "app/features/notification/model/notification-config";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { AlertService } from "../../alerts/alert.service";
+import { NotificationRuleConditionComponent } from "app/features/notification/notification-rule-condition/notification-rule-condition.component";
 
 @Component({
   selector: "app-user-notification-setting",
@@ -42,6 +43,7 @@ import { AlertService } from "../../alerts/alert.service";
     HelpButtonComponent,
     NotificationCenterSelectComponent,
     ReactiveFormsModule,
+    NotificationRuleConditionComponent,
   ],
   templateUrl: "./user-notification-setting.component.html",
   styleUrl: "./user-notification-setting.component.scss",
