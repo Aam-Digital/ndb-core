@@ -66,40 +66,34 @@ export class UserNotificationSettingComponent implements OnInit {
   }
 
   private async init() {
-    this.addNewRule();
     this.allNotificationRules = await this.loadNotificationConfig();
-    this.pushNotificationsEnabled = this.allNotificationRules.channels.push;
-    this.setEntityType();
+    if (this.allNotificationRules) {
+      this.pushNotificationsEnabled = this.allNotificationRules.channels.push;
+      this.populateNotificationRules();
+    } else {
+      this.addNewRule();
+    }
   }
 
-  private async setEntityType() {
-    this.allNotificationRules.notificationTypes.map(
-      (notificationType: any, index: number) => {
-        this.getFormField(index, "entityType").setValue(
-          notificationType.entityType,
-        );
-      },
-    );
-  }
+  private populateNotificationRules() {
+    if (
+      this.allNotificationRules &&
+      this.allNotificationRules.notificationTypes
+    ) {
+      this.allNotificationRules.notificationTypes.forEach(
+        (notificationType: any, index: number) => {
+          const newRule = this.createNotificationRuleFormGroup();
 
-  /**
-   * Get the logged in user id
-   */
-  private get userId(): string | undefined {
-    return this.sessionInfo.value?.id;
-  }
+          this.notificationRules.push(newRule);
 
-  /**
-   * Loads the user's notification configuration.
-   */
-  private async loadNotificationConfig() {
-    try {
-      return await this.entityMapper.load<NotificationConfig>(
-        NotificationConfig,
-        this.userId,
+          this.getFormField(index, "entityType").setValue(
+            notificationType.entityType,
+          );
+          this.getFormField(index, "enabled").setValue(
+            notificationType.enabled,
+          );
+        },
       );
-    } catch (error) {
-      return null;
     }
   }
 
@@ -125,6 +119,27 @@ export class UserNotificationSettingComponent implements OnInit {
    */
   getFormField(index: number, fieldName: string): FormControl {
     return this.notificationRules.at(index).get(fieldName) as FormControl;
+  }
+
+  /**
+   * Get the logged in user id
+   */
+  private get userId(): string | undefined {
+    return this.sessionInfo.value?.id;
+  }
+
+  /**
+   * Loads the user's notification configuration.
+   */
+  private async loadNotificationConfig() {
+    try {
+      return await this.entityMapper.load<NotificationConfig>(
+        NotificationConfig,
+        this.userId,
+      );
+    } catch (error) {
+      return null;
+    }
   }
 
   /**
@@ -183,16 +198,19 @@ export class UserNotificationSettingComponent implements OnInit {
     Logging.log("Notification settings test successful.");
   }
 
-  async updateNotificationSettingField(value: string, index: number) {
+  async updateNotificationSettingField(index: number, fieldName: string) {
     const userNotificationConfig = await this.loadNotificationConfig();
+    const selectedEntity = this.notificationRules
+      .at(index)
+      .get(fieldName).value;
     if (userNotificationConfig) {
       await this.updateExistingNotificationConfig(
         userNotificationConfig,
-        value,
+        selectedEntity,
         index,
       );
     } else {
-      await this.createAndSaveNewNotificationConfig(value);
+      await this.createAndSaveNewNotificationConfig(selectedEntity);
     }
 
     this.alertService.addInfo($localize`Notification Settings updated`);
@@ -287,8 +305,6 @@ export class UserNotificationSettingComponent implements OnInit {
   }
 
   getNotificationRuleEnabled(index: number): boolean {
-    return (
-      this.allNotificationRules?.notificationTypes[index]?.enabled || false
-    );
+    return this.allNotificationRules?.notificationTypes[index]?.enabled;
   }
 }

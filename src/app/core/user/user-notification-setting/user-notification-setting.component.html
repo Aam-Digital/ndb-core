@@ -35,7 +35,9 @@
               [allowMultiSelect]="false"
               label="Select an entity type"
               [formControl]="getFormField(index, 'entityType')"
-              (selectedEntity)="updateNotificationSettingField($event, index)"
+              (selectedEntity)="
+                updateNotificationSettingField(index, 'entityType')
+              "
             ></app-entity-type-select>
             <app-help-button
               text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
@@ -84,7 +86,6 @@
               class="notification-toggle"
               matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
               i18n-matTooltip
-              [checked]="getNotificationRuleEnabled(index)"
             ></mat-slide-toggle>
           </div>
 
