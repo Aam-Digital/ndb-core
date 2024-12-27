@@ -19,9 +19,13 @@
   padding: 8px 10px;
 }
 
+.notification-list-body {
+  overflow-y: auto;
+}
+
 .notification-panel {
   width: 280px;
-  max-height: 95vh;
+  max-height: 90vh;
 }
 
 .no-notification-message {
@@ -37,8 +41,4 @@
 
 .menu-option {
   margin-left: 12px;
-}
-
-::ng-deep .mat-mdc-menu-content {
-  padding: 0px !important;
 }
