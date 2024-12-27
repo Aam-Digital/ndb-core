@@ -4,11 +4,6 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DataFilter } from "app/core/filter/filters/filters";
 
 /**
- * Defines allowed notification channels.
- */
-export type NotificationChannel = "push";
-
-/**
  * This represents one specific notification config for one specific user,
  */
 @DatabaseEntity("NotificationConfig")
@@ -24,7 +19,7 @@ export class NotificationConfig extends Entity {
   /**
    * Specific rules to trigger notifications.
    */
-  @DatabaseField() notificationTypes: NotificationType[];
+  @DatabaseField() notificationRules: NotificationRule[];
 
   /**
    * The "id" must be the user account ID to which this config relates.
@@ -42,11 +37,16 @@ export class NotificationConfig extends Entity {
 }
 
 /**
+ * Defines allowed notification channels.
+ */
+export type NotificationChannel = "push";
+
+/**
  * Represents a specific notification type configuration.
  */
-export class NotificationType {
+export class NotificationRule {
   /** The general type of notification (e.g. changes to entities, etc.) */
-  @DatabaseField() notificationType: string;
+  @DatabaseField() notificationType: NotificationType;
 
   /** whether this notification is enabled or currently "paused" */
   @DatabaseField() enabled: boolean;
@@ -63,3 +63,8 @@ export class NotificationType {
   /** (for "entity_change" notifications only): conditions which changes cause notifications */
   @DatabaseField() conditions: DataFilter<any>;
 }
+
+/**
+ * Base type of notification rule.
+ */
+export type NotificationType = "entity_change";
