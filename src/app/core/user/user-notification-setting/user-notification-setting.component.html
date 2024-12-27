@@ -63,10 +63,11 @@
             class="flex-row justify-content-center align-center notification-rule-option"
           >
             <app-notification-center-select
-              [selectedNotificationMethod]="['Push']"
+              [selectedNotificationMethod]="[notificationMethods[0]]"
               [notificationMethods]="notificationMethods"
               [disabled]="true"
               label="Notification Method"
+              i18n-label
             ></app-notification-center-select>
             <app-help-button
               text="Define a notification method to receive notifications"
@@ -83,6 +84,7 @@
               class="notification-toggle"
               matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
               i18n-matTooltip
+              [checked]="getNotificationRuleEnabled(index)"
             ></mat-slide-toggle>
           </div>
 
@@ -146,7 +148,10 @@
             i18n-text
           ></app-help-button>
         </div>
-        <mat-slide-toggle (change)="onEnableNotification()" />
+        <mat-slide-toggle
+          (change)="onEnableNotification($event)"
+          [checked]="pushNotificationsEnabled"
+        />
       </div>
 
       <div class="flex-row">

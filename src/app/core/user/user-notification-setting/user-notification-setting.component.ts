@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import {
   MatSlideToggle,
   MatSlideToggleChange,
@@ -46,10 +46,12 @@ import { AlertService } from "../../alerts/alert.service";
   templateUrl: "./user-notification-setting.component.html",
   styleUrl: "./user-notification-setting.component.scss",
 })
-export class UserNotificationSettingComponent {
+export class UserNotificationSettingComponent implements OnInit {
   notificationSetting = new FormGroup({
     notificationRules: new FormArray([]),
   });
+  allNotificationRules = null;
+  pushNotificationsEnabled = false;
   notificationMethods = ["Push", "Email"];
 
   constructor(
@@ -57,8 +59,27 @@ export class UserNotificationSettingComponent {
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
     private alertService: AlertService,
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.init();
+  }
+
+  private async init() {
     this.addNewRule();
+    this.allNotificationRules = await this.loadNotificationConfig();
+    this.pushNotificationsEnabled = this.allNotificationRules.channels.push;
+    this.setEntityType();
+  }
+
+  private async setEntityType() {
+    this.allNotificationRules.notificationTypes.map(
+      (notificationType: any, index: number) => {
+        this.getFormField(index, "entityType").setValue(
+          notificationType.entityType,
+        );
+      },
+    );
   }
 
   /**
@@ -69,19 +90,25 @@ export class UserNotificationSettingComponent {
   }
 
   /**
+   * Loads the user's notification configuration.
+   */
+  private async loadNotificationConfig() {
+    try {
+      return await this.entityMapper.load<NotificationConfig>(
+        NotificationConfig,
+        this.userId,
+      );
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
    * Adds a new notification rule and initializes its default values.
    */
   addNewRule() {
-    const newRule = new FormGroup({
-      entityType: new FormControl(""),
-      notificationRuleCondition: new FormControl(""),
-      notificationMethod: new FormControl("Push"),
-      enabled: new FormControl(false),
-    });
-
-    (this.notificationSetting.get("notificationRules") as FormArray).push(
-      newRule,
-    );
+    const newRule = this.createNotificationRuleFormGroup();
+    this.notificationRules.push(newRule);
   }
 
   /**
@@ -107,108 +134,161 @@ export class UserNotificationSettingComponent {
    */
   async confirmRemoveNotificationRule(index: number) {
     const confirmed = await this.confirmationDialog.getConfirmation(
-      "Delete notification rule",
-      "Are you sure you want to remove this notification rule?",
+      $localize`Delete notification rule`,
+      $localize`Are you sure you want to remove this notification rule?`,
     );
-
-    if (!confirmed) {
-      return;
+    if (confirmed) {
+      await this.deleteNotificationRule(index);
+      this.notificationRules.removeAt(index);
+      return true;
     }
+    return false;
+  }
 
-    (this.notificationSetting.get("notificationRules") as FormArray).removeAt(
-      index,
-    );
-    return true;
+  private async deleteNotificationRule(index: number) {
+    const userNotificationConfig = await this.loadNotificationConfig();
+    if (userNotificationConfig) {
+      const notificationTypes = userNotificationConfig.notificationTypes || [];
+      notificationTypes.splice(index, 1);
+      userNotificationConfig.notificationTypes = notificationTypes;
+      await this.entityMapper.save(userNotificationConfig);
+      this.alertService.addInfo(
+        $localize`Notification rule deleted successfully`,
+      );
+    }
   }
 
   /**
-   * Enables or disables notifications and updates the backend.
-   * @param index The index of the notification rule being toggled.
+   * Enables or disables notifications
    */
-  onEnableNotification() {
-    Logging.log("Browser notifications toggled.");
+  async onEnableNotification(event: MatSlideToggleChange) {
+    const userNotificationConfig = await this.loadNotificationConfig();
+    const pushEnabled = event.checked;
+
+    if (userNotificationConfig) {
+      userNotificationConfig.channels.push = pushEnabled;
+      await this.entityMapper.save(userNotificationConfig);
+    } else {
+      await this.createAndSaveNotificationConfigWithRule(pushEnabled);
+    }
+
+    this.alertService.addInfo($localize`Notifications enabled.`);
   }
 
   /**
    * Sends a test notification.
    */
   testNotification() {
+    // TODO: Implement the test notification logic.
     Logging.log("Notification settings test successful.");
   }
 
-  /**
-   * Loads the user's notification configuration.
-   */
-  private async loadNotificationConfig(userId: string) {
-    try {
-      return await this.entityMapper.load<NotificationConfig>(
-        NotificationConfig,
-        userId,
-      );
-    } catch (error) {
-      return null;
-    }
-  }
-
   async updateNotificationSettingField(value: string, index: number) {
-    const userNotificationConfig = await this.loadNotificationConfig(
-      this.userId,
-    );
-
+    const userNotificationConfig = await this.loadNotificationConfig();
     if (userNotificationConfig) {
-      this.updateExistingNotificationConfig(
+      await this.updateExistingNotificationConfig(
         userNotificationConfig,
         value,
         index,
       );
     } else {
-      this.createAndSaveNewNotificationConfig(value);
+      await this.createAndSaveNewNotificationConfig(value);
     }
 
-    this.alertService.addInfo("Notification Settings updated");
+    this.alertService.addInfo($localize`Notification Settings updated`);
   }
 
-  private updateExistingNotificationConfig(
-    config: NotificationConfig,
+  private async updateExistingNotificationConfig(
+    userNotificationConfig: NotificationConfig,
     value: string,
     index: number,
   ) {
-    const notificationTypes = config.notificationTypes || [];
-    const updatedNotificationType = this.createNotificationType(value);
-
+    const notificationTypes = userNotificationConfig.notificationTypes || [];
     if (notificationTypes.length) {
-      notificationTypes[index] = {
-        ...notificationTypes[index],
-        ...updatedNotificationType,
-      };
+      notificationTypes[index] = this.createNotificationType(value);
     } else {
-      notificationTypes.push(updatedNotificationType);
+      notificationTypes.push(this.createNotificationType(value));
     }
 
-    config.notificationTypes = notificationTypes;
-    this.entityMapper.save(config);
+    userNotificationConfig.notificationTypes = notificationTypes;
+    userNotificationConfig.channels = { ...userNotificationConfig.channels };
+
+    try {
+      await this.entityMapper.save(userNotificationConfig);
+    } catch (error) {
+      if (error.message.includes("conflict")) {
+        const latestConfig = await this.entityMapper.load(
+          NotificationConfig,
+          this.userId,
+        );
+        await this.updateExistingNotificationConfig(latestConfig, value, index);
+      } else {
+        throw error;
+      }
+    }
   }
 
-  private createAndSaveNewNotificationConfig(value: string) {
+  private async createAndSaveNewNotificationConfig(value: string) {
     const userNotificationConfig = new NotificationConfig(this.userId);
     userNotificationConfig.notificationTypes = [
       this.createNotificationType(value),
     ];
     userNotificationConfig.channels = { push: false, email: false };
-    this.entityMapper.save(userNotificationConfig);
+    await this.entityMapper.save(userNotificationConfig);
   }
 
   private createNotificationType(value: string) {
     return {
       notificationType: "entity-update",
       enabled: true,
-      channels: { push: true, email: true },
-      entityType: value.toString(),
+      channels: { push: true, email: false },
+      entityType: value,
       conditions: {},
     };
   }
 
-  enableNotificationRule(event: MatSlideToggleChange, index: number) {
-    Logging.log(event.checked ? "Enabled" : "Disabled");
+  async enableNotificationRule(event: MatSlideToggleChange, index: number) {
+    const userNotificationConfig = await this.loadNotificationConfig();
+    const updatedNotificationType = this.createNotificationType("");
+
+    if (userNotificationConfig) {
+      const notificationTypes = userNotificationConfig.notificationTypes || [];
+      if (notificationTypes[index]) {
+        notificationTypes[index].enabled = event.checked;
+      } else {
+        notificationTypes.push(updatedNotificationType);
+      }
+
+      userNotificationConfig.notificationTypes = notificationTypes;
+      await this.entityMapper.save(userNotificationConfig);
+    } else {
+      await this.createAndSaveNotificationConfigWithRule(event.checked);
+    }
+
+    this.alertService.addInfo($localize`Enable notification rule.`);
+  }
+
+  private async createAndSaveNotificationConfigWithRule(push: boolean) {
+    const newUserNotificationConfig = new NotificationConfig(this.userId);
+    newUserNotificationConfig.notificationTypes = [
+      this.createNotificationType(""),
+    ];
+    newUserNotificationConfig.channels = { push, email: false };
+    await this.entityMapper.save(newUserNotificationConfig);
+  }
+
+  private createNotificationRuleFormGroup() {
+    return new FormGroup({
+      entityType: new FormControl(""),
+      notificationRuleCondition: new FormControl(""),
+      notificationMethod: new FormControl("Push"),
+      enabled: new FormControl(false),
+    });
+  }
+
+  getNotificationRuleEnabled(index: number): boolean {
+    return (
+      this.allNotificationRules?.notificationTypes[index]?.enabled || false
+    );
   }
 }
