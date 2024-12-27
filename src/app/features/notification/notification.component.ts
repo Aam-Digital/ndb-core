@@ -190,4 +190,13 @@ export class NotificationComponent implements OnInit {
   onRedirectToNotificationsSetting() {
     this.router.navigate(["/user-account"], { queryParams: { tabIndex: 1 } });
   }
+
+  // TODO: remove test code before final merge
+  async createTestEvent() {
+    const event = new NotificationEvent();
+    event.title = "Test Notification";
+    event.body = "This is a test notification.";
+    event.notificationFor = this.userId;
+    await this.entityMapper.save(event);
+  }
 }
