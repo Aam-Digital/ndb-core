@@ -100,7 +100,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3428613289989595847" datatype="html">
-        <source> Record Attendance </source>
+        <source> Record Attendance
+</source>
         <target> Record Attendance </target>
         <note priority="1" from="description">Title when recording the attendance at a particular stage
     (e.g. selecting the event, recording it)</note>
@@ -111,7 +112,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8890553633144307762" datatype="html">
-        <source>Indietro</source>
+        <source>Back</source>
         <target>Indietro</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/add-day-attendance.component.html</context>
@@ -191,7 +192,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8747316656326754222" datatype="html">
-        <source>Data</source>
+        <source>Date </source>
         <target>Data</target>
         <note priority="1" from="description">Record an event for a particular date that is to be
         inputted</note>
@@ -284,8 +285,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2615484314952190660" datatype="html">
-        <source>This event has some participants who are &quot;archived&quot;. We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?</source>
-        <target>This event has some participants who are &quot;archived&quot;. We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?</target>
+        <source>This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?</source>
+        <target>This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
           <context context-type="linenumber">273</context>
@@ -324,7 +325,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4942664025620181200" datatype="html">
-        <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/> ) </source>
+        <source> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{selectedEvent.children.length, plural,
+        one {participant}
+        other {participants}
+      }" xid="7122178387978631158"/> ) </source>
         <target> All excused (out of <x id="INTERPOLATION" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/> ) </target>
         <note priority="1" from="description">How many participants attended at an event (in
         percent)</note>
@@ -335,7 +339,11 @@
         </context-group>
       </trans-unit>
       <trans-unit id="678258264214451087" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>) </source>
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{selectedEvent.children.length, plural,
+        one {participant}
+        other {participants}
+
+      }" xid="7122178387978631158"/>) </source>
         <target> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.average | percent: &quot;1.0-0&quot; }}"/> attended (of <x id="INTERPOLATION_1" equiv-text="{{ selectedEvent.children.length }}"/> <x id="ICU" equiv-text="{ selectedEvent.children.length, plural, one {participant} other {participants} }"/>) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-calendar/attendance-calendar.component.html</context>
@@ -343,7 +351,10 @@
         </context-group>
       </trans-unit>
       <trans-unit id="6998523433750901307" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }}"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other {participants} }"/> without recorded status </source>
+        <source> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }}"/> <x id="ICU" equiv-text="{selectedEventStats.excludedUnknown, plural,
+        one {participant}
+        other {participants}
+      }" xid="7122178387978631158"/> without recorded status </source>
         <target> <x id="INTERPOLATION" equiv-text="{{ selectedEventStats.excludedUnknown }}"/> <x id="ICU" equiv-text="{ selectedEventStats.excludedUnknown, plural, one {participant} other {participants} }"/> without recorded status </target>
         <note priority="1" from="description">How many children are without a status</note>
         <note priority="1" from="meaning">Unknown status</note>
@@ -385,7 +396,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3580318546691057460" datatype="html">
-        <source> Attendance: <x id="INTERPOLATION" equiv-text="{{           (focusedChild             ? entity?.getAttendancePercentage(focusedChild)             : entity?.getAttendancePercentageAverage()           ) | percent: &quot;1.0-0&quot;         }}"/> </source>
+        <source> Attendance: <x id="INTERPOLATION" equiv-text="{{
+      (forChild
+        ? entity?.getAttendancePercentage(forChild)
+        : entity?.getAttendancePercentageAverage()
+      ) | percent: &quot;1.0-0&quot;
+    }}"/> </source>
         <target> Attendance: <x id="INTERPOLATION" equiv-text="{{           (focusedChild             ? entity?.getAttendancePercentage(focusedChild)             : entity?.getAttendancePercentageAverage()           ) | percent: &quot;1.0-0&quot;         }}"/> </target>
         <note priority="1" from="description">Attendance of a child (in percent) or the average of the event
       (in percent)</note>
@@ -515,8 +531,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7296311640397262557" datatype="html">
-        <source> Manage &quot;recurring activities&quot; for which you regularly record attendance. You can assign participants and users to these activities and analyze their attendance across time. </source>
-        <target> Manage &quot;recurring activities&quot; for which you regularly record attendance. You can assign participants and users to these activities and analyze their attendance across time. </target>
+        <source> Manage "recurring activities" for which you regularly record attendance. You can assign participants and users to these activities and analyze their attendance across time. </source>
+        <target> Manage "recurring activities" for which you regularly record attendance. You can assign participants and users to these activities and analyze their attendance across time. </target>
         <note priority="1" from="description">Manage Activities content</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-manager/attendance-manager.component.html</context>
@@ -560,7 +576,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7084649392822804759" datatype="html">
-        <source>Overall Attendance</source>
+        <source> Overall Attendance </source>
         <target>Overall Attendance</target>
         <note priority="1" from="description">Attendance summary title</note>
         <context-group purpose="location">
@@ -594,7 +610,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5171185103484548297" datatype="html">
-        <source>Participant</source>
+        <source> Participant </source>
         <target>Participant</target>
         <note priority="1" from="description">The participant of a group, e.g. a school</note>
         <context-group purpose="location">
@@ -603,7 +619,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1164922858866015709" datatype="html">
-        <source>Attendance</source>
+        <source> Attendance </source>
         <target>Attendance</target>
         <note priority="1" from="description">The attendance of a participant, e.g. a student</note>
         <context-group purpose="location">
@@ -621,7 +637,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1953186544830876621" datatype="html">
-        <source>Absences <x id="PH" equiv-text="config.periodLabel"/></source>
+        <source>Absences <x id="PH" equiv-text="this.periodLabel"/></source>
         <target>Absences <x id="PH" equiv-text="config.periodLabel"/></target>
         <note priority="1" from="description">Dashboard attendance component subtitle</note>
         <context-group purpose="location">
@@ -868,7 +884,9 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3036695099328175425" datatype="html">
-        <source><x id="PH" equiv-text="faker.name.firstName()"/> <x id="PH_1" equiv-text="faker.helpers.arrayElement(         [this.normalSchool, this.highSchool]       )"/></source>
+        <source><x id="PH" equiv-text="faker.person.firstName()"/> <x id="PH_1" equiv-text="faker.helpers.arrayElement(
+        [this.normalSchool, this.highSchool],
+      )"/></source>
         <target><x id="PH" equiv-text="faker.name.firstName()"/> <x id="PH_1" equiv-text="faker.helpers.arrayElement(         [this.normalSchool, this.highSchool]       )"/></target>
         <note priority="1" from="description">e.g. Example School</note>
         <note priority="1" from="meaning">School demo name order for connecting the school name and (High) School</note>
@@ -1204,7 +1222,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="888341446683346521" datatype="html">
-        <source>Data inizio</source>
+        <source>Start date</source>
         <target>Data inizio</target>
         <note priority="1" from="description">Label for the start date of a relation</note>
         <context-group purpose="location">
@@ -1246,7 +1264,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="126074860850048964" datatype="html">
-        <source>Data fine</source>
+        <source>End date</source>
         <target>Data fine</target>
         <note priority="1" from="description">Label for the end date of a relation</note>
         <context-group purpose="location">
@@ -1311,9 +1329,9 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7252022468002751385" datatype="html">
-        <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;ng-container               *ngIf=&quot;childNoteInfo.moreThan"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container               *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;             &gt;"/> &gt;  <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/></source>
-        <target><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;ng-container               *ngIf=&quot;childNoteInfo.moreThan"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container               *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;             &gt;"/> &gt;  <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/></target>
-        <note priority="1" from="description">Format like &apos;Days passed &gt; 5 days&apos;</note>
+        <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text=">"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;entityNoteInfo.moreThanDaysSince&quot;>"/> >  <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container>"/> <x id="INTERPOLATION" equiv-text="{{ entityNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></source>
+        <target><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;ng-container               *ngIf=&quot;childNoteInfo.moreThan"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container               *ngIf=&quot;childNoteInfo.moreThanDaysSince&quot;             >"/> >  <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container>"/> <x id="INTERPOLATION" equiv-text="{{ childNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td>"/></target>
+        <note priority="1" from="description">Format like 'Days passed > 5 days'</note>
         <note priority="1" from="meaning">Amount of days back</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
@@ -1323,7 +1341,7 @@
       <trans-unit id="150250621540120335" datatype="html">
         <source> no records without recent report </source>
         <target> no records without recent report </target>
-        <note priority="1" from="description">There are no participants that don&apos;t have a recent report to be shown
+        <note priority="1" from="description">There are no participants that don't have a recent report to be shown
           here</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
@@ -1331,7 +1349,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7614074067535967988" datatype="html">
-        <source> Nessun caso recente </source>
+        <source> no records with recent report </source>
         <target> Nessun caso recente </target>
         <note priority="1" from="description">There are no participants that have a recent report to be shown here</note>
         <context-group purpose="location">
@@ -1340,7 +1358,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1416477962742777056" datatype="html">
-        <source><x id="PH" equiv-text="Child.labelPlural"/> with recent report</source>
+        <source><x id="PH" equiv-text="this._entity.labelPlural"/> with recent report</source>
         <target><x id="PH" equiv-text="Child.labelPlural"/> with recent report</target>
         <note priority="1" from="description">Subtitle informing the user that these are the entities with recent reports</note>
         <note priority="1" from="meaning">Subtitle</note>
@@ -1350,7 +1368,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8464701253103976828" datatype="html">
-        <source><x id="PH" equiv-text="Child.labelPlural"/> having no recent reports</source>
+        <source><x id="PH" equiv-text="this._entity.labelPlural"/> having no recent reports</source>
         <target><x id="PH" equiv-text="Child.labelPlural"/> having no recent reports</target>
         <note priority="1" from="description">Subtitle informing the user that these are the entities without recent reports</note>
         <note priority="1" from="meaning">Subtitle</note>
@@ -1382,7 +1400,7 @@
       <trans-unit id="4192457106372889898" datatype="html">
         <source>since the beginning of the week</source>
         <target>since the beginning of the week</target>
-        <note priority="1" from="description">&apos;includes cases without a note since the beginning of the week&apos;</note>
+        <note priority="1" from="description">'includes cases without a note since the beginning of the week'</note>
         <note priority="1" from="meaning">Tooltip-part</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.ts</context>
@@ -1392,7 +1410,7 @@
       <trans-unit id="285138170519416351" datatype="html">
         <source>without a note within the last <x id="PH" equiv-text="this.sinceDays"/> days</source>
         <target>without a note within the last <x id="PH" equiv-text="this.sinceDays"/> days</target>
-        <note priority="1" from="description">&apos;includes cases without a note within the last x days&apos;</note>
+        <note priority="1" from="description">'includes cases without a note within the last x days'</note>
         <note priority="1" from="meaning">Tooltip-part</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.ts</context>
@@ -1575,11 +1593,11 @@
       </trans-unit>
       <trans-unit id="5417078587421662135" datatype="html">
         <source>
-        Child was not in school whole last week again. When calling the mother she didn&apos;t know about it.
+        Child was not in school whole last week again. When calling the mother she didn't know about it.
         Need to follow up urgently to discuss with the child and the guardians.
       </source>
         <target>
-        Child was not in school whole last week again. When calling the mother she didn&apos;t know about it.
+        Child was not in school whole last week again. When calling the mother she didn't know about it.
         Need to follow up urgently to discuss with the child and the guardians.
       </target>
         <note priority="1" from="description">Note demo text</note>
@@ -1623,11 +1641,11 @@
       </trans-unit>
       <trans-unit id="1746630085741853041" datatype="html">
         <source>
-        Discussed the child&apos;s progress with coaching teacher. He is still a weak student and needs more support.
+        Discussed the child's progress with coaching teacher. He is still a weak student and needs more support.
         We should consider arranging an extra class for him. Discuss next social worker meeting.
       </source>
         <target>
-        Discussed the child&apos;s progress with coaching teacher. He is still a weak student and needs more support.
+        Discussed the child's progress with coaching teacher. He is still a weak student and needs more support.
         We should consider arranging an extra class for him. Discuss next social worker meeting.
       </target>
         <note priority="1" from="description">Note demo text</note>
@@ -1759,8 +1777,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="960104205206293026" datatype="html">
-        <source>got excused by it&apos;s mother</source>
-        <target>got excused by it&apos;s mother</target>
+        <source>got excused by it's mother</source>
+        <target>got excused by it's mother</target>
         <note priority="1" from="description">Absence remark</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/demo-data/remarks.ts</context>
@@ -1786,7 +1804,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3954203536096188474" datatype="html">
-        <source> Scarica </source>
+        <source> Download details </source>
         <target> Scarica </target>
         <note priority="1" from="description">Download note details as CSV</note>
         <context-group purpose="location">
@@ -1795,8 +1813,11 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8113676679316331846" datatype="html">
-        <source><x id="START_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="&lt;app-fa-dynamic-icon       [icon]=&quot;includeEventNotes ? 'toggle-on' : 'toggle-off'&quot;       class=&quot;standard-icon-with-text color-accent&quot;     &gt;"/><x id="CLOSE_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="Include"/> Include events </source>
-        <target><x id="START_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="&lt;app-fa-dynamic-icon       [icon]=&quot;includeEventNotes ? 'toggle-on' : 'toggle-off'&quot;       class=&quot;standard-icon-with-text color-accent&quot;     &gt;"/><x id="CLOSE_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="Include"/> Include events </target>
+        <source><x id="START_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="&lt;app-fa-dynamic-icon
+      [icon]=&quot;includeEventNotes ? 'toggle-on' : 'toggle-off'&quot;
+      class=&quot;standard-icon-with-text color-accent&quot;
+    >"/><x id="CLOSE_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="Include"/> Include events </source>
+        <target><x id="START_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="&lt;app-fa-dynamic-icon       [icon]=&quot;includeEventNotes ? 'toggle-on' : 'toggle-off'&quot;       class=&quot;standard-icon-with-text color-accent&quot;     >"/><x id="CLOSE_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="Include"/> Include events </target>
         <note priority="1" from="description">events are related to a
       child</note>
         <note priority="1" from="meaning">Slider that allows a user to also include events</note>
@@ -1806,7 +1827,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="6019454386423409201" datatype="html">
-        <source>Risolto</source>
+        <source>Solved</source>
         <target>Risolto</target>
         <note priority="1" from="description">Label warning level</note>
         <context-group purpose="location">
@@ -1815,7 +1836,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2878121457281177358" datatype="html">
-        <source>Da seguire</source>
+        <source>Needs Follow-Up</source>
         <target>Da seguire</target>
         <note priority="1" from="description">Label warning level</note>
         <context-group purpose="location">
@@ -1824,7 +1845,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="646867864053789697" datatype="html">
-        <source>Da seguire: urgente</source>
+        <source>Urgent Follow-Up</source>
         <target>Da seguire: urgente</target>
         <note priority="1" from="description">Label warning level</note>
         <context-group purpose="location">
@@ -1833,9 +1854,9 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5191402552920528867" datatype="html">
-        <source> You can edit how users will see the details of a single record of this type. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. The editor below closely resembles how the form will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> We recommend to keep things simple: Only add fields that you really need for your work.
+        <source> You can edit how users will see the details of a single record of this type. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. The editor below closely resembles how the form will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> We recommend to keep things simple: Only add fields that you really need for your work.
 </source>
-        <target> You can edit how users will see the details of a single record of this type. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. The editor below closely resembles how the form will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> We recommend to keep things simple: Only add fields that you really need for your work.
+        <target> You can edit how users will see the details of a single record of this type. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. The editor below closely resembles how the form will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> We recommend to keep things simple: Only add fields that you really need for your work.
 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html</context>
@@ -1843,8 +1864,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3607589273604913815" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;             class=&quot;standard-icon-with-text&quot;           &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Add Section </source>
-        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;             class=&quot;standard-icon-with-text&quot;           &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Add Section </target>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+          aria-label=&quot;add element&quot;
+          icon=&quot;plus-circle&quot;
+          class=&quot;standard-icon-with-text&quot;
+        >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Add Section </source>
+        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;             class=&quot;standard-icon-with-text&quot;           >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Add Section </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html</context>
           <context context-type="linenumber">49,55</context>
@@ -1876,7 +1901,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2159130950882492111" datatype="html">
-        <source>Cancella</source>
+        <source>Cancel</source>
         <target>Cancella</target>
         <note priority="1" from="description">Button label</note>
         <context-group purpose="location">
@@ -1925,8 +1950,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1694267721118246954" datatype="html">
-        <source>Configure Field &quot;<x id="INTERPOLATION" equiv-text="{{ entitySchemaField.label }}"/>&quot;</source>
-        <target>Configure Field &quot;<x id="INTERPOLATION" equiv-text="{{ entitySchemaField.label }}"/>&quot;</target>
+        <source>Configure Field "<x id="INTERPOLATION" equiv-text="{{ entitySchemaField.label }}"/>"</source>
+        <target>Configure Field "<x id="INTERPOLATION" equiv-text="{{ entitySchemaField.label }}"/>"</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">1</context>
@@ -1969,8 +1994,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="6256100600031218967" datatype="html">
-        <source> Label (short) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></source>
-        <target> Label (short) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></target>
+        <source> Label (short) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+                  icon=&quot;question-circle&quot;
+                  matTooltip=&quot;Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited.&quot;
+                  i18n-matTooltip
+                >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/></source>
+        <target> Label (short) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited.&quot;                   i18n-matTooltip                 >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">22,29</context>
@@ -1985,8 +2014,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="5550244204631654051" datatype="html">
-        <source> Description <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;The description provides additional explanation or context about this field. It is usually displayed as a help icon with tooltip.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></source>
-        <target> Description <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;The description provides additional explanation or context about this field. It is usually displayed as a help icon with tooltip.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></target>
+        <source> Description <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+                  icon=&quot;question-circle&quot;
+                  matTooltip=&quot;The description provides additional explanation or context about this field. It is usually displayed as a help icon with tooltip.&quot;
+                  i18n-matTooltip
+                >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/></source>
+        <target> Description <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;The description provides additional explanation or context about this field. It is usually displayed as a help icon with tooltip.&quot;                   i18n-matTooltip                 >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">38,45</context>
@@ -2001,8 +2034,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2115662026008016120" datatype="html">
-        <source> Field ID (readonly) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;The internal ID of the field is used at a technical level in the database. The ID cannot be changed after the field has been created.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></source>
-        <target> Field ID (readonly) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;The internal ID of the field is used at a technical level in the database. The ID cannot be changed after the field has been created.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></target>
+        <source> Field ID (readonly) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+                  icon=&quot;question-circle&quot;
+                  matTooltip=&quot;The internal ID of the field is used at a technical level in the database. The ID cannot be changed after the field has been created.&quot;
+                  i18n-matTooltip
+                >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/></source>
+        <target> Field ID (readonly) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;The internal ID of the field is used at a technical level in the database. The ID cannot be changed after the field has been created.&quot;                   i18n-matTooltip                 >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">56,63</context>
@@ -2042,8 +2079,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8467058547593404857" datatype="html">
-        <source> Type Details (dropdown options set) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Select an existing set of options to share between multiple fields or create a new, independent list of dropdown options.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></source>
-        <target> Type Details (dropdown options set) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Select an existing set of options to share between multiple fields or create a new, independent list of dropdown options.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></target>
+        <source> Type Details (dropdown options set) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+                  icon=&quot;question-circle&quot;
+                  matTooltip=&quot;Select an existing set of options to share between multiple fields or create a new, independent list of dropdown options.&quot;
+                  i18n-matTooltip
+                >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/></source>
+        <target> Type Details (dropdown options set) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Select an existing set of options to share between multiple fields or create a new, independent list of dropdown options.&quot;                   i18n-matTooltip                 >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">97,104</context>
@@ -2058,8 +2099,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3945834347924960165" datatype="html">
-        <source> Type Details (target record type) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Select from which type of records the user can select and link to with this field.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></source>
-        <target> Type Details (target record type) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Select from which type of records the user can select and link to with this field.&quot;                   i18n-matTooltip                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/></target>
+        <source> Type Details (target record type) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+                  icon=&quot;question-circle&quot;
+                  matTooltip=&quot;Select from which type of records the user can select and link to with this field.&quot;
+                  i18n-matTooltip
+                >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/></source>
+        <target> Type Details (target record type) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon                   icon=&quot;question-circle&quot;                   matTooltip=&quot;Select from which type of records the user can select and link to with this field.&quot;                   i18n-matTooltip                 >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">125,132</context>
@@ -2356,8 +2401,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="6370672902175033609" datatype="html">
-        <source> drop here to create new field group <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon           icon=&quot;question-circle&quot;           matTooltip=&quot;You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.&quot;           i18n-matTooltip         &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/div"/></source>
-        <target> drop here to create new field group <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon           icon=&quot;question-circle&quot;           matTooltip=&quot;You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.&quot;           i18n-matTooltip         &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/div"/></target>
+        <source> drop here to create new field group <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+          icon=&quot;question-circle&quot;
+          matTooltip=&quot;You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.&quot;
+          i18n-matTooltip
+        >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/div"/></source>
+        <target> drop here to create new field group <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon           icon=&quot;question-circle&quot;           matTooltip=&quot;You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.&quot;           i18n-matTooltip         >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/div"/></target>
         <note priority="1" from="description">Header of drag and drop box</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
@@ -2382,7 +2431,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="6586271653607682602" datatype="html">
-        <source>drag &amp; drop to / from here </source>
+        <source> drag &amp; drop to / from here </source>
         <target>drag &amp; drop to / from here </target>
         <note priority="1" from="description">subtitle for drag and drop section</note>
         <context-group purpose="location">
@@ -2425,9 +2474,9 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2118667939256192500" datatype="html">
-        <source> You can edit how users will see the list of all records of this type. Drag and drop filters and change table columns in this preview. The editor below closely resembles how the list will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> To create new fields, use the &quot;Details View&quot; section.
+        <source> You can edit how users will see the list of all records of this type. Drag and drop filters and change table columns in this preview. The editor below closely resembles how the list will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> To create new fields, use the "Details View" section.
 </source>
-        <target> You can edit how users will see the list of all records of this type. Drag and drop filters and change table columns in this preview. The editor below closely resembles how the list will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> To create new fields, use the &quot;Details View&quot; section.
+        <target> You can edit how users will see the list of all records of this type. Drag and drop filters and change table columns in this preview. The editor below closely resembles how the list will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> To create new fields, use the "Details View" section.
 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
@@ -2435,16 +2484,27 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4861393935853819484" datatype="html">
-        <source> Add Filter: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu       [entityType]=&quot;entityConstructor&quot;       [activeFields]=&quot;filters&quot;       (activeFieldsChange)=&quot;updateFilters($event)&quot;       [availableFields]=&quot;allFields&quot;       icon=&quot;square-plus&quot;     &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu&gt;"/></source>
-        <target> Add Filter: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu       [entityType]=&quot;entityConstructor&quot;       [activeFields]=&quot;filters&quot;       (activeFieldsChange)=&quot;updateFilters($event)&quot;       [availableFields]=&quot;allFields&quot;       icon=&quot;square-plus&quot;     &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu&gt;"/></target>
+        <source> Add Filter: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu
+      [entityType]=&quot;entityConstructor&quot;
+      [activeFields]=&quot;filters&quot;
+      (activeFieldsChange)=&quot;updateFilters($event)&quot;
+      [availableFields]=&quot;allFields&quot;
+      icon=&quot;square-plus&quot;
+    >"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu>"/></source>
+        <target> Add Filter: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu       [entityType]=&quot;entityConstructor&quot;       [activeFields]=&quot;filters&quot;       (activeFieldsChange)=&quot;updateFilters($event)&quot;       [availableFields]=&quot;allFields&quot;       icon=&quot;square-plus&quot;     >"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
           <context context-type="linenumber">50,58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="325663236190656175" datatype="html">
-        <source> Drag &amp; drop table column headers. Add columns: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu           [entityType]=&quot;entityConstructor&quot;           [(activeFields)]=&quot;item.columns&quot;           [availableFields]=&quot;allFields&quot;           icon=&quot;square-plus&quot;         &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu&gt;"/></source>
-        <target> Drag &amp; drop table column headers. Add columns: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu           [entityType]=&quot;entityConstructor&quot;           [(activeFields)]=&quot;item.columns&quot;           [availableFields]=&quot;allFields&quot;           icon=&quot;square-plus&quot;         &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu&gt;"/></target>
+        <source> Drag &amp; drop table column headers. Add columns: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu
+          [entityType]=&quot;entityConstructor&quot;
+          [(activeFields)]=&quot;item.columns&quot;
+          [availableFields]=&quot;allFields&quot;
+          icon=&quot;square-plus&quot;
+        >"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu>"/></source>
+        <target> Drag &amp; drop table column headers. Add columns: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu           [entityType]=&quot;entityConstructor&quot;           [(activeFields)]=&quot;item.columns&quot;           [availableFields]=&quot;allFields&quot;           icon=&quot;square-plus&quot;         >"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu>"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
           <context context-type="linenumber">94,101</context>
@@ -2461,8 +2521,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3890141525539868537" datatype="html">
-        <source>General Settings of &quot;<x id="INTERPOLATION" equiv-text="{{ entityConstructor.label }}"/>&quot; Records</source>
-        <target>General Settings of &quot;<x id="INTERPOLATION" equiv-text="{{ entityConstructor.label }}"/>&quot; Records</target>
+        <source>General Settings of "<x id="INTERPOLATION" equiv-text="{{ entityConstructor.label }}"/>" Records</source>
+        <target>General Settings of "<x id="INTERPOLATION" equiv-text="{{ entityConstructor.label }}"/>" Records</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
           <context context-type="linenumber">6</context>
@@ -2501,8 +2561,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="7702195180269200082" datatype="html">
-        <source> Find available icon names at <x id="START_LINK" ctype="x-a" equiv-text="&lt;a                 href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot;                 target=&quot;_blank&quot;                 &gt;"/>fontawesome.com<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a               &gt;"/></source>
-        <target> Find available icon names at <x id="START_LINK" ctype="x-a" equiv-text="&lt;a                 href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot;                 target=&quot;_blank&quot;                 &gt;"/>fontawesome.com<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a               &gt;"/></target>
+        <source> Find available icon names at <x id="START_LINK" ctype="x-a" equiv-text="&lt;a
+                href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot;
+                target=&quot;_blank&quot;
+                >"/>fontawesome.com<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a
+              >"/></source>
+        <target> Find available icon names at <x id="START_LINK" ctype="x-a" equiv-text="&lt;a                 href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot;                 target=&quot;_blank&quot;                 >"/>fontawesome.com<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a               >"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
           <context context-type="linenumber">47,53</context>
@@ -2557,24 +2621,24 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4379176514372959023" datatype="html">
-        <source>If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the &apos;anonymization&apos; feature. This allows users to anonymize records of this type instead of just archiving or deleting them.</source>
-        <target>If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the &apos;anonymization&apos; feature. This allows users to anonymize records of this type instead of just archiving or deleting them.</target>
+        <source>If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the 'anonymization' feature. This allows users to anonymize records of this type instead of just archiving or deleting them.</source>
+        <target>If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the 'anonymization' feature. This allows users to anonymize records of this type instead of just archiving or deleting them.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
           <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5591054546376436766" datatype="html">
-        <source> Configure how records of this type can be anonymized. Users can &quot;anonymize&quot; a record as an alternative to just archiving it (keeping all personal details) or deleting it (losing any trace of the record, even in reports). Select below which fields can be &quot;retained&quot; to keep some limited data for statistical reporting and which fields have to be removed because they contain personal details. </source>
-        <target> Configure how records of this type can be anonymized. Users can &quot;anonymize&quot; a record as an alternative to just archiving it (keeping all personal details) or deleting it (losing any trace of the record, even in reports). Select below which fields can be &quot;retained&quot; to keep some limited data for statistical reporting and which fields have to be removed because they contain personal details. </target>
+        <source> Configure how records of this type can be anonymized. Users can "anonymize" a record as an alternative to just archiving it (keeping all personal details) or deleting it (losing any trace of the record, even in reports). Select below which fields can be "retained" to keep some limited data for statistical reporting and which fields have to be removed because they contain personal details. </source>
+        <target> Configure how records of this type can be anonymized. Users can "anonymize" a record as an alternative to just archiving it (keeping all personal details) or deleting it (losing any trace of the record, even in reports). Select below which fields can be "retained" to keep some limited data for statistical reporting and which fields have to be removed because they contain personal details. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
           <context context-type="linenumber">119,127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3826197724850782348" datatype="html">
-        <source> Editing data structure for &quot;<x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/>&quot; records </source>
-        <target> Editing data structure for &quot;<x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/>&quot; records </target>
+        <source> Editing data structure for "<x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/>" records </source>
+        <target> Editing data structure for "<x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/>" records </target>
         <note priority="1" from="description">page title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
@@ -2582,7 +2646,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3620188369327429839" datatype="html">
-        <source>Salva</source>
+        <source> Save </source>
         <target>Salva</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
@@ -2668,7 +2732,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="1900864180351193023" datatype="html">
-        <source> Administer Entity Types </source>
+        <source>Administer Entity Types</source>
         <target> Administer Entity Types </target>
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
@@ -2677,7 +2741,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2825615697460398548" datatype="html">
-        <source> Setup Wizard </source>
+        <source>Setup Wizard</source>
         <target> Setup Wizard </target>
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
@@ -2697,7 +2761,7 @@
       <trans-unit id="5701618810648052610" datatype="html">
         <source>Title</source>
         <target>Title</target>
-        <note priority="1" from="description">Admin UI - Config Section Header form field label</note>
+        <note priority="1" from="description">Label for the title of a recurring activity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
           <context context-type="linenumber">34</context>
@@ -2742,15 +2806,15 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2976793289932636779" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;person-digging&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Setup Wizard </source>
-        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;person-digging&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Setup Wizard </target>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;person-digging&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Setup Wizard </source>
+        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;person-digging&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Setup Wizard </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-button/setup-wizard-button.component.html</context>
           <context context-type="linenumber">10,12</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3492007542396725315" datatype="html">
-        <source> Welcome </source>
+        <source>Welcome</source>
         <target> Welcome </target>
         <note priority="1" from="description">Setup Wizard Step Title</note>
         <context-group purpose="location">
@@ -2761,8 +2825,8 @@
       <trans-unit id="140920051930610263" datatype="html">
         <source>
 # Welcome to Aam Digital!
-We are here to help you manage your participants&apos; or beneficiaries&apos; details
-and your team&apos;s interactions with them.
+We are here to help you manage your participants' or beneficiaries' details
+and your team's interactions with them.
 
 The Aam Digital platform is very flexible and you can customize the structures and views
 to exactly fit your project needs.
@@ -2772,12 +2836,12 @@ And you can start working with your data within a few minutes already.
 We also have some short video guides for you: [Aam Digital Video Guides (YouTube)](https://www.youtube.com/channel/UCZSFOX_MBa8zz5Mtfv_qlnA/videos)
 
 Feel free to leave this setup wizard in between to explore the existing system first.
-You can always come back to this view through the &quot;Setup Wizard&quot; button at the bottom of the main menu on the left.
-To dismiss and hide this wizard, go to the last step of the wizard and &quot;finish&quot; the setup process.</source>
+You can always come back to this view through the "Setup Wizard" button at the bottom of the main menu on the left.
+To dismiss and hide this wizard, go to the last step of the wizard and "finish" the setup process.</source>
         <target>
 # Welcome to Aam Digital!
-We are here to help you manage your participants&apos; or beneficiaries&apos; details
-and your team&apos;s interactions with them.
+We are here to help you manage your participants' or beneficiaries' details
+and your team's interactions with them.
 
 The Aam Digital platform is very flexible and you can customize the structures and views
 to exactly fit your project needs.
@@ -2787,8 +2851,8 @@ And you can start working with your data within a few minutes already.
 We also have some short video guides for you: [Aam Digital Video Guides (YouTube)](https://www.youtube.com/channel/UCZSFOX_MBa8zz5Mtfv_qlnA/videos)
 
 Feel free to leave this setup wizard in between to explore the existing system first.
-You can always come back to this view through the &quot;Setup Wizard&quot; button at the bottom of the main menu on the left.
-To dismiss and hide this wizard, go to the last step of the wizard and &quot;finish&quot; the setup process.</target>
+You can always come back to this view through the "Setup Wizard" button at the bottom of the main menu on the left.
+To dismiss and hide this wizard, go to the last step of the wizard and "finish" the setup process.</target>
         <note priority="1" from="description">Setup Wizard Step Text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
@@ -2809,9 +2873,9 @@ To dismiss and hide this wizard, go to the last step of the wizard and &quot;fin
 The system already holds some basic structures for your case management.
 You can adapt the fields and how the details are displayed.
 
-If you have further requirements, don&apos;t hesitate to reach out to us at [support@aam-digital.com](mailto:support@aam-digital.com).
+If you have further requirements, don't hesitate to reach out to us at [support@aam-digital.com](mailto:support@aam-digital.com).
 
-_Please note that the setup wizard and form builder is still under active development (&quot;beta&quot; version).
+_Please note that the setup wizard and form builder is still under active development ("beta" version).
 Some advanced configuration options are not available here yet for you to configure yourself and may need assistance from the tech support team.
 We are currently extending and optimizing the user interfaces for these steps._
 </source>
@@ -2819,9 +2883,9 @@ We are currently extending and optimizing the user interfaces for these steps._
 The system already holds some basic structures for your case management.
 You can adapt the fields and how the details are displayed.
 
-If you have further requirements, don&apos;t hesitate to reach out to us at [support@aam-digital.com](mailto:support@aam-digital.com).
+If you have further requirements, don't hesitate to reach out to us at [support@aam-digital.com](mailto:support@aam-digital.com).
 
-_Please note that the setup wizard and form builder is still under active development (&quot;beta&quot; version).
+_Please note that the setup wizard and form builder is still under active development ("beta" version).
 Some advanced configuration options are not available here yet for you to configure yourself and may need assistance from the tech support team.
 We are currently extending and optimizing the user interfaces for these steps._
 </target>
@@ -2896,12 +2960,12 @@ Data is synced and all users have access to the latest information.</target>
       <trans-unit id="8817848887977713945" datatype="html">
         <source>
 If you have exising data from a previous system, you can easily import it.
-Save the data in &quot;.csv&quot; format (e.g. from MS Excel).
+Save the data in ".csv" format (e.g. from MS Excel).
 You do not need any specific column names in your file to be imported.
 The Import Module helps your map your spreadsheet data to the relevant fields in your Aam Digital profiles.</source>
         <target>
 If you have exising data from a previous system, you can easily import it.
-Save the data in &quot;.csv&quot; format (e.g. from MS Excel).
+Save the data in ".csv" format (e.g. from MS Excel).
 You do not need any specific column names in your file to be imported.
 The Import Module helps your map your spreadsheet data to the relevant fields in your Aam Digital profiles.</target>
         <note priority="1" from="description">Setup Wizard Step Text</note>
@@ -2921,7 +2985,7 @@ The Import Module helps your map your spreadsheet data to the relevant fields in
       </trans-unit>
       <trans-unit id="7774522327812872461" datatype="html">
         <source>
-That&apos;s it. You are ready to explore your system and start work!
+That's it. You are ready to explore your system and start work!
 
 You can always adapt your setup further, after you started using it.
 We recommend to keep things simple in the beginning,
@@ -2930,7 +2994,7 @@ and then add further fields and adjust your setup.
 
 Feel free to reach out to us with your questions or feedback: [support@aam-digital.com](mailto:support@aam-digital.com)</source>
         <target>
-That&apos;s it. You are ready to explore your system and start work!
+That's it. You are ready to explore your system and start work!
 
 You can always adapt your setup further, after you started using it.
 We recommend to keep things simple in the beginning,
@@ -3036,7 +3100,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7819314041543176992" datatype="html">
-        <source> Chiudere </source>
+        <source>Close</source>
         <target> Chiudere </target>
         <note priority="1" from="description">Close popup</note>
         <context-group purpose="location">
@@ -3053,15 +3117,17 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5212890716533126981" datatype="html">
-        <source>Are you sure that you want to delete the option &quot;<x id="PH" equiv-text="value.label"/>&quot;?</source>
-        <target>Are you sure that you want to delete the option &quot;<x id="PH" equiv-text="value.label"/>&quot;?</target>
+        <source>Are you sure that you want to delete the option "<x id="PH" equiv-text="value.label"/>"?</source>
+        <target>Are you sure that you want to delete the option "<x id="PH" equiv-text="value.label"/>"?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
           <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5809649168268401149" datatype="html">
-        <source> The option is still used in <x id="PH" equiv-text="existingUsages.join(         &quot;, &quot;       )"/> records. If deleted, the records will not be lost but specially marked.</source>
+        <source> The option is still used in <x id="PH" equiv-text="existingUsages.join(
+        &quot;, &quot;,
+      )"/> records. If deleted, the records will not be lost but specially marked.</source>
         <target> The option is still used in <x id="PH" equiv-text="existingUsages.join(         &quot;, &quot;       )"/> records. If deleted, the records will not be lost but specially marked.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
@@ -3089,8 +3155,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6031162605459514264" datatype="html">
-        <source>Couldn&apos;t create this new option. Please check if the value already exists.</source>
-        <target>Couldn&apos;t create this new option. Please check if the value already exists.</target>
+        <source>Couldn't create this new option. Please check if the value already exists.</source>
+        <target>Couldn't create this new option. Please check if the value already exists.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
           <context context-type="linenumber">136</context>
@@ -3109,8 +3175,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5006850401853518123" datatype="html">
-        <source>Do you want to create the new option &quot;<x id="PH" equiv-text="option"/>&quot;?</source>
-        <target>Do you want to create the new option &quot;<x id="PH" equiv-text="option"/>&quot;?</target>
+        <source>Do you want to create the new option "<x id="PH" equiv-text="addedOption.label"/>"?</source>
+        <target>Do you want to create the new option "<x id="PH" equiv-text="option"/>"?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
           <context context-type="linenumber">107</context>
@@ -3135,7 +3201,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1130652265542107236" datatype="html">
-        <source>Età</source>
+        <source>Age</source>
         <target>Età</target>
         <note priority="1" from="description">Placeholder for the input that displays the age</note>
         <context-group purpose="location">
@@ -3148,8 +3214,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6115610944303081778" datatype="html">
-        <source>Questo campo è di sola lettura. Modifica la data di nascita per cambiare l&apos;età.</source>
-        <target>Questo campo è di sola lettura. Modifica la data di nascita per cambiare l&apos;età.</target>
+        <source>This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth.</source>
+        <target>Questo campo è di sola lettura. Modifica la data di nascita per cambiare l'età.</target>
         <note priority="1" from="description">Tooltip for the disabled age field</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date-with-age/edit-age/edit-age.component.html</context>
@@ -3165,8 +3231,13 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7471633835879231451" datatype="html">
-        <source> e.g. YYYY-MM-DD <x id="START_LINK" ctype="x-a" equiv-text="&lt;a         href=&quot;https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format&quot;         target=&quot;_blank&quot;         &gt;"/>(help)<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a       &gt;"/></source>
-        <target> e.g. YYYY-MM-DD <x id="START_LINK" ctype="x-a" equiv-text="&lt;a         href=&quot;https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format&quot;         target=&quot;_blank&quot;         &gt;"/>(help)<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a       &gt;"/></target>
+        <source> e.g. YYYY-MM-DD <x id="START_LINK" ctype="x-a" equiv-text="&lt;a
+        href=&quot;https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format&quot;
+        target=&quot;_blank&quot;
+        rel=&quot;noopener&quot;
+        >"/>(help)<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a
+      >"/></source>
+        <target> e.g. YYYY-MM-DD <x id="START_LINK" ctype="x-a" equiv-text="&lt;a         href=&quot;https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format&quot;         target=&quot;_blank&quot;         >"/>(help)<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a       >"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html</context>
           <context context-type="linenumber">5,13</context>
@@ -3218,8 +3289,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2844542848589379119" datatype="html">
-        <source>Some values don&apos;t have a mapping and will not be imported. Are you sure you want to keep it like this?</source>
-        <target>Some values don&apos;t have a mapping and will not be imported. Are you sure you want to keep it like this?</target>
+        <source>Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?</source>
+        <target>Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.ts</context>
           <context context-type="linenumber">80</context>
@@ -3318,8 +3389,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1089978064726290096" datatype="html">
-        <source>For each unique value from your imported data (left), select the category value from the system&apos;s data structure into which it will be transformed. The values you do not assign here will be ignored (remain empty) during import.</source>
-        <target>For each unique value from your imported data (left), select the category value from the system&apos;s data structure into which it will be transformed. The values you do not assign here will be ignored (remain empty) during import.</target>
+        <source>For each unique value from your imported data (left), select the category value from the system's data structure into which it will be transformed. The values you do not assign here will be ignored (remain empty) during import.</source>
+        <target>For each unique value from your imported data (left), select the category value from the system's data structure into which it will be transformed. The values you do not assign here will be ignored (remain empty) during import.</target>
         <note priority="1" from="description">import - value mapping (enum) - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
@@ -3327,8 +3398,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5906162393521861676" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ value?.length }}"/> in totale
-</source>
+        <source> <x id="INTERPOLATION" equiv-text="{{ value?.length }}"/> in total </source>
         <target> <x id="INTERPOLATION" equiv-text="{{ value?.length }}"/> in totale
 </target>
         <note priority="1" from="description">context 10 in total</note>
@@ -3339,7 +3409,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8454211630052123531" datatype="html">
-        <source>Add <x id="PH" equiv-text="label"/></source>
+        <source>Add <x id="PH" equiv-text="this.label"/></source>
         <target>Add <x id="PH" equiv-text="label"/></target>
         <note priority="1" from="description">context Add User(s)</note>
         <note priority="1" from="meaning">Placeholder for input to add entities</note>
@@ -3349,7 +3419,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5681930994338028694" datatype="html">
-        <source>Select matching <x id="INTERPOLATION" equiv-text="{{ entity.label }}"/> property</source>
+        <source> Select matching <x id="INTERPOLATION" equiv-text="{{ entity.label }}"/> property </source>
         <target>Select matching <x id="INTERPOLATION" equiv-text="{{ entity.label }}"/> property</target>
         <note priority="1" from="description">Label for property selection</note>
         <context-group purpose="location">
@@ -3358,8 +3428,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3009225232782609010" datatype="html">
-        <source>Select which property of the target entity is matching with the values of this column. E.g. if your column contains names of children then select &apos;Name&apos;.</source>
-        <target>Select which property of the target entity is matching with the values of this column. E.g. if your column contains names of children then select &apos;Name&apos;.</target>
+        <source>Select which property of the target entity is matching with the values of this column. E.g. if your column contains names of children then select 'Name'.</source>
+        <target>Select which property of the target entity is matching with the values of this column. E.g. if your column contains names of children then select 'Name'.</target>
         <note priority="1" from="description">import - value mapping (entity) - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/entity/entity-import-config/entity-import-config.component.html</context>
@@ -3447,7 +3517,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2123171795960509943" datatype="html">
-        <source>rimuovere</source>
+        <source>remove</source>
         <target>rimuovere</target>
         <note priority="1" from="description">tooltip for remove icon on chips of dropdown item</note>
         <context-group purpose="location">
@@ -3560,8 +3630,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3181094513182235085" datatype="html">
-        <source>Do you want to discard the changes made to &apos;<x id="PH" equiv-text="entity"/>&apos;?</source>
-        <target>Do you want to discard the changes made to &apos;<x id="PH" equiv-text="entity"/>&apos;?</target>
+        <source>Do you want to discard the changes made to '<x id="PH" equiv-text="entity"/>'?</source>
+        <target>Do you want to discard the changes made to '<x id="PH" equiv-text="entity"/>'?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component.ts</context>
           <context context-type="linenumber">154</context>
@@ -3586,7 +3656,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2168510081275502293" datatype="html">
-        <source> Nuovo </source>
+        <source>Add New</source>
         <target> Nuovo </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-create-button/entity-create-button.component.html</context>
@@ -3674,7 +3744,9 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1784555372833983723" datatype="html">
-        <source>Current user is not permitted to save these changes: <x id="PH" equiv-text="JSON.stringify(           conditions,         )"/></source>
+        <source>Current user is not permitted to save these changes: <x id="PH" equiv-text="JSON.stringify(
+          conditions,
+        )"/></source>
         <target>Current user is not permitted to save these changes: <x id="PH" equiv-text="JSON.stringify(           conditions,         )"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/entity-form.service.ts</context>
@@ -3707,7 +3779,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4377913418789938842" datatype="html">
-        <source> Also show <x id="INTERPOLATION" equiv-text="{{ inactiveFilteredEntities.length }}"/> inactive </source>
+        <source>Also show <x id="INTERPOLATION" equiv-text="{{ currentlyMatchingInactive }}"/> inactive </source>
         <target> Also show <x id="INTERPOLATION" equiv-text="{{ inactiveFilteredEntities.length }}"/> inactive </target>
         <note priority="1" from="description">e.g. include inactive children</note>
         <note priority="1" from="meaning">Label for checkbox</note>
@@ -3717,7 +3789,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2849064100927111571" datatype="html">
-        <source>caricare...</source>
+        <source>loading...</source>
         <target>caricare...</target>
         <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
         <context-group purpose="location">
@@ -3761,7 +3833,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4705822664965381735" datatype="html">
-        <source>Partecipanti</source>
+        <source>Children</source>
         <target>Partecipanti</target>
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
@@ -3808,9 +3880,9 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8104421162933956065" datatype="html">
-        <source>Appunti</source>
+        <source>Notes</source>
         <target>Appunti</target>
-        <note priority="1" from="description">Menu item</note>
+        <note priority="1" from="description">label (plural) for entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
           <context context-type="linenumber">41</context>
@@ -3868,8 +3940,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1868606282505332204" datatype="html">
-        <source> Reports
-</source>
+        <source>Reports</source>
         <target> Reports
 </target>
         <note priority="1" from="description">Menu item</note>
@@ -3897,7 +3968,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2935152225387412918" datatype="html">
-        <source> Record Attendance </source>
+        <source>Record Attendance</source>
         <target> Record Attendance </target>
         <note priority="1" from="description">record attendance shortcut</note>
         <note priority="1" from="meaning">Dashboard shortcut widget</note>
@@ -3967,7 +4038,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3973931101896534797" datatype="html">
-        <source>Data</source>
+        <source>Date</source>
         <target>Data</target>
         <note priority="1" from="description">Label for the date of a note</note>
         <context-group purpose="location">
@@ -3996,7 +4067,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="9127604588498960753" datatype="html">
-        <source>Soggetto / Sommario</source>
+        <source>Subject</source>
         <target>Soggetto / Sommario</target>
         <note priority="1" from="description">Label for the subject of a note</note>
         <context-group purpose="location">
@@ -4013,7 +4084,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1806667489382256324" datatype="html">
-        <source>Categoria</source>
+        <source>Category</source>
         <target>Categoria</target>
         <note priority="1" from="description">Label for the category of a note</note>
         <context-group purpose="location">
@@ -4051,9 +4122,9 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5944812089887969249" datatype="html">
-        <source>Gruppi</source>
+        <source>Groups</source>
         <target>Gruppi</target>
-        <note priority="1" from="description">label for the linked schools</note>
+        <note priority="1" from="description">Label for the linked schools of a recurring activity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
           <context context-type="linenumber">63</context>
@@ -4198,7 +4269,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8953033926734869941" datatype="html">
-        <source>Nome</source>
+        <source>Name</source>
         <target>Nome</target>
         <note priority="1" from="description">Column title for ChildBlockComponents</note>
         <context-group purpose="location">
@@ -4467,7 +4538,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="134488380944428715" datatype="html">
-        <source> Recurring Activities </source>
+        <source>Recurring Activities</source>
         <target> Recurring Activities </target>
         <note priority="1" from="description">label (plural) for entity</note>
         <context-group purpose="location">
@@ -4571,7 +4642,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3179148736830644140" datatype="html">
-        <source>Data di nascita</source>
+        <source>Date of birth</source>
         <target>Data di nascita</target>
         <note priority="1" from="description">Label for the date of birth of a child</note>
         <context-group purpose="location">
@@ -4741,7 +4812,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2826581353496868063" datatype="html">
-        <source><x id="PH" equiv-text="faker.name.firstName()"/> <x id="PH_1" equiv-text="school[&quot;language&quot;]"/> Language</source>
+        <source>Language</source>
         <target><x id="PH" equiv-text="faker.name.firstName()"/> <x id="PH_1" equiv-text="school[&quot;language&quot;]"/> Language</target>
         <note priority="1" from="description">Label for the language of a school</note>
         <context-group purpose="location">
@@ -4860,7 +4931,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       <trans-unit id="7922989125096435449" datatype="html">
         <source>Contact</source>
         <target>Contact</target>
-        <note priority="1" from="description">Label of user phone</note>
+        <note priority="1" from="description">Label of user field</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">1171</context>
@@ -4979,8 +5050,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1630128809859568701" datatype="html">
-        <source>Guardians&apos; Meeting</source>
-        <target>Guardians&apos; Meeting</target>
+        <source>Guardians' Meeting</source>
+        <target>Guardians' Meeting</target>
         <note priority="1" from="description">Interaction type/Category of a Note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/default-config/default-interaction-types.ts</context>
@@ -5015,7 +5086,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4753559457281797116" datatype="html">
-        <source> The application will be ready in a moment </source>
+        <source>The application will be ready in a moment</source>
         <target> The application will be ready in a moment </target>
         <note priority="1" from="description">Sync notification line 2</note>
         <context-group purpose="location">
@@ -5024,7 +5095,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6578397717654172779" datatype="html">
-        <source>Pagina non trovata</source>
+        <source>Page Not Found</source>
         <target>Pagina non trovata</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/dynamic-routing/not-found/not-found.component.html</context>
@@ -5032,7 +5103,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8883988827942560588" datatype="html">
-        <source>La pagina è stata rimossa o non disponi delle autorizzazioni necessarie per visualizzare questa pagina.</source>
+        <source> Either the page has been removed or you don't have the required permissions to view this page. </source>
         <target>La pagina è stata rimossa o non disponi delle autorizzazioni necessarie per visualizzare questa pagina.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/dynamic-routing/not-found/not-found.component.html</context>
@@ -5040,7 +5111,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="178520337056147266" datatype="html">
-        <source>Vai a Dashboard</source>
+        <source>Go to Dashboard</source>
         <target>Vai a Dashboard</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/dynamic-routing/not-found/not-found.component.html</context>
@@ -5065,8 +5136,12 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6040898424704842405" datatype="html">
-        <source> Inherited value from parent record selected in field &quot;<x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [field]=&quot;defaultValueHint.inheritedFromField&quot;         [entityType]=&quot;entity.getConstructor()&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label       &gt;"/>&quot; </source>
-        <target> Inherited value from parent record selected in field &quot;<x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [field]=&quot;defaultValueHint.inheritedFromField&quot;         [entityType]=&quot;entity.getConstructor()&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label       &gt;"/>&quot; </target>
+        <source> Inherited value from parent record selected in field "<x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label
+        [field]=&quot;defaultValueHint.inheritedFromField&quot;
+        [entityType]=&quot;entity.getConstructor()&quot;
+      >"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label
+      >"/>" </source>
+        <target> Inherited value from parent record selected in field "<x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [field]=&quot;defaultValueHint.inheritedFromField&quot;         [entityType]=&quot;entity.getConstructor()&quot;       >"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label       >"/>" </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/default-values/inherited-value-button/inherited-value-button.component.html</context>
           <context context-type="linenumber">22,29</context>
@@ -5089,8 +5164,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3652101972568362498" datatype="html">
-        <source> (manually overwritten): click to reset value to inherited from parent record <x id="START_BLOCK_IF" equiv-text="@if (!form.formGroup.enabled) {"/> (requires the form to be in &quot;Edit&quot; mode) <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
-        <target> (manually overwritten): click to reset value to inherited from parent record <x id="START_BLOCK_IF" equiv-text="@if (!form.formGroup.enabled) {"/> (requires the form to be in &quot;Edit&quot; mode) <x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
+        <source> (manually overwritten): click to reset value to inherited from parent record <x id="START_BLOCK_IF" equiv-text="@if (!form.formGroup.enabled) {"/> (requires the form to be in "Edit" mode) <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
+        <target> (manually overwritten): click to reset value to inherited from parent record <x id="START_BLOCK_IF" equiv-text="@if (!form.formGroup.enabled) {"/> (requires the form to be in "Edit" mode) <x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/default-values/inherited-value-button/inherited-value-button.component.html</context>
           <context context-type="linenumber">41,46</context>
@@ -5137,7 +5212,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8476438488721160420" datatype="html">
-        <source> Nuovo <x id="INTERPOLATION" equiv-text="{{ config?.title || config?.entity }}"/> </source>
+        <source> Adding new <x id="INTERPOLATION" equiv-text="{{ this.entityConstructor?.label }}"/> </source>
         <target> Nuovo <x id="INTERPOLATION" equiv-text="{{ config?.title || config?.entity }}"/> </target>
         <note priority="1" from="description">Title when adding a new entity</note>
         <context-group purpose="location">
@@ -5171,7 +5246,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2330577642930707695" datatype="html">
-        <source>Cancella</source>
+        <source> Cancel </source>
         <target>Cancella</target>
         <note priority="1" from="description">Cancel button for forms</note>
         <context-group purpose="location">
@@ -5204,7 +5279,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5377078063439833222" datatype="html">
-        <source> Modifica </source>
+        <source> Edit </source>
         <target> Modifica </target>
         <note priority="1" from="description">Edit button for forms</note>
         <context-group purpose="location">
@@ -5233,7 +5308,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7788705242231433853" datatype="html">
-        <source>Attualmente</source>
+        <source>Currently</source>
         <target>Attualmente</target>
         <note priority="1" from="description">e.g. Currently active</note>
         <note priority="1" from="meaning">Label for the currently active status</note>
@@ -5252,7 +5327,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2078241808113697591" datatype="html">
-        <source>attivo</source>
+        <source>active</source>
         <target>attivo</target>
         <note priority="1" from="description">Indication for the currently active status of an entry</note>
         <context-group purpose="location">
@@ -5261,7 +5336,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5245043848241067326" datatype="html">
-        <source>inattivo</source>
+        <source>not active</source>
         <target>inattivo</target>
         <note priority="1" from="description">Indication for the currently inactive status of an entry</note>
         <context-group purpose="location">
@@ -5288,8 +5363,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7114063802122199593" datatype="html">
-        <source>No &quot;<x id="PH" equiv-text="startLabel"/>&quot; date is set</source>
-        <target>No &quot;<x id="PH" equiv-text="startLabel"/>&quot; date is set</target>
+        <source>No "<x id="PH" equiv-text="startLabel"/>" date is set</source>
+        <target>No "<x id="PH" equiv-text="startLabel"/>" date is set</target>
         <note priority="1" from="description">Error assertValid failed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/related-time-period-entities/time-period.ts</context>
@@ -5297,8 +5372,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3663273932389961089" datatype="html">
-        <source>The &quot;<x id="PH" equiv-text="startLabel"/>&quot; date is after the &quot;<x id="PH_1" equiv-text="endLabel"/>&quot; date</source>
-        <target>The &quot;<x id="PH" equiv-text="startLabel"/>&quot; date is after the &quot;<x id="PH_1" equiv-text="endLabel"/>&quot; date</target>
+        <source>The "<x id="PH" equiv-text="startLabel"/>" date is after the "<x id="PH_1" equiv-text="endLabel"/>" date</source>
+        <target>The "<x id="PH" equiv-text="startLabel"/>" date is after the "<x id="PH_1" equiv-text="endLabel"/>" date</target>
         <note priority="1" from="description">Error assertValid failed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/related-time-period-entities/time-period.ts</context>
@@ -5306,7 +5381,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3866250944902698099" datatype="html">
-        <source>filtrare</source>
+        <source>Filter </source>
         <target>filtrare</target>
         <note priority="1" from="description">Allows the user to filter through entities</note>
         <note priority="1" from="meaning">Filter placeholder</note>
@@ -5333,7 +5408,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4416501390500692229" datatype="html">
-        <source> Nuovo </source>
+        <source> Add New </source>
         <target> Nuovo </target>
         <note priority="1" from="description">Add a new entity to a list of multiple entities</note>
         <context-group purpose="location">
@@ -5421,8 +5496,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="9214639802980140270" datatype="html">
-        <source> Actions on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/><x id="INTERPOLATION" equiv-text="th }}"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="selected reco"/> selected records: </source>
-        <target> Actions on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/><x id="INTERPOLATION" equiv-text="th }}"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="selected reco"/> selected records: </target>
+        <source> Actions on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b>"/><x id="INTERPOLATION" equiv-text="th }}"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="selected reco"/> selected records: </source>
+        <target> Actions on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b>"/><x id="INTERPOLATION" equiv-text="th }}"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="selected reco"/> selected records: </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">252,254</context>
@@ -5458,7 +5533,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1910227132918837305" datatype="html">
-        <source>Archive</source>
+        <source> Archive </source>
         <target>Archive</target>
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
@@ -5471,7 +5546,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7039933822426808326" datatype="html">
-        <source>Anonymize</source>
+        <source> Anonymize </source>
         <target>Anonymize</target>
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
@@ -5484,7 +5559,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6660925946511264619" datatype="html">
-        <source> Elimina </source>
+        <source> Delete </source>
         <target> Elimina </target>
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
@@ -5510,7 +5585,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7532581571486706488" datatype="html">
-        <source>Preparazione dei dati</source>
+        <source>Preparing data (Indexing)</source>
         <target>Preparazione dei dati</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/database-indexing/database-indexing.service.ts</context>
@@ -5554,7 +5629,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7022070615528435141" datatype="html">
-        <source> Elimina </source>
+        <source>Delete</source>
         <target> Elimina </target>
         <note priority="1" from="description">entity context menu</note>
         <context-group purpose="location">
@@ -5572,7 +5647,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5775346636203685655" datatype="html">
-        <source>Annullare</source>
+        <source>Undo</source>
         <target>Annullare</target>
         <note priority="1" from="description">Undo an entity action</note>
         <context-group purpose="location">
@@ -5620,7 +5695,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5210270493533766316" datatype="html">
-        <source>Elimina?</source>
+        <source>Delete?</source>
         <target>Elimina?</target>
         <note priority="1" from="description">Delete confirmation title</note>
         <context-group purpose="location">
@@ -5632,13 +5707,13 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>
         This will remove the data permanently as if it never existed. This cannot be undone. Statistical reports (also for past time periods) will change and not include this record anymore.
 
-        If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use &quot;anonymize&quot; or just &quot;archive&quot; instead, so that you will not lose your documentation for reports.
+        If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.
 
         Are you sure you want to delete <x id="PH" equiv-text="textForDeleteEntity"/>?</source>
         <target>
         This will remove the data permanently as if it never existed. This cannot be undone. Statistical reports (also for past time periods) will change and not include this record anymore.
 
-        If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use &quot;anonymize&quot; or just &quot;archive&quot; instead, so that you will not lose your documentation for reports.
+        If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.
 
         Are you sure you want to delete <x id="PH" equiv-text="textForDeleteEntity"/>?</target>
         <note priority="1" from="description">Delete confirmation dialog</note>
@@ -5675,9 +5750,9 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       </trans-unit>
       <trans-unit id="7574147290904240970" datatype="html">
         <source>Some related records (e.g. notes) may still contain personal data in their text. We have automatically deleted all records that are linked to ONLY <x id="PH" equiv-text="textForDeleteEntity"/>.
-        However, there are some records that are linked to multiple records. We have not deleted these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed, if required (e.g. by looking through the linked notes and editing a note&apos;s text).</source>
+        However, there are some records that are linked to multiple records. We have not deleted these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed, if required (e.g. by looking through the linked notes and editing a note's text).</source>
         <target>Some related records (e.g. notes) may still contain personal data in their text. We have automatically deleted all records that are linked to ONLY <x id="PH" equiv-text="textForDeleteEntity"/>.
-        However, there are some records that are linked to multiple records. We have not deleted these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed, if required (e.g. by looking through the linked notes and editing a note&apos;s text).</target>
+        However, there are some records that are linked to multiple records. We have not deleted these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed, if required (e.g. by looking through the linked notes and editing a note's text).</target>
         <note priority="1" from="description">post-delete related PII warning dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
@@ -5706,13 +5781,13 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>
         This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.
 
-        If a record has only become inactive and you want to keep all details, consider to use &quot;archive&quot; instead.
+        If a record has only become inactive and you want to keep all details, consider to use "archive" instead.
 
         Are you sure you want to anonymize <x id="PH" equiv-text="textForAnonymizeEntity"/>?</source>
         <target>
         This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.
 
-        If a record has only become inactive and you want to keep all details, consider to use &quot;archive&quot; instead.
+        If a record has only become inactive and you want to keep all details, consider to use "archive" instead.
 
         Are you sure you want to anonymize <x id="PH" equiv-text="textForAnonymizeEntity"/>?</target>
         <note priority="1" from="description">Anonymize confirmation dialog</note>
@@ -5723,9 +5798,9 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       </trans-unit>
       <trans-unit id="3741200625069266049" datatype="html">
         <source>Some related records (e.g. notes) may still contain personal data in their text. We have automatically anonymized all records that are linked to ONLY <x id="PH" equiv-text="textForAnonymizeEntity"/>.
-        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note&apos;s text).</source>
+        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note's text).</source>
         <target>Some related records (e.g. notes) may still contain personal data in their text. We have automatically anonymized all records that are linked to ONLY <x id="PH" equiv-text="textForAnonymizeEntity"/>.
-        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note&apos;s text).</target>
+        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note's text).</target>
         <note priority="1" from="description">post-anonymize related PII warning dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
@@ -5760,7 +5835,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6068329395413518097" datatype="html">
-        <source><x id="PH" equiv-text="faker.name.firstName()"/> <x id="PH_1" equiv-text="faker.helpers.arrayElement(         [this.normalSchool, this.highSchool]       )"/></source>
+        <source><x id="PH" equiv-text="entities.length"/> <x id="PH_1" equiv-text="entities[0].getConstructor().labelPlural"/> <x id="PH_2" equiv-text="action"/></source>
         <target><x id="PH" equiv-text="faker.name.firstName()"/> <x id="PH_1" equiv-text="faker.helpers.arrayElement(         [this.normalSchool, this.highSchool]       )"/></target>
         <note priority="1" from="description">Entity action confirmation message</note>
         <context-group purpose="location">
@@ -5769,8 +5844,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="9144027951517573846" datatype="html">
-        <source><x id="PH" equiv-text="entities[0].getConstructor().label"/> &quot;<x id="PH_1" equiv-text="entities.toString()"/>&quot; <x id="PH_2" equiv-text="action"/></source>
-        <target><x id="PH" equiv-text="entities[0].getConstructor().label"/> &quot;<x id="PH_1" equiv-text="entities.toString()"/>&quot; <x id="PH_2" equiv-text="action"/></target>
+        <source><x id="PH" equiv-text="entities[0].getConstructor().label"/> "<x id="PH_1" equiv-text="entities.toString()"/>" <x id="PH_2" equiv-text="action"/></source>
+        <target><x id="PH" equiv-text="entities[0].getConstructor().label"/> "<x id="PH_1" equiv-text="entities.toString()"/>" <x id="PH_2" equiv-text="action"/></target>
         <note priority="1" from="description">Entity action confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
@@ -5778,7 +5853,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4145435326093352332" datatype="html">
-        <source> Bulk edit <x id="INTERPOLATION" equiv-text="{{ selectedRows }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
+        <source> Bulk edit <x id="INTERPOLATION" equiv-text="{{ entitiesToEdit.length }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
 </source>
         <target> Bulk edit <x id="INTERPOLATION" equiv-text="{{ selectedRows }}"/> <x id="INTERPOLATION_1" equiv-text="{{ entityConstructor.labelPlural }}"/>
 </target>
@@ -5788,8 +5863,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2803306445942692791" datatype="html">
-        <source> You are about to modify the selected records. This action will apply changes across multiple entries. Make sure that the fields you are updating reflect the correct information for all selected records.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> If you are unsure about making changes across all these records, review your selection carefully before proceeding or edit the records individually. </source>
-        <target> You are about to modify the selected records. This action will apply changes across multiple entries. Make sure that the fields you are updating reflect the correct information for all selected records.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> If you are unsure about making changes across all these records, review your selection carefully before proceeding or edit the records individually. </target>
+        <source> You are about to modify the selected records. This action will apply changes across multiple entries. Make sure that the fields you are updating reflect the correct information for all selected records.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> If you are unsure about making changes across all these records, review your selection carefully before proceeding or edit the records individually. </source>
+        <target> You are about to modify the selected records. This action will apply changes across multiple entries. Make sure that the fields you are updating reflect the correct information for all selected records.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> If you are unsure about making changes across all these records, review your selection carefully before proceeding or edit the records individually. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
           <context context-type="linenumber">7,13</context>
@@ -5864,7 +5939,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1786540073279549582" datatype="html">
-        <source>Salva</source>
+        <source> Save
+</source>
         <target>Salva</target>
         <note priority="1" from="description">Form save button</note>
         <context-group purpose="location">
@@ -5873,7 +5949,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1293084960403366485" datatype="html">
-        <source>Cancella</source>
+        <source> Cancel
+</source>
         <target>Cancella</target>
         <note priority="1" from="description">Form cancel button</note>
         <context-group purpose="location">
@@ -5992,7 +6069,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7184098324706855236" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="records will be imported.&lt;/div"/> records will be imported.</source>
+        <source><x id="INTERPOLATION" equiv-text="data.entitiesToImport?.length }}"/> records will be imported.</source>
         <target><x id="INTERPOLATION" equiv-text="records will be imported.&lt;/div"/> records will be imported.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.html</context>
@@ -6040,8 +6117,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2232600251081390326" datatype="html">
-        <source>What type of records should your imported data become in the system? Select the target &apos;Entity Type&apos; here. (e.g. are you trying to import participants, events or team members etc.)</source>
-        <target>What type of records should your imported data become in the system? Select the target &apos;Entity Type&apos; here. (e.g. are you trying to import participants, events or team members etc.)</target>
+        <source>What type of records should your imported data become in the system? Select the target 'Entity Type' here. (e.g. are you trying to import participants, events or team members etc.)</source>
+        <target>What type of records should your imported data become in the system? Select the target 'Entity Type' here. (e.g. are you trying to import participants, events or team members etc.)</target>
         <note priority="1" from="description">import - select type - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-entity-type/import-entity-type.component.html</context>
@@ -6082,16 +6159,20 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5466619070073176207" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ item.ids.length }}"/> &quot;<x id="INTERPOLATION_1" equiv-text="{{ item.config.entityType | entityTypeLabel }}"/>&quot; records </source>
-        <target> <x id="INTERPOLATION" equiv-text="{{ item.ids.length }}"/> &quot;<x id="INTERPOLATION_1" equiv-text="{{ item.config.entityType | entityTypeLabel }}"/>&quot; records </target>
+        <source> <x id="INTERPOLATION" equiv-text="{{ item.ids.length }}"/> "<x id="INTERPOLATION_1" equiv-text="{{ item.config.entityType | entityTypeLabel }}"/>" records </source>
+        <target> <x id="INTERPOLATION" equiv-text="{{ item.ids.length }}"/> "<x id="INTERPOLATION_1" equiv-text="{{ item.config.entityType | entityTypeLabel }}"/>" records </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
           <context context-type="linenumber">13,16</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6375746665146474586" datatype="html">
-        <source> imported by <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block         [entityId]=&quot;item.user&quot;         entityType=&quot;User&quot;         [linkDisabled]=&quot;true&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at {{"/> at <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </source>
-        <target> imported by <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block         [entityId]=&quot;item.user&quot;         entityType=&quot;User&quot;         [linkDisabled]=&quot;true&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at {{"/> at <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </target>
+        <source> imported by <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block
+        [entityId]=&quot;item.user&quot;
+        entityType=&quot;User&quot;
+        [linkDisabled]=&quot;true&quot;
+      >"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at {{"/> at <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </source>
+        <target> imported by <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block         [entityId]=&quot;item.user&quot;         entityType=&quot;User&quot;         [linkDisabled]=&quot;true&quot;       >"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at {{"/> at <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
           <context context-type="linenumber">19,27</context>
@@ -6176,10 +6257,10 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3609313416980556585" datatype="html">
-        <source>The data previewed here is mapped and transformed according to the &apos;Column Mapping&apos; you defined in the previous step.
+        <source>The data previewed here is mapped and transformed according to the 'Column Mapping' you defined in the previous step.
         Only columns for which you selected a field there will be imported and appears here in this preview.
         If necessary, you can go back to the previous step and make changes to the mapping.</source>
-        <target>The data previewed here is mapped and transformed according to the &apos;Column Mapping&apos; you defined in the previous step.
+        <target>The data previewed here is mapped and transformed according to the 'Column Mapping' you defined in the previous step.
         Only columns for which you selected a field there will be imported and appears here in this preview.
         If necessary, you can go back to the previous step and make changes to the mapping.</target>
         <note priority="1" from="description">import - review data - help text</note>
@@ -6225,7 +6306,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8132424293432274889" datatype="html">
-        <source>Indietro</source>
+        <source> Back </source>
         <target>Indietro</target>
         <note priority="1" from="description">import back button</note>
         <context-group purpose="location">
@@ -6319,7 +6400,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.zeroRange" datatype="html">
-        <source>0 su <x id="PH" equiv-text="length"/></source>
+        <source>0 in <x id="PH" equiv-text="length"/></source>
         <target>0 su <x id="PH" equiv-text="length"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/language/TranslatableMatPaginator.ts</context>
@@ -6327,7 +6408,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.rangeOfLabel" datatype="html">
-        <source><x id="PH" equiv-text="startIndex + 1"/> - <x id="PH_1" equiv-text="endIndex"/> di <x id="PH_2" equiv-text="length"/></source>
+        <source><x id="PH" equiv-text="startIndex + 1"/> - <x id="PH_1" equiv-text="endIndex"/> of <x id="PH_2" equiv-text="length"/></source>
         <target><x id="PH" equiv-text="startIndex + 1"/> - <x id="PH_1" equiv-text="endIndex"/> di <x id="PH_2" equiv-text="length"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/language/TranslatableMatPaginator.ts</context>
@@ -6335,7 +6416,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.displayPerPage" datatype="html">
-        <source>Oggetti per pagina</source>
+        <source>Items per page</source>
         <target>Oggetti per pagina</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/language/TranslatableMatPaginator.ts</context>
@@ -6343,7 +6424,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.nextPage" datatype="html">
-        <source>pagina successiva</source>
+        <source>Next page</source>
         <target>pagina successiva</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/language/TranslatableMatPaginator.ts</context>
@@ -6351,7 +6432,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.prevPage" datatype="html">
-        <source>pagina precedente</source>
+        <source>Prev page</source>
         <target>pagina precedente</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/language/TranslatableMatPaginator.ts</context>
@@ -6359,7 +6440,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.firstPage" datatype="html">
-        <source>Prima pagina</source>
+        <source>First page</source>
         <target>Prima pagina</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/language/TranslatableMatPaginator.ts</context>
@@ -6367,7 +6448,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.lastPage" datatype="html">
-        <source>Ultima pagina</source>
+        <source>Last page</source>
         <target>Ultima pagina</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/language/TranslatableMatPaginator.ts</context>
@@ -6383,8 +6464,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8160928187400055629" datatype="html">
-        <source>Il tuo account non dispone dell&apos;autorizzazione richiesta per questa azione.</source>
-        <target>Il tuo account non dispone dell&apos;autorizzazione richiesta per questa azione.</target>
+        <source>Your account does not have the required permission for this action.</source>
+        <target>Il tuo account non dispone dell'autorizzazione richiesta per questa azione.</target>
         <note priority="1" from="description">Missing permission</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/permissions/permission-directive/disable-entity-operation.directive.ts</context>
@@ -6446,7 +6527,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5208762166158567179" datatype="html">
-        <source> Cambia la password </source>
+        <source> Change Password
+</source>
         <target> Cambia la password </target>
         <note priority="1" from="description">Button which opens password reset page</note>
         <context-group purpose="location">
@@ -6475,7 +6557,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       <trans-unit id="7703027023112056914" datatype="html">
         <source> Update email </source>
         <target> Update email </target>
-        <note priority="1" from="description">Button which updates the user&apos;s email</note>
+        <note priority="1" from="description">Button which updates the user's email</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
           <context context-type="linenumber">40,42</context>
@@ -6499,8 +6581,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3720831104832682481" datatype="html">
-        <source> to your system <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em&gt;"/><x id="INTERPOLATION" equiv-text="eName | async }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/mat-ca"/></source>
-        <target> to your system <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em&gt;"/><x id="INTERPOLATION" equiv-text="eName | async }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/mat-ca"/></target>
+        <source> to your system <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em>"/><x id="INTERPOLATION" equiv-text="eName | async }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/mat-ca"/></source>
+        <target> to your system <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em>"/><x id="INTERPOLATION" equiv-text="eName | async }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/mat-ca"/></target>
         <note priority="1" from="description">Sign in subtitle</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
@@ -6526,8 +6608,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4036593675663530097" datatype="html">
-        <source> We couldn&apos;t connect to the server currently. You can still use the application offline, if you have logged in on this device previously. </source>
-        <target> We couldn&apos;t connect to the server currently. You can still use the application offline, if you have logged in on this device previously. </target>
+        <source> We couldn't connect to the server currently. You can still use the application offline, if you have logged in on this device previously. </source>
+        <target> We couldn't connect to the server currently. You can still use the application offline, if you have logged in on this device previously. </target>
         <note priority="1" from="description">online login failed text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
@@ -6728,7 +6810,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7471826153403325742" datatype="html">
-        <source> Maggiori informazioni </source>
+        <source> More Information </source>
         <target> Maggiori informazioni </target>
         <note priority="1" from="description">Show more information about a change that was made to the app</note>
         <context-group purpose="location">
@@ -6737,7 +6819,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3824111208039064639" datatype="html">
-        <source> Mostra le modifiche precedenti </source>
+        <source> Show previous changes </source>
         <target> Mostra le modifiche precedenti </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/changelog/changelog.component.html</context>
@@ -6745,7 +6827,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5547981558491672240" datatype="html">
-        <source> Chiudere </source>
+        <source> Close </source>
         <target> Chiudere </target>
         <note priority="1" from="description">Generic close button</note>
         <context-group purpose="location">
@@ -6754,7 +6836,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2566001175328025157" datatype="html">
-        <source>Nessun registro delle modifiche disponibile</source>
+        <source>No Changelog Available</source>
         <target>Nessun registro delle modifiche disponibile</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/changelog/changelog.component.ts</context>
@@ -6762,7 +6844,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7795087408392131030" datatype="html">
-        <source>Impossibile caricare le ultime modifiche: <x id="PH" equiv-text="error"/></source>
+        <source>Could not load latest changes: <x id="PH" equiv-text="error"/></source>
         <target>Impossibile caricare le ultime modifiche: <x id="PH" equiv-text="error"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/latest-changes.service.ts</context>
@@ -6770,15 +6852,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2896181875024748753" datatype="html">
-        <source>È disponibile una nuova versione dell&apos;app!</source>
-        <target>È disponibile una nuova versione dell&apos;app!</target>
+        <source>A new version of the app is available!</source>
+        <target>È disponibile una nuova versione dell'app!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/update-manager.service.ts</context>
           <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4021752662928002901" datatype="html">
-        <source>Aggiornare</source>
+        <source>Update</source>
         <target>Aggiornare</target>
         <note priority="1" from="description">Action that a user can update the app with</note>
         <context-group purpose="location">
@@ -6804,7 +6886,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4580988005648117665" datatype="html">
-        <source>Cerca</source>
+        <source>Search</source>
         <target>Cerca</target>
         <note priority="1" from="description">Search label</note>
         <context-group purpose="location">
@@ -6813,7 +6895,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1403128231279755304" datatype="html">
-        <source> Inserire almeno <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> caratteri </source>
+        <source> Insert at least <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> characters </source>
         <target> Inserire almeno <x id="INTERPOLATION" equiv-text="{{ MIN_CHARACTERS_FOR_SEARCH }}"/> caratteri </target>
         <note priority="1" from="description">The user has inserted too few characters to start a search</note>
         <context-group purpose="location">
@@ -6822,7 +6904,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6553963712321892101" datatype="html">
-        <source>Search in progress...</source>
+        <source> Search in progress... </source>
         <target>Search in progress...</target>
         <note priority="1" from="description">A search is in progress</note>
         <context-group purpose="location">
@@ -6831,7 +6913,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2733216517368772094" datatype="html">
-        <source>There were no results</source>
+        <source> There were no results </source>
         <target>There were no results</target>
         <note priority="1" from="description">No search results are available</note>
         <context-group purpose="location">
@@ -6882,8 +6964,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5262832356524809379" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;user&quot; class=&quot;nav-icon&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Profilo </source>
-        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;user&quot; class=&quot;nav-icon&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Profilo </target>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/> Profile </source>
+        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;user&quot; class=&quot;nav-icon&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Profilo </target>
         <note priority="1" from="description">Navigate to user profile page</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
@@ -6891,8 +6973,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3887920281412977846" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;sign-out-alt&quot; class=&quot;nav-icon&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Disconnetti </source>
-        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;sign-out-alt&quot; class=&quot;nav-icon&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Disconnetti </target>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="alt&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/> Sign out </source>
+        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;sign-out-alt&quot; class=&quot;nav-icon&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Disconnetti </target>
         <note priority="1" from="description">Sign out of the app</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
@@ -6909,7 +6991,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="5248717555542428023" datatype="html">
-        <source>Nome utente</source>
+        <source>Username</source>
         <target>Nome utente</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
@@ -6929,8 +7011,10 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="849579647161243974" datatype="html">
-        <source> Couldn&apos;t find the record that your user account is linked to (<x id="INTERPOLATION" equiv-text="{{           (sessionInfo | async)?.entityId         }}"/>). </source>
-        <target> Couldn&apos;t find the record that your user account is linked to (<x id="INTERPOLATION" equiv-text="{{           (sessionInfo | async)?.entityId         }}"/>). </target>
+        <source> Couldn't find the record that your user account is linked to (<x id="INTERPOLATION" equiv-text="{{
+          (sessionInfo | async)?.entityId
+        }}"/>). </source>
+        <target> Couldn't find the record that your user account is linked to (<x id="INTERPOLATION" equiv-text="{{           (sessionInfo | async)?.entityId         }}"/>). </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
           <context context-type="linenumber">37,41</context>
@@ -7028,7 +7112,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2841397183376590473" datatype="html">
-        <source>Please enter a valid email</source>
+        <source> Please enter a valid email </source>
         <target>Please enter a valid email</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
@@ -7143,8 +7227,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2666994589784458982" datatype="html">
-        <source> Sorry, this feature isn&apos;t quite ready yet. We are working hard to make this available for you. Let us know below if you need this functionality. </source>
-        <target> Sorry, this feature isn&apos;t quite ready yet. We are working hard to make this available for you. Let us know below if you need this functionality. </target>
+        <source> Sorry, this feature isn't quite ready yet. We are working hard to make this available for you. Let us know below if you need this functionality. </source>
+        <target> Sorry, this feature isn't quite ready yet. We are working hard to make this available for you. Let us know below if you need this functionality. </target>
         <note priority="1" from="description">Coming Soon description</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/coming-soon/coming-soon/coming-soon.component.html</context>
@@ -7152,8 +7236,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4276749368621932121" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon           *ngIf=&quot;requested&quot;           aria-label=&quot;requested&quot;           icon=&quot;check&quot;           class=&quot;requested-icon&quot;         &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> I need this feature </source>
-        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon           *ngIf=&quot;requested&quot;           aria-label=&quot;requested&quot;           icon=&quot;check&quot;           class=&quot;requested-icon&quot;         &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> I need this feature </target>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon *ngIf=&quot;requested&quot; aria-label=&quot;requested&quot; icon=&quot;check&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> I need this feature </source>
+        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon           *ngIf=&quot;requested&quot;           aria-label=&quot;requested&quot;           icon=&quot;check&quot;           class=&quot;requested-icon&quot;         >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> I need this feature </target>
         <note priority="1" from="description">Indicates that the user needs this feature and can send a
         feature-request</note>
         <note priority="1" from="meaning">Feature Button</note>
@@ -7240,7 +7324,9 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4087848196794777278" datatype="html">
-        <source>Are you sure you want to keep the current version and delete this conflicting version? <x id="PH" equiv-text="this.stringify(         docToDelete       )"/></source>
+        <source>Are you sure you want to keep the current version and delete this conflicting version? <x id="PH" equiv-text="this.stringify(
+        docToDelete,
+      )"/></source>
         <target>Are you sure you want to keep the current version and delete this conflicting version? <x id="PH" equiv-text="this.stringify(         docToDelete       )"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
@@ -7280,7 +7366,9 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1114868388167698944" datatype="html">
-        <source>Are you sure you want to save the following changes and delete the conflicting version? <x id="PH" equiv-text="this.stringify(         newChanges       )"/></source>
+        <source>Are you sure you want to save the following changes and delete the conflicting version? <x id="PH" equiv-text="this.stringify(
+        newChanges,
+      )"/></source>
         <target>Are you sure you want to save the following changes and delete the conflicting version? <x id="PH" equiv-text="this.stringify(         newChanges       )"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
@@ -7304,17 +7392,17 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6142285405615208332" datatype="html">
-        <source>Compleanni</source>
+        <source>Upcoming Birthdays</source>
         <target>Compleanni</target>
-        <note priority="1" from="description">Subtitle of the birthday widget</note>
+        <note priority="1" from="description">dashboard widget subtitle</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6819703382888169350" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="yrs&lt;/td&gt;         &lt;/ng-container&gt;         &lt;tr mat-r"/> anni</source>
-        <target><x id="INTERPOLATION" equiv-text="yrs&lt;/td&gt;         &lt;/ng-container&gt;         &lt;tr mat-r"/> anni</target>
+        <source><x id="INTERPOLATION" equiv-text="entity.newAge }}"/> yrs</source>
+        <target><x id="INTERPOLATION" equiv-text="yrs&lt;/td>         &lt;/ng-container>         &lt;tr mat-r"/> anni</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard/birthday-dashboard.component.html</context>
           <context context-type="linenumber">26</context>
@@ -7346,7 +7434,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="357973413193006010" datatype="html">
-        <source>Center</source>
+        <source> Center </source>
         <target>Center</target>
         <note priority="1" from="description">The center that a partiipant belongs to, e.g. a city</note>
         <context-group purpose="location">
@@ -7355,7 +7443,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4295196190359383942" datatype="html">
-        <source>Count of children</source>
+        <source> Count of children </source>
         <target>Count of children</target>
         <note priority="1" from="description">The amount of children that study at one school</note>
         <context-group purpose="location">
@@ -7551,7 +7639,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1074292166255078044" datatype="html">
-        <source>Progress Bar</source>
+        <source> Progress Bar </source>
         <target>Progress Bar</target>
         <note priority="1" from="description">A visual aid to understand a progress of sorts</note>
         <context-group purpose="location">
@@ -7569,7 +7657,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6120058133616490580" datatype="html">
-        <source>Progresso vs obbiettivi</source>
+        <source>Progress of X</source>
         <target>Progresso vs obbiettivi</target>
         <note priority="1" from="description">The progress, e.g. of a certain activity</note>
         <context-group purpose="location">
@@ -7586,8 +7674,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4077530094273310479" datatype="html">
-        <source>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</source>
-        <target>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</target>
+        <source>Uploading "<x id="PH" equiv-text="file.name"/>"</source>
+        <target>Uploading "<x id="PH" equiv-text="file.name"/>"</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
           <context context-type="linenumber">57</context>
@@ -7667,8 +7755,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2381267598974852900" datatype="html">
-        <source>File &quot;<x id="PH" equiv-text="this.initialValue"/>&quot; deleted</source>
-        <target>File &quot;<x id="PH" equiv-text="this.initialValue"/>&quot; deleted</target>
+        <source>File "<x id="PH" equiv-text="this.initialValue"/>" deleted</source>
+        <target>File "<x id="PH" equiv-text="this.initialValue"/>" deleted</target>
         <note priority="1" from="description">Message for user</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
@@ -7685,8 +7773,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7211396766149775337" datatype="html">
-        <source>Loading &quot;<x id="PH" equiv-text="entity[property]"/>&quot;</source>
-        <target>Loading &quot;<x id="PH" equiv-text="entity[property]"/>&quot;</target>
+        <source>Loading "<x id="PH" equiv-text="entity[property]"/>"</source>
+        <target>Loading "<x id="PH" equiv-text="entity[property]"/>"</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/file.service.ts</context>
           <context context-type="linenumber">113</context>
@@ -7711,7 +7799,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4647051012506394863" datatype="html">
-        <source>Show File</source>
+        <source> Show File </source>
         <target>Show File</target>
         <note priority="1" from="description">Button to show a downloaded file</note>
         <context-group purpose="location">
@@ -7793,8 +7881,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="1562695877507366400" datatype="html">
-        <source>Do you want to overwrite the custom address to the full address from the online lookup? This will replace &quot;<x id="PH" equiv-text="manualAddress"/>&quot; with &quot;<x id="PH_1" equiv-text="lookupAddress"/>&quot;. The marked location on the map will be unaffected by this choice.</source>
-        <target>Do you want to overwrite the custom address to the full address from the online lookup? This will replace &quot;<x id="PH" equiv-text="manualAddress"/>&quot; with &quot;<x id="PH_1" equiv-text="lookupAddress"/>&quot;. The marked location on the map will be unaffected by this choice.</target>
+        <source>Do you want to overwrite the custom address to the full address from the online lookup? This will replace "<x id="PH" equiv-text="manualAddress"/>" with "<x id="PH_1" equiv-text="lookupAddress"/>". The marked location on the map will be unaffected by this choice.</source>
+        <target>Do you want to overwrite the custom address to the full address from the online lookup? This will replace "<x id="PH" equiv-text="manualAddress"/>" with "<x id="PH_1" equiv-text="lookupAddress"/>". The marked location on the map will be unaffected by this choice.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.ts</context>
           <context context-type="linenumber">107</context>
@@ -7825,8 +7913,10 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="112608564661097665" datatype="html">
-        <source>Set address without map location as &quot;<x id="INTERPOLATION" equiv-text="{{             inputElement.value           }}"/>&quot;</source>
-        <target>Set address without map location as &quot;<x id="INTERPOLATION" equiv-text="{{             inputElement.value           }}"/>&quot;</target>
+        <source>Set address without map location as "<x id="INTERPOLATION" equiv-text="{{
+            inputElement.value
+          }}"/>"</source>
+        <target>Set address without map location as "<x id="INTERPOLATION" equiv-text="{{             inputElement.value           }}"/>"</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-search/address-search.component.html</context>
           <context context-type="linenumber">30,32</context>
@@ -7877,7 +7967,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4517691647545108767" datatype="html">
-        <source>Apply</source>
+        <source> Apply </source>
         <target>Apply</target>
         <note priority="1" from="description">Button for closing popup and applying changes</note>
         <context-group purpose="location">
@@ -7886,7 +7976,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="2549737213024136740" datatype="html">
-        <source><x id="PH" equiv-text="res"/> km</source>
+        <source><x id="PH" equiv-text="closest"/> km</source>
         <target><x id="PH" equiv-text="res"/> km</target>
         <note priority="1" from="description">e.g. 5 km</note>
         <note priority="1" from="meaning">distance with unit</note>
@@ -7905,7 +7995,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="209260392918751767" datatype="html">
-        <source> Select <x id="INTERPOLATION" equiv-text="{{ side.entityType.label }}"/> </source>
+        <source> Select <x id="INTERPOLATION" equiv-text="{{ side.entityType?.label }}"/> </source>
         <target> Select <x id="INTERPOLATION" equiv-text="{{ side.entityType.label }}"/> </target>
         <note priority="1" from="description">header of section with entities available for selection</note>
         <context-group purpose="location">
@@ -8127,7 +8217,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       <trans-unit id="1906738132039774080" datatype="html">
         <source>not <x id="PH" equiv-text="property"/></source>
         <target>not <x id="PH" equiv-text="property"/></target>
-        <note priority="1" from="description">e.g. &apos;not male&apos;</note>
+        <note priority="1" from="description">e.g. 'not male'</note>
         <note priority="1" from="meaning">Not a certain property</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/report-row.ts</context>
@@ -8137,7 +8227,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       <trans-unit id="173558566233350756" datatype="html">
         <source>without <x id="PH" equiv-text="property"/></source>
         <target>without <x id="PH" equiv-text="property"/></target>
-        <note priority="1" from="description">e.g. &apos;without religion&apos;</note>
+        <note priority="1" from="description">e.g. 'without religion'</note>
         <note priority="1" from="meaning">Excluding a certain property</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/report-row.ts</context>
@@ -8158,7 +8248,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8778616811237742446" datatype="html">
-        <source>Nome</source>
+        <source> Name </source>
         <target>Nome</target>
         <note priority="1" from="description">Table report header</note>
         <context-group purpose="location">
@@ -8167,7 +8257,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8177873832400820695" datatype="html">
-        <source> Count</source>
+        <source>Count</source>
         <target> Count</target>
         <note priority="1" from="description">Table report header</note>
         <context-group purpose="location">
@@ -8192,9 +8282,9 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8925682277016699787" datatype="html">
-        <source> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Click again on &quot;Calculate&quot; to re-calculate the report including any changes of records since then.
+        <source> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Click again on "Calculate" to re-calculate the report including any changes of records since then.
 </source>
-        <target> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Click again on &quot;Calculate&quot; to re-calculate the report including any changes of records since then.
+        <target> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Click again on "Calculate" to re-calculate the report including any changes of records since then.
 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
@@ -8235,7 +8325,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3425748923175925415" datatype="html">
-        <source>Seleziona report</source>
+        <source>Select Report</source>
         <target>Seleziona report</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
@@ -8243,7 +8333,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="193735854885505934" datatype="html">
-        <source>Inserire un intervallo di date</source>
+        <source>Enter a date range</source>
         <target>Inserire un intervallo di date</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
@@ -8259,7 +8349,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="4435527043283877614" datatype="html">
-        <source> Calcolare </source>
+        <source> Calculate </source>
         <target> Calcolare </target>
         <note priority="1" from="description">Calculate the results for a report</note>
         <context-group purpose="location">
@@ -8268,7 +8358,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="3690261887763048230" datatype="html">
-        <source> Scaricare </source>
+        <source> Download</source>
         <target> Scaricare </target>
         <note priority="1" from="description">Button to download data</note>
         <context-group purpose="location">
@@ -8285,8 +8375,16 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="7745244129478763178" datatype="html">
-        <source> Select the template based on which to generate a file for the current record or <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       [routerLink]=&quot;TemplateExport.route&quot;       *appDisabledEntityOperation=&quot;{         entity: TemplateExport,         operation: 'update',       }&quot;       matDialogClose       &gt;"/>configure available templates<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a     &gt;"/>. </source>
-        <target> Select the template based on which to generate a file for the current record or <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       [routerLink]=&quot;TemplateExport.route&quot;       *appDisabledEntityOperation=&quot;{         entity: TemplateExport,         operation: 'update',       }&quot;       matDialogClose       &gt;"/>configure available templates<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a     &gt;"/>. </target>
+        <source> Select the template based on which to generate a file for the current record or <x id="START_LINK" ctype="x-a" equiv-text="&lt;a
+      [routerLink]=&quot;TemplateExport.route&quot;
+      *appDisabledEntityOperation=&quot;{
+        entity: TemplateExport,
+        operation: 'update',
+      }&quot;
+      matDialogClose
+      >"/>configure available templates<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a
+    >"/>. </source>
+        <target> Select the template based on which to generate a file for the current record or <x id="START_LINK" ctype="x-a" equiv-text="&lt;a       [routerLink]=&quot;TemplateExport.route&quot;       *appDisabledEntityOperation=&quot;{         entity: TemplateExport,         operation: 'update',       }&quot;       matDialogClose       >"/>configure available templates<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a     >"/>. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export-selection-dialog/template-export-selection-dialog.component.html</context>
           <context context-type="linenumber">3,15</context>
@@ -8401,8 +8499,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="6019588592701270147" datatype="html">
-        <source>The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. &quot;my-report_{d.name}.pdf&quot;).</source>
-        <target>The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. &quot;my-report_{d.name}.pdf&quot;).</target>
+        <source>The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}.pdf").</source>
+        <target>The filename for the resulting file when using this template. You can use the same placeholders here as in the template file itself (e.g. "my-report_{d.name}.pdf").</target>
         <note priority="1" from="description">TemplateExport</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
@@ -8430,20 +8528,20 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       <trans-unit id="7825436843695902859" datatype="html">
         <source>Upload a specially prepared template file here.
 The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
-For example {d.name} will be replaced with the value in the &quot;name&quot; field of the given entity.
+For example {d.name} will be replaced with the value in the "name" field of the given entity.
 See the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.
 
-The placeholder keys must match the field &quot;Field ID&quot; of the record data structure in Aam Digital.
-You can find this in the Admin UI form builder (Edit Data Structure -&gt; Details View) and edit a specific field to view its details.
+The placeholder keys must match the field "Field ID" of the record data structure in Aam Digital.
+You can find this in the Admin UI form builder (Edit Data Structure -> Details View) and edit a specific field to view its details.
 
 Template files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF.</source>
         <target>Upload a specially prepared template file here.
 The file can contain placeholders that will be replaced with actual data when a file is generated for a selected record.
-For example {d.name} will be replaced with the value in the &quot;name&quot; field of the given entity.
+For example {d.name} will be replaced with the value in the "name" field of the given entity.
 See the documentation of the [carbone system](https://carbone.io/documentation.html#substitutions) for more information.
 
-The placeholder keys must match the field &quot;Field ID&quot; of the record data structure in Aam Digital.
-You can find this in the Admin UI form builder (Edit Data Structure -&gt; Details View) and edit a specific field to view its details.
+The placeholder keys must match the field "Field ID" of the record data structure in Aam Digital.
+You can find this in the Admin UI form builder (Edit Data Structure -> Details View) and edit a specific field to view its details.
 
 Template files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF.</target>
         <note priority="1" from="description">TemplateExport</note>
@@ -8618,8 +8716,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         </context-group>
       </trans-unit>
       <trans-unit id="5034747390718755858" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;tools&quot; [fixedWidth]=&quot;true&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> define other interval </source>
-        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;tools&quot; [fixedWidth]=&quot;true&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> define other interval </target>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;tools&quot; [fixedWidth]=&quot;true&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> define other interval </source>
+        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;tools&quot; [fixedWidth]=&quot;true&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> define other interval </target>
         <note priority="1" from="description">recurring interval option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/recurring-interval/edit-recurring-interval/edit-recurring-interval.component.html</context>
@@ -8627,8 +8725,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         </context-group>
       </trans-unit>
       <trans-unit id="4794411980618038310" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;xmark&quot; [fixedWidth]=&quot;true&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> does not repeat </source>
-        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;xmark&quot; [fixedWidth]=&quot;true&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> does not repeat </target>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;xmark&quot; [fixedWidth]=&quot;true&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> does not repeat </source>
+        <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;xmark&quot; [fixedWidth]=&quot;true&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> does not repeat </target>
         <note priority="1" from="description">recurring interval option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/recurring-interval/edit-recurring-interval/edit-recurring-interval.component.html</context>
@@ -8665,7 +8763,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
       <trans-unit id="628521769441120149" datatype="html">
         <source>every <x id="PH" equiv-text="interval.amount"/> <x id="PH_1" equiv-text="timeunitLabelMap.get(interval.unit)"/></source>
         <target>every <x id="PH" equiv-text="interval.amount"/> <x id="PH_1" equiv-text="timeunitLabelMap.get(interval.unit)"/></target>
-        <note priority="1" from="description">e.g. every 2 weeks</note>
+        <note priority="1" from="description"> e.g. every 2 weeks</note>
         <note priority="1" from="meaning">custom interval select option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/recurring-interval/time-interval.ts</context>
@@ -8741,7 +8839,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         </context-group>
       </trans-unit>
       <trans-unit id="7336132279158298652" datatype="html">
-        <source> by <x id="INTERPOLATION" equiv-text="{{ value.completedBy }}"/> on <x id="INTERPOLATION_1" equiv-text="{{ value.completedAt | date }}"/> </source>
+        <source> by <x id="INTERPOLATION" equiv-text="{{ completedBy?.toString() }}"/> on <x id="INTERPOLATION_1" equiv-text="{{ value.completedAt | date }}"/> </source>
         <target> by <x id="INTERPOLATION" equiv-text="{{ value.completedBy }}"/> on <x id="INTERPOLATION_1" equiv-text="{{ value.completedAt | date }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-completion/display-todo-completion/display-todo-completion.component.html</context>
@@ -8766,7 +8864,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         </context-group>
       </trans-unit>
       <trans-unit id="5086653948161610675" datatype="html">
-        <source> Creating new item </source>
+        <source> Creating new item
+</source>
         <target> Creating new item </target>
         <note priority="1" from="description">Todo details heading for new record</note>
         <context-group purpose="location">
@@ -8858,17 +8957,19 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         </context-group>
       </trans-unit>
       <trans-unit id="1630785081498183127" datatype="html">
-        <source> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [entityType]=&quot;_entity&quot;         [field]=&quot;groupBy[currentGroupIndex]&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label&gt;"/> : </source>
-        <target> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [entityType]=&quot;_entity&quot;         [field]=&quot;groupBy[currentGroupIndex]&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label&gt;"/> : </target>
-        <note priority="1" from="description">category of disagregation in EntityCountDashboard</note>
+        <source> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label
+        [entityType]=&quot;_entity&quot;
+        [field]=&quot;groupBy[currentGroupIndex]&quot;
+      >"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label>"/> : </source>
+        <target> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [entityType]=&quot;_entity&quot;         [field]=&quot;groupBy[currentGroupIndex]&quot;       >"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label>"/> : </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
           <context context-type="linenumber">32,40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7054036729903021582" datatype="html">
-        <source>Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.</source>
-        <target>Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.</target>
+        <source>Counting all "active" records. If configured, you can view different disaggregations by using the arrows below.</source>
+        <target>Counting all "active" records. If configured, you can view different disaggregations by using the arrows below.</target>
         <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts</context>
@@ -8945,7 +9046,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         </context-group>
       </trans-unit>
       <trans-unit id="2908950742428941334" datatype="html">
-        <source>Team einbezogen</source>
+        <source>Team involved</source>
         <target>Team involved</target>
         <note priority="1" from="description">Label for the social worker(s) who created the note</note>
         <context-group purpose="location">
