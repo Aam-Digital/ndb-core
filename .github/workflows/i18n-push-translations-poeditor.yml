@@ -38,7 +38,7 @@ jobs:
             git checkout $branch_name
             git pull origin $branch_name
 
-            git merge ${{ env.BASE_BRANCH }}
+            git merge ${{ env.BASE_BRANCH }} --allow-unrelated-histories
           else
             echo "Creating new branch $branch_name..."
             git checkout -b $branch_name
