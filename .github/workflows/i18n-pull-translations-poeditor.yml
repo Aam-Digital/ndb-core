@@ -26,7 +26,6 @@ jobs:
       - name: Create or update branch for translations
         run: |
           branch_name="chore/update-poeditor-translations"
-          branch_base=process.env.BASE_BRANCH
 
           # Check if branch exists on remote
           if git ls-remote --exit-code origin $branch_name; then
@@ -35,7 +34,8 @@ jobs:
 
             git checkout $branch_name
             git pull origin $branch_name
-            git merge $branch_base
+
+            git merge ${{ env.BASE_BRANCH }}
           else
             echo "Creating new branch $branch_name..."
             git checkout -b $branch_name

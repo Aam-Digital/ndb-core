@@ -13,16 +13,12 @@ permissions:
 jobs:
   sync-translations:
     runs-on: ubuntu-latest
+    env:
+      BASE_BRANCH: "feat/translation-poeditor-integration"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Configure Git
         run: |
@@ -32,6 +28,8 @@ jobs:
 
       - name: Create or update branch for translations
         run: |
+          git status
+
           branch_name="chore/update-poeditor-translations"
 
           # Check if branch exists on remote
@@ -41,11 +39,18 @@ jobs:
 
             git checkout $branch_name
             git pull origin $branch_name
-            git merge ${{ github.head_ref }}
+
+            git log
           else
             echo "Creating new branch $branch_name..."
             git checkout -b $branch_name
           fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Extract i18n keys
         run: npm run extract-i18n
