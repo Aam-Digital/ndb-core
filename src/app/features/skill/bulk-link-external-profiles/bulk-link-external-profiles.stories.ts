@@ -8,6 +8,7 @@ import { importProvidersFrom } from "@angular/core";
 import { mockSkillApi } from "../skill-api-mock";
 import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { throwError } from "rxjs";
 
 const entities: Entity[] = [
   TestEntity.create({ name: "Test Entity 1" }),
@@ -43,5 +44,17 @@ export const Default: Story = {
   args: {
     entities: entities,
     config: { id: "ref", additional: profileLinkConfig } as FormFieldConfig,
+  },
+};
+
+export const Error: Story = {
+  args: {
+    entities: entities,
+    config: { id: "ref", additional: profileLinkConfig } as FormFieldConfig,
+    // @ts-ignore
+    skillApi: {
+      getExternalProfiles: () => throwError(() => "Test error"),
+      generateDefaultSearchParams: () => ({}),
+    },
   },
 };

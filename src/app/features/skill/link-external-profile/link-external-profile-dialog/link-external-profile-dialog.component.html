@@ -74,15 +74,15 @@
   </div>
 
   @if (error) {
-    @if (error.message) {
-      <p>
+    <p class="error-message">
+      @if (error.message) {
         {{ error.message }}
-      </p>
-    } @else {
-      <p i18n>
-        There was an error loading external profiles. Please try again later.
-      </p>
-    }
+      } @else {
+        <span i18n>
+          There was an error loading external profiles. Please try again later.
+        </span>
+      }
+    </p>
   }
 
   @if (possibleMatches) {

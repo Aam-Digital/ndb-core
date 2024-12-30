@@ -41,7 +41,6 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { PercentPipe } from "@angular/common";
 import { MatProgressBar } from "@angular/material/progress-bar";
-import { AlertService } from "../../../core/alerts/alert.service";
 
 @Component({
   selector: "app-bulk-link-external-profiles",
@@ -75,7 +74,6 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
   private readonly skillApi = inject(SkillApiService);
   private readonly dialog = inject(MatDialog);
   private readonly entityMapper = inject(EntityMapperService);
-  private readonly alertService = inject(AlertService);
 
   /**
    * The bulk-selected entities for which to search external profiles.

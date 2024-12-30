@@ -3,7 +3,7 @@ import { firstValueFrom, Observable } from "rxjs";
 import { ExternalProfile, ExternalSkill } from "./external-profile";
 import { Entity } from "app/core/entity/model/entity";
 import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
 import { EscoApiService } from "./esco-api.service";
 import { ExternalProfileLinkConfig } from "./external-profile-link-config";
 import { retryOnServerError } from "../../utils/retry-on-server-error.rxjs-pipe";
@@ -48,6 +48,12 @@ export class SkillApiService {
       .pipe(
         retryOnServerError(2),
         map((value) => value),
+        catchError((e) => {
+          if (e.status === 403) {
+            e.message = $localize`:external profile matching dialog:Your user account does not have permission to access external profiles.`;
+          }
+          throw e;
+        }),
       );
   }
 
