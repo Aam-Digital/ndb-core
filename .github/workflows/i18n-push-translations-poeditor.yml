@@ -20,30 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure Git
-        run: |
-          git config user.name ${{ secrets.GIT_BOT_USERNAME }}
-          git config user.email ${{ secrets.GIT_BOT_EMAIL }}
-          git remote set-url origin https://${{ secrets.GIT_BOT_ACCESS_TOKEN }}@github.com/Aam-Digital/ndb-core.git
-
-      - name: Create or update branch for translations
-        run: |
-          branch_name="chore/update-poeditor-translations"
-
-          # Check if branch exists on remote
-          if git ls-remote --exit-code origin $branch_name; then
-            echo "Branch $branch_name already exists. Fetching it..."
-            git fetch origin $branch_name:$branch_name
-
-            git checkout $branch_name
-            git pull origin $branch_name
-
-            git merge ${{ env.BASE_BRANCH }}
-          else
-            echo "Creating new branch $branch_name..."
-            git checkout -b $branch_name
-          fi
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
 
@@ -82,10 +58,3 @@ jobs:
           echo "Error uploading file for $lang: $response"
           exit 1
           fi
-
-      - name: Commit file changes
-        if: env.changed == 'true'
-        run: |
-          git add src/assets/locale/*.xlf
-          git commit -m "chore(i18n): update translation source file"
-          git push origin HEAD
