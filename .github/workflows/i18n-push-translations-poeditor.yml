@@ -30,7 +30,6 @@ jobs:
         run: npm run extract-i18n
 
       - name: Upload translations to POEditor
-        if: env.changed == 'true'
         run: |
           echo "Uploading new terms from ${files}"
           file="src/assets/locale/messages.xlf"
