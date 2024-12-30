@@ -29,16 +29,6 @@ jobs:
       - name: Extract i18n keys
         run: npm run extract-i18n
 
-      - name: Check if any files changed
-        run: |
-          if git diff --quiet; then
-            echo "No changes detected."
-            echo "changed=false" >> $GITHUB_ENV
-          else
-            echo "Changes detected."
-            echo "changed=true" >> $GITHUB_ENV
-          fi
-
       - name: Upload translations to POEditor
         if: env.changed == 'true'
         run: |
@@ -52,6 +42,7 @@ jobs:
           -F "overwrite=1" \
           -F "sync_terms=1" \
           -F "fuzzy_trigger=1" \
+          -F "read_from_source=1" \
           -F "file=@${file}")
           status=$(echo $response | jq -r '.response.status')
           if [ "$status" != "success" ]; then
