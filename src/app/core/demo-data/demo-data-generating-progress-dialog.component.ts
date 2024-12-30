@@ -27,7 +27,7 @@ import { Component } from "@angular/core";
     <mat-dialog-content>
       <p i18n>Generating sample data for this demo ...</p>
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-      <div i18n="sample test|a test string">new sample data text X3</div>
+      <div i18n="sample test|a test string">new sample data text X4</div>
     </mat-dialog-content>
   `,
 })
