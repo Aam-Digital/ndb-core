@@ -241,10 +241,10 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.RelatedEntitiesWithSummaryComponent),
   ],
   [
-    "EditEntityTypeDropdown",
+    "EditEntityType",
     () =>
-      import(
-        "./entity/edit-entity-type-dropdown/edit-entity-type-dropdown.component"
-      ).then((c) => c.EditEntityTypeDropdownComponent),
+      import("./entity/edit-entity-type/edit-entity-type.component").then(
+        (c) => c.EditEntityTypeComponent,
+      ),
   ],
 ];
