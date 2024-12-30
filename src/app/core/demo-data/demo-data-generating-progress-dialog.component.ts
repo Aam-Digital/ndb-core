@@ -25,9 +25,9 @@ import { Component } from "@angular/core";
 @Component({
   template: `
     <mat-dialog-content>
-      <p i18n>Generating sample data for this demo ... with changes XXXXXX</p>
-      <p i18n>etxra sample data text</p>
+      <p i18n>Generating sample data for this demo ...</p>
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <div i18n="test">new sample data text</div>
     </mat-dialog-content>
   `,
 })
