@@ -1,4 +1,4 @@
-name: Sync Translations with POEditor
+name: i18n - Send translation tokens to POEditor
 
 on:
   push:
