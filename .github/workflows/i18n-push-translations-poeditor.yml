@@ -28,8 +28,6 @@ jobs:
 
       - name: Create or update branch for translations
         run: |
-          git status
-
           branch_name="chore/update-poeditor-translations"
 
           # Check if branch exists on remote
@@ -40,7 +38,7 @@ jobs:
             git checkout $branch_name
             git pull origin $branch_name
 
-            git log
+            git merge ${{ env.BASE_BRANCH }}
           else
             echo "Creating new branch $branch_name..."
             git checkout -b $branch_name
@@ -90,4 +88,4 @@ jobs:
         run: |
           git add src/assets/locale/*.xlf
           git commit -m "chore(i18n): update translation source file"
-          git push
+          git push origin HEAD
