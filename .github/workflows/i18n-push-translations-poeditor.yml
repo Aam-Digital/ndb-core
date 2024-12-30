@@ -13,8 +13,6 @@ permissions:
 jobs:
   sync-translations:
     runs-on: ubuntu-latest
-    env:
-      BASE_BRANCH: "master"
 
     steps:
       - name: Checkout repository
@@ -43,6 +41,7 @@ jobs:
 
             git checkout $branch_name
             git pull origin $branch_name
+            git merge ${{ github.head_ref }}
           else
             echo "Creating new branch $branch_name..."
             git checkout -b $branch_name
@@ -60,17 +59,6 @@ jobs:
             echo "Changes detected."
             echo "changed=true" >> $GITHUB_ENV
           fi
-
-      - name: Commit file changes
-        if: env.changed == 'true'
-        run: |
-          git add src/assets/locale/*.xlf
-          git commit -m "chore(i18n): update translation source file"
-          git push origin HEAD
-
-      - name: Push changes to master
-        if: env.changed == 'true'
-        run: git push origin HEAD
 
       - name: Upload translations to POEditor
         if: env.changed == 'true'
@@ -91,3 +79,10 @@ jobs:
           echo "Error uploading file for $lang: $response"
           exit 1
           fi
+
+      - name: Commit file changes
+        if: env.changed == 'true'
+        run: |
+          git add src/assets/locale/*.xlf
+          git commit -m "chore(i18n): update translation source file"
+          git push
