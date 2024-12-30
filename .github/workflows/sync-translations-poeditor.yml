@@ -81,57 +81,59 @@ jobs:
           files["it"]="src/assets/locale/messages.it.xlf"
           files["fr"]="src/assets/locale/messages.fr.xlf"
 
+          # see POEditor Upload API: https://poeditor.com/docs/api#projects_upload
           for lang in "${!files[@]}"; do
-            echo "Uploading ${files[$lang]} for language $lang"
-            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
-              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
-              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
-              -F "language=$lang" \
-              -F "updating=terms_translations" \
-              -F "overwrite=1" \
-              -F "sync_terms=1" \
-              -F "file=@${files[$lang]}")
-            status=$(echo $response | jq -r '.response.status')
-            if [ "$status" != "success" ]; then
-              echo "Error uploading file for $lang: $response"
-              exit 1
-            fi
-            echo "Waiting for 30 seconds to respect rate limits..."
-            sleep 30
+          echo "Uploading ${files[$lang]} for language $lang"
+          response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
+          -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+          -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+          -F "language=$lang" \
+          -F "updating=terms_translations" \
+          -F "overwrite=1" \
+          -F "sync_terms=1" \
+          -F "file=@${files[$lang]}")
+          status=$(echo $response | jq -r '.response.status')
+          if [ "$status" != "success" ]; then
+          echo "Error uploading file for $lang: $response"
+          exit 1
+          fi
+          echo "Waiting for 30 seconds to respect rate limits..."
+          sleep 30
           done
 
       - name: Export translations from POEditor
         if: env.changed == 'true'
         run: |
-          languages=("en" "fr" "it" "de")
-          for lang in "${languages[@]}"; do
-            echo "Exporting translations for language $lang"
-            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
-              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
-              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
-              -F "language=$lang" \
-              -F "type=xlf")
-            status=$(echo $response | jq -r '.response.status')
-            if [ "$status" == "success" ]; then
-              url=$(echo $response | jq -r '.result.url')
-              if [ -n "$url" ]; then
-                echo "Downloading translations for $lang from $url"
-                if [ "$lang" == "en" ]; then
-                  curl -s -o src/assets/locale/messages.xlf $url
-                else
-                  curl -s -o src/assets/locale/messages.$lang.xlf $url
-                fi
-              else
-                echo "No URL found for downloading translations for $lang"
-                exit 1
-              fi
-            else
-              echo "Error exporting translations for $lang: $response"
-              exit 1
-            fi
-            echo "Waiting for 30 seconds to respect rate limits..."
-            sleep 30
-          done
+          # see POEditor Export API: https://poeditor.com/docs/api#projects_export
+               languages=("en" "fr" "it" "de")
+               for lang in "${languages[@]}"; do
+               echo "Exporting translations for language $lang"
+               response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
+               -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+               -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+               -F "language=$lang" \
+               -F "type=xlf")
+               status=$(echo $response | jq -r '.response.status')
+               if [ "$status" == "success" ]; then
+               url=$(echo $response | jq -r '.result.url')
+               if [ -n "$url" ]; then
+               echo "Downloading translations for $lang from $url"
+               if [ "$lang" == "en" ]; then
+               curl -s -o src/assets/locale/messages.xlf $url
+               else
+               curl -s -o src/assets/locale/messages.$lang.xlf $url
+               fi
+               else
+               echo "No URL found for downloading translations for $lang"
+               exit 1
+               fi
+               else
+               echo "Error exporting translations for $lang: $response"
+               exit 1
+               fi
+               echo "Waiting for 30 seconds to respect rate limits..."
+               sleep 30
+               done
 
       - name: Commit updated translations
         if: env.changed == 'true'
