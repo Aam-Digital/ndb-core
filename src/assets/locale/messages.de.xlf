@@ -8957,8 +8957,9 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       <trans-unit id="2228158536420411982" datatype="html">
         <source>Health checkups are to be done regularly, at least every 6 months according to the program guidelines. 
                         Make sure to visit the [Health Guidelines](https://example.com/guidelines) for detailed recommendations and procedures.</source>
-        <target>Health checkups are to be done regularly, at least every 6 months according to the program guidelines. 
-                        Make sure to visit the [Health Guidelines](https://example.com/guidelines) for detailed recommendations and procedures.</target>
+        <target>Gesundheits-Checks sind regelmäßig durchzuführen, entsprechend der
+          Projekt-Richtlinien mindestens alle 6 Monate.
+          Lesen Sie die [Richtlinien](https://example.com/guidelines) bezüglich konkreter Empfehlungen.</target>
         <note priority="1" from="description">description section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -8967,7 +8968,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="8218189824229731794" datatype="html">
         <source>Select an entity type</source>
-        <target>Select an entity type</target>
+        <target>Datensatz-Typ auswählen</target>
         <note priority="1" from="description">placeholder for Entity Type dropdown input</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-type-select/entity-type-select.component.html</context>
@@ -8976,7 +8977,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="6281284727431074654" datatype="html">
         <source>Remove file</source>
-        <target>Remove file</target>
+        <target>Datei entfernen</target>
         <note priority="1" from="description">Tooltip remove file</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
@@ -8985,7 +8986,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="7389781396805981942" datatype="html">
         <source> You can edit how users will see the details of this public form. To edit fields, click on the Edit button, make your changes, and then save. These changes will reflect on the public form. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Drag and drop fields and sections in this preview of a profile view. The editor below closely resembles how the form will look for users later. Forms show all fields below each other not in multiple columns, however. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/></source>
-        <target> You can edit how users will see the details of this public form. To edit fields, click on the Edit button, make your changes, and then save. These changes will reflect on the public form. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Drag and drop fields and sections in this preview of a profile view. The editor below closely resembles how the form will look for users later. Forms show all fields below each other not in multiple columns, however. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/></target>
+        <target> Sie können anpassen, wie Nutzer:innen die Details eines einzelnen Datensatzes dieses Typs sehen. Verschieben Sie Felder und Bereiche per &quot;drag &amp; drop&quot; in dieser Vorschau und gruppieren Sie Felder. Das Layout im untenstehenden Editor ist sehr ähnlich dem Formular, wie es Nutzer:innen später sehen. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Weniger ist mehr: Aus unserer Erfahrung empfehlen wir, nur Felder die Sie wirklich aktuell benötigen anzulegen.<x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/edit-public-form-columns/edit-public-form-columns.component.html</context>
           <context context-type="linenumber">1,9</context>
@@ -8993,7 +8994,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="5910380241111403899" datatype="html">
         <source>Public Form</source>
-        <target>Public Form</target>
+        <target>Öffentliches Formular</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9002,7 +9003,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="6488235897339728134" datatype="html">
         <source>Public Forms</source>
-        <target>Public Forms</target>
+        <target>Öffentliche Formulare</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9011,7 +9012,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="2006537404176009460" datatype="html">
         <source>Form Logo</source>
-        <target>Form Logo</target>
+        <target>Logo</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9020,7 +9021,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="6284159000764410402" datatype="html">
         <source>Add an image to be displayed at the top of the form</source>
-        <target>Add an image to be displayed at the top of the form</target>
+        <target>Fügen Sie optional ein Bild hinzu, dass über dem Formular angezeigt wird</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9029,7 +9030,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="4069795629674572555" datatype="html">
         <source>Form Link ID</source>
-        <target>Form Link ID</target>
+        <target>Formular Link ID</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9038,7 +9039,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="4899197196105570158" datatype="html">
         <source>The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID)</source>
-        <target>The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID)</target>
+        <target>Die ID ist Teil des Links (URL) über die Nutzer:innen dieses Formular aufrufen können (z.B. demo.aam-digital.com/public-form/MEINE_FORMULAR_ID)</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9047,7 +9048,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="7693952740891603217" datatype="html">
         <source>Entity</source>
-        <target>Entity</target>
+        <target>Datensatz-Typ</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9056,7 +9057,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="2875460883262985052" datatype="html">
         <source>The type of record that is created when a someone submits the form (e.g. if you select &quot;Note&quot; here, the form will create new entries in your &quot;Notes List&quot; and you can select only fields of your &quot;Note&quot; data structure for this form)</source>
-        <target>The type of record that is created when a someone submits the form (e.g. if you select &quot;Note&quot; here, the form will create new entries in your &quot;Notes List&quot; and you can select only fields of your &quot;Note&quot; data structure for this form)</target>
+        <target>Der Datensatztyp, der erstellt wird, wenn jemand das Formular absendet (wenn Sie hier beispielsweise „Notiz“ auswählen, erstellt das Formular neue Einträge in Ihrer „Notizen&quot;-Liste und Sie können für dieses Formular nur Felder Ihrer „Notiz“-Datenstruktur auswählen)</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9065,7 +9066,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="843548054527451651" datatype="html">
         <source>Columns</source>
-        <target>Columns</target>
+        <target>Felder</target>
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -9074,7 +9075,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="2202615822095431007" datatype="html">
         <source>Public Form not found</source>
-        <target>Public Form not found</target>
+        <target>Öffentliches Formular nicht gefunden</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
           <context context-type="linenumber">10</context>
@@ -9082,7 +9083,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="5740753227827335262" datatype="html">
         <source> The form you are looking for is either unavailable or doesn&apos;t exist. Please check the link and try again. </source>
-        <target> The form you are looking for is either unavailable or doesn&apos;t exist. Please check the link and try again. </target>
+        <target>Das Formular ist leider nicht verfügbar oder existiert nicht. Bitte überprüfen Sie den Link und versuchen Sie es erneut.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
           <context context-type="linenumber">11,14</context>
@@ -9090,7 +9091,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="6554740241518051906" datatype="html">
         <source>No access to public form &quot;<x id="INTERPOLATION" equiv-text="{{ formConfig?.title }}"/>&quot;</source>
-        <target>No access to public form &quot;<x id="INTERPOLATION" equiv-text="{{ formConfig?.title }}"/>&quot;</target>
+        <target>Kein Zugriff auf öffentliches Formular &quot;<x id="INTERPOLATION" equiv-text="{{ formConfig?.title }}"/>&quot;</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
           <context context-type="linenumber">17</context>
@@ -9098,7 +9099,8 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="7114971223705169687" datatype="html">
         <source> Unfortunately, you do not have the required permissions to submit data through this form. Please contact the person who shared this link with you. In case you have a user account, please make sure you are logged in. </source>
-        <target> Unfortunately, you do not have the required permissions to submit data through this form. Please contact the person who shared this link with you. In case you have a user account, please make sure you are logged in. </target>
+        <target>Leider haben Sie nicht die benötigten Berechtigungen um über dieses Formular Daten einzutragen. Bitte kontaktieren Sie die Person, die Ihnen diesen Link zur Verfügung gestellt hat.
+Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie eingeloggt sind.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
           <context context-type="linenumber">18,23</context>
@@ -9106,7 +9108,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="1443706528095929876" datatype="html">
         <source>Manage Public Forms</source>
-        <target>Manage Public Forms</target>
+        <target>Öffentliche Formulare verwalten</target>
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
@@ -9115,7 +9117,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="6553415034664118139" datatype="html">
         <source>General Setting</source>
-        <target>General Setting</target>
+        <target>Allgemeine Einstellungen</target>
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
@@ -9124,7 +9126,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="3933359702193107202" datatype="html">
         <source>If you want external people filling this form without logging in, the Permission System also has to allow &quot;public&quot; users to create new records of this type. If you are seeing problems submitting the form, please contact your technical support team.</source>
-        <target>If you want external people filling this form without logging in, the Permission System also has to allow &quot;public&quot; users to create new records of this type. If you are seeing problems submitting the form, please contact your technical support team.</target>
+        <target>Wenn Sie möchten, dass externe Personen dieses Formular ausfüllen ohne sich anzumelden, muss das Berechtigungssystem auch nicht-angemeldeten Benutzern das Erstellen neuer Datensätze dieses Typs erlauben. Anpassungen der Berechtigungen sind bislang nicht über das Admin-Interface möglich. Wenn beim Absenden des Formulars Probleme auftreten, wenden Sie sich bitte an Ihren technischen Support.</target>
         <note priority="1" from="description">PublicFormConfig admin form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
@@ -9133,7 +9135,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
       </trans-unit>
       <trans-unit id="7429211262318065236" datatype="html">
         <source>Configure Fields</source>
-        <target>Configure Fields</target>
+        <target>Formularfelder</target>
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
