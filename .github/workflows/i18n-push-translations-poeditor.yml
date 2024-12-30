@@ -3,8 +3,7 @@ name: i18n - Send translation tokens to POEditor
 on:
   push:
     branches:
-      # TODO: change to default branch after testing before merge
-      - feat/translation-poeditor-integration
+      - master
 
 permissions:
   contents: write
@@ -13,8 +12,6 @@ permissions:
 jobs:
   sync-translations:
     runs-on: ubuntu-latest
-    env:
-      BASE_BRANCH: "feat/translation-poeditor-integration"
 
     steps:
       - name: Checkout repository
