@@ -31,20 +31,28 @@ jobs:
 
       - name: Upload translations to POEditor
         run: |
-          echo "Uploading new terms from ${files}"
           file="src/assets/locale/messages.xlf"
+          echo "Uploading new terms from ${file}"
           # see POEditor Upload API: https://poeditor.com/docs/api#projects_upload
-          response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
-          -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
-          -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
-          -F "updating=terms" \
-          -F "overwrite=1" \
-          -F "sync_terms=1" \
-          -F "fuzzy_trigger=1" \
-          -F "read_from_source=1" \
-          -F "file=@${file}")
-          status=$(echo $response | jq -r '.response.status')
-          if [ "$status" != "success" ]; then
-          echo "Error uploading file for $lang: $response"
-          exit 1
-          fi
+
+          languages=("en" "fr" "it" "de")
+          for lang in "${languages[@]}"; do
+            echo "Uploading ${files[$lang]} for language $lang"
+            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
+              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+              -F "language=$lang" \
+              -F "updating=terms_translations" \
+              -F "overwrite=1" \
+              -F "sync_terms=1" \
+              -F "file=@${file}")
+
+            status=$(echo $response | jq -r '.response.status')
+            echo "API Response: $response"
+            if [ "$status" != "success" ]; then
+              echo "Error uploading file for $lang: $response"
+              exit 1
+            fi
+            echo "Waiting for 30 seconds to respect rate limits..."
+            sleep 30
+          done
