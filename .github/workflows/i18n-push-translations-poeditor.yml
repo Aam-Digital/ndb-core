@@ -84,6 +84,7 @@ jobs:
           -F "updating=terms" \
           -F "overwrite=1" \
           -F "sync_terms=1" \
+          -F "fuzzy_trigger=1" \
           -F "file=@${file}")
           status=$(echo $response | jq -r '.response.status')
           if [ "$status" != "success" ]; then
