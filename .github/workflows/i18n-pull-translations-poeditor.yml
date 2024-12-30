@@ -34,8 +34,6 @@ jobs:
 
             git checkout $branch_name
             git pull origin $branch_name
-
-            git merge ${{ env.BASE_BRANCH }}
           else
             echo "Creating new branch $branch_name..."
             git checkout -b $branch_name
@@ -67,8 +65,6 @@ jobs:
           echo "Error exporting translations for $lang: $response"
           exit 1
           fi
-          echo "Waiting for 30 seconds to respect rate limits..."
-          sleep 30
           done
 
       - name: Commit updated translations
