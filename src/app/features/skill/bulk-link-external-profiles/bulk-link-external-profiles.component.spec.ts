@@ -260,14 +260,17 @@ describe("BulkLinkExternalProfilesComponent", () => {
     const entity2 = TestEntity.create({
       name: "link to be removed",
       externalProfile: "1",
+      skills: ["old-skill"],
     } as any);
     const entity3 = TestEntity.create({
       name: "link to be changed",
       externalProfile: "old",
+      skills: ["old-skill"],
     } as any);
     const entity4 = TestEntity.create({
       name: "unchanged",
       externalProfile: "2",
+      skills: ["old-skill"],
     } as any);
     component.entities = [entity1, entity2, entity3, entity4];
     component.ngOnChanges({ entities: true as any });
@@ -304,7 +307,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
       jasmine.objectContaining({
         name: "link to be removed",
         externalProfile: undefined,
-        skills: undefined,
+        skills: ["old-skill"],
       }),
     );
     expect(savedEntities).toContain(

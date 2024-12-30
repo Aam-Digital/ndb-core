@@ -248,11 +248,13 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
       updatedEntity[this.config.id] = record.selected?.id;
 
       try {
-        await this.skillApi.applyDataFromExternalProfile(
-          record.selected, // pass in regardless of whether it's undefined, will reset the target values if not selected
-          this.config.additional,
-          updatedEntity,
-        );
+        if (record.selected) {
+          await this.skillApi.applyDataFromExternalProfile(
+            record.selected, // if passed in as undefined, will reset the target values
+            this.config.additional,
+            updatedEntity,
+          );
+        }
       } catch (e) {
         Logging.error("Could not load data for external profile", e);
       }
