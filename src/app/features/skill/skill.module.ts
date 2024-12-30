@@ -2,9 +2,9 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { Skill } from "./skill";
-import { SkillApiService } from "./skill-api.service";
+import { SkillApiService } from "./skill-api/skill-api.service";
 import { environment } from "../../../environments/environment";
-import { mockSkillApi } from "./skill-api-mock";
+import { mockSkillApi } from "./skill-api/skill-api-mock";
 
 /**
  * Integration with external Skill Tagging services via API.

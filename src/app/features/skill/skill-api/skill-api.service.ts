@@ -1,15 +1,15 @@
 import { inject, Injectable } from "@angular/core";
 import { firstValueFrom, Observable } from "rxjs";
 import { ExternalProfile, ExternalSkill } from "./external-profile";
-import { Entity } from "app/core/entity/model/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { HttpClient } from "@angular/common/http";
 import { catchError, map } from "rxjs/operators";
-import { EscoApiService } from "./esco-api.service";
-import { ExternalProfileLinkConfig } from "./external-profile-link-config";
-import { retryOnServerError } from "../../utils/retry-on-server-error.rxjs-pipe";
+import { EscoApiService } from "../esco-api/esco-api.service";
+import { ExternalProfileLinkConfig } from "../external-profile-link-config";
+import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
 import { FormGroup } from "@angular/forms";
-import { Logging } from "../../core/logging/logging.service";
-import { AlertService } from "../../core/alerts/alert.service";
+import { Logging } from "../../../core/logging/logging.service";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 /**
  * Interaction with Aam Digital backend providing access to external profiles

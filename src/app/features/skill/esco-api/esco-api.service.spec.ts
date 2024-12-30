@@ -11,9 +11,9 @@ import {
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
 import { firstValueFrom } from "rxjs";
-import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { Skill } from "./skill";
-import { Entity } from "../../core/entity/model/entity";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { Skill } from "../skill";
+import { Entity } from "../../../core/entity/model/entity";
 
 describe("EscoApiService", () => {
   let service: EscoApiService;

@@ -5,22 +5,22 @@ import {
   ExternalProfileSearchParams,
   SkillApiService,
 } from "./skill-api.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../core/entity/entity-mapper/mock-entity-mapper-service";
-import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { EscoApiService } from "./esco-api.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EscoApiService } from "../esco-api/esco-api.service";
 import {
   HttpTestingController,
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
 import { provideHttpClient } from "@angular/common/http";
-import { TestEntity } from "../../utils/test-utils/TestEntity";
-import { ExternalProfileLinkConfig } from "./external-profile-link-config";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { firstValueFrom, throwError } from "rxjs";
 import { ExternalProfile } from "./external-profile";
 import { FormControl, FormGroup } from "@angular/forms";
-import { AlertService } from "../../core/alerts/alert.service";
-import { Skill } from "./skill";
+import { AlertService } from "../../../core/alerts/alert.service";
+import { Skill } from "../skill";
 
 describe("SkillApiService", () => {
   let service: SkillApiService;

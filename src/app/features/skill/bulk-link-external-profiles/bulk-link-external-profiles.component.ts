@@ -25,8 +25,8 @@ import {
   MatTableDataSource,
 } from "@angular/material/table";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
-import { ExternalProfile } from "../external-profile";
-import { SkillApiService } from "../skill-api.service";
+import { ExternalProfile } from "../skill-api/external-profile";
+import { SkillApiService } from "../skill-api/skill-api.service";
 import { MatSort, MatSortModule } from "@angular/material/sort";
 import {
   LinkExternalProfileDialogComponent,

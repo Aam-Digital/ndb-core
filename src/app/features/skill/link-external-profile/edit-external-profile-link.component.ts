@@ -11,11 +11,11 @@ import {
   LinkExternalProfileDialogComponent,
   LinkExternalProfileDialogData,
 } from "./link-external-profile-dialog/link-external-profile-dialog.component";
-import { ExternalProfile } from "../external-profile";
+import { ExternalProfile } from "../skill-api/external-profile";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
-import { SkillApiService } from "../skill-api.service";
+import { SkillApiService } from "../skill-api/skill-api.service";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { ExternalProfileLinkConfig } from "../external-profile-link-config";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";

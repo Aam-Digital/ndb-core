@@ -2,9 +2,9 @@ import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { firstValueFrom, Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { Skill } from "./skill";
-import { retryOnServerError } from "../../utils/retry-on-server-error.rxjs-pipe";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { Skill } from "../skill";
+import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pipe";
 
 export interface EscoSkillResponseDto {
   count: number;

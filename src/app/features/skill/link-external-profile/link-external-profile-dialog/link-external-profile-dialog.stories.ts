@@ -3,8 +3,8 @@ import { importProvidersFrom } from "@angular/core";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { LinkExternalProfileDialogComponent } from "./link-external-profile-dialog.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { createSkillApiDummyData } from "../../skill-api-mock";
-import { SkillApiService } from "../../skill-api.service";
+import { createSkillApiDummyData } from "../../skill-api/skill-api-mock";
+import { SkillApiService } from "../../skill-api/skill-api.service";
 
 const meta: Meta<LinkExternalProfileDialogComponent> = {
   title: "Features/Skill Integration/LinkExternalProfileDialog",

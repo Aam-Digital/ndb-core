@@ -7,13 +7,13 @@ import {
   MatDialogTitle,
 } from "@angular/material/dialog";
 import { MatButton, MatIconButton } from "@angular/material/button";
-import { ExternalProfile } from "../../external-profile";
+import { ExternalProfile } from "../../skill-api/external-profile";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import {
   ExternalProfileResponseDto,
   ExternalProfileSearchParams,
   SkillApiService,
-} from "../../skill-api.service";
+} from "../../skill-api/skill-api.service";
 import { firstValueFrom } from "rxjs";
 import { Logging } from "../../../../core/logging/logging.service";
 import { MatRadioButton, MatRadioGroup } from "@angular/material/radio";

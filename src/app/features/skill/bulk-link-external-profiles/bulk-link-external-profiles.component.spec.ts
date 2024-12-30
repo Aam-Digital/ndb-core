@@ -9,7 +9,7 @@ import { BulkLinkExternalProfilesComponent } from "./bulk-link-external-profiles
 import {
   ExternalProfileResponseDto,
   SkillApiService,
-} from "../skill-api.service";
+} from "../skill-api/skill-api.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";

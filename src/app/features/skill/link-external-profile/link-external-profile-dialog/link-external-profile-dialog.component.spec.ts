@@ -7,9 +7,9 @@ import {
 
 import { LinkExternalProfileDialogComponent } from "./link-external-profile-dialog.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { SkillApiService } from "../../skill-api.service";
+import { SkillApiService } from "../../skill-api/skill-api.service";
 import { of } from "rxjs";
-import { ExternalProfile } from "../../external-profile";
+import { ExternalProfile } from "../../skill-api/external-profile";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpErrorResponse } from "@angular/common/http";

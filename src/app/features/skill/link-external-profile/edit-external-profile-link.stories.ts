@@ -5,8 +5,8 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { FormControl } from "@angular/forms";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ExternalProfileLinkConfig } from "../external-profile-link-config";
-import { SkillApiService } from "../skill-api.service";
-import { mockSkillApi } from "../skill-api-mock";
+import { SkillApiService } from "../skill-api/skill-api.service";
+import { mockSkillApi } from "../skill-api/skill-api-mock";
 
 const meta: Meta<EditExternalProfileLinkComponent> = {
   title: "Features/Skill Integration/EditExternalProfileLink",

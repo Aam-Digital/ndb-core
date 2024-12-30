@@ -6,13 +6,13 @@ import {
 } from "@angular/core/testing";
 
 import { EditExternalProfileLinkComponent } from "./edit-external-profile-link.component";
-import { SkillApiService } from "../skill-api.service";
+import { SkillApiService } from "../skill-api/skill-api.service";
 import { FormControl, FormGroup } from "@angular/forms";
 import { Entity } from "../../../core/entity/model/entity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { of, Subject, throwError } from "rxjs";
-import { ExternalProfile } from "../external-profile";
+import { ExternalProfile } from "../skill-api/external-profile";
 import { LinkExternalProfileDialogData } from "./link-external-profile-dialog/link-external-profile-dialog.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { HttpErrorResponse } from "@angular/common/http";
