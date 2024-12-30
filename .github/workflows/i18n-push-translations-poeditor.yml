@@ -103,37 +103,37 @@ jobs:
 
       - name: Export translations from POEditor
         if: env.changed == 'true'
+        # see POEditor Export API: https://poeditor.com/docs/api#projects_export
         run: |
-          # see POEditor Export API: https://poeditor.com/docs/api#projects_export
-               languages=("en" "fr" "it" "de")
-               for lang in "${languages[@]}"; do
-               echo "Exporting translations for language $lang"
-               response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
-               -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
-               -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
-               -F "language=$lang" \
-               -F "type=xlf")
-               status=$(echo $response | jq -r '.response.status')
-               if [ "$status" == "success" ]; then
-               url=$(echo $response | jq -r '.result.url')
-               if [ -n "$url" ]; then
-               echo "Downloading translations for $lang from $url"
-               if [ "$lang" == "en" ]; then
-               curl -s -o src/assets/locale/messages.xlf $url
-               else
-               curl -s -o src/assets/locale/messages.$lang.xlf $url
-               fi
-               else
-               echo "No URL found for downloading translations for $lang"
-               exit 1
-               fi
-               else
-               echo "Error exporting translations for $lang: $response"
-               exit 1
-               fi
-               echo "Waiting for 30 seconds to respect rate limits..."
-               sleep 30
-               done
+          languages=("en" "fr" "it" "de")
+          for lang in "${languages[@]}"; do
+          echo "Exporting translations for language $lang"
+          response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
+          -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+          -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+          -F "language=$lang" \
+          -F "type=xlf")
+          status=$(echo $response | jq -r '.response.status')
+          if [ "$status" == "success" ]; then
+          url=$(echo $response | jq -r '.result.url')
+          if [ -n "$url" ]; then
+          echo "Downloading translations for $lang from $url"
+          if [ "$lang" == "en" ]; then
+          curl -s -o src/assets/locale/messages.xlf $url
+          else
+          curl -s -o src/assets/locale/messages.$lang.xlf $url
+          fi
+          else
+          echo "No URL found for downloading translations for $lang"
+          exit 1
+          fi
+          else
+          echo "Error exporting translations for $lang: $response"
+          exit 1
+          fi
+          echo "Waiting for 30 seconds to respect rate limits..."
+          sleep 30
+          done
 
       - name: Commit updated translations
         if: env.changed == 'true'
