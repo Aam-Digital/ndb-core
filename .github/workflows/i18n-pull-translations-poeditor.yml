@@ -44,13 +44,14 @@ jobs:
       - name: Export translations from POEditor
         # see POEditor Export API: https://poeditor.com/docs/api#projects_export
         run: |
-          languages=("en" "fr" "it" "de")
+          languages=("fr" "it" "de")
           for lang in "${languages[@]}"; do
           echo "Exporting translations for language $lang"
           response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
           -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
           -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
           -F "language=$lang" \
+          -F "fallback_language=en" \
           -F "type=xlf")
           status=$(echo $response | jq -r '.response.status')
           if [ "$status" == "success" ]; then
