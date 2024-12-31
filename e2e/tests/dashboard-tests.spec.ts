@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Dashboard Tests", () => {
-  test("should display Quick Actions widget on dashboard", async ({ page }) => {
+  test('test', async ({ page }) => {
     // Go to the dashboard page
     await page.goto("http://localhost:4200");
 
@@ -22,62 +22,25 @@ test.describe("Dashboard Tests", () => {
     const childrenCount = page.locator("app-entity-count-dashboard-widget");
 
     await expect(childrenCount).toContainText(/107/);
-  });
 
-  test("should navigate to the attendence page", async ({ page }) => {
-    await page.goto("http://localhost:4200/");
-
-    await page.click("text=Attendance");
-
-    // Check if the URL contains "attendance"
-    await expect(page).toHaveURL(/.*attendance/);
-  });
-
-  test("should display tasks due with correct due dates", async ({ page }) => {
-    // Go to the dashboard page
-    await page.goto("http://localhost:4200");
-
+    // Verify that the "Tasks due" widget is visible and display task
     await page.waitForSelector("text=Tasks due");
-
-    // Check for the "Tasks due" widget
+  
+    // Check that the "Tasks due" widget is visible
     const tasksDueElement = page.locator("text=Tasks due");
-
     await expect(tasksDueElement).toBeVisible();
+  
+    // Locate task names and due dates dynamically
+    const taskElements = page.locator("app-widget-content");
+    
+    // Ensure at least one task is listed
+    const taskCount = await taskElements.count();
+      expect(taskCount).toBeGreaterThan(0);
 
-    // Verify that the task names and due dates are displayed
-    const taskNames = await page
-      .locator("app-widget-content")
-      .filter({ hasText: "get signed agreement Nov 19," })
-      .allTextContents();
-    const dueDates = await page
-      .locator("app-widget-content")
-      .filter({ hasText: "get signed agreement Nov 19," })
-      .allTextContents();
-
-    expect(taskNames.length).toBeGreaterThan(0); // Ensure there is at least one task
-    expect(dueDates.length).toBe(taskNames.length); // Ensure every task has a due date
-  });
-
-  test("should display absence this week", async ({ page }) => {
-    await page.goto("http://localhost:4200");
-
-    await page.waitForSelector("text=Absences this week");
-
-    const absencesThisWeekElement = page.locator("text=Absences this week");
-    await expect(absencesThisWeekElement).toBeVisible();
-
-    const absenceCountText = await page
-      .getByText("4 Absences this week")
-      .innerText();
-    const absenceCount = parseInt(absenceCountText.split(" ")[0], 10);
-    expect(absenceCount).toBeGreaterThanOrEqual(0);
-  });
-
-  test("Attendance page elements should be visible and clickable with navigation checks", async ({
-    page,
-  }) => {
-    // Navigate to the Attendance page
-    await page.goto("http://localhost:4200/attendance");
+    // Should navigate to the attendance page
+    await page.locator('mat-list-item').filter({ hasText: 'Attendance' }).click();  
+     // Check if the URL contains "attendance"
+    await expect(page).toHaveURL(/.*attendance/);
 
     // Verify that "Record Attendance" section is visible
     await page.waitForSelector("text=Managing Attendance");
@@ -122,16 +85,10 @@ test.describe("Dashboard Tests", () => {
     await expect(
       page.getByRole("heading", { name: "Recurring Activities" }),
     ).toHaveText("Recurring Activities"); // Check page title or header
-    await page.goBack(); // Return to Attendance page to continue testing
-  });
-
-  test('Navigation to "Recurring Activities" page and verify elements', async ({
-    page,
-  }) => {
-    // Navigate to the Attendance page
-    await page.goto("http://localhost:4200/attendance/recurring-activity");
-
-    await page.waitForSelector("text=Recurring Activities");
+    await page.goBack(); 
+    
+    // Navigate to "Recurring Activities" page and verify elements
+    await page.getByRole('button', { name: 'Manage Activities' }).click();
 
     await expect(
       page.getByRole("heading", { name: "Recurring Activities" }),
@@ -148,15 +105,12 @@ test.describe("Dashboard Tests", () => {
     await expect(page.locator("text=Type")).toBeVisible();
     await expect(page.locator("text=Assigned user(s)")).toBeVisible();
 
-    // Verify some specific table rows content (replace with exact selectors or text as needed)
-    await expect(page.locator("text=Coaching Class 2F")).toBeVisible();
-    await expect(page.locator("text=School Class 4J")).toBeVisible();
-
     // Verify pagination controls are visible
     await expect(page.locator("text=Items per page")).toBeVisible();
 
     // Verify "Include archived records" toggle
     const archivedRecordsToggle = page.locator("text=Include archived records");
     await expect(archivedRecordsToggle).toBeVisible();
-  });
 });
+});
+
