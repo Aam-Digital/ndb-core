@@ -1,11 +1,11 @@
 <mat-form-field>
   <mat-label>{{ label }}</mat-label>
   <mat-select
-    [(ngModel)]="selectedNotificationMethod"
-    (ngModelChange)="onSelectionChange()"
+    (selectionChange)="onSelectionChange($event)"
     placeholder="Choose notification centers"
-    multiple
     [disabled]="disabled"
+    multiple
+    [value]="selectedNotificationMethod"
     i18n-placeholder="Choose notification centers"
   >
     <mat-option

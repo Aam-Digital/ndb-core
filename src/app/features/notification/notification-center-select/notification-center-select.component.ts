@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MatSelectModule } from "@angular/material/select";
+import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 
 @Component({
   standalone: true,
@@ -11,12 +11,12 @@ import { MatSelectModule } from "@angular/material/select";
 })
 export class NotificationCenterSelectComponent {
   @Input() label: string;
-  @Input() selectedNotificationMethod: string[] = [];
   @Input() notificationMethods: string[] = [];
   @Input() disabled: boolean = false;
   @Output() selectionChange = new EventEmitter<string[]>();
+  @Input() selectedNotificationMethod: string | string[] = [];
 
-  onSelectionChange() {
-    this.selectionChange.emit(this.selectedNotificationMethod);
+  onSelectionChange(event: MatSelectChange) {
+    this.selectionChange.emit(event.value);
   }
 }

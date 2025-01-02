@@ -1,11 +1,12 @@
 <div class="notifications-container">
-  <h1 class="notification-setting-title">
-    <strong i18n>Notifications settings</strong>
-  </h1>
+  <h1 class="notification-setting-title" i18n>Notifications Settings</h1>
   <div i18n>
-    You can set up and customize notifications to get timely updates about
-    beneficiaries, tasks, or notes. You can choose how you want to receive these
-    notifications, either through email or alerts in the app.
+    Notifications can remind you of events in the system that are important to
+    you. For example, you can set up custom notifications to see when certain
+    records are added or changed (e.g. when a new participant has registered
+    through a public form; or when a colleague assigned a task to you). These
+    notifications are visible in the toolbar and can be sent to you via email or
+    push notifications.
   </div>
 
   <div class="notification-types-container">
@@ -13,8 +14,9 @@
       <strong>What notifications you receive</strong>
     </h3>
     <div i18n>
-      Customize and configure notifications to receive updates about various
-      activities in the application
+      Define rules for events that you want to get notifications for. You can
+      add as many rules as you want. Disable a rule temporarily to pause these
+      notifications without deleting the conditions completely.
     </div>
 
     @for (
@@ -73,10 +75,12 @@
             class="flex-row justify-content-center align-center notification-rule-option"
           >
             <app-notification-center-select
-              [selectedNotificationMethod]="[notificationMethods[0]]"
+              [selectedNotificationMethod]="[
+                getFormField(index, 'notificationMethod').value,
+              ]"
               [notificationMethods]="notificationMethods"
-              [disabled]="true"
               label="Notification Method"
+              (selectionChange)="updateNotificationCenter($event, index)"
               i18n-label
             ></app-notification-center-select>
             <app-help-button
@@ -98,7 +102,6 @@
           </div>
 
           <button
-            *ngIf="notificationRules.controls.length > 1"
             mat-icon-button
             (click)="confirmRemoveNotificationRule(index)"
             matTooltip="Remove notification rule"
@@ -124,7 +127,7 @@
         class="add-new-rule-button"
         color="accent"
         (click)="addNewRule()"
-        matTooltip="Add new notification rule"
+        matTooltip="Define another type of notifications for your user account"
         i18n-matTooltip
       >
         <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
@@ -140,41 +143,61 @@
       <h3 i18n class="no-margin">
         <strong>Where you receive notifications</strong>
       </h3>
-      <div i18n>Decide where you want to get notifications.</div>
+      <div i18n>
+        Notifications are always visible through the bell icon in the toolbar at
+        the top of the application. You can enable other ways to get
+        notifications sent to you below.
+      </div>
     </div>
     <div class="receive-notifications-container">
-      <div class="flex-row">
-        <fa-icon icon="window-maximize"></fa-icon>
-        <p class="notification-toggle" i18n>Browser</p>
-      </div>
-      <div
-        class="flex-row align-center justify-space-between browser-notification-list"
-      >
-        <div class="flex-row align-center">
-          <span i18n>Push notifications</span>
-          <app-help-button
-            text="You can receive real-time alerts directly on your device or app. These alerts keep you updated about messages, events, or changes without needing to open the app."
-            i18n-text
-          ></app-help-button>
+      <div>
+        <div class="flex-row">
+          <fa-icon icon="window-maximize"></fa-icon>
+          <p class="notification-toggle" i18n>Browser</p>
         </div>
-        <mat-slide-toggle
-          (change)="onEnableNotification($event)"
-          [checked]="pushNotificationsEnabled"
-        />
+        <div
+          class="flex-row align-center justify-space-between browser-notification-list"
+        >
+          <div class="flex-row align-center">
+            <span i18n>Notification Center (in app)</span>
+            <app-help-button
+              text="View notifications in the app's interface. Click the icon in the top toolbar to see all notifications, including those you already read. The notification center is always available and cannot be disabled."
+              i18n-text
+            ></app-help-button>
+          </div>
+          <mat-slide-toggle [checked]="true" [disabled]="true" />
+        </div>
+        <div
+          class="flex-row align-center justify-space-between browser-notification-list"
+        >
+          <div class="flex-row align-center">
+            <span i18n>Push notifications</span>
+            <app-help-button
+              text="A notification on your system (e.g. a normal Android smartphone notification). You see these alerts without needing to open the app."
+              i18n-text
+            ></app-help-button>
+          </div>
+          <mat-slide-toggle
+            (change)="onEnableNotification($event)"
+            [checked]="pushNotificationsEnabled"
+          />
+        </div>
       </div>
 
-      <div class="flex-row">
-        <fa-icon icon="envelope"></fa-icon>
-        <p class="notification-toggle" i18n>Email</p>
-      </div>
-      <div
-        class="flex-row align-center justify-space-between browser-notification-list"
-      >
-        <div class="flex-row align-center">
-          <span i18n>Email notifications</span>
-          <span class="coming-soon-label" i18n>Coming Soon</span>
+      <div>
+        <div class="flex-row">
+          <fa-icon icon="envelope"></fa-icon>
+          <p class="notification-toggle" i18n>Email</p>
         </div>
-        <mat-slide-toggle disabled></mat-slide-toggle>
+        <div
+          class="flex-row align-center justify-space-between browser-notification-list"
+        >
+          <div class="flex-row align-center">
+            <span i18n>Email</span>
+            <span class="coming-soon-label" i18n>Coming Soon</span>
+          </div>
+          <mat-slide-toggle disabled></mat-slide-toggle>
+        </div>
       </div>
     </div>
   </div>

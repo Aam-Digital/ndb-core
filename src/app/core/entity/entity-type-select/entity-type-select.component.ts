@@ -49,7 +49,7 @@ export class EntityTypeSelectComponent implements OnInit {
   optionToLabel = (option: EntityConstructor) => option.label;
   optionToId = (option: EntityConstructor) => option.ENTITY_TYPE;
   value: any;
-  onChange = (_: any) => {};
+  onChange = (_: string) => {};
   onTouched = () => {};
 
   constructor(private entityRegistry: EntityRegistry) {}
@@ -64,15 +64,15 @@ export class EntityTypeSelectComponent implements OnInit {
     });
   }
 
-  writeValue(value: any): void {
+  writeValue(value: string) {
     this.value = value;
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: () => void) {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
 }
