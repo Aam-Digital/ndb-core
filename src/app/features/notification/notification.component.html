@@ -8,6 +8,7 @@
   matTooltip="Notifications"
   i18n-matTooltip="notifications toolbar icon tooltip"
   [matMenuTriggerFor]="notificationList"
+  #notificationListTrigger="matMenuTrigger"
 >
   <span
     [matBadge]="
@@ -91,6 +92,7 @@
       mat-menu-item
       [routerLink]="['/user-account']"
       [queryParams]="{ tabIndex: 1 }"
+      (click)="closeOnlySubmenu(notificationListTrigger, $event)"
     >
       <fa-icon icon="gear"></fa-icon>
       <span class="menu-option" i18n>Notification settings</span>
