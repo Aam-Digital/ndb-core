@@ -12,7 +12,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
-import { NotificationCenterSelectComponent } from "app/features/notification/notification-center-select/notification-center-select.component";
+import { NotificationMethodSelectComponent } from "app/features/notification/notification-method-select/notification-method-select.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormControl, FormGroup } from "@angular/forms";
 
@@ -31,7 +31,7 @@ import { FormControl, FormGroup } from "@angular/forms";
     MatTooltipModule,
     EntityTypeSelectComponent,
     HelpButtonComponent,
-    NotificationCenterSelectComponent,
+    NotificationMethodSelectComponent,
     ReactiveFormsModule,
   ],
   templateUrl: "./notification-setting.component.html",
@@ -43,9 +43,7 @@ export class NotificationSettingsComponent {
     notificationRules: new FormArray([]),
   });
 
-  constructor(private confirmationDialog: ConfirmationDialogService) {
-    this.addNewNotificationRule();
-  }
+  constructor(private confirmationDialog: ConfirmationDialogService) {}
 
   /**
    * Adds a new notification rule and initializes its default values.
@@ -59,9 +57,7 @@ export class NotificationSettingsComponent {
       enabled: new FormControl(false),
     });
 
-    (this.notificationSetting.get("notificationRules") as FormArray).push(
-      newNotificationRule,
-    );
+    this.notificationRules.push(newNotificationRule);
   }
 
   /**

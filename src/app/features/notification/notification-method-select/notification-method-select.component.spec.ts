@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { NotificationCenterSelectComponent } from "./notification-center-select.component";
+import { NotificationMethodSelectComponent } from "./notification-method-select.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("NotificationCenterSelectComponent", () => {
-  let component: NotificationCenterSelectComponent;
-  let fixture: ComponentFixture<NotificationCenterSelectComponent>;
+  let component: NotificationMethodSelectComponent;
+  let fixture: ComponentFixture<NotificationMethodSelectComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NotificationCenterSelectComponent, BrowserAnimationsModule],
+      imports: [NotificationMethodSelectComponent, BrowserAnimationsModule],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(NotificationCenterSelectComponent);
+    fixture = TestBed.createComponent(NotificationMethodSelectComponent);
     component = fixture.componentInstance;
 
     fixture.detectChanges();
