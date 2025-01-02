@@ -39,6 +39,7 @@ import { LoginStateSubject } from "../../session/session-type";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
+import { NotificationComponent } from "../../../features/notification/notification.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -67,6 +68,7 @@ import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizar
     PrimaryActionComponent,
     DisplayImgComponent,
     SetupWizardButtonComponent,
+    NotificationComponent,
   ],
   standalone: true,
 })
