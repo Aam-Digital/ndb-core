@@ -64,9 +64,6 @@
             class="flex-row justify-content-center align-center notification-rule-option"
           >
             <app-notification-center-select
-              [selectedNotificationMethod]="['Push']"
-              [notificationMethods]="notificationMethods"
-              [disabled]="true"
               label="Notification Method"
             ></app-notification-center-select>
             <app-help-button
@@ -87,7 +84,6 @@
           </div>
 
           <button
-            *ngIf="notificationRules.controls.length > 1"
             mat-icon-button
             (click)="confirmRemoveNotificationRule(index)"
             matTooltip="Remove notification rule"

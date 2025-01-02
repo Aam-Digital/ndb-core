@@ -18,7 +18,7 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
 import { FormControl, FormGroup } from "@angular/forms";
 
 @Component({
-  selector: "app-user-notification-setting",
+  selector: "app-notification-setting",
   standalone: true,
   imports: [
     MatSlideToggle,
@@ -30,20 +30,18 @@ import { FormControl, FormGroup } from "@angular/forms";
     FaIconComponent,
     MatButtonModule,
     MatTooltipModule,
-    NgIf,
     EntityTypeSelectComponent,
     HelpButtonComponent,
     NotificationCenterSelectComponent,
     ReactiveFormsModule,
   ],
-  templateUrl: "./user-notification-setting.component.html",
-  styleUrl: "./user-notification-setting.component.scss",
+  templateUrl: "./notification-setting.component.html",
+  styleUrl: "./notification-setting.component.scss",
 })
-export class UserNotificationSettingComponent {
+export class NotificationSettingsComponent {
   notificationSetting = new FormGroup({
     notificationRules: new FormArray([]),
   });
-  notificationMethods = ["Push", "Email"];
 
   constructor(private confirmationDialog: ConfirmationDialogService) {
     this.addNewRule();

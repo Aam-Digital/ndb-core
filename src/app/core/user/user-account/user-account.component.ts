@@ -28,7 +28,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { SessionSubject } from "../../session/auth/session-info";
-import { UserNotificationSettingComponent } from "../user-notification-setting/user-notification-setting.component";
+import { NotificationSettingsComponent } from "app/features/notification/notification-setting/notification-setting.component";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -47,7 +47,7 @@ import { UserNotificationSettingComponent } from "../user-notification-setting/u
     AsyncPipe,
     EntityBlockComponent,
     NgIf,
-    UserNotificationSettingComponent,
+    NotificationSettingsComponent,
   ],
   standalone: true,
 })

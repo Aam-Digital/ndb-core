@@ -10,10 +10,11 @@ import { MatSelectModule } from "@angular/material/select";
   templateUrl: "./notification-center-select.component.html",
 })
 export class NotificationCenterSelectComponent {
+  notificationMethods: string[] = ["Push"];
   @Input() label: string;
   @Input() selectedNotificationMethod: string[] = [];
-  @Input() notificationMethods: string[] = [];
   @Input() disabled: boolean = false;
+
   @Output() selectionChange = new EventEmitter<string[]>();
 
   onSelectionChange() {
