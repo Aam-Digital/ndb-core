@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { MatInputModule } from "@angular/material/input";
-import { NgIf } from "@angular/common";
 import {
   FaIconComponent,
   FontAwesomeModule,
@@ -53,7 +52,7 @@ export class NotificationSettingsComponent {
    */
   addNewNotificationRule() {
     // TODO: Update this Form Group when we implement the logic to dynamically update the notification notificationRules.
-    const newRule = new FormGroup({
+    const newNotificationRule = new FormGroup({
       entityType: new FormControl(""),
       notificationRuleCondition: new FormControl(""),
       notificationMethod: new FormControl("Push"),
@@ -61,7 +60,7 @@ export class NotificationSettingsComponent {
     });
 
     (this.notificationSetting.get("notificationRules") as FormArray).push(
-      newRule,
+      newNotificationRule,
     );
   }
 
