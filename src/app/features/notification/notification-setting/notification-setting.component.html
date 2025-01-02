@@ -124,10 +124,22 @@
     <div class="browser-notifications-title">
       <h3 i18n class="no-margin flex-row align-center">
         <strong>Where you receive notifications</strong>
-        @if (!hasPushNotificationEnabled) {
-          <div class="disabled-text">Disabled</div>
+        @if (hasPushNotificationEnabled) {
+          <div
+            class="enabled-text"
+            matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
+            i18n-matTooltip
+          >
+            Enabled
+          </div>
         } @else {
-          <div class="enabled-text">Enabled</div>
+          <div
+            class="disabled-text"
+            matTooltip="Push notifications are disabled. Turn them on in settings to stay informed about updates."
+            i18n-matTooltip
+          >
+            Disabled
+          </div>
         }
       </h3>
       <div i18n>
