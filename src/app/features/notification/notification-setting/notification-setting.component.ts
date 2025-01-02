@@ -91,9 +91,7 @@ export class NotificationSettingsComponent {
       return;
     }
 
-    (this.notificationSetting.get("notificationRules") as FormArray).removeAt(
-      index,
-    );
+    this.notificationRules.removeAt(index);
     return true;
   }
 
