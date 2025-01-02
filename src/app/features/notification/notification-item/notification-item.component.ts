@@ -32,8 +32,10 @@ import { closeOnlySubmenu } from "../close-only-submenu";
 })
 export class NotificationItemComponent {
   @Input() notification: NotificationEvent;
+
   @Output() readStatusChange = new EventEmitter<boolean>();
   @Output() deleteClick = new EventEmitter<void>();
+  @Output() notificationClick = new EventEmitter<NotificationEvent>();
   protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
   updateReadStatus(newStatus: boolean) {
@@ -42,5 +44,9 @@ export class NotificationItemComponent {
 
   handleDeleteNotification() {
     this.deleteClick.emit();
+  }
+
+  onNotificationClick(notification: NotificationEvent) {
+    this.notificationClick.emit(notification);
   }
 }

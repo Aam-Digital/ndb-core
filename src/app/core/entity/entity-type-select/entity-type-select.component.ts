@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, forwardRef } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  forwardRef,
+} from "@angular/core";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import {
   NG_VALUE_ACCESSOR,
@@ -36,12 +43,13 @@ export class EntityTypeSelectComponent implements OnInit {
   @Input() formControl: FormControl;
   @Input() allowMultiSelect = false;
   @Input() label: string;
+  @Output() selectedEntity = new EventEmitter();
 
   entityTypes: EntityConstructor[];
   optionToLabel = (option: EntityConstructor) => option.label;
   optionToId = (option: EntityConstructor) => option.ENTITY_TYPE;
   value: any;
-  onChange = (_: any) => {};
+  onChange = (_: string) => {};
   onTouched = () => {};
 
   constructor(private entityRegistry: EntityRegistry) {}
@@ -50,17 +58,21 @@ export class EntityTypeSelectComponent implements OnInit {
     this.entityTypes = this.entityRegistry
       .getEntityTypes(true)
       .map(({ value }) => value);
+
+    this.formControl.valueChanges.subscribe((value) => {
+      this.selectedEntity.emit(value);
+    });
   }
 
-  writeValue(value: any): void {
+  writeValue(value: string) {
     this.value = value;
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: () => void) {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
 }

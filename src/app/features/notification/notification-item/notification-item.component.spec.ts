@@ -19,6 +19,7 @@ describe("NotificationItemComponent", () => {
 
     fixture = TestBed.createComponent(NotificationItemComponent);
     component = fixture.componentInstance;
+
     component.notification = new NotificationEvent();
 
     fixture.detectChanges();
