@@ -27,6 +27,7 @@ import { Validators } from "@angular/forms";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
 import { AdminEntityService } from "../../admin-entity.service";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
@@ -85,6 +86,7 @@ describe("AdminEntityFieldComponent", () => {
   it("should include 'additional' field only for relevant datatypes", fakeAsync(() => {
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     let additionalInput: MatInputHarness;
+
     function findAdditionalInputComponent() {
       loader
         .getHarness(
@@ -179,7 +181,7 @@ describe("AdminEntityFieldComponent", () => {
   }));
 
   it("should init 'additional' options for entity datatypes", fakeAsync(() => {
-    const mockEntityTypes = [Entity, RecurringActivity];
+    const mockEntityTypes = [TestEntity, RecurringActivity];
     const entityRegistry = TestBed.inject(EntityRegistry);
     spyOn(entityRegistry, "getEntityTypes").and.returnValue(
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
@@ -192,7 +194,7 @@ describe("AdminEntityFieldComponent", () => {
     tick();
 
     expect(component.typeAdditionalOptions).toEqual([
-      { value: "Entity", label: "Entity" },
+      { value: TestEntity.ENTITY_TYPE, label: TestEntity.label },
       { value: RecurringActivity.ENTITY_TYPE, label: RecurringActivity.label },
     ]);
     expect(component.additionalForm.value).toBe(RecurringActivity.ENTITY_TYPE);

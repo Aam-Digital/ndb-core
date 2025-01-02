@@ -228,7 +228,10 @@ describe("MatchingEntitiesComponent", () => {
         schoolId: testEntity.getId(),
         childId: matchedEntity.getId(),
         name:
-          "ChildSchoolRelation " + testEntity.toString() + " - matched child",
+          ChildSchoolRelation.label +
+          " " +
+          testEntity.toString() +
+          " - matched child",
       } as Partial<ChildSchoolRelation>),
     );
     expect(saveSpy).toHaveBeenCalledWith(jasmine.any(ChildSchoolRelation));
