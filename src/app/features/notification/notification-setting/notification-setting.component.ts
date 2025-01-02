@@ -45,13 +45,13 @@ export class NotificationSettingsComponent {
   });
 
   constructor(private confirmationDialog: ConfirmationDialogService) {
-    this.addNewRule();
+    this.addNewNotificationRule();
   }
 
   /**
    * Adds a new notification rule and initializes its default values.
    */
-  addNewRule() {
+  addNewNotificationRule() {
     // TODO: Update this Form Group when we implement the logic to dynamically update the notification notificationRules.
     const newRule = new FormGroup({
       entityType: new FormControl(""),

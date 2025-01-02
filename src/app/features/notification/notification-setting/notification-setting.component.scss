@@ -111,8 +111,23 @@ app-notification-center-select {
   margin-bottom: 20px;
 }
 
-.warning-icon {
-  color: red;
-  font-size: 20px;
+.text-badge {
+  font-size: 12px;
+  font-weight: bold;
   margin-left: 10px;
+  border-radius: 25px;
+  padding-inline: 15px;
+  border: 1px solid;
+}
+
+.disabled-text {
+  @extend .text-badge;
+  border-color: #fa222a;
+  background-color: #eba7a9;
+}
+
+.enabled-text {
+  @extend .text-badge;
+  border-color: green;
+  background-color: #beddba;
 }

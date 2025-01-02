@@ -108,7 +108,7 @@
         mat-stroked-button
         class="add-new-rule-button"
         color="accent"
-        (click)="addNewRule()"
+        (click)="addNewNotificationRule()"
         matTooltip="Define another type of notifications for your user account"
         i18n-matTooltip
       >
@@ -122,15 +122,12 @@
 
   <div class="browser-notifications-container">
     <div class="browser-notifications-title">
-      <h3 i18n class="no-margin">
+      <h3 i18n class="no-margin flex-row align-center">
         <strong>Where you receive notifications</strong>
         @if (!hasPushNotificationEnabled) {
-          <fa-icon
-            matTooltip="Push notifications are currently disabled. Enable them in settings to stay updated."
-            i18n-matTooltip
-            class="warning-icon"
-            icon="exclamation-triangle"
-          ></fa-icon>
+          <div class="disabled-text">Disabled</div>
+        } @else {
+          <div class="enabled-text">Enabled</div>
         }
       </h3>
       <div i18n>
