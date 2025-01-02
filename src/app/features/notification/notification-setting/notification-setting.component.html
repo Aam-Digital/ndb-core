@@ -124,6 +124,14 @@
     <div class="browser-notifications-title">
       <h3 i18n class="no-margin">
         <strong>Where you receive notifications</strong>
+        @if (!hasPushNotificationEnabled) {
+          <fa-icon
+            matTooltip="Push notifications are currently disabled. Enable them in settings to stay updated."
+            i18n-matTooltip
+            class="warning-icon"
+            icon="exclamation-triangle"
+          ></fa-icon>
+        }
       </h3>
       <div i18n>
         Notifications are always visible through the bell icon in the toolbar at

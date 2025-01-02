@@ -39,6 +39,7 @@ import { FormControl, FormGroup } from "@angular/forms";
   styleUrl: "./notification-setting.component.scss",
 })
 export class NotificationSettingsComponent {
+  hasPushNotificationEnabled: boolean = false;
   notificationSetting = new FormGroup({
     notificationRules: new FormArray([]),
   });
@@ -107,6 +108,7 @@ export class NotificationSettingsComponent {
    */
   onEnableNotification() {
     // TODO: Implement the logic to enable the notification for user and update the value in CouchDB backend.
+    this.hasPushNotificationEnabled = !this.hasPushNotificationEnabled;
     Logging.log("Browser notifications toggled.");
   }
 
