@@ -23,6 +23,18 @@ describe("EditPublicFormColumnsComponent", () => {
       fields: ["name", "phone"],
     },
   ];
+
+  const oldColumnConfig = {
+    fieldGroups: [["name"], ["gender"]],
+  };
+  const newVolumnConfig = {
+    fieldGroups: [
+      {
+        fields: ["name", "gender"],
+      },
+    ],
+  };
+
   beforeEach(() => {
     let mockDatabase: jasmine.SpyObj<Database>;
     mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
@@ -60,5 +72,10 @@ describe("EditPublicFormColumnsComponent", () => {
 
   it("should create the component", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should migrate old columns config to new columns config", () => {
+    const migratedConfig = (component as any).migrateConfig(oldColumnConfig);
+    expect(migratedConfig).toEqual(newVolumnConfig);
   });
 });
