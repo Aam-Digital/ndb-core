@@ -17,8 +17,8 @@ describe("Schema data type: date", () => {
     expect(actualAnonymized).toEqual(new Date(2023, 6, 1));
   });
 
-  it("should log warning if transformation fails", () => {
-    spyOn(Logging, "warn");
+  it("should log (debug) if transformation fails", () => {
+    spyOn(Logging, "debug");
     const datatype = new DateDatatype();
 
     const result = datatype.transformToObjectFormat("invalidDate", null, {
@@ -27,6 +27,6 @@ describe("Schema data type: date", () => {
     });
 
     expect(result).toBeUndefined();
-    expect(Logging.warn).toHaveBeenCalled();
+    expect(Logging.debug).toHaveBeenCalled();
   });
 });
