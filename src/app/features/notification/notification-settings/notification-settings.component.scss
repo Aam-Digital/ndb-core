@@ -40,7 +40,7 @@
   margin-top: sizes.$regular;
   gap: 40px;
 
-  @media screen and (min-width: breakpoints.$xl) {
+  @media screen and (min-width: breakpoints.$xxl) {
     flex-direction: row;
   }
 }
@@ -48,7 +48,7 @@
 .notification-options-wrapper {
   @extend .full-width;
 
-  @media screen and (min-width: breakpoints.$xl) {
+  @media screen and (min-width: breakpoints.$xxl) {
     flex-direction: row;
   }
 }
