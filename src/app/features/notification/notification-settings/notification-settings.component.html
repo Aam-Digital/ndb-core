@@ -63,9 +63,7 @@
           <div
             class="flex-row justify-content-center align-center notification-rule-option"
           >
-            <app-notification-method-select
-              label="Notification Method"
-            ></app-notification-method-select>
+            <app-notification-method-select></app-notification-method-select>
             <app-help-button
               text="Define a notification method to receive notifications"
               i18n-text
@@ -164,7 +162,6 @@
               i18n-text
             ></app-help-button>
           </div>
-          <mat-slide-toggle [checked]="true" [disabled]="true" />
         </div>
         <div
           class="flex-row align-center justify-space-between browser-notification-list"
