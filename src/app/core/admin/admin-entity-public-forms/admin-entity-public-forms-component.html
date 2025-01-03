@@ -1,1 +1,20 @@
-<ng-template [appDynamicComponent]="config"></ng-template>
+<div class="hint-banner" i18n>
+  You can share the link to a "Public Form" with people who do not have an
+  account or embed it in your website. People can submit new records through
+  this form without logging in. For example, you can let participants
+  self-register this way and then review their data later.
+</div>
+
+<app-view-title [disableBackButton]="true" [displayInPlace]="true" i18n>
+  Public Forms
+</app-view-title>
+
+<div>
+  <app-related-entities
+    entityType="PublicFormConfig"
+    property="entity"
+    [columns]="['title', 'route', 'description']"
+    [entity]="dummyEntity"
+    clickMode="popup-details"
+  ></app-related-entities>
+</div>

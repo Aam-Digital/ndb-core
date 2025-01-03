@@ -1,40 +1,29 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { EntityConstructor } from "app/core/entity/model/entity";
-import { DynamicComponentDirective } from "app/core/config/dynamic-components/dynamic-component.directive";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
+import { RelatedEntitiesComponent } from "../../entity-details/related-entities/related-entities.component";
 
 @Component({
   selector: "app-admin-entity-public-forms-component",
   standalone: true,
   templateUrl: "./admin-entity-public-forms-component.html",
-  styleUrls: ["./admin-entity-public-forms-component.scss"],
-  imports: [DynamicComponentDirective],
+  styleUrls: [
+    "./admin-entity-public-forms-component.scss",
+    "../admin-entity/admin-entity-styles.scss",
+  ],
+  imports: [ViewTitleComponent, RelatedEntitiesComponent],
 })
-export class AdminEntityPublicFormsComponent implements OnInit {
+export class AdminEntityPublicFormsComponent {
+  /**
+   * The entity type for which to display public forms for.
+   */
   @Input() entityConstructor: EntityConstructor;
-  config: Config;
 
-  ngOnInit(): void {
-    this.config = {
-      component: "RelatedEntities",
-      config: {
-        entityType: "PublicFormConfig",
-        property: this.entityConstructor.ENTITY_TYPE,
-        columns: ["title", "entity", "route", "description"],
-        filter: {
-          entity: this.entityConstructor.ENTITY_TYPE,
-        },
-      },
-    };
-  }
-}
-interface Config {
-  component: string;
-  config: {
-    entityType: string;
-    property: string;
-    columns: string[];
-    filter: {
-      entity: string;
-    };
+  /**
+   * Fake entity instance to correctly filter/link related PublicFormConfigs
+   * using the standard related-entities component.
+   */
+  protected dummyEntity: any = {
+    getId: () => this.entityConstructor.ENTITY_TYPE,
   };
 }
