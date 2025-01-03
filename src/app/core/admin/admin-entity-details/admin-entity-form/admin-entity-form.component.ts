@@ -66,21 +66,7 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
-  @Input() set config(value: FormConfig) {
-    // assign default value and make a deep copy to avoid side effects
-    if (!value) {
-      value = { fieldGroups: [] };
-    }
-    value = JSON.parse(JSON.stringify(value));
-    if (!value.fieldGroups) {
-      value.fieldGroups = [];
-    }
-
-    this._config = value;
-  }
-  get config(): FormConfig {
-    return this._config;
-  }
+  @Input() config: FormConfig
   private _config: FormConfig;
 
   @Output() configChange = new EventEmitter<FormConfig>();
@@ -135,6 +121,9 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   private getUsedFields(config: FormConfig): ColumnConfig[] {
+    if (!config.fieldGroups) {
+      config.fieldGroups = [];
+    }
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
   }
 
