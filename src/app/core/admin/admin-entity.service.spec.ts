@@ -22,4 +22,6 @@ describe("AdminEntityService", () => {
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
+
+  // saving tested via AdminEntityComponent (see admin-entity.component.spec.ts)
 });
