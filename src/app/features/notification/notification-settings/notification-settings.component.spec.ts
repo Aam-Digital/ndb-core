@@ -7,7 +7,7 @@ import {
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
-describe("NotificationSettingComponent", () => {
+describe("NotificationSettingsComponent", () => {
   let component: NotificationSettingsComponent;
   let fixture: ComponentFixture<NotificationSettingsComponent>;
 
