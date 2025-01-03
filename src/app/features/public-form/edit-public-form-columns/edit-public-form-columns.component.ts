@@ -10,7 +10,6 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
-
 @Component({
   selector: "app-edit-public-form-columns",
   standalone: true,
@@ -34,10 +33,9 @@ export class EditPublicFormColumnsComponent
     if (this.entity) {
       this.entityConstructor = this.entities.get(this.entity["entity"]);
 
-      this.publicFormConfig = this.migrateConfig({ fieldGroups: this.formControl.getRawValue() });
-      this.formControl.valueChanges.subscribe(
-        (v) => (this.publicFormConfig = { fieldGroups: v }),
-      );
+      this.publicFormConfig = this.migrateConfig({
+        fieldGroups: this.formControl.getRawValue(),
+      });
     }
 
     this.originalEntitySchemaFields = JSON.parse(
