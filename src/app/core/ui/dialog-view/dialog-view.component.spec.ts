@@ -3,9 +3,9 @@ import { DialogViewComponent } from "./dialog-view.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { Component } from "@angular/core";
-import { EntityConfigService } from "../../entity/entity-config.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { Entity } from "../../entity/model/entity";
+import { Router } from "@angular/router";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 @Component({
   template: ``,
@@ -17,11 +17,11 @@ describe("DialogViewComponent", () => {
   let fixture: ComponentFixture<DialogViewComponent>;
 
   let mockDialogData;
-  let mockEntityConfigService: jasmine.SpyObj<EntityConfigService>;
+  let mockRouter: Partial<Router>;
 
   beforeEach(() => {
     mockDialogData = {};
-    mockEntityConfigService = jasmine.createSpyObj(["getDetailsViewConfig"]);
+    mockRouter = { config: [] };
 
     TestBed.configureTestingModule({
       imports: [DialogViewComponent, FontAwesomeTestingModule],
@@ -34,7 +34,7 @@ describe("DialogViewComponent", () => {
           provide: ComponentRegistry,
           useValue: { get: () => async () => MockComponent },
         },
-        { provide: EntityConfigService, useValue: mockEntityConfigService },
+        { provide: Router, useValue: mockRouter },
       ],
     });
   });
@@ -63,14 +63,14 @@ describe("DialogViewComponent", () => {
   }));
 
   it("should add view config for given entity type as config", fakeAsync(() => {
-    const testEntity = new Entity();
+    const testEntity = new TestEntity();
     mockDialogData.config = { dialogDetail: "1" };
     mockDialogData.entity = testEntity;
-    mockEntityConfigService.getDetailsViewConfig.and.returnValue({
-      config: {
-        viewConfig: "2",
-      },
-    } as any);
+
+    const testRouteConfig = { config: { viewConfig: "2" } };
+    mockRouter.config.push({ path: "test-entity/:id", data: testRouteConfig });
+    mockRouter.config.push({ path: "other", data: {} });
+
     createComponent();
 
     expect(component.config).toEqual({
@@ -78,8 +78,5 @@ describe("DialogViewComponent", () => {
       viewConfig: "2",
       entity: testEntity,
     });
-    expect(mockEntityConfigService.getDetailsViewConfig).toHaveBeenCalledWith(
-      Entity,
-    );
   }));
 });
