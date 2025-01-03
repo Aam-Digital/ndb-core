@@ -8,31 +8,24 @@ import {
 import { CommonModule, Location } from "@angular/common";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
 import { EntityConfigService } from "../../entity/entity-config.service";
-import { Config } from "../../config/config";
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
-import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatButton } from "@angular/material/button";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list.component";
-import {
-  MatSidenav,
-  MatSidenavContainer,
-  MatSidenavContent,
-} from "@angular/material/sidenav";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature/beta-feature.component";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { AdminEntityService } from "../admin-entity.service";
 import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/admin-entity-public-forms-component";
 
 @Component({
@@ -44,12 +37,6 @@ import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/ad
     MatButton,
     ViewTitleComponent,
     AdminEntityListComponent,
-    MatSidenav,
-    MatSidenavContainer,
-    MatSidenavContent,
-    FaIconComponent,
-    MatIconButton,
-    RouterLink,
     MatNavList,
     MatListItem,
     AdminEntityDetailsComponent,
@@ -76,7 +63,7 @@ export class AdminEntityComponent implements OnInit {
     private entities: EntityRegistry,
     private configService: ConfigService,
     private location: Location,
-    private entityMapper: EntityMapperService,
+    private adminEntityService: AdminEntityService,
     private entityActionsService: EntityActionsService,
     private routes: ActivatedRoute,
   ) {}
@@ -100,7 +87,22 @@ export class AdminEntityComponent implements OnInit {
     );
     this.configListView = this.loadViewConfig(this.entityConstructor, "list");
 
-    this.configEntitySettings = this.entityConstructor;
+    this.configEntitySettings = this.getEntitySettingsFromConstructor(
+      this.entityConstructor,
+    );
+  }
+
+  private getEntitySettingsFromConstructor(
+    entityCtr: EntityConstructor,
+  ): EntityConfig {
+    return {
+      label: entityCtr.label,
+      labelPlural: entityCtr.labelPlural,
+      icon: entityCtr.icon,
+      color: entityCtr.color,
+      toStringAttributes: [...entityCtr.toStringAttributes],
+      hasPII: entityCtr.hasPII,
+    };
   }
 
   private loadViewConfig(
@@ -140,51 +142,18 @@ export class AdminEntityComponent implements OnInit {
   }
 
   async save() {
-    const originalConfig = await this.entityMapper.load(
-      Config,
-      Config.CONFIG_KEY,
+    const result = await this.adminEntityService.setAndSaveEntityConfig(
+      this.entityConstructor,
+      this.configEntitySettings,
+      this.configListView,
+      this.configDetailsView,
     );
-    const newConfig = originalConfig.copy();
 
-    newConfig.data[
-      EntityConfigService.getDetailsViewId(this.entityConstructor)
-    ] = this.configDetailsView;
-    newConfig.data[EntityConfigService.getListViewId(this.entityConstructor)] =
-      this.configListView;
-    this.setEntityConfig(newConfig);
-
-    await this.entityMapper.save(newConfig);
     this.entityActionsService.showSnackbarConfirmationWithUndo(
       $localize`:Save config confirmation message:Configuration updated`,
-      [originalConfig],
+      [result.previous],
     );
 
     this.location.back();
-  }
-
-  private setEntityConfig(newConfig: Config) {
-    const entityConfigKey =
-      EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType;
-
-    // init config if not present
-    newConfig.data[entityConfigKey] =
-      newConfig.data[entityConfigKey] ?? ({ attributes: {} } as EntityConfig);
-    newConfig.data[entityConfigKey].attributes =
-      newConfig.data[entityConfigKey].attributes ?? {};
-
-    const entitySchemaConfig: EntityConfig = newConfig.data[entityConfigKey];
-
-    for (const [fieldId, field] of this.entityConstructor.schema.entries()) {
-      entitySchemaConfig.attributes[fieldId] = field;
-    }
-    if (this.configEntitySettings) {
-      entitySchemaConfig.label = this.configEntitySettings.label;
-      entitySchemaConfig.labelPlural = this.configEntitySettings.labelPlural;
-      entitySchemaConfig.icon = this.configEntitySettings.icon;
-      entitySchemaConfig.color = this.configEntitySettings.color;
-      entitySchemaConfig.toStringAttributes =
-        this.configEntitySettings.toStringAttributes;
-      entitySchemaConfig.hasPII = this.configEntitySettings.hasPII;
-    }
   }
 }

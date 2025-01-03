@@ -66,10 +66,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   async saveClicked() {
     try {
-      await this.entityFormService.saveChanges(
-        this.form.formGroup,
-        this.entity,
-      );
+      await this.entityFormService.saveChanges(this.form, this.entity);
       if (this.creatingNew && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
@@ -87,7 +84,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     if (this.creatingNew) {
       this.location.back();
     }
-    this.entityFormService.resetForm(this.form.formGroup, this.entity);
+    this.entityFormService.resetForm(this.form, this.entity);
     this.form.formGroup.disable();
   }
 }
