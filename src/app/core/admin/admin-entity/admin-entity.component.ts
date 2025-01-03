@@ -85,7 +85,22 @@ export class AdminEntityComponent implements OnInit {
     );
     this.configListView = this.loadViewConfig(this.entityConstructor, "list");
 
-    this.configEntitySettings = this.entityConstructor;
+    this.configEntitySettings = this.getEntitySettingsFromConstructor(
+      this.entityConstructor,
+    );
+  }
+
+  private getEntitySettingsFromConstructor(
+    entityCtr: EntityConstructor,
+  ): EntityConfig {
+    return {
+      label: entityCtr.label,
+      labelPlural: entityCtr.labelPlural,
+      icon: entityCtr.icon,
+      color: entityCtr.color,
+      toStringAttributes: [...entityCtr.toStringAttributes],
+      hasPII: entityCtr.hasPII,
+    };
   }
 
   private loadViewConfig(

@@ -65,13 +65,7 @@ export class AdminEntityService {
 
     // Add additional general settings if available
     if (configEntitySettings) {
-      entitySchemaConfig.label = configEntitySettings.label;
-      entitySchemaConfig.labelPlural = configEntitySettings.labelPlural;
-      entitySchemaConfig.icon = configEntitySettings.icon;
-      entitySchemaConfig.color = configEntitySettings.color;
-      entitySchemaConfig.toStringAttributes =
-        configEntitySettings.toStringAttributes;
-      entitySchemaConfig.hasPII = configEntitySettings.hasPII;
+      Object.assign(entitySchemaConfig, configEntitySettings);
     }
 
     // Add additional view config if available
@@ -85,7 +79,6 @@ export class AdminEntityService {
     }
 
     const updatedConfig: Config = await this.entityMapper.save(newConfig);
-
     return { previous: originalConfig, current: updatedConfig };
   }
 
