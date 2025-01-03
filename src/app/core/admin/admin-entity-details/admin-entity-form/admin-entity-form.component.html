@@ -12,7 +12,8 @@
     >
       <!-- GROUP HEADER -->
       <app-admin-section-header
-        [(title)]="group.header"
+        [title]="group.header"
+        (titleChange)="group.header = $event; emitUpdatedConfig()"
         (remove)="removeGroup(i)"
       ></app-admin-section-header>
 
