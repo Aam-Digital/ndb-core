@@ -5,8 +5,6 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
-import { ConfigurableEnumDirective } from "../configurable-enum-directive/configurable-enum.directive";
-import { NgIf } from "@angular/common";
 import { EnumDropdownComponent } from "../enum-dropdown/enum-dropdown.component";
 
 @DynamicComponent("EditConfigurableEnum")
@@ -17,8 +15,6 @@ import { EnumDropdownComponent } from "../enum-dropdown/enum-dropdown.component"
     MatFormFieldModule,
     ReactiveFormsModule,
     MatSelectModule,
-    ConfigurableEnumDirective,
-    NgIf,
     EnumDropdownComponent,
   ],
   standalone: true,
