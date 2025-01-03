@@ -1,0 +1,15 @@
+<mat-form-field>
+  <mat-label>Operator</mat-label>
+  <mat-select
+    (selectionChange)="onSelectionChange($event)"
+    placeholder="Choose notification centers"
+    [value]="selectedNotificationMethod"
+    i18n-placeholder="Choose notification condition"
+  >
+    @for (operator of operators; track operator) {
+      <mat-option [value]="operator.value">
+        {{ operator.label }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>
