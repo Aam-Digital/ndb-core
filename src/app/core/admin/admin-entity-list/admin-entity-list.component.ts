@@ -7,9 +7,6 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FilterComponent } from "../../filter/filter/filter.component";
-import { MatTab, MatTabGroup } from "@angular/material/tabs";
-import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   EntityListConfig,
@@ -29,7 +26,6 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MatIconButton } from "@angular/material/button";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatSelect } from "@angular/material/select";
 import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.component";
@@ -41,16 +37,11 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
   standalone: true,
   imports: [
     CommonModule,
-    FilterComponent,
-    MatTabGroup,
-    EntitiesTableComponent,
-    MatTab,
     EntityFieldsMenuComponent,
     MatTableModule,
     EntityFieldLabelComponent,
     CdkDrag,
     FaIconComponent,
-    MatIconButton,
     CdkDropList,
     MatFormField,
     MatLabel,
@@ -92,11 +83,13 @@ export class AdminEntityListComponent implements OnChanges, AfterViewInit {
       this.initAvailableFields();
     }
   }
+
   ngAfterViewInit() {
     const placeholderElement = this.placeholder.element.nativeElement;
     placeholderElement.style.display = "none";
     placeholderElement.parentNode.removeChild(placeholderElement);
   }
+
   /**
    * Config allows to not have columnGroups and by default then display all `columns`,
    * create an initial columnGroup in this case to allow full editing.

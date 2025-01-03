@@ -33,14 +33,12 @@
           <div
             class="flex-row justify-content-center align-center notification-rule-option"
           >
-            <app-entity-type-select
-              [allowMultiSelect]="false"
-              label="Select an entity type"
-              [formControl]="getFormField(index, 'entityType')"
-              (selectedEntity)="
-                updateNotificationEntityField(index, 'entityType')
-              "
-            ></app-entity-type-select>
+            <mat-form-field class="full-width-field">
+              <mat-label i18n>Select an entity type</mat-label>
+              <app-entity-type-select
+                [formControl]="getFormField(index, 'entityType')"
+              ></app-entity-type-select>
+            </mat-form-field>
             <app-help-button
               text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
               i18n-text
@@ -71,6 +69,7 @@
                 getFormField(index, 'notificationMethod').value,
               ]"
               (selectionChange)="updateNotificationCenter($event, index)"
+              class="full-width-field"
             ></app-notification-method-select>
             <app-help-button
               text="Define a notification method to receive notifications"
@@ -182,10 +181,14 @@
               i18n-text
             ></app-help-button>
           </div>
+          <<<<<<< HEAD
           <mat-slide-toggle
             (change)="onEnableNotification($event)"
             [checked]="hasPushNotificationEnabled"
           />
+          =======
+          <mat-slide-toggle (change)="onEnableNotification()" />
+          >>>>>>> beebbe36c178a8f5cd0170d4bc37b5394059435c
         </div>
       </div>
 

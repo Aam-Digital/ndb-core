@@ -1,78 +1,40 @@
+import { Component, inject, Input } from "@angular/core";
 import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  forwardRef,
-} from "@angular/core";
-import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
-import {
-  NG_VALUE_ACCESSOR,
-  FormControl,
-  ReactiveFormsModule,
-} from "@angular/forms";
+  BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
+  BasicAutocompleteComponent,
+} from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConstructor } from "../model/entity";
 import { EntityRegistry } from "../database-entity.decorator";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatFormFieldControl } from "@angular/material/form-field";
 
-/**
- * Component for selecting an entity type from a dropdown.
- */
 @Component({
   selector: "app-entity-type-select",
-  templateUrl: "./entity-type-select.component.html",
-  imports: [
-    BasicAutocompleteComponent,
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-  ],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => EntityTypeSelectComponent),
-      multi: true,
-    },
-  ],
+  templateUrl:
+    "../../common-components/basic-autocomplete/basic-autocomplete.component.html",
   standalone: true,
+  imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
+  providers: [
+    { provide: MatFormFieldControl, useExisting: EntityTypeSelectComponent },
+  ],
 })
+export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
+  EntityConstructor,
+  string
+> {
+  @Input() override multi = false;
+  @Input() override placeholder =
+    $localize`:EntityTypeSelect placeholder:Select Entity Type`;
 
-// TODO: Need to use the CustomFormControlDirective abstract class instead of ControlValueAccessor.
-export class EntityTypeSelectComponent implements OnInit {
-  @Input() formControl: FormControl;
-  @Input() allowMultiSelect = false;
-  @Input() label: string;
-  @Output() selectedEntity = new EventEmitter();
+  private entityRegistry = inject(EntityRegistry);
 
-  entityTypes: EntityConstructor[];
-  optionToLabel = (option: EntityConstructor) => option.label;
-  optionToId = (option: EntityConstructor) => option.ENTITY_TYPE;
-  value: any;
-  onChange = (_: string) => {};
-  onTouched = () => {};
+  override optionToString = (option: EntityConstructor) => option.label;
+  override valueMapper = (option: EntityConstructor) => option.ENTITY_TYPE;
 
-  constructor(private entityRegistry: EntityRegistry) {}
-
-  ngOnInit() {
-    this.entityTypes = this.entityRegistry
+  override ngOnInit() {
+    this.options = this.entityRegistry
       .getEntityTypes(true)
       .map(({ value }) => value);
 
-    this.formControl.valueChanges.subscribe((value) => {
-      this.selectedEntity.emit(value);
-    });
-  }
-
-  writeValue(value: string) {
-    this.value = value;
-  }
-
-  registerOnChange(fn: () => void) {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void) {
-    this.onTouched = fn;
+    super.ngOnInit();
   }
 }
