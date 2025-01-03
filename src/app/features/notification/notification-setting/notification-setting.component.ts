@@ -37,7 +37,7 @@ import { FormControl, FormGroup } from "@angular/forms";
   templateUrl: "./notification-setting.component.html",
   styleUrl: "./notification-setting.component.scss",
 })
-export class NotificationSettingsComponent {
+export class NotificationSettingComponent {
   hasPushNotificationEnabled: boolean = false;
   notificationSetting = new FormGroup({
     notificationRules: new FormArray([]),
