@@ -15,7 +15,7 @@ import {
   ViewChild,
   WritableSignal,
 } from "@angular/core";
-import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
+import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   FormControl,
@@ -42,7 +42,6 @@ import {
 } from "@angular/material/chips";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
-import { MatIcon } from "@angular/material/icon";
 import {
   CdkDragDrop,
   DragDropModule,
@@ -61,7 +60,29 @@ interface SelectableOption<O, V> {
   selected: boolean;
 }
 
-/** Custom `MatFormFieldControl` for any select / dropdown field. */
+export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
+  ReactiveFormsModule,
+  MatInputModule,
+  MatAutocompleteModule,
+  NgForOf,
+  MatCheckboxModule,
+  NgIf,
+  NgTemplateOutlet,
+  MatChipInput,
+  MatChipGrid,
+  MatChipRow,
+  FaIconComponent,
+  MatTooltip,
+  MatChipRemove,
+  DragDropModule,
+  CdkVirtualScrollViewport,
+  CdkVirtualForOf,
+  CdkFixedSizeVirtualScroll,
+];
+
+/**
+ * Custom `MatFormFieldControl` for any select / dropdown field.
+ */
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",
@@ -70,27 +91,7 @@ interface SelectableOption<O, V> {
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
   ],
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    NgForOf,
-    MatCheckboxModule,
-    NgIf,
-    AsyncPipe,
-    NgTemplateOutlet,
-    MatChipInput,
-    MatChipGrid,
-    MatChipRow,
-    FaIconComponent,
-    MatTooltip,
-    MatIcon,
-    MatChipRemove,
-    DragDropModule,
-    CdkVirtualScrollViewport,
-    CdkVirtualForOf,
-    CdkFixedSizeVirtualScroll,
-  ],
+  imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
 })
 export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
@@ -156,6 +157,7 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
   }
+
   private _options: SelectableOption<O, V>[] = [];
 
   _selectedOptions: SelectableOption<O, V>[] = [];

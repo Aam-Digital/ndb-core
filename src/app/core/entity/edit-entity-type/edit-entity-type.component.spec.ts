@@ -4,7 +4,7 @@ import { EditEntityTypeComponent } from "./edit-entity-type.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { setupEditComponent } from "../default-datatype/edit-component.spec";
 
-describe("EditConfigurableEnumComponent", () => {
+describe("EditEntityTypeComponent", () => {
   let component: EditEntityTypeComponent;
   let fixture: ComponentFixture<EditEntityTypeComponent>;
 
