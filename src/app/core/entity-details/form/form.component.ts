@@ -41,8 +41,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   form: EntityForm<E> | undefined;
 
-  // @Output() onFormSaved = new EventEmitter<void>();
-
   constructor(
     private router: Router,
     private location: Location,
