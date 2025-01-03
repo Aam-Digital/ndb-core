@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { NotificationComponent } from "./notification.component";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../core/entity/entity-mapper/mock-entity-mapper-service";

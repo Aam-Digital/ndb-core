@@ -12,9 +12,11 @@ import { Angulartics2Module } from "angulartics2";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { Entity } from "../../entity/model/entity";
-import { FormGroup } from "@angular/forms";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
-import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../common-components/entity-form/entity-form.service";
 import { AlertService } from "../../alerts/alert.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -41,9 +43,9 @@ import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.compo
   templateUrl: "./dialog-buttons.component.html",
   styleUrls: ["./dialog-buttons.component.scss"],
 })
-export class DialogButtonsComponent implements OnInit {
-  @Input() entity: Entity;
-  @Input() form: FormGroup;
+export class DialogButtonsComponent<E extends Entity> implements OnInit {
+  @Input() entity: E;
+  @Input() form: EntityForm<E>;
   detailsRoute: string;
 
   @Output() closeView = new EventEmitter<any>();
@@ -80,7 +82,7 @@ export class DialogButtonsComponent implements OnInit {
   ngOnInit() {
     if (!this.entity.isNew) {
       if (this.ability.cannot("update", this.entity)) {
-        this.form.disable();
+        this.form.formGroup.disable();
       }
       this.initializeDetailsRouteIfAvailable();
     }
@@ -101,8 +103,8 @@ export class DialogButtonsComponent implements OnInit {
       .saveChanges(this.form, this.entity)
       .then((res) => {
         // Attachments are only saved once form is disabled
-        this.form.disable();
-        this.form.markAsPristine();
+        this.form.formGroup.disable();
+        this.form.formGroup.markAsPristine();
         this.close(res);
       })
       .catch((err) => {
