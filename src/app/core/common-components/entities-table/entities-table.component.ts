@@ -80,6 +80,7 @@ export class EntitiesTableComponent<T extends Entity> {
     this.updateFilteredData();
     this.isLoading = false;
   }
+
   private lastSelectedIndex: number = null;
   private lastSelection: boolean = null;
   _records: T[] = [];
@@ -122,6 +123,7 @@ export class EntitiesTableComponent<T extends Entity> {
       .map((col) => col.id)
       .join("");
   }
+
   _customColumns: FormFieldConfig[];
   _columns: FormFieldConfig[] = [];
 
@@ -151,12 +153,14 @@ export class EntitiesTableComponent<T extends Entity> {
       this.sortIsInferred = true;
     }
   }
+
   _columnsToDisplay: string[];
 
   @Input() set entityType(value: EntityConstructor<T>) {
     this._entityType = value;
     this.customColumns = this._customColumns;
   }
+
   _entityType: EntityConstructor<T>;
 
   /** how to sort data by default during initialization */
@@ -185,6 +189,7 @@ export class EntitiesTableComponent<T extends Entity> {
     this._filter = value ?? {};
     this.updateFilteredData();
   }
+
   _filter: DataFilter<T> = {};
   /** output the currently displayed records, whenever filters for the user change */
   @Output() filteredRecordsChange = new EventEmitter<T[]>(true);
@@ -206,7 +211,15 @@ export class EntitiesTableComponent<T extends Entity> {
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
   idForSavingPagination: string;
 
-  @Input() clickMode: "popup" | "navigate" | "none" = "popup";
+  /**
+   * The action the system triggers when a user clicks on an entry (row):
+   * - popup: open dialog with simplified form with the given fields only
+   * - navigate: route the app to the details view of the entity
+   * - popup-details: open dialog with the full EntityDetails view
+   * - none: do not trigger any automatic action
+   */
+  @Input() clickMode: "popup" | "navigate" | "popup-details" | "none" = "popup";
+
   /**
    * Emits the entity being clicked in the table - or the newly created entity from the "create" button.
    */
@@ -220,6 +233,7 @@ export class EntitiesTableComponent<T extends Entity> {
     this._selectable = v;
     this.columnsToDisplay = this._columnsToDisplay;
   }
+
   _selectable: boolean = false;
 
   readonly ACTIONCOLUMN_SELECT = "__select";
@@ -251,6 +265,7 @@ export class EntitiesTableComponent<T extends Entity> {
     this._editable = v;
     this.columnsToDisplay = this._columnsToDisplay;
   }
+
   _editable: boolean = true;
   readonly ACTIONCOLUMN_EDIT = "__edit";
   /**
@@ -354,6 +369,9 @@ export class EntitiesTableComponent<T extends Entity> {
       case "popup":
         this.formDialog.openFormPopup(entity, this._customColumns);
         break;
+      case "popup-details":
+        this.formDialog.openView(entity, "EntityDetails");
+        break;
       case "navigate":
         this.router.navigate([
           entity.getConstructor().route,
@@ -431,6 +449,7 @@ export class EntitiesTableComponent<T extends Entity> {
     this.updateFilteredData();
     this.showInactiveChange.emit(value);
   }
+
   _showInactive: boolean = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
 

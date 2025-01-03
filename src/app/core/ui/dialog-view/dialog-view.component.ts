@@ -1,6 +1,5 @@
 import { Component, Inject, Injector } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -10,11 +9,11 @@ import {
 } from "@angular/material/dialog";
 import { EntityConfigService } from "../../entity/entity-config.service";
 import { Entity } from "../../entity/model/entity";
-import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
-import { CdkPortalOutlet } from "@angular/cdk/portal";
 import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
 import { AbstractViewComponent } from "../abstract-view/abstract-view.component";
+import { Router } from "@angular/router";
+import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
 
 /**
  * Wrapper component for a modal/dialog view
@@ -28,11 +27,8 @@ import { AbstractViewComponent } from "../abstract-view/abstract-view.component"
   standalone: true,
   imports: [
     CommonModule,
-    DynamicComponentDirective,
-    ViewTitleComponent,
     DialogCloseComponent,
     MatDialogClose,
-    CdkPortalOutlet,
     DynamicComponentPipe,
     MatDialogTitle,
     MatDialogContent,
@@ -48,8 +44,8 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA)
     dialogData: DialogViewData<T>,
-    private entityConfigService: EntityConfigService,
     injector: Injector,
+    router: Router,
   ) {
     super(injector, true);
 
@@ -57,10 +53,12 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
 
     let viewConfig = {};
     if (dialogData.entity) {
+      const detailsRoute = EntityConfigService.getDetailsViewId(
+        dialogData.entity.getConstructor(),
+      ).substring(PREFIX_VIEW_CONFIG.length);
       viewConfig =
-        this.entityConfigService.getDetailsViewConfig(
-          dialogData.entity.getConstructor(),
-        )?.config ?? {};
+        router.config.find((route) => route.path === detailsRoute)?.data
+          ?.config ?? {};
     }
 
     if (dialogData.entity) {
