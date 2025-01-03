@@ -73,6 +73,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     this._columns = value.map((c) => toFormFieldConfig(c));
     this.updateColumnsToDisplayForScreenSize();
   }
+
   protected _columns: FormFieldConfig[];
 
   columnsToDisplay: string[];
@@ -87,7 +88,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
    */
   @Input() showInactive: boolean;
 
-  @Input() clickMode: "popup" | "navigate" = "popup";
+  @Input() clickMode: "popup" | "navigate" | "popup-details" = "popup";
   @Input() editable: boolean = true;
 
   data: E[];
