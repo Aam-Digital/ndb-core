@@ -18,16 +18,10 @@ import { EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
-import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatButton } from "@angular/material/button";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { AdminEntityListComponent } from "../admin-entity-list/admin-entity-list.component";
-import {
-  MatSidenav,
-  MatSidenavContainer,
-  MatSidenavContent,
-} from "@angular/material/sidenav";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
@@ -43,12 +37,6 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
     MatButton,
     ViewTitleComponent,
     AdminEntityListComponent,
-    MatSidenav,
-    MatSidenavContainer,
-    MatSidenavContent,
-    FaIconComponent,
-    MatIconButton,
-    RouterLink,
     MatNavList,
     MatListItem,
     AdminEntityDetailsComponent,
