@@ -93,7 +93,7 @@ app-entity-type-select {
   }
 }
 
-app-notification-center-select {
+app-notification-method-select {
   @extend app-entity-type-select;
 }
 
@@ -109,4 +109,25 @@ app-notification-center-select {
 
 .browser-notifications-title {
   margin-bottom: 20px;
+}
+
+.text-badge {
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 10px;
+  border-radius: 25px;
+  padding-inline: 15px;
+  border: 1px solid;
+}
+
+.disabled-text {
+  @extend .text-badge;
+  border-color: #fa222a;
+  background-color: #eba7a9;
+}
+
+.enabled-text {
+  @extend .text-badge;
+  border-color: green;
+  background-color: #beddba;
 }

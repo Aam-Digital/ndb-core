@@ -74,15 +74,14 @@
           <div
             class="flex-row justify-content-center align-center notification-rule-option"
           >
-            <app-notification-center-select
+            <app-notification-method-select
               [selectedNotificationMethod]="[
                 getFormField(index, 'notificationMethod').value,
               ]"
-              [notificationMethods]="notificationMethods"
               label="Notification Method"
               (selectionChange)="updateNotificationCenter($event, index)"
               i18n-label
-            ></app-notification-center-select>
+            ></app-notification-method-select>
             <app-help-button
               text="Define a notification method to receive notifications"
               i18n-text
@@ -126,7 +125,7 @@
         mat-stroked-button
         class="add-new-rule-button"
         color="accent"
-        (click)="addNewRule()"
+        (click)="addNewNotificationRule()"
         matTooltip="Define another type of notifications for your user account"
         i18n-matTooltip
       >
@@ -140,8 +139,25 @@
 
   <div class="browser-notifications-container">
     <div class="browser-notifications-title">
-      <h3 i18n class="no-margin">
+      <h3 i18n class="no-margin flex-row align-center">
         <strong>Where you receive notifications</strong>
+        @if (hasPushNotificationsEnabled) {
+          <div
+            class="enabled-text"
+            matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
+            i18n-matTooltip
+          >
+            Enabled
+          </div>
+        } @else {
+          <div
+            class="disabled-text"
+            matTooltip="Push notifications are disabled. Turn them on in settings to stay informed about updates."
+            i18n-matTooltip
+          >
+            Disabled
+          </div>
+        }
       </h3>
       <div i18n>
         Notifications are always visible through the bell icon in the toolbar at
@@ -179,7 +195,7 @@
           </div>
           <mat-slide-toggle
             (change)="onEnableNotification($event)"
-            [checked]="pushNotificationsEnabled"
+            [checked]="hasPushNotificationsEnabled"
           />
         </div>
       </div>

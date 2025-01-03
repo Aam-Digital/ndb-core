@@ -4,7 +4,6 @@ import {
   MatSlideToggleChange,
 } from "@angular/material/slide-toggle";
 import { MatInputModule } from "@angular/material/input";
-import { NgIf } from "@angular/common";
 import {
   FaIconComponent,
   FontAwesomeModule,
@@ -16,7 +15,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
-import { NotificationCenterSelectComponent } from "app/features/notification/notification-center-select/notification-center-select.component";
+import { NotificationMethodSelectComponent } from "../notification-method-select/notification-method-select.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { FormControl, FormGroup } from "@angular/forms";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
@@ -41,22 +40,21 @@ import { NotificationRuleConditionComponent } from "app/features/notification/no
     FaIconComponent,
     MatButtonModule,
     MatTooltipModule,
-    NgIf,
     EntityTypeSelectComponent,
     HelpButtonComponent,
-    NotificationCenterSelectComponent,
+    NotificationMethodSelectComponent,
     ReactiveFormsModule,
     NotificationRuleConditionComponent,
   ],
   templateUrl: "./notification-setting.component.html",
   styleUrl: "./notification-setting.component.scss",
 })
-export class NotificationSettingsComponent implements OnInit {
+export class NotificationSettingComponent implements OnInit {
   notificationSetting = new FormGroup({
     notificationRules: new FormArray([]),
   });
   allNotificationRules: NotificationConfig = null;
-  pushNotificationsEnabled = false;
+  hasPushNotificationsEnabled = false;
   notificationMethods = ["Push"];
   hasNotificationRuleEnabled = false;
   hasNotificationCenterPush = false;
@@ -75,12 +73,12 @@ export class NotificationSettingsComponent implements OnInit {
   private async initializeNotificationSettings() {
     this.allNotificationRules = await this.loadNotificationConfig();
     if (this.allNotificationRules) {
-      this.pushNotificationsEnabled = this.allNotificationRules.channels.push;
+      this.hasPushNotificationsEnabled = this.allNotificationRules.channels.push;
       this.populateNotificationRules(
         this.allNotificationRules.notificationRules,
       );
     } else {
-      this.addNewRule();
+      this.addNewNotificationRule();
     }
   }
 
@@ -120,24 +118,24 @@ export class NotificationSettingsComponent implements OnInit {
   /**
    * Adds a new notification rule and initializes its default values.
    */
-  addNewRule(): void {
+  addNewNotificationRule() {
     const newRule = this.createNotificationRuleFormGroup();
     this.notificationRules.push(newRule);
   }
 
   async onEnableNotification(event: MatSlideToggleChange) {
     const config = await this.loadNotificationConfig();
-    const pushEnabled = event.checked;
+    this.hasPushNotificationsEnabled = event.checked;
 
     if (config) {
-      config.channels.push = pushEnabled;
+      config.channels.push = this.hasPushNotificationsEnabled;
       await this.saveNotificationConfig(config);
     } else {
-      await this.createAndSaveNotificationConfig(pushEnabled);
+      await this.createAndSaveNotificationConfig(this.hasPushNotificationsEnabled);
     }
 
     this.alertService.addInfo(
-      `Notifications ${pushEnabled ? "enabled" : "disabled"}.`,
+      `Notifications ${this.hasPushNotificationsEnabled ? "enabled" : "disabled"}.`,
     );
   }
 

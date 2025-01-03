@@ -16,12 +16,16 @@
 }
 
 .notification-panel-header {
-  padding: 0px 10px;
+  padding: 8px 10px;
+}
+
+.notification-list-body {
+  overflow-y: auto;
 }
 
 .notification-panel {
   width: 280px;
-  max-height: 95vh;
+  max-height: 90vh;
 }
 
 .no-notification-message {

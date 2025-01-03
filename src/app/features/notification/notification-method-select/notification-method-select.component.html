@@ -8,11 +8,10 @@
     [value]="selectedNotificationMethod"
     i18n-placeholder="Choose notification centers"
   >
-    <mat-option
-      *ngFor="let notificationMethod of notificationMethods"
-      [value]="notificationMethod"
-    >
-      {{ notificationMethod }}
-    </mat-option>
+    @for (notificationMethod of notificationMethods; track notificationMethod) {
+      <mat-option [value]="notificationMethod">
+        {{ notificationMethod }}
+      </mat-option>
+    }
   </mat-select>
 </mat-form-field>
