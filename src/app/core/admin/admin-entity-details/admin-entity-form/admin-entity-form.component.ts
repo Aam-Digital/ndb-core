@@ -66,7 +66,24 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
-  @Input() config: FormConfig;
+  @Input() set config(value: FormConfig) {
+    // assign default value and make a deep copy to avoid side effects
+    if (!value) {
+      value = { fieldGroups: [] };
+    }
+    value = JSON.parse(JSON.stringify(value));
+    if (!value.fieldGroups) {
+      value.fieldGroups = [];
+    }
+
+    this._config = value;
+  }
+
+  get config(): FormConfig {
+    return this._config;
+  }
+
+  private _config: FormConfig;
 
   @Output() configChange = new EventEmitter<FormConfig>();
 
@@ -120,9 +137,6 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   private getUsedFields(config: FormConfig): ColumnConfig[] {
-    if (!config.fieldGroups) {
-      config.fieldGroups = [];
-    }
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
   }
 
@@ -151,7 +165,7 @@ export class AdminEntityFormComponent implements OnChanges {
     ];
   }
 
-  private emitUpdatedConfig() {
+  protected emitUpdatedConfig() {
     this.configChange.emit(this.config);
   }
 
@@ -279,6 +293,7 @@ export class AdminEntityFormComponent implements OnChanges {
 
     this.emitUpdatedConfig();
   }
+
   /**
    * drop handler specifically for the "create new Text field" item
    * @param event
