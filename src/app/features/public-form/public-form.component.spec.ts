@@ -93,10 +93,7 @@ describe("PublicFormComponent", () => {
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.form.formGroup,
-      component.entity,
-    );
+    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
     expect(openSnackbarSpy).toHaveBeenCalled();
   }));
@@ -111,10 +108,7 @@ describe("PublicFormComponent", () => {
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.form.formGroup,
-      component.entity,
-    );
+    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
     expect(openSnackbarSpy).toHaveBeenCalledWith(
       jasmine.stringContaining("invalid"),
