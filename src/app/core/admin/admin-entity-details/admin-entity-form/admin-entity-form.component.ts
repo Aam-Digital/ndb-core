@@ -66,8 +66,7 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
-  @Input() config: FormConfig
-  private _config: FormConfig;
+  @Input() config: FormConfig;
 
   @Output() configChange = new EventEmitter<FormConfig>();
 
