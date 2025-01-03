@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { NotificationSettingComponent } from "./notification-setting.component";
+import { NotificationSettingsComponent } from "./notification-settings.component";
 import {
   EntityRegistry,
   entityRegistry,
@@ -8,20 +8,20 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("NotificationSettingComponent", () => {
-  let component: NotificationSettingComponent;
-  let fixture: ComponentFixture<NotificationSettingComponent>;
+  let component: NotificationSettingsComponent;
+  let fixture: ComponentFixture<NotificationSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        NotificationSettingComponent,
+        NotificationSettingsComponent,
         FontAwesomeTestingModule,
         BrowserAnimationsModule,
       ],
       providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(NotificationSettingComponent);
+    fixture = TestBed.createComponent(NotificationSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

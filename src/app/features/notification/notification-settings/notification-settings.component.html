@@ -47,7 +47,7 @@
             ></app-help-button>
           </div>
 
-          <div class="flex-row justify-content-center align-center full-width">
+          <div class="flex-row align-center full-width">
             <mat-form-field class="notification-rule-option">
               <mat-label i18n>Notification condition</mat-label>
               <input
@@ -70,9 +70,7 @@
               [selectedNotificationMethod]="[
                 getFormField(index, 'notificationMethod').value,
               ]"
-              label="Notification Method"
               (selectionChange)="updateNotificationCenter($event, index)"
-              i18n-label
             ></app-notification-method-select>
             <app-help-button
               text="Define a notification method to receive notifications"
@@ -173,7 +171,6 @@
               i18n-text
             ></app-help-button>
           </div>
-          <mat-slide-toggle [checked]="true" [disabled]="true" />
         </div>
         <div
           class="flex-row align-center justify-space-between browser-notification-list"

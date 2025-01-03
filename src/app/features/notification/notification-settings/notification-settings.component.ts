@@ -9,7 +9,13 @@ import {
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import { FormArray, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -17,7 +23,6 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { NotificationMethodSelectComponent } from "../notification-method-select/notification-method-select.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { FormControl, FormGroup } from "@angular/forms";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import {
   NotificationConfig,
@@ -26,8 +31,11 @@ import {
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { AlertService } from "app/core/alerts/alert.service";
 
+/**
+ * UI for current user to configure individual notification settings.
+ */
 @Component({
-  selector: "app-notification-setting",
+  selector: "app-notification-settings",
   standalone: true,
   imports: [
     MatSlideToggle,
@@ -44,10 +52,10 @@ import { AlertService } from "app/core/alerts/alert.service";
     NotificationMethodSelectComponent,
     ReactiveFormsModule,
   ],
-  templateUrl: "./notification-setting.component.html",
-  styleUrl: "./notification-setting.component.scss",
+  templateUrl: "./notification-settings.component.html",
+  styleUrl: "./notification-settings.component.scss",
 })
-export class NotificationSettingComponent implements OnInit {
+export class NotificationSettingsComponent implements OnInit {
   notificationSetting = new FormGroup({
     notificationRules: new FormArray([]),
   });

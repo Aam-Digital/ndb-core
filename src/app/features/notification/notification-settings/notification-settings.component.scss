@@ -1,5 +1,7 @@
 @use "variables/colors";
+@use "variables/sizes";
 @use "../../../../styles/variables/breakpoints";
+@use "@angular/material/core/style/elevation" as mat-elevation;
 
 .full-width {
   width: 100%;
@@ -10,19 +12,19 @@
 }
 
 .notification-types-container {
-  margin-top: 30px;
+  margin-top: sizes.$large;
 }
 
 .browser-notifications-container {
-  margin-top: 32px;
+  margin-top: sizes.$large;
 }
 
 .notification-setting-title {
-  margin-bottom: 10px;
+  margin-bottom: sizes.$x-small;
 }
 
 .panel-wrapper {
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  @include mat-elevation.elevation(2);
   border-radius: 10px;
   padding: 16px;
 }
@@ -35,10 +37,10 @@
 .notifications-options-container {
   @extend .panel-wrapper;
   background-color: colors.$background;
-  margin-top: 20px;
+  margin-top: sizes.$regular;
   gap: 40px;
 
-  @media screen and (min-width: breakpoints.$xl) {
+  @media screen and (min-width: breakpoints.$xxl) {
     flex-direction: row;
   }
 }
@@ -46,7 +48,7 @@
 .notification-options-wrapper {
   @extend .full-width;
 
-  @media screen and (min-width: breakpoints.$xl) {
+  @media screen and (min-width: breakpoints.$xxl) {
     flex-direction: row;
   }
 }
