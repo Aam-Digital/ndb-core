@@ -86,17 +86,13 @@
   background-color: aliceblue;
 }
 
-app-entity-type-select {
+.full-width-field {
   @extend .full-width;
   display: inline-block;
 
   ::ng-deep mat-form-field {
     @extend .full-width;
   }
-}
-
-app-notification-method-select {
-  @extend app-entity-type-select;
 }
 
 .notification-rule-option {
