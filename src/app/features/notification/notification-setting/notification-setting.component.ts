@@ -54,7 +54,7 @@ export class NotificationSettingComponent implements OnInit {
     notificationRules: new FormArray([]),
   });
   allNotificationRules: NotificationConfig = null;
-  hasPushNotificationsEnabled = false;
+  hasPushNotificationEnabled = false;
   notificationMethods = ["Push"];
   hasNotificationRuleEnabled = false;
   hasNotificationCenterPush = false;
@@ -73,7 +73,7 @@ export class NotificationSettingComponent implements OnInit {
   private async initializeNotificationSettings() {
     this.allNotificationRules = await this.loadNotificationConfig();
     if (this.allNotificationRules) {
-      this.hasPushNotificationsEnabled = this.allNotificationRules.channels.push;
+      this.hasPushNotificationEnabled = this.allNotificationRules.channels.push;
       this.populateNotificationRules(
         this.allNotificationRules.notificationRules,
       );
@@ -125,17 +125,19 @@ export class NotificationSettingComponent implements OnInit {
 
   async onEnableNotification(event: MatSlideToggleChange) {
     const config = await this.loadNotificationConfig();
-    this.hasPushNotificationsEnabled = event.checked;
+    this.hasPushNotificationEnabled = event.checked;
 
     if (config) {
-      config.channels.push = this.hasPushNotificationsEnabled;
+      config.channels.push = this.hasPushNotificationEnabled;
       await this.saveNotificationConfig(config);
     } else {
-      await this.createAndSaveNotificationConfig(this.hasPushNotificationsEnabled);
+      await this.createAndSaveNotificationConfig(
+        this.hasPushNotificationEnabled,
+      );
     }
 
     this.alertService.addInfo(
-      `Notifications ${this.hasPushNotificationsEnabled ? "enabled" : "disabled"}.`,
+      `Notifications ${this.hasPushNotificationEnabled ? "enabled" : "disabled"}.`,
     );
   }
 

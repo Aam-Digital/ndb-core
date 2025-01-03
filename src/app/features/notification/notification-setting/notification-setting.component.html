@@ -141,7 +141,7 @@
     <div class="browser-notifications-title">
       <h3 i18n class="no-margin flex-row align-center">
         <strong>Where you receive notifications</strong>
-        @if (hasPushNotificationsEnabled) {
+        @if (hasPushNotificationEnabled) {
           <div
             class="enabled-text"
             matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
@@ -195,7 +195,7 @@
           </div>
           <mat-slide-toggle
             (change)="onEnableNotification($event)"
-            [checked]="hasPushNotificationsEnabled"
+            [checked]="hasPushNotificationEnabled"
           />
         </div>
       </div>
