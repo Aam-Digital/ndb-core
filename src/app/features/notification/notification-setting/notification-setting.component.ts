@@ -25,6 +25,7 @@ import {
 } from "app/features/notification/model/notification-config";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { AlertService } from "app/core/alerts/alert.service";
+import { NotificationRuleConditionComponent } from "../notification-rule-condition/notification-rule-condition.component";
 
 @Component({
   selector: "app-notification-setting",
@@ -43,6 +44,7 @@ import { AlertService } from "app/core/alerts/alert.service";
     HelpButtonComponent,
     NotificationMethodSelectComponent,
     ReactiveFormsModule,
+    NotificationRuleConditionComponent,
   ],
   templateUrl: "./notification-setting.component.html",
   styleUrl: "./notification-setting.component.scss",
