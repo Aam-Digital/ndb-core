@@ -10,6 +10,7 @@ import { retryOnServerError } from "../../../utils/retry-on-server-error.rxjs-pi
 import { FormGroup } from "@angular/forms";
 import { Logging } from "../../../core/logging/logging.service";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { Skill } from "../skill";
 
 /**
  * Interaction with Aam Digital backend providing access to external profiles
@@ -131,7 +132,7 @@ export class SkillApiService {
       try {
         switch (transformation) {
           case "escoSkill":
-            value = await this.transformationToEscoSkills(value);
+            value = await this.transformationToEscoSkills(value, true);
         }
       } catch (e) {
         Logging.warn(
@@ -166,10 +167,12 @@ export class SkillApiService {
 
   /**
    * Transform the given value to a list of ESCO skill entities and return their IDs.
-   * @param value
+   * @param value The array of external skills to transform
+   * @param skipInvalid skip any single skill that fails to get loaded from ESCO and continue with the rest
    */
   private async transformationToEscoSkills(
     value: ExternalSkill[],
+    skipInvalid = false,
   ): Promise<string[] | undefined> {
     if (!Array.isArray(value)) {
       return undefined;
@@ -177,10 +180,24 @@ export class SkillApiService {
 
     const skills: Entity[] = [];
     for (const extSkill of value) {
-      const skill = await this.escoApi.loadOrCreateSkillEntity(
-        extSkill.escoUri,
-      );
-      skills.push(skill);
+      let skill: Skill;
+      try {
+        skill = await this.escoApi.loadOrCreateSkillEntity(extSkill.escoUri);
+        skills.push(skill);
+      } catch (e) {
+        if (skipInvalid) {
+          this.alertService.addWarning(
+            $localize`:transformationToEscoSkills error:Could not load ESCO data of a skill (${extSkill.escoUri}), skipping this skill for the import.`,
+          );
+          Logging.debug(
+            "SkillAPI: transformationToEscoSkills error loading skill",
+            skill,
+            e,
+          );
+        } else {
+          throw e;
+        }
+      }
     }
 
     return skills.map((s) => s.getId());
