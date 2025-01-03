@@ -19,8 +19,8 @@
             </mat-form-field>
 
             <mat-form-field floatLabel="always">
-              <mat-label i18n>
-                Label (short)
+              <mat-label>
+                <span i18n> Label (short)</span>
                 <fa-icon
                   icon="question-circle"
                   matTooltip="Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited."
@@ -35,8 +35,8 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label i18n>
-                Description
+              <mat-label>
+                <span i18n> Description</span>
                 <fa-icon
                   icon="question-circle"
                   matTooltip="The description provides additional explanation or context about this field. It is usually displayed as a help icon with tooltip."
@@ -53,8 +53,8 @@
 
           <div class="entity-form-cell">
             <mat-form-field>
-              <mat-label i18n>
-                Field ID (readonly)
+              <mat-label>
+                <span i18n> Field ID (readonly)</span>
                 <fa-icon
                   icon="question-circle"
                   matTooltip="The internal ID of the field is used at a technical level in the database. The ID cannot be changed after the field has been created."
@@ -94,8 +94,8 @@
 
             <!-- "additional" for enum datatype -->
             <mat-form-field *ngIf="formDataType.value === 'configurable-enum'">
-              <mat-label i18n>
-                Type Details (dropdown options set)
+              <mat-label>
+                <span i18n> Type Details (dropdown options set)</span>
                 <fa-icon
                   icon="question-circle"
                   matTooltip="Select an existing set of options to share between multiple fields or create a new, independent list of dropdown options."
@@ -122,8 +122,8 @@
 
             <!-- "additional" for entity ref datatypes -->
             <mat-form-field *ngIf="formDataType.value === 'entity'">
-              <mat-label i18n>
-                Type Details (target record type)
+              <mat-label>
+                <span i18n> Type Details (target record type)</span>
                 <fa-icon
                   icon="question-circle"
                   matTooltip="Select from which type of records the user can select and link to with this field."
