@@ -1,0 +1,1289 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >DatabaseIndexingService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/entity/database-indexing/database-indexing.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Manage database query index creation and use, working as a facade in front of the Database service.
+This allows to track pending indexing processes and also show them to users in the UI.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createIndex" >createIndex</a>
+                            </li>
+                            <li>
+                                <a href="#generateIndexOnProperty" >generateIndexOnProperty</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#queryIndexDocs" >queryIndexDocs</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#queryIndexDocsRange" >queryIndexDocsRange</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#queryIndexRaw" >queryIndexRaw</a>
+                            </li>
+                            <li>
+                                <a href="#queryIndexStats" >queryIndexStats</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Accessors</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#indicesRegistered" >indicesRegistered</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(db: <a href="../classes/Database.html" target="_self">Database</a>, entitySchemaService: <a href="../injectables/EntitySchemaService.html" target="_self">EntitySchemaService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:41</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>db</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Database.html" target="_self" >Database</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entitySchemaService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntitySchemaService.html" target="_self" >EntitySchemaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createIndex"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createIndex</b></span>
+                        <a href="#createIndex"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createIndex(designDoc: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="55"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:55</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Register a new database query to be created/updated and indexed.</p>
+<p>This also triggers updates to the observable <code>indicesRegistered</code>.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>designDoc</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The design document (see</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateIndexOnProperty"></a>
+                    <span class="name">
+                        <span ><b>generateIndexOnProperty</b></span>
+                        <a href="#generateIndexOnProperty"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>generateIndexOnProperty(indexId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, entity: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;E&gt;</a>, referenceProperty: REF, secondaryIndex?: SEC)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:99</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                                    <li>REF</li>
+                                    <li>SEC</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Generate and save a new database query index for the given entity type and property.</p>
+<p>This allows you to efficiently query documents of that entity type based on values of the reference property,
+e.g. query all Notes (entityType=Note) that are related to a certain user (referenceProperty=&quot;authors&quot;).</p>
+<p>Query this index using the given indexId like this:
+generateIndexOnProperty(&quot;myIndex&quot;, Note, &quot;category&quot;);
+queryIndexDocs(Note, &quot;myIndex/by_category&quot;)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>indexId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>id to query this index after creation (--&gt; {indexId}/by_{referenceProperty})</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>entity</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;E&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>entity type to limit the documents included in this index</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>referenceProperty</td>
+                                            <td>
+                                                        <code>REF</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>property key on the documents whose value is indexed as a query key</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>secondaryIndex</td>
+                                            <td>
+                                                        <code>SEC</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>(optional) additional property to emit as a secondary index to narrow queries further</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="queryIndexDocs"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>queryIndexDocs</b></span>
+                        <a href="#queryIndexDocs"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>queryIndexDocs(entityConstructor: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt;</a>, indexName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, options: <a href="../undefineds/QueryOptions.html" target="_self">QueryOptions | string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:150</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load data from the Database through the given, previously created index.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityConstructor</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>indexName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The name of the previously created index to be queried.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>options</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#QueryOptions" target="_self" >QueryOptions | string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{}</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>(Optional) additional query options object or a simple value used as the exact key to retrieve</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="queryIndexDocsRange"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>queryIndexDocsRange</b></span>
+                        <a href="#queryIndexDocsRange"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>queryIndexDocsRange(entityConstructor: <a href="../classes/Entity.html" target="_self">EntityConstructor&lt;T&gt;</a>, indexName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, startkey: string | any[], endkey?: string | any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="175"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:175</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>T</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load data from the Database through the given, previously created index for a key range.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityConstructor</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityConstructor&lt;T&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>indexName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The name of the previously created index to be queried.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>startkey</td>
+                                            <td>
+                                                        <code>string | any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>start id of range to query</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>endkey</td>
+                                            <td>
+                                                        <code>string | any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>end id of range to query (inclusive)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="queryIndexRaw"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>queryIndexRaw</b></span>
+                        <a href="#queryIndexRaw"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>queryIndexRaw(indexName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, options: <a href="../undefineds/QueryOptions.html" target="_self">QueryOptions</a>, doNotWaitForIndexCreation?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="212"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:212</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Run a query on the database.
+If the required index does not exist (yet) this blocks the request by default
+and only runs and returns once the index is available.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">   If no index exists this may result in an error (e.g. 404)</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>indexName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>key of the database index to be used</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>options</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#QueryOptions" target="_self" >QueryOptions</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>additional options for the request</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>doNotWaitForIndexCreation</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>(Optional) flag to <em>not</em> block the query if the index doesn&#39;t exist yet.
+If no index exists this may result in an error (e.g. 404)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="queryIndexStats"></a>
+                    <span class="name">
+                        <span ><b>queryIndexStats</b></span>
+                        <a href="#queryIndexStats"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>queryIndexStats(indexName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, options: <a href="../undefineds/QueryOptions.html" target="_self">QueryOptions</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="192"
+                                    class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:192</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>indexName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>options</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#QueryOptions" target="_self" >QueryOptions</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{
+      reduce: true,
+      group: true,
+    }</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-accessors">
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="indicesRegistered"></a>
+                        <span class="name"><b>indicesRegistered</b><a href="#indicesRegistered"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>indicesRegistered()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="39" class="link-to-prism">src/app/core/entity/database-indexing/database-indexing.service.ts:39</a></div>
+                                </td>
+                            </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-description"><p>All currently registered indices with their status</p>
+</div>
+
+                                <div class="io-description">
+                                    <b>Returns : </b>        <code><a href="../interfaces/BackgroundProcessState.html" target="_self" >Observable&lt;BackgroundProcessState[]&gt;</a></code>
+
+                                </div>
+                        </td>
+                    </tr>
+
+            </tbody>
+        </table>
+</section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { Database, QueryOptions } from &quot;../../database/database&quot;;
+import { BehaviorSubject, firstValueFrom, Observable } from &quot;rxjs&quot;;
+import { BackgroundProcessState } from &quot;../../ui/sync-status/background-process-state.interface&quot;;
+import { Entity, EntityConstructor } from &quot;../model/entity&quot;;
+import { EntitySchemaService } from &quot;../schema/entity-schema.service&quot;;
+import { first } from &quot;rxjs/operators&quot;;
+
+/**
+ * Manage database query index creation and use, working as a facade in front of the Database service.
+ * This allows to track pending indexing processes and also show them to users in the UI.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class DatabaseIndexingService {
+  private _indicesRegistered &#x3D; new BehaviorSubject&lt;BackgroundProcessState[]&gt;(
+    [],
+  );
+
+  /** All currently registered indices with their status */
+  get indicesRegistered(): Observable&lt;BackgroundProcessState[]&gt; {
+    return this._indicesRegistered.asObservable();
+  }
+
+  constructor(
+    private db: Database,
+    private entitySchemaService: EntitySchemaService,
+  ) {}
+
+  /**
+   * Register a new database query to be created/updated and indexed.
+   *
+   * This also triggers updates to the observable &#x60;indicesRegistered&#x60;.
+   *
+   * @param designDoc The design document (see @link{Database}) describing the query/index.
+   */
+  async createIndex(designDoc: any): Promise&lt;void&gt; {
+    const indexDetails &#x3D; designDoc._id.replace(/_design\//, &quot;&quot;);
+    const indexState: BackgroundProcessState &#x3D; {
+      title: $localize&#x60;Preparing data (Indexing)&#x60;,
+      details: indexDetails,
+      pending: true,
+    };
+
+    const indexCreationPromise &#x3D; this.db.saveDatabaseIndex(designDoc);
+    this._indicesRegistered.next([
+      ...this._indicesRegistered.value.filter(
+        (state) &#x3D;&gt; state.details !&#x3D;&#x3D; indexDetails,
+      ),
+      indexState,
+    ]);
+
+    try {
+      await indexCreationPromise;
+    } catch (err) {
+      indexState.pending &#x3D; false;
+      indexState.error &#x3D; err;
+      this._indicesRegistered.next(this._indicesRegistered.value);
+      throw err;
+    }
+
+    indexState.pending &#x3D; false;
+    this._indicesRegistered.next(this._indicesRegistered.value);
+  }
+
+  /**
+   * Generate and save a new database query index for the given entity type and property.
+   *
+   * This allows you to efficiently query documents of that entity type based on values of the reference property,
+   * e.g. query all Notes (entityType&#x3D;Note) that are related to a certain user (referenceProperty&#x3D;&quot;authors&quot;).
+   *
+   * Query this index using the given indexId like this:
+   * generateIndexOnProperty(&quot;myIndex&quot;, Note, &quot;category&quot;);
+   * queryIndexDocs(Note, &quot;myIndex/by_category&quot;)
+   *
+   * @param indexId id to query this index after creation (--&gt; {indexId}/by_{referenceProperty})
+   * @param entity entity type to limit the documents included in this index
+   * @param referenceProperty property key on the documents whose value is indexed as a query key
+   * @param secondaryIndex (optional) additional property to emit as a secondary index to narrow queries further
+   */
+  generateIndexOnProperty&lt;
+    E extends Entity,
+    REF extends keyof E &amp; string,
+    SEC extends keyof E &amp; string,
+  &gt;(
+    indexId: string,
+    entity: EntityConstructor&lt;E&gt;,
+    referenceProperty: REF,
+    secondaryIndex?: SEC,
+  ): Promise&lt;void&gt; {
+    const emitParamFormatter &#x3D; (primaryParam) &#x3D;&gt; {
+      if (secondaryIndex) {
+        return &#x60;emit([${primaryParam}, doc.${secondaryIndex}]);&#x60;;
+      } else {
+        return &#x60;emit(${primaryParam});&#x60;;
+      }
+    };
+
+    const simpleEmit &#x3D; emitParamFormatter(&quot;doc.&quot; + referenceProperty);
+    const arrayEmit &#x3D; &#x60;
+      if (!Array.isArray(doc.${referenceProperty})) return;
+      doc.${referenceProperty}.forEach((relatedEntity) &#x3D;&gt; {
+        ${emitParamFormatter(&quot;relatedEntity&quot;)}
+      });&#x60;;
+
+    const designDoc &#x3D; {
+      _id: &quot;_design/&quot; + indexId,
+      views: {
+        [&#x60;by_${referenceProperty}&#x60;]: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (!doc._id.startsWith(&quot;${entity.ENTITY_TYPE}&quot;)) return;
+
+            ${
+              entity.schema.get(referenceProperty).isArray
+                ? arrayEmit
+                : simpleEmit
+            }
+          }&#x60;,
+        },
+      },
+    };
+
+    return this.createIndex(designDoc);
+  }
+
+  /**
+   * Load data from the Database through the given, previously created index.
+   * @param entityConstructor
+   * @param indexName The name of the previously created index to be queried.
+   * @param options (Optional) additional query options object or a simple value used as the exact key to retrieve
+   */
+  async queryIndexDocs&lt;T extends Entity&gt;(
+    entityConstructor: EntityConstructor&lt;T&gt;,
+    indexName: string,
+    options: QueryOptions | string &#x3D; {},
+  ): Promise&lt;T[]&gt; {
+    if (typeof options &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      options &#x3D; { key: options };
+    }
+    options.include_docs &#x3D; true;
+
+    const rawResults &#x3D; await this.queryIndexRaw(indexName, options);
+    return rawResults.rows.map((loadedRecord) &#x3D;&gt; {
+      const entity &#x3D; new entityConstructor(&quot;&quot;);
+      this.entitySchemaService.loadDataIntoEntity(entity, loadedRecord.doc);
+      return entity;
+    });
+  }
+
+  /**
+   * Load data from the Database through the given, previously created index for a key range.
+   * @param entityConstructor
+   * @param indexName The name of the previously created index to be queried.
+   * @param startkey start id of range to query
+   * @param endkey end id of range to query (inclusive)
+   */
+  async queryIndexDocsRange&lt;T extends Entity&gt;(
+    entityConstructor: EntityConstructor&lt;T&gt;,
+    indexName: string,
+    startkey: string | any[],
+    endkey?: string | any[],
+  ): Promise&lt;T[]&gt; {
+    if (Array.isArray(endkey)) {
+      endkey &#x3D; [...endkey, {}];
+    } else {
+      endkey &#x3D; endkey + &quot;\ufff0&quot;;
+    }
+    return this.queryIndexDocs(entityConstructor, indexName, {
+      startkey: startkey,
+      endkey: endkey,
+    });
+  }
+
+  queryIndexStats(
+    indexName: string,
+    options: QueryOptions &#x3D; {
+      reduce: true,
+      group: true,
+    },
+  ): Promise&lt;any&gt; {
+    return this.queryIndexRaw(indexName, options);
+  }
+
+  /**
+   * Run a query on the database.
+   * If the required index does not exist (yet) this blocks the request by default
+   * and only runs and returns once the index is available.
+   *
+   * @param indexName key of the database index to be used
+   * @param options additional options for the request
+   * @param doNotWaitForIndexCreation (Optional) flag to *not* block the query if the index doesn&#x27;t exist yet.
+   *        If no index exists this may result in an error (e.g. 404)
+   */
+  async queryIndexRaw(
+    indexName: string,
+    options: QueryOptions,
+    doNotWaitForIndexCreation?: boolean,
+  ): Promise&lt;any&gt; {
+    if (!doNotWaitForIndexCreation) {
+      await this.waitForIndexAvailable(indexName);
+    }
+
+    return this.db.query(indexName, options);
+  }
+
+  /**
+   * If the index is not created yet, wait until it is ready to avoid 404 errors.
+   * Returns immediately if index is already created.
+   * @param indexName
+   * @private
+   */
+  private async waitForIndexAvailable(indexName: string): Promise&lt;void&gt; {
+    function relevantIndexIsReady(processes, requiredIndexName) {
+      const relevantProcess &#x3D; processes.find(
+        (process) &#x3D;&gt;
+          process.details &#x3D;&#x3D;&#x3D; requiredIndexName ||
+          requiredIndexName.startsWith(process.details + &quot;/&quot;),
+      );
+      return relevantProcess &amp;&amp; !relevantProcess.pending;
+    }
+
+    if (relevantIndexIsReady(this._indicesRegistered.value, indexName)) {
+      return;
+    }
+
+    await firstValueFrom(
+      this._indicesRegistered.pipe(
+        first((processes) &#x3D;&gt; relevantIndexIsReady(processes, indexName)),
+      ),
+    );
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'DatabaseIndexingService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

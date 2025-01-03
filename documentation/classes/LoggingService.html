@@ -1,0 +1,1380 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >LoggingService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/logging/logging.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
+that allows developers to monitor and analyse problems.</p>
+<p>Logging to the remote monitoring server is set only for warnings and errors.</p>
+<p>To allow remote logging, call Sentry.init during bootstrap in your AppModule or somewhere early on during startup.</p>
+<p>Import the constant <code>Logging</code> to use this from anywhere (without Angular DI).</p>
+
+            </p>
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#addContext" >addContext</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#debug" >debug</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#error" >error</a>
+                            </li>
+                            <li>
+                                <a href="#getAngularTracingProviders" >getAngularTracingProviders</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#info" >info</a>
+                            </li>
+                            <li>
+                                <a href="#initAngularLogging" >initAngularLogging</a>
+                            </li>
+                            <li>
+                                <a href="#initRemoteLogging" >initRemoteLogging</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#log" >log</a>
+                            </li>
+                            <li>
+                                <a href="#setLoggingContextUser" >setLoggingContextUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#warn" >warn</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addContext"></a>
+                    <span class="name">
+                        <span ><b>addContext</b></span>
+                        <a href="#addContext"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>addContext(key: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, value: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, asTag: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:99</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Update a piece of context information that will be attached to all log messages for easier debugging,
+especially in remote logging.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>key</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>Identifier of the key-value pair</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>Value of the key-value pair</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>asTag</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>false</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>If this should be added as indexed tag rather than simple context (see <a href="https://docs.sentry.io/platforms/javascript/enriching-events/tags/">https://docs.sentry.io/platforms/javascript/enriching-events/tags/</a>)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="debug"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>debug</b></span>
+                        <a href="#debug"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>debug(message: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, ...context: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="124"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:124</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Log the message with &quot;debug&quot; level - for very detailed, non-essential information.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>message</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>context</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>Additional context for debugging</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="error"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>error</b></span>
+                        <a href="#error"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>error(message: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, ...context: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:150</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Log the message with &quot;error&quot; level - for unexpected critical events that cannot be handled and will affect functions.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>message</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>context</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAngularTracingProviders"></a>
+                    <span class="name">
+                        <span ><b>getAngularTracingProviders</b></span>
+                        <a href="#getAngularTracingProviders"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getAngularTracingProviders()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:66</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get the Angular providers to set up additional logging and tracing,
+that should be added to the providers array of the AppModule.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Provider[]</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="info"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>info</b></span>
+                        <a href="#info"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>info(message: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="132"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:132</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Log the message with &quot;info&quot; level - for relevant information that occurs during regular functioning of the app.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>message</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initAngularLogging"></a>
+                    <span class="name">
+                        <span ><b>initAngularLogging</b></span>
+                        <a href="#initAngularLogging"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initAngularLogging(loginState: <a href="../injectables/LoginStateSubject.html" target="_self">LoginStateSubject</a>, sessionInfo: <a href="../injectables/SessionSubject.html" target="_self">SessionSubject</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="47"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:47</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Register any additional logging context integrations that need Angular services.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>loginState</td>
+                                            <td>
+                                                            <code><a href="../injectables/LoginStateSubject.html" target="_self" >LoginStateSubject</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>sessionInfo</td>
+                                            <td>
+                                                            <code><a href="../injectables/SessionSubject.html" target="_self" >SessionSubject</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>() &#x3D;&gt; any</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="initRemoteLogging"></a>
+                    <span class="name">
+                        <span ><b>initRemoteLogging</b></span>
+                        <a href="#initRemoteLogging"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>initRemoteLogging(options: <a href="../undefineds/Browser.html" target="_self">Sentry.BrowserOptions</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="28"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:28</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Initialize the remote logging module with the given options.
+If set up this will be used to send errors to a remote endpoint for analysis.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>options</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#Browser" target="_self" >Sentry.BrowserOptions</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="log"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>log</b></span>
+                        <a href="#log"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>log(message: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, logLevel: <a href="../undefineds/LogLevel.html" target="_self">LogLevel</a>, ...context: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="160"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:160</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Generic logging of a message.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>message</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>Message to be logged</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>logLevel</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/enumerations.html#LogLevel" target="_self" >LogLevel</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>LogLevel.INFO</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Optional log level - default is &quot;info&quot;</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>context</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>Additional context for debugging</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setLoggingContextUser"></a>
+                    <span class="name">
+                        <span ><b>setLoggingContextUser</b></span>
+                        <a href="#setLoggingContextUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>setLoggingContextUser(username: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="115"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:115</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Update the username to be attached to all log messages for easier debugging,
+especially in remote logging.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>username</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="warn"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>warn</b></span>
+                        <a href="#warn"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>warn(message: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, ...context: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/app/core/logging/logging.service.ts:141</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Log the message with &quot;warning&quot; level - for unexpected events that the app can still handle gracefully.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>message</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>context</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { LogLevel } from &quot;./log-level&quot;;
+import * as Sentry from &quot;@sentry/angular&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import { APP_INITIALIZER, ErrorHandler, Provider } from &quot;@angular/core&quot;;
+import { Router } from &quot;@angular/router&quot;;
+import { LoginState } from &quot;../session/session-states/login-state.enum&quot;;
+import { LoginStateSubject } from &quot;../session/session-type&quot;;
+import { SessionSubject } from &quot;../session/auth/session-info&quot;;
+
+/* eslint-disable no-console */
+
+/**
+ * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
+ * that allows developers to monitor and analyse problems.
+ *
+ * Logging to the remote monitoring server is set only for warnings and errors.
+ *
+ * To allow remote logging, call Sentry.init during bootstrap in your AppModule or somewhere early on during startup.
+ *
+ * Import the constant &#x60;Logging&#x60; to use this from anywhere (without Angular DI).
+ */
+export class LoggingService {
+  /**
+   * Initialize the remote logging module with the given options.
+   * If set up this will be used to send errors to a remote endpoint for analysis.
+   * @param options
+   */
+  initRemoteLogging(options: Sentry.BrowserOptions) {
+    if (!options.dsn) {
+      // abort if no target url is set
+      return;
+    }
+
+    const defaultOptions &#x3D; {
+      release: &quot;ndb-core@&quot; + environment.appVersion,
+      transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
+      beforeBreadcrumb: enhanceSentryBreadcrumb,
+    };
+    Sentry.init(Object.assign(defaultOptions, options));
+  }
+
+  /**
+   * Register any additional logging context integrations that need Angular services.
+   * @param loginState
+   * @param sessionInfo
+   */
+  initAngularLogging(
+    loginState: LoginStateSubject,
+    sessionInfo: SessionSubject,
+  ) {
+    return () &#x3D;&gt;
+      loginState.subscribe((newState) &#x3D;&gt; {
+        if (newState &#x3D;&#x3D;&#x3D; LoginState.LOGGED_IN) {
+          const username &#x3D; sessionInfo.value?.id;
+          Logging.setLoggingContextUser(username);
+        } else {
+          Logging.setLoggingContextUser(undefined);
+        }
+      });
+  }
+
+  /**
+   * Get the Angular providers to set up additional logging and tracing,
+   * that should be added to the providers array of the AppModule.
+   */
+  getAngularTracingProviders(): Provider[] {
+    return [
+      /* Sentry setup */
+      {
+        provide: ErrorHandler,
+        useValue: Sentry.createErrorHandler(),
+      },
+      {
+        provide: Sentry.TraceService,
+        deps: [Router],
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: () &#x3D;&gt; () &#x3D;&gt; {},
+        deps: [Sentry.TraceService],
+        multi: true,
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: Logging.initAngularLogging,
+        deps: [LoginStateSubject, SessionSubject],
+        multi: true,
+      },
+    ];
+  }
+
+  /**
+   * Update a piece of context information that will be attached to all log messages for easier debugging,
+   * especially in remote logging.
+   * @param key Identifier of the key-value pair
+   * @param value Value of the key-value pair
+   * @param asTag If this should be added as indexed tag rather than simple context (see https://docs.sentry.io/platforms/javascript/enriching-events/tags/)
+   */
+  addContext(key: string, value: any, asTag: boolean &#x3D; false) {
+    if (asTag) {
+      Sentry.setTag(key, value);
+    } else {
+      if (typeof value !&#x3D;&#x3D; &quot;object&quot;) {
+        value &#x3D; { value: value };
+      }
+      Sentry.getCurrentScope().setContext(key, value);
+    }
+  }
+
+  /**
+   * Update the username to be attached to all log messages for easier debugging,
+   * especially in remote logging.
+   * @param username
+   */
+  setLoggingContextUser(username: string) {
+    Sentry.setUser({ username: username });
+  }
+
+  /**
+   * Log the message with &quot;debug&quot; level - for very detailed, non-essential information.
+   * @param message
+   * @param context Additional context for debugging
+   */
+  public debug(message: any, ...context: any[]) {
+    this.log(message, LogLevel.DEBUG, ...context);
+  }
+
+  /**
+   * Log the message with &quot;info&quot; level - for relevant information that occurs during regular functioning of the app.
+   * @param message
+   */
+  public info(message: any) {
+    this.log(message, LogLevel.INFO);
+  }
+
+  /**
+   * Log the message with &quot;warning&quot; level - for unexpected events that the app can still handle gracefully.
+   * @param message
+   * @param context
+   */
+  public warn(message: any, ...context: any[]) {
+    this.log(message, LogLevel.WARN, ...context);
+  }
+
+  /**
+   * Log the message with &quot;error&quot; level - for unexpected critical events that cannot be handled and will affect functions.
+   * @param message
+   * @param context
+   */
+  public error(message: any, ...context: any[]) {
+    this.log(message, LogLevel.ERROR, ...context);
+  }
+
+  /**
+   * Generic logging of a message.
+   * @param message Message to be logged
+   * @param logLevel Optional log level - default is &quot;info&quot;
+   * @param context Additional context for debugging
+   */
+  public log(
+    message: any,
+    logLevel: LogLevel &#x3D; LogLevel.INFO,
+    ...context: any[]
+  ) {
+    this.logToConsole(message, logLevel, ...context);
+
+    if (logLevel !&#x3D;&#x3D; LogLevel.DEBUG &amp;&amp; logLevel !&#x3D;&#x3D; LogLevel.INFO) {
+      this.logToRemoteMonitoring(message, logLevel);
+    }
+  }
+
+  private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
+    switch (+logLevel) {
+      case LogLevel.DEBUG:
+        console.debug(message, ...context);
+        break;
+      case LogLevel.INFO:
+        console.info(message, ...context);
+        break;
+      case LogLevel.WARN:
+        console.warn(message, ...context);
+        break;
+      case LogLevel.ERROR:
+        console.error(message, ...context);
+        break;
+      default:
+        console.log(message, ...context);
+        break;
+    }
+  }
+
+  private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
+    if (logLevel &#x3D;&#x3D;&#x3D; LogLevel.ERROR) {
+      if (message instanceof Error) {
+        Sentry.captureException(message);
+      } else {
+        Sentry.captureException(
+          new Error(message?.message ?? message?.error ?? message),
+        );
+      }
+    } else {
+      Sentry.captureMessage(message, this.translateLogLevel(logLevel));
+    }
+  }
+
+  private translateLogLevel(logLevel: LogLevel): Sentry.SeverityLevel {
+    switch (+logLevel) {
+      case LogLevel.DEBUG:
+        return &quot;debug&quot;;
+      case LogLevel.INFO:
+        return &quot;info&quot;;
+      case LogLevel.WARN:
+        return &quot;warning&quot;;
+      case LogLevel.ERROR:
+        return &quot;error&quot;;
+      default:
+        return &quot;info&quot;;
+    }
+  }
+}
+
+/**
+ * Add more human-readable descriptions to Sentry breadcrumbs for debugging.
+ *
+ * see https://docs.sentry.io/platforms/javascript/enriching-events/breadcrumbs/
+ */
+function enhanceSentryBreadcrumb(
+  breadcrumb: Sentry.Breadcrumb,
+  hint: SentryBreadcrumbHint,
+) {
+  if (breadcrumb.category &#x3D;&#x3D;&#x3D; &quot;ui.click&quot;) {
+    const event &#x3D; hint.event;
+    const elementText &#x3D; event.target?.[&quot;innerText&quot;] ?? &quot;&quot;;
+    breadcrumb.message &#x3D; elementText + &quot; | &quot; + breadcrumb.message;
+  }
+  return breadcrumb;
+}
+
+/**
+ * https://docs.sentry.io/platforms/javascript/configuration/filtering/#hints-for-breadcrumbs
+ */
+interface SentryBreadcrumbHint {
+  /**
+   * For breadcrumbs created from browser events, the Sentry SDK often supplies the event to the breadcrumb as a hint.
+   * This can be used to extract data from the target DOM element into a breadcrumb, for example.
+   */
+  event?: PointerEvent;
+
+  input?: string[];
+
+  /**
+   * e.g. console output level (warn / log / ...)
+   */
+  level: string;
+
+  response?: Response;
+  request?: any;
+  xhr?: XMLHttpRequest;
+}
+
+export const Logging &#x3D; new LoggingService();
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'LoggingService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
