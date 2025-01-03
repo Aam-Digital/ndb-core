@@ -1,0 +1,17 @@
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+  <mat-select
+    (selectionChange)="onSelectionChange($event)"
+    placeholder="Choose notification channels"
+    i18n-placeholder="Notification Method Select placeholder"
+    [disabled]="disabled"
+    multiple
+    [value]="selectedNotificationMethod"
+  >
+    @for (notificationMethod of notificationMethods; track notificationMethod) {
+      <mat-option [value]="notificationMethod.key">
+        {{ notificationMethod.label }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>
