@@ -38,7 +38,7 @@
               label="Select an entity type"
               [formControl]="getFormField(index, 'entityType')"
               (selectedEntity)="
-                updateNotificationSettingField(index, 'entityType')
+                updateNotificationEntityField(index, 'entityType')
               "
             ></app-entity-type-select>
             <app-help-button

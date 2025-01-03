@@ -71,16 +71,19 @@ export class NotificationSettingComponent implements OnInit {
   private async initializeNotificationSettings() {
     this.allNotificationRules = await this.loadNotificationConfig();
     if (this.allNotificationRules) {
-      this.hasPushNotificationEnabled = this.allNotificationRules.channels.push;
       this.populateNotificationRules(
         this.allNotificationRules.notificationRules,
       );
     }
   }
 
-  private populateNotificationRules(rules: NotificationRule[] = []): void {
-    rules.forEach((rule) => {
-      const newNotificationRule = this.createNotificationRuleFormGroup(rule);
+  private populateNotificationRules(
+    notificationRules: NotificationRule[] = [],
+  ) {
+    notificationRules.forEach((notificationRule) => {
+      this.hasPushNotificationEnabled = notificationRule.channels.push;
+      const newNotificationRule =
+        this.createNotificationRuleFormGroup(notificationRule);
       this.notificationRules.push(newNotificationRule);
     });
   }
@@ -107,7 +110,7 @@ export class NotificationSettingComponent implements OnInit {
   /**
    * Get the logged in user id
    */
-  private get userId(): string | undefined {
+  private get userId() {
     return this.sessionInfo.value?.id;
   }
 
@@ -120,12 +123,12 @@ export class NotificationSettingComponent implements OnInit {
   }
 
   async onEnableNotification(event: MatSlideToggleChange) {
-    const config = await this.loadNotificationConfig();
+    const notificationConfig = await this.loadNotificationConfig();
     this.hasPushNotificationEnabled = event.checked;
 
-    if (config) {
-      config.channels.push = this.hasPushNotificationEnabled;
-      await this.saveNotificationConfig(config);
+    if (notificationConfig) {
+      notificationConfig.channels.push = this.hasPushNotificationEnabled;
+      await this.saveNotificationConfig(notificationConfig);
     } else {
       await this.createAndSaveNotificationConfig(
         this.hasPushNotificationEnabled,
@@ -150,20 +153,12 @@ export class NotificationSettingComponent implements OnInit {
   }
 
   private async removeNotificationRule(index: number) {
-    const config = await this.loadNotificationConfig();
-    if (config) {
-      config.notificationRules.splice(index, 1);
-      await this.saveNotificationConfig(config);
+    const notificationConfig = await this.loadNotificationConfig();
+    if (notificationConfig) {
+      notificationConfig.notificationRules.splice(index, 1);
+      await this.saveNotificationConfig(notificationConfig);
       this.notificationRules.removeAt(index);
       this.alertService.addInfo(`Notification rule deleted successfully.`);
-    }
-  }
-
-  private async saveNotificationConfig(config: NotificationConfig) {
-    try {
-      await this.entityMapper.save(config);
-    } catch (error) {
-      throw error;
     }
   }
 
@@ -192,19 +187,21 @@ export class NotificationSettingComponent implements OnInit {
     Logging.log("Notification settings test successful.");
   }
 
-  async updateNotificationSettingField(index: number, fieldName: string) {
+  async updateNotificationEntityField(index: number, fieldName: string) {
     const userNotificationConfig = await this.loadNotificationConfig();
     const selectedEntity = this.notificationRules
       .at(index)
       .get(fieldName).value;
 
-    userNotificationConfig
-      ? await this.updateExistingNotificationConfig(
-          userNotificationConfig,
-          selectedEntity,
-          index,
-        )
-      : await this.createAndSaveNewNotificationConfig(selectedEntity);
+    if (userNotificationConfig) {
+      await this.updateExistingNotificationConfig(
+        userNotificationConfig,
+        selectedEntity,
+        index,
+      );
+    } else {
+      await this.createAndSaveNewNotificationConfig(selectedEntity);
+    }
 
     this.alertService.addInfo($localize`Notification Settings updated`);
   }
@@ -244,7 +241,7 @@ export class NotificationSettingComponent implements OnInit {
 
     if (userNotificationConfig) {
       userNotificationConfig.notificationRules = notificationRules;
-      await this.entityMapper.save(userNotificationConfig);
+      await this.saveNotificationConfig(userNotificationConfig);
     } else {
       await this.createAndSaveNotificationConfigWithRule(update.push || false);
     }
@@ -256,15 +253,19 @@ export class NotificationSettingComponent implements OnInit {
       this.createNotificationType(""),
     ];
     newUserNotificationConfig.channels = { push };
-    await this.entityMapper.save(newUserNotificationConfig);
+    await this.saveNotificationConfig(newUserNotificationConfig);
   }
 
-  private createNotificationRuleFormGroup(rule?: NotificationRule): FormGroup {
+  private createNotificationRuleFormGroup(
+    notificationRule?: NotificationRule,
+  ): FormGroup {
     return new FormGroup({
-      entityType: new FormControl(rule?.entityType || ""),
+      entityType: new FormControl(notificationRule?.entityType || ""),
       notificationRuleCondition: new FormControl(""),
-      notificationMethod: new FormControl(rule?.channels.push ? "Push" : ""),
-      enabled: new FormControl(rule?.enabled || false),
+      notificationMethod: new FormControl(
+        notificationRule?.channels.push ? "Push" : "",
+      ),
+      enabled: new FormControl(notificationRule?.enabled || false),
     });
   }
 
@@ -290,16 +291,17 @@ export class NotificationSettingComponent implements OnInit {
     selectedEntity: any,
     index: number,
   ) {
-    const notificationRules = userNotificationConfig.notificationRules || [];
+    const updatedNotificationRule =
+      userNotificationConfig.notificationRules || [];
 
-    if (notificationRules[index]) {
-      notificationRules[index].entityType = selectedEntity;
+    if (updatedNotificationRule[index]) {
+      updatedNotificationRule[index].entityType = selectedEntity;
     } else {
-      notificationRules.push(this.createNotificationType(selectedEntity));
+      updatedNotificationRule.push(this.createNotificationType(selectedEntity));
     }
 
-    userNotificationConfig.notificationRules = notificationRules;
-    await this.entityMapper.save(userNotificationConfig);
+    userNotificationConfig.notificationRules = updatedNotificationRule;
+    await this.saveNotificationConfig(userNotificationConfig);
   }
 
   private async createAndSaveNewNotificationConfig(selectedEntity: any) {
@@ -309,6 +311,14 @@ export class NotificationSettingComponent implements OnInit {
       this.createNotificationType(selectedEntity),
     ];
 
-    await this.entityMapper.save(newUserNotificationConfig);
+    await this.saveNotificationConfig(newUserNotificationConfig);
+  }
+
+  private async saveNotificationConfig(notificationConfig: NotificationConfig) {
+    try {
+      await this.entityMapper.save(notificationConfig);
+    } catch (error) {
+      return null;
+    }
   }
 }
