@@ -25,7 +25,6 @@ import {
 } from "app/features/notification/model/notification-config";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { AlertService } from "app/core/alerts/alert.service";
-import { NotificationRuleConditionComponent } from "app/features/notification/notification-rule-condition/notification-rule-condition.component";
 
 @Component({
   selector: "app-notification-setting",
@@ -44,7 +43,6 @@ import { NotificationRuleConditionComponent } from "app/features/notification/no
     HelpButtonComponent,
     NotificationMethodSelectComponent,
     ReactiveFormsModule,
-    NotificationRuleConditionComponent,
   ],
   templateUrl: "./notification-setting.component.html",
   styleUrl: "./notification-setting.component.scss",
@@ -77,8 +75,6 @@ export class NotificationSettingComponent implements OnInit {
       this.populateNotificationRules(
         this.allNotificationRules.notificationRules,
       );
-    } else {
-      this.addNewNotificationRule();
     }
   }
 
