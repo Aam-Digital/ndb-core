@@ -37,6 +37,9 @@
               <mat-label i18n>Select an entity type</mat-label>
               <app-entity-type-select
                 [formControl]="getFormField(index, 'entityType')"
+                (ngModelChange)="
+                  updateNotificationEntityField(index, 'entityType')
+                "
               ></app-entity-type-select>
             </mat-form-field>
             <app-help-button
