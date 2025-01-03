@@ -86,15 +86,7 @@ export class Entity {
   /**
    * human-readable name/label of the entity in the UI
    */
-  static get label(): string {
-    return this._label ?? this.ENTITY_TYPE;
-  }
-
-  static set label(value: string) {
-    this._label = value;
-  }
-
-  private static _label: string;
+  static label: string;
 
   /**
    * human-readable label for uses of plural of the entity in the UI

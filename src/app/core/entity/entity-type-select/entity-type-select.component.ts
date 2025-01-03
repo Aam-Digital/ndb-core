@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { EntityConstructor } from "../model/entity";
@@ -21,6 +21,12 @@ export class EntityTypeSelectComponent implements OnInit {
   @Input() allowMultiSelect = false;
   @Input() label: string;
 
+  /**
+   * whether to include entity types without a human-readable label
+   * (usually only used internally for technical purposes)
+   */
+  @Input() showInternalTypes: boolean = false;
+
   entityTypes: EntityConstructor[];
   optionToLabel = (option: EntityConstructor) => option.label;
   optionToId = (option: EntityConstructor) => option.ENTITY_TYPE;
@@ -30,6 +36,7 @@ export class EntityTypeSelectComponent implements OnInit {
   ngOnInit() {
     this.entityTypes = this.entityRegistry
       .getEntityTypes(true)
+      .filter(({ value }) => this.showInternalTypes || !!value.label)
       .map(({ value }) => value);
   }
 }

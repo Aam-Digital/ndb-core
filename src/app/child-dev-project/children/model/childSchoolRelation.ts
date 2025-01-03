@@ -10,6 +10,8 @@ import { TimePeriod } from "../../../core/entity-details/related-time-period-ent
  */
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends TimePeriod {
+  static override label = "School Enrollment";
+  static override labelPlural = "School Enrollments";
   static override hasPII = true;
 
   @DatabaseField({
