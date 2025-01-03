@@ -120,9 +120,11 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   ): PublicFormConfig {
     if (formConfig.columns) {
       formConfig.columns = formConfig.columns.map(
-        (column: FieldGroup | string[]) => ({
-          fields: Array.isArray(column) ? column : column.fields || [],
-        }),
+        (column: FieldGroup | string[]) => {
+          return Array.isArray(column)
+            ? { fields: column, header: null }
+            : { fields: column.fields || [], header: column?.header || null };
+        },
       );
     }
 
