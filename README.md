@@ -54,6 +54,13 @@ https://github.com/Aam-Digital/aam-services/tree/main/docs/developer
 Our detailed [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 provides tutorials, guides, concepts and an API reference.
 
+## Translations (internationalization; i18n)
+
+Aam Digital is available in multiple languages.
+We translate the terms using POEditor: [Join the translation team](https://poeditor.com/join/project/CGn4IA7Ilz)
+
+To commit latest translations to the codebase, trigger the manual GitHub Action in the repository.
+
 ## Code Style
 
 We use _prettier_ to enforce a consistent formatting of code to make the project easier to read.
