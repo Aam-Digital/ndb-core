@@ -8,7 +8,6 @@ import { EventAttendanceMap } from "../../child-dev-project/attendance/model/eve
 import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EntityConfig } from "../entity/entity-config";
-import { ExternalProfileLinkConfig } from "../../features/skill/external-profile-link-config";
 
 // prettier-ignore
 export const defaultJsonConfig = {
