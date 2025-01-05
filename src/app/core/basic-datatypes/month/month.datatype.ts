@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
-import { DateOnlyDatatype } from "../date-only/date-only.datatype";
+import { DateDatatype } from "../date/date.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { Logging } from "../../logging/logging.service";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a short string month format ("YYYY-mm").
@@ -13,7 +12,7 @@ import { Logging } from "../../logging/logging.service";
  * `@DatabaseField({dataType: 'month'}) myMonth: Date = new Date('2020-01-15'); // will be "2020-01" in the database`
  */
 @Injectable()
-export class MonthDatatype extends DateOnlyDatatype {
+export class MonthDatatype extends DateDatatype {
   static override dataType = "month";
   static override label: string = $localize`:datatype-label:month (date without day of month)`;
 
@@ -38,12 +37,8 @@ export class MonthDatatype extends DateOnlyDatatype {
   ) {
     const values = value.split("-").map((v) => Number(v));
     const date = new Date(values[0], values[1] - 1);
-    if (Number.isNaN(date.getTime())) {
-      Logging.warn(
-        `failed to convert data '${value}' to Date object for ${parent?._id}`,
-      );
-      return undefined;
-    }
-    return date;
+
+    // re-use error logging and basic return logic from base type
+    return super.transformToObjectFormat(date, schemaField, parent);
   }
 }

@@ -2,15 +2,15 @@
   <mat-label>{{ label }}</mat-label>
   <mat-select
     (selectionChange)="onSelectionChange($event)"
-    placeholder="Choose notification centers"
+    placeholder="Choose notification channels"
+    i18n-placeholder="Notification Method Select placeholder"
     [disabled]="disabled"
     multiple
     [value]="selectedNotificationMethod"
-    i18n-placeholder="Choose notification centers"
   >
     @for (notificationMethod of notificationMethods; track notificationMethod) {
-      <mat-option [value]="notificationMethod">
-        {{ notificationMethod }}
+      <mat-option [value]="notificationMethod.key">
+        {{ notificationMethod.label }}
       </mat-option>
     }
   </mat-select>

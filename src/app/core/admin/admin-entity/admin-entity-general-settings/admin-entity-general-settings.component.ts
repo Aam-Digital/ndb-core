@@ -25,8 +25,6 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { AdminEntityService } from "../../admin-entity.service";
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
-import { MatSort } from "@angular/material/sort";
-import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
 import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
@@ -54,8 +52,6 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     CommonModule,
     MatTooltipModule,
     HelpButtonComponent,
-    MatSort,
-    EntityFieldLabelComponent,
     AnonymizeOptionsComponent,
     FaIconComponent,
   ],
@@ -162,6 +158,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       ...unselectedOptions,
     ];
   }
+
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.key;
 }

@@ -1,0 +1,52 @@
+name: i18n - Send translation tokens to POEditor
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-translations:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Extract i18n keys
+        run: npm run extract-i18n
+
+      - name: Upload translations to POEditor
+        run: |
+          file="src/assets/locale/messages.xlf"
+          echo "Uploading new terms from ${file}"
+          # see POEditor Upload API: https://poeditor.com/docs/api#projects_upload
+
+          echo "Uploading for referenc language 'en'"
+          response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
+            -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+            -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
+            -F "language=en" \
+            -F "updating=terms_translations" \
+            -F "read_from_source=1" \
+            -F "overwrite=1" \
+            -F "sync_terms=1" \
+            -F "fuzzy_trigger=1" \
+            -F "file=@${file}")
+
+          status=$(echo $response | jq -r '.response.status')
+          echo "API Response: $response"
+          if [ "$status" != "success" ]; then
+            echo "Error uploading file for $lang: $response"
+            exit 1
+          fi
