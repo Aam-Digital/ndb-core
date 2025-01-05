@@ -589,14 +589,6 @@ export const defaultJsonConfig = {
                   },
                   {
                     fields: [
-                      "externalProfileMockResults",
-                      "externalProfile",
-                      "skills"
-                    ],
-                    header: "Skill API Integration (under development)"
-                  },
-                  {
-                    fields: [
                       "dateOfBirth",
                       "birth_certificate",
                       "gender",
