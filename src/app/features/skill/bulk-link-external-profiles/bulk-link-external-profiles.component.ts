@@ -171,7 +171,7 @@ export class BulkLinkExternalProfilesComponent implements OnChanges {
         };
       }
     } catch (err) {
-      Logging.debug("Could not load external profiles (bulk action)", err); // TODO: should we log this to remote monitoring (i.e. "warn" level)?
+      Logging.warn("Could not load external profiles (bulk action)", err);
       record.warning = {
         ...(record.warning ?? {}),
         possibleMatches: $localize`:bulk-link external profile error:Error while fetching possible matches. Please try to manually search and select a profile to see details.`,

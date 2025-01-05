@@ -83,7 +83,7 @@ describe("SkillApiService", () => {
     );
     expect(resultWithSkippedParam).toEqual({
       fullName: "John Doe xyz",
-      email: "", // TODO: @tomwinter - should this be undefined/skipped when sent to API?
+      email: "",
       phone: "",
     });
   });
