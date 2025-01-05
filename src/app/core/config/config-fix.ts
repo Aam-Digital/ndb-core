@@ -1063,41 +1063,6 @@ export const defaultJsonConfig = {
         additional: {
           acceptedFileTypes: ".pdf"
         }
-      },
-
-      externalProfile: {
-        label: "External SkillLab Profile",
-        dataType: "string",
-        editComponent: "EditExternalProfileLink",
-        additional: {
-          searchFields: {
-            fullName: [
-              "name",
-              "fullName",
-              "firstName",
-              "lastName"
-            ],
-            email: ["email"],
-            phone: ["phone"]
-          },
-          applyData: [{
-            from: "skills",
-            to: "skills",
-            transformation: "escoSkill"
-          }]
-        } as ExternalProfileLinkConfig
-      },
-      skills: {
-        dataType: "entity",
-        isArray: true,
-        additional: "Skill",
-        label: "Skills"
-      },
-      externalProfileMockResults: {
-        dataType: "number",
-        label: "Mock Profiles",
-        description: "Select the number of mocked results for the external profile search in order to test different UX.",
-        defaultValue: { mode: "static", value: 2 }
       }
     }
   } as EntityConfig,
