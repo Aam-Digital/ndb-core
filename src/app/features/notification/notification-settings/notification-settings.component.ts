@@ -80,7 +80,8 @@ export class NotificationSettingsComponent implements OnInit {
   private async initializeNotificationSettings() {
     this.allNotificationRules = await this.loadNotificationConfig();
     if (this.allNotificationRules) {
-      this.isPushNotificationEnabled = this.allNotificationRules.channels.push;
+      this.isPushNotificationEnabled =
+        this.allNotificationRules?.channels.push || false;
       this.populateNotificationRules(
         this.allNotificationRules.notificationRules,
       );
@@ -93,7 +94,6 @@ export class NotificationSettingsComponent implements OnInit {
     notificationRules.forEach((notificationRule) => {
       const newNotificationRule =
         this.initializeNotificationRuleFormGroup(notificationRule);
-      this.isNotificationMethodPushAllowed = notificationRule.channels.push;
       this.isNotificationRuleConfigured = notificationRule.enabled;
       this.notificationRules.push(newNotificationRule);
     });
@@ -207,6 +207,10 @@ export class NotificationSettingsComponent implements OnInit {
     this.selectedNotificationEntity = this.notificationRules
       .at(index)
       .get(fieldName).value;
+    this.isNotificationMethodPushAllowed =
+      this.getFormField(index, "notificationMethod").value || false;
+    this.isNotificationRuleConfigured =
+      this.getFormField(index, "enabled").value || false;
 
     const updatedNotificationRules = this.updateOrAddNotificationRule(
       userNotificationConfig?.notificationRules || [],
@@ -268,7 +272,7 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   private initializeNotificationRuleFormGroup(
-    notificationRule?: NotificationRule,
+    notificationRule: NotificationRule = null,
   ): FormGroup {
     return new FormGroup({
       entityType: new FormControl(notificationRule?.entityType || ""),
@@ -283,6 +287,8 @@ export class NotificationSettingsComponent implements OnInit {
   async updateNotificationCenter(event: string[], index: number) {
     const userNotificationConfig = await this.loadNotificationConfig();
     this.isNotificationMethodPushAllowed = event.includes("push");
+    this.isNotificationRuleConfigured =
+      this.getFormField(index, "enabled").value || false;
     await this.saveOrUpdateNotificationRule(
       userNotificationConfig,
       index,
