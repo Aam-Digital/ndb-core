@@ -304,6 +304,16 @@
         Duplicate
       </button>
 
+      <button
+        mat-raised-button
+        (click)="linkExternalProfiles()"
+        [disabled]="selectedRows.length === 0"
+        color="accent"
+        i18n="bulk action button"
+      >
+        Link External Profile
+      </button>
+
       <button mat-raised-button (click)="selectedRows = undefined" i18n>
         Cancel
       </button>
