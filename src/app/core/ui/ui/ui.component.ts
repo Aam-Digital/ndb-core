@@ -40,6 +40,7 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 import { NotificationComponent } from "../../../features/notification/notification.component";
+import { NotificationService } from "app/features/notification/notification.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -85,6 +86,7 @@ export class UiComponent {
     private siteSettingsService: SiteSettingsService,
     private loginState: LoginStateSubject,
     private sessionManager: SessionManagerService,
+    private notificationService: NotificationService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -115,5 +117,10 @@ export class UiComponent {
     if (this.sideNavMode === "over") {
       this.sideNav.close();
     }
+  }
+
+  async triggerNotificationDeviceApi() {
+    const token = this.notificationService.getNotificationToken();
+    console.log({token});
   }
 }
