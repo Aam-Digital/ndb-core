@@ -78,9 +78,11 @@ export class AdminEntityFormComponent implements OnChanges {
 
     this._config = value;
   }
+
   get config(): FormConfig {
     return this._config;
   }
+
   private _config: FormConfig;
 
   @Output() configChange = new EventEmitter<FormConfig>();
@@ -163,7 +165,7 @@ export class AdminEntityFormComponent implements OnChanges {
     ];
   }
 
-  private emitUpdatedConfig() {
+  protected emitUpdatedConfig() {
     this.configChange.emit(this.config);
   }
 
@@ -291,6 +293,7 @@ export class AdminEntityFormComponent implements OnChanges {
 
     this.emitUpdatedConfig();
   }
+
   /**
    * drop handler specifically for the "create new Text field" item
    * @param event
