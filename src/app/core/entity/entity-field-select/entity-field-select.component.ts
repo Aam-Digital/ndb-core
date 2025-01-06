@@ -25,10 +25,11 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<strin
   @Input() override placeholder: string =
     $localize`:EntityFieldSelect placeholder: Select Entity Field`;
 
-  labelMapper = (name: string) => this.entityCtor.schema.get(name).label;
+  override optionToString = (option: string) =>
+    this.entityCtor.schema.get(option).label;
   dataTypeMap: { [name: string]: DefaultDatatype };
   selectedEntityField: string;
-  @Output() selectedFieldChange = new EventEmitter<string>();
+  @Input() override hideOption: (option: string) => boolean;
 
   private entityRegistry = inject(EntityRegistry);
   private entitySchemaService = inject(EntitySchemaService);
@@ -55,9 +56,5 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<strin
         );
         return name;
       });
-  }
-
-  updateMapping() {
-    this.selectedFieldChange.emit(this.selectedEntityField);
   }
 }

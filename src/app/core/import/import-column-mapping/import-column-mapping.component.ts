@@ -13,7 +13,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
-import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
+import { EntityFieldSelectComponent } from "../../entity/entity-field-select/entity-field-select.component";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
@@ -35,7 +35,7 @@ import { ImportColumnMappingService } from "./import-column-mapping.service";
     HelpButtonComponent,
     NgForOf,
     MatInputModule,
-    BasicAutocompleteComponent,
+    EntityFieldSelectComponent,
     FormsModule,
     MatButtonModule,
     NgIf,
@@ -47,9 +47,24 @@ export class ImportColumnMappingComponent implements OnChanges {
   @Input() columnMapping: ColumnMapping[] = [];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
-  @Input() entityType: string;
+  entityCtor: EntityConstructor;
 
-  private entityCtor: EntityConstructor;
+  @Input() set entityType(value: string) {
+    if (!value) {
+      return;
+    }
+
+    this.entityCtor = this.entities.get(value);
+    this.dataTypeMap = {};
+
+    [...this.entityCtor.schema.entries()]
+      .filter(([_, schema]) => schema.label)
+      .forEach(([name, schema]) => {
+        this.dataTypeMap[name] = this.schemaService.getDatatypeOrDefault(
+          schema.dataType,
+        );
+      });
+  }
 
   /** properties that need further adjustments through a component */
   dataTypeMap: { [name: string]: DefaultDatatype };
@@ -62,6 +77,8 @@ export class ImportColumnMappingComponent implements OnChanges {
     this.columnMapping.some(({ propertyName }) => propertyName === option);
 
   constructor(
+    private entities: EntityRegistry,
+    private schemaService: EntitySchemaService,
     private componentRegistry: ComponentRegistry,
     private dialog: MatDialog,
     private importColumnMappingService: ImportColumnMappingService,
