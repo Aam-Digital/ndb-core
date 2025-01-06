@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+
 import { EntityFieldSelectComponent } from "./entity-field-select.component";
 import { EntityRegistry } from "../database-entity.decorator";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";

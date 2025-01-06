@@ -1,14 +1,9 @@
+import { Component, inject, Input } from "@angular/core";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
+  BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
+  BasicAutocompleteComponent,
+} from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConstructor } from "../model/entity";
 import { EntityRegistry } from "../database-entity.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
@@ -18,32 +13,26 @@ import { EntitySchema } from "../schema/entity-schema";
 @Component({
   selector: "app-entity-field-select",
   standalone: true,
-  imports: [
-    MatFormField,
-    MatLabel,
-    ReactiveFormsModule,
-    BasicAutocompleteComponent,
-    FormsModule,
+  imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
+  templateUrl:
+    "../../common-components/basic-autocomplete/basic-autocomplete.component.html",
+  providers: [
+    { provide: MatFormFieldControl, useExisting: EntityFieldSelectComponent },
   ],
-  templateUrl: "./entity-field-select.component.html",
 })
-export class EntityFieldSelectComponent {
+export class EntityFieldSelectComponent extends BasicAutocompleteComponent<string> {
   private entityCtor: EntityConstructor;
-  @Input() label: string =
-    $localize`:EntityFieldSelect label: Select Entity Field`;
-  @Input() placeholder =
-    $localize`:EntityFieldSelect placeholder:Select Entity Field`;
+  @Input() override placeholder: string =
+    $localize`:EntityFieldSelect placeholder: Select Entity Field`;
 
-  labelMapper = (name: string) => this.entityCtor.schema.get(name).label;
-  allFieldProps: string[] = [];
+  override optionToString = (option: string) =>
+    this.entityCtor.schema.get(option).label;
   dataTypeMap: { [name: string]: DefaultDatatype };
   selectedEntityField: string;
-  @Output() selectedFieldChange = new EventEmitter<string>();
+  @Input() override hideOption: (option: string) => boolean;
 
-  constructor(
-    private entities: EntityRegistry,
-    private schemaService: EntitySchemaService,
-  ) {}
+  private entityRegistry = inject(EntityRegistry);
+  private entitySchemaService = inject(EntitySchemaService);
 
   @Input() set entityType(entity: string) {
     if (!entity) {
@@ -53,23 +42,19 @@ export class EntityFieldSelectComponent {
   }
 
   private initializeEntity(entity: string): void {
-    this.entityCtor = this.entities.get(entity);
+    this.entityCtor = this.entityRegistry.get(entity);
     this.dataTypeMap = {};
-    this.allFieldProps = this.getAllFieldProps(this.entityCtor.schema);
+    this.options = this.getAllFieldProps(this.entityCtor.schema);
   }
 
   private getAllFieldProps(schema: EntitySchema): string[] {
     return [...schema.entries()]
       .filter(([_, fieldSchema]) => fieldSchema.label)
       .map(([name, fieldSchema]) => {
-        this.dataTypeMap[name] = this.schemaService.getDatatypeOrDefault(
+        this.dataTypeMap[name] = this.entitySchemaService.getDatatypeOrDefault(
           fieldSchema.dataType,
         );
         return name;
       });
-  }
-
-  updateMapping() {
-    this.selectedFieldChange.emit(this.selectedEntityField);
   }
 }

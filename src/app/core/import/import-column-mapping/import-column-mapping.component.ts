@@ -13,7 +13,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
-import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
+import { EntityFieldSelectComponent } from "../../entity/entity-field-select/entity-field-select.component";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
@@ -35,7 +35,7 @@ import { ImportColumnMappingService } from "./import-column-mapping.service";
     HelpButtonComponent,
     NgForOf,
     MatInputModule,
-    BasicAutocompleteComponent,
+    EntityFieldSelectComponent,
     FormsModule,
     MatButtonModule,
     NgIf,
@@ -47,6 +47,8 @@ export class ImportColumnMappingComponent implements OnChanges {
   @Input() columnMapping: ColumnMapping[] = [];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
+  entityCtor: EntityConstructor;
+
   @Input() set entityType(value: string) {
     if (!value) {
       return;
@@ -54,20 +56,15 @@ export class ImportColumnMappingComponent implements OnChanges {
 
     this.entityCtor = this.entities.get(value);
     this.dataTypeMap = {};
-    this.allProps = [...this.entityCtor.schema.entries()]
+
+    [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
-      .map(([name, schema]) => {
+      .forEach(([name, schema]) => {
         this.dataTypeMap[name] = this.schemaService.getDatatypeOrDefault(
           schema.dataType,
         );
-        return name;
       });
   }
-
-  private entityCtor: EntityConstructor;
-
-  /** entity properties that have a label */
-  allProps: string[] = [];
 
   /** properties that need further adjustments through a component */
   dataTypeMap: { [name: string]: DefaultDatatype };
