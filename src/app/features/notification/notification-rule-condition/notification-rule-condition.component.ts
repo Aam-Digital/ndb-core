@@ -1,12 +1,10 @@
-import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { MatSelectChange, MatSelectModule } from "@angular/material/select";
 
 @Component({
   selector: "app-notification-rule-condition",
   standalone: true,
-  imports: [MatSelectModule, FormsModule, CommonModule],
+  imports: [MatSelectModule],
   templateUrl: "./notification-rule-condition.component.html",
 })
 export class NotificationRuleConditionComponent {

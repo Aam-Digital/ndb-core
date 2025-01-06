@@ -19,113 +19,166 @@
       notifications without deleting the conditions completely.
     </div>
 
-    @for (
-      notificationRule of notificationRules.controls;
-      track notificationRule;
-      let index = $index
-    ) {
-      <div
-        class="flex-column justify-space-between align-center notifications-options-container"
-      >
-        <div
-          class="flex-column justify-space-between align-center notification-options-wrapper"
-        >
-          <div
-            class="flex-row justify-content-center align-center notification-rule-option"
+    <cdk-accordion class="notification-rules-accordion">
+      @for (
+        notificationRule of notificationRules.controls;
+        track notificationRule;
+        let index = $index
+      ) {
+        <div class="notification-rule-accordion-item">
+          <cdk-accordion-item
+            #accordionItem="cdkAccordionItem"
+            tabindex="0"
+            [attr.id]="'accordion-header-' + index"
+            [attr.aria-expanded]="accordionItem.expanded"
+            [attr.aria-controls]="'accordion-body-' + index"
+            class="flex-column justify-space-between align-center notifications-options-container"
           >
-            <mat-form-field class="full-width-field">
-              <mat-label i18n>Select an entity type</mat-label>
-              <app-entity-type-select
-                [formControl]="getFormField(index, 'entityType')"
-                (ngModelChange)="
-                  updateNotificationEntityField(index, 'entityType')
-                "
-              ></app-entity-type-select>
-            </mat-form-field>
-            <app-help-button
-              text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
-              i18n-text
-            ></app-help-button>
-          </div>
+            <div
+              class="flex-column justify-space-between align-center notification-options-wrapper"
+            >
+              <div
+                class="flex-row justify-content-center align-center notification-rule-option"
+              >
+                <mat-form-field class="full-width-field">
+                  <mat-label i18n>Select an entity type</mat-label>
+                  <app-entity-type-select
+                    [formControl]="getFormField(index, 'entityType')"
+                    (ngModelChange)="
+                      updateNotificationEntityField(index, 'entityType')
+                    "
+                  ></app-entity-type-select>
+                </mat-form-field>
+                <app-help-button
+                  text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
+                  i18n-text
+                ></app-help-button>
+              </div>
 
-          <div class="flex-row align-center full-width">
-            <mat-form-field class="notification-rule-option">
-              <mat-label i18n>Entity Fields</mat-label>
-              <input
-                matInput
-                placeholder="Entity Fields"
-                i18n-placeholder="Notification entity fields placeholder"
-              />
-            </mat-form-field>
-            <app-notification-rule-condition />
-            <mat-form-field class="notification-rule-option">
-              <mat-label i18n>Notification condition</mat-label>
-              <input
-                matInput
-                placeholder="Status"
-                i18n-placeholder="Notification condition placeholder"
-              />
-            </mat-form-field>
-            <app-help-button
-              text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
-              i18n-text
-            ></app-help-button>
-          </div>
+              <div
+                class="flex-row justify-content-center align-center notification-rule-option"
+              >
+                <app-notification-method-select
+                  [selectedNotificationMethod]="[
+                    getFormField(index, 'notificationMethod').value,
+                  ]"
+                  (selectionChange)="updateNotificationCenter($event, index)"
+                  class="full-width-field"
+                ></app-notification-method-select>
+                <app-help-button
+                  text="Define a notification method to receive notifications"
+                  i18n-text
+                ></app-help-button>
+              </div>
+            </div>
 
-          <div
-            class="flex-row justify-content-center align-center notification-rule-option"
-          >
-            <app-notification-method-select
-              [selectedNotificationMethod]="[
-                getFormField(index, 'notificationMethod').value,
-              ]"
-              (selectionChange)="updateNotificationCenter($event, index)"
-              class="full-width-field"
-            ></app-notification-method-select>
-            <app-help-button
-              text="Define a notification method to receive notifications"
-              i18n-text
-            ></app-help-button>
-          </div>
-        </div>
+            <div class="flex-row notification-rule-actions">
+              <div class="flex-row align-center">
+                <mat-slide-toggle
+                  [formControl]="getFormField(index, 'enabled')"
+                  (change)="enableNotificationRule($event, index)"
+                  class="notification-toggle"
+                  matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
+                  i18n-matTooltip
+                ></mat-slide-toggle>
+              </div>
 
-        <div class="flex-row notification-rule-actions">
-          <div class="flex-row align-center">
-            <mat-slide-toggle
-              [formControl]="getFormField(index, 'enabled')"
-              (change)="enableNotificationRule($event, index)"
-              class="notification-toggle"
-              matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
+              <button
+                mat-icon-button
+                (click)="confirmRemoveNotificationRule(index)"
+                matTooltip="Remove notification rule"
+                i18n-matTooltip
+              >
+                <fa-icon icon="trash"></fa-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                (click)="testNotification()"
+                matTooltip="Test notification"
+                i18n-matTooltip
+              >
+                <fa-icon icon="paper-plane"></fa-icon>
+              </button>
+            </div>
+
+            <button
+              mat-icon-button
+              [matTooltip]="
+                accordionItem.expanded ? 'Collapse section' : 'Expand section'
+              "
               i18n-matTooltip
-            ></mat-slide-toggle>
-          </div>
-
-          <button
-            mat-icon-button
-            (click)="confirmRemoveNotificationRule(index)"
-            matTooltip="Remove notification rule"
-            i18n-matTooltip
-          >
-            <fa-icon icon="trash"></fa-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            (click)="testNotification()"
-            matTooltip="Test notification"
-            i18n-matTooltip
-          >
-            <fa-icon icon="paper-plane"></fa-icon>
-          </button>
+              (click)="accordionItem.toggle()"
+            >
+              <fa-icon
+                [icon]="accordionItem.expanded ? 'chevron-up' : 'chevron-down'"
+              ></fa-icon>
+            </button>
+          </cdk-accordion-item>
+          @if (accordionItem.expanded) {
+            <div
+              class="example-accordion-item-body"
+              role="region"
+              [style.display]="accordionItem.expanded ? '' : 'none'"
+              [attr.id]="'accordion-body-' + index"
+              [attr.aria-labelledby]="'accordion-header-' + index"
+            >
+              <div class="flex-row align-center notification-condition-section">
+                <strong>Add the Notification Condition</strong>
+                <app-help-button
+                  text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
+                  i18n-text
+                ></app-help-button>
+              </div>
+              @for (
+                notificationCondition of notificationConditions;
+                track notificationCondition;
+                let index = $index
+              ) {
+                <div class="flex-row align-center full-width">
+                  <app-entity-field-select
+                    [entityType]="this.selectedNotificationEntity"
+                  />
+                  <app-notification-rule-condition />
+                  <mat-form-field class="notification-rule-option">
+                    <mat-label i18n>Notification condition</mat-label>
+                    <input
+                      matInput
+                      placeholder="Status"
+                      i18n-placeholder="Notification condition placeholder"
+                    />
+                  </mat-form-field>
+                </div>
+              }
+              <div class="flex-row justify-content-center">
+                <button
+                  mat-stroked-button
+                  class="add-new-rule-button"
+                  color="accent"
+                  (click)="appendNewNotificationCondition($event)"
+                  matTooltip="Define another condition of notifications for your user account"
+                  i18n-matTooltip
+                >
+                  <fa-icon
+                    aria-label="add element"
+                    icon="plus-circle"
+                  ></fa-icon>
+                  <span i18n class="new-notification-rule"
+                    >Add new notification condition</span
+                  >
+                </button>
+              </div>
+            </div>
+          }
         </div>
-      </div>
-    }
-    <div class="add-new-notification-rule">
+      }
+    </cdk-accordion>
+    <div class="flex-row justify-content-center add-new-notification-rule">
       <button
         mat-stroked-button
         class="add-new-rule-button"
         color="accent"
-        (click)="addNewNotificationRule()"
+        (click)="appendNewNotificationRule()"
         matTooltip="Define another type of notifications for your user account"
         i18n-matTooltip
       >
@@ -141,7 +194,7 @@
     <div class="browser-notifications-title">
       <h3 i18n class="no-margin flex-row align-center">
         <strong>Where you receive notifications</strong>
-        @if (hasPushNotificationEnabled) {
+        @if (isPushNotificationEnabled) {
           <div
             class="enabled-text"
             matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
@@ -194,7 +247,7 @@
           </div>
           <mat-slide-toggle
             (change)="onEnableNotification($event)"
-            [checked]="hasPushNotificationEnabled"
+            [checked]="isPushNotificationEnabled"
           />
         </div>
       </div>

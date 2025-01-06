@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { NotificationRuleConditionComponent } from "./notification-rule-condition.component";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("NotificationRuleConditionComponent", () => {
   let component: NotificationRuleConditionComponent;
@@ -8,7 +9,7 @@ describe("NotificationRuleConditionComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NotificationRuleConditionComponent],
+      imports: [BrowserAnimationsModule, NotificationRuleConditionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NotificationRuleConditionComponent);

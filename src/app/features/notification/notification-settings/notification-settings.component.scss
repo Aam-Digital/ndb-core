@@ -34,10 +34,14 @@
   background-color: colors.$background;
 }
 
-.notifications-options-container {
+.notification-rule-accordion-item {
   @extend .panel-wrapper;
   background-color: colors.$background;
   margin-top: sizes.$regular;
+  cursor: pointer;
+}
+
+.notifications-options-container {
   gap: 40px;
 
   @media screen and (min-width: breakpoints.$xxl) {
@@ -74,8 +78,6 @@
 }
 
 .add-new-notification-rule {
-  display: flex;
-  justify-content: center;
   margin-top: 30px;
 }
 
@@ -128,4 +130,9 @@
   @extend .text-badge;
   border-color: green;
   background-color: #beddba;
+}
+
+.notification-condition-section {
+  margin-top: sizes.$regular;
+  margin-bottom: sizes.$regular;
 }
