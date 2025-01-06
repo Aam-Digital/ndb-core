@@ -13,6 +13,7 @@ import { EntityConstructor } from "../model/entity";
 import { EntityRegistry } from "../database-entity.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
+import { EntitySchema } from "../schema/entity-schema";
 
 @Component({
   selector: "app-entity-field-select",
@@ -44,18 +45,25 @@ export class EntityFieldSelectComponent {
     private schemaService: EntitySchemaService,
   ) {}
 
-  @Input() set entityType(value: string) {
-    if (!value) {
+  @Input() set entityType(entity: string) {
+    if (!entity) {
       return;
     }
+    this.initializeEntity(entity);
+  }
 
-    this.entityCtor = this.entities.get(value);
+  private initializeEntity(entity: string): void {
+    this.entityCtor = this.entities.get(entity);
     this.dataTypeMap = {};
-    this.allFieldProps = [...this.entityCtor.schema.entries()]
-      .filter(([_, schema]) => schema.label)
-      .map(([name, schema]) => {
+    this.allFieldProps = this.getAllFieldProps(this.entityCtor.schema);
+  }
+
+  private getAllFieldProps(schema: EntitySchema): string[] {
+    return [...schema.entries()]
+      .filter(([_, fieldSchema]) => fieldSchema.label)
+      .map(([name, fieldSchema]) => {
         this.dataTypeMap[name] = this.schemaService.getDatatypeOrDefault(
-          schema.dataType,
+          fieldSchema.dataType,
         );
         return name;
       });
