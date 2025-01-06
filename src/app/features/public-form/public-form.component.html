@@ -38,7 +38,12 @@
             ></app-display-img>
           }
         </div>
-        <mat-card-subtitle>{{ formConfig?.description }}</mat-card-subtitle>
+        @if (formConfig?.description) {
+          <!-- needs the @if wrapper because <markdown> doesn't seem to do good change detection -->
+          <mat-card-subtitle>
+            <markdown>{{ formConfig?.description }}</markdown>
+          </mat-card-subtitle>
+        }
       </div>
     </mat-card-header>
 

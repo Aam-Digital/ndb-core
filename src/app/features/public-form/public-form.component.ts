@@ -22,6 +22,7 @@ import { DefaultValueConfig } from "../../core/entity/schema/default-value-confi
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MarkdownPageModule } from "../markdown-page/markdown-page.module";
 
 @UntilDestroy()
 @Component({
@@ -34,6 +35,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatCardModule,
     DisplayImgComponent,
     FontAwesomeModule,
+    MarkdownPageModule,
   ],
   standalone: true,
 })
