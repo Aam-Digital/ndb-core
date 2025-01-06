@@ -61,6 +61,7 @@ export class EditPublicFormColumnsComponent
   }
 
   updateValue(newConfig: FormConfig) {
+    // setTimeout needed for change detection of disabling tabs
     setTimeout(() => this.formControl.setValue(newConfig.fieldGroups));
     this.formControl.markAsDirty();
   }
