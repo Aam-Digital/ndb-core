@@ -36,7 +36,13 @@ import { FormsModule } from "@angular/forms";
   // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
-  imports: [NgForOf, NgIf, NgClass, EntityFieldEditComponent, FormsModule],
+  imports: [
+    FormsModule, // importing FormsModule ensures that buttons anywhere inside do not trigger form submission / page reload
+    NgForOf,
+    NgIf,
+    NgClass,
+    EntityFieldEditComponent,
+  ],
   standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>

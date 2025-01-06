@@ -1,3 +1,5 @@
+@use "variables/colors";
+
 :host {
   display: flex;
   flex-direction: column;
@@ -22,4 +24,7 @@
 .img-label {
   margin: auto;
   color: rgba(0, 0, 0, 0.6);
+}
+.img-label.invalid {
+  color: colors.$error;
 }

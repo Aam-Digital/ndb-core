@@ -46,7 +46,7 @@ export class PublicFormConfig extends Entity {
   @DatabaseField({
     label: $localize`:PublicFormConfig:Entity`,
     description: $localize`:PublicFormConfig:The type of record that is created when a someone submits the form (e.g. if you select "Note" here, the form will create new entries in your "Notes List" and you can select only fields of your "Note" data structure for this form)`,
-    editComponent: "EditEntityTypeDropdown",
+    editComponent: "EditEntityType",
     validators: {
       required: true,
     },

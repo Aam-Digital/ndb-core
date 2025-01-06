@@ -17,6 +17,7 @@ import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -92,10 +93,7 @@ describe("PublicFormComponent", () => {
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.form.formGroup,
-      component.entity,
-    );
+    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
     expect(openSnackbarSpy).toHaveBeenCalled();
   }));
@@ -110,10 +108,7 @@ describe("PublicFormComponent", () => {
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.form.formGroup,
-      component.entity,
-    );
+    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
     expect(openSnackbarSpy).toHaveBeenCalledWith(
       jasmine.stringContaining("invalid"),
@@ -168,6 +163,36 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(component.form.formGroup.get("name")).toHaveValue("default name");
+  }));
+
+  it("should throw an error when do not have permissions to submit the form", fakeAsync(() => {
+    TestBed.inject(EntityAbility).update([
+      {
+        subject: "Child",
+        action: "create",
+      },
+    ]);
+    testFormConfig.entity = "School";
+    testFormConfig.title = "Some test title";
+
+    initComponent();
+    tick();
+
+    expect(component).toBeDefined();
+    expect(component.error).toBe("no_permissions");
+  }));
+
+  it("should display not found error when config does not exist", fakeAsync(() => {
+    const entityMapperSpy = spyOn(
+      TestBed.inject(EntityMapperService),
+      "loadType",
+    ).and.resolveTo([]);
+
+    initComponent();
+    tick();
+
+    expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
+    expect(component.error).toBe("not_found");
   }));
 
   function initComponent() {
