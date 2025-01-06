@@ -11,7 +11,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityConstructor } from "../../entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
-import { NgForOf, NgIf } from "@angular/common";
+import { NgForOf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
 import { EntityFieldSelectComponent } from "../../entity/entity-field-select/entity-field-select.component";
 import { FormsModule } from "@angular/forms";
@@ -21,6 +21,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -38,7 +39,6 @@ import { ImportColumnMappingService } from "./import-column-mapping.service";
     EntityFieldSelectComponent,
     FormsModule,
     MatButtonModule,
-    NgIf,
     MatBadgeModule,
   ],
 })
@@ -72,9 +72,8 @@ export class ImportColumnMappingComponent implements OnChanges {
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: { [key: string]: string } = {};
 
-  labelMapper = (name: string) => this.entityCtor.schema.get(name).label;
-  isUsed = (option: string) =>
-    this.columnMapping.some(({ propertyName }) => propertyName === option);
+  isUsed = (option: FormFieldConfig) =>
+    this.columnMapping.some(({ propertyName }) => propertyName === option.id);
 
   constructor(
     private entities: EntityRegistry,
