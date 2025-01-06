@@ -10,6 +10,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MockEntityMapperService } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { FieldGroup } from "../../../core/entity-details/form/field-group";
 
 describe("EditPublicFormColumnsComponent", () => {
   let component: EditPublicFormColumnsComponent;
@@ -24,16 +25,11 @@ describe("EditPublicFormColumnsComponent", () => {
     },
   ];
 
-  const oldColumnConfig = {
-    fieldGroups: [["name"], ["gender"]],
-  };
-  const newVolumnConfig = {
-    fieldGroups: [
-      {
-        fields: ["name", "gender"],
-      },
-    ],
-  };
+  const oldColumnConfig: string[][] = [["name", "gender"], ["other"]];
+  const newColumnConfig: FieldGroup[] = [
+    { fields: ["name", "gender"], header: null },
+    { fields: ["other"], header: null },
+  ];
 
   beforeEach(() => {
     let mockDatabase: jasmine.SpyObj<Database>;
@@ -75,7 +71,10 @@ describe("EditPublicFormColumnsComponent", () => {
   });
 
   it("should migrate old columns config to new columns config", () => {
-    const migratedConfig = (component as any).migrateConfig(oldColumnConfig);
-    expect(migratedConfig).toEqual(newVolumnConfig);
+    component.formControl.setValue(oldColumnConfig as any);
+
+    component.ngOnInit();
+
+    expect(component.formConfig.fieldGroups).toEqual(newColumnConfig);
   });
 });

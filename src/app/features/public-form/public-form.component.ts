@@ -109,56 +109,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.error = "no_permissions";
       return;
     }
-    this.formConfig = this.migratePublicFormConfig(this.formConfig);
+    this.formConfig = migratePublicFormConfig(this.formConfig);
     this.fieldGroups = this.formConfig.columns;
     await this.initForm();
-  }
-
-  private migratePublicFormConfig(
-    formConfig: PublicFormConfig,
-  ): PublicFormConfig {
-    if (formConfig.columns) {
-      formConfig.columns = formConfig.columns.map(
-        (column: FieldGroup | string[]) => {
-          return Array.isArray(column)
-            ? { fields: column, header: null }
-            : { fields: column.fields || [], header: column?.header || null };
-        },
-      );
-    }
-
-    for (let [id, value] of Object.entries(formConfig["prefilled"] ?? [])) {
-      const defaultValue: DefaultValueConfig = { mode: "static", value };
-
-      const field: FormFieldConfig = this.findFieldInFieldGroups(id);
-      if (!field) {
-        // add new field to last column
-        const lastColumn: FieldGroup =
-          formConfig.columns[formConfig.columns.length - 1];
-        lastColumn.fields.push({ id, defaultValue, hideFromForm: true });
-      } else {
-        field.defaultValue = defaultValue;
-      }
-    }
-    delete formConfig.prefilled;
-
-    return formConfig;
-  }
-
-  private findFieldInFieldGroups(id: string): FormFieldConfig {
-    for (const column of this.formConfig.columns) {
-      for (const field of column.fields) {
-        if (typeof field === "string" && field === id) {
-          // replace the string with a field object, so that we can pass by reference
-          const newField: FormFieldConfig = { id: field };
-          column.fields[column.fields.indexOf(field)] = newField;
-          return newField;
-        } else if (typeof field === "object" && field.id === id) {
-          return field;
-        }
-      }
-    }
-    return undefined;
   }
 
   private async initForm() {
@@ -168,4 +121,54 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.entity,
     );
   }
+}
+
+export function migratePublicFormConfig(
+  formConfig: PublicFormConfig,
+): PublicFormConfig {
+  if (formConfig.columns) {
+    formConfig.columns = formConfig.columns.map(
+      (column: FieldGroup | string[]) => {
+        return Array.isArray(column)
+          ? { fields: column, header: null }
+          : { fields: column.fields || [], header: column?.header || null };
+      },
+    );
+  }
+
+  for (let [id, value] of Object.entries(formConfig["prefilled"] ?? [])) {
+    const defaultValue: DefaultValueConfig = { mode: "static", value };
+
+    const field: FormFieldConfig = findFieldInFieldGroups(formConfig, id);
+    if (!field) {
+      // add new field to last column
+      const lastColumn: FieldGroup =
+        formConfig.columns[formConfig.columns.length - 1];
+      lastColumn.fields.push({ id, defaultValue, hideFromForm: true });
+    } else {
+      field.defaultValue = defaultValue;
+    }
+  }
+  delete formConfig.prefilled;
+
+  return formConfig;
+}
+
+function findFieldInFieldGroups(
+  formConfig: PublicFormConfig,
+  id: string,
+): FormFieldConfig {
+  for (const column of formConfig.columns) {
+    for (const field of column.fields) {
+      if (typeof field === "string" && field === id) {
+        // replace the string with a field object, so that we can pass by reference
+        const newField: FormFieldConfig = { id: field };
+        column.fields[column.fields.indexOf(field)] = newField;
+        return newField;
+      } else if (typeof field === "object" && field.id === id) {
+        return field;
+      }
+    }
+  }
+  return undefined;
 }

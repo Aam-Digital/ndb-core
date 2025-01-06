@@ -9,6 +9,8 @@ import { FormConfig } from "app/core/entity-details/form/form.component";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { PublicFormConfig } from "../public-form-config";
+import { migratePublicFormConfig } from "../public-form.component";
 
 @Component({
   selector: "app-edit-public-form-columns",
@@ -23,7 +25,7 @@ export class EditPublicFormColumnsComponent
   implements OnInit
 {
   entityConstructor: EntityConstructor;
-  publicFormConfig: FormConfig;
+  formConfig: FormConfig;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
   private entities = inject(EntityRegistry);
@@ -33,9 +35,12 @@ export class EditPublicFormColumnsComponent
     if (this.entity) {
       this.entityConstructor = this.entities.get(this.entity["entity"]);
 
-      this.publicFormConfig = this.migrateConfig({
-        fieldGroups: this.formControl.getRawValue(),
-      });
+      const publicFormConfig: PublicFormConfig = migratePublicFormConfig({
+        columns: this.formControl.getRawValue(),
+      } as Partial<PublicFormConfig> as PublicFormConfig);
+      this.formConfig = {
+        fieldGroups: publicFormConfig.columns,
+      };
     }
 
     this.originalEntitySchemaFields = JSON.parse(
@@ -53,21 +58,6 @@ export class EditPublicFormColumnsComponent
           );
       });
     }
-  }
-
-  /**
-   * Migrates the configuration if it uses the old structure.
-   */
-  private migrateConfig(config: FormConfig): FormConfig {
-    if (
-      Array.isArray(config.fieldGroups) &&
-      config.fieldGroups.every((column) => Array.isArray(column))
-    ) {
-      const fields = config.fieldGroups.flat();
-      return { fieldGroups: [{ fields }] };
-    }
-    // Return the original config if no migration is needed
-    return config;
   }
 
   updateValue(newConfig: FormConfig) {
