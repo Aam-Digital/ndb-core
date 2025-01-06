@@ -117,7 +117,7 @@
         mat-stroked-button
         class="add-new-rule-button"
         color="accent"
-        (click)="addNewNotificationRule()"
+        (click)="appendNewNotificationRule()"
         matTooltip="Define another type of notifications for your user account"
         i18n-matTooltip
       >
@@ -133,7 +133,7 @@
     <div class="browser-notifications-title">
       <h3 i18n class="no-margin flex-row align-center">
         <strong>Where you receive notifications</strong>
-        @if (hasPushNotificationEnabled) {
+        @if (isPushNotificationEnabled) {
           <div
             class="enabled-text"
             matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
@@ -186,7 +186,7 @@
           </div>
           <mat-slide-toggle
             (change)="onEnableNotification($event)"
-            [checked]="hasPushNotificationEnabled"
+            [checked]="isPushNotificationEnabled"
           />
         </div>
       </div>
