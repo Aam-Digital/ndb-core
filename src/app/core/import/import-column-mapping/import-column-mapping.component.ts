@@ -47,27 +47,9 @@ export class ImportColumnMappingComponent implements OnChanges {
   @Input() columnMapping: ColumnMapping[] = [];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
-  @Input() set entityType(value: string) {
-    if (!value) {
-      return;
-    }
-
-    this.entityCtor = this.entities.get(value);
-    this.dataTypeMap = {};
-    this.allProps = [...this.entityCtor.schema.entries()]
-      .filter(([_, schema]) => schema.label)
-      .map(([name, schema]) => {
-        this.dataTypeMap[name] = this.schemaService.getDatatypeOrDefault(
-          schema.dataType,
-        );
-        return name;
-      });
-  }
+  @Input() entityType: string;
 
   private entityCtor: EntityConstructor;
-
-  /** entity properties that have a label */
-  allProps: string[] = [];
 
   /** properties that need further adjustments through a component */
   dataTypeMap: { [name: string]: DefaultDatatype };
@@ -80,8 +62,6 @@ export class ImportColumnMappingComponent implements OnChanges {
     this.columnMapping.some(({ propertyName }) => propertyName === option);
 
   constructor(
-    private entities: EntityRegistry,
-    private schemaService: EntitySchemaService,
     private componentRegistry: ComponentRegistry,
     private dialog: MatDialog,
     private importColumnMappingService: ImportColumnMappingService,

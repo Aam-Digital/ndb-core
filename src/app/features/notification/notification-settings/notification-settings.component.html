@@ -136,9 +136,12 @@
                 let index = $index
               ) {
                 <div class="flex-row align-center full-width">
-                  <app-entity-field-select
-                    [entityType]="this.selectedNotificationEntity"
-                  />
+                  <mat-form-field>
+                    <mat-label i18n>Select Entity Field</mat-label>
+                    <app-entity-field-select
+                      [entityType]="this.selectedNotificationEntity"
+                    />
+                  </mat-form-field>
                   <app-notification-rule-condition />
                   <mat-form-field class="notification-rule-option">
                     <mat-label i18n>Notification condition</mat-label>

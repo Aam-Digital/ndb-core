@@ -16,13 +16,7 @@
   <div *ngFor="let col of columnMapping">
     <mat-form-field>
       <mat-label>{{ col.column }}</mat-label>
-      <app-basic-autocomplete
-        [options]="allProps"
-        [(ngModel)]="col.propertyName"
-        (ngModelChange)="updateMapping(col)"
-        [optionToString]="labelMapper"
-        [hideOption]="isUsed"
-      />
+      <app-entity-field-select [entityType]="entityType" />
     </mat-form-field>
 
     <button
