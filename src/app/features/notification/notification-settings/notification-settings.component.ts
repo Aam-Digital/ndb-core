@@ -71,9 +71,9 @@ export class NotificationSettingsComponent implements OnInit {
 
   private async initializeNotificationSettings() {
     this.allNotificationRules = await this.loadNotificationConfig();
-    this.isPushNotificationEnabled =
-      this.allNotificationRules?.channels.push || false;
     if (this.allNotificationRules) {
+      this.isPushNotificationEnabled =
+        this.allNotificationRules?.channels.push || false;
       this.populateNotificationRules(
         this.allNotificationRules.notificationRules,
       );
