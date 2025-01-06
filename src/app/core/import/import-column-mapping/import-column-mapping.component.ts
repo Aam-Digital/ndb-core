@@ -59,7 +59,7 @@ export class ImportColumnMappingComponent implements OnChanges {
 
     [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
-      .forEach(([name, schema]) => {
+      .map(([name, schema]) => {
         this.dataTypeMap[name] = this.schemaService.getDatatypeOrDefault(
           schema.dataType,
         );
