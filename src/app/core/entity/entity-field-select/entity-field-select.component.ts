@@ -44,12 +44,16 @@ export class EntityFieldSelectComponent {
     private schemaService: EntitySchemaService,
   ) {}
 
-  @Input() set entityType(value: string) {
-    if (!value) {
+  @Input() set entityType(entity: string) {
+    if (!entity) {
       return;
     }
 
-    this.entityCtor = this.entities.get(value);
+    this.initializeEntity(entity);
+  }
+
+  private initializeEntity(entity: string) {
+    this.entityCtor = this.entities.get(entity);
     this.dataTypeMap = {};
     this.allFieldProps = [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
