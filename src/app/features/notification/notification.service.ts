@@ -24,8 +24,7 @@ export class NotificationService {
   private messaging: firebase.messaging.Messaging = null;
   readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${environment.notificationsConfig.projectId}/messages:send`;
   private readonly NOTIFICATION_TOKEN_COOKIE_NAME = "NOTIFICATION_TOKEN";
-  private readonly DEVICE_NOTIFICATION_API_URL =
-    "/api/v1/notification/device";
+  private readonly DEVICE_NOTIFICATION_API_URL = "/api/v1/notification/device";
   private readonly COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN = 30;
 
   constructor(

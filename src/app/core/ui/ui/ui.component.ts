@@ -41,6 +41,7 @@ import { SessionManagerService } from "../../session/session-service/session-man
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 import { NotificationComponent } from "../../../features/notification/notification.component";
 import { NotificationService } from "app/features/notification/notification.service";
+import { Logging } from "app/core/logging/logging.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -119,8 +120,9 @@ export class UiComponent {
     }
   }
 
+  // TODO: Remove this function integration part tested and before merge
   async triggerNotificationDeviceApi() {
     const token = this.notificationService.getNotificationToken();
-    console.log({token});
+    Logging.log({ token });
   }
 }
