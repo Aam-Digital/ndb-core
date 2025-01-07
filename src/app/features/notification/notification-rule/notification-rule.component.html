@@ -47,9 +47,14 @@
             placeholder="Choose notification channels"
             i18n-placeholder="Notification Method Select placeholder"
           >
-            <mat-option value="push" i18n="notification method option">
-              Push
-            </mat-option>
+            @for (notificationMethod of notificationMethods; track $index) {
+              <mat-option
+                [value]="notificationMethod.key"
+                i18n="notification method option"
+              >
+                {{ notificationMethod.label }}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <app-help-button

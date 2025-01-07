@@ -16,7 +16,10 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Logging } from "app/core/logging/logging.service";
-import { NotificationRule } from "../model/notification-config";
+import {
+  NotificationChannel,
+  NotificationRule,
+} from "../model/notification-config";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 
@@ -49,6 +52,10 @@ export class NotificationRuleComponent implements OnChanges {
   @Output() removeNotificationRule = new EventEmitter<void>();
 
   form: FormGroup;
+
+  notificationMethods: { key: NotificationChannel; label: string }[] = [
+    { key: "push", label: $localize`:notification method option:Push` },
+  ];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -89,9 +96,13 @@ export class NotificationRuleComponent implements OnChanges {
   private parseChannelsToOptionsArray(channels?: {
     [key: string]: boolean;
   }): string[] {
-    return Object.entries(channels ?? [])
+    const parsedChannels = Object.entries(channels ?? [])
       .filter(([key, value]) => value === true)
       .map(([key, value]) => key);
+
+    return parsedChannels
+      .map((index) => this.notificationMethods[index]?.key)
+      .filter((key) => key !== undefined);
   }
 
   private parseOptionsArrayToChannels(options: string[]): {
