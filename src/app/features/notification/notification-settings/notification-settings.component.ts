@@ -131,6 +131,30 @@ export class NotificationSettingsComponent implements OnInit {
 
   async appendNewNotificationRule() {
     this.notificationRules.push(this.createNotificationRuleFormGroup());
+
+    let updatedNotificationConfig = await this.loadNotificationConfig();
+    if (!updatedNotificationConfig) {
+      updatedNotificationConfig = new NotificationConfig(this.userId);
+    }
+
+    updatedNotificationConfig.notificationRules =
+      this.getUpdatedNotificationRules();
+
+    await this.saveNotificationConfig(updatedNotificationConfig);
+  }
+
+  private getUpdatedNotificationRules() {
+    return this.notificationRules.value.map((rule: any) => {
+      return {
+        notificationType: "entity_change",
+        enabled: rule.enabled,
+        channels: {
+          push: false,
+        },
+        entityType: rule.notificationEntity,
+        conditions: {},
+      };
+    });
   }
 
   private async saveNotificationConfig(config: NotificationConfig) {
@@ -154,22 +178,6 @@ export class NotificationSettingsComponent implements OnInit {
     });
   }
 
-  private createNotificationRule(
-    index: number,
-    fieldName: string,
-  ): NotificationRule {
-    const fieldValue = this.getFormField(index, fieldName)?.value;
-    return {
-      notificationType: "entity_change",
-      enabled: fieldName === "enabled" ? fieldValue : false,
-      channels: {
-        push: fieldName === "notificationMethod" ? fieldValue : false,
-      },
-      entityType: fieldName === "notificationEntity" ? fieldValue : "",
-      conditions: {},
-    };
-  }
-
   async handleNotificationRuleChange($event: string, index: number) {
     const userNotificationConfig = await this.loadNotificationConfig();
     const updatedNotificationRules =
@@ -177,10 +185,6 @@ export class NotificationSettingsComponent implements OnInit {
     const updatedRules = [...updatedNotificationRules];
 
     const fieldValue = this.getFormField(index, $event)?.value;
-
-    if (!updatedRules[index]) {
-      updatedRules[index] = this.createNotificationRule(index, $event);
-    }
 
     switch ($event) {
       case "notificationEntity":
