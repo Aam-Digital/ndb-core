@@ -41,23 +41,21 @@ export class NotificationRuleComponent {
     return this.notificationRule.get(fieldName) as FormControl;
   }
 
-  updateNotificationRuleChange(fieldName: string) {
-    const entityFieldValue = this.getFormField(fieldName).value;
+  handleNotificationRuleChange(fieldName: string, event?: any) {
+    const formField = this.getFormField(fieldName);
 
-    if (this.getFormField(fieldName).value !== entityFieldValue) {
-      this.getFormField(fieldName).setValue(entityFieldValue);
+    if (event instanceof MatSlideToggleChange) {
+      formField.setValue(event.checked);
+    } else if (Array.isArray(event)) {
+      const fieldValue = event.includes("push");
+      formField.setValue(fieldValue);
+    } else {
+      const entityFieldValue = formField.value;
+      if (formField.value !== entityFieldValue) {
+        formField.setValue(entityFieldValue);
+      }
     }
-    this.notificationRuleChange.emit(fieldName);
-  }
 
-  enableNotificationRule(fieldName: string, event: MatSlideToggleChange) {
-    this.getFormField(fieldName).setValue(event.checked);
-    this.notificationRuleChange.emit(fieldName);
-  }
-
-  updateNotificationCenter(fieldName: string, event: string[]) {
-    const fieldValue = event.includes("push");
-    this.getFormField(fieldName).setValue(fieldValue);
     this.notificationRuleChange.emit(fieldName);
   }
 

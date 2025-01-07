@@ -11,7 +11,7 @@
         <mat-label i18n>Select an entity type</mat-label>
         <app-entity-type-select
           [formControl]="getFormField('notificationEntity')"
-          (ngModelChange)="updateNotificationRuleChange('notificationEntity')"
+          (ngModelChange)="handleNotificationRuleChange('notificationEntity')"
         ></app-entity-type-select>
       </mat-form-field>
       <app-help-button
@@ -44,7 +44,7 @@
           getFormField('notificationMethod').value,
         ]"
         (selectionChange)="
-          updateNotificationCenter('notificationMethod', $event)
+          handleNotificationRuleChange('notificationMethod', $event)
         "
         class="full-width-field"
       ></app-notification-method-select>
@@ -59,7 +59,7 @@
     <div class="flex-row align-center">
       <mat-slide-toggle
         [formControl]="getFormField('enabled')"
-        (change)="enableNotificationRule('enabled', $event)"
+        (change)="handleNotificationRuleChange('enabled', $event)"
         class="notification-toggle"
         matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
         i18n-matTooltip
