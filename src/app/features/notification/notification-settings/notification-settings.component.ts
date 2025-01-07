@@ -88,7 +88,7 @@ export class NotificationSettingsComponent implements OnInit {
    * Get the logged in user id
    */
   private get userId() {
-    return this.sessionInfo.value?.entityId;
+    return this.sessionInfo.value?.id;
   }
 
   get notificationRules(): FormArray {
