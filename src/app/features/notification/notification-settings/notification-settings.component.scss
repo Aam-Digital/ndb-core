@@ -79,8 +79,6 @@
 }
 
 .add-new-notification-rule {
-  display: flex;
-  justify-content: center;
   margin-top: 30px;
 }
 
@@ -138,4 +136,11 @@
 .notification-condition-section {
   margin-top: sizes.$regular;
   margin-bottom: sizes.$regular;
+}
+
+.new-rule-condition-button {
+  background-color: transparent;
+  padding: sizes.$regular sizes.$large;
+  cursor: pointer;
+  border-radius: sizes.$large;
 }

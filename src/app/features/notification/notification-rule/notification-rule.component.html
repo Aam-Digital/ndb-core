@@ -129,20 +129,18 @@
         </mat-form-field>
       </div>
     }
-    <div class="flex-row justify-content-center">
-      <button
-        mat-stroked-button
-        class="add-new-rule-button"
-        color="accent"
-        (click)="appendNewNotificationCondition($event)"
-        matTooltip="Define another condition of notifications for your user account"
-        i18n-matTooltip
+    <button
+      mat-stroked-button
+      class="new-rule-condition-button"
+      color="accent"
+      (click)="appendNewNotificationCondition($event)"
+      matTooltip="Define another condition of notifications for your user account"
+      i18n-matTooltip
+    >
+      <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+      <span i18n class="new-notification-rule"
+        >Add Notification Condition</span
       >
-        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-        <span i18n class="new-notification-rule"
-          >Add new notification condition</span
-        >
-      </button>
-    </div>
+    </button>
   </div>
 }
