@@ -20,6 +20,10 @@ import { Observable } from "rxjs";
 /**
  * An implementation of this abstract class provides functions for direct database access.
  * This interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
+ *
+ * PLEASE NOTE:
+ * Direct access to the Database layer is rarely necessary, and you should probably use EntityMapperService instead.
+ * Database is not an Angular Service and has to be accessed through the DatabaseResolverService.
  */
 export abstract class Database {
   /**

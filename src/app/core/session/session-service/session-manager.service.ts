@@ -24,9 +24,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
-import { Database } from "../../database/database";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -34,6 +32,7 @@ import { filter, take } from "rxjs/operators";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
  * This service handles the user session.
@@ -42,9 +41,7 @@ import { ConfigService } from "../../config/config.service";
  */
 @Injectable()
 export class SessionManagerService {
-  readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
   readonly RESET_REMOTE_SESSION_KEY = "RESET_REMOTE";
-  private pouchDatabase: PouchDatabase;
   private remoteLoggedIn = false;
   private updateSubscription: Subscription;
 
@@ -59,12 +56,8 @@ export class SessionManagerService {
     private router: Router,
     @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
     private configService: ConfigService,
-    database: Database,
-  ) {
-    if (database instanceof PouchDatabase) {
-      this.pouchDatabase = database;
-    }
-  }
+    private databaseResolver: DatabaseResolverService,
+  ) {}
 
   /**
    * Login for a remote session and start the sync.
@@ -98,7 +91,7 @@ export class SessionManagerService {
   }
 
   private async initializeUser(session: SessionInfo) {
-    await this.initializeDatabaseForCurrentUser(session);
+    await this.databaseResolver.initDatabasesForSession(session);
     this.sessionInfo.next(session);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
     this.configService.configUpdates.pipe(take(1)).subscribe(() =>
@@ -155,7 +148,7 @@ export class SessionManagerService {
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;
-    this.pouchDatabase.reset();
+    this.databaseResolver.resetDatabases();
     return this.router.navigate(["/login"], {
       queryParams: { redirect_uri: this.router.routerState.snapshot.url },
     });
@@ -173,38 +166,5 @@ export class SessionManagerService {
     await this.initializeUser(user);
     this.syncService.startSync();
     this.localAuthService.saveUser(user);
-  }
-
-  private async initializeDatabaseForCurrentUser(user: SessionInfo) {
-    const userDBName = `${user.name}-${environment.DB_NAME}`;
-    // Work on a temporary database before initializing the real one
-    const tmpDB = new PouchDatabase();
-    this.initDatabase(userDBName, tmpDB);
-    if (!(await tmpDB.isEmpty())) {
-      // Current user has own database, we are done here
-      this.initDatabase(userDBName);
-      return;
-    }
-
-    this.initDatabase(environment.DB_NAME, tmpDB);
-    const dbFallback = window.localStorage.getItem(this.DEPRECATED_DB_KEY);
-    const dbAvailable = !dbFallback || dbFallback === user.name;
-    if (dbAvailable && !(await tmpDB.isEmpty())) {
-      // Old database is available and can be used by the current user
-      window.localStorage.setItem(this.DEPRECATED_DB_KEY, user.name);
-      this.initDatabase(environment.DB_NAME);
-      return;
-    }
-
-    // Create a new database for the current user
-    this.initDatabase(userDBName);
-  }
-
-  private initDatabase(dbName: string, db = this.pouchDatabase) {
-    if (environment.session_type === SessionType.mock) {
-      db.initInMemoryDB(dbName);
-    } else {
-      db.initIndexedDB(dbName);
-    }
   }
 }

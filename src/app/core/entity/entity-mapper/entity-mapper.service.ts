@@ -16,7 +16,6 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Database } from "../../database/database";
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { Observable } from "rxjs";
@@ -25,6 +24,7 @@ import { EntityRegistry } from "../database-entity.decorator";
 import { map } from "rxjs/operators";
 import { UpdateMetadata } from "../model/update-metadata";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -39,7 +39,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 @Injectable({ providedIn: "root" })
 export class EntityMapperService {
   constructor(
-    private _db: Database,
+    private dbResolver: DatabaseResolverService,
     private entitySchemaService: EntitySchemaService,
     private currentUser: CurrentUserSubject,
     private registry: EntityRegistry,
@@ -58,7 +58,9 @@ export class EntityMapperService {
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
     const entityId = Entity.createPrefixedId(ctor.ENTITY_TYPE, id);
-    const result = await this._db.get(entityId);
+    const result = await this.dbResolver
+      .getDatabase(ctor.DATABASE)
+      .get(entityId);
     return this.transformToEntityFormat(result, ctor);
   }
 
@@ -75,7 +77,9 @@ export class EntityMapperService {
     entityType: EntityConstructor<T> | string,
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
-    const records = await this._db.getAll(ctor.ENTITY_TYPE + ":");
+    const records = await this.dbResolver
+      .getDatabase(ctor.DATABASE)
+      .getAll(ctor.ENTITY_TYPE + ":");
     return records.map((rec) => this.transformToEntityFormat(rec, ctor));
   }
 
@@ -113,20 +117,23 @@ export class EntityMapperService {
   ): Observable<UpdatedEntity<T>> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
-    return this._db.changes(type + ":").pipe(
-      map((doc) => {
-        const entity = new ctor();
-        this.entitySchemaService.loadDataIntoEntity(entity, doc);
-        if (doc._deleted) {
-          return { type: "remove", entity: entity };
-        } else if (doc._rev.startsWith("1-")) {
-          // This does not cover all the cases as docs with higher rev-number might be synchronized for the first time
-          return { type: "new", entity: entity };
-        } else {
-          return { type: "update", entity: entity };
-        }
-      }),
-    );
+    return this.dbResolver
+      .getDatabase(ctor.DATABASE)
+      .changes(type + ":")
+      .pipe(
+        map((doc) => {
+          const entity = new ctor();
+          this.entitySchemaService.loadDataIntoEntity(entity, doc);
+          if (doc._deleted) {
+            return { type: "remove", entity: entity };
+          } else if (doc._rev.startsWith("1-")) {
+            // This does not cover all the cases as docs with higher rev-number might be synchronized for the first time
+            return { type: "new", entity: entity };
+          } else {
+            return { type: "update", entity: entity };
+          }
+        }),
+      );
   }
 
   /**
@@ -142,7 +149,9 @@ export class EntityMapperService {
     this.setEntityMetadata(entity);
     const rawData =
       this.entitySchemaService.transformEntityToDatabaseFormat(entity);
-    const result = await this._db.put(rawData, forceUpdate);
+    const result = await this.dbResolver
+      .getDatabase(entity.getConstructor().DATABASE)
+      .put(rawData, forceUpdate);
     if (result?.ok) {
       entity._rev = result.rev;
     }
@@ -163,10 +172,27 @@ export class EntityMapperService {
     forceUpdate: boolean = false,
   ): Promise<any[]> {
     entities.forEach((e) => this.setEntityMetadata(e));
-    const rawData = entities.map((e) =>
-      this.entitySchemaService.transformEntityToDatabaseFormat(e),
+
+    // group entities by their DATABASE
+    const groupedEntities = new Map<string, Entity[]>();
+    entities.forEach((e) => {
+      const db = e.getConstructor().DATABASE;
+      if (!groupedEntities.has(db)) {
+        groupedEntities.set(db, []);
+      }
+      groupedEntities.get(db).push(e);
+    });
+
+    const savePromises = Array.from(groupedEntities.entries()).map(
+      ([db, entities]) => {
+        const rawData = entities.map((e) =>
+          this.entitySchemaService.transformEntityToDatabaseFormat(e),
+        );
+        return this.dbResolver.getDatabase(db).putAll(rawData, forceUpdate);
+      },
     );
-    const results = await this._db.putAll(rawData, forceUpdate);
+
+    const results = (await Promise.all(savePromises)).flat();
     results.forEach((res, idx) => {
       if (res.ok) {
         const entity = entities[idx];
@@ -181,7 +207,9 @@ export class EntityMapperService {
    * @param entity The entity to be deleted
    */
   public remove<T extends Entity>(entity: T): Promise<any> {
-    return this._db.remove(entity);
+    return this.dbResolver
+      .getDatabase(entity.getConstructor().DATABASE)
+      .remove(entity);
   }
 
   protected resolveConstructor<T extends Entity>(

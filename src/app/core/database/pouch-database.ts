@@ -20,7 +20,6 @@ import { Logging } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
-import { Injectable, Optional } from "@angular/core";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 import { HttpStatusCode } from "@angular/common/http";
@@ -34,7 +33,6 @@ import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.serv
  * Additional convenience functions on top of the PouchDB API
  * should be implemented in the abstract {@link Database}.
  */
-@Injectable()
 export class PouchDatabase extends Database {
   /**
    * Small helper function which creates a database with in-memory PouchDB initialized
@@ -66,9 +64,13 @@ export class PouchDatabase extends Database {
 
   /**
    * Create a PouchDB database manager.
+   * @param authService (Optional) the authentication service that may require additional auth headers for remote DB access
    */
-  constructor(@Optional() private authService?: KeycloakAuthService) {
+  constructor(private authService?: KeycloakAuthService) {
     super();
+
+    // TODO: refactor to run the init method directly from constructor and remove databaseInitialized
+    //  now that DatabaseResolver handles creation and provider we don't have to separate creation and initialization anymore
   }
 
   /**

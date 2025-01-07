@@ -2,7 +2,6 @@ import { Inject, Injectable } from "@angular/core";
 import { DatabaseRule } from "../permission-types";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Database } from "../../database/database";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../ability/entity-ability";
@@ -10,6 +9,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
 import { firstValueFrom } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
  * This service checks whether the relevant rules for the current user changed.
@@ -28,7 +28,7 @@ export class PermissionEnforcerService {
     private sessionInfo: SessionSubject,
     private ability: EntityAbility,
     private entityMapper: EntityMapperService,
-    private database: Database,
+    private dbResolver: DatabaseResolverService,
     private analyticsService: AnalyticsService,
     private entities: EntityRegistry,
     @Inject(LOCATION_TOKEN) private location: Location,
@@ -48,7 +48,8 @@ export class PermissionEnforcerService {
         "destroying local db due to lost permissions",
         { category: "Migration" },
       );
-      await this.database.destroy();
+      // TODO: is it enough to destroy the default DB or could other DBs also be affected?
+      await this.dbResolver.getDatabase().destroy();
       this.location.reload();
     }
     window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
