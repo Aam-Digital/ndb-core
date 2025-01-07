@@ -5,9 +5,9 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
-import { FormControl } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { NotificationRule } from "../model/notification-config";
 
 describe("NotificationRuleComponent", () => {
   let component: NotificationRuleComponent;
@@ -18,14 +18,17 @@ describe("NotificationRuleComponent", () => {
       imports: [
         NotificationRuleComponent,
         FontAwesomeTestingModule,
-        BrowserAnimationsModule,
+        NoopAnimationsModule,
       ],
       providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NotificationRuleComponent);
     component = fixture.componentInstance;
-    component.getFormField = () => new FormControl();
+
+    component.value = new NotificationRule();
+    component.ngOnChanges({ value: { currentValue: component.value } } as any);
+
     fixture.detectChanges();
   });
 

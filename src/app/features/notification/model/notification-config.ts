@@ -61,7 +61,18 @@ export class NotificationRule {
   @DatabaseField() entityType: string;
 
   /** (for "entity_change" notifications only): conditions which changes cause notifications */
-  @DatabaseField() conditions: DataFilter<any>;
+  @DatabaseField() conditions: NotificationCondition[];
+}
+
+/**
+ * Represents a specific notification condition configuration.
+ */
+export class NotificationCondition {
+  /** (for "entity_change" notifications only): conditions which changes cause notifications */
+  @DatabaseField() entityTypeField: string;
+
+  /** Defines the rule or condition for triggering the notification. */
+  @DatabaseField() rule: string;
 }
 
 /**
