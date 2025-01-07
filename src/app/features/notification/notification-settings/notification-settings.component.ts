@@ -3,16 +3,9 @@ import {
   MatSlideToggle,
   MatSlideToggleChange,
 } from "@angular/material/slide-toggle";
-import { MatInputModule } from "@angular/material/input";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-} from "@angular/forms";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import { FormArray, FormControl, FormGroup } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
@@ -33,13 +26,10 @@ import { NotificationRuleComponent } from "../notification-rule/notification-rul
   standalone: true,
   imports: [
     MatSlideToggle,
-    MatInputModule,
     FontAwesomeModule,
     MatFormFieldModule,
     MatButtonModule,
-    MatTooltipModule,
     HelpButtonComponent,
-    ReactiveFormsModule,
     NotificationRuleComponent,
   ],
   templateUrl: "./notification-settings.component.html",
