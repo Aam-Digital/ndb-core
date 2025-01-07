@@ -42,6 +42,7 @@
 }
 
 .notifications-options-container {
+  @extend .full-width;
   gap: 40px;
 
   @media screen and (min-width: breakpoints.$xxl) {
@@ -78,6 +79,8 @@
 }
 
 .add-new-notification-rule {
+  display: flex;
+  justify-content: center;
   margin-top: 30px;
 }
 
