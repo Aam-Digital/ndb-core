@@ -17,6 +17,7 @@ import {
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { NotificationRuleComponent } from "../notification-rule/notification-rule.component";
 import { MatTooltip } from "@angular/material/tooltip";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -44,6 +45,7 @@ export class NotificationSettingsComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
     private confirmationDialog: ConfirmationDialogService,
+    private alertService: AlertService,
   ) {}
 
   /**
@@ -53,8 +55,8 @@ export class NotificationSettingsComponent implements OnInit {
     return this.sessionInfo.value?.id;
   }
 
-  ngOnInit(): void {
-    this.initializeNotificationSettings();
+  async ngOnInit() {
+    await this.initializeNotificationSettings();
   }
 
   private async initializeNotificationSettings() {
@@ -99,6 +101,7 @@ export class NotificationSettingsComponent implements OnInit {
 
   private async saveNotificationConfig(config: NotificationConfig) {
     await this.entityMapper.save(config);
+    this.alertService.addInfo($localize`Notification settings saved.`);
   }
 
   async addNewNotificationRule() {
