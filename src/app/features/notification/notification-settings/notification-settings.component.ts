@@ -26,9 +26,9 @@ import {
 } from "app/features/notification/model/notification-config";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { AlertService } from "app/core/alerts/alert.service";
-import { NotificationRuleConditionComponent } from "../notification-rule-condition/notification-rule-condition.component";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
+import { ConditionFilterComponent } from "app/core/filter/filters/condition-filter.component";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -47,9 +47,9 @@ import { CdkAccordionModule } from "@angular/cdk/accordion";
     HelpButtonComponent,
     NotificationMethodSelectComponent,
     ReactiveFormsModule,
-    NotificationRuleConditionComponent,
     EntityFieldSelectComponent,
     CdkAccordionModule,
+    ConditionFilterComponent,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
