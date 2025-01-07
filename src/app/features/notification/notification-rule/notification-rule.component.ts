@@ -15,7 +15,7 @@ import { NotificationMethodSelectComponent } from "../notification-method-select
 import { Logging } from "app/core/logging/logging.service";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
-import { ConditionFilterComponent } from "app/core/filter/filters/condition-filter.component";
+import { ConditionalFilterComponent } from "app/core/filter/conditional-filter/conditional-filter.component";
 
 @Component({
   selector: "app-notification-rule",
@@ -33,7 +33,7 @@ import { ConditionFilterComponent } from "app/core/filter/filters/condition-filt
     ReactiveFormsModule,
     CdkAccordionModule,
     EntityFieldSelectComponent,
-    ConditionFilterComponent,
+    ConditionalFilterComponent,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
@@ -45,7 +45,6 @@ export class NotificationRuleComponent {
   @Output() removeNotificationRule = new EventEmitter<void>();
 
   notificationConditions: any[] = [];
-  selectedNotificationEntity: string;
 
   getFormField(fieldName: string): FormControl {
     return this.notificationRule.get(fieldName) as FormControl;
@@ -53,6 +52,7 @@ export class NotificationRuleComponent {
 
   handleNotificationRuleChange(fieldName: string, event?: any) {
     const formField = this.getFormField(fieldName);
+    console.log("formField", formField.value);
 
     if (event instanceof MatSlideToggleChange) {
       formField.setValue(event.checked);
@@ -61,7 +61,6 @@ export class NotificationRuleComponent {
       formField.setValue(fieldValue);
     } else {
       const entityFieldValue = formField.value;
-      this.selectedNotificationEntity = entityFieldValue;
       if (formField.value !== entityFieldValue) {
         formField.setValue(entityFieldValue);
       }
@@ -88,8 +87,7 @@ export class NotificationRuleComponent {
     Logging.log("Get the notification token.");
   }
 
-  appendNewNotificationCondition(event: MouseEvent) {
-    event.stopPropagation();
+  appendNewNotificationCondition() {
     this.notificationConditions.push({});
   }
 }

@@ -111,12 +111,17 @@
       <div class="flex-row align-center full-width">
         <mat-form-field class="full-width-field">
           <mat-label i18n>Select Entity Field</mat-label>
-          <app-entity-field-select [entityType]="selectedNotificationEntity" />
+          <app-entity-field-select
+            [entityType]="getFormField('notificationEntity').value"
+          />
         </mat-form-field>
         <mat-form-field class="full-width-field">
           <mat-label i18n>Notification condition</mat-label>
           <app-conditional-filter
             [formControl]="getFormField('notificationRuleCondition')"
+            (ngModelChange)="
+              handleNotificationRuleChange('notificationRuleCondition')
+            "
           />
         </mat-form-field>
         <mat-form-field class="full-width-field">
@@ -133,14 +138,12 @@
       mat-stroked-button
       class="new-rule-condition-button"
       color="accent"
-      (click)="appendNewNotificationCondition($event)"
+      (click)="appendNewNotificationCondition()"
       matTooltip="Define another condition of notifications for your user account"
       i18n-matTooltip
     >
       <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-      <span i18n class="new-notification-rule"
-        >Add Notification Condition</span
-      >
+      <span i18n class="new-notification-rule">Add Notification Condition</span>
     </button>
   </div>
 }
