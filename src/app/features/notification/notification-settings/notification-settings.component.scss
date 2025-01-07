@@ -11,18 +11,6 @@
   padding: 16px;
 }
 
-.notification-types-container {
-  margin-top: sizes.$large;
-}
-
-.browser-notifications-container {
-  margin-top: sizes.$large;
-}
-
-.notification-setting-title {
-  margin-bottom: sizes.$x-small;
-}
-
 .panel-wrapper {
   @include mat-elevation.elevation(2);
   border-radius: 10px;
@@ -34,27 +22,16 @@
   background-color: colors.$background;
 }
 
-.notifications-options-container {
-  @extend .panel-wrapper;
-  background-color: colors.$background;
-  margin-top: sizes.$regular;
-  gap: 40px;
-
-  @media screen and (min-width: breakpoints.$xxl) {
-    flex-direction: row;
-  }
+.notification-types-container {
+  margin-top: sizes.$large;
 }
 
-.notification-options-wrapper {
-  @extend .full-width;
-
-  @media screen and (min-width: breakpoints.$xxl) {
-    flex-direction: row;
-  }
+.browser-notifications-container {
+  margin-top: sizes.$large;
 }
 
-.notification-rule-actions {
-  gap: 15px;
+.notification-setting-title {
+  margin-bottom: sizes.$x-small;
 }
 
 .browser-notification-list {
@@ -84,19 +61,6 @@
   border-radius: 20px;
   padding: 22px;
   background-color: aliceblue;
-}
-
-.full-width-field {
-  @extend .full-width;
-  display: inline-block;
-
-  ::ng-deep mat-form-field {
-    @extend .full-width;
-  }
-}
-
-.notification-rule-option {
-  width: 80%;
 }
 
 .coming-soon-label {

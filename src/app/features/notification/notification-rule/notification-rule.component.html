@@ -1,0 +1,87 @@
+<div
+  class="flex-column justify-space-between align-center notifications-options-container"
+>
+  <div
+    class="flex-column justify-space-between align-center notification-options-wrapper"
+  >
+    <div
+      class="flex-row justify-content-center align-center notification-rule-option"
+    >
+      <mat-form-field class="full-width-field">
+        <mat-label i18n>Select an entity type</mat-label>
+        <app-entity-type-select
+          [formControl]="getFormField('notificationEntity')"
+          (ngModelChange)="updateNotificationRuleChange('notificationEntity')"
+        ></app-entity-type-select>
+      </mat-form-field>
+      <app-help-button
+        text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
+        i18n-text
+      ></app-help-button>
+    </div>
+
+    <div class="flex-row align-center full-width">
+      <mat-form-field class="notification-rule-option">
+        <mat-label i18n>Notification condition</mat-label>
+        <input
+          matInput
+          placeholder="TO BE IMPLEMENTED LATER"
+          disabled="true"
+          i18n-placeholder="Notification condition placeholder"
+        />
+      </mat-form-field>
+      <app-help-button
+        text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
+        i18n-text
+      ></app-help-button>
+    </div>
+
+    <div
+      class="flex-row justify-content-center align-center notification-rule-option"
+    >
+      <app-notification-method-select
+        [selectedNotificationMethod]="[
+          getFormField('notificationMethod').value,
+        ]"
+        (selectionChange)="
+          updateNotificationCenter('notificationMethod', $event)
+        "
+        class="full-width-field"
+      ></app-notification-method-select>
+      <app-help-button
+        text="Define a notification method to receive notifications"
+        i18n-text
+      ></app-help-button>
+    </div>
+  </div>
+
+  <div class="flex-row notification-rule-actions">
+    <div class="flex-row align-center">
+      <mat-slide-toggle
+        [formControl]="getFormField('enabled')"
+        (change)="enableNotificationRule('enabled', $event)"
+        class="notification-toggle"
+        matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
+        i18n-matTooltip
+      ></mat-slide-toggle>
+    </div>
+
+    <button
+      (click)="removeRule()"
+      mat-icon-button
+      matTooltip="Remove notification rule"
+      i18n-matTooltip
+    >
+      <fa-icon icon="trash"></fa-icon>
+    </button>
+
+    <button
+      mat-icon-button
+      (click)="testNotification()"
+      matTooltip="Test notification"
+      i18n-matTooltip
+    >
+      <fa-icon icon="paper-plane"></fa-icon>
+    </button>
+  </div>
+</div>
