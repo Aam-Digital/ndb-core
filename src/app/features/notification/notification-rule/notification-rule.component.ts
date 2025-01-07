@@ -30,7 +30,7 @@ import { Logging } from "app/core/logging/logging.service";
     ReactiveFormsModule,
   ],
   templateUrl: "./notification-rule.component.html",
-  styleUrl: "./notification-rule.component.scss",
+  styleUrl: "../notification-settings/notification-settings.component.scss",
 })
 export class NotificationRuleComponent {
   @Input() notificationRule: FormControl;
