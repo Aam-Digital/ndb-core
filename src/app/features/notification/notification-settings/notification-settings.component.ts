@@ -110,6 +110,7 @@ export class NotificationSettingsComponent implements OnInit {
       notificationEntity: new FormControl(rule.entityType || ""),
       enabled: new FormControl(rule.enabled || false),
       notificationMethod: new FormControl(rule.channels?.push ? "push" : ""),
+      notificationRuleCondition: new FormControl(rule.conditions || ""),
     });
   }
 
@@ -178,7 +179,9 @@ export class NotificationSettingsComponent implements OnInit {
   ): FormGroup {
     return new FormGroup({
       notificationEntity: new FormControl(notificationRule?.entityType || ""),
-      notificationRuleCondition: new FormControl(""),
+      notificationRuleCondition: new FormControl(
+        notificationRule?.conditions || "",
+      ),
       notificationMethod: new FormControl(
         notificationRule?.channels.push ? "push" : "",
       ),

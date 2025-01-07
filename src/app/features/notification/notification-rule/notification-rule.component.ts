@@ -15,6 +15,7 @@ import { NotificationMethodSelectComponent } from "../notification-method-select
 import { Logging } from "app/core/logging/logging.service";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
+import { ConditionFilterComponent } from "app/core/filter/filters/condition-filter.component";
 
 @Component({
   selector: "app-notification-rule",
@@ -32,6 +33,7 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
     ReactiveFormsModule,
     CdkAccordionModule,
     EntityFieldSelectComponent,
+    ConditionFilterComponent,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
@@ -43,6 +45,7 @@ export class NotificationRuleComponent {
   @Output() removeNotificationRule = new EventEmitter<void>();
 
   notificationConditions: any[] = [];
+  selectedNotificationEntity: string;
 
   getFormField(fieldName: string): FormControl {
     return this.notificationRule.get(fieldName) as FormControl;
@@ -58,6 +61,7 @@ export class NotificationRuleComponent {
       formField.setValue(fieldValue);
     } else {
       const entityFieldValue = formField.value;
+      this.selectedNotificationEntity = entityFieldValue;
       if (formField.value !== entityFieldValue) {
         formField.setValue(entityFieldValue);
       }
