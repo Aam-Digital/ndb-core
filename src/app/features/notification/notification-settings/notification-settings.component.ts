@@ -5,7 +5,6 @@ import {
 } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import { FormArray, FormControl, FormGroup } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
@@ -17,6 +16,7 @@ import {
 } from "app/features/notification/model/notification-config";
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { NotificationRuleComponent } from "../notification-rule/notification-rule.component";
+import { MatTooltip } from "@angular/material/tooltip";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -31,15 +31,13 @@ import { NotificationRuleComponent } from "../notification-rule/notification-rul
     MatButtonModule,
     HelpButtonComponent,
     NotificationRuleComponent,
+    MatTooltip,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
 })
 export class NotificationSettingsComponent implements OnInit {
-  notificationSetting = new FormGroup({
-    notificationRules: new FormArray([]),
-  });
-  allNotificationRules: NotificationConfig = null;
+  notificationConfig: NotificationConfig = null;
   isPushNotificationEnabled = false;
 
   constructor(
@@ -48,29 +46,24 @@ export class NotificationSettingsComponent implements OnInit {
     private confirmationDialog: ConfirmationDialogService,
   ) {}
 
+  /**
+   * Get the logged-in user id
+   */
+  private get userId() {
+    return this.sessionInfo.value?.id;
+  }
+
   ngOnInit(): void {
     this.initializeNotificationSettings();
   }
 
   private async initializeNotificationSettings() {
-    this.allNotificationRules = await this.loadNotificationConfig();
-    if (this.allNotificationRules) {
-      this.isPushNotificationEnabled =
-        this.allNotificationRules?.channels?.push || false;
-      this.populateNotificationRules(
-        this.allNotificationRules.notificationRules,
-      );
-    }
-  }
+    this.notificationConfig = await this.loadNotificationConfig();
 
-  private populateNotificationRules(
-    notificationRules: NotificationRule[] = [],
-  ) {
-    notificationRules.forEach((notificationRule) => {
-      const newNotificationRule =
-        this.initializeNotificationRuleFormGroup(notificationRule);
-      this.notificationRules.push(newNotificationRule);
-    });
+    if (this.notificationConfig) {
+      this.isPushNotificationEnabled =
+        this.notificationConfig?.channels?.push || false;
+    }
   }
 
   private async loadNotificationConfig() {
@@ -81,36 +74,11 @@ export class NotificationSettingsComponent implements OnInit {
       );
     } catch (err) {
       Logging.debug(err);
+
+      if (err.status === 404) {
+        return new NotificationConfig(this.userId);
+      }
     }
-  }
-
-  /**
-   * Get the logged in user id
-   */
-  private get userId() {
-    return this.sessionInfo.value?.id;
-  }
-
-  get notificationRules(): FormArray {
-    return this.notificationSetting.get("notificationRules") as FormArray;
-  }
-
-  private createNotificationRuleFormGroup(
-    rule: NotificationRule = {} as NotificationRule,
-  ): FormGroup {
-    return new FormGroup({
-      notificationEntity: new FormControl(rule.entityType || ""),
-      enabled: new FormControl(rule.enabled || false),
-      notificationMethod: new FormControl(rule.channels?.push ? "push" : ""),
-    });
-  }
-
-  getFormField(index: number, fieldName: string): FormControl {
-    return this.notificationRules.at(index).get(fieldName) as FormControl;
-  }
-
-  getFormFieldControl(index: number) {
-    return this.notificationRules.at(index) as FormControl;
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {
@@ -129,80 +97,33 @@ export class NotificationSettingsComponent implements OnInit {
     await this.saveNotificationConfig(notificationConfig);
   }
 
-  async appendNewNotificationRule() {
-    this.notificationRules.push(this.createNotificationRuleFormGroup());
-
-    let updatedNotificationConfig = await this.loadNotificationConfig();
-    if (!updatedNotificationConfig) {
-      updatedNotificationConfig = new NotificationConfig(this.userId);
-    }
-
-    updatedNotificationConfig.notificationRules =
-      this.getUpdatedNotificationRules();
-
-    await this.saveNotificationConfig(updatedNotificationConfig);
-  }
-
-  private getUpdatedNotificationRules() {
-    return this.notificationRules.value.map((rule: any) => {
-      return {
-        notificationType: "entity_change",
-        enabled: rule.enabled,
-        channels: {
-          push: false,
-        },
-        entityType: rule.notificationEntity,
-        conditions: {},
-      };
-    });
-  }
-
   private async saveNotificationConfig(config: NotificationConfig) {
-    try {
-      await this.entityMapper.save(config);
-    } catch (error) {
-      Logging.debug("Failed to save notification config:", error);
-    }
+    await this.entityMapper.save(config);
   }
 
-  private initializeNotificationRuleFormGroup(
-    notificationRule: NotificationRule = null,
-  ): FormGroup {
-    return new FormGroup({
-      notificationEntity: new FormControl(notificationRule?.entityType || ""),
-      notificationRuleCondition: new FormControl(""),
-      notificationMethod: new FormControl(
-        notificationRule?.channels.push ? "push" : "",
-      ),
-      enabled: new FormControl(notificationRule?.enabled || false),
-    });
+  async addNewNotificationRule() {
+    const newRule: NotificationRule = {
+      notificationType: "entity_change",
+      entityType: undefined,
+      channels: undefined,
+      conditions: undefined,
+      enabled: true,
+    };
+
+    if (!this.notificationConfig.notificationRules) {
+      this.notificationConfig.notificationRules = [];
+    }
+    this.notificationConfig.notificationRules.push(newRule);
+
+    // saving this only once the fields are actually edited by the user
   }
 
-  async handleNotificationRuleChange($event: string, index: number) {
-    const userNotificationConfig = await this.loadNotificationConfig();
-    const updatedNotificationRules =
-      userNotificationConfig?.notificationRules || [];
-    const updatedRules = [...updatedNotificationRules];
-
-    const fieldValue = this.getFormField(index, $event)?.value;
-
-    switch ($event) {
-      case "notificationEntity":
-        updatedRules[index].entityType = fieldValue;
-        break;
-      case "enabled":
-        updatedRules[index].enabled = fieldValue;
-        break;
-      case "notificationMethod":
-        updatedRules[index].channels.push = fieldValue;
-        break;
-    }
-
-    const updatedNotificationConfig: NotificationConfig =
-      userNotificationConfig || new NotificationConfig(this.userId);
-    updatedNotificationConfig.notificationRules = updatedRules;
-
-    await this.saveNotificationConfig(updatedNotificationConfig);
+  async updateNotificationRule(
+    notificationRule: NotificationRule,
+    updatedRule: NotificationRule,
+  ) {
+    Object.assign(notificationRule, updatedRule);
+    await this.saveNotificationConfig(this.notificationConfig);
   }
 
   async confirmRemoveNotificationRule(index: number) {
@@ -218,11 +139,7 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   private async removeNotificationRule(index: number) {
-    const notificationConfig = await this.loadNotificationConfig();
-    if (notificationConfig?.notificationRules) {
-      notificationConfig.notificationRules.splice(index, 1);
-      await this.saveNotificationConfig(notificationConfig);
-    }
-    this.notificationRules.removeAt(index);
+    this.notificationConfig.notificationRules.splice(index, 1);
+    await this.saveNotificationConfig(this.notificationConfig);
   }
 }

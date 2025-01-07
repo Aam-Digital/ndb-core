@@ -20,22 +20,23 @@
     </div>
 
     @for (
-      notificationRule of notificationRules.controls;
+      notificationRule of notificationConfig?.notificationRules;
       track notificationRule;
       let index = $index
     ) {
       <app-notification-rule
-        [notificationRule]="getFormFieldControl(index)"
-        (notificationRuleChange)="handleNotificationRuleChange($event, index)"
+        [value]="notificationRule"
+        (valueChange)="updateNotificationRule(notificationRule, $event)"
         (removeNotificationRule)="confirmRemoveNotificationRule(index)"
       ></app-notification-rule>
     }
+
     <div class="add-new-notification-rule">
       <button
         mat-stroked-button
         class="add-new-rule-button"
         color="accent"
-        (click)="appendNewNotificationRule()"
+        (click)="addNewNotificationRule()"
         matTooltip="Define another type of notifications for your user account"
         i18n-matTooltip
       >
