@@ -68,11 +68,8 @@ export class NotificationRule {
  * Represents a specific notification condition configuration.
  */
 export class NotificationCondition {
-  /** (for "entity_change" notifications only): conditions which changes cause notifications */
-  @DatabaseField() entityTypeField: string;
-
-  /** Defines the rule or condition for triggering the notification. */
-  @DatabaseField() rule: string;
+  /** Defines the notification condition for triggering the notification. */
+  @DatabaseField() notificationCondition: Record<string, any>;
 }
 
 /**

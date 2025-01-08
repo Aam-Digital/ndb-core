@@ -118,18 +118,22 @@
         <div class="flex-row align-center full-width">
           <mat-form-field class="full-width-field">
             <mat-label i18n>Select Entity Field</mat-label>
-            <app-entity-field-select [entityType]="value?.entityType" />
+            <app-entity-field-select
+              [entityType]="value?.entityType"
+              formControlName="entityTypeField"
+            />
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label i18n>Notification condition</mat-label>
-            <app-conditional-filter />
+            <app-conditional-filter formControlName="operator" />
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label i18n>Notification condition</mat-label>
             <input
               matInput
-              placeholder="Status"
+              placeholder="Enter condition"
               i18n-placeholder="Notification condition placeholder"
+              formControlName="condition"
             />
           </mat-form-field>
           <button

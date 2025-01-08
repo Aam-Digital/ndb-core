@@ -142,8 +142,11 @@ export class NotificationRuleComponent implements OnChanges {
 
   appendNewNotificationCondition() {
     const newRule: NotificationCondition = {
-      entityTypeField: undefined,
-      rule: undefined,
+      notificationCondition: {
+        entityTypeField: "",
+        operator: "",
+        condition: "",
+      },
     };
 
     if (!this.value.conditions) {
