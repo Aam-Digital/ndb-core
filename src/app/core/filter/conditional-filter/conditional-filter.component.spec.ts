@@ -1,16 +1,22 @@
-import { TestBed } from "@angular/core/testing";
-
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConditionalFilterComponent } from "./conditional-filter.component";
 
 describe("ConditionalFilterComponent", () => {
-  let service: ConditionalFilterComponent;
+  let component: ConditionalFilterComponent;
+  let fixture: ComponentFixture<ConditionalFilterComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(ConditionalFilterComponent);
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ConditionalFilterComponent, MockedTestingModule.withState()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ConditionalFilterComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
+  it("should create", () => {
+    expect(component).toBeTruthy();
   });
 });
