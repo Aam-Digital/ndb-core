@@ -130,9 +130,7 @@ export class NotificationRuleComponent implements OnChanges {
       .filter(([key, value]) => value === true)
       .map(([key, value]) => key);
 
-    return parsedChannels
-      .map((index) => this.notificationMethods[index]?.key)
-      .filter((key) => key !== undefined);
+    return parsedChannels.map((index) => this.notificationMethods[index]?.key);
   }
 
   private parseOptionsArrayToChannels(options: string[]): {
