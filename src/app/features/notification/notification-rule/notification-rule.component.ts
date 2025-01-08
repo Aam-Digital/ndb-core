@@ -107,7 +107,7 @@ export class NotificationRuleComponent implements OnChanges {
     [key: string]: boolean;
   } {
     const channels = {};
-    for (let option in options ?? []) {
+    for (let option of options ?? []) {
       channels[option] = true;
     }
     return channels;
