@@ -60,21 +60,6 @@ export class EditPublicFormColumnsComponent
     }
   }
 
-  /**
-   * Migrates the configuration if it uses the old structure.
-   */
-  private migrateConfig(config: FormConfig): FormConfig {
-    if (
-      Array.isArray(config.fieldGroups) &&
-      config.fieldGroups.every((column) => Array.isArray(column))
-    ) {
-      const fields = config.fieldGroups.flat();
-      return { fieldGroups: [{ fields }] };
-    }
-    // Return the original config if no migration is needed
-    return config;
-  }
-
   updateValue(newConfig: FormConfig) {
     // setTimeout needed for change detection of disabling tabs
     setTimeout(() => this.formControl.setValue(newConfig.fieldGroups));
