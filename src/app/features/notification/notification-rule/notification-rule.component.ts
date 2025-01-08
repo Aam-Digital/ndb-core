@@ -23,7 +23,6 @@ import { Logging } from "app/core/logging/logging.service";
 import {
   NotificationChannel,
   NotificationRule,
-  NotificationCondition,
 } from "../model/notification-config";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
@@ -75,7 +74,6 @@ export class NotificationRuleComponent implements OnChanges, OnInit {
   form: FormGroup;
 
   notificationConditionForm: FormGroup;
-  notificationCondition: NotificationCondition = null;
   conditionalOptions = null;
   conditionalValueMapper = null;
 

@@ -1,7 +1,6 @@
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
-import { DataFilter } from "app/core/filter/filters/filters";
 
 /**
  * This represents one specific notification config for one specific user,
@@ -62,14 +61,6 @@ export class NotificationRule {
 
   /** (for "entity_change" notifications only): conditions which changes cause notifications */
   @DatabaseField() conditions: string[];
-}
-
-/**
- * Represents a specific notification condition configuration.
- */
-export class NotificationCondition {
-  /** Defines the notification condition for triggering the notification. */
-  @DatabaseField() notificationCondition: Record<string, any>;
 }
 
 /**
