@@ -96,11 +96,9 @@ export class NotificationRuleComponent implements OnChanges {
   private parseChannelsToOptionsArray(channels?: {
     [key: string]: boolean;
   }): string[] {
-    const parsedChannels = Object.entries(channels ?? [])
+    return Object.entries(channels ?? [])
       .filter(([key, value]) => value === true)
       .map(([key, value]) => key);
-
-    return parsedChannels.map((index) => this.notificationMethods[index]?.key);
   }
 
   private parseOptionsArrayToChannels(options: string[]): {
