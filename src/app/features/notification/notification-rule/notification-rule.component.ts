@@ -63,7 +63,7 @@ export class NotificationRuleComponent implements OnChanges {
     }
   }
 
-  private initForm() {
+  initForm() {
     this.form = new FormGroup({
       entityType: new FormControl(this.value?.entityType ?? ""),
       enabled: new FormControl(this.value?.enabled || false),
