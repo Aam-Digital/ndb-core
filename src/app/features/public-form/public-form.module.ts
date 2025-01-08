@@ -133,7 +133,7 @@ const viewConfigs: ViewConfig[] = [
                   },
                 ],
               },
-            }
+            },
           ],
         },
       ],
