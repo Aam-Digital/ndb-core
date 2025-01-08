@@ -127,7 +127,11 @@
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label i18n>Notification condition</mat-label>
-            <app-conditional-filter formControlName="operator" />
+            <app-basic-autocomplete
+              [options]="conditionalOptions"
+              [valueMapper]="conditionalValueMapper"
+              formControlName="operator"
+            />
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label i18n>Notification condition</mat-label>

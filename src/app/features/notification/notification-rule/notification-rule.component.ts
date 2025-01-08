@@ -3,10 +3,14 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import {
+  MatFormFieldControl,
+  MatFormFieldModule,
+} from "@angular/material/form-field";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
@@ -25,7 +29,7 @@ import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
-import { ConditionalFilterComponent } from "app/core/filter/conditional-filter/conditional-filter.component";
+import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
 
 /**
  * Configure a single notification rule.
@@ -47,12 +51,15 @@ import { ConditionalFilterComponent } from "app/core/filter/conditional-filter/c
     MatSelect,
     CdkAccordionModule,
     EntityFieldSelectComponent,
-    ConditionalFilterComponent,
+    BasicAutocompleteComponent,
+  ],
+  providers: [
+    { provide: MatFormFieldControl, useExisting: NotificationRuleComponent },
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
 })
-export class NotificationRuleComponent implements OnChanges {
+export class NotificationRuleComponent implements OnChanges, OnInit {
   @Input() value: NotificationRule;
   @Output() valueChange = new EventEmitter<NotificationRule>();
 
@@ -69,10 +76,37 @@ export class NotificationRuleComponent implements OnChanges {
 
   notificationConditionForm: FormGroup;
   notificationCondition: NotificationCondition = null;
+  conditionalOptions = null;
+  conditionalValueMapper = null;
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
   ];
+
+  private conditionMappings: Record<string, string> = {
+    "Equal To": "$eq",
+    "Greater Than": "$gt",
+    "Greater Than or Equal To": "$gte",
+    "Less Than": "$lt",
+    "Less Than or Equal To": "$lte",
+    "Not Equal To": "$ne",
+    "In List": "$in",
+    "Not In List": "$nin",
+    AND: "$and",
+    NOT: "$not",
+    Neither: "$nor",
+    OR: "$or",
+    Exists: "$exists",
+    "Has Type": "$type",
+    "Where To": "$where",
+  };
+
+  ngOnInit(): void {
+    this.conditionalOptions = Object.keys(this.conditionMappings);
+    this.conditionalValueMapper = (value: string): string => {
+      return this.conditionMappings[value];
+    };
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -88,7 +122,7 @@ export class NotificationRuleComponent implements OnChanges {
       channels: new FormControl(
         this.parseChannelsToOptionsArray(this.value?.channels),
       ),
-      conditions: new FormControl(this.value?.conditions ?? ""), // TODO: parse conditions format?
+      conditions: new FormControl(this.value?.conditions ?? []), // TODO: parse conditions format?
       // hidden fields
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
@@ -160,23 +194,21 @@ export class NotificationRuleComponent implements OnChanges {
   }
 
   addNewNotificationCondition() {
-    const newCondition: NotificationCondition = {
-      notificationCondition: {
-        entityTypeField: "",
-        operator: "",
-        condition: "",
-      },
+    const newCondition = {
+      entityTypeField: "",
+      operator: "",
+      condition: "",
     };
 
     if (!this.value.conditions) {
       this.value.conditions = [];
     }
 
-    this.value.conditions.push(newCondition);
+    (this.value.conditions as any[]).push(newCondition);
   }
 
   removeCondition(conditionIndex: number) {
     this.value.conditions.splice(conditionIndex, 1);
-    this.removeNotificationCondition.emit(conditionIndex);
+    this.removeNotificationCondition.emit();
   }
 }

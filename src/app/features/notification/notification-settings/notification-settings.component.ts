@@ -148,10 +148,7 @@ export class NotificationSettingsComponent implements OnInit {
     await this.saveNotificationConfig(this.notificationConfig);
   }
 
-  async removeNotificationCondition(index: number, conditionIndex: any) {
-    const notificationConditions =
-      this.notificationConfig.notificationRules[index].conditions;
-    notificationConditions.splice(conditionIndex, 1);
+  async removeNotificationCondition() {
     await this.saveNotificationConfig(this.notificationConfig);
   }
 

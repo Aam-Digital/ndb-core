@@ -61,7 +61,7 @@ export class NotificationRule {
   @DatabaseField() entityType: string;
 
   /** (for "entity_change" notifications only): conditions which changes cause notifications */
-  @DatabaseField() conditions: NotificationCondition[];
+  @DatabaseField() conditions: string[];
 }
 
 /**
