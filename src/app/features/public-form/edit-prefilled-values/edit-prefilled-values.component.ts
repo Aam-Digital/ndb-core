@@ -37,7 +37,7 @@ export class EditPrefilledValuesComponent
   implements OnInit
 {
   entityConstructor!: EntityConstructor;
-  publicFormConfig!: FormConfig;
+  formConfig: FormConfig;
   availableFields: string[] = [];
 
   prefilledValueSettings = this.fb.group({
@@ -54,7 +54,7 @@ export class EditPrefilledValuesComponent
     if (!this.entity) return;
 
     this.entityConstructor = this.entities.get(this.entity["entity"]);
-    this.publicFormConfig = { fieldGroups: this.formControl.getRawValue() };
+    this.formConfig = { fieldGroups: this.formControl.getRawValue() };
     this.populateAvailableFields();
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
@@ -77,7 +77,7 @@ export class EditPrefilledValuesComponent
   }
 
   private initializePrefilledValues(): void {
-    this.publicFormConfig.fieldGroups.forEach((group) => {
+    this.formConfig.fieldGroups.forEach((group) => {
       group.fields.forEach((field: any) => {
         const fieldId = typeof field === "string" ? field : field.id;
         const defaultValue =
@@ -112,7 +112,7 @@ export class EditPrefilledValuesComponent
 
     const fieldToUpdate = this.prefilledValues.at(index).value.field;
 
-    this.publicFormConfig.fieldGroups.forEach((group) => {
+    this.formConfig.fieldGroups.forEach((group) => {
       group.fields = group.fields.map((field: any) => {
         if (typeof field === "object" && field.id === fieldToUpdate) {
           return field.id;
@@ -127,7 +127,7 @@ export class EditPrefilledValuesComponent
   private updateFieldGroups(value): void {
     if (!value?.prefilledvalue) return;
 
-    const fieldGroups = this.publicFormConfig.fieldGroups;
+    const fieldGroups = this.formConfig.fieldGroups;
 
     value.prefilledvalue.forEach((prefilledValue) => {
       const fieldId = prefilledValue.field;
@@ -139,8 +139,6 @@ export class EditPrefilledValuesComponent
 
       this.updateFieldInGroups(fieldGroups, fieldId, defaultValue);
     });
-
-    this.formControl.markAsDirty();
   }
 
   private updateFieldInGroups(
@@ -159,10 +157,12 @@ export class EditPrefilledValuesComponent
         group.fields[fieldIndex] = updatedValue;
       }
     });
+    setTimeout(() => this.formControl.setValue(fieldGroups));
+    this.formControl.markAsDirty();
   }
 
   private getUsedFields(): string[] {
-    return this.publicFormConfig.fieldGroups.flatMap((group) =>
+    return this.formConfig.fieldGroups.flatMap((group) =>
       group.fields
         .map((field) => {
           if (typeof field === "string") {
