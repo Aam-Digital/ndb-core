@@ -1,23 +1,40 @@
 <p i18n>
-    set the default value related to field
-</p>
-
-<form [formGroup]="prefilledValueSettings">
-    <div formArrayName="prefilledvalue">
-        <div *ngFor="let fieldGroup of prefilledValues.controls; let i = index" [formGroupName]="i">
-            <label for="field">Field</label>
-            <select formControlName="field">
-                <option *ngFor="let field of availableFields" [value]="field">
+    Set the default value related to the field. After setting the default value, the selected value will be automatically pre-filled in the corresponding field of the public form. This will apply only to this specific public form and will not impact other forms or configurations.
+  </p>
+  
+  <div  [class.disabled]="formControl.disabled">
+    <form [formGroup]="prefilledValueSettings">
+        <div formArrayName="prefilledvalue">
+          <div *ngFor="let fieldGroup of prefilledValues.controls; let i = index" [formGroupName]="i">
+            <div class="flex-row justify-space-between align-center">
+              <mat-form-field>
+                <mat-label>Select Field</mat-label>
+                <mat-select formControlName="field" placeholder="Select a field">
+                  <mat-option *ngFor="let field of availableFields" [value]="field">
                     {{ field }}
-                </option>
-            </select>
-
-            <app-default-value-options [value]="fieldGroup.get('defaultValue').value"
-                (valueChange)="fieldGroup.get('defaultValue').setValue($event)" [entityType]="entityConstructor">
-            </app-default-value-options>
-
-            <button type="button" (click)="removeField(i)">Remove</button>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+      
+              <app-default-value-options
+                [value]="fieldGroup.get('defaultValue').value"
+                (valueChange)="fieldGroup.get('defaultValue').setValue($event)"
+                [entityType]="entityConstructor"
+              ></app-default-value-options>
+      
+              <div class="actions">
+                <button
+                  mat-icon-button
+                  (click)="removeField(i)"
+                  matTooltip="Remove Prefilled value"
+                  i18n-matTooltip
+                >
+                  <fa-icon icon="trash"></fa-icon>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-    <button type="button" (click)="addField()">Add Another Default Value</button>
-</form>
+        <div class="add-rule-button" (click)="addField()">Set new Default value</div>
+      </form>
+  </div>

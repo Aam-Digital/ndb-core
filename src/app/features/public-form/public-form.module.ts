@@ -126,6 +126,7 @@ const viewConfigs: ViewConfig[] = [
                   {
                     fields: [
                       {
+                        id: "columns",
                         editComponent: "EditPrefilledValuesComponent",
                       },
                     ],
