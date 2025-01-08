@@ -37,10 +37,7 @@
             i18n-placeholder="Notification Method Select placeholder"
           >
             @for (notificationMethod of notificationMethods; track $index) {
-              <mat-option
-                [value]="notificationMethod.key"
-                i18n="notification method option"
-              >
+              <mat-option [value]="notificationMethod.key">
                 {{ notificationMethod.label }}
               </mat-option>
             }
