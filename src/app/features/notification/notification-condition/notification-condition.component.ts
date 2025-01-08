@@ -44,7 +44,7 @@ import { NotificationRule } from "../model/notification-config";
   templateUrl: "./notification-condition.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
 })
-export class NotificationConditionComponent implements OnInit, OnChanges {
+export class NotificationConditionComponent implements OnChanges, OnInit {
   @Input() notificationRule: NotificationRule;
 
   @Input() notificationConditionIndex: number;
@@ -56,6 +56,7 @@ export class NotificationConditionComponent implements OnInit, OnChanges {
 
   notificationConditionForm: FormGroup;
   conditionalOptions: SimpleDropdownValue[] = [];
+
   optionsToLabel = (v: SimpleDropdownValue) => this.conditionMappings[v.value];
   optionsToValue = (v: SimpleDropdownValue) =>
     Object.keys(this.conditionMappings).find(
@@ -84,6 +85,7 @@ export class NotificationConditionComponent implements OnInit, OnChanges {
     this.conditionalOptions = Object.keys(this.conditionMappings).map(
       (key) => ({ label: this.conditionMappings[key], value: key }),
     );
+    this.initForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -93,16 +95,17 @@ export class NotificationConditionComponent implements OnInit, OnChanges {
   }
 
   private initForm() {
-    this.notificationRule.conditions?.forEach((condition) => {
-      this.notificationConditionForm = new FormGroup({
-        entityTypeField: new FormControl(condition?.entityTypeField ?? ""),
-        operator: new FormControl(condition?.operator ?? ""),
-        condition: new FormControl(condition?.condition ?? ""),
-      });
+    const condition =
+      this.notificationRule?.conditions?.[this.notificationConditionIndex];
 
-      this.notificationConditionForm.valueChanges.subscribe((value) => {
-        this.updateNotificationConditionValue(value);
-      });
+    this.notificationConditionForm = new FormGroup({
+      entityTypeField: new FormControl(condition.entityTypeField || ""),
+      operator: new FormControl(condition.operator || ""),
+      condition: new FormControl(condition.condition || ""),
+    });
+
+    this.notificationConditionForm.valueChanges.subscribe((value) => {
+      this.updateNotificationConditionValue(value);
     });
   }
 
