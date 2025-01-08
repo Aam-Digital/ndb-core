@@ -9,6 +9,8 @@ import { FormConfig } from "app/core/entity-details/form/form.component";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { PublicFormConfig } from "../public-form-config";
+import { migratePublicFormConfig } from "../public-form.component";
 
 @Component({
   selector: "app-edit-public-form-columns",
@@ -23,7 +25,7 @@ export class EditPublicFormColumnsComponent
   implements OnInit
 {
   entityConstructor: EntityConstructor;
-  publicFormConfig: FormConfig;
+  formConfig: FormConfig;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
   private entities = inject(EntityRegistry);
@@ -33,10 +35,12 @@ export class EditPublicFormColumnsComponent
     if (this.entity) {
       this.entityConstructor = this.entities.get(this.entity["entity"]);
 
-      this.publicFormConfig = { fieldGroups: this.formControl.getRawValue() };
-      this.formControl.valueChanges.subscribe(
-        (v) => (this.publicFormConfig = { fieldGroups: v }),
-      );
+      const publicFormConfig: PublicFormConfig = migratePublicFormConfig({
+        columns: this.formControl.getRawValue(),
+      } as Partial<PublicFormConfig> as PublicFormConfig);
+      this.formConfig = {
+        fieldGroups: publicFormConfig.columns,
+      };
     }
 
     this.originalEntitySchemaFields = JSON.parse(
@@ -58,7 +62,6 @@ export class EditPublicFormColumnsComponent
 
   updateValue(newConfig: FormConfig) {
     // setTimeout needed for change detection of disabling tabs
-    // TODO: change logic to instead disable tabs upon edit mode immediately (without waiting for changes)
     setTimeout(() => this.formControl.setValue(newConfig.fieldGroups));
     this.formControl.markAsDirty();
   }
