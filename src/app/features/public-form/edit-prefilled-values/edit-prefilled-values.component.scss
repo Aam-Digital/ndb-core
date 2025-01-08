@@ -1,32 +1,38 @@
-form {
-    .disabled {
-        pointer-events: none;
-        opacity: 0.6;
-      }
-      
-  
-    .actions {
-      display: flex;
-      align-items: center;
-  
-      button {
-        margin-left: 8px;
-      }
+@use "variables/colors";
+@use "variables/sizes";
+@use "../../../../styles/variables/breakpoints";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+.defaultvalue-container {
+    overflow: hidden
+}
+
+.container {
+    @include mat-elevation.elevation(2);
+    border-radius: 10px;
+    padding: 16px;
+    background-color: colors.$background;
+    margin-top: sizes.$regular;
+    gap: 40px;
+
+    @media screen and (min-width: breakpoints.$xxl) {
+        flex-direction: row;
     }
-  }
-  
-  .add-rule-button {
-    background-color: #f3f4f6;
-    border: 1px dashed #d1d5db;
-    border-radius: 4px;
-    color: #374151;
-    padding: 12px;
-    font-size: 14px;
-    text-align: center;
-    cursor: pointer;
-  
-    &:hover {
-      background-color: #e5e7eb;
-    }
-  }
-  
+}
+
+.add-new-defaultvalue-field {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.add-new-defaultvalue-button {
+    width: 50%;
+    border-radius: 20px;
+    padding: 22px;
+    background-color: aliceblue;
+}
+
+.new-defaultvalue-rule {
+    margin-left: 5px;
+}

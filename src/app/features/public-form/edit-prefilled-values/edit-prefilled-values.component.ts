@@ -7,12 +7,13 @@ import { EntityRegistry } from 'app/core/entity/database-entity.decorator';
 import { EditComponent } from 'app/core/entity/default-datatype/edit-component';
 import { EntityConstructor } from 'app/core/entity/model/entity';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatOptionModule } from '@angular/material/core';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormConfig } from 'app/core/entity-details/form/form.component';
 import { DefaultValueConfig } from 'app/core/entity/schema/default-value-config';
+import { HelpButtonComponent } from 'app/core/common-components/help-button/help-button.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-edit-prefilled-values',
@@ -22,10 +23,11 @@ import { DefaultValueConfig } from 'app/core/entity/schema/default-value-config'
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatOptionModule,
-    MatIconModule,
     MatSelectModule,
-    FaIconComponent,
+    MatTooltipModule,
+    HelpButtonComponent,
+    FontAwesomeModule,
+    MatButtonModule
   ],
   templateUrl: './edit-prefilled-values.component.html',
   styleUrls: ['./edit-prefilled-values.component.scss'],
@@ -103,8 +105,21 @@ export class EditPrefilledValuesComponent extends EditComponent<FieldGroup[]> im
     if (index < 0 || index >= this.prefilledValues.length) {
       return;
     }
+  
+    const fieldToUpdate = this.prefilledValues.at(index).value.field;
+  
+    this.publicFormConfig.fieldGroups.forEach((group) => {
+      group.fields = group.fields.map((field: any) => {
+        if (typeof field === 'object' && field.id === fieldToUpdate) {
+          return field.id;
+        }
+        return field;
+      });
+    });
     this.prefilledValues.removeAt(index);
+    this.formControl.markAsDirty();
   }
+  
 
   private updateFieldGroups(value): void {
     if (!value?.prefilledvalue) return;
