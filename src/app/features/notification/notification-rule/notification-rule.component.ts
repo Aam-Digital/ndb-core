@@ -8,7 +8,6 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import {
-  MatFormFieldControl,
   MatFormFieldModule,
 } from "@angular/material/form-field";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
@@ -27,13 +26,13 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Logging } from "app/core/logging/logging.service";
 import {
   NotificationChannel,
+  NotificationCondition,
   NotificationRule,
 } from "../model/notification-config";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
-import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
-import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
+import { NotificationConditionComponent } from "../notification-condition/notification-condition.component";
 
 /**
  * Configure a single notification rule.
@@ -54,65 +53,28 @@ import { BasicAutocompleteComponent } from "app/core/common-components/basic-aut
     MatOption,
     MatSelect,
     CdkAccordionModule,
-    EntityFieldSelectComponent,
-    BasicAutocompleteComponent,
-  ],
-  providers: [
-    { provide: MatFormFieldControl, useExisting: NotificationRuleComponent },
+    NotificationConditionComponent,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
 })
-export class NotificationRuleComponent implements OnChanges, OnInit {
+export class NotificationRuleComponent implements OnChanges {
   @Input() value: NotificationRule;
+  @Input() accordionIndex: number;
   @Output() valueChange = new EventEmitter<NotificationRule>();
-
-  @Output() valueNotificationConditionChange =
-    new EventEmitter<NotificationRule>();
 
   @Output() removeNotificationRule = new EventEmitter<void>();
 
   @Output() removeNotificationCondition = new EventEmitter<any>();
 
-  @Input() accordionIndex: number;
+  @Output() valueNotificationConditionChange =
+    new EventEmitter<NotificationRule>();
 
   form: FormGroup;
-
-  notificationConditionForm: FormGroup;
-  conditionalOptions: SimpleDropdownValue[] = [];
-  optionsToLabel = (v: SimpleDropdownValue) => this.conditionMappings[v.value];
-  optionsToValue = (v: SimpleDropdownValue) =>
-    Object.keys(this.conditionMappings).find(
-      (key) => this.conditionMappings[key] === v.label,
-    );
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
   ];
-
-  private conditionMappings: Record<string, string> = {
-    $eq: "Equal To",
-    $gt: "Greater Than",
-    $gte: "Greater Than or Equal To",
-    $lt: "Less Than",
-    $lte: "Less Than or Equal To",
-    $ne: "Not Equal To",
-    $in: "In List",
-    $nin: "Not In List",
-    $and: "AND",
-    $not: "NOT",
-    $nor: "Neither",
-    $or: "OR",
-    $exists: "Exists",
-    $type: "Has Type",
-    $where: "Where To",
-  };
-
-  ngOnInit(): void {
-    this.conditionalOptions = Object.keys(this.conditionMappings).map(
-      (key) => ({ label: this.conditionMappings[key], value: key }),
-    );
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -128,30 +90,13 @@ export class NotificationRuleComponent implements OnChanges, OnInit {
       channels: new FormControl(
         this.parseChannelsToOptionsArray(this.value?.channels),
       ),
-      conditions: new FormControl(this.value?.conditions ?? []), // TODO: parse conditions format?
-      // hidden fields
+      conditions: new FormArray([]),
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
       ),
     });
 
-    this.value?.conditions?.forEach((condition) => {
-      this.addConditionToFormArray(condition);
-    });
-
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
-    this.notificationConditionForm.valueChanges.subscribe((value) =>
-      this.updateNotificationConditionValue(value),
-    );
-  }
-
-  addConditionToFormArray(condition) {
-    const conditionFormGroup = new FormGroup({
-      entityTypeField: new FormControl(condition?.entityTypeField ?? ""),
-      operator: new FormControl(condition?.operator ?? ""),
-      condition: new FormControl(condition?.condition ?? ""),
-    });
-    (this.form.get("conditions") as FormArray).push(conditionFormGroup);
   }
 
   private updateValue(value: any) {
@@ -166,18 +111,12 @@ export class NotificationRuleComponent implements OnChanges, OnInit {
     this.valueChange.emit(value);
   }
 
-  private updateNotificationConditionValue(value: any) {
-    this.valueNotificationConditionChange.emit(value);
-  }
-
   private parseChannelsToOptionsArray(channels?: {
     [key: string]: boolean;
   }): string[] {
-    const parsedChannels = Object.entries(channels ?? [])
+    return Object.entries(channels ?? [])
       .filter(([key, value]) => value === true)
       .map(([key, value]) => key);
-
-    return parsedChannels.map((index) => this.notificationMethods[index]?.key);
   }
 
   private parseOptionsArrayToChannels(options: string[]): {
@@ -216,16 +155,14 @@ export class NotificationRuleComponent implements OnChanges, OnInit {
     }
 
     (this.value.conditions as any[]).push(newCondition);
-    this.valueNotificationConditionChange.emit(this.value);
+  }
+
+  updateNotificationCondition(updateNotificationCondition: NotificationRule) {
+    this.valueNotificationConditionChange.emit(updateNotificationCondition);
   }
 
   removeCondition(conditionIndex: number) {
     this.value.conditions.splice(conditionIndex, 1);
     this.removeNotificationCondition.emit();
   }
-}
-
-interface SimpleDropdownValue {
-  label: string;
-  value: string;
 }

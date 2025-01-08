@@ -1,0 +1,37 @@
+<form [formGroup]="notificationConditionForm">
+  <div class="flex-row align-center full-width">
+    <mat-form-field class="full-width-field">
+      <mat-label i18n>Select Entity Field</mat-label>
+      <app-entity-field-select
+        [entityType]="notificationRule?.entityType"
+        formControlName="entityTypeField"
+      />
+    </mat-form-field>
+    <mat-form-field class="full-width-field">
+      <mat-label i18n>Notification condition</mat-label>
+      <app-basic-autocomplete
+        [options]="conditionalOptions"
+        [optionToString]="optionsToLabel"
+        [valueMapper]="optionsToValue"
+        formControlName="operator"
+      />
+    </mat-form-field>
+    <mat-form-field class="full-width-field">
+      <mat-label i18n>Notification condition</mat-label>
+      <input
+        matInput
+        placeholder="Enter condition"
+        i18n-placeholder="Notification condition placeholder"
+        formControlName="condition"
+      />
+    </mat-form-field>
+    <button
+      (click)="removeNotificationCondition.emit()"
+      mat-icon-button
+      matTooltip="Remove notification rule"
+      i18n-matTooltip
+    >
+      <fa-icon icon="trash"></fa-icon>
+    </button>
+  </div>
+</form>

@@ -11,6 +11,7 @@ import { HelpButtonComponent } from "app/core/common-components/help-button/help
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import {
+  NotificationCondition,
   NotificationConfig,
   NotificationRule,
 } from "app/features/notification/model/notification-config";
@@ -54,7 +55,7 @@ export class NotificationSettingsComponent implements OnInit {
    * Get the logged-in user id
    */
   private get userId() {
-    return this.sessionInfo.value?.id;
+    return this.sessionInfo.value?.entityId;
   }
 
   async ngOnInit() {
@@ -111,7 +112,7 @@ export class NotificationSettingsComponent implements OnInit {
       notificationType: "entity_change",
       entityType: undefined,
       channels: this.notificationConfig.channels, // by default, use the global channels
-      conditions: undefined,
+      conditions: [],
       enabled: true,
     };
 
@@ -152,10 +153,7 @@ export class NotificationSettingsComponent implements OnInit {
     await this.saveNotificationConfig(this.notificationConfig);
   }
 
-  async updateNotificationCondition(
-    notificationCondition: NotificationRule,
-    updatedRule: NotificationRule,
-  ) {
-    console.log({ notificationCondition }, { updatedRule });
+  async updateNotificationCondition() {
+    await this.saveNotificationConfig(this.notificationConfig);
   }
 }
