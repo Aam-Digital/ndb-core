@@ -45,24 +45,35 @@ describe("NotificationRuleComponent", () => {
     component.value = mockValue;
     component.ngOnChanges({ value: { currentValue: mockValue } } as any);
 
-    expect(component.value).toEqual(mockValue);
+    expect(component.form.getRawValue()).toEqual({
+      entityType: "entityType1",
+      enabled: true,
+      channels: ["push"], // expect channels value to be parsed into an array
+      conditions: [],
+      notificationType: "entity_change",
+    });
   });
 
   it("should emit valueChange with the correct format when a formControl is updated", () => {
     spyOn(component.valueChange, "emit");
     component.initForm();
+
     component.form.setValue({
       entityType: "EventNote",
       notificationType: "entity_change",
-      channels: {
-        "0": true,
-      },
+      channels: ["push"], // output from MatSelect
       conditions: [],
       enabled: true,
     });
 
     expect(component.valueChange.emit).toHaveBeenCalledWith(
-      jasmine.objectContaining({ entityType: "EventNote", enabled: true }),
+      jasmine.objectContaining({
+        entityType: "EventNote",
+        notificationType: "entity_change",
+        channels: { push: true }, // expect channels value to be parsed into an object
+        conditions: [],
+        enabled: true,
+      } as NotificationRule),
     );
   });
 });
