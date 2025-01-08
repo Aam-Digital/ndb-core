@@ -1,25 +1,23 @@
-import { Component } from "@angular/core";
-import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { MatInputModule } from "@angular/material/input";
+import { Component, OnInit } from "@angular/core";
 import {
-  FaIconComponent,
-  FontAwesomeModule,
-} from "@fortawesome/angular-fontawesome";
+  MatSlideToggle,
+  MatSlideToggleChange,
+} from "@angular/material/slide-toggle";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Logging } from "app/core/logging/logging.service";
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from "@angular/forms";
-import { MatTooltip, MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
-import { NotificationMethodSelectComponent } from "app/features/notification/notification-method-select/notification-method-select.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import {
+  NotificationConfig,
+  NotificationRule,
+} from "app/features/notification/model/notification-config";
+import { SessionSubject } from "app/core/session/auth/session-info";
+import { NotificationRuleComponent } from "../notification-rule/notification-rule.component";
+import { MatTooltip } from "@angular/material/tooltip";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -29,95 +27,122 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
   standalone: true,
   imports: [
     MatSlideToggle,
-    MatInputModule,
     FontAwesomeModule,
-    FormsModule,
     MatFormFieldModule,
-    MatTooltip,
-    FaIconComponent,
     MatButtonModule,
-    MatTooltipModule,
-    EntityTypeSelectComponent,
     HelpButtonComponent,
-    NotificationMethodSelectComponent,
-    ReactiveFormsModule,
+    NotificationRuleComponent,
+    MatTooltip,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
 })
-export class NotificationSettingsComponent {
-  hasPushNotificationEnabled: boolean = false;
-  notificationSetting = new FormGroup({
-    notificationRules: new FormArray([]),
-  });
+export class NotificationSettingsComponent implements OnInit {
+  notificationConfig: NotificationConfig = null;
+  isPushNotificationEnabled = false;
 
-  constructor(private confirmationDialog: ConfirmationDialogService) {}
+  constructor(
+    private entityMapper: EntityMapperService,
+    private sessionInfo: SessionSubject,
+    private confirmationDialog: ConfirmationDialogService,
+    private alertService: AlertService,
+  ) {}
 
   /**
-   * Adds a new notification rule and initializes its default values.
+   * Get the logged-in user id
    */
-  addNewNotificationRule() {
-    // TODO: Update this Form Group when we implement the logic to dynamically update the notification notificationRules.
-    const newNotificationRule = new FormGroup({
-      entityType: new FormControl(""),
-      notificationRuleCondition: new FormControl(""),
-      notificationMethod: new FormControl("Push"),
-      enabled: new FormControl(false),
-    });
-
-    this.notificationRules.push(newNotificationRule);
+  private get userId() {
+    return this.sessionInfo.value?.id;
   }
 
-  /**
-   * Gets the FormArray of notification rules.
-   * This is used to access the collection of individual notification rules in the form group.
-   */
-  get notificationRules(): FormArray {
-    return this.notificationSetting.get("notificationRules") as FormArray;
+  async ngOnInit() {
+    await this.initializeNotificationSettings();
   }
 
-  /**
-   * Retrieves the FormControl for the form field at a specified index.
-   * This allows accessing and manipulating the form field within a specific notification rule.
-   */
-  getFormField(index: number, fieldName: string): FormControl {
-    return this.notificationRules.at(index).get(fieldName) as FormControl;
+  private async initializeNotificationSettings() {
+    this.notificationConfig = await this.loadNotificationConfig();
+
+    if (this.notificationConfig) {
+      this.isPushNotificationEnabled =
+        this.notificationConfig?.channels?.push || false;
+    }
   }
 
-  /**
-   * Opens a confirmation dialog, and removes the notification
-   * rule at the specified index.
-   * @param index The index of the notification rule to remove
-   */
-  async confirmRemoveNotificationRule(index: number) {
-    const confirmed = await this.confirmationDialog.getConfirmation(
-      "Delete notification rule",
-      "Are you sure you want to remove this notification rule?",
-    );
+  private async loadNotificationConfig() {
+    try {
+      return await this.entityMapper.load<NotificationConfig>(
+        NotificationConfig,
+        this.userId,
+      );
+    } catch (err) {
+      Logging.debug(err);
 
-    if (!confirmed) {
-      return;
+      if (err.status === 404) {
+        return new NotificationConfig(this.userId);
+      }
+    }
+  }
+
+  async togglePushNotifications(event: MatSlideToggleChange) {
+    this.isPushNotificationEnabled = event.checked;
+    let notificationConfig = await this.loadNotificationConfig();
+
+    if (!notificationConfig) {
+      notificationConfig = new NotificationConfig(this.userId);
     }
 
-    this.notificationRules.removeAt(index);
-    return true;
+    notificationConfig.channels = {
+      ...notificationConfig.channels,
+      push: this.isPushNotificationEnabled,
+    };
+
+    await this.saveNotificationConfig(notificationConfig);
   }
 
-  /**
-   * Enables or disables notifications and updates the backend.
-   * @param index The index of the notification rule being toggled.
-   */
-  onEnableNotification() {
-    // TODO: Implement the logic to enable the notification for user and update the value in CouchDB backend.
-    this.hasPushNotificationEnabled = !this.hasPushNotificationEnabled;
-    Logging.log("Browser notifications toggled.");
+  private async saveNotificationConfig(config: NotificationConfig) {
+    await this.entityMapper.save(config);
+    this.alertService.addInfo($localize`Notification settings saved.`);
   }
 
-  /**
-   * Sends a test notification.
-   */
-  testNotification() {
-    // TODO: Implement the logic to test the notification setting.
-    Logging.log("Notification settings test successful.");
+  async addNewNotificationRule() {
+    const newRule: NotificationRule = {
+      notificationType: "entity_change",
+      entityType: undefined,
+      channels: this.notificationConfig.channels, // by default, use the global channels
+      conditions: undefined,
+      enabled: true,
+    };
+
+    if (!this.notificationConfig.notificationRules) {
+      this.notificationConfig.notificationRules = [];
+    }
+    this.notificationConfig.notificationRules.push(newRule);
+
+    // saving this only once the fields are actually edited by the user
+  }
+
+  async updateNotificationRule(
+    notificationRule: NotificationRule,
+    updatedRule: NotificationRule,
+  ) {
+    Object.assign(notificationRule, updatedRule);
+    await this.saveNotificationConfig(this.notificationConfig);
+  }
+
+  async confirmRemoveNotificationRule(index: number) {
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      $localize`Delete notification rule`,
+      $localize`Are you sure you want to remove this notification rule?`,
+    );
+    if (confirmed) {
+      await this.removeNotificationRule(index);
+      return true;
+    }
+    return false;
+  }
+
+  private async removeNotificationRule(index: number) {
+    this.notificationConfig.notificationRules.splice(index, 1);
+    await this.saveNotificationConfig(this.notificationConfig);
   }
 }
