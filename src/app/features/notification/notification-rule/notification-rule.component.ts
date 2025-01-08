@@ -15,7 +15,12 @@ import { HelpButtonComponent } from "app/core/common-components/help-button/help
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -74,36 +79,39 @@ export class NotificationRuleComponent implements OnChanges, OnInit {
   form: FormGroup;
 
   notificationConditionForm: FormGroup;
-  conditionalOptions = null;
-  conditionalValueMapper = null;
+  conditionalOptions: SimpleDropdownValue[] = [];
+  optionsToLabel = (v: SimpleDropdownValue) => this.conditionMappings[v.value];
+  optionsToValue = (v: SimpleDropdownValue) =>
+    Object.keys(this.conditionMappings).find(
+      (key) => this.conditionMappings[key] === v.label,
+    );
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
   ];
 
   private conditionMappings: Record<string, string> = {
-    "Equal To": "$eq",
-    "Greater Than": "$gt",
-    "Greater Than or Equal To": "$gte",
-    "Less Than": "$lt",
-    "Less Than or Equal To": "$lte",
-    "Not Equal To": "$ne",
-    "In List": "$in",
-    "Not In List": "$nin",
-    AND: "$and",
-    NOT: "$not",
-    Neither: "$nor",
-    OR: "$or",
-    Exists: "$exists",
-    "Has Type": "$type",
-    "Where To": "$where",
+    $eq: "Equal To",
+    $gt: "Greater Than",
+    $gte: "Greater Than or Equal To",
+    $lt: "Less Than",
+    $lte: "Less Than or Equal To",
+    $ne: "Not Equal To",
+    $in: "In List",
+    $nin: "Not In List",
+    $and: "AND",
+    $not: "NOT",
+    $nor: "Neither",
+    $or: "OR",
+    $exists: "Exists",
+    $type: "Has Type",
+    $where: "Where To",
   };
 
   ngOnInit(): void {
-    this.conditionalOptions = Object.keys(this.conditionMappings);
-    this.conditionalValueMapper = (value: string): string => {
-      return this.conditionMappings[value];
-    };
+    this.conditionalOptions = Object.keys(this.conditionMappings).map(
+      (key) => ({ label: this.conditionMappings[key], value: key }),
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -127,16 +135,23 @@ export class NotificationRuleComponent implements OnChanges, OnInit {
       ),
     });
 
-    this.notificationConditionForm = new FormGroup({
-      entityTypeField: new FormControl(""),
-      operator: new FormControl(""),
-      condition: new FormControl(""),
+    this.value?.conditions?.forEach((condition) => {
+      this.addConditionToFormArray(condition);
     });
 
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
     this.notificationConditionForm.valueChanges.subscribe((value) =>
       this.updateNotificationConditionValue(value),
     );
+  }
+
+  addConditionToFormArray(condition) {
+    const conditionFormGroup = new FormGroup({
+      entityTypeField: new FormControl(condition?.entityTypeField ?? ""),
+      operator: new FormControl(condition?.operator ?? ""),
+      condition: new FormControl(condition?.condition ?? ""),
+    });
+    (this.form.get("conditions") as FormArray).push(conditionFormGroup);
   }
 
   private updateValue(value: any) {
@@ -201,10 +216,16 @@ export class NotificationRuleComponent implements OnChanges, OnInit {
     }
 
     (this.value.conditions as any[]).push(newCondition);
+    this.valueNotificationConditionChange.emit(this.value);
   }
 
   removeCondition(conditionIndex: number) {
     this.value.conditions.splice(conditionIndex, 1);
     this.removeNotificationCondition.emit();
   }
+}
+
+interface SimpleDropdownValue {
+  label: string;
+  value: string;
 }

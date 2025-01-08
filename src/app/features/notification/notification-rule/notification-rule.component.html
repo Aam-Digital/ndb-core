@@ -82,8 +82,8 @@
         [matTooltip]="
           accordionItem?.expanded ? 'Collapse section' : 'Expand section'
         "
-        i18n-matTooltip
         (click)="accordionItem.toggle()"
+        i18n-matTooltip
       >
         <fa-icon
           [icon]="accordionItem.expanded ? 'chevron-up' : 'chevron-down'"
@@ -95,8 +95,6 @@
 
 @if (accordionItem.expanded) {
   <div
-    class="example-accordion-item-body"
-    role="region"
     [style.display]="accordionItem.expanded ? '' : 'none'"
     [attr.id]="'accordion-body-' + accordionIndex"
     [attr.aria-labelledby]="'accordion-header-' + accordionIndex"
@@ -120,13 +118,15 @@
             <app-entity-field-select
               [entityType]="value?.entityType"
               formControlName="entityTypeField"
+              [disabled]="!value?.entityType"
             />
           </mat-form-field>
           <mat-form-field class="full-width-field">
             <mat-label i18n>Notification condition</mat-label>
             <app-basic-autocomplete
               [options]="conditionalOptions"
-              [valueMapper]="conditionalValueMapper"
+              [optionToString]="optionsToLabel"
+              [valueMapper]="optionsToValue"
               formControlName="operator"
             />
           </mat-form-field>
