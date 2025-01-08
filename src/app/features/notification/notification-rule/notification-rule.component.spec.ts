@@ -32,7 +32,7 @@ describe("NotificationRuleComponent", () => {
       entityType: "entityType1",
       enabled: true,
       channels: { push: true },
-      conditions: "some condition",
+      conditions: "",
       notificationType: "entity_change",
     };
   });
