@@ -154,4 +154,11 @@ export class NotificationSettingsComponent implements OnInit {
     notificationConditions.splice(conditionIndex, 1);
     await this.saveNotificationConfig(this.notificationConfig);
   }
+
+  async updateNotificationCondition(
+    notificationCondition: NotificationRule,
+    updatedRule: NotificationRule,
+  ) {
+    console.log({ notificationCondition }, { updatedRule });
+  }
 }

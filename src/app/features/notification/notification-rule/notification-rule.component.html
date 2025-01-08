@@ -94,15 +94,17 @@
       </button>
     </div>
   </cdk-accordion-item>
+</form>
 
-  @if (accordionItem.expanded) {
-    <div
-      class="example-accordion-item-body"
-      role="region"
-      [style.display]="accordionItem.expanded ? '' : 'none'"
-      [attr.id]="'accordion-body-' + accordionIndex"
-      [attr.aria-labelledby]="'accordion-header-' + accordionIndex"
-    >
+@if (accordionItem.expanded) {
+  <div
+    class="example-accordion-item-body"
+    role="region"
+    [style.display]="accordionItem.expanded ? '' : 'none'"
+    [attr.id]="'accordion-body-' + accordionIndex"
+    [attr.aria-labelledby]="'accordion-header-' + accordionIndex"
+  >
+    <form [formGroup]="notificationConditionForm">
       <div class="flex-row align-center notification-condition-section">
         <strong>Define Notification Criteria</strong>
         <app-help-button
@@ -111,7 +113,7 @@
         ></app-help-button>
       </div>
       @for (
-        notificationCondition of value.conditions;
+        notificationCondition of value?.conditions;
         track notificationCondition;
         let index = $index
       ) {
@@ -150,7 +152,7 @@
         mat-stroked-button
         class="new-rule-condition-button"
         color="accent"
-        (click)="appendNewNotificationCondition()"
+        (click)="addNewNotificationCondition()"
         matTooltip="Define another condition of notifications for your user account"
         i18n-matTooltip
       >
@@ -159,6 +161,6 @@
           >Add Notification Condition</span
         >
       </button>
-    </div>
-  }
-</form>
+    </form>
+  </div>
+}

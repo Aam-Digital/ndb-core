@@ -56,6 +56,9 @@ export class NotificationRuleComponent implements OnChanges {
   @Input() value: NotificationRule;
   @Output() valueChange = new EventEmitter<NotificationRule>();
 
+  @Output() valueNotificationConditionChange =
+    new EventEmitter<NotificationRule>();
+
   @Output() removeNotificationRule = new EventEmitter<void>();
 
   @Output() removeNotificationCondition = new EventEmitter<any>();
@@ -63,6 +66,9 @@ export class NotificationRuleComponent implements OnChanges {
   @Input() accordionIndex: number;
 
   form: FormGroup;
+
+  notificationConditionForm: FormGroup;
+  notificationCondition: NotificationCondition = null;
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
@@ -89,7 +95,16 @@ export class NotificationRuleComponent implements OnChanges {
       ),
     });
 
+    this.notificationConditionForm = new FormGroup({
+      entityTypeField: new FormControl(""),
+      operator: new FormControl(""),
+      condition: new FormControl(""),
+    });
+
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
+    this.notificationConditionForm.valueChanges.subscribe((value) =>
+      this.updateNotificationConditionValue(value),
+    );
   }
 
   private updateValue(value: any) {
@@ -102,6 +117,10 @@ export class NotificationRuleComponent implements OnChanges {
 
     this.value = value;
     this.valueChange.emit(value);
+  }
+
+  private updateNotificationConditionValue(value: any) {
+    this.valueNotificationConditionChange.emit(value);
   }
 
   private parseChannelsToOptionsArray(channels?: {
@@ -140,8 +159,8 @@ export class NotificationRuleComponent implements OnChanges {
     Logging.log("Get the notification token.");
   }
 
-  appendNewNotificationCondition() {
-    const newRule: NotificationCondition = {
+  addNewNotificationCondition() {
+    const newCondition: NotificationCondition = {
       notificationCondition: {
         entityTypeField: "",
         operator: "",
@@ -152,7 +171,8 @@ export class NotificationRuleComponent implements OnChanges {
     if (!this.value.conditions) {
       this.value.conditions = [];
     }
-    this.value.conditions.push(newRule);
+
+    this.value.conditions.push(newCondition);
   }
 
   removeCondition(conditionIndex: number) {
