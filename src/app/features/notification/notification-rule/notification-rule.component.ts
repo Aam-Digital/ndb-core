@@ -58,7 +58,7 @@ export class NotificationRuleComponent implements OnChanges {
 
   @Output() removeNotificationRule = new EventEmitter<void>();
 
-  @Output() removeNotificationCondition = new EventEmitter<void>();
+  @Output() removeNotificationCondition = new EventEmitter<any>();
 
   @Input() accordionIndex: number;
 
@@ -153,5 +153,10 @@ export class NotificationRuleComponent implements OnChanges {
       this.value.conditions = [];
     }
     this.value.conditions.push(newRule);
+  }
+
+  removeCondition(conditionIndex: number) {
+    this.value.conditions.splice(conditionIndex, 1);
+    this.removeNotificationCondition.emit(conditionIndex);
   }
 }
