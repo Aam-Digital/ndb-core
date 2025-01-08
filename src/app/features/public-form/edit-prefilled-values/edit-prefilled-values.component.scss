@@ -6,6 +6,10 @@
 .defaultvalue-container {
     overflow: hidden
 }
+.defaultvalue-container.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
 
 .container {
     @include mat-elevation.elevation(2);

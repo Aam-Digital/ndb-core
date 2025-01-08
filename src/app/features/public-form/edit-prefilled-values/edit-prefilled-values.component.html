@@ -1,42 +1,64 @@
 <p i18n>
-    Set the default value related to the field. After setting the default value, the selected value will be
-    automatically pre-filled in the corresponding field of the public form. This will apply only to this specific public
-    form and will not impact other forms or configurations.
+  Set the default value related to the field. After setting the default value,
+  the selected value will be automatically pre-filled in the corresponding field
+  of the public form. This will apply only to this specific public form and will
+  not impact other forms or configurations.
 </p>
 
-<div class="defaultvalue-container">
-    <form [formGroup]="prefilledValueSettings">
-        <div formArrayName="prefilledvalue">
-            <div *ngFor="let fieldGroup of prefilledValues.controls; let i = index" [formGroupName]="i">
-                <div class="flex-row justify-space-between align-center container">
-                    <div class="flex-row align-center width-1-2">
-                        <mat-form-field>
-                            <mat-label>Select Field</mat-label>
-                            <mat-select formControlName="field" placeholder="Select a field">
-                                <mat-option *ngFor="let field of availableFields" [value]="field">
-                                    {{ field }}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <app-help-button text="Select the field which you wanted to set default value."
-                            i18n-text></app-help-button>
-                    </div>
-                    <app-default-value-options [value]="fieldGroup.get('defaultValue').value"
-                        (valueChange)="fieldGroup.get('defaultValue').setValue($event)"
-                        [entityType]="entityConstructor"></app-default-value-options>
+<div class="defaultvalue-container" [class.disabled]="formControl.disabled">
+  <form [formGroup]="prefilledValueSettings">
+    <div formArrayName="prefilledvalue">
+      <div
+        *ngFor="let fieldGroup of prefilledValues.controls; let i = index"
+        [formGroupName]="i"
+      >
+        <div class="flex-row justify-space-between align-center container">
+          <div class="flex-row align-center width-1-2">
+            <mat-form-field>
+              <mat-label>Select Field</mat-label>
+              <mat-select formControlName="field" placeholder="Select a field">
+                <mat-option
+                  *ngFor="let field of availableFields"
+                  [value]="field"
+                >
+                  {{ field }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <app-help-button
+              text="Select the field which you wanted to set default value."
+              i18n-text
+            ></app-help-button>
+          </div>
+          <app-default-value-options
+            [value]="fieldGroup.get('defaultValue').value"
+            (valueChange)="fieldGroup.get('defaultValue').setValue($event)"
+            [entityType]="entityConstructor"
+          ></app-default-value-options>
 
-                    <button mat-icon-button (click)="removeField(i)" matTooltip="Remove defualt value" i18n-matTooltip>
-                        <fa-icon icon="trash"></fa-icon>
-                    </button>
-                </div>
-            </div>
+          <button
+            mat-icon-button
+            (click)="removeField(i)"
+            matTooltip="Remove defualt value"
+            i18n-matTooltip
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
         </div>
-    </form>
-    <div class="add-new-defaultvalue-field">
-        <button mat-stroked-button class="add-new-defaultvalue-button" color="accent" (click)="addField()"
-            matTooltip="Add another default value related to another field" i18n-matTooltip>
-            <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-            <span i18n class="new-defaultvalue-rule">Add new notification rule</span>
-        </button>
+      </div>
     </div>
+  </form>
+  <div class="add-new-defaultvalue-field">
+    <button
+      mat-stroked-button
+      class="add-new-defaultvalue-button"
+      color="accent"
+      (click)="addField()"
+      matTooltip="Add another default value related to another field"
+      i18n-matTooltip
+    >
+      <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+      <span i18n class="new-defaultvalue-rule">Add new notification rule</span>
+    </button>
+  </div>
 </div>
