@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
@@ -30,6 +31,9 @@ import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { NotificationConditionComponent } from "./notification-condition/notification-condition.component";
+import { MatDialog } from "@angular/material/dialog";
+import { JsonEditorComponent } from "./json-editor/json-editor.component";
+import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
  * Configure a single notification rule.
@@ -68,6 +72,7 @@ export class NotificationRuleComponent implements OnChanges {
     new EventEmitter<NotificationRule>();
 
   form: FormGroup;
+  readonly dialog = inject(MatDialog);
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
@@ -170,5 +175,25 @@ export class NotificationRuleComponent implements OnChanges {
     // open MatDialog, passing in the current conditions property
     // dialog displays a new component with json editor
     // on dialogclose, update the conditions property with the dialogs return value
+    const buttons = YesNoButtons;
+
+    const dialogRef = this.dialog.open(JsonEditorComponent, {
+      data: {
+        title: "Notification Condition",
+        conditions: {
+          operator: "$gt",
+          condition: "",
+          entityTypeField: "date",
+        },
+        buttons: buttons,
+        closeButton: true,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log({ result });
+      }
+    });
   }
 }

@@ -17,6 +17,9 @@
           <mat-label i18n>Select an entity type</mat-label>
           <app-entity-type-select
             formControlName="entityType"
+            (click)="
+              !notificationRuleItem.expanded && notificationRuleItem.toggle()
+            "
           ></app-entity-type-select>
         </mat-form-field>
         <app-help-button
@@ -132,7 +135,7 @@
       <span i18n class="new-notification-rule">Add Notification Condition</span>
     </button>
 
-    <!-- <button
+    <button
       mat-stroked-button
       class="new-rule-condition-button"
       color="accent"
@@ -140,6 +143,6 @@
     >
       <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
       <span i18n class="new-notification-rule">Advanced Conditions Editor</span>
-    </button> -->
+    </button>
   </div>
 }
