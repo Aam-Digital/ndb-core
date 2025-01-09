@@ -70,7 +70,7 @@ describe("BasicAutocompleteComponent", () => {
     component.options = [school1, school2, school3];
     let currentAutocompleteSuggestions: TestEntity[];
     component.autocompleteSuggestedOptions.subscribe(
-      (value) => (currentAutocompleteSuggestions = value.map((o) => o.asValue)),
+      (value) => (currentAutocompleteSuggestions = value.map((o) => o.initial)),
     );
 
     component.autocompleteForm.setValue("");
@@ -92,6 +92,29 @@ describe("BasicAutocompleteComponent", () => {
     fixture.detectChanges();
 
     expect(component.displayText).toBe("First Child");
+  });
+
+  it("should use _id and _label as default display/value for options", async () => {
+    const option1 = { _id: "1", _label: "First" };
+    const option2 = { _id: "2", _label: "Second" };
+    component.options = [option1, option2];
+
+    component.ngOnChanges({ options: true });
+    fixture.detectChanges();
+
+    // @ts-ignore
+    expect(component._options).toEqual([
+      jasmine.objectContaining({
+        asValue: "1",
+        asString: "First",
+        initial: option1,
+      }),
+      jasmine.objectContaining({
+        asValue: "2",
+        asString: "Second",
+        initial: option2,
+      }),
+    ]);
   });
 
   it("should have the correct entity selected when it's name is entered", () => {
