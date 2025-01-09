@@ -116,10 +116,6 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
     );
     this.notificationConditionValueChange.emit(this.notificationRule);
   }
-
-  isEntityTypeDisabled(notificationRule?: NotificationRule): boolean {
-    return true;
-  }
 }
 
 interface SimpleDropdownValue {
