@@ -82,13 +82,13 @@ export class EditPrefilledValuesComponent
           typeof field === "string" ? null : field.defaultValue;
 
         if (fieldId) {
-            this.prefilledValues.push(
-              this.fb.group({
-                field: [fieldId],
-                defaultValue: [defaultValue],
-                hideFromForm: [field.hideFromForm ?? true],
-              }),
-            );
+          this.prefilledValues.push(
+            this.fb.group({
+              field: [fieldId],
+              defaultValue: [defaultValue],
+              hideFromForm: [field.hideFromForm ?? true],
+            }),
+          );
         }
       });
     });
