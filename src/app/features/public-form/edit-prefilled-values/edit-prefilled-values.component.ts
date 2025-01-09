@@ -40,7 +40,7 @@ export class EditPrefilledValuesComponent
   entityConstructor: EntityConstructor;
   formConfig: FormConfig;
   availableFields: string[] = [];
-
+  defaultValue: DefaultValueConfig;
   prefilledValueSettings = this.fb.group({
     prefilledvalue: this.fb.array([]),
   });
@@ -103,8 +103,11 @@ export class EditPrefilledValuesComponent
     this.prefilledValues.push(
       this.fb.group({
         field: [""],
-        defaultValue: null,
-        hideFromForm: [true],
+        defaultValue: {
+          mode: "static",
+          value: null,
+        },
+        hideFromForm: true,
       }),
     );
   }
