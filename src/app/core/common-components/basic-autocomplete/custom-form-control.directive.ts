@@ -11,9 +11,11 @@ import {
   Directive,
   DoCheck,
   ElementRef,
+  EventEmitter,
   HostBinding,
   Input,
   OnDestroy,
+  Output,
 } from "@angular/core";
 import { Subject } from "rxjs";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
@@ -34,10 +36,12 @@ export abstract class CustomFormControlDirective<T>
   get required() {
     return this._required;
   }
+
   set required(req: boolean) {
     this._required = coerceBooleanProperty(req);
     this.stateChanges.next();
   }
+
   private _required = false;
 
   stateChanges = new Subject<void>();
@@ -79,6 +83,8 @@ export abstract class CustomFormControlDirective<T>
   }
 
   _value: T;
+
+  @Output() valueChange = new EventEmitter<T>();
 
   constructor(
     public elementRef: ElementRef<HTMLElement>,
@@ -126,6 +132,7 @@ export abstract class CustomFormControlDirective<T>
 
   writeValue(val: T): void {
     this.value = val;
+    this.valueChange.emit(val);
   }
 
   registerOnChange(fn: any): void {
