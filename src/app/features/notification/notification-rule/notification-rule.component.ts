@@ -7,9 +7,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import {
-  MatFormFieldModule,
-} from "@angular/material/form-field";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
@@ -67,7 +65,7 @@ export class NotificationRuleComponent implements OnChanges {
 
   @Output() removeNotificationCondition = new EventEmitter<any>();
 
-  @Output() valueNotificationConditionChange =
+  @Output() notificationConditionValueChange =
     new EventEmitter<NotificationRule>();
 
   form: FormGroup;
@@ -123,7 +121,7 @@ export class NotificationRuleComponent implements OnChanges {
     [key: string]: boolean;
   } {
     const channels = {};
-    for (let option in options ?? []) {
+    for (let option of options ?? []) {
       channels[option] = true;
     }
     return channels;
@@ -158,7 +156,7 @@ export class NotificationRuleComponent implements OnChanges {
   }
 
   updateNotificationCondition(updateNotificationCondition: NotificationRule) {
-    this.valueNotificationConditionChange.emit(updateNotificationCondition);
+    this.notificationConditionValueChange.emit(updateNotificationCondition);
   }
 
   removeCondition(conditionIndex: number) {

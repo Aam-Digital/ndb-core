@@ -11,7 +11,6 @@ import { HelpButtonComponent } from "app/core/common-components/help-button/help
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import {
-  NotificationCondition,
   NotificationConfig,
   NotificationRule,
 } from "app/features/notification/model/notification-config";
@@ -55,7 +54,7 @@ export class NotificationSettingsComponent implements OnInit {
    * Get the logged-in user id
    */
   private get userId() {
-    return this.sessionInfo.value?.entityId;
+    return this.sessionInfo.value?.id;
   }
 
   async ngOnInit() {

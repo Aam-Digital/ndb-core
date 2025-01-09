@@ -49,7 +49,7 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
 
   @Input() notificationConditionIndex: number;
 
-  @Output() valueNotificationConditionChange =
+  @Output() notificationConditionValueChange =
     new EventEmitter<NotificationRule>();
 
   @Output() removeNotificationCondition = new EventEmitter<any>();
@@ -85,23 +85,23 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
     this.conditionalOptions = Object.keys(this.conditionMappings).map(
       (key) => ({ label: this.conditionMappings[key], value: key }),
     );
-    this.initForm();
+    this.initNotificationConditionForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
-      this.initForm();
+      this.initNotificationConditionForm();
     }
   }
 
-  private initForm() {
+  initNotificationConditionForm() {
     const condition =
       this.notificationRule?.conditions?.[this.notificationConditionIndex];
 
     this.notificationConditionForm = new FormGroup({
-      entityTypeField: new FormControl(condition.entityTypeField || ""),
-      operator: new FormControl(condition.operator || ""),
-      condition: new FormControl(condition.condition || ""),
+      entityTypeField: new FormControl(condition?.entityTypeField || ""),
+      operator: new FormControl(condition?.operator || ""),
+      condition: new FormControl(condition?.condition || ""),
     });
 
     this.notificationConditionForm.valueChanges.subscribe((value) => {
@@ -114,7 +114,7 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
       this.notificationRule.conditions[this.notificationConditionIndex],
       value,
     );
-    this.valueNotificationConditionChange.emit(this.notificationRule);
+    this.notificationConditionValueChange.emit(this.notificationRule);
   }
 }
 
