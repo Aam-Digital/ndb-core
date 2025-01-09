@@ -58,27 +58,29 @@ describe("NotificationConditionComponent", () => {
 
   it("should emit notificationCondition valueChange with the correct format when a formControl is updated", () => {
     spyOn(component.notificationConditionValueChange, "emit");
-    component.notificationRule = {
-      conditions: [mockNotificationConditionValue],
-    } as NotificationRule;
-    component.notificationConditionIndex = 0;
 
-    component.initNotificationConditionForm();
-    const mockUpdatedNotificationCondition: NotificationCondition = {
+    const mockInitialNotificationCondition: NotificationCondition = {
       entityTypeField: "Subject",
       operator: "$gte",
       condition: "english",
     };
 
+    component.notificationRule = {
+      conditions: [mockInitialNotificationCondition],
+    } as NotificationRule;
+    component.notificationConditionIndex = 0;
+
+    component.initNotificationConditionForm();
+
     component.notificationConditionForm.setValue(
-      mockUpdatedNotificationCondition,
+      mockInitialNotificationCondition,
     );
 
     expect(
       component.notificationConditionValueChange.emit,
     ).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        conditions: [mockUpdatedNotificationCondition],
+        conditions: [mockInitialNotificationCondition],
       }),
     );
   });
