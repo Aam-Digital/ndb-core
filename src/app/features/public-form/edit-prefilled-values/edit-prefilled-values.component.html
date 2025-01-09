@@ -38,7 +38,7 @@
 
           <button
             mat-icon-button
-            (click)="removeField(i)"
+            (click)="removeRestrictedPrefilled(i)"
             matTooltip="Remove defualt value"
             i18n-matTooltip
           >
@@ -53,7 +53,7 @@
       mat-stroked-button
       class="add-new-defaultvalue-button"
       color="accent"
-      (click)="addField()"
+      (click)="addRestrictedPrefilled()"
       matTooltip="Add another default value related to another field"
       i18n-matTooltip
     >

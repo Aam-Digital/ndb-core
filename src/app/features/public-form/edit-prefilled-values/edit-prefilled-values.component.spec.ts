@@ -48,12 +48,13 @@ describe("EditPrefilledValuesComponent", () => {
 
   it("should add a new field to prefilled values", () => {
     component.availableFields = ["name", "age"];
-    component.addField();
+    component.addRestrictedPrefilled();
 
     expect(component.prefilledValues.length).toBe(1);
     expect(component.prefilledValues.at(0).value).toEqual({
       field: "",
       defaultValue: null,
+      hideFromForm: true,
     });
   });
 
@@ -62,10 +63,11 @@ describe("EditPrefilledValuesComponent", () => {
       new FormBuilder().group({
         field: "name",
         defaultValue: { mode: "static", value: "default name" },
+        hideFromForm: true,
       }),
     );
 
-    component.removeField(0);
+    component.removeRestrictedPrefilled(0);
 
     expect(component.prefilledValues.length).toBe(0);
   });
