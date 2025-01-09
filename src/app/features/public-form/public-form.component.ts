@@ -111,6 +111,20 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
     this.formConfig = migratePublicFormConfig(this.formConfig);
     this.fieldGroups = this.formConfig.columns;
+
+    if (
+      this.formConfig.restrictedPrefilled &&
+      this.formConfig.restrictedPrefilled.length > 0
+    ) {
+      this.formConfig.restrictedPrefilled.forEach((item) => {
+        if (item.fields && item.fields.length > 0) {
+          this.fieldGroups.push({
+            fields: item.fields,
+          });
+        }
+      });
+    }
+
     await this.initForm();
   }
 

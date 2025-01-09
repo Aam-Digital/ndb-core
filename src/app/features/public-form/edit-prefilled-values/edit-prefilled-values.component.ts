@@ -75,6 +75,7 @@ export class EditPrefilledValuesComponent
   }
 
   private initializePrefilledValues(): void {
+    if (!this.formConfig.fieldGroups) return;
     this.formConfig.fieldGroups.forEach((group) => {
       group.fields.forEach((field: FormFieldConfig) => {
         const fieldId = typeof field === "string" ? field : field.id;
