@@ -148,10 +148,6 @@ export class NotificationSettingsComponent implements OnInit {
     await this.saveNotificationConfig(this.notificationConfig);
   }
 
-  async removeNotificationCondition() {
-    await this.saveNotificationConfig(this.notificationConfig);
-  }
-
   async updateNotificationCondition() {
     await this.saveNotificationConfig(this.notificationConfig);
   }

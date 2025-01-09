@@ -142,7 +142,7 @@ export class NotificationRuleComponent implements OnChanges {
   }
 
   addNewNotificationCondition() {
-    const newCondition = {
+    const newNotificationCondition = {
       entityTypeField: "",
       operator: "",
       condition: "",
@@ -152,7 +152,9 @@ export class NotificationRuleComponent implements OnChanges {
       this.value.conditions = [];
     }
 
-    (this.value.conditions as any[]).push(newCondition);
+    (this.value.conditions as NotificationCondition[]).push(
+      newNotificationCondition,
+    );
   }
 
   updateNotificationCondition(updateNotificationCondition: NotificationRule) {
