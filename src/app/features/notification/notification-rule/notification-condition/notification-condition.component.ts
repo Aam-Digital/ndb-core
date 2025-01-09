@@ -99,7 +99,10 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
       this.notificationRule?.conditions?.[this.notificationConditionIndex];
 
     this.notificationConditionForm = new FormGroup({
-      entityTypeField: new FormControl(condition?.entityTypeField || ""),
+      entityTypeField: new FormControl({
+        value: condition?.entityTypeField || "",
+        disabled: !this.notificationRule?.entityType,
+      }),
       operator: new FormControl(condition?.operator || ""),
       condition: new FormControl(condition?.condition || ""),
     });
