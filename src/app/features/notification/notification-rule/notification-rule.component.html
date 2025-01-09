@@ -13,11 +13,13 @@
       <div
         class="flex-row justify-content-center align-center notification-rule-option"
       >
-        <mat-form-field class="full-width-field">
+        <mat-form-field
+          class="full-width-field"
+          (click)="handleToggleAccordion(notificationRuleItem)"
+        >
           <mat-label i18n>Select an entity type</mat-label>
           <app-entity-type-select
             formControlName="entityType"
-            (click)="handleToggleAccordion(notificationRuleItem)"
           ></app-entity-type-select>
         </mat-form-field>
         <app-help-button

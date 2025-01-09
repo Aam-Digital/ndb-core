@@ -6,9 +6,8 @@ import {
 } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConstructor } from "../model/entity";
 import { EntityRegistry } from "../database-entity.decorator";
-import { EntitySchemaService } from "../schema/entity-schema.service";
-import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { EntitySchema } from "../schema/entity-schema";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-entity-field-select",
@@ -20,41 +19,38 @@ import { EntitySchema } from "../schema/entity-schema";
     { provide: MatFormFieldControl, useExisting: EntityFieldSelectComponent },
   ],
 })
-export class EntityFieldSelectComponent extends BasicAutocompleteComponent<string> {
-  private entityCtor: EntityConstructor;
+export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
+  FormFieldConfig,
+  string
+> {
   @Input() override placeholder: string =
-    $localize`:EntityFieldSelect placeholder: Select Entity Field`;
+    $localize`:EntityFieldSelect placeholder:Select Entity Field`;
 
-  override optionToString = (option: string) =>
-    this.entityCtor.schema.get(option).label;
-  dataTypeMap: { [name: string]: DefaultDatatype };
-  selectedEntityField: string;
-  @Input() override hideOption: (option: string) => boolean;
+  override optionToString = (option: FormFieldConfig) => option.label;
+  override valueMapper = (option: FormFieldConfig) => option.id;
 
-  private entityRegistry = inject(EntityRegistry);
-  private entitySchemaService = inject(EntitySchemaService);
+  @Input() override hideOption: (option: FormFieldConfig) => boolean;
 
-  @Input() set entityType(entity: string) {
+  @Input() set entityType(entity: string | EntityConstructor) {
     if (!entity) {
       return;
     }
-    this.initializeEntity(entity);
+    if (typeof entity === "string") {
+      this._entityType = this.entityRegistry.get(entity);
+    } else {
+      this._entityType = entity;
+    }
+
+    this.options = this.getAllFieldProps(this._entityType.schema);
   }
 
-  private initializeEntity(entity: string): void {
-    this.entityCtor = this.entityRegistry.get(entity);
-    this.dataTypeMap = {};
-    this.options = this.getAllFieldProps(this.entityCtor.schema);
-  }
+  private _entityType: EntityConstructor;
 
-  private getAllFieldProps(schema: EntitySchema): string[] {
+  private entityRegistry = inject(EntityRegistry);
+
+  private getAllFieldProps(schema: EntitySchema): FormFieldConfig[] {
     return [...schema.entries()]
       .filter(([_, fieldSchema]) => fieldSchema.label)
-      .map(([name, fieldSchema]) => {
-        this.dataTypeMap[name] = this.entitySchemaService.getDatatypeOrDefault(
-          fieldSchema.dataType,
-        );
-        return name;
-      });
+      .map(([name, fieldSchema]) => ({ ...fieldSchema, id: name }));
   }
 }
