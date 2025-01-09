@@ -164,4 +164,11 @@ export class NotificationRuleComponent implements OnChanges {
     this.value.conditions.splice(conditionIndex, 1);
     this.removeNotificationCondition.emit();
   }
+
+  openConditionsInJsonEditorPopup() {
+    // TODO
+    // open MatDialog, passing in the current conditions property
+    // dialog displays a new component with json editor
+    // on dialogclose, update the conditions property with the dialogs return value
+  }
 }

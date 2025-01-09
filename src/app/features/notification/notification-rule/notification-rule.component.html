@@ -131,5 +131,15 @@
       <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
       <span i18n class="new-notification-rule">Add Notification Condition</span>
     </button>
+
+    <button
+      mat-stroked-button
+      class="new-rule-condition-button"
+      color="accent"
+      (click)="openConditionsInJsonEditorPopup()"
+    >
+      <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+      <span i18n class="new-notification-rule">Advanced Conditions Editor</span>
+    </button>
   </div>
 }
