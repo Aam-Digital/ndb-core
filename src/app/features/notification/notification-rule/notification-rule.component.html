@@ -1,10 +1,10 @@
 <form [formGroup]="form">
   <cdk-accordion-item
-    #accordionItem="cdkAccordionItem"
+    #notificationRuleItem="cdkAccordionItem"
     tabindex="0"
-    [attr.id]="'accordion-header-' + accordionIndex"
-    [attr.aria-expanded]="accordionItem.expanded"
-    [attr.aria-controls]="'accordion-body-' + accordionIndex"
+    [attr.id]="'notification-rule-item-header-' + accordionIndex"
+    [attr.aria-expanded]="notificationRuleItem.expanded"
+    [attr.aria-controls]="'notification-rule-item-body-' + accordionIndex"
     class="flex-column justify-space-between align-center notifications-options-container"
   >
     <div
@@ -80,24 +80,24 @@
       <button
         mat-icon-button
         [matTooltip]="
-          accordionItem?.expanded ? 'Collapse section' : 'Expand section'
+          notificationRuleItem?.expanded ? 'Collapse section' : 'Expand section'
         "
-        (click)="accordionItem.toggle()"
+        (click)="notificationRuleItem.toggle()"
         i18n-matTooltip
       >
         <fa-icon
-          [icon]="accordionItem.expanded ? 'chevron-up' : 'chevron-down'"
+          [icon]="notificationRuleItem.expanded ? 'chevron-up' : 'chevron-down'"
         ></fa-icon>
       </button>
     </div>
   </cdk-accordion-item>
 </form>
 
-@if (accordionItem.expanded) {
+@if (notificationRuleItem.expanded) {
   <div
-    [style.display]="accordionItem.expanded ? '' : 'none'"
-    [attr.id]="'accordion-body-' + accordionIndex"
-    [attr.aria-labelledby]="'accordion-header-' + accordionIndex"
+    [style.display]="notificationRuleItem.expanded ? '' : 'none'"
+    [attr.id]="'notification-rule-item-body-' + accordionIndex"
+    [attr.aria-labelledby]="'notification-rule-item-header-' + accordionIndex"
   >
     <div class="flex-row align-center notification-condition-section">
       <strong>Define Notification Criteria</strong>
