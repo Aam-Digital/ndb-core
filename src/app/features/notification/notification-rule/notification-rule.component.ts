@@ -3,7 +3,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
 } from "@angular/core";
@@ -30,7 +29,7 @@ import {
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
-import { NotificationConditionComponent } from "../notification-condition/notification-condition.component";
+import { NotificationConditionComponent } from "./notification-condition/notification-condition.component";
 
 /**
  * Configure a single notification rule.

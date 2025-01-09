@@ -19,7 +19,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
-import { NotificationRule } from "../model/notification-config";
+import { NotificationRule } from "../../model/notification-config";
 
 @Component({
   selector: "app-notification-condition",
@@ -42,7 +42,7 @@ import { NotificationRule } from "../model/notification-config";
     },
   ],
   templateUrl: "./notification-condition.component.html",
-  styleUrl: "../notification-settings/notification-settings.component.scss",
+  styleUrl: "../../notification-settings/notification-settings.component.scss",
 })
 export class NotificationConditionComponent implements OnChanges, OnInit {
   @Input() notificationRule: NotificationRule;
@@ -115,6 +115,10 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
       value,
     );
     this.notificationConditionValueChange.emit(this.notificationRule);
+  }
+
+  isEntityTypeDisabled(notificationRule?: NotificationRule): boolean {
+    return true;
   }
 }
 

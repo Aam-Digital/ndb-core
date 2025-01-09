@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import {
   NotificationCondition,
   NotificationRule,
-} from "../model/notification-config";
+} from "../../model/notification-config";
 import {
   EntityRegistry,
   entityRegistry,
