@@ -61,4 +61,10 @@ export class PublicFormConfig extends Entity {
 
   /** @deprecated use ColumnConfig directly in the columns array instead */
   @DatabaseField() prefilled: { [key in string]: any };
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Restricted Prefilled`,
+    isArray: true,
+  })
+  restrictedPrefilled: FieldGroup[];
 }
