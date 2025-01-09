@@ -29,7 +29,7 @@ import {
 } from "../model/notification-config";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
-import { CdkAccordionModule } from "@angular/cdk/accordion";
+import { CdkAccordionItem, CdkAccordionModule } from "@angular/cdk/accordion";
 import { NotificationConditionComponent } from "./notification-condition/notification-condition.component";
 import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorComponent } from "./json-editor/json-editor.component";
@@ -195,5 +195,11 @@ export class NotificationRuleComponent implements OnChanges {
         console.log({ result });
       }
     });
+  }
+
+  handleToggleAccordion(notificationRuleItem: CdkAccordionItem) {
+    if (!notificationRuleItem.expanded) {
+      notificationRuleItem.toggle();
+    }
   }
 }

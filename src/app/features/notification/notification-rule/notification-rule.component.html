@@ -17,9 +17,7 @@
           <mat-label i18n>Select an entity type</mat-label>
           <app-entity-type-select
             formControlName="entityType"
-            (click)="
-              !notificationRuleItem.expanded && notificationRuleItem.toggle()
-            "
+            (click)="handleToggleAccordion(notificationRuleItem)"
           ></app-entity-type-select>
         </mat-form-field>
         <app-help-button
