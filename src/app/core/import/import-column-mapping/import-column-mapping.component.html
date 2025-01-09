@@ -16,28 +16,28 @@
   <div *ngFor="let col of columnMapping">
     <mat-form-field>
       <mat-label>{{ col.column }}</mat-label>
-      <app-basic-autocomplete
-        [options]="allProps"
+      <app-entity-field-select
+        [entityType]="entityCtor.label"
+        [hideOption]="isUsed"
         [(ngModel)]="col.propertyName"
         (ngModelChange)="updateMapping(col)"
-        [optionToString]="labelMapper"
-        [hideOption]="isUsed"
       />
     </mat-form-field>
 
-    <button
-      class="margin-left-small"
-      mat-stroked-button
-      *ngIf="dataTypeMap[col.propertyName]?.importConfigComponent"
-      (click)="openMappingComponent(col)"
-      i18n="
-        import - column mapping - configure additional transformation button
-      "
-      [matBadge]="mappingAdditionalWarning?.[col.column]"
-      [matBadgeHidden]="!mappingAdditionalWarning?.[col.column]"
-      matBadgeColor="warn"
-    >
-      Configure value mapping
-    </button>
+    @if (dataTypeMap[col.propertyName]?.importConfigComponent) {
+      <button
+        class="margin-left-small"
+        mat-stroked-button
+        (click)="openMappingComponent(col)"
+        i18n="
+          import - column mapping - configure additional transformation button
+        "
+        [matBadge]="mappingAdditionalWarning?.[col.column]"
+        [matBadgeHidden]="!mappingAdditionalWarning?.[col.column]"
+        matBadgeColor="warn"
+      >
+        Configure value mapping
+      </button>
+    }
   </div>
 </div>
