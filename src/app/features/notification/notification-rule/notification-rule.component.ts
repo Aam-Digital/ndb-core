@@ -31,7 +31,6 @@ import { MatSelect } from "@angular/material/select";
 import { CdkAccordionItem, CdkAccordionModule } from "@angular/cdk/accordion";
 import { NotificationConditionComponent } from "./notification-condition/notification-condition.component";
 import { MatDialog } from "@angular/material/dialog";
-import { JsonEditorComponent } from "./json-editor/json-editor.component";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
@@ -162,33 +161,6 @@ export class NotificationRuleComponent implements OnChanges {
   removeCondition(conditionIndex: number) {
     (this.form.get("conditions") as FormArray).removeAt(conditionIndex);
     this.removeNotificationCondition.emit();
-  }
-
-  openConditionsInJsonEditorPopup() {
-    // TODO
-    // open MatDialog, passing in the current conditions property
-    // dialog displays a new component with json editor
-    // on dialogclose, update the conditions property with the dialogs return value
-    const buttons = YesNoButtons;
-
-    const dialogRef = this.dialog.open(JsonEditorComponent, {
-      data: {
-        title: "Notification Condition",
-        conditions: {
-          operator: "$gt",
-          condition: "",
-          entityTypeField: "date",
-        },
-        buttons: buttons,
-        closeButton: true,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log({ result });
-      }
-    });
   }
 
   handleToggleAccordion(notificationRuleItem: CdkAccordionItem) {
