@@ -53,7 +53,7 @@ describe("EditPrefilledValuesComponent", () => {
     expect(component.prefilledValues.length).toBe(1);
     expect(component.prefilledValues.at(0).value).toEqual({
       field: "",
-      defaultValue: null,
+      defaultValue: { mode: "static", value: null },
       hideFromForm: true,
     });
   });
