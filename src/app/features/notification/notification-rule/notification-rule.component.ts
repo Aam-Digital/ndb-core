@@ -24,7 +24,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Logging } from "app/core/logging/logging.service";
 import {
   NotificationChannel,
-  NotificationCondition,
   NotificationRule,
 } from "../model/notification-config";
 import { MatOption } from "@angular/material/core";
@@ -70,6 +69,8 @@ export class NotificationRuleComponent implements OnChanges {
 
   @Output() notificationConditionValueChange =
     new EventEmitter<NotificationRule>();
+
+  notificationConditions: string[] = []
 
   form: FormGroup;
   readonly dialog = inject(MatDialog);
@@ -146,19 +147,12 @@ export class NotificationRuleComponent implements OnChanges {
   }
 
   addNewNotificationCondition() {
-    const newNotificationCondition = {
-      entityTypeField: "",
-      operator: "",
-      condition: "",
-    };
-
-    if (!this.value.conditions) {
-      this.value.conditions = [];
-    }
-
-    (this.value.conditions as NotificationCondition[]).push(
-      newNotificationCondition,
-    );
+    const newCondition = new FormGroup({
+      entityTypeField: new FormControl(""),
+      operator: new FormControl(""),
+      condition: new FormControl(""),
+    });
+    (this.form.get("conditions") as FormArray).push(newCondition);
   }
 
   updateNotificationCondition(updateNotificationCondition: NotificationRule) {
@@ -166,7 +160,7 @@ export class NotificationRuleComponent implements OnChanges {
   }
 
   removeCondition(conditionIndex: number) {
-    this.value.conditions.splice(conditionIndex, 1);
+    (this.form.get("conditions") as FormArray).removeAt(conditionIndex);
     this.removeNotificationCondition.emit();
   }
 
