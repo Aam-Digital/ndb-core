@@ -54,6 +54,7 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
 
   @Output() removeNotificationCondition = new EventEmitter<any>();
 
+  @Input() form: FormGroup;
   notificationConditionForm: FormGroup;
   conditionalOptions: SimpleDropdownValue[] = [];
 
@@ -124,4 +125,10 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
 interface SimpleDropdownValue {
   label: string;
   value: string;
+}
+
+export interface NotificationRuleCondition {
+  entityTypeField: string;
+  operator: string;
+  condition: string;
 }

@@ -1,4 +1,4 @@
-<form [formGroup]="notificationConditionForm">
+<form [formGroup]="form">
   <div class="flex-row align-center full-width">
     <mat-form-field class="full-width-field">
       <mat-label i18n>Select Entity Field</mat-label>
@@ -14,7 +14,6 @@
         [optionToString]="optionsToLabel"
         [valueMapper]="optionsToValue"
         formControlName="operator"
-        [disabled]="true"
       />
     </mat-form-field>
     <mat-form-field class="full-width-field">

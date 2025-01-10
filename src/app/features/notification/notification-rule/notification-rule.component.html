@@ -115,12 +115,11 @@
       let notificationConditionIndex = $index
     ) {
       <app-notification-condition
-        [notificationRule]="value"
         (removeNotificationCondition)="
           removeCondition(notificationConditionIndex)
         "
-        [notificationConditionIndex]="notificationConditionIndex"
-        (notificationConditionValueChange)="updateNotificationCondition($event)"
+        [form]="notificationCondition"
+        [notificationRule]="value"
       />
     }
     <button
