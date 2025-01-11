@@ -115,6 +115,9 @@ export class NotificationRuleComponent implements OnChanges {
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
   }
 
+  /**
+   * Disable the entityType field if there are notification conditions.
+   */
   private updateEntityTypeControlState() {
     this.form.get("conditions").valueChanges.subscribe(() => {
       const conditionsLength = (this.form.get("conditions") as FormArray)
