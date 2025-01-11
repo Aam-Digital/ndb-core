@@ -10,6 +10,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { MockEntityMapperService } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { FieldGroup } from "../../../core/entity-details/form/field-group";
 
 describe("EditPublicFormColumnsComponent", () => {
   let component: EditPublicFormColumnsComponent;
@@ -23,6 +24,13 @@ describe("EditPublicFormColumnsComponent", () => {
       fields: ["name", "phone"],
     },
   ];
+
+  const oldColumnConfig: string[][] = [["name", "gender"], ["other"]];
+  const newColumnConfig: FieldGroup[] = [
+    { fields: ["name", "gender"], header: null },
+    { fields: ["other"], header: null },
+  ];
+
   beforeEach(() => {
     let mockDatabase: jasmine.SpyObj<Database>;
     mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
@@ -60,5 +68,13 @@ describe("EditPublicFormColumnsComponent", () => {
 
   it("should create the component", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should migrate old columns config to new columns config", () => {
+    component.formControl.setValue(oldColumnConfig as any);
+
+    component.ngOnInit();
+
+    expect(component.formConfig.fieldGroups).toEqual(newColumnConfig);
   });
 });

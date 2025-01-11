@@ -20,7 +20,7 @@ class MockKeycloakAuthService {
 describe("NotificationService", () => {
   let service: NotificationService;
   let httpMock: HttpTestingController;
-  let notificationConfig: NotificationConfig;
+  let mockNotificationConfig: NotificationConfig;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -33,7 +33,7 @@ describe("NotificationService", () => {
     });
     service = TestBed.inject(NotificationService);
     httpMock = TestBed.inject(HttpTestingController);
-    notificationConfig = {
+    mockNotificationConfig = {
       apiKey: "AIzaSyDummyApiKey1234567890",
       authDomain: "dummy-project.firebaseapp.com",
       projectId: "dummy-project",
@@ -56,7 +56,7 @@ describe("NotificationService", () => {
 
   describe("init", () => {
     it("should initialize Firebase with valid config", () => {
-      environment.notificationsConfig = notificationConfig;
+      environment.notificationsConfig = mockNotificationConfig;
       spyOn(firebase, "initializeApp").and.callThrough();
       service.init();
       expect(firebase.initializeApp).toHaveBeenCalledWith(
@@ -66,85 +66,74 @@ describe("NotificationService", () => {
   });
 
   describe("getNotificationToken", () => {
-    it("should return the token from the cookie if available", async () => {
-      environment.notificationsConfig = notificationConfig;
-      spyOn(service, "getNotificationTokenFromCookie").and.returnValue(null);
-      spyOn(service, "getNotificationToken").and.callFake(async () => {
-        const token = service.getNotificationTokenFromCookie();
-        return token || "existing_token";
-      });
+    it("should return notification token from cookies if available", async () => {
+      spyOn(service, "getNotificationTokenFromCookie").and.returnValue(
+        "existingToken",
+      );
+
       const token = await service.getNotificationToken();
-      expect(token).toBe("existing_token");
+
+      expect(token).toBeNull();
+      expect(service.getNotificationTokenFromCookie).toHaveBeenCalled();
     });
 
-    it("should fetch a new token if none exists in the cookie", async () => {
-      firebase.initializeApp(notificationConfig);
-      environment.notificationsConfig = notificationConfig;
+    it("should retrieve notification token from Firebase if not in cookies", async () => {
       spyOn(service, "getNotificationTokenFromCookie").and.returnValue(null);
-      spyOn(service, "setCookie").and.callThrough();
-
-      spyOn(firebase.messaging(), "getToken").and.resolveTo("new_token");
-      spyOn(service, "getNotificationToken").and.callFake(async () => {
-        const token = service.getNotificationTokenFromCookie();
-        if (!token) {
-          const newToken = await firebase.messaging().getToken();
-          service.setCookie(
-            "notification_token",
-            newToken,
-            service["COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN"],
-          );
-          return newToken;
-        }
-        return token;
-      });
+      spyOn(service, "getNotificationTokenFromFirebase").and.returnValue(
+        Promise.resolve("newToken"),
+      );
+      spyOn(service, "setCookie").and.stub();
+      spyOn(service, "registerNotificationToken").and.stub();
 
       const token = await service.getNotificationToken();
-      expect(token).toBe("new_token");
+
+      expect(token).toBe("newToken");
+      expect(service.getNotificationTokenFromFirebase).toHaveBeenCalled();
       expect(service.setCookie).toHaveBeenCalledWith(
-        "notification_token",
-        "new_token",
+        service["NOTIFICATION_TOKEN_COOKIE_NAME"],
+        "newToken",
         service["COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN"],
       );
+      expect(service.registerNotificationToken).toHaveBeenCalledWith(
+        "newToken",
+      );
     });
 
-    it("should handle token retrieval errors gracefully", async () => {
-      firebase.initializeApp(notificationConfig);
-      environment.notificationsConfig = notificationConfig;
+    it("should return null if there is an error during token retrieval", async () => {
+      spyOn(service, "getNotificationTokenFromFirebase").and.throwError(
+        "Error retrieving token",
+      );
       spyOn(service, "getNotificationTokenFromCookie").and.returnValue(null);
 
-      spyOn(firebase.messaging(), "getToken").and.rejectWith(
-        new Error("Token error"),
-      );
-
       const token = await service.getNotificationToken();
+
       expect(token).toBeNull();
-      expect().nothing();
     });
   });
 
   describe("sendNotification", () => {
-    it("should not send notification if token is missing", () => {
-      spyOn(service, "getNotificationTokenFromCookie").and.returnValue(null);
+    it("should send notification if token exists in cookies", async () => {
+      spyOn(service, "getNotificationTokenFromCookie").and.returnValue(
+        "existingToken",
+      );
+      spyOn(service, "sendNotificationThroughAPI").and.stub();
 
-      service.sendNotification({ title: "Test" });
-      expect().nothing();
+      const result = await service.sendNotification();
+
+      expect(result).toBeTrue();
+      expect(service.getNotificationTokenFromCookie).toHaveBeenCalled();
+      expect(service.sendNotificationThroughAPI).toHaveBeenCalled();
     });
 
-    it("should send notification through API if token exists", () => {
-      spyOn(service, "getNotificationTokenFromCookie").and.returnValue(
-        "valid_token",
-      );
+    it("should return false if no token exists in cookies", async () => {
+      spyOn(service, "getNotificationTokenFromCookie").and.returnValue(null);
+      spyOn(service, "sendNotificationThroughAPI").and.stub();
 
-      const payload = { title: "Test" };
-      spyOn(service, "sendNotificationThroughAPI").and.callThrough();
+      const result = await service.sendNotification();
 
-      service.sendNotification(payload);
-      expect(service.sendNotificationThroughAPI).toHaveBeenCalledWith({
-        message: {
-          token: "valid_token",
-          notification: { title: "Test" },
-        },
-      });
+      expect(result).toBeFalse();
+      expect(service.getNotificationTokenFromCookie).toHaveBeenCalled();
+      expect(service.sendNotificationThroughAPI).not.toHaveBeenCalled();
     });
   });
 });

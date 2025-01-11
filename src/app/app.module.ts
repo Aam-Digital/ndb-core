@@ -91,6 +91,7 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { NotificationModule } from "./features/notification/notification.module";
+import { SkillModule } from "./features/skill/skill.module";
 
 /**
  * Main entry point of the application.
@@ -136,6 +137,7 @@ import { NotificationModule } from "./features/notification/notification.module"
     AdminModule,
     TemplateExportModule,
     PublicFormModule,
+    SkillModule,
     // top level component
     UiComponent,
     // Global Angular Material modules
