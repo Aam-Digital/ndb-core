@@ -48,19 +48,18 @@ export class NotificationService {
   async getNotificationToken(): Promise<string | null> {
     try {
       const existingNotificationToken = this.getNotificationTokenFromCookie();
-      const notificationToken: string =
-        (await this.getNotificationTokenFromFirebase()) ?? null;
+      const notificationToken = await this.getNotificationTokenFromFirebase();
 
       if (
         !notificationToken ||
         notificationToken === existingNotificationToken
       ) {
-        return notificationToken || null;
+        return notificationToken ?? null;
       }
 
       try {
-        this.registerNotificationToken(notificationToken);
-      } catch {
+        await this.registerNotificationToken(notificationToken);
+      } catch (error) {
         this.setCookie(this.NOTIFICATION_TOKEN_COOKIE_NAME, "", null);
         return null;
       }
@@ -72,8 +71,11 @@ export class NotificationService {
       );
 
       return notificationToken;
-    } catch (err) {
-      Logging.error("An error occurred while retrieving token: ", err);
+    } catch (error) {
+      Logging.error(
+        "An error occurred while retrieving the notification token: ",
+        error,
+      );
       return null;
     }
   }
@@ -101,20 +103,24 @@ export class NotificationService {
    * @param deviceName - The name of the device.
    */
 
-  registerNotificationToken(
+  async registerNotificationToken(
     notificationToken: string,
     deviceName: string = "web",
   ) {
     const payload = { deviceToken: notificationToken, deviceName };
     const headers = {};
     this.authService.addAuthHeader(headers);
-    try {
-      this.httpClient
-        .post(this.DEVICE_NOTIFICATION_API_URL, payload, { headers })
-        .subscribe();
-    } catch (err) {
-      throw new Error("Device registration failed");
-    }
+
+    this.httpClient
+      .post(this.DEVICE_NOTIFICATION_API_URL, payload, { headers })
+      .subscribe({
+        next: () => {
+          Logging.log("Device registration successful.");
+        },
+        error: (err) => {
+          Logging.error("Device registration failed");
+        },
+      });
   }
 
   /**
@@ -174,14 +180,16 @@ export class NotificationService {
   sendNotificationThroughAPI() {
     const headers = {};
     this.authService.addAuthHeader(headers);
-    try {
-      this.httpClient
-        .post(this.SEND_NOTIFICATION_API_URL, {}, { headers })
-        .subscribe();
-    } catch (err) {
-      Logging.error(err);
-    } finally {
-      this.alertService.addInfo($localize`Notification send to device.`);
-    }
+
+    this.httpClient
+      .post(this.SEND_NOTIFICATION_API_URL, {}, { headers })
+      .subscribe({
+        next: () => {
+          this.alertService.addInfo($localize`Notification sent to device.`);
+        },
+        error: (err) => {
+          Logging.error(err);
+        },
+      });
   }
 }

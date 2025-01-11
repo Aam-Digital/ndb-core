@@ -1,4 +1,4 @@
-import { NotificationConfig } from "app/features/notification/notification-config.interface";
+import { FirebaseConfiguration } from "app/features/notification/notification-config.interface";
 import { SessionType } from "../app/core/session/session-type";
 
 /**
@@ -16,5 +16,4 @@ export const environment = {
   email: undefined,
   DB_PROXY_PREFIX: "/db",
   DB_NAME: "app",
-  notificationsConfig: {} as NotificationConfig,
 };

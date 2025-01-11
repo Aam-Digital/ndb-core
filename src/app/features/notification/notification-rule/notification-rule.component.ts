@@ -22,6 +22,7 @@ import {
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { NotificationService } from "../notification.service";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 /**
  * Configure a single notification rule.
@@ -41,6 +42,7 @@ import { NotificationService } from "../notification.service";
     ReactiveFormsModule,
     MatOption,
     MatSelect,
+    MatProgressSpinnerModule,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
@@ -123,6 +125,8 @@ export class NotificationRuleComponent implements OnChanges {
     if (!notificationToken) {
       return;
     }
-    return this.notificationService.sendNotification();
+
+    await this.notificationService.sendNotification();
+    return;
   }
 }

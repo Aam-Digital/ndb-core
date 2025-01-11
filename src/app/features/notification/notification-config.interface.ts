@@ -1,14 +1,12 @@
-/** Structure of the notification configuration object.
- * This object contains the necessary settings for Cloud Messaging integration.
+/**
+ * This object contains the necessary settings for Firebase Cloud Messaging integration.
  */
 
-export interface NotificationConfig {
+export interface FirebaseConfiguration {
   apiKey: string;
   authDomain: string;
   projectId: string;
   storageBucket: string;
   messagingSenderId: string;
   appId: string;
-  vapidKey: string;
-  enabled: boolean;
 }

@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NotificationConfig } from "app/features/notification/notification-config.interface";
+import { FirebaseConfiguration } from "app/features/notification/notification-config.interface";
 import { SessionType } from "../app/core/session/session-type";
 
 /**
@@ -35,7 +35,7 @@ export const environment = {
 
   demo_mode: true,
   session_type: SessionType.mock,
-  account_url: "https://accounts.aam-digital.net",
+  account_url: "https://aam.localhost/accounts-backend",
   email: undefined,
 
   /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
@@ -43,5 +43,14 @@ export const environment = {
 
   /** Name of the database that is used */
   DB_NAME: "app",
-  notificationsConfig: {} as NotificationConfig,
+
+  // /** aam-digital-development firebase project (public information) **/
+  // firebaseConfig: {
+  //   apiKey: "AIzaSyAVxpEeaCL8b4KQPwMqvWRW7lpcgDYZHdw",
+  //   authDomain: "aam-digital-b8a7b.firebaseapp.com",
+  //   projectId: "aam-digital-b8a7b",
+  //   storageBucket: "aam-digital-b8a7b.firebasestorage.app",
+  //   messagingSenderId: "189059495005",
+  //   appId: "1:189059495005:web:151bb9f04d6bebb637c9b4",
+  // } as FirebaseConfiguration,
 };
