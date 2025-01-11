@@ -87,7 +87,10 @@ export class NotificationRuleComponent implements OnChanges {
 
   initForm() {
     this.form = new FormGroup({
-      entityType: new FormControl(this.value?.entityType ?? ""),
+      entityType: new FormControl({
+        value: this.value?.entityType ?? "",
+        disabled: Object.keys(this.value?.conditions).length > 0,
+      }),
       enabled: new FormControl(this.value?.enabled || false),
       // different format for form control
       channels: new FormControl(
@@ -108,10 +111,28 @@ export class NotificationRuleComponent implements OnChanges {
       ),
     });
 
+    this.updateEntityTypeControlState();
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
   }
 
+  private updateEntityTypeControlState() {
+    this.form.get("conditions").valueChanges.subscribe(() => {
+      const conditionsLength = (this.form.get("conditions") as FormArray)
+        .length;
+      const entityTypeControl = this.form.get("entityType");
+      if (conditionsLength > 0) {
+        entityTypeControl.disable();
+      } else {
+        entityTypeControl.enable();
+      }
+    });
+  }
+
   private updateValue(value: any) {
+    const entityTypeControl = this.form.get("entityType");
+    if (entityTypeControl?.disabled) {
+      value.entityType = entityTypeControl.value;
+    }
     value.channels = this.parseOptionsArrayToChannels(value.channels);
     value.conditions = this.parseConditionsArrayToObject(value.conditions);
 
@@ -169,8 +190,10 @@ export class NotificationRuleComponent implements OnChanges {
     this.notificationConditionValueChange.emit(updateNotificationCondition);
   }
 
-  removeCondition(conditionIndex: number) {
-    (this.form.get("conditions") as FormArray).removeAt(conditionIndex);
+  removeCondition(notificationConditionIndex: number) {
+    (this.form.get("conditions") as FormArray).removeAt(
+      notificationConditionIndex,
+    );
     this.removeNotificationCondition.emit();
   }
 
