@@ -35,8 +35,7 @@ import {
 } from "./notification-condition/notification-condition.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
 import { MatDialog } from "@angular/material/dialog";
-import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { JsonEditorComponent } from "../json-editor/json-editor.component";
+import { NotificationConditionEditorComponent } from "./notification-condition/notification-condition-editor/notification-condition-editor.component";
 
 /**
  * Configure a single notification rule.
@@ -76,6 +75,7 @@ export class NotificationRuleComponent implements OnChanges {
 
   form: FormGroup;
   readonly dialog = inject(MatDialog);
+  jsonData = { greeting: "Hello World" };
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
@@ -202,24 +202,10 @@ export class NotificationRuleComponent implements OnChanges {
     this.removeNotificationCondition.emit();
   }
 
-  openConditionsInJsonEditorPopup() {
-    // TODO
-    // open MatDialog, passing in the current conditions property
-    // dialog displays a new component with json editor
-    // on dialogclose, update the conditions property with the dialogs return value
-    const buttons = YesNoButtons;
-
-    const dialogRef = this.dialog.open(JsonEditorComponent, {
-      data: {
-        title: "Notification Condition",
-        conditions: {
-          operator: "$gt",
-          condition: "",
-          entityTypeField: "date",
-        },
-        buttons: buttons,
-        closeButton: true,
-      },
+  openConditionsInJsonEditorPopup(): void {
+    const dialogRef = this.dialog.open(NotificationConditionEditorComponent, {
+      width: "600px",
+      data: { value: this.jsonData, isModal: true, closeButton: true },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
