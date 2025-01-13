@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { JsonEditorComponent } from "./json-editor.component";
 
 describe("JsonEditorComponent", () => {
@@ -18,5 +17,11 @@ describe("JsonEditorComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should emit valueChange event when onSave is triggered", () => {
+    spyOn(component.valueChange, "emit");
+    component.onSave();
+    expect(component.valueChange.emit).toHaveBeenCalled();
   });
 });

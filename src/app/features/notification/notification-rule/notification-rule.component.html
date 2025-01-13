@@ -145,6 +145,7 @@
         matTooltip="Update Notification Condition via JSON editor"
         i18n-matTooltip
         (click)="openConditionsInJsonEditorPopup()"
+        [disabled]="!value.entityType"
       >
         <fa-icon icon="tools"></fa-icon>
       </button>

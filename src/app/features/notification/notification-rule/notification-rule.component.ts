@@ -201,33 +201,52 @@ export class NotificationRuleComponent implements OnChanges {
     this.removeNotificationCondition.emit();
   }
 
-  openConditionsInJsonEditorPopup(): void {
+  /**
+   * Open the conditions JSON editor popup.
+   */
+  openConditionsInJsonEditorPopup() {
+    const notificationConditions = this.form.get("conditions")?.value;
     const dialogRef = this.dialog.open(NotificationConditionEditorComponent, {
       data: {
-        value: this.form.get("conditions")?.value ?? {},
+        value: this.parseConditionsArrayToObject(notificationConditions) ?? {},
         closeButton: true,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        const conditions = result as NotificationRuleCondition[];
-        const conditionsFormArray = this.form.get("conditions") as FormArray;
-        conditionsFormArray.clear();
-        conditions.forEach((condition) => {
-          conditionsFormArray.push(
-            new FormGroup({
-              entityTypeField: new FormControl(condition.entityTypeField),
-              operator: new FormControl(condition.operator),
-              condition: new FormControl(condition.condition),
-            }),
-          );
-        });
-        this.updateValue(this.form.value);
-      }
+      this.handleConditionsJsonEditorPopupClose(result);
     });
   }
 
+  /**
+   * Handle the result of the conditions JSON editor popup.
+   * @param result
+   * @private
+   */
+  private handleConditionsJsonEditorPopupClose(result: any[]) {
+    if (!result) {
+      return;
+    }
+
+    const conditions = this.parseConditionsObjectToArray(result);
+    const conditionsFormArray = this.form.get("conditions") as FormArray;
+    conditionsFormArray.clear();
+    conditions.forEach((c) => {
+      const conditionGroup = new FormGroup({
+        entityTypeField: new FormControl(c.entityTypeField),
+        operator: new FormControl(c.operator),
+        condition: new FormControl(c.condition),
+      });
+      conditionsFormArray.push(conditionGroup);
+    });
+
+    this.updateValue(this.form.value);
+  }
+
+  /**
+   * Toggle the notification conditions accordion.
+   * @param notificationRuleItem
+   */
   handleToggleAccordion(notificationRuleItem: CdkAccordionItem) {
     if (!notificationRuleItem.expanded) {
       notificationRuleItem.toggle();
