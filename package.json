@@ -4,7 +4,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0",
+    "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build --configuration production",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karma-config=build/karma-ci.conf.js ",
