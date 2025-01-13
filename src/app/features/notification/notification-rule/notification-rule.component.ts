@@ -211,7 +211,19 @@ export class NotificationRuleComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log({ result });
+        const conditions = result as NotificationRuleCondition[];
+        const conditionsFormArray = this.form.get("conditions") as FormArray;
+        conditionsFormArray.clear();
+        conditions.forEach((condition) => {
+          conditionsFormArray.push(
+            new FormGroup({
+              entityTypeField: new FormControl(condition.entityTypeField),
+              operator: new FormControl(condition.operator),
+              condition: new FormControl(condition.condition),
+            }),
+          );
+        });
+        this.updateValue(this.form.value);
       }
     });
   }

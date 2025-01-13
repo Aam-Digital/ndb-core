@@ -1,5 +1,9 @@
 import { Component, Inject, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
 import { JsonEditorComponent } from "app/features/json-editor/json-editor.component";
 
@@ -14,14 +18,15 @@ import { JsonEditorComponent } from "app/features/json-editor/json-editor.compon
 export class NotificationConditionEditorComponent {
   jsonData: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<NotificationConditionEditorComponent>,
+  ) {
     this.jsonData = data?.value;
   }
 
-  onJsonChange(json: any) {
+  onJsonChange(json: {}) {
     this.jsonData = json;
-
-    // Emit the updated JSON data
-    this.data.value = json;
+    this.dialogRef.close(this.jsonData);
   }
 }

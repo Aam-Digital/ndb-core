@@ -58,5 +58,6 @@ export class JsonEditorComponent {
 
   onCancel() {
     this.editor.update({ json: this.value });
+    this.valueChange.emit(null);
   }
 }
