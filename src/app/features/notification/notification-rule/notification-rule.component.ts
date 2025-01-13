@@ -89,7 +89,7 @@ export class NotificationRuleComponent implements OnChanges {
     this.form = new FormGroup({
       entityType: new FormControl({
         value: this.value?.entityType ?? "",
-        disabled: Object.keys(this.value?.conditions).length > 0,
+        disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
       }),
       enabled: new FormControl(this.value?.enabled || false),
       // different format for form control
