@@ -1,28 +1,27 @@
-<form [formGroup]="notificationConditionForm">
+<form [formGroup]="form">
   <div class="flex-row align-center full-width">
     <mat-form-field class="full-width-field">
-      <mat-label i18n>Select Entity Field</mat-label>
+      <mat-label i18n>Select entity field</mat-label>
       <app-entity-field-select
         [entityType]="notificationRule?.entityType"
         formControlName="entityTypeField"
       />
     </mat-form-field>
-    <mat-form-field class="full-width-field">
-      <mat-label i18n>Notification condition</mat-label>
+    <mat-form-field class="full-width-field notification-condition-operator">
+      <mat-label i18n>Select Notification operator</mat-label>
       <app-basic-autocomplete
         [options]="conditionalOptions"
         [optionToString]="optionsToLabel"
         [valueMapper]="optionsToValue"
         formControlName="operator"
-        [disabled]="true"
       />
     </mat-form-field>
     <mat-form-field class="full-width-field">
       <mat-label i18n>Notification condition</mat-label>
       <input
         matInput
-        placeholder="Enter condition"
-        i18n-placeholder="Notification condition placeholder"
+        placeholder="Enter notification condition"
+        i18n-placeholder="Notification condition"
         formControlName="condition"
       />
     </mat-form-field>

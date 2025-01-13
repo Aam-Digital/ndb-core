@@ -1,18 +1,7 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
-import {
-  MatFormFieldControl,
-  MatFormFieldModule,
-} from "@angular/material/form-field";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -35,26 +24,16 @@ import { NotificationRule } from "../../model/notification-config";
     EntityFieldSelectComponent,
     BasicAutocompleteComponent,
   ],
-  providers: [
-    {
-      provide: MatFormFieldControl,
-      useExisting: NotificationConditionComponent,
-    },
-  ],
   templateUrl: "./notification-condition.component.html",
   styleUrl: "../../notification-settings/notification-settings.component.scss",
 })
-export class NotificationConditionComponent implements OnChanges, OnInit {
+export class NotificationConditionComponent implements OnInit {
   @Input() notificationRule: NotificationRule;
 
-  @Input() notificationConditionIndex: number;
-
-  @Output() notificationConditionValueChange =
-    new EventEmitter<NotificationRule>();
+  @Input() form: FormGroup;
 
   @Output() removeNotificationCondition = new EventEmitter<any>();
 
-  notificationConditionForm: FormGroup;
   conditionalOptions: SimpleDropdownValue[] = [];
 
   optionsToLabel = (v: SimpleDropdownValue) => this.conditionMappings[v.value];
@@ -85,43 +64,16 @@ export class NotificationConditionComponent implements OnChanges, OnInit {
     this.conditionalOptions = Object.keys(this.conditionMappings).map(
       (key) => ({ label: this.conditionMappings[key], value: key }),
     );
-    this.initNotificationConditionForm();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.value) {
-      this.initNotificationConditionForm();
-    }
-  }
-
-  initNotificationConditionForm() {
-    const condition =
-      this.notificationRule?.conditions?.[this.notificationConditionIndex];
-
-    this.notificationConditionForm = new FormGroup({
-      entityTypeField: new FormControl({
-        value: condition?.entityTypeField || "",
-        disabled: !this.notificationRule?.entityType,
-      }),
-      operator: new FormControl(condition?.operator || ""),
-      condition: new FormControl(condition?.condition || ""),
-    });
-
-    this.notificationConditionForm.valueChanges.subscribe((value) => {
-      this.updateNotificationConditionValue(value);
-    });
-  }
-
-  private updateNotificationConditionValue(value: any) {
-    Object.assign(
-      this.notificationRule.conditions[this.notificationConditionIndex],
-      value,
-    );
-    this.notificationConditionValueChange.emit(this.notificationRule);
   }
 }
 
 interface SimpleDropdownValue {
   label: string;
   value: string;
+}
+
+export interface NotificationRuleCondition {
+  entityTypeField: string;
+  operator: string;
+  condition: string;
 }

@@ -111,7 +111,7 @@ export class NotificationSettingsComponent implements OnInit {
       notificationType: "entity_change",
       entityType: undefined,
       channels: this.notificationConfig.channels, // by default, use the global channels
-      conditions: [],
+      conditions: {},
       enabled: true,
     };
 

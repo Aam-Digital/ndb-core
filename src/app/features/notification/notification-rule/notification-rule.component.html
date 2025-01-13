@@ -31,7 +31,10 @@
       <div
         class="flex-row justify-content-center align-center notification-rule-option"
       >
-        <mat-form-field class="full-width-field">
+        <mat-form-field
+          class="full-width-field"
+          (click)="handleToggleAccordion(notificationRuleItem)"
+        >
           <mat-label i18n>Notification method(s)</mat-label>
           <mat-select
             formControlName="channels"
@@ -115,37 +118,24 @@
       let notificationConditionIndex = $index
     ) {
       <app-notification-condition
-        [notificationRule]="value"
         (removeNotificationCondition)="
           removeCondition(notificationConditionIndex)
         "
-        [notificationConditionIndex]="notificationConditionIndex"
-        (notificationConditionValueChange)="updateNotificationCondition($event)"
+        [form]="notificationCondition"
+        [notificationRule]="value"
       />
     }
-    <div class="flex-row align-center">
-      <button
-        mat-stroked-button
-        class="new-rule-condition-button"
-        color="accent"
-        (click)="addNewNotificationCondition()"
-        matTooltip="Define another condition of notifications for your user account"
-        i18n-matTooltip
-      >
-        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-        <span i18n class="new-notification-rule"
-          >Add Notification Condition</span
-        >
-      </button>
-
-      <button
-        mat-icon-button
-        matTooltip="Update Notification Condition via JSON editor"
-        i18n-matTooltip
-        (click)="openConditionsInJsonEditorPopup()"
-      >
-        <fa-icon icon="tools"></fa-icon>
-      </button>
-    </div>
+    <button
+      mat-stroked-button
+      class="new-rule-condition-button"
+      color="accent"
+      [disabled]="!value.entityType"
+      (click)="addNewNotificationCondition()"
+      matTooltip="Define another condition of notifications for your user account"
+      i18n-matTooltip
+    >
+      <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+      <span i18n class="new-notification-rule">Add Notification Criteria</span>
+    </button>
   </div>
 }

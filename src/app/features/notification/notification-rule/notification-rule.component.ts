@@ -29,7 +29,11 @@ import {
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { CdkAccordionItem, CdkAccordionModule } from "@angular/cdk/accordion";
-import { NotificationConditionComponent } from "./notification-condition/notification-condition.component";
+import {
+  NotificationConditionComponent,
+  NotificationRuleCondition,
+} from "./notification-condition/notification-condition.component";
+import { DataFilter } from "../../../core/filter/filters/filters";
 import { MatDialog } from "@angular/material/dialog";
 import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { JsonEditorComponent } from "../json-editor/json-editor.component";
@@ -70,8 +74,6 @@ export class NotificationRuleComponent implements OnChanges {
   @Output() notificationConditionValueChange =
     new EventEmitter<NotificationRule>();
 
-  notificationConditions: string[] = [];
-
   form: FormGroup;
   readonly dialog = inject(MatDialog);
 
@@ -87,23 +89,57 @@ export class NotificationRuleComponent implements OnChanges {
 
   initForm() {
     this.form = new FormGroup({
-      entityType: new FormControl(this.value?.entityType ?? ""),
+      entityType: new FormControl({
+        value: this.value?.entityType ?? "",
+        disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
+      }),
       enabled: new FormControl(this.value?.enabled || false),
       // different format for form control
       channels: new FormControl(
         this.parseChannelsToOptionsArray(this.value?.channels),
       ),
-      conditions: new FormArray([]),
+      conditions: new FormArray(
+        this.parseConditionsObjectToArray(this.value?.conditions).map(
+          (c) =>
+            new FormGroup({
+              entityTypeField: new FormControl(c.entityTypeField),
+              operator: new FormControl(c.operator),
+              condition: new FormControl(c.condition),
+            }),
+        ),
+      ),
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
       ),
     });
 
+    this.updateEntityTypeControlState();
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
   }
 
+  /**
+   * Disable the entityType field if there are notification conditions.
+   */
+  private updateEntityTypeControlState() {
+    this.form.get("conditions").valueChanges.subscribe(() => {
+      const conditionsLength = (this.form.get("conditions") as FormArray)
+        .length;
+      const entityTypeControl = this.form.get("entityType");
+      if (conditionsLength > 0) {
+        entityTypeControl.disable();
+      } else {
+        entityTypeControl.enable();
+      }
+    });
+  }
+
   private updateValue(value: any) {
+    const entityTypeControl = this.form.get("entityType");
+    if (entityTypeControl?.disabled) {
+      value.entityType = entityTypeControl.value;
+    }
     value.channels = this.parseOptionsArrayToChannels(value.channels);
+    value.conditions = this.parseConditionsArrayToObject(value.conditions);
 
     if (JSON.stringify(value) === JSON.stringify(this.value)) {
       // skip if no actual change
@@ -159,8 +195,10 @@ export class NotificationRuleComponent implements OnChanges {
     this.notificationConditionValueChange.emit(updateNotificationCondition);
   }
 
-  removeCondition(conditionIndex: number) {
-    (this.form.get("conditions") as FormArray).removeAt(conditionIndex);
+  removeCondition(notificationConditionIndex: number) {
+    (this.form.get("conditions") as FormArray).removeAt(
+      notificationConditionIndex,
+    );
     this.removeNotificationCondition.emit();
   }
 
@@ -195,5 +233,64 @@ export class NotificationRuleComponent implements OnChanges {
     if (!notificationRuleItem.expanded) {
       notificationRuleItem.toggle();
     }
+  }
+
+  /**
+   * Parse from config format to a format that can be used in the form
+   * e.g. from `{ fieldName: { '$eq': 'value' } }`
+   * to `[ { entityTypeField: 'fieldName', operator: '$eq', condition: 'value' } ]`
+   *
+   * @param conditions
+   * @private
+   */
+  private parseConditionsObjectToArray(
+    conditions: DataFilter<any> | undefined,
+  ): NotificationRuleCondition[] {
+    if (!conditions) {
+      return [];
+    }
+
+    return Object.entries(conditions).map(([entityField, condition]) => {
+      const operator = Object.keys(condition)[0];
+      return {
+        entityTypeField: entityField,
+        operator,
+        condition: condition[operator],
+      };
+    });
+  }
+
+  /**
+   * Transform form format back to the needed config entity format
+   * e.g. from `[ { entityTypeField: 'fieldName', operator: '$eq', condition: 'value' } ]`
+   * to { fieldName: { '$eq': 'value' } }`
+   *
+   * @param conditions
+   * @private
+   */
+  private parseConditionsArrayToObject(
+    conditions: NotificationRuleCondition[],
+  ): DataFilter<any> {
+    if (!conditions) {
+      return {};
+    }
+
+    return conditions.reduce((acc, condition) => {
+      if (
+        !condition.entityTypeField ||
+        !condition.operator ||
+        condition.operator === "" ||
+        !condition.condition ||
+        condition.condition === ""
+      ) {
+        // continue without adding incomplete condition
+        return acc;
+      }
+
+      acc[condition.entityTypeField] = {
+        [condition.operator]: condition.condition,
+      };
+      return acc;
+    }, {});
   }
 }
