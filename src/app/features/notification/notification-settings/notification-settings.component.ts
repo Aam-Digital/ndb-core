@@ -54,7 +54,7 @@ export class NotificationSettingsComponent implements OnInit {
    * Get the logged-in user id
    */
   private get userId() {
-    return this.sessionInfo.value?.id;
+    return this.sessionInfo.value?.entityId;
   }
 
   async ngOnInit() {

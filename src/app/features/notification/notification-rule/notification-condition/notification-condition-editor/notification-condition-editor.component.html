@@ -1,8 +1,8 @@
-<mat-dialog-content>
+<mat-dialog-content class="mat-typography">
   @if (data.closeButton) {
     <app-dialog-close mat-dialog-close></app-dialog-close>
   }
-  <div style="margin-top: 30px">
+  <div class="json-editor">
     <app-json-editor
       [value]="jsonData"
       (valueChange)="onJsonChange($event)"

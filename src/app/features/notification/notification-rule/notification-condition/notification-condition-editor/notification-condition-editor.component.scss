@@ -1,0 +1,7 @@
+@use "variables/sizes";
+
+.mat-typography {
+  width: 80vh;
+  max-height: 90vh;
+  margin-top: sizes.$large;
+}

@@ -75,7 +75,6 @@ export class NotificationRuleComponent implements OnChanges {
 
   form: FormGroup;
   readonly dialog = inject(MatDialog);
-  jsonData = { greeting: "Hello World" };
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
@@ -204,8 +203,10 @@ export class NotificationRuleComponent implements OnChanges {
 
   openConditionsInJsonEditorPopup(): void {
     const dialogRef = this.dialog.open(NotificationConditionEditorComponent, {
-      width: "600px",
-      data: { value: this.jsonData, isModal: true, closeButton: true },
+      data: {
+        value: this.form.get("conditions")?.value ?? {},
+        closeButton: true,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

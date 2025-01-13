@@ -1,0 +1,12 @@
+@use "variables/sizes";
+
+.json-editor-actions {
+  justify-content: end;
+  margin-top: sizes.$regular;
+  gap: sizes.$regular;
+}
+
+.json-editor {
+  width: 100%;
+  height: 100%;
+}
