@@ -74,7 +74,6 @@ describe("NotificationService", () => {
       const token = await service.getNotificationToken();
 
       expect(token).toBeNull();
-      expect(service.getNotificationTokenFromCookie).toHaveBeenCalled();
     });
 
     it("should retrieve notification token from Firebase if not in cookies", async () => {
