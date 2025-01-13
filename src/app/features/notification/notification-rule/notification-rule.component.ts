@@ -33,7 +33,6 @@ import {
   NotificationConditionComponent,
   NotificationRuleCondition,
 } from "./notification-condition/notification-condition.component";
-import { MatDialog } from "@angular/material/dialog";
 import { DataFilter } from "../../../core/filter/filters/filters";
 
 /**
@@ -73,7 +72,6 @@ export class NotificationRuleComponent implements OnChanges {
     new EventEmitter<NotificationRule>();
 
   form: FormGroup;
-  readonly dialog = inject(MatDialog);
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
