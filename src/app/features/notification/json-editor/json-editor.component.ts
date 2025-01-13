@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Inject, Input, Output } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  Output,
+  afterNextRender,
+  viewChild,
+} from "@angular/core";
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
@@ -8,8 +17,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { MatInput } from "@angular/material/input";
+import { createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 
 @Component({
   selector: "app-json-editor",
@@ -20,9 +28,6 @@ import { MatInput } from "@angular/material/input";
     MatDialogModule,
     DialogCloseComponent,
     MatButtonModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
   ],
   templateUrl: "./json-editor.component.html",
 })
@@ -36,13 +41,42 @@ export class JsonEditorComponent {
 
   @Output() valueChange = new EventEmitter<any>();
 
+  json = viewChild.required<ElementRef<HTMLDivElement>>("json");
+
   // TODO: research if there are json editor components on npm
 
   constructor(
     public dialogRef: MatDialogRef<JsonEditorComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
-    this.jsonData = JSON.stringify(data.conditions, null, 2);
+    afterNextRender(() => {
+      let content = {
+        text: undefined,
+        json: {
+          greeting: "Hello World",
+        },
+      };
+
+      const editor = createJSONEditor({
+        target: this.json().nativeElement,
+        props: {
+          content,
+          onChange: (
+            updatedContent: any,
+            previousContent: any,
+            { contentErrors, patchResult }: any,
+          ) => {
+            console.log("onChange", {
+              updatedContent,
+              previousContent,
+              contentErrors,
+              patchResult,
+            });
+            content = updatedContent;
+          },
+        },
+      });
+    });
   }
 
   onSave(): void {
