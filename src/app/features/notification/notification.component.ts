@@ -135,11 +135,12 @@ export class NotificationComponent implements OnInit {
     await this.entityMapper.remove(notification);
   }
 
-  generateNotificationActionURL(notification: NotificationEvent): string {
+  private generateNotificationActionURL(
+    notification: NotificationEvent,
+  ): string {
     const routes = this.router.config;
     let actionURL = "";
 
-    //
     const entityRoute = routes.find(
       (route) => route.data?.config?.entityType === notification.entityType,
     );
