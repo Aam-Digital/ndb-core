@@ -1,6 +1,7 @@
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { NotificationType } from "./notification-config";
 
 /**
  * This represents one specific notification event for one specific user,
@@ -13,5 +14,7 @@ export class NotificationEvent extends Entity {
   @DatabaseField() actionURL: string;
   @DatabaseField() notificationFor: string;
   @DatabaseField() notificationToken: string;
+  @DatabaseField() notificationType: NotificationType;
+  @DatabaseField() entityType: string;
   @DatabaseField() readStatus: boolean;
 }

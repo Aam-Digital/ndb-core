@@ -135,6 +135,28 @@ export class NotificationComponent implements OnInit {
     await this.entityMapper.remove(notification);
   }
 
+  generateNotificationActionURL(notification: NotificationEvent): string {
+    const routes = this.router.config;
+    let actionURL = "";
+
+    //
+    const entityRoute = routes.find(
+      (route) => route.data?.config?.entityType === notification.entityType,
+    );
+
+    switch (notification.notificationType) {
+      case "entity_change":
+        if (entityRoute) {
+          actionURL = `/${entityRoute.path}`;
+        }
+        break;
+      default:
+        break;
+    }
+
+    return actionURL;
+  }
+
   /**
    * Updates the read status of a selected notification.
    * Handles notification events by redirecting the user to the corresponding action URL.
@@ -142,8 +164,9 @@ export class NotificationComponent implements OnInit {
    */
   async notificationClicked(notification: NotificationEvent) {
     await this.updateReadStatus([notification], true);
-    if (!notification.actionURL) return;
-    await this.router.navigate([notification.actionURL]);
+    const actionURL = this.generateNotificationActionURL(notification);
+    if (!actionURL) return;
+    await this.router.navigate([actionURL]);
   }
 
   // TODO: remove test code before final merge
