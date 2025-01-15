@@ -22,6 +22,7 @@ import {
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { NotificationService } from "../notification.service";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 /**
  * Configure a single notification rule.
@@ -41,6 +42,7 @@ import { NotificationService } from "../notification.service";
     ReactiveFormsModule,
     MatOption,
     MatSelect,
+    MatProgressSpinnerModule,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
@@ -52,6 +54,8 @@ export class NotificationRuleComponent implements OnChanges {
   @Output() removeNotificationRule = new EventEmitter<void>();
 
   form: FormGroup;
+
+  hasTestNotification = false;
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
@@ -117,12 +121,18 @@ export class NotificationRuleComponent implements OnChanges {
    * Sends a test notification.
    */
   async testNotification() {
+    this.hasTestNotification = true;
     const notificationToken =
       await this.notificationService.getNotificationToken();
 
     if (!notificationToken) {
+      this.hasTestNotification = false;
       return;
     }
-    return this.notificationService.sendNotification();
+
+    await this.notificationService.sendNotification();
+    this.hasTestNotification = false;
+
+    return;
   }
 }

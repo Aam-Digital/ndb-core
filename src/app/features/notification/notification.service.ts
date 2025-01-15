@@ -58,7 +58,7 @@ export class NotificationService {
       }
 
       try {
-        this.registerNotificationToken(notificationToken);
+        await this.registerNotificationToken(notificationToken);
       } catch (error) {
         this.setCookie(this.NOTIFICATION_TOKEN_COOKIE_NAME, "", null);
         return null;
@@ -103,7 +103,7 @@ export class NotificationService {
    * @param deviceName - The name of the device.
    */
 
-  registerNotificationToken(
+  async registerNotificationToken(
     notificationToken: string,
     deviceName: string = "web",
   ) {

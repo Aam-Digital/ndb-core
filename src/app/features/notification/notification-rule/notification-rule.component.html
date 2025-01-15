@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div class="flex-row notification-rule-actions">
+    <div class="flex-row align-center notification-rule-actions">
       <div class="flex-row align-center">
         <mat-slide-toggle
           formControlName="enabled"
@@ -80,14 +80,18 @@
         <fa-icon icon="trash"></fa-icon>
       </button>
 
-      <button
-        mat-icon-button
-        (click)="testNotification()"
-        matTooltip="Test notification"
-        i18n-matTooltip
-      >
-        <fa-icon icon="paper-plane"></fa-icon>
-      </button>
+      @if (hasTestNotification) {
+        <mat-spinner diameter="24"></mat-spinner>
+      } @else {
+        <button
+          mat-icon-button
+          (click)="testNotification()"
+          matTooltip="Test notification"
+          i18n-matTooltip
+        >
+          <fa-icon icon="paper-plane"></fa-icon>
+        </button>
+      }
     </div>
   </div>
 </form>
