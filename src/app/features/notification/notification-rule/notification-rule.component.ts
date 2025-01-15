@@ -55,8 +55,6 @@ export class NotificationRuleComponent implements OnChanges {
 
   form: FormGroup;
 
-  hasTestNotification = false;
-
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
   ];
@@ -121,18 +119,14 @@ export class NotificationRuleComponent implements OnChanges {
    * Sends a test notification.
    */
   async testNotification() {
-    this.hasTestNotification = true;
     const notificationToken =
       await this.notificationService.getNotificationToken();
 
     if (!notificationToken) {
-      this.hasTestNotification = false;
       return;
     }
 
     await this.notificationService.sendNotification();
-    this.hasTestNotification = false;
-
     return;
   }
 }
