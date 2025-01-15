@@ -70,10 +70,14 @@ describe("NotificationService", () => {
       spyOn(service, "getNotificationTokenFromCookie").and.returnValue(
         "existingToken",
       );
+      spyOn(service, "getNotificationTokenFromFirebase").and.resolveTo(
+        "firebaseToken",
+      );
+      spyOn(service, "registerNotificationToken").and.resolveTo();
 
       const token = await service.getNotificationToken();
 
-      expect(token).toBeNull();
+      expect(token).toBe("firebaseToken");
     });
 
     it("should retrieve notification token from Firebase if not in cookies", async () => {
