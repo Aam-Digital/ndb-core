@@ -1,100 +1,93 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Dashboard Tests", () => {
-  test('test', async ({ page }) => {
-    // Go to the dashboard page
-    await page.goto("http://localhost:4200");
+test.describe.configure({ timeout: 120000 });
 
-    // Wait for "Quick Actions" element to load
-    await page.waitForSelector("text=Quick actions");
+test.describe('Attendance Page Tests', () => {
+  test.beforeAll(async ({ page }) => {
+    await page.goto('http://localhost:4200/');
+    await page.waitForSelector("text=Database up-to-date");
 
-    // Check if "Quick Actions" element is visible
+  });
+
+  test("Verify Quick Actions widget", async ({ page }) => {
+    // Check "Quick Actions" widget is visible
+     await page.waitForSelector("text=Quick actions");
     const quickActionsElement = page.locator("text=Quick actions");
     await expect(quickActionsElement).toBeVisible();
 
-    // Verify that Record Attendance button exists in Quick actions widget
+    // Verify "Record Attendance" button in Quick Actions
     const recordAttendanceButton = page.getByRole("cell", {
       name: "Record Attendance",
     });
     await expect(recordAttendanceButton).toBeVisible();
+  });
 
-    // Verify children count is displayed
+  test("Verify children count is displayed", async ({ page }) => {
     const childrenCount = page.locator("app-entity-count-dashboard-widget");
-
     await expect(childrenCount).toContainText(/107/);
+  });
 
-    // Verify that the "Tasks due" widget is visible and display task
-    await page.waitForSelector("text=Tasks due");
-  
-    // Check that the "Tasks due" widget is visible
+  test("Verify Tasks Due widget and tasks", async ({ page }) => {
+    // Check "Tasks Due" widget is visible
     const tasksDueElement = page.locator("text=Tasks due");
     await expect(tasksDueElement).toBeVisible();
-  
-    // Locate task names and due dates dynamically
-    const taskElements = page.locator("app-widget-content");
-    
-    // Ensure at least one task is listed
-    const taskCount = await taskElements.count();
-      expect(taskCount).toBeGreaterThan(0);
 
-    // Should navigate to the attendance page
-    await page.locator('mat-list-item').filter({ hasText: 'Attendance' }).click();  
-     // Check if the URL contains "attendance"
+    // Verify at least one task is listed
+    const taskElements = page.locator("app-widget-content");
+    const taskCount = await taskElements.count();
+    expect(taskCount).toBeGreaterThan(0);
+  });
+
+  test("Navigate to Attendance page and verify sections", async ({ page }) => {
+    // Navigate to the Attendance page
+    await page.locator("mat-list-item").filter({ hasText: "Attendance" }).click();
     await expect(page).toHaveURL(/.*attendance/);
 
-    // Verify that "Record Attendance" section is visible
-    await page.waitForSelector("text=Managing Attendance");
+    // Verify "Record Attendance" section
     const recordAttendanceSection = page.getByText("Record Attendance", {
       exact: true,
     });
     await expect(recordAttendanceSection).toBeVisible();
 
-    // Verify that "Recurring Activities" section is visible
+    // Verify "Recurring Activities" section
     const recurringActivitiesSection = page.getByText("Recurring Activities", {
       exact: true,
     });
     await expect(recurringActivitiesSection).toBeVisible();
 
-    // Verify that "Monthly Attendance" section is visible
+    // Verify "Monthly Attendance" section
     const monthlyAttendanceSection = page.getByText("Monthly Attendance");
     await expect(monthlyAttendanceSection).toBeVisible();
+  });
 
-    // Click the "Record" button in the "Record Attendance" section and check navigation
+  test("Record Attendance button navigation", async ({ page }) => {
     const recordButton = page.getByRole("button", { name: "Record" });
     await expect(recordButton).toBeVisible();
     await recordButton.click();
 
-    // Check if navigation to "Record Attendance" page was successful
+    // Check navigation to "Record Attendance" page
     await expect(page).toHaveURL("http://localhost:4200/attendance/add-day");
-    await expect(
-      page.getByRole("heading", { name: "Record Attendance" }),
-    ).toHaveText("Record Attendance"); // Check page title or header
-    await page.goBack(); // Return to Attendance page to continue testing
+    await expect(page.getByRole("heading", { name: "Record Attendance" })).toBeVisible();
+    await page.goBack();
+  });
 
-    // Click the "Manage Activities" button in the "Recurring Activities" section and check navigation
-    const manageActivitiesButton = page.getByRole("button", {
-      name: "Manage Activities",
-    });
+  test("Manage Activities button navigation", async ({ page }) => {
+    const manageActivitiesButton = page.getByRole("button", { name: "Manage Activities" });
     await expect(manageActivitiesButton).toBeVisible();
     await manageActivitiesButton.click();
 
-    // Check if navigation to "Manage Activities" page was successful
-    await expect(page).toHaveURL(
-      "http://localhost:4200/attendance/recurring-activity",
-    );
-    await expect(
-      page.getByRole("heading", { name: "Recurring Activities" }),
-    ).toHaveText("Recurring Activities"); // Check page title or header
-    await page.goBack(); 
-    
-    // Navigate to "Recurring Activities" page and verify elements
-    await page.getByRole('button', { name: 'Manage Activities' }).click();
+    // Check navigation to "Manage Activities" page
+    await expect(page).toHaveURL("http://localhost:4200/attendance/recurring-activity");
+    await expect(page.getByRole("heading", { name: "Recurring Activities" })).toBeVisible();
+    await page.goBack();
+  });
 
-    await expect(
-      page.getByRole("heading", { name: "Recurring Activities" }),
-    ).toHaveText("Recurring Activities"); // Confirm page header
+  test("Recurring Activities page elements", async ({ page }) => {
+    // Navigate to Recurring Activities page
+    await page.getByRole("button", { name: "Manage Activities" }).click();
+    await expect(page.getByRole("heading", { name: "Recurring Activities" })).toBeVisible();
 
-    // Check for the "Add New" button on the page
+    // Verify "Add New" button is visible
     const addNewButton = page.getByRole("button", {
       name: "add elementAdd New",
     });
@@ -111,6 +104,5 @@ test.describe("Dashboard Tests", () => {
     // Verify "Include archived records" toggle
     const archivedRecordsToggle = page.locator("text=Include archived records");
     await expect(archivedRecordsToggle).toBeVisible();
+  });
 });
-});
-

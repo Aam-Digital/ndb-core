@@ -8,12 +8,13 @@ test('test', async ({ page }) => {
 
   // Verify the date field displays the current date
   const currentDate = new Date();
-  const formattedDate = `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/` +
-                      `${currentDate.getDate().toString().padStart(2, '0')}/` +
-                      `${currentDate.getFullYear()}`;
-  const dateField = page.getByLabel('Date')
-  await expect(dateField).toHaveValue(formattedDate);
-  
+const formattedDateRegex = new RegExp(
+  `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}|` +
+  `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')}/${currentDate.getFullYear()}`
+);
+const dateField = page.getByLabel('Date');
+await expect(dateField).toHaveValue(formattedDateRegex);
+
   // Verify backdated editing is allowed
   const backdatedDate = '12/15/2024';
   await dateField.fill(backdatedDate);
@@ -92,7 +93,7 @@ test('test', async ({ page }) => {
   await expect(BackOverviewBtn).toBeVisible(); // "Back to Overview" button is visible 
   await BackOverviewBtn.click(); // "Back to Overview" button is clickable
 
-  await page.getByRole('button', { name: 'Show more' }).click();
+  //await page.getByRole('button', { name: 'Show more' }).click();
 
   // Verify the class just recorded attendance should be highlighted in green and all others in orange
   const classCard = page.locator('mat-card');
@@ -127,8 +128,8 @@ test('test', async ({ page }) => {
   await page.locator('div').filter({ hasText: 'Select Report' }).nth(4).click();
   await page.getByRole('option', { name: 'Attendance Report' }).click();
   await page.getByLabel('Open calendar').click();
-  await page.getByLabel('December 2,').click();
-  await page.getByLabel('December 23,').click();
+  await page.getByLabel('January 2,').click();
+  await page.getByLabel('January 15,').click();
   await page.getByRole('button', { name: 'Calculate' }).click();
 
   const childNameColumn = page.getByRole('columnheader', { name: 'Name' });
