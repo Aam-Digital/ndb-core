@@ -8,7 +8,12 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { createJSONEditor } from "vanilla-jsoneditor/standalone.js";
+import {
+  Content,
+  ContentErrors,
+  createJSONEditor,
+  JSONPatchResult,
+} from "vanilla-jsoneditor/standalone.js";
 import { AlertService } from "../../alerts/alert.service";
 
 /**
@@ -47,9 +52,19 @@ export class JsonEditorComponent {
       target: this.json.nativeElement,
       props: {
         content: { json: this.value || {} },
-        onChange: (updatedContent: any, { contentErrors }: any) => {
-          if (contentErrors?.length === 0) {
-            this.value = updatedContent.json;
+        onChange: (
+          updatedContent: Content,
+          {
+            contentErrors,
+          }: {
+            contentErrors: ContentErrors | undefined;
+          },
+        ) => {
+          if ("json" in updatedContent) {
+            this.value = updatedContent.json as object;
+          }
+          if (contentErrors) {
+            this.alertService.addWarning($localize`Invalid JSON`);
           }
         },
       },
