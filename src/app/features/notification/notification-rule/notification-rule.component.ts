@@ -116,9 +116,13 @@ export class NotificationRuleComponent implements OnChanges {
    * Disable the entityType field if there are notification conditions.
    */
   private updateEntityTypeControlState() {
-    this.form.get("conditions").valueChanges.subscribe(() => {
-      const conditionsLength = (this.form.get("conditions") as FormArray)
-        .length;
+    const conditionsControl = this.form.get("conditions");
+
+    if (!conditionsControl || !(conditionsControl instanceof FormArray)) {
+      return;
+    }
+    conditionsControl.valueChanges.subscribe(() => {
+      const conditionsLength = (conditionsControl as FormArray).length;
       const entityTypeControl = this.form.get("entityType");
       if (conditionsLength > 0) {
         entityTypeControl.disable();
@@ -218,7 +222,7 @@ export class NotificationRuleComponent implements OnChanges {
       return [];
     }
 
-    return Object.entries(conditions).map(([entityField, condition]) => {
+    return Object.entries(conditions)?.map(([entityField, condition]) => {
       const operator = Object.keys(condition)[0];
       return {
         entityTypeField: entityField,
