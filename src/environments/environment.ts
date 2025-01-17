@@ -35,7 +35,7 @@ export const environment = {
 
   demo_mode: true,
   session_type: SessionType.mock,
-  account_url: "https://accounts.aam-digital.net",
+  account_url: "https://aam.localhost/accounts-backend",
   email: undefined,
 
   /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
