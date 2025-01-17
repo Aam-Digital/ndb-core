@@ -1,15 +1,18 @@
 import { test, expect } from "@playwright/test";
 
-test.describe.configure({ timeout: 120000 });
+// test.describe.configure({ timeout: 120000 });
+test.use({ storageState: 'storageState.json' });
 
-test.describe('Attendance Page Tests', () => {
-  test.beforeAll(async ({ page }) => {
+test.describe('Dashboard Page Tests', () => {
+  // test.beforeAll(async ({ page }) => {
+  //   await page.goto('http://localhost:4200/');
+  //   await page.waitForSelector("text=Database up-to-date");
+
+  // });
+
+  test('Verify Quick Actions widget', async ({ page }) => {
     await page.goto('http://localhost:4200/');
-    await page.waitForSelector("text=Database up-to-date");
 
-  });
-
-  test("Verify Quick Actions widget", async ({ page }) => {
     // Check "Quick Actions" widget is visible
      await page.waitForSelector("text=Quick actions");
     const quickActionsElement = page.locator("text=Quick actions");

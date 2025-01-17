@@ -76,4 +76,5 @@ export default defineConfig({
     url: "http://localhost:4200",
     reuseExistingServer: !process.env.CI,
   },
+  globalSetup: './e2e/playwright-setup.ts', // Specify the global setup script
 });
