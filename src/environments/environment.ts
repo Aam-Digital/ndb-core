@@ -44,13 +44,13 @@ export const environment = {
   /** Name of the database that is used */
   DB_NAME: "app",
 
-  /** aam-digital-development firebase project (public information) **/
-  firebaseConfig: {
-    apiKey: "AIzaSyAVxpEeaCL8b4KQPwMqvWRW7lpcgDYZHdw",
-    authDomain: "aam-digital-b8a7b.firebaseapp.com",
-    projectId: "aam-digital-b8a7b",
-    storageBucket: "aam-digital-b8a7b.firebasestorage.app",
-    messagingSenderId: "189059495005",
-    appId: "1:189059495005:web:151bb9f04d6bebb637c9b4",
-  } as FirebaseConfiguration,
+  // /** aam-digital-development firebase project (public information) **/
+  // firebaseConfig: {
+  //   apiKey: "AIzaSyAVxpEeaCL8b4KQPwMqvWRW7lpcgDYZHdw",
+  //   authDomain: "aam-digital-b8a7b.firebaseapp.com",
+  //   projectId: "aam-digital-b8a7b",
+  //   storageBucket: "aam-digital-b8a7b.firebasestorage.app",
+  //   messagingSenderId: "189059495005",
+  //   appId: "1:189059495005:web:151bb9f04d6bebb637c9b4",
+  // } as FirebaseConfiguration,
 };
