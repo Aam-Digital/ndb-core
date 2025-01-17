@@ -22,7 +22,6 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 @DynamicComponent("EntityImportConfig")
 @Component({
   selector: "app-entity-import-config",
-  standalone: true,
   templateUrl: "./entity-import-config.component.html",
   styleUrls: ["./entity-import-config.component.scss"],
   imports: [

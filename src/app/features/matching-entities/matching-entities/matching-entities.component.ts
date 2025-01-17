@@ -84,7 +84,6 @@ export interface MatchingSide extends MatchingSideConfig {
     FilterComponent,
     FlattenArrayPipe,
   ],
-  standalone: true,
 })
 export class MatchingEntitiesComponent implements OnInit {
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";

@@ -9,6 +9,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 @Component({
   template: ``,
+  standalone: false,
 })
 class MockComponent {}
 

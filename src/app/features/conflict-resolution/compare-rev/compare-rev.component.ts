@@ -27,7 +27,6 @@ import { FormsModule } from "@angular/forms";
     MatButtonModule,
     FormsModule,
   ],
-  standalone: true,
 })
 export class CompareRevComponent {
   /** revision key (_rev) of the confliction version to be displayed */

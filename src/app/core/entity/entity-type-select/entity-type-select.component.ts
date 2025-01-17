@@ -1,4 +1,4 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
@@ -11,16 +11,15 @@ import { MatFormFieldControl } from "@angular/material/form-field";
   selector: "app-entity-type-select",
   templateUrl:
     "../../common-components/basic-autocomplete/basic-autocomplete.component.html",
-  standalone: true,
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   providers: [
     { provide: MatFormFieldControl, useExisting: EntityTypeSelectComponent },
   ],
 })
-export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
-  EntityConstructor,
-  string
-> {
+export class EntityTypeSelectComponent
+  extends BasicAutocompleteComponent<EntityConstructor, string>
+  implements OnInit
+{
   @Input() override multi = false;
   @Input() override placeholder =
     $localize`:EntityTypeSelect placeholder:Select Entity Type`;

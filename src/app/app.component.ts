@@ -30,6 +30,7 @@ import { filter } from "rxjs/operators";
     } @else {
       <app-ui></app-ui>
     }`,
+  standalone: false,
 })
 export class AppComponent {
   configFullscreen: boolean = false;

@@ -18,7 +18,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   templateUrl: "./pwa-install.component.html",
   styleUrls: ["./pwa-install.component.scss"],
   imports: [NgIf, MatButtonModule, Angulartics2Module, FontAwesomeModule],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PwaInstallComponent implements OnInit {

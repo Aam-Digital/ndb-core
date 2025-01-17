@@ -43,7 +43,6 @@ import { filter } from "rxjs/operators";
 
 @Component({
   selector: "app-default-value-options",
-  standalone: true,
   imports: [
     MatFormField,
     MatLabel,

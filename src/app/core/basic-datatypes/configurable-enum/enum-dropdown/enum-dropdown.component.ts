@@ -1,8 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { MatSelectModule } from "@angular/material/select";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { ConfigurableEnumDirective } from "../configurable-enum-directive/configurable-enum.directive";
-import { NgForOf, NgIf } from "@angular/common";
+import { NgIf } from "@angular/common";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { ConfigurableEnumService } from "../configurable-enum.service";
@@ -24,13 +23,10 @@ import { OkButton } from "../../../common-components/confirmation-dialog/confirm
     "./enum-dropdown.component.scss",
     "../../../common-components/basic-autocomplete/basic-autocomplete-dropdown.component.scss",
   ],
-  standalone: true,
   imports: [
     MatSelectModule,
     ReactiveFormsModule,
-    ConfigurableEnumDirective,
     NgIf,
-    NgForOf,
     BasicAutocompleteComponent,
     FontAwesomeModule,
     ErrorHintComponent,

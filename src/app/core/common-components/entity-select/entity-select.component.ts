@@ -45,7 +45,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
     MatSlideToggle,
     FormsModule,
   ],
-  standalone: true,
 })
 @UntilDestroy()
 export class EntitySelectComponent<

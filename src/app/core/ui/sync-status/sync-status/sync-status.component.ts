@@ -37,7 +37,6 @@ import { SyncStateSubject } from "../../../session/session-type";
   selector: "app-sync-status",
   templateUrl: "./sync-status.component.html",
   imports: [BackgroundProcessingIndicatorComponent],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyncStatusComponent {

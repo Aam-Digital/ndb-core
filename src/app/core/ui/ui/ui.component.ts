@@ -68,7 +68,6 @@ import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizar
     DisplayImgComponent,
     SetupWizardButtonComponent,
   ],
-  standalone: true,
 })
 export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */

@@ -41,7 +41,6 @@ import { OkButton } from "../../../common-components/confirmation-dialog/confirm
     FontAwesomeModule,
     MatButtonModule,
   ],
-  standalone: true,
 })
 export class ConfigureEnumPopupComponent {
   newOptionInput: string;

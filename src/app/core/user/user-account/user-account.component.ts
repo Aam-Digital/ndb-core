@@ -25,7 +25,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { SessionSubject } from "../../session/auth/session-info";
 
@@ -45,9 +45,7 @@ import { SessionSubject } from "../../session/auth/session-info";
     AccountPageComponent,
     AsyncPipe,
     EntityBlockComponent,
-    NgIf,
   ],
-  standalone: true,
 })
 export class UserAccountComponent implements OnInit {
   passwordChangeDisabled = false;

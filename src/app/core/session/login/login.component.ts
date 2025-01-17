@@ -52,7 +52,6 @@ import { race, timer } from "rxjs";
     NgForOf,
     FontAwesomeModule,
   ],
-  standalone: true,
 })
 export class LoginComponent implements OnInit {
   offlineUsers: SessionInfo[] = [];

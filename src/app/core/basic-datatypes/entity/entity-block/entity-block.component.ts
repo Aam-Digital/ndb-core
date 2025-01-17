@@ -24,15 +24,11 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   imports: [
     NgClass,
     NgIf,
-    DynamicComponentDirective,
     FaDynamicIconComponent,
     TemplateTooltipDirective,
-    FaIconComponent,
-    NgForOf,
     DisplayImgComponent,
     EntityFieldViewComponent,
   ],
-  standalone: true,
 })
 export class EntityBlockComponent implements OnInit {
   @Input() entity: Entity;

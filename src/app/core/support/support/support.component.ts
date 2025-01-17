@@ -25,7 +25,6 @@ import { Entity } from "../../entity/model/entity";
   templateUrl: "./support.component.html",
   styleUrls: ["./support.component.scss"],
   imports: [MatExpansionModule, MatButtonModule, MatTooltipModule],
-  standalone: true,
 })
 export class SupportComponent implements OnInit {
   sessionInfo: SessionInfo;

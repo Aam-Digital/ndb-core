@@ -34,7 +34,6 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 
 @Component({
   selector: "app-admin-entity-list",
-  standalone: true,
   imports: [
     CommonModule,
     EntityFieldsMenuComponent,

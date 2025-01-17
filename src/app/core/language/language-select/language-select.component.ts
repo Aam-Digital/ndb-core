@@ -5,7 +5,6 @@ import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
-import { NgForOf } from "@angular/common";
 import { LOCALE_ENUM_ID } from "../languages";
 import { ConfigurableEnumDirective } from "../../basic-datatypes/configurable-enum/configurable-enum-directive/configurable-enum.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -22,12 +21,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    NgForOf,
     ConfigurableEnumDirective,
     FontAwesomeModule,
     MatTooltipModule,
   ],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSelectComponent {

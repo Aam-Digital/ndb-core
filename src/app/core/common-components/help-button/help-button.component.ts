@@ -12,7 +12,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   selector: "app-help-button",
   templateUrl: "./help-button.component.html",
   styleUrls: ["./help-button.component.scss"],
-  standalone: true,
   imports: [FontAwesomeModule, MatButtonModule, NgIf, MatTooltipModule],
 })
 export class HelpButtonComponent {

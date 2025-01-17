@@ -37,7 +37,6 @@ import { MarkdownPageModule } from "../markdown-page/markdown-page.module";
     FontAwesomeModule,
     MarkdownPageModule,
   ],
-  standalone: true,
 })
 export class PublicFormComponent<E extends Entity> implements OnInit {
   private entityType: EntityConstructor<E>;

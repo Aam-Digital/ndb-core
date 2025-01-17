@@ -90,7 +90,6 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
   providers: [
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
   ],
-  standalone: true,
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
 })
 export class BasicAutocompleteComponent<O, V = O>

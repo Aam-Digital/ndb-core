@@ -42,7 +42,6 @@ import { environment } from "../../../../environments/environment";
     MatSelectModule,
     NgForOf,
   ],
-  standalone: true,
 })
 export class UserSecurityComponent implements OnInit {
   @Input() entity: Entity;

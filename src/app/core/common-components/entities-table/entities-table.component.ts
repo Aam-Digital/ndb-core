@@ -52,7 +52,6 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 @UntilDestroy()
 @Component({
   selector: "app-entities-table",
-  standalone: true,
   imports: [
     CommonModule,
     EntityFieldEditComponent,

@@ -49,7 +49,6 @@ export interface MapPopupConfig {
     AsyncPipe,
     AddressEditComponent,
   ],
-  standalone: true,
 })
 export class MapPopupComponent {
   markedLocations: BehaviorSubject<GeoResult[]>;

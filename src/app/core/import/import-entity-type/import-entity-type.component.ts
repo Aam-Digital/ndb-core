@@ -15,7 +15,6 @@ import { FormsModule } from "@angular/forms";
   selector: "app-import-entity-type",
   templateUrl: "./import-entity-type.component.html",
   styleUrls: ["./import-entity-type.component.scss"],
-  standalone: true,
   imports: [
     MatInputModule,
     MatSelectModule,

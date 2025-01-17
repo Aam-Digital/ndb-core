@@ -15,7 +15,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 @Component({
   selector: "app-display-date",
   templateUrl: "./display-date.component.html",
-  standalone: true,
   imports: [DatePipe, NgIf, FontAwesomeModule, MatTooltipModule],
 })
 export class DisplayDateComponent extends ViewDirective<Date, string> {

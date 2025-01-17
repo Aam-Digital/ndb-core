@@ -5,6 +5,5 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
   templateUrl: "./application-loading.component.html",
   styleUrls: ["./application-loading.component.scss"],
   imports: [MatProgressBarModule],
-  standalone: true,
 })
 export class ApplicationLoadingComponent {}

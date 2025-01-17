@@ -10,7 +10,6 @@ import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
-import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { Entity } from "../../entity/model/entity";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
 import {
@@ -28,13 +27,11 @@ import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.compo
 
 @Component({
   selector: "app-dialog-buttons",
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,
     Angulartics2Module,
     MatDialogModule,
-    DisableEntityOperationDirective,
     MatMenuModule,
     FontAwesomeModule,
     RouterLink,

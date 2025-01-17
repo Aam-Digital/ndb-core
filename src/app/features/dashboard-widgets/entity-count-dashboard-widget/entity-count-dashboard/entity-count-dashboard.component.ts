@@ -67,7 +67,6 @@ interface GroupCountRow {
     MatIconButton,
     EntityFieldLabelComponent,
   ],
-  standalone: true,
 })
 export class EntityCountDashboardComponent
   extends DashboardWidget

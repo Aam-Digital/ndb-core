@@ -5,7 +5,6 @@ import { DialogCloseComponent } from "../../../../core/common-components/dialog-
 
 @Component({
   selector: "app-image-popup",
-  standalone: true,
   imports: [CommonModule, DialogCloseComponent, MatDialogModule],
   templateUrl: "./image-popup.component.html",
   styleUrls: ["./image-popup.component.scss"],

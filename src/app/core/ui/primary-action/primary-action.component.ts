@@ -22,7 +22,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     DisableEntityOperationDirective,
     FontAwesomeModule,
   ],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrimaryActionComponent {
