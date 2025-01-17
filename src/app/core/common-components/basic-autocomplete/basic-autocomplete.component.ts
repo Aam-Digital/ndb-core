@@ -15,7 +15,7 @@ import {
   ViewChild,
   WritableSignal,
 } from "@angular/core";
-import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
+import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   FormControl,
@@ -42,7 +42,6 @@ import {
 } from "@angular/material/chips";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
-import { MatIcon } from "@angular/material/icon";
 import {
   CdkDragDrop,
   DragDropModule,
@@ -61,7 +60,29 @@ interface SelectableOption<O, V> {
   selected: boolean;
 }
 
-/** Custom `MatFormFieldControl` for any select / dropdown field. */
+export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
+  ReactiveFormsModule,
+  MatInputModule,
+  MatAutocompleteModule,
+  NgForOf,
+  MatCheckboxModule,
+  NgIf,
+  NgTemplateOutlet,
+  MatChipInput,
+  MatChipGrid,
+  MatChipRow,
+  FaIconComponent,
+  MatTooltip,
+  MatChipRemove,
+  DragDropModule,
+  CdkVirtualScrollViewport,
+  CdkVirtualForOf,
+  CdkFixedSizeVirtualScroll,
+];
+
+/**
+ * Custom `MatFormFieldControl` for any select / dropdown field.
+ */
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",
@@ -70,27 +91,7 @@ interface SelectableOption<O, V> {
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
   ],
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    NgForOf,
-    MatCheckboxModule,
-    NgIf,
-    AsyncPipe,
-    NgTemplateOutlet,
-    MatChipInput,
-    MatChipGrid,
-    MatChipRow,
-    FaIconComponent,
-    MatTooltip,
-    MatIcon,
-    MatChipRemove,
-    DragDropModule,
-    CdkVirtualScrollViewport,
-    CdkVirtualForOf,
-    CdkFixedSizeVirtualScroll,
-  ],
+  imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
 })
 export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
@@ -105,8 +106,10 @@ export class BasicAutocompleteComponent<O, V = O>
   @ViewChild(CdkVirtualScrollViewport)
   virtualScrollViewport: CdkVirtualScrollViewport;
 
-  @Input() valueMapper = (option: O) => option as unknown as V;
-  @Input() optionToString = (option: O) => option?.toString();
+  @Input() valueMapper = (option: O) =>
+    option?.["_id"] ?? (option as unknown as V);
+  @Input() optionToString = (option: O) =>
+    option?.["_label"] ?? option?.toString();
   @Input() createOption: (input: string) => Promise<O>;
   @Input() hideOption: (option: O) => boolean = () => false;
 
@@ -114,11 +117,11 @@ export class BasicAutocompleteComponent<O, V = O>
    * Whether the user should be able to select multiple values.
    */
   @Input() multi?: boolean;
-  @Input() reorder?: boolean;
 
   /**
    * Whether the user can manually drag & drop to reorder the selected items
    */
+  @Input() reorder?: boolean;
 
   autocompleteOptions: SelectableOption<O, V>[] = [];
   autocompleteForm = new FormControl("");
@@ -153,9 +156,18 @@ export class BasicAutocompleteComponent<O, V = O>
     this.stateChanges.next();
   }
 
+  /**
+   * The options to display in the autocomplete dropdown.
+   * If you pass complex objects here, you can customize what value is displayed and what value is output/stored
+   * by overriding the `valueMapper` and `optionToString` methods via inputs.
+   * By default, the "_id" property is used as the value and the "_label" property or `toString()` method as the display value.
+   *
+   * @param options Array of available options (can be filtered further by the `hideOption` function)
+   */
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
   }
+
   private _options: SelectableOption<O, V>[] = [];
 
   _selectedOptions: SelectableOption<O, V>[] = [];
