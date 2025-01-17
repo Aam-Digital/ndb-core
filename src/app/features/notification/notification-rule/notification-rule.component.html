@@ -113,7 +113,7 @@
       ></app-help-button>
     </div>
     @for (
-      notificationCondition of form.get("conditions")["controls"];
+      notificationCondition of form.get("conditions")?.["controls"] ?? [];
       track notificationCondition;
       let notificationConditionIndex = $index
     ) {
