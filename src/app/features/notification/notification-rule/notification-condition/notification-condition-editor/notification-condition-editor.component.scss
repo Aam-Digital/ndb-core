@@ -4,3 +4,9 @@
   max-height: 90vh;
   margin-top: sizes.$large;
 }
+
+.json-editor-actions {
+  justify-content: end;
+  margin-top: sizes.$regular;
+  gap: sizes.$regular;
+}

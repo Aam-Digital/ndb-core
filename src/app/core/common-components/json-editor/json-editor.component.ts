@@ -7,12 +7,10 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
 import {
   Content,
   ContentErrors,
   createJSONEditor,
-  JSONPatchResult,
 } from "vanilla-jsoneditor/standalone.js";
 import { AlertService } from "../../alerts/alert.service";
 
@@ -22,9 +20,8 @@ import { AlertService } from "../../alerts/alert.service";
 @Component({
   selector: "app-json-editor",
   standalone: true,
-  imports: [CommonModule, MatButtonModule],
+  imports: [CommonModule],
   templateUrl: "./json-editor.component.html",
-  styleUrl: "./json-editor.component.scss",
 })
 export class JsonEditorComponent {
   /**
@@ -62,6 +59,7 @@ export class JsonEditorComponent {
         ) => {
           if ("json" in updatedContent) {
             this.value = updatedContent.json as object;
+            this.valueChange.emit(this.value);
           }
           if (contentErrors) {
             this.alertService.addWarning($localize`Invalid JSON`);
@@ -69,26 +67,5 @@ export class JsonEditorComponent {
         },
       },
     });
-  }
-
-  /**
-   * Save the JSON value and emit the updated value.
-   * If the JSON is invalid, show a warning.
-   */
-  onSave() {
-    try {
-      const updatedJson = this.jsonEditor.get();
-      this.valueChange.emit(updatedJson.json);
-    } catch (e) {
-      this.alertService.addWarning($localize`Invalid JSON`);
-    }
-  }
-
-  /**
-   * Cancel the changes and reset the JSON value.
-   */
-  onCancel() {
-    this.jsonEditor.update({ json: this.value });
-    this.valueChange.emit(null);
   }
 }
