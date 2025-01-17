@@ -11,18 +11,19 @@ button {
   margin-bottom: 10px;
 }
 
-.public-form-container{
+.public-form-container {
   display: flex;
   justify-content: center;
 }
 
-.card-container{
+.card-container {
   width: 100%;
 }
 
 .public-form-image {
   max-width: 100%;
   height: 100px;
+  object-fit: contain;
 }
 
 .error-container {
