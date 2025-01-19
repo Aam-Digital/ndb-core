@@ -14,12 +14,18 @@ import {
 } from "../../../core/session/auth/session-info";
 import { BehaviorSubject } from "rxjs";
 import { TEST_USER } from "../../../core/user/demo-user-generator.service";
+import { HttpClient } from "@angular/common/http";
+import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
+import { NotificationService } from "../notification.service";
 
 describe("NotificationSettingComponent", () => {
   let component: NotificationSettingsComponent;
   let fixture: ComponentFixture<NotificationSettingsComponent>;
   let entityMapper: MockEntityMapperService;
+  let mockHttp: jasmine.SpyObj<HttpClient>;
   const testUser: SessionInfo = { name: TEST_USER, id: TEST_USER, roles: [] };
+  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockNotificationService: jasmine.SpyObj<NotificationService>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -35,6 +41,9 @@ describe("NotificationSettingComponent", () => {
           provide: SessionSubject,
           useValue: new BehaviorSubject(testUser),
         },
+        { provide: HttpClient, useValue: mockHttp },
+        { provide: KeycloakAuthService, useValue: mockAuthService },
+        { provide: NotificationService, useValue: mockNotificationService },
       ],
     }).compileComponents();
 
