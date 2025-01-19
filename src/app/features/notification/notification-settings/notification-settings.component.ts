@@ -18,6 +18,7 @@ import { SessionSubject } from "app/core/session/auth/session-info";
 import { NotificationRuleComponent } from "../notification-rule/notification-rule.component";
 import { MatTooltip } from "@angular/material/tooltip";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { NotificationService } from "../notification.service";
 
 /**
@@ -34,6 +35,7 @@ import { NotificationService } from "../notification.service";
     HelpButtonComponent,
     NotificationRuleComponent,
     MatTooltip,
+    CdkAccordionModule,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
@@ -123,7 +125,7 @@ export class NotificationSettingsComponent implements OnInit {
       notificationType: "entity_change",
       entityType: undefined,
       channels: this.notificationConfig.channels, // by default, use the global channels
-      conditions: undefined,
+      conditions: {},
       enabled: true,
     };
 
@@ -157,6 +159,10 @@ export class NotificationSettingsComponent implements OnInit {
 
   private async removeNotificationRule(index: number) {
     this.notificationConfig.notificationRules.splice(index, 1);
+    await this.saveNotificationConfig(this.notificationConfig);
+  }
+
+  async updateNotificationCondition() {
     await this.saveNotificationConfig(this.notificationConfig);
   }
 }

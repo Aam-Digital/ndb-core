@@ -1,5 +1,10 @@
 <form [formGroup]="form">
-  <div
+  <cdk-accordion-item
+    #notificationRuleItem="cdkAccordionItem"
+    tabindex="0"
+    [attr.id]="'notification-rule-item-header-' + accordionIndex"
+    [attr.aria-expanded]="notificationRuleItem.expanded"
+    [attr.aria-controls]="'notification-rule-item-body-' + accordionIndex"
     class="flex-column justify-space-between align-center notifications-options-container"
   >
     <div
@@ -8,7 +13,10 @@
       <div
         class="flex-row justify-content-center align-center notification-rule-option"
       >
-        <mat-form-field class="full-width-field">
+        <mat-form-field
+          class="full-width-field"
+          (click)="handleToggleAccordion(notificationRuleItem)"
+        >
           <mat-label i18n>Select an entity type</mat-label>
           <app-entity-type-select
             formControlName="entityType"
@@ -20,26 +28,13 @@
         ></app-help-button>
       </div>
 
-      <div class="flex-row justify-content-center align-center full-width">
-        <mat-form-field class="notification-rule-option">
-          <mat-label i18n>Notification condition</mat-label>
-          <input
-            matInput
-            placeholder="TO BE IMPLEMENTED LATER"
-            [disabled]="true"
-            i18n-placeholder="Notification condition placeholder"
-          />
-        </mat-form-field>
-        <app-help-button
-          text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
-          i18n-text
-        ></app-help-button>
-      </div>
-
       <div
         class="flex-row justify-content-center align-center notification-rule-option"
       >
-        <mat-form-field class="full-width-field">
+        <mat-form-field
+          class="full-width-field"
+          (click)="handleToggleAccordion(notificationRuleItem)"
+        >
           <mat-label i18n>Notification method(s)</mat-label>
           <mat-select
             formControlName="channels"
@@ -88,6 +83,59 @@
       >
         <fa-icon icon="paper-plane"></fa-icon>
       </button>
+      <button
+        mat-icon-button
+        [matTooltip]="
+          notificationRuleItem?.expanded ? 'Collapse section' : 'Expand section'
+        "
+        (click)="notificationRuleItem.toggle()"
+        i18n-matTooltip
+      >
+        <fa-icon
+          [icon]="notificationRuleItem.expanded ? 'chevron-up' : 'chevron-down'"
+        ></fa-icon>
+      </button>
     </div>
-  </div>
+  </cdk-accordion-item>
 </form>
+
+@if (notificationRuleItem.expanded) {
+  <div
+    [style.display]="notificationRuleItem.expanded ? '' : 'none'"
+    [attr.id]="'notification-rule-item-body-' + accordionIndex"
+    [attr.aria-labelledby]="'notification-rule-item-header-' + accordionIndex"
+  >
+    <div class="flex-row align-center notification-condition-section">
+      <strong i18n>Define Notification Criteria</strong>
+      <app-help-button
+        text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
+        i18n-text
+      ></app-help-button>
+    </div>
+    @for (
+      notificationCondition of form.get("conditions")?.["controls"] ?? [];
+      track notificationCondition;
+      let notificationConditionIndex = $index
+    ) {
+      <app-notification-condition
+        (removeNotificationCondition)="
+          removeCondition(notificationConditionIndex)
+        "
+        [form]="notificationCondition"
+        [notificationRule]="value"
+      />
+    }
+    <button
+      mat-stroked-button
+      class="new-rule-condition-button"
+      color="accent"
+      [disabled]="!value.entityType"
+      (click)="addNewNotificationCondition()"
+      matTooltip="Define another condition of notifications for your user account"
+      i18n-matTooltip
+    >
+      <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+      <span i18n class="new-notification-rule">Add Notification Criteria</span>
+    </button>
+  </div>
+}

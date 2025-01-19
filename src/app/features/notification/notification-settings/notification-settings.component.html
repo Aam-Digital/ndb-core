@@ -19,19 +19,25 @@
       notifications without deleting the conditions completely.
     </div>
 
-    @for (
-      notificationRule of notificationConfig?.notificationRules;
-      track notificationRule;
-      let index = $index
-    ) {
-      <app-notification-rule
-        [value]="notificationRule"
-        (valueChange)="updateNotificationRule(notificationRule, $event)"
-        (removeNotificationRule)="confirmRemoveNotificationRule(index)"
-      ></app-notification-rule>
-    }
-
-    <div class="add-new-notification-rule">
+    <cdk-accordion>
+      @for (
+        notificationRule of notificationConfig?.notificationRules;
+        track notificationRule;
+        let index = $index
+      ) {
+        <div class="notification-rule-accordion-item">
+          <app-notification-rule
+            [value]="notificationRule"
+            (valueChange)="updateNotificationRule(notificationRule, $event)"
+            (notificationConditionValueChange)="updateNotificationCondition()"
+            (removeNotificationRule)="confirmRemoveNotificationRule(index)"
+            (removeNotificationCondition)="updateNotificationCondition()"
+            [accordionIndex]="index"
+          ></app-notification-rule>
+        </div>
+      }
+    </cdk-accordion>
+    <div class="flex-row justify-content-center add-new-notification-rule">
       <button
         mat-stroked-button
         class="add-new-rule-button"

@@ -34,10 +34,15 @@
   background-color: colors.$background;
 }
 
-.notifications-options-container {
+.notification-rule-accordion-item {
   @extend .panel-wrapper;
   background-color: colors.$background;
   margin-top: sizes.$regular;
+  cursor: pointer;
+}
+
+.notifications-options-container {
+  @extend .full-width;
   gap: 40px;
 
   @media screen and (min-width: breakpoints.$xxl) {
@@ -74,8 +79,6 @@
 }
 
 .add-new-notification-rule {
-  display: flex;
-  justify-content: center;
   margin-top: 30px;
 }
 
@@ -128,4 +131,21 @@
   @extend .text-badge;
   border-color: green;
   background-color: #beddba;
+}
+
+.notification-condition-section {
+  margin-top: sizes.$regular;
+  margin-bottom: sizes.$regular;
+}
+
+.new-rule-condition-button {
+  background-color: transparent;
+  padding: sizes.$regular sizes.$large;
+  cursor: pointer;
+  border-radius: sizes.$large;
+}
+
+.notification-condition-operator {
+  margin-left: sizes.$large;
+  margin-right: sizes.$large;
 }

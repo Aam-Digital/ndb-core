@@ -11,7 +11,12 @@ import { HelpButtonComponent } from "app/core/common-components/help-button/help
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -21,6 +26,12 @@ import {
 } from "../model/notification-config";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
+import { CdkAccordionItem, CdkAccordionModule } from "@angular/cdk/accordion";
+import {
+  NotificationConditionComponent,
+  NotificationRuleCondition,
+} from "./notification-condition/notification-condition.component";
+import { DataFilter } from "../../../core/filter/filters/filters";
 import { NotificationService } from "../notification.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { Logging } from "../../../core/logging/logging.service";
@@ -43,6 +54,8 @@ import { Logging } from "../../../core/logging/logging.service";
     ReactiveFormsModule,
     MatOption,
     MatSelect,
+    CdkAccordionModule,
+    NotificationConditionComponent,
     MatProgressSpinnerModule,
   ],
   templateUrl: "./notification-rule.component.html",
@@ -50,9 +63,15 @@ import { Logging } from "../../../core/logging/logging.service";
 })
 export class NotificationRuleComponent implements OnChanges {
   @Input() value: NotificationRule;
+  @Input() accordionIndex: number;
   @Output() valueChange = new EventEmitter<NotificationRule>();
 
   @Output() removeNotificationRule = new EventEmitter<void>();
+
+  @Output() removeNotificationCondition = new EventEmitter<any>();
+
+  @Output() notificationConditionValueChange =
+    new EventEmitter<NotificationRule>();
 
   form: FormGroup;
 
@@ -70,24 +89,61 @@ export class NotificationRuleComponent implements OnChanges {
 
   initForm() {
     this.form = new FormGroup({
-      entityType: new FormControl(this.value?.entityType ?? ""),
+      entityType: new FormControl({
+        value: this.value?.entityType ?? "",
+        disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
+      }),
       enabled: new FormControl(this.value?.enabled || false),
       // different format for form control
       channels: new FormControl(
         this.parseChannelsToOptionsArray(this.value?.channels),
       ),
-      conditions: new FormControl(this.value?.conditions ?? ""), // TODO: parse conditions format?
-      // hidden fields
+      conditions: new FormArray(
+        this.parseConditionsObjectToArray(this.value?.conditions).map(
+          (c) =>
+            new FormGroup({
+              entityTypeField: new FormControl(c.entityTypeField),
+              operator: new FormControl(c.operator),
+              condition: new FormControl(c.condition),
+            }),
+        ),
+      ),
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
       ),
     });
 
+    this.updateEntityTypeControlState();
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
   }
 
+  /**
+   * Disable the entityType field if there are notification conditions.
+   */
+  private updateEntityTypeControlState() {
+    const conditionsControl = this.form.get("conditions");
+
+    if (!conditionsControl || !(conditionsControl instanceof FormArray)) {
+      return;
+    }
+    conditionsControl.valueChanges.subscribe(() => {
+      const conditionsLength = (conditionsControl as FormArray).length;
+      const entityTypeControl = this.form.get("entityType");
+      if (conditionsLength > 0) {
+        entityTypeControl.disable();
+      } else {
+        entityTypeControl.enable();
+      }
+    });
+  }
+
   private updateValue(value: any) {
+    const entityTypeControl = this.form.get("entityType");
+    if (entityTypeControl?.disabled) {
+      value.entityType = entityTypeControl.value;
+    }
     value.channels = this.parseOptionsArrayToChannels(value.channels);
+    value.conditions = this.parseConditionsArrayToObject(value.conditions);
 
     if (JSON.stringify(value) === JSON.stringify(this.value)) {
       // skip if no actual change
@@ -123,5 +179,90 @@ export class NotificationRuleComponent implements OnChanges {
     this.notificationService.testNotification().catch((reason) => {
       Logging.error("Could not send test notification: " + reason.message);
     });
+  }
+
+  addNewNotificationCondition() {
+    const newCondition = new FormGroup({
+      entityTypeField: new FormControl(""),
+      operator: new FormControl(""),
+      condition: new FormControl(""),
+    });
+    (this.form.get("conditions") as FormArray).push(newCondition);
+  }
+
+  updateNotificationCondition(updateNotificationCondition: NotificationRule) {
+    this.notificationConditionValueChange.emit(updateNotificationCondition);
+  }
+
+  removeCondition(notificationConditionIndex: number) {
+    (this.form.get("conditions") as FormArray).removeAt(
+      notificationConditionIndex,
+    );
+    this.removeNotificationCondition.emit();
+  }
+
+  handleToggleAccordion(notificationRuleItem: CdkAccordionItem) {
+    if (!notificationRuleItem.expanded) {
+      notificationRuleItem.toggle();
+    }
+  }
+
+  /**
+   * Parse from config format to a format that can be used in the form
+   * e.g. from `{ fieldName: { '$eq': 'value' } }`
+   * to `[ { entityTypeField: 'fieldName', operator: '$eq', condition: 'value' } ]`
+   *
+   * @param conditions
+   * @private
+   */
+  private parseConditionsObjectToArray(
+    conditions: DataFilter<any> | undefined,
+  ): NotificationRuleCondition[] {
+    if (!conditions) {
+      return [];
+    }
+
+    return Object.entries(conditions)?.map(([entityField, condition]) => {
+      const operator = Object.keys(condition)[0];
+      return {
+        entityTypeField: entityField,
+        operator,
+        condition: condition[operator],
+      };
+    });
+  }
+
+  /**
+   * Transform form format back to the needed config entity format
+   * e.g. from `[ { entityTypeField: 'fieldName', operator: '$eq', condition: 'value' } ]`
+   * to { fieldName: { '$eq': 'value' } }`
+   *
+   * @param conditions
+   * @private
+   */
+  private parseConditionsArrayToObject(
+    conditions: NotificationRuleCondition[],
+  ): DataFilter<any> {
+    if (!conditions) {
+      return {};
+    }
+
+    return conditions.reduce((acc, condition) => {
+      if (
+        !condition.entityTypeField ||
+        !condition.operator ||
+        condition.operator === "" ||
+        !condition.condition ||
+        condition.condition === ""
+      ) {
+        // continue without adding incomplete condition
+        return acc;
+      }
+
+      acc[condition.entityTypeField] = {
+        [condition.operator]: condition.condition,
+      };
+      return acc;
+    }, {});
   }
 }
