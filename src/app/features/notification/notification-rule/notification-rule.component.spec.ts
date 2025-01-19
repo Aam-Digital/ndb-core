@@ -10,6 +10,7 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
+import { NotificationService } from "../notification.service";
 
 describe("NotificationRuleComponent", () => {
   let component: NotificationRuleComponent;
@@ -17,6 +18,7 @@ describe("NotificationRuleComponent", () => {
   let mockValue: NotificationRule;
   let mockHttp: jasmine.SpyObj<HttpClient>;
   let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockNotificationService: jasmine.SpyObj<NotificationService>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -30,6 +32,7 @@ describe("NotificationRuleComponent", () => {
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: HttpClient, useValue: mockHttp },
         { provide: KeycloakAuthService, useValue: mockAuthService },
+        { provide: NotificationService, useValue: mockNotificationService },
       ],
     }).compileComponents();
 

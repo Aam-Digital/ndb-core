@@ -1,12 +1,11 @@
-import { Injectable } from "@angular/core";
-import "firebase/compat/messaging";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { inject, Injectable } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
-import { environment } from "../../../environments/environment";
-import firebase from "firebase/compat/app";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
-import { AlertService } from "app/core/alerts/alert.service";
+import { AngularFireMessaging } from "@angular/fire/compat/messaging";
+import { mergeMap, Subscription } from "rxjs";
+import { environment } from "../../../environments/environment";
+import { AlertService } from "../../core/alerts/alert.service";
 
 /**
  * Handles the interaction with Cloud Messaging.
@@ -18,83 +17,101 @@ import { AlertService } from "app/core/alerts/alert.service";
   providedIn: "root",
 })
 export class NotificationService {
-  /**
-   * A private instance of the Firebase Cloud Messaging service.
-   * This property is used to delegate messaging operations to the Firebase Cloud Messaging service.
-   */
-  private messaging: firebase.messaging.Messaging = null;
-  readonly FIREBASE_CLOUD_MESSAGING_URL = `https://fcm.googleapis.com/v1/projects/${environment.notificationsConfig.projectId}/messages:send`;
-  private readonly NOTIFICATION_TOKEN_COOKIE_NAME = "NOTIFICATION_TOKEN";
-  private readonly DEVICE_NOTIFICATION_API_URL = "/api/v1/notification/device";
-  private readonly SEND_NOTIFICATION_API_URL =
-    "api/v1/notification/message/device-test";
-  private readonly COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN = 30;
+  private firebaseMessaging = inject(AngularFireMessaging);
+  private httpClient = inject(HttpClient);
+  private authService = inject(KeycloakAuthService);
+  private alertService = inject(AlertService);
 
-  constructor(
-    private httpClient: HttpClient,
-    private authService?: KeycloakAuthService,
-    private alertService?: AlertService,
-  ) {}
+  private tokenSubscription: Subscription | undefined = undefined;
+
+  private readonly NOTIFICATION_API_URL = "/api/v1/notification";
 
   init() {
-    firebase.initializeApp(environment.notificationsConfig);
-    this.messaging = firebase.messaging();
-  }
-
-  /**
-   * Get the notification token for the device.
-   * Update the notification token in browser cookies.
-   */
-  async getNotificationToken(): Promise<string | null> {
-    try {
-      const existingNotificationToken = this.getNotificationTokenFromCookie();
-      const notificationToken = await this.getNotificationTokenFromFirebase();
-
-      if (
-        !notificationToken ||
-        notificationToken === existingNotificationToken
-      ) {
-        return notificationToken ?? null;
-      }
-
-      try {
-        await this.registerNotificationToken(notificationToken);
-      } catch (error) {
-        this.setCookie(this.NOTIFICATION_TOKEN_COOKIE_NAME, "", null);
-        return null;
-      }
-
-      this.setCookie(
-        this.NOTIFICATION_TOKEN_COOKIE_NAME,
-        notificationToken,
-        this.COOKIE_EXPIRATION_DAYS_FOR_NOTIFICATION_TOKEN,
-      );
-
-      return notificationToken;
-    } catch (error) {
-      Logging.error(
-        "An error occurred while retrieving the notification token: ",
-        error,
-      );
-      return null;
+    if (environment.enableNotificationModule) {
+      this.listenForMessages();
     }
+    // this.messaging = firebase.messaging();
   }
 
   /**
-   * Requests permission for Firebase messaging and retrieves the token.
-   * Logs the token if successful, otherwise logs an error or info message.
+   * Request a token device from firebase and register it in aam-backend
    */
-  async getNotificationTokenFromFirebase() {
-    try {
-      return await getToken(this.messaging, {
-        vapidKey: environment.notificationsConfig.vapidKey,
+  registerDevice(): void {
+    this.tokenSubscription?.unsubscribe();
+    this.tokenSubscription = undefined;
+
+    this.tokenSubscription = this.firebaseMessaging.requestToken.subscribe({
+      next: (token) => {
+        this.registerNotificationToken(token)
+          .then(() => {
+            Logging.log("Device registered in aam-digital backend.");
+            this.alertService.addInfo(
+              $localize`Device registered for push notifications.`,
+            );
+            this.listenForMessages();
+          })
+          .catch((err) => {
+            Logging.error(
+              "Could not register device in aam-digital backend. Push notifications will not work.",
+              err,
+            );
+            this.alertService.addInfo(
+              $localize`Could not register device in aam-digital backend. Push notifications will not work.`,
+            );
+          });
+      },
+      error: (err) => {
+        this.tokenSubscription?.unsubscribe();
+        this.tokenSubscription = undefined;
+        if (err.code === 20) {
+          this.registerDevice();
+        } else {
+          this.alertService.addInfo(
+            $localize`User has rejected the authorisation request.`,
+          );
+          Logging.error("User has rejected the authorisation request.", err);
+        }
+      },
+    });
+    // try to register device
+
+    // show error message if not successful
+  }
+
+  /**
+   * Unregister a device from firebase, this will disable push notifications.
+   */
+  unregisterDevice(): void {
+    let tempToken = null;
+    this.firebaseMessaging.getToken
+      .pipe(
+        mergeMap((token) => {
+          tempToken = token;
+          return this.firebaseMessaging.deleteToken(token);
+        }),
+      )
+      .subscribe({
+        next: (success: boolean) => {
+          if (!success) {
+            this.alertService.addInfo(
+              $localize`Could not un-register device from firebase.`,
+            );
+            Logging.error("Could not un-register device from firebase.");
+            return;
+          }
+
+          this.unRegisterNotificationToken(tempToken).catch((err) => {
+            Logging.error("Could not unregister device from aam-backend.", err);
+          });
+
+          this.alertService.addInfo(
+            $localize`Device un-registered for push notifications.`,
+          );
+        },
+        error: (err) => {
+          Logging.error("Could not unregister device from firebase.", err);
+        },
       });
-    } catch (err) {
-      this.alertService.addInfo(
-        $localize`Failed to access device token. Please check if notification permission is enabled in your device settings`,
-      );
-      Logging.debug(`Error getting notification token`);
-    }
   }
 
   /**
@@ -102,17 +119,16 @@ export class NotificationService {
    * @param notificationToken - The FCM token for the device.
    * @param deviceName - The name of the device.
    */
-
   async registerNotificationToken(
     notificationToken: string,
-    deviceName: string = "web",
-  ) {
+    deviceName: string = "web", // todo something useful here
+  ): Promise<void> {
     const payload = { deviceToken: notificationToken, deviceName };
     const headers = {};
     this.authService.addAuthHeader(headers);
 
     this.httpClient
-      .post(this.DEVICE_NOTIFICATION_API_URL, payload, { headers })
+      .post(this.NOTIFICATION_API_URL + "/device", payload, { headers })
       .subscribe({
         next: () => {
           Logging.log("Device registration successful.");
@@ -124,72 +140,62 @@ export class NotificationService {
   }
 
   /**
-   * Retrieves the value of token from a cookie if it exists.
+   * Unregister the device with the backend using the FCM token.
+   * @param notificationToken - The FCM token for the device.
    */
-  getNotificationTokenFromCookie(): string | null {
-    const cookies = new URLSearchParams(document.cookie.replace(/; /g, "&"));
-    return cookies.get(this.NOTIFICATION_TOKEN_COOKIE_NAME) || null;
+  async unRegisterNotificationToken(notificationToken: string): Promise<void> {
+    const headers = {};
+    this.authService.addAuthHeader(headers);
+
+    this.httpClient
+      .delete(this.NOTIFICATION_API_URL + "/device/" + notificationToken, {
+        headers,
+      })
+      .subscribe({
+        next: () => {
+          Logging.log("Device un-registration successful.");
+        },
+        error: (err) => {
+          Logging.error("Device un-registration failed");
+        },
+      });
   }
 
-  /**
-   * Sets a cookie with a specified name, value, and expiration days.
-   * @param name - The name of the cookie.
-   * @param value - The value of the cookie.
-   * @param days - The number of days until the cookie expires.
-   */
-  setCookie(name: string, value: string, days: number): void {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+  async testNotification(): Promise<void> {
+    const headers = {};
+    this.authService.addAuthHeader(headers);
+
+    this.httpClient
+      .post(this.NOTIFICATION_API_URL + "/message/device-test", null, {
+        headers,
+      })
+      .subscribe({
+        next: () => {
+          this.alertService.addInfo(
+            $localize`Test notification sent to devices.`,
+          );
+        },
+        error: (err) => {
+          Logging.error("Device test failed", err);
+        },
+      });
   }
 
   /**
    * Listens for incoming Firebase Cloud Messages (FCM) in real time.
    * Displays a browser notification when a message is received.
    */
-  listenForMessages() {
-    const messaging = getMessaging();
-    onMessage(messaging, (payload) => {
-      const { notification } = payload;
-      if (notification) {
-        new Notification(notification.title, {
-          body: notification.body,
-          icon: notification.icon,
+  listenForMessages(): void {
+    this.firebaseMessaging.messages.subscribe({
+      next: (payload) => {
+        new Notification(payload.notification.title, {
+          body: payload.notification.body,
+          icon: payload.notification.image,
         });
-      }
+      },
+      error: (err) => {
+        Logging.error("Error while listening for messages.", err);
+      },
     });
-  }
-
-  /**
-   * Sends a notification to the user.
-   * First retrieves the FCM token and then calls the notification sending function.
-   */
-  async sendNotification() {
-    const notificationToken = this.getNotificationTokenFromCookie();
-    if (notificationToken) {
-      this.sendNotificationThroughAPI();
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * Sends a notification to device.
-   */
-  sendNotificationThroughAPI() {
-    const headers = {};
-    this.authService.addAuthHeader(headers);
-
-    this.httpClient
-      .post(this.SEND_NOTIFICATION_API_URL, {}, { headers })
-      .subscribe({
-        next: () => {
-          this.alertService.addInfo($localize`Notification sent to device.`);
-        },
-        error: (err) => {
-          Logging.error(err);
-        },
-      });
   }
 }

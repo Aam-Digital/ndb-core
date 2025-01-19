@@ -93,14 +93,11 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {
-    const notificationToken =
-      await this.notificationService.getNotificationToken();
-
-    if (!notificationToken) {
-      return;
+    if (event.checked) {
+      this.notificationService.registerDevice();
+    } else {
+      this.notificationService.unregisterDevice();
     }
-
-    this.isPushNotificationEnabled = event.checked;
 
     let notificationConfig = await this.loadNotificationConfig();
 

@@ -15,7 +15,6 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { FirebaseConfiguration } from "app/features/notification/notification-config.interface";
 import { SessionType } from "../app/core/session/session-type";
 
 /**
@@ -33,8 +32,8 @@ export const environment = {
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
 
-  demo_mode: true,
-  session_type: SessionType.mock,
+  demo_mode: false,
+  session_type: SessionType.synced,
   account_url: "https://aam.localhost/accounts-backend",
   email: undefined,
 
@@ -44,13 +43,5 @@ export const environment = {
   /** Name of the database that is used */
   DB_NAME: "app",
 
-  // /** aam-digital-development firebase project (public information) **/
-  // firebaseConfig: {
-  //   apiKey: "AIzaSyAVxpEeaCL8b4KQPwMqvWRW7lpcgDYZHdw",
-  //   authDomain: "aam-digital-b8a7b.firebaseapp.com",
-  //   projectId: "aam-digital-b8a7b",
-  //   storageBucket: "aam-digital-b8a7b.firebasestorage.app",
-  //   messagingSenderId: "189059495005",
-  //   appId: "1:189059495005:web:151bb9f04d6bebb637c9b4",
-  // } as FirebaseConfiguration,
+  enableNotificationModule: true,
 };

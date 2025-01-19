@@ -1,32 +1,50 @@
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js",
-);
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.1.3/firebase-messaging-compat.js",
-);
+// see source: https://github.com/firebase/snippets-web/blob/56d70627e2dc275f01cd0e55699794bf40faca80/messaging/service-worker.js#L10-L33
 
-async function initializeFirebase() {
-  const response = await fetch("/assets/firebase-config.json");
-  if (!response.ok) {
-    throw new Error("Failed to load Firebase config");
-  }
-  const firebaseConfig = await response.json();
+importScripts("https://www.gstatic.com/firebasejs/11.2.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/11.2.0/firebase-messaging-compat.js");
 
+function loadConfig() {
+  return fetch("/assets/firebase-config.json")
+    .then(function(response) {
+      return parseResponse(response);
+    })
+    .catch(function(error) {
+      console.error("Could not fetch firebase-config in service worker. Background Notifications not available.", error);
+    });
+}
+
+function parseResponse(response) {
+  return response.json()
+    .then(function(firebaseConfig) {
+      return firebaseConfig;
+    })
+    .catch(function(error) {
+      console.error("Could not parse firebase-config in service worker. Background Notifications not available.", error);
+    });
+}
+
+loadConfig()
+  .then(function(firebaseConfig) {
+  // Initialize the Firebase app in the service worker by passing in
+  // your app's Firebase config object.
+  // https://firebase.google.com/docs/web/setup#config-object
   firebase.initializeApp(firebaseConfig);
+
+  // Retrieve an instance of Firebase Messaging so that it can handle background
+  // messages.
   const messaging = firebase.messaging();
 
-  messaging.onBackgroundMessage(function (payload) {
-    const { title, body, icon } = payload.data;
+  messaging.onBackgroundMessage(function(payload) {
+    const { title, body, image } = payload.notification;
     const notificationOptions = {
       title: title,
       body: body,
-      icon: icon,
+      icon: image,
       data: {
-        url: payload.data.url,
-      },
+        url: payload.data?.url
+      }
     };
     self.registration.showNotification(title, notificationOptions);
   });
-}
 
-initializeFirebase();
+});

@@ -23,6 +23,7 @@ import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { NotificationService } from "../notification.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { Logging } from "../../../core/logging/logging.service";
 
 /**
  * Configure a single notification rule.
@@ -118,15 +119,9 @@ export class NotificationRuleComponent implements OnChanges {
   /**
    * Sends a test notification.
    */
-  async testNotification() {
-    const notificationToken =
-      await this.notificationService.getNotificationToken();
-
-    if (!notificationToken) {
-      return;
-    }
-
-    await this.notificationService.sendNotification();
-    return;
+  testNotification() {
+    this.notificationService.testNotification().catch((reason) => {
+      Logging.error("Could not send test notification: " + reason.message);
+    });
   }
 }
