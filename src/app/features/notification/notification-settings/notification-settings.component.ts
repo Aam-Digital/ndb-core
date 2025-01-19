@@ -18,6 +18,7 @@ import { SessionSubject } from "app/core/session/auth/session-info";
 import { NotificationRuleComponent } from "../notification-rule/notification-rule.component";
 import { MatTooltip } from "@angular/material/tooltip";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { NotificationService } from "../notification.service";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -46,6 +47,7 @@ export class NotificationSettingsComponent implements OnInit {
     private sessionInfo: SessionSubject,
     private confirmationDialog: ConfirmationDialogService,
     private alertService: AlertService,
+    private notificationService: NotificationService,
   ) {}
 
   /**
@@ -70,10 +72,17 @@ export class NotificationSettingsComponent implements OnInit {
 
   private async loadNotificationConfig() {
     try {
-      return await this.entityMapper.load<NotificationConfig>(
-        NotificationConfig,
-        this.userId,
-      );
+      const notificationConfig =
+        await this.entityMapper.load<NotificationConfig>(
+          NotificationConfig,
+          this.userId,
+        );
+
+      if (!notificationConfig) {
+        return null;
+      }
+
+      return notificationConfig;
     } catch (err) {
       Logging.debug(err);
 
@@ -84,7 +93,12 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {
-    this.isPushNotificationEnabled = event.checked;
+    if (event.checked) {
+      this.notificationService.registerDevice();
+    } else {
+      this.notificationService.unregisterDevice();
+    }
+
     let notificationConfig = await this.loadNotificationConfig();
 
     if (!notificationConfig) {
