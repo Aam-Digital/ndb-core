@@ -5,6 +5,10 @@ import { PublicFormConfig } from "../public-form-config";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatIconButton } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { AlertService } from "app/core/alerts/alert.service";
 
 @Component({
   selector: "app-edit-publicform-route",
@@ -14,6 +18,9 @@ import { MatInputModule } from "@angular/material/input";
     ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
+    FontAwesomeModule,
+    MatIconButton,
+    MatTooltipModule,
   ],
   templateUrl: "./edit-publicform-route.component.html",
   styleUrls: ["./edit-publicform-route.component.scss"],
@@ -23,7 +30,10 @@ export class EditPublicformRouteComponent
   implements OnInit
 {
   form: FormGroup;
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private alertService: AlertService,
+  ) {
     super();
   }
 
@@ -43,8 +53,15 @@ export class EditPublicformRouteComponent
   }
 
   getPrefixValue(): string {
-    const currentUrl = window.location.host;
+    const currentUrl = window.location.origin;
 
     return `${currentUrl}/public-form/`;
+  }
+  copyToClipboard(): void {
+    const fullUrl =
+      this.getPrefixValue() + (this.form.get("route")?.value || "");
+    navigator.clipboard.writeText(fullUrl).then(() => {
+      this.alertService.addInfo("Link copied: " + fullUrl);
+    });
   }
 }
