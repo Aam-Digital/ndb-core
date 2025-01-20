@@ -11,8 +11,13 @@ button {
   margin-bottom: 10px;
 }
 
-.public-form-container{
-  text-align: center;
+.public-form-container {
+  display: flex;
+  justify-content: center;
+}
+
+.card-container {
+  width: 100%;
 }
 
 .public-form-image {

@@ -8,18 +8,29 @@ import { EntityFormService } from "app/core/common-components/entity-form/entity
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { MockEntityMapperService } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { FieldGroup } from "../../../core/entity-details/form/field-group";
 
 describe("EditPublicFormColumnsComponent", () => {
   let component: EditPublicFormColumnsComponent;
   let fixture: ComponentFixture<EditPublicFormColumnsComponent>;
   let mockEntityRegistry: Partial<EntityRegistry>;
   let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
+  let entityMapper: MockEntityMapperService;
 
   const testColumns = [
     {
       fields: ["name", "phone"],
     },
   ];
+
+  const oldColumnConfig: string[][] = [["name", "gender"], ["other"]];
+  const newColumnConfig: FieldGroup[] = [
+    { fields: ["name", "gender"], header: null },
+    { fields: ["other"], header: null },
+  ];
+
   beforeEach(() => {
     let mockDatabase: jasmine.SpyObj<Database>;
     mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
@@ -41,6 +52,7 @@ describe("EditPublicFormColumnsComponent", () => {
         { provide: Database, useValue: mockDatabase },
         { provide: EntityRegistry, useValue: mockEntityRegistry },
         { provide: EntityFormService, useValue: mockEntityFormService },
+        { provide: EntityMapperService, useValue: entityMapper },
       ],
     }).compileComponents();
   });
@@ -56,5 +68,13 @@ describe("EditPublicFormColumnsComponent", () => {
 
   it("should create the component", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should migrate old columns config to new columns config", () => {
+    component.formControl.setValue(oldColumnConfig as any);
+
+    component.ngOnInit();
+
+    expect(component.formConfig.fieldGroups).toEqual(newColumnConfig);
   });
 });
