@@ -4,7 +4,7 @@ import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-fdescribe("EditPublicformRouteComponent", () => {
+describe("EditPublicformRouteComponent", () => {
   let component: EditPublicformRouteComponent;
   let fixture: ComponentFixture<EditPublicformRouteComponent>;
 
