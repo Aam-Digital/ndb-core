@@ -3,7 +3,7 @@ import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import { AngularFireMessaging } from "@angular/fire/compat/messaging";
-import { mergeMap, Subscription } from "rxjs";
+import { firstValueFrom, mergeMap, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
 
@@ -73,9 +73,6 @@ export class NotificationService {
         }
       },
     });
-    // try to register device
-
-    // show error message if not successful
   }
 
   /**
@@ -119,66 +116,52 @@ export class NotificationService {
    * @param notificationToken - The FCM token for the device.
    * @param deviceName - The name of the device.
    */
-  async registerNotificationToken(
+  registerNotificationToken(
     notificationToken: string,
     deviceName: string = "web", // todo something useful here
-  ): Promise<void> {
+  ): Promise<Object> {
     const payload = { deviceToken: notificationToken, deviceName };
     const headers = {};
     this.authService.addAuthHeader(headers);
 
-    this.httpClient
-      .post(this.NOTIFICATION_API_URL + "/device", payload, { headers })
-      .subscribe({
-        next: () => {
-          Logging.log("Device registration successful.");
-        },
-        error: (err) => {
-          Logging.error("Device registration failed");
-        },
-      });
+    return firstValueFrom(
+      this.httpClient.post(this.NOTIFICATION_API_URL + "/device", payload, {
+        headers,
+      }),
+    );
   }
 
   /**
    * Unregister the device with the backend using the FCM token.
    * @param notificationToken - The FCM token for the device.
    */
-  async unRegisterNotificationToken(notificationToken: string): Promise<void> {
+  unRegisterNotificationToken(notificationToken: string): Promise<Object> {
     const headers = {};
     this.authService.addAuthHeader(headers);
 
-    this.httpClient
-      .delete(this.NOTIFICATION_API_URL + "/device/" + notificationToken, {
-        headers,
-      })
-      .subscribe({
-        next: () => {
-          Logging.log("Device un-registration successful.");
+    return firstValueFrom(
+      this.httpClient.delete(
+        this.NOTIFICATION_API_URL + "/device/" + notificationToken,
+        {
+          headers,
         },
-        error: (err) => {
-          Logging.error("Device un-registration failed");
-        },
-      });
+      ),
+    );
   }
 
-  async testNotification(): Promise<void> {
+  testNotification(): Promise<Object> {
     const headers = {};
     this.authService.addAuthHeader(headers);
 
-    this.httpClient
-      .post(this.NOTIFICATION_API_URL + "/message/device-test", null, {
-        headers,
-      })
-      .subscribe({
-        next: () => {
-          this.alertService.addInfo(
-            $localize`Test notification sent to devices.`,
-          );
+    return firstValueFrom(
+      this.httpClient.post(
+        this.NOTIFICATION_API_URL + "/message/device-test",
+        null,
+        {
+          headers,
         },
-        error: (err) => {
-          Logging.error("Device test failed", err);
-        },
-      });
+      ),
+    );
   }
 
   /**
