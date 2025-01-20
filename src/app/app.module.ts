@@ -21,8 +21,10 @@ import { APP_INITIALIZER, LOCALE_ID, NgModule } from "@angular/core";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
+
 import { SessionModule } from "./core/session/session.module";
 import { LatestChangesModule } from "./core/ui/latest-changes/latest-changes.module";
+
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import {
   ServiceWorkerModule,
