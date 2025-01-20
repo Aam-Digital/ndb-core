@@ -21,7 +21,6 @@ import {
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { Logging } from "app/core/logging/logging.service";
 import {
   NotificationChannel,
   NotificationRule,
@@ -34,7 +33,10 @@ import {
   NotificationRuleCondition,
 } from "./notification-condition/notification-condition.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
+import { NotificationService } from "../notification.service";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
+import { Logging } from "../../../core/logging/logging.service";
 import { NotificationConditionEditorComponent } from "./notification-condition/notification-condition-editor/notification-condition-editor.component";
 
 /**
@@ -57,6 +59,7 @@ import { NotificationConditionEditorComponent } from "./notification-condition/n
     MatSelect,
     CdkAccordionModule,
     NotificationConditionComponent,
+    MatProgressSpinnerModule,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
@@ -79,6 +82,8 @@ export class NotificationRuleComponent implements OnChanges {
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
   ];
+
+  constructor(private notificationService: NotificationService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -174,15 +179,10 @@ export class NotificationRuleComponent implements OnChanges {
   /**
    * Sends a test notification.
    */
-  async testNotification() {
-    const NotificationToken = this.getNotificationToken();
-    // TODO: Implement the test notification logic when the PR #2692 merged, and if the user have notificationToken then only trigger the API call to trigger the test notification.
-    Logging.log("Notification settings test successful.");
-  }
-
-  private async getNotificationToken() {
-    // TODO: Need to trigger the getNotificationToken(Implement this when the PR #2692 merged) function to allow the user to browser notification permission and update the notification token.
-    Logging.log("Get the notification token.");
+  testNotification() {
+    this.notificationService.testNotification().catch((reason) => {
+      Logging.error("Could not send test notification: " + reason.message);
+    });
   }
 
   addNewNotificationCondition() {
