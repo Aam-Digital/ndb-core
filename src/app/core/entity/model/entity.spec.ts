@@ -59,12 +59,14 @@ describe("Entity", () => {
     expect(otherEntity).toBeInstanceOf(TestEntity);
   });
 
-  it("should use entity type as default label if none is explicitly configured", () => {
+  it("should use label as default for labelPlural if none is explicitly configured", () => {
     @DatabaseEntity("TestEntityForLabel")
-    class TestEntity extends Entity {}
+    class TestEntity extends Entity {
+      static override label = "X";
+    }
 
-    expect(TestEntity.label).toBe("TestEntityForLabel");
-    expect(TestEntity.labelPlural).toBe("TestEntityForLabel");
+    expect(TestEntity.label).toBe("X");
+    expect(TestEntity.labelPlural).toBe("X");
   });
 
   it("should return the route based on entity type name", () => {
