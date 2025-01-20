@@ -1,1 +1,7 @@
-<p>edit-publicform-route works!</p>
+<form [formGroup]="form" [class.disabled]="formControl.disabled">
+  <mat-form-field appearance="outline">
+    <mat-label>Form Link ID</mat-label>
+    <span class="prefix-text" matTextPrefix>{{ getPrefixValue() }}&nbsp;</span>
+    <input matInput formControlName="route" placeholder="Enter Form Link ID" />
+  </mat-form-field>
+</form>

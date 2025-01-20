@@ -47,6 +47,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
         "app/features/public-form/edit-prefilled-values/edit-prefilled-values.component"
       ).then((c) => c.EditPrefilledValuesComponent),
   ],
+  [
+    "EditPublicformRouteComponent",
+    () =>
+      import(
+        "app/features/public-form/edit-publicform-route/edit-publicform-route.component"
+      ).then((c) => c.EditPublicformRouteComponent),
+  ],
 ];
 
 const viewConfigs: ViewConfig[] = [
@@ -76,7 +83,13 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["route", "title"],
+                    fields: [
+                      {
+                        id: "route",
+                        editComponent: "EditPublicformRouteComponent",
+                      },
+                      "title",
+                    ],
                   },
                   {
                     fields: [
