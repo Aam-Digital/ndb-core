@@ -73,9 +73,6 @@ export class NotificationRuleComponent implements OnChanges {
 
   @Output() removeNotificationCondition = new EventEmitter<any>();
 
-  @Output() notificationConditionValueChange =
-    new EventEmitter<NotificationRule>();
-
   form: FormGroup;
   readonly dialog = inject(MatDialog);
 
@@ -194,15 +191,11 @@ export class NotificationRuleComponent implements OnChanges {
     (this.form.get("conditions") as FormArray).push(newCondition);
   }
 
-  updateNotificationCondition(updateNotificationCondition: NotificationRule) {
-    this.notificationConditionValueChange.emit(updateNotificationCondition);
-  }
-
   removeCondition(notificationConditionIndex: number) {
     (this.form.get("conditions") as FormArray).removeAt(
       notificationConditionIndex,
     );
-    this.removeNotificationCondition.emit();
+    this.updateValue(this.form.value);
   }
 
   /**
@@ -227,19 +220,19 @@ export class NotificationRuleComponent implements OnChanges {
    * @param result
    * @private
    */
-  private handleConditionsJsonEditorPopupClose(result: any[]) {
+  private handleConditionsJsonEditorPopupClose(result: string[]) {
     if (!result) {
       return;
     }
 
-    const conditions = this.parseConditionsObjectToArray(result);
+    const parsedObject = this.parseConditionsObjectToArray(result);
     const conditionsFormArray = this.form.get("conditions") as FormArray;
     conditionsFormArray.clear();
-    conditions.forEach((c) => {
+    parsedObject.forEach((condition) => {
       const conditionGroup = new FormGroup({
-        entityTypeField: new FormControl(c.entityTypeField),
-        operator: new FormControl(c.operator),
-        condition: new FormControl(c.condition),
+        entityTypeField: new FormControl(condition.entityTypeField),
+        operator: new FormControl(condition.operator),
+        condition: new FormControl(condition.condition),
       });
       conditionsFormArray.push(conditionGroup);
     });
