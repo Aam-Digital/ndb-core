@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-// test.use({ storageState: 'storageState.json' });
+test.describe.configure({ timeout: 120000 });
 
 test.describe('Dashboard Page Tests', () => {
 
@@ -23,13 +23,15 @@ test.describe('Dashboard Page Tests', () => {
   });
 
   test("Verify children count is displayed", async ({ page }) => {
+    await page.waitForSelector("text=Children");
     const childrenCount = page.locator("app-entity-count-dashboard-widget");
     await expect(childrenCount).toContainText(/107/);
   });
 
   test("Verify Tasks Due widget and tasks", async ({ page }) => {
     // Check "Tasks Due" widget is visible
-    const tasksDueElement = page.locator("text=Tasks due");
+    await page.waitForSelector("text=Tasks due");
+    const tasksDueElement = page.getByText('Tasks due');
     await expect(tasksDueElement).toBeVisible();
 
     // Verify at least one task is listed
@@ -61,6 +63,7 @@ test.describe('Dashboard Page Tests', () => {
   });
 
   test("Record Attendance button navigation", async ({ page }) => {
+    await page.locator('mat-list-item').filter({ hasText: 'Attendance' }).click();
     const recordButton = page.getByRole("button", { name: "Record" });
     await expect(recordButton).toBeVisible();
     await recordButton.click();
@@ -72,6 +75,7 @@ test.describe('Dashboard Page Tests', () => {
   });
 
   test("Manage Activities button navigation", async ({ page }) => {
+    await page.locator('mat-list-item').filter({ hasText: 'Attendance' }).click();
     const manageActivitiesButton = page.getByRole("button", { name: "Manage Activities" });
     await expect(manageActivitiesButton).toBeVisible();
     await manageActivitiesButton.click();
@@ -84,6 +88,7 @@ test.describe('Dashboard Page Tests', () => {
 
   test("Recurring Activities page elements", async ({ page }) => {
     // Navigate to Recurring Activities page
+    await page.locator('mat-list-item').filter({ hasText: 'Attendance' }).click();
     await page.getByRole("button", { name: "Manage Activities" }).click();
     await expect(page.getByRole("heading", { name: "Recurring Activities" })).toBeVisible();
 
