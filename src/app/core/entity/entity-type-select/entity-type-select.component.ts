@@ -1,4 +1,4 @@
-import { Component, inject, Input } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
@@ -17,13 +17,19 @@ import { MatFormFieldControl } from "@angular/material/form-field";
     { provide: MatFormFieldControl, useExisting: EntityTypeSelectComponent },
   ],
 })
-export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
-  EntityConstructor,
-  string
-> {
+export class EntityTypeSelectComponent
+  extends BasicAutocompleteComponent<EntityConstructor, string>
+  implements OnInit
+{
   @Input() override multi = false;
   @Input() override placeholder =
     $localize`:EntityTypeSelect placeholder:Select Entity Type`;
+
+  /**
+   * whether to include entity types without a human-readable label
+   * (usually only used internally for technical purposes)
+   */
+  @Input() showInternalTypes: boolean = false;
 
   private entityRegistry = inject(EntityRegistry);
 
@@ -33,6 +39,7 @@ export class EntityTypeSelectComponent extends BasicAutocompleteComponent<
   override ngOnInit() {
     this.options = this.entityRegistry
       .getEntityTypes(true)
+      .filter(({ value }) => this.showInternalTypes || !!value.label)
       .map(({ value }) => value);
 
     super.ngOnInit();
