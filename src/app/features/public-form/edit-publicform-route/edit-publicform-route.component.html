@@ -6,7 +6,13 @@
       floatLabel="always"
     >
       <mat-label i18n>Form Link ID</mat-label>
-      <span i18n matTextPrefix>{{ getPrefixValue() }}&nbsp;</span>
+      <span
+        i18n
+        matTextPrefix
+        [ngClass]="{ 'prefix-text': !formControl.disabled }"
+      >
+        {{ getPrefixValue() }}&nbsp;
+      </span>
       <input
         matInput
         formControlName="route"

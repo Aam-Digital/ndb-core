@@ -89,6 +89,7 @@ const viewConfigs: ViewConfig[] = [
                         editComponent: "EditPublicformRouteComponent",
                       },
                       "title",
+                      "description",
                     ],
                   },
                   {
@@ -100,7 +101,6 @@ const viewConfigs: ViewConfig[] = [
                         If you are seeing problems submitting the form, please contact your **technical support team**.`,
                       },
                       "entity",
-                      "description",
                       "logo",
                     ],
                   },
