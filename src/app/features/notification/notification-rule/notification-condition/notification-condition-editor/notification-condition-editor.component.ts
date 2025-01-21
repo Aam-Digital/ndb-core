@@ -24,6 +24,8 @@ import { JsonEditorComponent } from "app/core/common-components/json-editor/json
 export class NotificationConditionEditorComponent {
   jsonData: object;
 
+  isValidJson: boolean = true;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<NotificationConditionEditorComponent>,
@@ -37,6 +39,14 @@ export class NotificationConditionEditorComponent {
    */
   onJsonChange(json: object) {
     this.jsonData = json;
+  }
+
+  /**
+   * Handle to check if the JSON is valid.
+   * @param isValid The new json data.
+   */
+  onJsonIsValidChange(isValid: boolean) {
+    this.isValidJson = isValid;
   }
 
   /**

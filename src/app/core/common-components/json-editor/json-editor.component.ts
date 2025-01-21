@@ -7,11 +7,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import {
-  Content,
-  ContentErrors,
-  createJSONEditor,
-} from "vanilla-jsoneditor/standalone.js";
+import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 import { AlertService } from "../../alerts/alert.service";
 
 /**
@@ -22,6 +18,7 @@ import { AlertService } from "../../alerts/alert.service";
   standalone: true,
   imports: [CommonModule],
   templateUrl: "./json-editor.component.html",
+  styleUrl: "./json-editor.component.scss",
 })
 export class JsonEditorComponent {
   /**
@@ -29,13 +26,11 @@ export class JsonEditorComponent {
    */
   @Input() value: object = {};
 
-  @Input() height = "65vh";
-
   @Output() valueChange = new EventEmitter<any>();
 
-  @ViewChild("json", { static: true }) json!: ElementRef<HTMLDivElement>;
+  @Output() isValidChange = new EventEmitter<boolean>();
 
-  private jsonEditor: any;
+  @ViewChild("json", { static: true }) json!: ElementRef<HTMLDivElement>;
 
   constructor(private alertService: AlertService) {}
 
@@ -45,27 +40,44 @@ export class JsonEditorComponent {
    * creates a JSON editor instance and sets up the onChange event handler.
    */
   ngAfterViewInit(): void {
-    this.jsonEditor = createJSONEditor({
+    createJSONEditor({
       target: this.json.nativeElement,
       props: {
         content: { json: this.value || {} },
-        onChange: (
-          updatedContent: Content,
-          {
-            contentErrors,
-          }: {
-            contentErrors: ContentErrors | undefined;
-          },
-        ) => {
+        mode: "text",
+        onChange: (updatedContent: Content) => {
           if ("json" in updatedContent) {
-            this.value = updatedContent.json as object;
-            this.valueChange.emit(this.value);
+            this.handleJSONChange(updatedContent.json as object);
           }
-          if (contentErrors) {
-            this.alertService.addWarning($localize`Invalid JSON`);
+          if ("text" in updatedContent && updatedContent.text) {
+            this.handleTextChange(updatedContent.text);
           }
         },
       },
     });
+  }
+
+  /**
+   * Handle the change event from the JSON editor.
+   * @param updatedJSON The updated JSON data.
+   */
+  handleJSONChange(updatedJSON: object): void {
+    this.value = updatedJSON;
+    this.valueChange.emit(this.value);
+  }
+
+  /**
+   * Handle the change event from the text editor.
+   * @param updatedText The updated text data.
+   */
+  handleTextChange(updatedText: string): void {
+    try {
+      this.value = updatedText ? JSON.parse(updatedText) : {};
+      this.valueChange.emit(this.value);
+      this.isValidChange.emit(true);
+    } catch (e) {
+      this.isValidChange.emit(false);
+      this.alertService.addWarning("Invalid JSON");
+    }
   }
 }

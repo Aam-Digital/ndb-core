@@ -6,13 +6,21 @@
     <app-json-editor
       [value]="jsonData"
       (valueChange)="onJsonChange($event)"
+      (isValidChange)="onJsonIsValidChange($event)"
     ></app-json-editor>
 
     <div class="flex-row json-editor-actions">
       <button mat-raised-button (click)="onJsonValueCancel()" i18n>
         Cancel
       </button>
-      <button mat-raised-button (click)="onJsonValueSave()" i18n>Save</button>
+      <button
+        [disabled]="!isValidJson"
+        mat-raised-button
+        (click)="onJsonValueSave()"
+        i18n
+      >
+        Save
+      </button>
     </div>
   </div>
 </mat-dialog-content>
