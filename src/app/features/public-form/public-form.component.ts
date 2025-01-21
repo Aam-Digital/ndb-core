@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { PouchDatabase } from "../../core/database/pouch-database";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { PublicFormConfig } from "./public-form-config";
@@ -56,6 +56,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     private configService: ConfigService,
     private snackbar: MatSnackBar,
     private ability: EntityAbility,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -71,7 +72,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   async submit() {
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.snackbar.open($localize`Successfully submitted form`);
+      this.router.navigate(["/submission-success"]);
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
         this.snackbar.open(
@@ -81,8 +82,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       }
       throw e;
     }
-
-    await this.initForm();
   }
 
   async reset() {
