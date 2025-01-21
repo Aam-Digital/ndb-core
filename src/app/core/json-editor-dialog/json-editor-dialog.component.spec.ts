@@ -31,26 +31,46 @@ describe("JsonEditorDialogComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should update the json data when json changed", () => {
-    const json = { key: "value" };
-    component.onJsonChange(json);
-    expect().nothing();
-  });
-
-  it("should set json data from dialog data", () => {
-    const data = { value: { foo: "bar" } };
+  it("should initialize jsonData from dialog data", () => {
+    const data = { value: { key: "value" } };
     component = new JsonEditorDialogComponent(data, dialogRef);
     expect(component.jsonData).toEqual(data.value);
   });
 
-  it("should set json data to empty object if dialog data is not provided", () => {
+  it("should set jsonData to undefined if dialog data is not provided", () => {
     component = new JsonEditorDialogComponent(undefined, dialogRef);
     expect(component.jsonData).toBeUndefined();
   });
 
-  it("should set json data to empty object if dialog data value is null", () => {
+  it("should set jsonData to null if dialog data value is null", () => {
     const data = { value: null };
     component = new JsonEditorDialogComponent(data, dialogRef);
     expect(component.jsonData).toBeNull();
+  });
+
+  it("should update jsonData when onJsonChange is called", () => {
+    const newJson = { updatedKey: "updatedValue" };
+    component.onJsonChange(newJson);
+    expect(component.jsonData).toEqual(newJson);
+  });
+
+  it("should update isValidJson when onJsonIsValidChange is called", () => {
+    component.onJsonIsValidChange(false);
+    expect(component.isValidJson).toBeFalse();
+
+    component.onJsonIsValidChange(true);
+    expect(component.isValidJson).toBeTrue();
+  });
+
+  it("should close dialog with updated jsonData when onJsonValueSave is called", () => {
+    const jsonData = { key: "value" };
+    component.jsonData = jsonData;
+    component.onJsonValueSave();
+    expect(dialogRef.close).toHaveBeenCalledWith(jsonData);
+  });
+
+  it("should close dialog with null when onJsonValueCancel is called", () => {
+    component.onJsonValueCancel();
+    expect(dialogRef.close).toHaveBeenCalledWith(null);
   });
 });
