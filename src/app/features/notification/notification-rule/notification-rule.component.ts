@@ -37,7 +37,7 @@ import { NotificationService } from "../notification.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
 import { Logging } from "../../../core/logging/logging.service";
-import { NotificationConditionEditorComponent } from "./notification-condition/notification-condition-editor/notification-condition-editor.component";
+import { JsonEditorDialogComponent } from "../../../core/json-editor-dialog/json-editor-dialog.component";
 
 /**
  * Configure a single notification rule.
@@ -203,7 +203,7 @@ export class NotificationRuleComponent implements OnChanges {
    */
   openConditionsInJsonEditorPopup() {
     const notificationConditions = this.form.get("conditions")?.value;
-    const dialogRef = this.dialog.open(NotificationConditionEditorComponent, {
+    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
       data: {
         value: this.parseConditionsArrayToObject(notificationConditions) ?? {},
         closeButton: true,

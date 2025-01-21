@@ -9,7 +9,7 @@ import { DialogCloseComponent } from "app/core/common-components/dialog-close/di
 import { JsonEditorComponent } from "app/core/common-components/json-editor/json-editor.component";
 
 @Component({
-  selector: "app-notification-condition-editor",
+  selector: "app-json-editor-dialog",
   standalone: true,
   imports: [
     JsonEditorComponent,
@@ -18,17 +18,17 @@ import { JsonEditorComponent } from "app/core/common-components/json-editor/json
     MatButtonModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: "./notification-condition-editor.component.html",
-  styleUrl: "./notification-condition-editor.component.scss",
+  templateUrl: "./json-editor-dialog.component.html",
+  styleUrl: "./json-editor-dialog.component.scss",
 })
-export class NotificationConditionEditorComponent {
+export class JsonEditorDialogComponent {
   jsonData: object;
 
   isValidJson: boolean = true;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<NotificationConditionEditorComponent>,
+    private dialogRef: MatDialogRef<JsonEditorDialogComponent>,
   ) {
     this.jsonData = data?.value;
   }

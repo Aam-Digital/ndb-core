@@ -93,7 +93,6 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
       this.isValidChange.emit(true);
     } catch (e) {
       this.isValidChange.emit(false);
-      this.alertService.addWarning("Invalid JSON");
     }
   }
 }

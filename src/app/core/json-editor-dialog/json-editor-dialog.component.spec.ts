@@ -1,33 +1,28 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { NotificationConditionEditorComponent } from "./notification-condition-editor.component";
+import { JsonEditorDialogComponent } from "./json-editor-dialog.component";
 import { MockedTestingModule } from "app/utils/mocked-testing.module";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 
-describe("NotificationConditionEditorComponent", () => {
-  let component: NotificationConditionEditorComponent;
-  let fixture: ComponentFixture<NotificationConditionEditorComponent>;
-  let dialogRef: jasmine.SpyObj<
-    MatDialogRef<NotificationConditionEditorComponent>
-  >;
+describe("JsonEditorDialogComponent", () => {
+  let component: JsonEditorDialogComponent;
+  let fixture: ComponentFixture<JsonEditorDialogComponent>;
+  let dialogRef: jasmine.SpyObj<MatDialogRef<JsonEditorDialogComponent>>;
 
   beforeEach(async () => {
     const dialogRefSpy = jasmine.createSpyObj("MatDialogRef", ["close"]);
 
     await TestBed.configureTestingModule({
-      imports: [
-        NotificationConditionEditorComponent,
-        MockedTestingModule.withState(),
-      ],
+      imports: [JsonEditorDialogComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: MatDialogRef, useValue: dialogRefSpy },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(NotificationConditionEditorComponent);
+    fixture = TestBed.createComponent(JsonEditorDialogComponent);
     component = fixture.componentInstance;
     dialogRef = TestBed.inject(MatDialogRef) as jasmine.SpyObj<
-      MatDialogRef<NotificationConditionEditorComponent>
+      MatDialogRef<JsonEditorDialogComponent>
     >;
     fixture.detectChanges();
   });
@@ -36,7 +31,7 @@ describe("NotificationConditionEditorComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should close dialog when json is changed", () => {
+  it("should update the json data when json changed", () => {
     const json = { key: "value" };
     component.onJsonChange(json);
     expect().nothing();
@@ -44,18 +39,18 @@ describe("NotificationConditionEditorComponent", () => {
 
   it("should set json data from dialog data", () => {
     const data = { value: { foo: "bar" } };
-    component = new NotificationConditionEditorComponent(data, dialogRef);
+    component = new JsonEditorDialogComponent(data, dialogRef);
     expect(component.jsonData).toEqual(data.value);
   });
 
   it("should set json data to empty object if dialog data is not provided", () => {
-    component = new NotificationConditionEditorComponent(undefined, dialogRef);
+    component = new JsonEditorDialogComponent(undefined, dialogRef);
     expect(component.jsonData).toBeUndefined();
   });
 
   it("should set json data to empty object if dialog data value is null", () => {
     const data = { value: null };
-    component = new NotificationConditionEditorComponent(data, dialogRef);
+    component = new JsonEditorDialogComponent(data, dialogRef);
     expect(component.jsonData).toBeNull();
   });
 });
