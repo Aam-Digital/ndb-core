@@ -2,13 +2,18 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
   Output,
   ViewChild,
+  Optional,
+  Self,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 import { AlertService } from "../../alerts/alert.service";
+import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
+import { NgControl, NgForm, FormGroupDirective } from "@angular/forms";
+import { ErrorStateMatcher } from "@angular/material/core";
+import { MatFormFieldControl } from "@angular/material/form-field";
 
 /**
  * Component for editing JSON data.
@@ -19,20 +24,31 @@ import { AlertService } from "../../alerts/alert.service";
   imports: [CommonModule],
   templateUrl: "./json-editor.component.html",
   styleUrl: "./json-editor.component.scss",
+  providers: [
+    { provide: MatFormFieldControl, useExisting: JsonEditorComponent },
+  ],
 })
-export class JsonEditorComponent {
-  /**
-   * JSON value to be edited by the user.
-   */
-  @Input() value: object = {};
-
-  @Output() valueChange = new EventEmitter<any>();
-
+export class JsonEditorComponent extends CustomFormControlDirective<object> {
   @Output() isValidChange = new EventEmitter<boolean>();
 
   @ViewChild("json", { static: true }) json!: ElementRef<HTMLDivElement>;
 
-  constructor(private alertService: AlertService) {}
+  constructor(
+    private alertService: AlertService,
+    elementRef: ElementRef<HTMLElement>,
+    errorStateMatcher: ErrorStateMatcher,
+    @Optional() @Self() ngControl: NgControl,
+    @Optional() parentForm: NgForm,
+    @Optional() parentFormGroup: FormGroupDirective,
+  ) {
+    super(
+      elementRef,
+      errorStateMatcher,
+      ngControl,
+      parentForm,
+      parentFormGroup,
+    );
+  }
 
   /**
    * Initialize the JSON editor.
