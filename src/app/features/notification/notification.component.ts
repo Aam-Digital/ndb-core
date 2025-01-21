@@ -64,7 +64,7 @@ export class NotificationComponent implements OnInit {
    * Get the logged-in user id
    */
   private get userId(): string | undefined {
-    return this.sessionInfo.value?.entityId;
+    return this.sessionInfo.value?.id;
   }
 
   /**
