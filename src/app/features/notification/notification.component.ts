@@ -15,6 +15,7 @@ import { closeOnlySubmenu } from "./close-only-submenu";
 import { Router, RouterLink } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../core/entity/model/entity-update";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 
 @UntilDestroy()
 @Component({
@@ -47,6 +48,7 @@ export class NotificationComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
     private router: Router,
+    private entityRegistry: EntityRegistry,
   ) {}
 
   ngOnInit(): void {
@@ -138,17 +140,13 @@ export class NotificationComponent implements OnInit {
   private generateNotificationActionURL(
     notification: NotificationEvent,
   ): string {
-    const routes = this.router.config;
     let actionURL = "";
-
-    const entityRoute = routes.find(
-      (route) => route.data?.config?.entityType === notification.entityType,
-    );
+    const entityRoute = this.entityRegistry.get(notification.entityType);
 
     switch (notification.notificationType) {
       case "entity_change":
         if (entityRoute) {
-          actionURL = `/${entityRoute.path}`;
+          actionURL = `/${entityRoute.route}`;
         }
         break;
       default:
