@@ -146,7 +146,7 @@ export class NotificationComponent implements OnInit {
     switch (notification.notificationType) {
       case "entity_change":
         if (entityRoute) {
-          actionURL = `/${entityRoute.route}`;
+          actionURL = `/${entityRoute?.route}`;
         }
         break;
       default:
