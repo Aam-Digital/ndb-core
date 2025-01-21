@@ -152,7 +152,7 @@ export class NotificationComponent implements OnInit {
         }
         break;
       default:
-        break;
+        actionURL = notification.actionURL;
     }
 
     return actionURL;
