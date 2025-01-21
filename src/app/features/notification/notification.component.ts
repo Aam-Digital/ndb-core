@@ -64,7 +64,7 @@ export class NotificationComponent implements OnInit {
    * Get the logged-in user id
    */
   private get userId(): string | undefined {
-    return this.sessionInfo.value?.id;
+    return this.sessionInfo.value?.entityId;
   }
 
   /**
@@ -178,8 +178,10 @@ export class NotificationComponent implements OnInit {
     event.title = "Test Notification";
     event.body = "This is a test notification.";
     event.notificationFor = this.userId;
+    event.notificationType = "entity_change";
+    event.entityType = "School";
     if (this.testEventTypeToggle) {
-      event.actionURL = "child/1";
+      event.actionURL = "/school";
       event.title = event.title + " (with action)";
     }
 
