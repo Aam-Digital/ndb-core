@@ -236,8 +236,6 @@ export class NotificationRuleComponent implements OnChanges {
       });
       conditionsFormArray.push(conditionGroup);
     });
-
-    this.updateValue(this.form.value);
   }
 
   /**
