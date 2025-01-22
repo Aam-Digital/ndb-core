@@ -1,16 +1,20 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
-  Output,
   ViewChild,
   Optional,
   Self,
+  Input,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
-import { NgControl, NgForm, FormGroupDirective } from "@angular/forms";
+import {
+  NgControl,
+  NgForm,
+  FormGroupDirective,
+  FormControl,
+} from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
 
@@ -28,9 +32,9 @@ import { MatFormFieldControl } from "@angular/material/form-field";
   ],
 })
 export class JsonEditorComponent extends CustomFormControlDirective<object> {
-  @Output() isValidChange = new EventEmitter<boolean>();
-
   @ViewChild("json", { static: true }) json!: ElementRef<HTMLDivElement>;
+
+  @Input() formControl!: FormControl;
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
@@ -63,7 +67,7 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
     createJSONEditor({
       target: this.json.nativeElement,
       props: {
-        content: { json: this.value || {} },
+        content: { json: this.formControl?.value || {} },
         mode: "text",
         onChange: (updatedContent: Content) =>
           this.handleEditorChange(updatedContent),
@@ -89,7 +93,7 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
    * @param updatedJSON The updated JSON data.
    */
   handleJSONChange(updatedJSON: object): void {
-    this.writeValue(updatedJSON);
+    this.formControl?.setValue(updatedJSON);
   }
 
   /**
@@ -99,10 +103,10 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
   handleTextChange(updatedText: string): void {
     try {
       this.value = updatedText ? JSON.parse(updatedText) : {};
-      this.writeValue(this.value);
-      this.isValidChange.emit(true);
+      this.formControl?.setValue(this.value);
+      this.formControl?.setErrors(null);
     } catch (e) {
-      this.isValidChange.emit(false);
+      this.formControl?.setErrors({ invalidJson: true });
     }
   }
 }
