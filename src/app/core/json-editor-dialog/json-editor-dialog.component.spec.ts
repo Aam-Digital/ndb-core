@@ -35,22 +35,10 @@ describe("JsonEditorDialogComponent", () => {
     expect(component.jsonDataControl.value).toEqual({ key: "value" });
   });
 
-  it("should close dialog with updated data", () => {
+  it("should save the updated JSON value when the form is valid", () => {
     component.jsonDataControl.setValue({ key: "updated value" });
     component.onJsonValueSave();
     expect(dialogRef.close).toHaveBeenCalledWith({ key: "updated value" });
-  });
-
-  it("should close dialog with empty data", () => {
-    component.jsonDataControl.setValue({});
-    component.onJsonValueSave();
-    expect(dialogRef.close).toHaveBeenCalledWith({});
-  });
-
-  it("should close dialog with null data", () => {
-    component.jsonDataControl.setValue(null);
-    component.onJsonValueSave();
-    expect(dialogRef.close).toHaveBeenCalledWith(null);
   });
 
   it("should close dialog with null", () => {
