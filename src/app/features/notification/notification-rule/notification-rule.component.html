@@ -77,14 +77,6 @@
 
       <button
         mat-icon-button
-        (click)="testNotification()"
-        matTooltip="Test notification"
-        i18n-matTooltip
-      >
-        <fa-icon icon="paper-plane"></fa-icon>
-      </button>
-      <button
-        mat-icon-button
         [matTooltip]="
           notificationRuleItem?.expanded ? 'Collapse section' : 'Expand section'
         "
@@ -125,17 +117,30 @@
         [notificationRule]="value"
       />
     }
-    <button
-      mat-stroked-button
-      class="new-rule-condition-button"
-      color="accent"
-      [disabled]="!value.entityType"
-      (click)="addNewNotificationCondition()"
-      matTooltip="Define another condition of notifications for your user account"
-      i18n-matTooltip
-    >
-      <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-      <span i18n class="new-notification-rule">Add Notification Criteria</span>
-    </button>
+    <div class="flex-row align-center">
+      <button
+        mat-stroked-button
+        class="new-rule-condition-button"
+        color="accent"
+        [disabled]="!value.entityType"
+        (click)="addNewNotificationCondition()"
+        matTooltip="Define another condition of notifications for your user account"
+        i18n-matTooltip
+      >
+        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
+        <span i18n class="new-notification-rule"
+          >Add Notification Criteria</span
+        >
+      </button>
+
+      <button
+        mat-icon-button
+        (click)="testNotification()"
+        matTooltip="Test notification"
+        i18n-matTooltip
+      >
+        <fa-icon icon="paper-plane"></fa-icon>
+      </button>
+    </div>
   </div>
 }

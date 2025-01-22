@@ -94,9 +94,13 @@ export class NotificationComponent implements OnInit {
    * Filters notifications based on the sender and read status.
    */
   private filterUserNotifications(notifications: NotificationEvent[]) {
-    this.allNotifications = notifications.filter(
-      (notification) => notification.notificationFor === this.userId,
-    );
+    this.allNotifications = notifications
+      .filter((notification) => notification.notificationFor === this.userId)
+      .sort(
+        (notificationA, notificationB) =>
+          notificationB.created.at.getTime() -
+          notificationA.created.at.getTime(),
+      );
     this.unreadNotifications = notifications.filter(
       (notification) =>
         notification.notificationFor === this.userId &&
