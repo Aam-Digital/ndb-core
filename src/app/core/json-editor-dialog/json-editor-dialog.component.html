@@ -4,15 +4,13 @@
   }
   <div class="json-editor">
     <app-json-editor
-      [value]="jsonData"
-      (valueChange)="onJsonChange($event)"
-      (isValidChange)="onJsonIsValidChange($event)"
+      [formControl]="jsonDataControl"
       class="json-editor-dialog"
     ></app-json-editor>
 
     <div class="flex-row json-editor-actions">
       <button
-        [disabled]="!isValidJson"
+        [disabled]="jsonDataControl.invalid"
         mat-raised-button
         (click)="onJsonValueSave()"
         i18n
