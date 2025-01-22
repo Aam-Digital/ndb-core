@@ -10,6 +10,8 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
  */
 @DatabaseEntity("PublicFormConfig")
 export class PublicFormConfig extends Entity {
+  static override label = $localize`:PublicFormConfig:Public Form`;
+  static override labelPlural = $localize`:PublicFormConfig:Public Forms`;
   static override route = "admin/public-form";
   static override toStringAttributes = ["title"];
 
@@ -27,8 +29,6 @@ export class PublicFormConfig extends Entity {
   title: string;
 
   @DatabaseField({
-    label: $localize`:PublicFormConfig:Form Link ID`,
-    description: $localize`:PublicFormConfig:The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID)`,
     validators: {
       required: true,
     },
