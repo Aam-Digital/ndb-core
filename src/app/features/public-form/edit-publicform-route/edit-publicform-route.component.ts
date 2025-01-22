@@ -1,10 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+import { ReactiveFormsModule, Validators } from "@angular/forms";
 import { EditComponent } from "app/core/entity/default-datatype/edit-component";
 import { PublicFormConfig } from "../public-form-config";
 import { CommonModule } from "@angular/common";
@@ -36,12 +31,7 @@ export class EditPublicformRouteComponent
   extends EditComponent<string>
   implements OnInit
 {
-  form: FormGroup;
-
-  constructor(
-    private fb: FormBuilder,
-    private alertService: AlertService,
-  ) {
+  constructor(private alertService: AlertService) {
     super();
   }
 
@@ -50,14 +40,8 @@ export class EditPublicformRouteComponent
       route: this.formControl.getRawValue(),
     } as Partial<PublicFormConfig> as PublicFormConfig;
 
-    this.form = this.fb.group({
-      route: [publicFormConfig.route, Validators.required],
-    });
-
-    this.form.valueChanges.subscribe((value) => {
-      this.formControl.setValue(value.route);
-      this.formControl.markAsDirty();
-    });
+    this.formControl.setValidators([Validators.required]);
+    this.formControl.setValue(publicFormConfig.route);
   }
 
   getPrefixValue(): string {
@@ -65,9 +49,9 @@ export class EditPublicformRouteComponent
 
     return `${currentUrl}/public-form/`;
   }
+
   copyToClipboard(): void {
-    const fullUrl =
-      this.getPrefixValue() + (this.form.get("route")?.value || "");
+    const fullUrl = this.getPrefixValue() + (this.formControl.value || "");
     navigator.clipboard.writeText(fullUrl).then(() => {
       this.alertService.addInfo("Link copied: " + fullUrl);
     });
