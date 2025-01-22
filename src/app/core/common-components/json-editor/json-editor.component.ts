@@ -9,7 +9,6 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
-import { AlertService } from "../../alerts/alert.service";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { NgControl, NgForm, FormGroupDirective } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
@@ -34,7 +33,6 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
   @ViewChild("json", { static: true }) json!: ElementRef<HTMLDivElement>;
 
   constructor(
-    private alertService: AlertService,
     elementRef: ElementRef<HTMLElement>,
     errorStateMatcher: ErrorStateMatcher,
     @Optional() @Self() ngControl: NgControl,
@@ -91,8 +89,7 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
    * @param updatedJSON The updated JSON data.
    */
   handleJSONChange(updatedJSON: object): void {
-    this.value = updatedJSON;
-    this.valueChange.emit(this.value);
+    this.writeValue(updatedJSON);
   }
 
   /**
@@ -102,7 +99,7 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
   handleTextChange(updatedText: string): void {
     try {
       this.value = updatedText ? JSON.parse(updatedText) : {};
-      this.valueChange.emit(this.value);
+      this.writeValue(this.value);
       this.isValidChange.emit(true);
     } catch (e) {
       this.isValidChange.emit(false);
