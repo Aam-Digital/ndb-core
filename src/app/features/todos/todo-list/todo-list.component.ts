@@ -44,10 +44,9 @@ import { DisableEntityOperationDirective } from "../../../core/permissions/permi
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
 import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
-import { AbilityModule } from "@casl/angular";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
-import { EntityActionsMenuComponent } from "../../../core/entity-details/entity-actions-menu/entity-actions-menu.component";
 import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.service";
+import { AblePurePipe } from "@casl/angular";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -55,9 +54,8 @@ import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.se
   selector: "app-todo-list",
   templateUrl:
     "../../../core/entity-list/entity-list/entity-list.component.html",
-  standalone: true,
-
   imports: [
+    AblePurePipe,
     NgIf,
     NgStyle,
     MatButtonModule,
@@ -79,9 +77,7 @@ import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.se
     RouterLink,
     MatTooltipModule,
     EntityCreateButtonComponent,
-    AbilityModule,
     AsyncPipe,
-    EntityActionsMenuComponent,
     ViewActionsComponent,
   ],
 })

@@ -28,7 +28,6 @@ interface AttendanceWeekRow {
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
-  standalone: true,
   imports: [
     NgIf,
     MatTableModule,

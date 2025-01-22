@@ -22,7 +22,6 @@ import { Logging } from "../../logging/logging.service";
 
 @Component({
   selector: "app-setup-wizard",
-  standalone: true,
   imports: [
     CommonModule,
     MatStepper,

@@ -28,7 +28,6 @@ import { MatButtonModule } from "@angular/material/button";
   selector: "app-import-additional-actions",
   templateUrl: "./import-additional-actions.component.html",
   styleUrls: ["./import-additional-actions.component.scss"],
-  standalone: true,
   imports: [
     MatListModule,
     FontAwesomeModule,

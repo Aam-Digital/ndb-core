@@ -31,7 +31,6 @@ import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.compo
     EntityFormComponent,
     DisableEntityOperationDirective,
   ],
-  standalone: true,
 })
 export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() entity: E;

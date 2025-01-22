@@ -30,7 +30,6 @@ import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.compo
     FontAwesomeModule,
     NgTemplateOutlet,
   ],
-  standalone: true,
 })
 export class ViewTitleComponent implements AfterViewInit {
   @ViewChild("template") template: TemplateRef<any>;

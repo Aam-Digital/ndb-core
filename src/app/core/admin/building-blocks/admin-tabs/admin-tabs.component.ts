@@ -8,8 +8,6 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { AdminEntityFormComponent } from "../../admin-entity-details/admin-entity-form/admin-entity-form.component";
-import { AdminEntityPanelComponentComponent } from "../../admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component";
 import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";
@@ -43,11 +41,8 @@ import {
  */
 @Component({
   selector: "app-admin-tabs",
-  standalone: true,
   imports: [
     CommonModule,
-    AdminEntityFormComponent,
-    AdminEntityPanelComponentComponent,
     AdminSectionHeaderComponent,
     FaIconComponent,
     MatButton,
@@ -56,7 +51,6 @@ import {
     MatTabGroup,
     MatTabLabel,
     MatTooltip,
-    AdminTabTemplateDirective,
     DragDropModule,
   ],
   templateUrl: "./admin-tabs.component.html",

@@ -27,7 +27,6 @@ import { MenuItemComponent } from "../menu-item/menu-item.component";
     CommonModule,
     MenuItemComponent,
   ],
-  standalone: true,
 })
 export class NavigationComponent {
   /** The menu-item link (not the actual router link) that is currently active */

@@ -8,7 +8,6 @@ import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynam
   selector: "app-display-img",
   templateUrl: "./display-img.component.html",
   styleUrls: ["./display-img.component.scss"],
-  standalone: true,
   imports: [FaDynamicIconComponent, NgIf],
 })
 export class DisplayImgComponent implements OnChanges {

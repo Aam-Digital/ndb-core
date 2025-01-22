@@ -8,7 +8,6 @@ import { EntityFunctionPipe } from "./entity-function.pipe";
 @Component({
   selector: "app-readonly-function",
   template: `{{ entity | entityFunction: config }}`,
-  standalone: true,
   imports: [EntityFunctionPipe],
 })
 export class ReadonlyFunctionComponent extends ViewDirective<

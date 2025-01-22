@@ -18,7 +18,6 @@ import { ReactiveFormsModule } from "@angular/forms";
     MatLabel,
     ReactiveFormsModule,
   ],
-  standalone: true,
 })
 export class EditEntityTypeComponent
   extends EditComponent<string | string[]>

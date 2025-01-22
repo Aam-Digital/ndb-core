@@ -28,7 +28,6 @@ import { RouteTarget } from "../../../route-target";
     NgForOf,
     MatPaginatorModule,
   ],
-  standalone: true,
 })
 export class ConflictResolutionListComponent implements AfterViewInit {
   /** visible table columns in the template */

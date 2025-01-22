@@ -88,6 +88,7 @@ describe("DisableEntityOperationDirective", () => {
     }"
     #button
   ></button>`,
+  standalone: false,
 })
 class TestComponent {
   public entityConstructor = Entity;

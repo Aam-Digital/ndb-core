@@ -15,7 +15,6 @@ import { Logging } from "../../../logging/logging.service";
 @UntilDestroy()
 @Component({
   selector: "app-setup-wizard-button",
-  standalone: true,
   imports: [FaIconComponent, MatButton],
   templateUrl: "./setup-wizard-button.component.html",
   styleUrls: ["./setup-wizard-button.component.scss"],

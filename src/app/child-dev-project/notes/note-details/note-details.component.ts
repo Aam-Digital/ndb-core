@@ -20,10 +20,8 @@ import {
   EntityFormService,
 } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
-import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
-import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
 import { EntityFieldEditComponent } from "../../../core/common-components/entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
@@ -54,17 +52,14 @@ import { ViewActionsComponent } from "../../../core/common-components/view-actio
     ExportDataDirective,
     Angulartics2Module,
     EntityFormComponent,
-    DynamicComponentDirective,
     DialogButtonsComponent,
     MatMenuModule,
-    DialogCloseComponent,
     EntityArchivedInfoComponent,
     EntityFieldEditComponent,
     ViewTitleComponent,
     MatProgressBar,
     ViewActionsComponent,
   ],
-  standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
 export class NoteDetailsComponent

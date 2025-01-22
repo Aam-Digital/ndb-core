@@ -30,7 +30,6 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-admin-entity-general-settings",
-  standalone: true,
   templateUrl: "./admin-entity-general-settings.component.html",
   styleUrls: [
     "./admin-entity-general-settings.component.scss",

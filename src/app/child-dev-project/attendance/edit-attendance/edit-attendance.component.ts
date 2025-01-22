@@ -22,7 +22,6 @@ import { MatCardModule } from "@angular/material/card";
 @DynamicComponent("EditAttendance")
 @Component({
   selector: "app-edit-attendance",
-  standalone: true,
   imports: [
     EditEntityComponent,
     NgIf,

@@ -8,7 +8,6 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
@@ -23,15 +22,12 @@ import { EntityAction } from "./entity-action.interface";
   selector: "app-entity-actions-menu",
   templateUrl: "./entity-actions-menu.component.html",
   styleUrls: ["./entity-actions-menu.component.scss"],
-  standalone: true,
   imports: [
-    NgIf,
     MatButtonModule,
     FontAwesomeModule,
     MatMenuModule,
     Angulartics2Module,
     DisableEntityOperationDirective,
-    NgForOf,
     MatTooltipModule,
   ],
 })

@@ -97,5 +97,6 @@ describe("TemplateTooltipDirective", () => {
     </div>
     <ng-template #tooltip><h2>Custom Tooltip</h2></ng-template>
   `,
+  standalone: false,
 })
 class MockComponent {}

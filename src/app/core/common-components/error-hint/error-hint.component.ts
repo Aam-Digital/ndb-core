@@ -7,7 +7,6 @@ import { KeyValuePipe, NgForOf } from "@angular/common";
   templateUrl: "./error-hint.component.html",
   styleUrls: ["./error-hint.component.scss"],
   imports: [NgForOf, KeyValuePipe],
-  standalone: true,
 })
 export class ErrorHintComponent {
   @Input() form: UntypedFormControl;

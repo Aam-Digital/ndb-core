@@ -31,7 +31,6 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
   selector: "app-import-column-mapping",
   templateUrl: "./import-column-mapping.component.html",
   styleUrls: ["./import-column-mapping.component.scss"],
-  standalone: true,
   imports: [
     HelpButtonComponent,
     NgForOf,

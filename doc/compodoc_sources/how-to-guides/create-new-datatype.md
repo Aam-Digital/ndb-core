@@ -7,12 +7,12 @@ The Aam Digital core defines most commonly known datatypes already (see `CoreMod
 The architecture of datatypes is designed for extension however, so you can easily add further types.
 
 A datatype consists of three parts that can be provided as custom implementations:
+
 1. A `DefaultDatatype` implementation, defining a "name" for the type, how the values are stored in the DB and which components are used for it in the UI
 2. An `EditComponent` implementation, defining a component that provides special UI for the FormField through which this type of values can be edited and viewed in Detail Views.
 3. A `DisplayComponent` implementation, defining a component for showing the value in a read-only way (e.g. in table columns)
 
 You can reuse the components of existing datatypes, if your type does not require customization for one of these aspects. However, you should implement a class extending the DefaultDatatype in order to register in the admin and configuration system.
-
 
 ## The base: Extending `DefaultDatatype`
 
@@ -26,7 +26,7 @@ You can use Angular's dependency injection to access any other services, if need
 
 ## Defining a new Datatype
 
-1. Create a new  class (according to our file name convention it should follow the pattern `my-custom.datatype.ts`)
+1. Create a new class (according to our file name convention it should follow the pattern `my-custom.datatype.ts`)
 2. Use inheritance to extend the `DefaultDatatype` class
 3. Define your datatype identifier (which is used in `@DatabaseField` annotations in their `EntitySchemaField.dataType` definitions to use this type) by setting the `static override dataType = "my-custom"` property of your class
 4. Define other important properties:
@@ -35,10 +35,10 @@ You can use Angular's dependency injection to access any other services, if need
    - `editComponent`: The string ID for the EditComponent (see below) used for form field UI of the value in detail views
 5. Override any of the other aspects and methods if you want to customize, like the data transformation methods (see below)
 6. **Register the datatype** using Angular DI system as a "multi" provider in your feature module to make it available to the system overall:
-`{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true }`
-
+   `{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true }`
 
 This could result in a Datatype class like this:
+
 ```
 @Injectable()
 export class MyCustomDatatype extends DefaultDatatype<SpecialObject, string> {
@@ -74,7 +74,6 @@ export class MyCustomDatatype extends DefaultDatatype<SpecialObject, string> {
 
 Please also refer to the extensive JsDoc code comments in the `DefaultDatatype` class.
 
-
 ## Registering the new Datatype
 
 Provide your datatype service using Angular dependency injection:
@@ -83,8 +82,8 @@ Provide your datatype service using Angular dependency injection:
 The EntitySchemaService, that handles all data transformations, and other platform modules automatically pick up your datatype
 and use it for any entity properties that use the `dataType` identifier of your implementation.
 
-
 ## Implementing a custom EditComponent
+
 To provide a custom UI, you can implement an Angular component that extends the `EditComponent` and configure it to be used for the datatype as shown above.
 
 Such a component is a standard Angular component.
@@ -96,6 +95,7 @@ You can use these to provide a custom UI and functionality, possibly even access
 Please refer to the code and comments in `EditComponent`.
 
 ### Registering the new Component
+
 In order to make a component accessible under a string ID required for the configuration system, you need to explicitly register it beyond the standard Angular imports:
 
 ```

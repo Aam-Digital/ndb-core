@@ -17,7 +17,6 @@ import { EnumDropdownComponent } from "../enum-dropdown/enum-dropdown.component"
     MatSelectModule,
     EnumDropdownComponent,
   ],
-  standalone: true,
 })
 export class EditConfigurableEnumComponent
   extends EditComponent<ConfigurableEnumValue>

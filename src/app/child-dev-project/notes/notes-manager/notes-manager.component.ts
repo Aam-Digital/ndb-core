@@ -46,7 +46,6 @@ export interface NotesManagerConfig {
     MatMenuModule,
     FaDynamicIconComponent,
   ],
-  standalone: true,
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {

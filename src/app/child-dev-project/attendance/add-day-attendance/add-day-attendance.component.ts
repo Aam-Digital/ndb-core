@@ -26,7 +26,6 @@ import { RouteTarget } from "../../../route-target";
     RollCallComponent,
     ViewTitleComponent,
   ],
-  standalone: true,
 })
 export class AddDayAttendanceComponent {
   /** (optional) property name of the participant entities by which they are sorted for the roll call */

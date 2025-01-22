@@ -49,7 +49,6 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
     "../../building-blocks/admin-section-header/admin-section-header.component.scss",
     "../../../common-components/entity-form/entity-form/entity-form.component.scss",
   ],
-  standalone: true,
   imports: [
     DragDropModule,
     NgForOf,

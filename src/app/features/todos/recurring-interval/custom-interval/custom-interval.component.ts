@@ -12,7 +12,6 @@ import { NgForOf } from "@angular/common";
   selector: "app-custom-interval",
   templateUrl: "./custom-interval.component.html",
   styleUrls: ["./custom-interval.component.scss"],
-  standalone: true,
   imports: [
     FormsModule,
     MatDialogModule,

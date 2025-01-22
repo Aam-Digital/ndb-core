@@ -12,7 +12,6 @@ import { DateFilter } from "../../../filter/filters/dateFilter";
   selector: "app-date-range-filter",
   templateUrl: "./date-range-filter.component.html",
   styleUrls: ["./date-range-filter.component.scss"],
-  standalone: true,
   imports: [MatFormFieldModule, MatDatepickerModule, FormsModule],
 })
 export class DateRangeFilterComponent<T extends Entity> implements OnChanges {

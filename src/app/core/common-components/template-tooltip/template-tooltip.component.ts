@@ -48,7 +48,6 @@ import { NgTemplateOutlet } from "@angular/common";
       transition(":enter", [animate("100ms")]),
     ]),
   ],
-  standalone: true,
   imports: [NgTemplateOutlet],
 })
 export class TemplateTooltipComponent {

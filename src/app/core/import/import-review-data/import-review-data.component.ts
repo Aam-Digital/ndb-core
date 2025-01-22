@@ -27,7 +27,6 @@ import { MatProgressBar } from "@angular/material/progress-bar";
   selector: "app-import-review-data",
   templateUrl: "./import-review-data.component.html",
   styleUrls: ["./import-review-data.component.scss"],
-  standalone: true,
   imports: [
     MatButtonModule,
     HelpButtonComponent,

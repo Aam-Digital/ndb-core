@@ -11,7 +11,6 @@ import { Logging } from "../../../../core/logging/logging.service";
 
 @Component({
   selector: "app-sql-v2-table",
-  standalone: true,
   imports: [MatTableModule, MatSortModule, NgClass],
   templateUrl: "./sql-v2-table.component.html",
   styleUrl: "./sql-v2-table.component.scss",

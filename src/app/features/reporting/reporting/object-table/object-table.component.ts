@@ -9,7 +9,6 @@ import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
   templateUrl: "./object-table.component.html",
   styleUrls: ["./object-table.component.scss"],
   imports: [MatTableModule, NgForOf, MatSortModule, MatPaginatorModule],
-  standalone: true,
 })
 export class ObjectTableComponent implements OnInit {
   @Input() objects: any[];

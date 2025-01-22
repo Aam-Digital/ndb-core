@@ -38,7 +38,6 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
     AttendanceCalendarComponent,
     AttendanceSummaryComponent,
   ],
-  standalone: true,
 })
 export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   @Input() entity: RecurringActivity;

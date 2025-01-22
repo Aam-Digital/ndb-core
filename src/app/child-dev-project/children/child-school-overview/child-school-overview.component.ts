@@ -35,7 +35,6 @@ import { FilterService } from "../../../core/filter/filter.service";
     NgIf,
     PillComponent,
   ],
-  standalone: true,
 })
 export class ChildSchoolOverviewComponent
   extends RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>

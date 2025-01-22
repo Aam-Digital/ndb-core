@@ -35,7 +35,6 @@ import { TimePeriod } from "./time-period";
     NgIf,
     PillComponent,
   ],
-  standalone: true,
 })
 export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   extends RelatedEntitiesComponent<E>

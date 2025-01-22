@@ -15,7 +15,6 @@ import { NgIf } from "@angular/common";
   templateUrl: "./view-file.component.html",
   styleUrls: ["../edit-file/edit-file.component.scss"],
   imports: [MatButtonModule, NgIf],
-  standalone: true,
 })
 export class ViewFileComponent extends ViewDirective<string> {
   constructor(public fileService: FileService) {

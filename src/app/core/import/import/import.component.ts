@@ -31,7 +31,6 @@ import { RouteTarget } from "../../../route-target";
   selector: "app-import",
   templateUrl: "./import.component.html",
   styleUrls: ["./import.component.scss"],
-  standalone: true,
   imports: [
     MatStepperModule,
     FontAwesomeModule,

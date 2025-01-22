@@ -23,7 +23,6 @@ export type DashboardTheme =
     FaDynamicIconComponent,
     MatTooltipModule,
   ],
-  standalone: true,
 })
 export class DashboardWidgetComponent {
   @Input() subtitle: string;

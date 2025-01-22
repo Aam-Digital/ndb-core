@@ -19,7 +19,6 @@ interface FlattenedReportRow extends ReportRow {
   templateUrl: "./report-row.component.html",
   styleUrls: ["./report-row.component.scss"],
   imports: [MatTableModule, MatButtonModule, FontAwesomeModule],
-  standalone: true,
 })
 export class ReportRowComponent {
   @Input() set rows(rows: ReportRow[]) {

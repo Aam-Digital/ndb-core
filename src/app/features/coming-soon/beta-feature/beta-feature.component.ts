@@ -8,7 +8,6 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
  */
 @Component({
   selector: "app-beta-feature",
-  standalone: true,
   imports: [MatTooltip, MatCard, FaIconComponent],
   templateUrl: "./beta-feature.component.html",
   styleUrl: "./beta-feature.component.scss",

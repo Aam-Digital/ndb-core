@@ -19,7 +19,6 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
  */
 @Component({
   selector: "app-admin-section-header",
-  standalone: true,
   imports: [
     CommonModule,
     FaIconComponent,

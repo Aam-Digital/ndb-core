@@ -27,7 +27,6 @@ export interface ImportDialogData {
   selector: "app-import-confirm-summary",
   templateUrl: "./import-confirm-summary.component.html",
   styleUrls: ["./import-confirm-summary.component.scss"],
-  standalone: true,
   imports: [MatDialogModule, NgIf, MatProgressBarModule, MatButtonModule],
 })
 export class ImportConfirmSummaryComponent {

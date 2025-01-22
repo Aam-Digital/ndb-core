@@ -59,5 +59,6 @@ describe("TabStateService", () => {
     <mat-tab label="D">D</mat-tab>
     <mat-tab label="E">E</mat-tab>
   </mat-tab-group>`,
+  standalone: false,
 })
 class TestAppComponent {}

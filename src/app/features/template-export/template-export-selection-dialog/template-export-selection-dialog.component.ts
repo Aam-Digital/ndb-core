@@ -18,7 +18,6 @@ import { EntitySelectComponent } from "../../../core/common-components/entity-se
 import { FormControl } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
-import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { AlertService } from "../../../core/alerts/alert.service";
 
@@ -28,7 +27,6 @@ import { AlertService } from "../../../core/alerts/alert.service";
  */
 @Component({
   selector: "app-file-template-selection-dialog-component",
-  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogActions,
@@ -37,7 +35,6 @@ import { AlertService } from "../../../core/alerts/alert.service";
     MatDialogClose,
     RouterLink,
     DisableEntityOperationDirective,
-    MatProgressSpinner,
     MatProgressBar,
   ],
   templateUrl: "./template-export-selection-dialog.component.html",

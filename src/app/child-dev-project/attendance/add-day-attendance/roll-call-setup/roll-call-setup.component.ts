@@ -44,7 +44,6 @@ import { DataFilter } from "../../../../core/filter/filters/filters";
     NgForOf,
     MatButtonModule,
   ],
-  standalone: true,
 })
 export class RollCallSetupComponent implements OnInit {
   date = new Date();

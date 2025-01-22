@@ -44,7 +44,6 @@ import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
   selector: "app-bulk-link-external-profiles",
-  standalone: true,
   imports: [
     ViewTitleComponent,
     ViewActionsComponent,

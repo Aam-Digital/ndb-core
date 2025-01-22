@@ -24,7 +24,6 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
   imports: [EntitiesTableComponent],
-  standalone: true,
 })
 export class NotesRelatedToEntityComponent
   extends RelatedEntitiesComponent<Note>

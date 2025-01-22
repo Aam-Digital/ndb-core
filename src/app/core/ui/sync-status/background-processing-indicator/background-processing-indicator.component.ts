@@ -31,7 +31,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     FontAwesomeModule,
     MatTooltipModule,
   ],
-  standalone: true,
 })
 export class BackgroundProcessingIndicatorComponent implements OnInit {
   /** details on current background processes to be displayed to user */

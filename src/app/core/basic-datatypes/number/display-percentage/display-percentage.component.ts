@@ -8,7 +8,6 @@ import { CommonModule } from "@angular/common";
   selector: "app-display-percentage",
   template:
     "{{ value !== undefined ? (value | number : numberFormat) + '%' : '-' }}",
-  standalone: true,
   imports: [CommonModule],
 })
 export class DisplayPercentageComponent

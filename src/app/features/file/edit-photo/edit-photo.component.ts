@@ -13,7 +13,7 @@ import { resizeImage } from "../file-utils";
 import { MatDialog } from "@angular/material/dialog";
 import { ImagePopupComponent } from "./image-popup/image-popup.component";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { MatError, MatHint } from "@angular/material/form-field";
+import { MatError } from "@angular/material/form-field";
 import { ErrorHintComponent } from "app/core/common-components/error-hint/error-hint.component";
 
 @DynamicComponent("EditPhoto")
@@ -26,12 +26,10 @@ import { ErrorHintComponent } from "app/core/common-components/error-hint/error-
     MatTooltipModule,
     FontAwesomeModule,
     NgIf,
-    MatHint,
     ErrorHintComponent,
     MatError,
     NgClass,
   ],
-  standalone: true,
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
   private readonly defaultImage = "assets/child.png";

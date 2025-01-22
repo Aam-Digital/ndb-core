@@ -22,7 +22,6 @@ import { DataFilter, Filter } from "../filters/filters";
   selector: "app-filter",
   templateUrl: "./filter.component.html",
   imports: [NgComponentOutlet],
-  standalone: true,
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   /**

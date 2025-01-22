@@ -19,7 +19,6 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
     TemplateTooltipDirective,
     AttendanceCalendarComponent,
   ],
-  standalone: true,
 })
 export class AttendanceBlockComponent implements OnChanges {
   @Input() attendanceData: ActivityAttendance;
