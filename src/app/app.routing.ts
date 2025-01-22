@@ -23,7 +23,7 @@ import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
 import { AdminModule } from "./core/admin/admin.module";
-import { SubmissionSuccessComponent } from "./core/config/dynamic-routing/submission-success/submission-success.component";
+import { SubmissionSuccessComponent } from "./features/public-form/submission-success/submission-success.component";
 
 /**
  * All routes configured for the main app routing.
