@@ -9,7 +9,9 @@ describe("JsonEditorComponent", () => {
     await TestBed.configureTestingModule({
       imports: [JsonEditorComponent],
     }).compileComponents();
+  });
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(JsonEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
