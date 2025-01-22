@@ -1,6 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnInit, inject } from "@angular/core";
-import { FormArray, FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormArray,
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { DefaultValueOptionsComponent } from "app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
@@ -102,14 +107,17 @@ export class EditPrefilledValuesComponent
 
     this.prefilledValues.push(
       this.fb.group({
-        field: [""],
+        field: ["", Validators.required],
         defaultValue: {
           mode: "static",
-          value: null,
         },
         hideFromForm: true,
       }),
     );
+  }
+
+  get isAddDisabled(): boolean {
+    return this.prefilledValues.invalid;
   }
 
   removeRestrictedPrefilled(index: number): void {

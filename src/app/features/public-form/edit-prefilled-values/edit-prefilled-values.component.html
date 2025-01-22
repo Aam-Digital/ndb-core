@@ -1,10 +1,9 @@
-<p i18n>
+<p i18n class="component-info">
   Set the default value related to the field. After setting the default value,
   the selected value will be automatically pre-filled in the corresponding field
   of the public form. This will apply only to this specific public form and will
   not impact other forms or configurations.
 </p>
-
 <div class="defaultvalue-container" [class.disabled]="formControl.disabled">
   <form [formGroup]="prefilledValueSettings">
     <div formArrayName="prefilledvalue">
@@ -39,7 +38,7 @@
           <button
             mat-icon-button
             (click)="removeRestrictedPrefilled(i)"
-            matTooltip="Remove defualt value"
+            matTooltip="Remove default value"
             i18n-matTooltip
           >
             <fa-icon icon="trash"></fa-icon>
@@ -54,6 +53,7 @@
       class="add-new-defaultvalue-button"
       color="accent"
       (click)="addRestrictedPrefilled()"
+      [disabled]="isAddDisabled"
       matTooltip="Add another default value related to another field"
       i18n-matTooltip
     >
