@@ -53,24 +53,37 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
   /**
    * Initialize the JSON editor.
    * This method is called after the component view is initialized.
-   * creates a JSON editor instance and sets up the onChange event handler.
    */
   ngAfterViewInit(): void {
+    this.initializeJSONEditor();
+  }
+
+  /**
+   * Initializes the JSON editor and sets up event handlers.
+   */
+  private initializeJSONEditor(): void {
     createJSONEditor({
       target: this.json.nativeElement,
       props: {
         content: { json: this.value || {} },
         mode: "text",
-        onChange: (updatedContent: Content) => {
-          if ("json" in updatedContent) {
-            this.handleJSONChange(updatedContent.json as object);
-          }
-          if ("text" in updatedContent && updatedContent.text) {
-            this.handleTextChange(updatedContent.text);
-          }
-        },
+        onChange: (updatedContent: Content) =>
+          this.handleEditorChange(updatedContent),
       },
     });
+  }
+
+  /**
+   * Handles changes from the JSON editor.
+   * @param updatedContent The updated content from the editor.
+   */
+  private handleEditorChange(updatedContent: Content): void {
+    if ("json" in updatedContent) {
+      this.handleJSONChange(updatedContent.json as object);
+    }
+    if ("text" in updatedContent && updatedContent.text) {
+      this.handleTextChange(updatedContent.text);
+    }
   }
 
   /**
