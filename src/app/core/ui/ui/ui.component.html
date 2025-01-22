@@ -93,12 +93,15 @@
             routerLink="user-account"
             class="footer-cell width-1-2"
           >
-            <fa-icon icon="user"></fa-icon>
+            <fa-icon icon="user" class="standard-icon-with-text"></fa-icon>
             <span i18n="Navigate to user profile page">Profile</span>
           </button>
 
           <button mat-button (click)="logout()" class="footer-cell width-1-2">
-            <fa-icon icon="sign-out-alt"></fa-icon>
+            <fa-icon
+              icon="sign-out-alt"
+              class="standard-icon-with-text"
+            ></fa-icon>
             <span i18n="Sign out of the app">Sign out</span>
           </button>
         </div>
