@@ -48,7 +48,7 @@ const dynamicComponents: [string, AsyncComponent][] = [
       ).then((c) => c.EditPrefilledValuesComponent),
   ],
   [
-    "EditPublicformRouteComponent",
+    "EditPublicformRoute",
     () =>
       import(
         "app/features/public-form/edit-publicform-route/edit-publicform-route.component"
@@ -83,14 +83,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: [
-                      {
-                        id: "route",
-                        editComponent: "EditPublicformRouteComponent",
-                      },
-                      "title",
-                      "description",
-                    ],
+                    fields: ["route", "title", "description"],
                   },
                   {
                     fields: [

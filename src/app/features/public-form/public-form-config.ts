@@ -29,9 +29,11 @@ export class PublicFormConfig extends Entity {
   title: string;
 
   @DatabaseField({
+    label: $localize`:PublicFormConfig:Form Link ID`,
     validators: {
       required: true,
     },
+    editComponent: "EditPublicformRoute",
   })
   route: string;
 
