@@ -5,7 +5,15 @@
       [class.disabled]="formControl.disabled"
       floatLabel="always"
     >
-      <mat-label i18n>Form Link ID</mat-label>
+      <mat-label>
+        <span i18n>Form Link ID </span>
+        &nbsp;
+        <fa-icon
+          icon="question-circle"
+          matTooltip="The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID)."
+          i18n-matTooltip
+        ></fa-icon>
+      </mat-label>
       <span
         i18n
         matTextPrefix
@@ -18,6 +26,11 @@
         formControlName="route"
         placeholder="Enter Form Link ID"
       />
+      @if (formControl.invalid && formControl.touched) {
+        <mat-error>
+          <app-error-hint [form]="formControl"></app-error-hint>
+        </mat-error>
+      }
     </mat-form-field>
     <button
       mat-icon-button
