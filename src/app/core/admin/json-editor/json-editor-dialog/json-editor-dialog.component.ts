@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Inject } from "@angular/core";
+import { Component, Inject, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
@@ -6,9 +6,8 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { JsonEditorComponent } from "../json-editor.component";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
-import { MatFormField } from "@angular/material/form-field";
+import { JsonEditorComponent } from "../json-editor.component";
 
 @Component({
   selector: "app-json-editor-dialog",
@@ -18,7 +17,6 @@ import { MatFormField } from "@angular/material/form-field";
     MatDialogModule,
     DialogCloseComponent,
     MatButtonModule,
-    MatFormField,
     ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
