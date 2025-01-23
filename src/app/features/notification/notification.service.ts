@@ -91,9 +91,9 @@ export class NotificationService {
         next: (success: boolean) => {
           if (!success) {
             this.alertService.addInfo(
-              $localize`Could not un-register device from firebase.`,
+              $localize`Could not unregister device from firebase.`,
             );
-            Logging.error("Could not un-register device from firebase.");
+            Logging.error("Could not unregister device from firebase.");
             return;
           }
 
