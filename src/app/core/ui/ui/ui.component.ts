@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ViewChild } from "@angular/core";
+import { Component, inject, ViewChild } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
@@ -39,6 +39,8 @@ import { LoginStateSubject } from "../../session/session-type";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
+import { JsonEditorDialogComponent } from "../../admin/json-editor/json-editor-dialog/json-editor-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
 
 /**
  * The main user interface component as root element for the app structure
@@ -106,8 +108,23 @@ export class UiComponent {
    * Trigger logout of user.
    */
   async logout() {
-    this.sessionManager.logout();
+    //this.sessionManager.logout();
+
+    // TODO: undo - only added for testing
+
+    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
+      data: {
+        value: {},
+        closeButton: true,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      alert(JSON.stringify(result));
+    });
   }
+
+  dialog = inject(MatDialog);
 
   closeSidenavOnMobile() {
     if (this.sideNavMode === "over") {

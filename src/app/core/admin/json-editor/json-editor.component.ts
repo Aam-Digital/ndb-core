@@ -1,21 +1,7 @@
-import {
-  Component,
-  ElementRef,
-  ViewChild,
-  Optional,
-  Self,
-  Input,
-} from "@angular/core";
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
-import {
-  NgControl,
-  NgForm,
-  FormGroupDirective,
-  FormControl,
-} from "@angular/forms";
-import { ErrorStateMatcher } from "@angular/material/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
 
 /**
@@ -31,26 +17,11 @@ import { MatFormFieldControl } from "@angular/material/form-field";
     { provide: MatFormFieldControl, useExisting: JsonEditorComponent },
   ],
 })
-export class JsonEditorComponent extends CustomFormControlDirective<object> {
+export class JsonEditorComponent
+  extends CustomFormControlDirective<object>
+  implements AfterViewInit
+{
   @ViewChild("json", { static: true }) json!: ElementRef<HTMLDivElement>;
-
-  @Input() formControl!: FormControl;
-
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Self() ngControl: NgControl,
-    @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective,
-  ) {
-    super(
-      elementRef,
-      errorStateMatcher,
-      ngControl,
-      parentForm,
-      parentFormGroup,
-    );
-  }
 
   /**
    * Initialize the JSON editor.
@@ -67,7 +38,7 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
     createJSONEditor({
       target: this.json.nativeElement,
       props: {
-        content: { json: this.formControl?.value || {} },
+        content: { json: this.ngControl?.control?.value ?? {} },
         mode: "text",
         onChange: (updatedContent: Content) =>
           this.handleEditorChange(updatedContent),
@@ -93,7 +64,7 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
    * @param updatedJSON The updated JSON data.
    */
   handleJSONChange(updatedJSON: object): void {
-    this.formControl?.setValue(updatedJSON);
+    this.writeValue(updatedJSON);
   }
 
   /**
@@ -102,11 +73,9 @@ export class JsonEditorComponent extends CustomFormControlDirective<object> {
    */
   handleTextChange(updatedText: string): void {
     try {
-      this.value = updatedText ? JSON.parse(updatedText) : {};
-      this.formControl?.setValue(this.value);
-      this.formControl?.setErrors(null);
+      this.writeValue(updatedText ? JSON.parse(updatedText) : {});
     } catch (e) {
-      this.formControl?.setErrors({ invalidJson: true });
+      this.ngControl.control.setErrors({ invalidJson: true });
     }
   }
 }
