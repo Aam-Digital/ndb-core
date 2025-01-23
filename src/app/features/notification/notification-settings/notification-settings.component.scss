@@ -44,10 +44,6 @@
 .notifications-options-container {
   @extend .full-width;
   gap: 40px;
-
-  @media screen and (min-width: breakpoints.$xxl) {
-    flex-direction: row;
-  }
 }
 
 .notification-options-wrapper {
