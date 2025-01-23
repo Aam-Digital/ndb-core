@@ -19,7 +19,7 @@ import { RouterModule } from "@angular/router";
 })
 export class PublicFormModule {
   static databaseEntities = [PublicFormConfig];
-  static publicFormRoutes = publicFormRoutes;
+  static routes = publicFormRoutes;
 
   constructor(
     components: ComponentRegistry,
@@ -79,7 +79,7 @@ const viewConfigs: ViewConfig[] = [
                       {
                         id: "permissions_remark",
                         editComponent: "EditDescriptionOnly",
-                        label: $localize`:PublicFormConfig admin form:If you want external people filling this form without logging in, the _Permission System_ also has to allow **"public"** users to create new records of this type.<br> 
+                        label: $localize`:PublicFormConfig admin form:If you want external people filling this form without logging in, the _Permission System_ also has to allow **"public"** users to create new records of this type.<br>
                         If you are seeing problems submitting the form, please contact your **technical support team**.`,
                       },
                       "entity",

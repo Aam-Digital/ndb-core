@@ -47,7 +47,7 @@ export const allRoutes: Routes = [
   // this can't be configured in config as the config is only loaded on login
   {
     path: "public-form",
-    children: PublicFormModule.publicFormRoutes,
+    children: PublicFormModule.routes,
   },
   {
     path: "admin",
