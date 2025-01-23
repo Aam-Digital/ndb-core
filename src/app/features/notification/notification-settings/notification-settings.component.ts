@@ -102,9 +102,7 @@ export class NotificationSettingsComponent implements OnInit {
     } else {
       this.notificationService.unregisterDevice();
     }
-    const isPushNotificationPermissionGranted =
-      this.isNotificationPermissionGranted();
-    this.isPushNotificationEnabled = isPushNotificationPermissionGranted;
+    this.isPushNotificationEnabled = this.isNotificationPermissionGranted();
 
     let notificationConfig = await this.loadNotificationConfig();
 
@@ -178,8 +176,12 @@ export class NotificationSettingsComponent implements OnInit {
   isNotificationPermissionGranted(): boolean {
     if (Notification.permission === "granted") {
       return true;
-    } else if (Notification.permission == "denied") {
-      return false;
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          return true;
+        }
+      });
     }
     return false;
   }
