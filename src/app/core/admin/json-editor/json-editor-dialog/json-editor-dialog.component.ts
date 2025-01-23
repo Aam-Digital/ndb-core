@@ -1,5 +1,5 @@
 import { Component, Inject, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -17,6 +17,7 @@ import { JsonEditorComponent } from "../json-editor.component";
     MatDialogModule,
     DialogCloseComponent,
     MatButtonModule,
+    ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: "./json-editor-dialog.component.html",
