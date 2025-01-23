@@ -127,7 +127,6 @@ export class NotificationSettingsComponent implements OnInit {
     const newRule: NotificationRule = {
       notificationType: "entity_change",
       entityType: undefined,
-      channels: this.notificationConfig.channels, // by default, use the global channels
       conditions: {},
       enabled: true,
     };

@@ -83,10 +83,6 @@ export class NotificationRuleComponent implements OnChanges {
         disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
       }),
       enabled: new FormControl(this.value?.enabled || false),
-      // different format for form control
-      channels: new FormControl(
-        this.parseChannelsToOptionsArray(this.value?.channels),
-      ),
       conditions: new FormArray(
         this.parseConditionsObjectToArray(this.value?.conditions).map(
           (c) =>
