@@ -67,8 +67,10 @@ export class NotificationSettingsComponent implements OnInit {
     this.notificationConfig = await this.loadNotificationConfig();
 
     if (this.notificationConfig) {
-      this.isPushNotificationEnabled =
-        this.notificationConfig?.channels?.push || false;
+      if (this.isNotificationPermissionGranted()) {
+        this.isPushNotificationEnabled =
+          this.notificationConfig.channels?.push || false;
+      }
     }
   }
 
@@ -166,5 +168,18 @@ export class NotificationSettingsComponent implements OnInit {
 
   async updateNotificationCondition() {
     await this.saveNotificationConfig(this.notificationConfig);
+  }
+
+  /**
+   * user given the notification permission to browser or not
+   * @returns boolean
+   */
+  isNotificationPermissionGranted(): boolean {
+    if (Notification.permission === "granted") {
+      return true;
+    } else if (Notification.permission == "denied") {
+      return false;
+    }
+    return false;
   }
 }
