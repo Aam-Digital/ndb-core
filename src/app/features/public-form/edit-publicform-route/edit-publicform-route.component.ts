@@ -11,6 +11,9 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { AlertService } from "app/core/alerts/alert.service";
 import { ErrorHintComponent } from "app/core/common-components/error-hint/error-hint.component";
 
+/**
+ * Special Form Field to edit an ID and copy the full public-form URL generated based on this.
+ */
 @Component({
   selector: "app-edit-publicform-route",
   standalone: true,
