@@ -13,16 +13,12 @@
       >
         <div class="flex-row justify-space-between align-center container">
           <div class="flex-row align-center width-1-2">
-            <mat-form-field>
-              <mat-label>Select Field</mat-label>
-              <mat-select formControlName="field" placeholder="Select a field">
-                <mat-option
-                  *ngFor="let field of availableFields"
-                  [value]="field"
-                >
-                  {{ field }}
-                </mat-option>
-              </mat-select>
+            <mat-form-field class="full-width-field">
+              <mat-label i18n>Select entity field</mat-label>
+              <app-entity-field-select
+                [entityType]="entityConstructor"
+                formControlName="field"
+              />
             </mat-form-field>
             <app-help-button
               text="Select the field which you wanted to set default value."

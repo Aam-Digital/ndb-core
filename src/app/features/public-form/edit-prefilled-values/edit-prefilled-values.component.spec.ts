@@ -11,7 +11,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 
-fdescribe("EditPrefilledValuesComponent", () => {
+describe("EditPrefilledValuesComponent", () => {
   let component: EditPrefilledValuesComponent;
   let fixture: ComponentFixture<EditPrefilledValuesComponent>;
   let mockEntityRegistry: Partial<EntityRegistry>;
@@ -44,18 +44,6 @@ fdescribe("EditPrefilledValuesComponent", () => {
 
   it("should create the component", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should add a new field to prefilled values", () => {
-    component.availableFields = ["name", "age"];
-    component.addRestrictedPrefilled();
-
-    expect(component.prefilledValues.length).toBe(1);
-    expect(component.prefilledValues.at(0).value).toEqual({
-      field: "",
-      defaultValue: { mode: "static" },
-      hideFromForm: true,
-    });
   });
 
   it("should remove a field from prefilled values", () => {

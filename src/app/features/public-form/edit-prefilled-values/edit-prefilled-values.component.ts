@@ -20,6 +20,7 @@ import { HelpButtonComponent } from "app/core/common-components/help-button/help
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 
 @Component({
   selector: "app-edit-prefilled-values",
@@ -34,6 +35,7 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
     HelpButtonComponent,
     FontAwesomeModule,
     MatButtonModule,
+    EntityFieldSelectComponent,
   ],
   templateUrl: "./edit-prefilled-values.component.html",
   styleUrls: ["./edit-prefilled-values.component.scss"],
@@ -44,7 +46,6 @@ export class EditPrefilledValuesComponent
 {
   entityConstructor: EntityConstructor;
   formConfig: FormConfig;
-  availableFields: string[] = [];
   defaultValue: DefaultValueConfig;
   prefilledValueSettings = this.fb.group({
     prefilledvalue: this.fb.array([]),
@@ -61,7 +62,6 @@ export class EditPrefilledValuesComponent
 
     this.entityConstructor = this.entities.get(this.entity["entity"]);
     this.formConfig = { fieldGroups: this.formControl.getRawValue() };
-    this.populateAvailableFields();
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
       this.updateFieldGroups(value),
@@ -70,13 +70,6 @@ export class EditPrefilledValuesComponent
 
   get prefilledValues(): FormArray {
     return this.prefilledValueSettings.get("prefilledvalue") as FormArray;
-  }
-
-  private populateAvailableFields(): void {
-    this.availableFields = Array.from(this.entityConstructor.schema.entries())
-      .filter(([, value]) => value.label)
-      .sort(([, a], [, b]) => a.label.localeCompare(b.label))
-      .map(([key]) => key);
   }
 
   private initializePrefilledValues(): void {
@@ -101,10 +94,6 @@ export class EditPrefilledValuesComponent
   }
 
   addRestrictedPrefilled(): void {
-    if (!this.availableFields.length) {
-      return;
-    }
-
     this.prefilledValues.push(
       this.fb.group({
         field: ["", Validators.required],
