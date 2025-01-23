@@ -1,7 +1,15 @@
+.router-container {
+  display: flex;
+  flex-direction: row;
+}
 .disabled {
   opacity: 0.5;
   pointer-events: none;
 }
 .prefix-text {
+  display: flex;
+  width: max-content;
+}
+.prefix-text-disabled {
   opacity: 0.6;
 }

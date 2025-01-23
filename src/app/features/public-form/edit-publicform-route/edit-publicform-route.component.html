@@ -1,4 +1,4 @@
-<div class="flex-row">
+<div class="router-container">
   <mat-form-field
     appearance="outline"
     [class.disabled]="formControl.disabled"
@@ -15,7 +15,8 @@
     <span
       i18n
       matTextPrefix
-      [ngClass]="{ 'prefix-text': !formControl.disabled }"
+      class="prefix-text"
+      [ngClass]="{ 'prefix-text-disabled': !formControl.disabled }"
     >
       {{ getPrefixValue() }}&nbsp;
     </span>
