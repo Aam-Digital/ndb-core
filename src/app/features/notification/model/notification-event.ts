@@ -2,6 +2,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { NotificationType } from "./notification-config";
+import { EntityNotificationContext } from "./entity-notification-context";
 
 /**
  * This represents one specific notification event for one specific user,
@@ -22,7 +23,7 @@ export class NotificationEvent extends Entity {
   /*
    * The URL to redirect the user to when the notification is clicked.
    */
-  @DatabaseField() actionURL: string;
+  @DatabaseField() actionURL?: string;
 
   /*
    * The user ID for whom the notification is intended
@@ -40,9 +41,12 @@ export class NotificationEvent extends Entity {
   @DatabaseField() notificationType: NotificationType;
 
   /*
-   * The entity type of the notification.
+   * Additional context about the notification,
+   * like details about the entity that the notification is about.
+   *
+   * Introduce additional context interfaces for other NotificationTypes in the future.
    */
-  @DatabaseField() entityType: string;
+  @DatabaseField() context?: EntityNotificationContext;
 
   /*
    * The status of the notification.

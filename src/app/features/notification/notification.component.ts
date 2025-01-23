@@ -15,6 +15,7 @@ import { closeOnlySubmenu } from "./close-only-submenu";
 import { Router, RouterLink } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../core/entity/model/entity-update";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 
 @UntilDestroy()
 @Component({
@@ -47,6 +48,7 @@ export class NotificationComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
     private router: Router,
+    private entityRegistry: EntityRegistry,
   ) {}
 
   ngOnInit(): void {
@@ -138,24 +140,33 @@ export class NotificationComponent implements OnInit {
   private generateNotificationActionURL(
     notification: NotificationEvent,
   ): string {
-    const routes = this.router.config;
-    let actionURL = "";
+    if (!notification.context) return notification.actionURL;
 
-    const entityRoute = routes.find(
-      (route) => route.data?.config?.entityType === notification.entityType,
-    );
+    let actionURL = "";
 
     switch (notification.notificationType) {
       case "entity_change":
-        if (entityRoute) {
-          actionURL = `/${entityRoute.path}`;
-        }
+        actionURL = this.generateEntityUrl(notification);
         break;
       default:
-        break;
+        actionURL = notification.actionURL;
     }
 
     return actionURL;
+  }
+
+  private generateEntityUrl(notification: NotificationEvent): string {
+    let url = "";
+
+    const entityCtr = this.entityRegistry.get(notification.context.entityType);
+    if (entityCtr) {
+      url = `/${entityCtr?.route}`;
+      if (notification.context.entityId) {
+        url += `/${notification.context.entityId}`;
+      }
+    }
+
+    return url;
   }
 
   /**
@@ -180,9 +191,16 @@ export class NotificationComponent implements OnInit {
     event.title = "Test Notification";
     event.body = "This is a test notification.";
     event.notificationFor = this.userId;
+    event.notificationType = "entity_change";
+    event.context = {
+      entityType: "School",
+      entityId: "1",
+    };
     if (this.testEventTypeToggle) {
-      event.actionURL = "child/1";
-      event.title = event.title + " (with action)";
+      event.actionURL = "/school";
+      event.context = undefined;
+      event.notificationType = "other" as any;
+      event.title = event.title + " (with explicit action)";
     }
 
     await this.entityMapper.save(event);
