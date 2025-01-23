@@ -8,7 +8,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
-import { NotificationRule } from "../../model/notification-config";
+import {
+  NotificationChannel,
+  NotificationRule,
+} from "../../model/notification-config";
+import { MatOption } from "@angular/material/core";
+import { MatSelect } from "@angular/material/select";
 
 @Component({
   selector: "app-notification-condition",
@@ -23,6 +28,8 @@ import { NotificationRule } from "../../model/notification-config";
     CdkAccordionModule,
     EntityFieldSelectComponent,
     BasicAutocompleteComponent,
+    MatOption,
+    MatSelect,
   ],
   templateUrl: "./notification-condition.component.html",
   styleUrl: "../../notification-settings/notification-settings.component.scss",
@@ -35,6 +42,10 @@ export class NotificationConditionComponent implements OnInit {
   @Output() removeNotificationCondition = new EventEmitter<any>();
 
   conditionalOptions: SimpleDropdownValue[] = [];
+
+  notificationMethods: { key: NotificationChannel; label: string }[] = [
+    { key: "push", label: $localize`:notification method option:Push` },
+  ];
 
   optionsToLabel = (v: SimpleDropdownValue) => this.conditionMappings[v.value];
   optionsToValue = (v: SimpleDropdownValue) =>
@@ -76,4 +87,5 @@ export interface NotificationRuleCondition {
   entityTypeField: string;
   operator: string;
   condition: string;
+  channels: { [key in NotificationChannel]?: boolean };
 }

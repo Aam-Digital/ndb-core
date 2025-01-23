@@ -106,12 +106,12 @@
               text="A notification on your system (e.g. a normal Android smartphone notification). You see these alerts without needing to open the app."
               i18n-text
             ></app-help-button>
-            <mat-slide-toggle
-              (change)="togglePushNotifications($event)"
-              [checked]="isPushNotificationEnabled"
-              class="receive-notification-toggle"
-            />
           </div>
+          <mat-slide-toggle
+            (change)="togglePushNotifications($event)"
+            [checked]="isPushNotificationEnabled"
+            class="receive-notification-toggle"
+          />
         </div>
       </div>
 
@@ -120,17 +120,15 @@
           <fa-icon icon="envelope"></fa-icon>
           <p class="notification-toggle" i18n>Email</p>
         </div>
-        <div
-          class="flex-row align-center justify-space-between browser-notification-list"
-        >
-          <div class="flex-row align-center">
+        <div class="flex-row align-center browser-notification-list">
+          <div class="flex-row align-center email-notification-option">
             <span i18n>Email</span>
             <span class="coming-soon-label" i18n>Coming Soon</span>
-            <mat-slide-toggle
-              disabled
-              class="receive-notification-toggle"
-            ></mat-slide-toggle>
           </div>
+          <mat-slide-toggle
+            disabled
+            class="receive-notification-toggle"
+          ></mat-slide-toggle>
         </div>
       </div>
     </div>

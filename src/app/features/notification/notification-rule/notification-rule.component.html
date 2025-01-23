@@ -70,34 +70,6 @@
     [attr.id]="'notification-rule-item-body-' + accordionIndex"
     [attr.aria-labelledby]="'notification-rule-item-header-' + accordionIndex"
   >
-    <form [formGroup]="form">
-      <div
-        class="flex-row justify-space-between align-center notification-options-wrapper notification-rule-method"
-      >
-        <mat-form-field
-          class="full-width-field"
-          (click)="handleToggleAccordion(notificationRuleItem)"
-        >
-          <mat-label i18n>Notification method(s)</mat-label>
-          <mat-select
-            formControlName="channels"
-            multiple
-            placeholder="Choose notification channels"
-            i18n-placeholder="Notification Method Select placeholder"
-          >
-            @for (notificationMethod of notificationMethods; track $index) {
-              <mat-option [value]="notificationMethod.key">
-                {{ notificationMethod.label }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <app-help-button
-          text="Define a notification method to receive notifications"
-          i18n-text
-        ></app-help-button>
-      </div>
-    </form>
     <div class="flex-row align-center notification-condition-section">
       <strong i18n>Define Notification Criteria</strong>
       <app-help-button

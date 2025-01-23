@@ -16,6 +16,28 @@
         formControlName="operator"
       />
     </mat-form-field>
+    <mat-form-field class="full-width-field notification-condition-operator">
+      <mat-label i18n
+        >Notification method(s)
+        <fa-icon
+          icon="question-circle"
+          matTooltip="Define a notification method to receive notifications."
+          i18n-matTooltip
+        ></fa-icon>
+      </mat-label>
+      <mat-select
+        formControlName="channels"
+        multiple
+        placeholder="Choose notification channels"
+        i18n-placeholder="Notification Method Select placeholder"
+      >
+        @for (notificationMethod of notificationMethods; track $index) {
+          <mat-option [value]="notificationMethod.key">
+            {{ notificationMethod.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
     <mat-form-field class="full-width-field">
       <mat-label i18n>Notification condition</mat-label>
       <input
