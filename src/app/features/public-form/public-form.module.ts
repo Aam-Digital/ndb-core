@@ -8,14 +8,13 @@ import { AdminOverviewService } from "../../core/admin/admin-overview/admin-over
 import { PublicFormConfig } from "./public-form-config";
 import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 import { publicFormRoutes } from "./public-form-routing";
-import { RouterModule } from "@angular/router";
 
 /**
  * Configure publicly accessible forms for users without login to record some data into the system.
  */
 @NgModule({
   declarations: [],
-  imports: [CommonModule, RouterModule.forChild(publicFormRoutes)],
+  imports: [CommonModule],
 })
 export class PublicFormModule {
   static databaseEntities = [PublicFormConfig];

@@ -72,7 +72,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   async submit() {
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.router.navigate(["/submission-success"]);
+      this.router.navigate(["/public-form/submission-success"]);
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
         this.snackbar.open(

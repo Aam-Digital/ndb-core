@@ -4,7 +4,7 @@ import { PublicFormComponent } from "./public-form.component";
 
 export const publicFormRoutes: Routes = [
   {
-    path: "public-form/:id",
+    path: "form/:id",
     component: PublicFormComponent,
   },
   { path: "submission-success", component: SubmissionSuccessComponent },
