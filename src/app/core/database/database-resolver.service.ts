@@ -1,4 +1,4 @@
-import { inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Database } from "./database";
 import { SessionInfo } from "../session/auth/session-info";
 import { environment } from "../../../environments/environment";
@@ -15,7 +15,22 @@ export class DatabaseResolverService {
   static readonly DEFAULT_DB = "app";
 
   private databases: Map<string, Database> = new Map();
-  private databaseFactory = inject(DatabaseFactoryService);
+
+  constructor(private databaseFactory: DatabaseFactoryService) {
+    this.initDatabaseStubs();
+  }
+
+  /**
+   * Generate Database objects so that change subscriptions and other operations
+   * can already be performed during bootstrap.
+   * @private
+   */
+  private initDatabaseStubs() {
+    this.databases.set(
+      DatabaseResolverService.DEFAULT_DB,
+      this.databaseFactory.createDatabase(),
+    );
+  }
 
   getDatabase(dbName: string = DatabaseResolverService.DEFAULT_DB): Database {
     return this.databases.get(dbName);
@@ -30,8 +45,10 @@ export class DatabaseResolverService {
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
     const userDBName = `${user.name}-${environment.DB_NAME}`;
-    const userDb = this.databaseFactory.createDatabase(userDBName);
-    this.databases.set(environment.DB_NAME, userDb);
+    this.databaseFactory.initDatabase(
+      this.getDatabase(DatabaseResolverService.DEFAULT_DB),
+      userDBName,
+    );
 
     // TODO: have removed fallback to old "app" IndexedDB database here; check sentry if this may cause larger impact
   }

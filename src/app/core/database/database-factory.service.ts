@@ -16,15 +16,17 @@ import { SessionType } from "../session/session-type";
 export class DatabaseFactoryService {
   private authService = inject(KeycloakAuthService);
 
-  createDatabase(dbName: string): Database {
-    const db = new PouchDatabase(this.authService);
+  createDatabase(): Database {
+    return new PouchDatabase(this.authService);
+  }
 
-    if (environment.session_type === SessionType.mock) {
-      db.initInMemoryDB(dbName);
-    } else {
-      db.initIndexedDB(dbName);
+  initDatabase(db: Database, dbName: string): void {
+    if (db instanceof PouchDatabase) {
+      if (environment.session_type === SessionType.mock) {
+        db.initInMemoryDB(dbName);
+      } else {
+        db.initIndexedDB(dbName);
+      }
     }
-
-    return db;
   }
 }

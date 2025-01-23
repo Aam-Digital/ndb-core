@@ -1,5 +1,4 @@
 import { Inject, Injectable } from "@angular/core";
-import { Database } from "./database";
 import { PouchDatabase } from "./pouch-database";
 import { Logging } from "../logging/logging.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
@@ -14,9 +13,11 @@ import {
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { Config } from "../config/config";
 import { Entity } from "../entity/model/entity";
-import { from, interval, merge, of, Subscription } from "rxjs";
+import { from, interval, merge, of } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
+import { DatabaseResolverService } from "./database-resolver.service";
+import { Database } from "./database";
 
 /**
  * This service initializes the remote DB and manages the sync between the local and remote DB.
@@ -33,13 +34,15 @@ export class SyncService {
   private remoteDB: PouchDB.Database;
   private localDB: PouchDB.Database;
 
+  private database: Database;
+
   constructor(
-    private database: Database,
+    private databaseResolver: DatabaseResolverService,
     private authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
     @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
   ) {
-    this.remoteDatabase = new PouchDatabase(this.authService);
+    this.database = this.databaseResolver.getDatabase();
 
     this.logSyncContext();
 
@@ -54,7 +57,8 @@ export class SyncService {
 
   private async logSyncContext() {
     const lastSyncTime = localStorage.getItem(SyncService.LAST_SYNC_KEY);
-    const configRev = await this.database
+    const configRev = await this.databaseResolver
+      .getDatabase()
       .get(Entity.createPrefixedId(Config.ENTITY_TYPE, Config.CONFIG_KEY))
       .catch(() => null)
       .then((config) => config?._rev);
@@ -69,6 +73,7 @@ export class SyncService {
    * Initializes the remote DB and starts the sync
    */
   startSync() {
+    // TODO: extend this to sync multiple databases
     this.initDatabases();
     this.liveSync();
   }
@@ -78,6 +83,7 @@ export class SyncService {
    * @private
    */
   private initDatabases() {
+    this.remoteDatabase = new PouchDatabase(this.authService);
     this.remoteDatabase.initRemoteDB(
       `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}`,
     );
@@ -119,6 +125,7 @@ export class SyncService {
    * Continuous syncing in background.
    */
   liveSyncEnabled: boolean;
+
   private liveSync() {
     this.liveSyncEnabled = true;
 

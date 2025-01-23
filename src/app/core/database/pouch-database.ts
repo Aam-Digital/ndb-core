@@ -68,9 +68,6 @@ export class PouchDatabase extends Database {
    */
   constructor(private authService?: KeycloakAuthService) {
     super();
-
-    // TODO: refactor to run the init method directly from constructor and remove databaseInitialized
-    //  now that DatabaseResolver handles creation and provider we don't have to separate creation and initialization anymore
   }
 
   /**
