@@ -32,6 +32,7 @@ import { filter, take } from "rxjs/operators";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
+import { Logging } from "../../logging/logging.service";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
