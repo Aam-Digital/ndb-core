@@ -96,7 +96,9 @@ describe("PublicFormComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
-    expect(navigateSpy).toHaveBeenCalledWith(["/public-form/submission-success"]);
+    expect(navigateSpy).toHaveBeenCalledWith([
+      "/public-form/submission-success",
+    ]);
   }));
 
   it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
