@@ -140,20 +140,33 @@ export class NotificationComponent implements OnInit {
   private generateNotificationActionURL(
     notification: NotificationEvent,
   ): string {
+    if (!notification.context) return notification.actionURL;
+
     let actionURL = "";
-    const entityRoute = this.entityRegistry.get(notification.entityType);
 
     switch (notification.notificationType) {
       case "entity_change":
-        if (entityRoute) {
-          actionURL = `/${entityRoute?.route}`;
-        }
+        actionURL = this.generateEntityUrl(notification);
         break;
       default:
         actionURL = notification.actionURL;
     }
 
     return actionURL;
+  }
+
+  private generateEntityUrl(notification: NotificationEvent): string {
+    let url = "";
+
+    const entityCtr = this.entityRegistry.get(notification.context.entityType);
+    if (entityCtr) {
+      url = `/${entityCtr?.route}`;
+      if (notification.context.entityId) {
+        url += `/${notification.context.entityId}`;
+      }
+    }
+
+    return url;
   }
 
   /**
@@ -179,10 +192,15 @@ export class NotificationComponent implements OnInit {
     event.body = "This is a test notification.";
     event.notificationFor = this.userId;
     event.notificationType = "entity_change";
-    event.entityType = "School";
+    event.context = {
+      entityType: "School",
+      entityId: "1",
+    };
     if (this.testEventTypeToggle) {
       event.actionURL = "/school";
-      event.title = event.title + " (with action)";
+      event.context = undefined;
+      event.notificationType = "other" as any;
+      event.title = event.title + " (with explicit action)";
     }
 
     await this.entityMapper.save(event);
