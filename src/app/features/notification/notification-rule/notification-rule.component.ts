@@ -37,7 +37,7 @@ import { NotificationService } from "../notification.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
 import { Logging } from "../../../core/logging/logging.service";
-import { JsonEditorDialogComponent } from "../../../core/json-editor-dialog/json-editor-dialog.component";
+import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 
 /**
  * Configure a single notification rule.

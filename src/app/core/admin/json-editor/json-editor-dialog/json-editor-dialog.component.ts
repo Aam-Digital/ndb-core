@@ -7,7 +7,7 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
-import { JsonEditorComponent } from "app/core/common-components/json-editor/json-editor.component";
+import { JsonEditorComponent } from "../json-editor.component";
 
 @Component({
   selector: "app-json-editor-dialog",

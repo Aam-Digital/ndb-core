@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
-import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import {
   NgControl,
   NgForm,
@@ -17,6 +16,7 @@ import {
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
+import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
 
 /**
  * Component for editing JSON data.
