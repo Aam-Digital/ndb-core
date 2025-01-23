@@ -41,7 +41,7 @@ describe("JsonEditorDialogComponent", () => {
     expect(dialogRef.close).toHaveBeenCalledWith({ key: "updated value" });
   });
 
-  it("should close dialog with null", () => {
+  it("should close dialog with null when user cancels", () => {
     component.onJsonValueCancel();
     expect(dialogRef.close).toHaveBeenCalledWith(null);
   });
