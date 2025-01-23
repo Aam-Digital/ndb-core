@@ -16,3 +16,7 @@
 .prefix-text-disabled {
   opacity: 0.6;
 }
+
+:host ::ng-deep .mat-mdc-form-field-infix {
+  width: auto;
+}
