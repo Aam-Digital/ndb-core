@@ -1,11 +1,33 @@
 import { test, expect } from "@playwright/test";
 
+async function setFixedDate(page, fixedDate) {
+  const fakeNow = new Date(fixedDate).valueOf(); // Convert the fixed date to a timestamp
+  await page.addInitScript(`{
+    Date = class extends Date {
+      constructor(...args) {
+        if (args.length === 0) {
+          super(${fakeNow}); // Default to the fixed date
+        } else {
+          super(...args); // Handle explicitly provided dates
+        }
+      }
+    }
+    const __DateNowOffset = ${fakeNow} - Date.now(); // Offset for Date.now()
+    const __DateNow = Date.now;
+    Date.now = () => __DateNow() + __DateNowOffset; // Override Date.now()
+  }`);
+}
+
 test.describe.configure({ timeout: 120000 });
 
 test.describe('Dashboard Page Tests', () => {
-
   test.beforeEach(async ({ page }, testInfo) => {
-    console.log(`Running test case -${testInfo.title}`);
+    console.log(`Running test case - ${testInfo.title}`);
+    
+    // Set fixed date before navigating to the app
+    await setFixedDate(page, '1/1/2025');
+
+    // Navigate to the application after the date is set
     await page.goto('http://localhost:4200/');
   });
 
