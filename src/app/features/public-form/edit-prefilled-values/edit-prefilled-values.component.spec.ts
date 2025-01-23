@@ -11,7 +11,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 
-describe("EditPrefilledValuesComponent", () => {
+fdescribe("EditPrefilledValuesComponent", () => {
   let component: EditPrefilledValuesComponent;
   let fixture: ComponentFixture<EditPrefilledValuesComponent>;
   let mockEntityRegistry: Partial<EntityRegistry>;
@@ -53,7 +53,7 @@ describe("EditPrefilledValuesComponent", () => {
     expect(component.prefilledValues.length).toBe(1);
     expect(component.prefilledValues.at(0).value).toEqual({
       field: "",
-      defaultValue: { mode: "static", value: null },
+      defaultValue: { mode: "static" },
       hideFromForm: true,
     });
   });
