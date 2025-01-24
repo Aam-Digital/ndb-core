@@ -1,8 +1,9 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from "@angular/core";
+import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
+import { Logging } from "app/core/logging/logging.service";
 
 /**
  * Component for editing JSON data.
@@ -75,7 +76,12 @@ export class JsonEditorComponent
     try {
       this.writeValue(updatedText ? JSON.parse(updatedText) : {});
     } catch (e) {
-      this.ngControl.control?.setErrors({ invalidJson: true });
+      const control = this.ngControl?.control;
+      if (!control) {
+        Logging.debug("No FormControl in JsonEditorComponent");
+        return;
+      }
+      this.ngControl.control.setErrors({ invalidJson: true });
     }
   }
 }
