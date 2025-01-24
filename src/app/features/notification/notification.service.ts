@@ -42,6 +42,13 @@ export class NotificationService {
 
     this.tokenSubscription = this.firebaseMessaging.requestToken.subscribe({
       next: (token) => {
+        if (!token) {
+          Logging.error("Could not get token for device.");
+          this.alertService.addInfo(
+            $localize`Please enable notification permissions to receive important updates.`,
+          );
+          return;
+        }
         this.registerNotificationToken(token)
           .then(() => {
             Logging.log("Device registered in aam-digital backend.");
@@ -56,7 +63,7 @@ export class NotificationService {
               err,
             );
             this.alertService.addInfo(
-              $localize`Please enable notification permissions to receive important updates.`,
+              $localize`Could not register device in aam-digital backend. Push notifications will not work.`,
             );
           });
       },
