@@ -34,6 +34,8 @@ export class EditPublicformRouteComponent
   extends EditComponent<string>
   implements OnInit
 {
+  prefixValue: string;
+
   constructor(private alertService: AlertService) {
     super();
   }
@@ -45,16 +47,12 @@ export class EditPublicformRouteComponent
 
     this.formControl.setValidators([Validators.required]);
     this.formControl.setValue(publicFormConfig.route);
-  }
 
-  getPrefixValue(): string {
-    const currentUrl = window.location.origin;
-
-    return `${currentUrl}/public-form/form/`;
+    this.prefixValue = `${window.location.origin}/public-form/form/`;
   }
 
   copyToClipboard(): void {
-    const fullUrl = this.getPrefixValue() + (this.formControl.value || "");
+    const fullUrl = this.prefixValue + (this.formControl.value || "");
     navigator.clipboard.writeText(fullUrl).then(() => {
       this.alertService.addInfo("Link copied: " + fullUrl);
     });
