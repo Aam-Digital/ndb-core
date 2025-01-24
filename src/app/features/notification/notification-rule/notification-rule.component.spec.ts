@@ -42,6 +42,7 @@ describe("NotificationRuleComponent", () => {
     mockValue = {
       entityType: "entityType1",
       enabled: true,
+      channels: { push: true },
       conditions: {},
       notificationType: "entity_change",
     };
@@ -58,6 +59,7 @@ describe("NotificationRuleComponent", () => {
     expect(component.form.getRawValue()).toEqual({
       entityType: "entityType1",
       enabled: true,
+      channels: ["push"], // expect channels value to be parsed into an array
       conditions: [],
       notificationType: "entity_change",
     });
@@ -70,6 +72,7 @@ describe("NotificationRuleComponent", () => {
     component.form.setValue({
       entityType: "EventNote",
       notificationType: "entity_change",
+      channels: ["push"], // output from MatSelect
       conditions: [],
       enabled: true,
     });
@@ -78,6 +81,7 @@ describe("NotificationRuleComponent", () => {
       jasmine.objectContaining({
         entityType: "EventNote",
         notificationType: "entity_change",
+        channels: { push: true }, // expect channels value to be parsed into an object
         conditions: {},
         enabled: true,
       } as NotificationRule),
