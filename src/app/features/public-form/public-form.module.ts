@@ -42,6 +42,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
         "app/features/public-form/edit-public-form-columns/edit-public-form-columns.component"
       ).then((c) => c.EditPublicFormColumnsComponent),
   ],
+  [
+    "EditPublicformRoute",
+    () =>
+      import(
+        "app/features/public-form/edit-publicform-route/edit-publicform-route.component"
+      ).then((c) => c.EditPublicformRouteComponent),
+  ],
 ];
 
 const viewConfigs: ViewConfig[] = [
@@ -71,7 +78,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["route", "title"],
+                    fields: ["route", "title", "description"],
                   },
                   {
                     fields: [
@@ -82,7 +89,6 @@ const viewConfigs: ViewConfig[] = [
                         If you are seeing problems submitting the form, please contact your **technical support team**.`,
                       },
                       "entity",
-                      "description",
                       "logo",
                     ],
                   },
@@ -99,12 +105,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: [
-                      {
-                        id: "columns",
-                        editComponent: "EditPublicFormColumns",
-                      },
-                    ],
+                    fields: ["columns"],
                   },
                 ],
               },
