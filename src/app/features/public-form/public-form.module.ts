@@ -7,6 +7,7 @@ import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { PublicFormConfig } from "./public-form-config";
 import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
+import { publicFormRoutes } from "./public-form-routing";
 
 /**
  * Configure publicly accessible forms for users without login to record some data into the system.
@@ -17,6 +18,7 @@ import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 })
 export class PublicFormModule {
   static databaseEntities = [PublicFormConfig];
+  static routes = publicFormRoutes;
 
   constructor(
     components: ComponentRegistry,
@@ -83,7 +85,7 @@ const viewConfigs: ViewConfig[] = [
                       {
                         id: "permissions_remark",
                         editComponent: "EditDescriptionOnly",
-                        label: $localize`:PublicFormConfig admin form:If you want external people filling this form without logging in, the _Permission System_ also has to allow **"public"** users to create new records of this type.<br> 
+                        label: $localize`:PublicFormConfig admin form:If you want external people filling this form without logging in, the _Permission System_ also has to allow **"public"** users to create new records of this type.<br>
                         If you are seeing problems submitting the form, please contact your **technical support team**.`,
                       },
                       "entity",
