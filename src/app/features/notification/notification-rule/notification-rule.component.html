@@ -105,12 +105,15 @@
       </button>
 
       <button
-        mat-icon-button
+        mat-stroked-button
+        color="accent"
+        class="test-notification-button"
         (click)="testNotification()"
-        matTooltip="Test notification"
+        matTooltip="Test/Sample notification"
         i18n-matTooltip
       >
         <fa-icon icon="paper-plane"></fa-icon>
+        <span i18n class="new-notification-rule">Test Notification</span>
       </button>
     </div>
   </div>

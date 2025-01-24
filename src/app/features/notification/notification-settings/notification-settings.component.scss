@@ -157,3 +157,10 @@
 .notification-option {
   margin-right: sizes.$large;
 }
+
+.test-notification-button {
+  padding: sizes.$regular sizes.$large;
+  cursor: pointer;
+  border-radius: sizes.$large;
+  margin-left: sizes.$small;
+}
