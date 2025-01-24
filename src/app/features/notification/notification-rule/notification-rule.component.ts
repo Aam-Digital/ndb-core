@@ -230,7 +230,6 @@ export class NotificationRuleComponent implements OnChanges {
         entityTypeField: entityField,
         operator,
         condition: condition[operator],
-        channels: condition.channels,
       };
     });
   }

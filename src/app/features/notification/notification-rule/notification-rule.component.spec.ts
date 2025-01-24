@@ -40,6 +40,7 @@ describe("NotificationRuleComponent", () => {
     component = fixture.componentInstance;
 
     mockValue = {
+      label: "label1",
       entityType: "entityType1",
       enabled: true,
       channels: { push: true },
@@ -57,6 +58,7 @@ describe("NotificationRuleComponent", () => {
     component.ngOnChanges({ value: { currentValue: mockValue } } as any);
 
     expect(component.form.getRawValue()).toEqual({
+      label: "label1",
       entityType: "entityType1",
       enabled: true,
       channels: ["push"], // expect channels value to be parsed into an array
@@ -70,6 +72,7 @@ describe("NotificationRuleComponent", () => {
     component.initForm();
 
     component.form.setValue({
+      label: "label2",
       entityType: "EventNote",
       notificationType: "entity_change",
       channels: ["push"], // output from MatSelect
@@ -79,6 +82,7 @@ describe("NotificationRuleComponent", () => {
 
     expect(component.valueChange.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({
+        label: "label2",
         entityType: "EventNote",
         notificationType: "entity_change",
         channels: { push: true }, // expect channels value to be parsed into an object
