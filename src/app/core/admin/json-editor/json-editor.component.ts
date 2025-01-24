@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
-import { Logging } from "app/core/logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Component for editing JSON data.
