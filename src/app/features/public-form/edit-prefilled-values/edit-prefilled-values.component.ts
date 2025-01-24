@@ -7,7 +7,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { DefaultValueOptionsComponent } from "app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component";
-import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EditComponent } from "app/core/entity/default-datatype/edit-component";
 import { EntityConstructor } from "app/core/entity/model/entity";
@@ -41,27 +40,26 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
   styleUrls: ["./edit-prefilled-values.component.scss"],
 })
 export class EditPrefilledValuesComponent
-  extends EditComponent<FieldGroup[]>
+  extends EditComponent<FormFieldConfig[]>
   implements OnInit
 {
   entityConstructor: EntityConstructor;
   formConfig: FormConfig;
+  FormFieldConfig: FormFieldConfig;
   defaultValue: DefaultValueConfig;
-  prefilledValueSettings = this.fb.group({
-    prefilledvalue: this.fb.array([]),
-  });
 
   private entities = inject(EntityRegistry);
 
-  constructor(private fb: FormBuilder) {
-    super();
-  }
+  private fb = inject(FormBuilder);
+
+  prefilledValueSettings = this.fb.group({
+    prefilledvalue: this.fb.array([]),
+  });
 
   override ngOnInit(): void {
     if (!this.entity) return;
 
     this.entityConstructor = this.entities.get(this.entity["entity"]);
-    this.formConfig = { fieldGroups: this.formControl.getRawValue() };
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
       this.updateFieldGroups(value),
@@ -73,23 +71,17 @@ export class EditPrefilledValuesComponent
   }
 
   private initializePrefilledValues(): void {
-    if (!this.formConfig.fieldGroups) return;
-    this.formConfig.fieldGroups.forEach((group) => {
-      group.fields.forEach((field: FormFieldConfig) => {
-        const fieldId = typeof field === "string" ? field : field.id;
-        const defaultValue =
-          typeof field === "string" ? null : field.defaultValue;
+    const fields = this.formControl.value as FormFieldConfig[];
+    if (!fields || !Array.isArray(fields)) return;
 
-        if (fieldId) {
-          this.prefilledValues.push(
-            this.fb.group({
-              field: [fieldId],
-              defaultValue: [defaultValue],
-              hideFromForm: [field.hideFromForm ?? true],
-            }),
-          );
-        }
-      });
+    fields.forEach((field) => {
+      this.prefilledValues.push(
+        this.fb.group({
+          field: [field.id, Validators.required],
+          defaultValue: [field.defaultValue],
+          hideFromForm: [field.hideFromForm ?? true],
+        }),
+      );
     });
   }
 
@@ -114,70 +106,21 @@ export class EditPrefilledValuesComponent
       return;
     }
 
-    const fieldToRemove = this.prefilledValues.at(index).value.field;
-
-    this.formConfig.fieldGroups.forEach((group) => {
-      group.fields = group.fields.filter((field: any) => {
-        if (typeof field === "object") {
-          return field.id !== fieldToRemove;
-        }
-        return field !== fieldToRemove;
-      });
-    });
-
     this.prefilledValues.removeAt(index);
-
     this.formControl.markAsDirty();
   }
 
   private updateFieldGroups(value): void {
     if (!value?.prefilledvalue) return;
 
-    const fieldGroups = this.formConfig.fieldGroups || [];
-
-    if (fieldGroups.length === 0) {
-      fieldGroups.push({ fields: [] });
-    }
-
-    value.prefilledvalue.forEach((prefilledValue) => {
-      const fieldId = prefilledValue.field;
-      const defaultValue = prefilledValue.defaultValue;
-
-      if (!fieldId) {
-        return;
-      }
-      this.updateFieldInGroup(
-        fieldGroups[0].fields as unknown as FormFieldConfig[],
-        fieldId,
-        defaultValue,
-      );
-    });
-
-    setTimeout(() => this.formControl.setValue(fieldGroups));
-    this.formControl.markAsDirty();
-  }
-
-  private updateFieldInGroup(
-    fields: (string | FormFieldConfig)[],
-    fieldId: string,
-    defaultValue: DefaultValueConfig | null,
-  ): void {
-    const updatedValue: FormFieldConfig = defaultValue
-      ? { id: fieldId, defaultValue, hideFromForm: true }
-      : { id: fieldId, hideFromForm: true };
-
-    const fieldIndex = fields.findIndex((field) =>
-      typeof field === "string" ? field === fieldId : field.id === fieldId,
+    const updatedFields: FormFieldConfig[] = value.prefilledvalue.map(
+      (prefilledValue) => ({
+        id: prefilledValue.field,
+        defaultValue: prefilledValue.defaultValue,
+        hideFromForm: prefilledValue.hideFromForm ?? true,
+      }),
     );
-
-    if (fieldIndex !== -1) {
-      if (typeof fields[fieldIndex] === "object") {
-        const existingField = fields[fieldIndex] as FormFieldConfig;
-        existingField.defaultValue = defaultValue;
-        existingField.hideFromForm = true;
-      }
-    } else {
-      fields.push(updatedValue);
-    }
+    this.formControl.setValue(updatedFields);
+    this.formControl.markAsDirty();
   }
 }
