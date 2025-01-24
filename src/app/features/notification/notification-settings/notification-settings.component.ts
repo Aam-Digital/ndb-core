@@ -172,12 +172,8 @@ export class NotificationSettingsComponent implements OnInit {
   isNotificationPermissionGranted(): boolean {
     if (Notification.permission === "granted") {
       return true;
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          return true;
-        }
-      });
+    } else if (Notification.permission === "denied") {
+      return false;
     }
     return false;
   }

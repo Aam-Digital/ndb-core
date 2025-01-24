@@ -56,7 +56,7 @@ export class NotificationService {
               err,
             );
             this.alertService.addInfo(
-              $localize`Could not register device in aam-digital backend. Enable the notification permission to receive push notifications.`,
+              $localize`Please enable notification permissions to receive important updates.`,
             );
           });
       },
