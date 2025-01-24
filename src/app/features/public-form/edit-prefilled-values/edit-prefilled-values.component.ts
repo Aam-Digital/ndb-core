@@ -53,7 +53,7 @@ export class EditPrefilledValuesComponent
   private fb = inject(FormBuilder);
 
   prefilledValueSettings = this.fb.group({
-    prefilledvalue: this.fb.array([]),
+    prefilledValue: this.fb.array([]),
   });
 
   override ngOnInit(): void {
@@ -67,7 +67,7 @@ export class EditPrefilledValuesComponent
   }
 
   get prefilledValues(): FormArray {
-    return this.prefilledValueSettings.get("prefilledvalue") as FormArray;
+    return this.prefilledValueSettings.get("prefilledValue") as FormArray;
   }
 
   private initializePrefilledValues(): void {
@@ -111,9 +111,9 @@ export class EditPrefilledValuesComponent
   }
 
   private updateFieldGroups(value): void {
-    if (!value?.prefilledvalue) return;
+    if (!value?.prefilledValue) return;
 
-    const updatedFields: FormFieldConfig[] = value.prefilledvalue.map(
+    const updatedFields: FormFieldConfig[] = value.prefilledValue.map(
       (prefilledValue) => ({
         id: prefilledValue.field,
         defaultValue: prefilledValue.defaultValue,

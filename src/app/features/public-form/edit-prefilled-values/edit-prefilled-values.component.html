@@ -9,7 +9,7 @@
 
 <div class="defaultvalue-container" [class.disabled]="formControl.disabled">
   <form [formGroup]="prefilledValueSettings">
-    <div formArrayName="prefilledvalue">
+    <div formArrayName="prefilledValue">
       <div
         *ngFor="let fieldGroup of prefilledValues.controls; let i = index"
         [formGroupName]="i"
