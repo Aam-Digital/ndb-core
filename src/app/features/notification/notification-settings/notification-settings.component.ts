@@ -171,8 +171,6 @@ export class NotificationSettingsComponent implements OnInit {
    */
   isNotificationPermissionGranted(): boolean {
     switch (Notification.permission) {
-      case "default":
-        return true;
       case "granted":
         return true;
       case "denied":
