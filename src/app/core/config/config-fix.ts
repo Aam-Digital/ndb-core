@@ -101,7 +101,7 @@ export const defaultJsonConfig = {
               {
                 label: $localize`:Dashboard shortcut widget|open public form:Public Registration Form`,
                 icon: "file-circle-check",
-                link: "/public-form/test"
+                link: "/public-form/form/test"
               }
             ]
           }

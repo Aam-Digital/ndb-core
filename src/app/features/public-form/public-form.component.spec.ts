@@ -10,7 +10,7 @@ import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
@@ -83,11 +83,12 @@ describe("PublicFormComponent", () => {
     expect(component.formConfig.title).toBe("Some test title");
   }));
 
-  it("should show a snackbar and reset form when the form has been submitted", fakeAsync(() => {
+  it("should navigate to the success page after form submission and show a link to submit another form", fakeAsync(() => {
     initComponent();
     tick();
     const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     saveSpy.and.resolveTo();
     component.form.formGroup.get("name").setValue("some name");
 
@@ -95,7 +96,9 @@ describe("PublicFormComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
-    expect(openSnackbarSpy).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith([
+      "/public-form/submission-success",
+    ]);
   }));
 
   it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
