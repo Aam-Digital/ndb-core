@@ -12,18 +12,17 @@
         i18n-matTooltip
       ></fa-icon>
     </mat-label>
-    <span
-      i18n
-      matTextPrefix
-      class="prefix-text"
+    <div
+      class="readonly-prefix"
       [ngClass]="{ 'prefix-text-disabled': !formControl.disabled }"
     >
-      {{ getPrefixValue() }}&nbsp;
-    </span>
+      {{ getPrefixValue() }}
+    </div>
     <input
       matInput
       [formControl]="formControl"
       placeholder="Enter Form Link ID"
+      class="editable-input"
     />
     @if (formControl.invalid && formControl.touched) {
       <mat-error>

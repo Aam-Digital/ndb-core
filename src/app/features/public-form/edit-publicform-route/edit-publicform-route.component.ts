@@ -50,7 +50,7 @@ export class EditPublicformRouteComponent
   getPrefixValue(): string {
     const currentUrl = window.location.origin;
 
-    return `${currentUrl}/public-form/`;
+    return `${currentUrl}/public-form/form/`;
   }
 
   copyToClipboard(): void {
