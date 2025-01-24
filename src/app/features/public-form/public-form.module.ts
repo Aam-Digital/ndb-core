@@ -106,12 +106,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: [
-                      {
-                        id: "columns",
-                        editComponent: "EditPublicFormColumns",
-                      },
-                    ],
+                    fields: ["columns"],
                   },
                 ],
               },
@@ -126,12 +121,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: [
-                      {
-                        id: "restrictedPrefilled",
-                        editComponent: "EditPrefilledValuesComponent",
-                      },
-                    ],
+                    fields: ["restrictedPrefilled"],
                   },
                 ],
               },
