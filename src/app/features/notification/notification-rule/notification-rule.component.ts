@@ -78,6 +78,7 @@ export class NotificationRuleComponent implements OnChanges {
 
   initForm() {
     this.form = new FormGroup({
+      label: new FormControl(this.value?.label ?? ""),
       entityType: new FormControl({
         value: this.value?.entityType ?? "",
         disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
@@ -170,6 +171,7 @@ export class NotificationRuleComponent implements OnChanges {
 
   addNewNotificationCondition() {
     const newCondition = new FormGroup({
+      label: new FormControl(""),
       entityTypeField: new FormControl(""),
       operator: new FormControl(""),
       condition: new FormControl(""),

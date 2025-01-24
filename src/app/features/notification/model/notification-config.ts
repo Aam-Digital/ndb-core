@@ -45,6 +45,9 @@ export type NotificationChannel = "push";
  * Represents a specific notification type configuration.
  */
 export class NotificationRule {
+  /** human-readable title for this notification rule */
+  @DatabaseField() label?: string;
+
   /** The general type of notification (e.g. changes to entities, etc.) */
   @DatabaseField() notificationType: NotificationType;
 

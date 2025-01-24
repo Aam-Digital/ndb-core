@@ -1,14 +1,15 @@
 <form [formGroup]="form">
   <div class="flex-row align-center full-width">
     <mat-form-field class="full-width-field">
-      <mat-label i18n>Select entity field</mat-label>
+      <mat-label i18n>Field</mat-label>
       <app-entity-field-select
         [entityType]="notificationRule?.entityType"
         formControlName="entityTypeField"
       />
     </mat-form-field>
+
     <mat-form-field class="full-width-field notification-condition-operator">
-      <mat-label i18n>Select Notification operator</mat-label>
+      <mat-label i18n>Type of condition</mat-label>
       <app-basic-autocomplete
         [options]="conditionalOptions"
         [optionToString]="optionsToLabel"
@@ -16,6 +17,7 @@
         formControlName="operator"
       />
     </mat-form-field>
+
     <mat-form-field class="full-width-field notification-option">
       <mat-label i18n
         >Notification method(s)
@@ -39,8 +41,9 @@
         }
       </mat-select>
     </mat-form-field>
+
     <mat-form-field class="full-width-field">
-      <mat-label i18n>Notification condition</mat-label>
+      <mat-label i18n>has value</mat-label>
       <input
         matInput
         placeholder="Enter notification condition"
@@ -48,10 +51,11 @@
         formControlName="condition"
       />
     </mat-form-field>
+
     <button
       (click)="removeNotificationCondition.emit()"
       mat-icon-button
-      matTooltip="Remove notification rule"
+      matTooltip="Remove notification condition"
       i18n-matTooltip
     >
       <fa-icon icon="trash"></fa-icon>
