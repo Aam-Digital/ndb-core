@@ -13,6 +13,9 @@ import {
   NotificationRule,
 } from "../../model/notification-config";
 
+/**
+ * Configure a single notification rule condition.
+ */
 @Component({
   selector: "app-notification-condition",
   standalone: true,

@@ -1774,15 +1774,6 @@
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3954203536096188474" datatype="html">
-        <source> Download details </source>
-        <target>Details herunterladen</target>
-        <note priority="1" from="description">Download note details as CSV</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
-          <context context-type="linenumber">71</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="8113676679316331846" datatype="html">
         <source><x id="START_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="&lt;app-fa-dynamic-icon       [icon]=&quot;includeEventNotes ? 'toggle-on' : 'toggle-off'&quot;       class=&quot;standard-icon-with-text color-accent&quot;     &gt;"/><x id="CLOSE_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="Include"/> Include events </source>
         <target><x id="START_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="&lt;app-fa-dynamic-icon       [icon]=&quot;includeEventNotes ? 'toggle-on' : 'toggle-off'&quot;       class=&quot;standard-icon-with-text color-accent&quot;     &gt;"/><x id="CLOSE_TAG_APP_FA_DYNAMIC_ICON" ctype="x-app_fa_dynamic_icon" equiv-text="Include"/> Events einbeziehen </target>
@@ -2352,7 +2343,7 @@
         <note priority="1" from="description">Label drag and drop item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4704280698666275116" datatype="html">
@@ -2361,7 +2352,7 @@
         <note priority="1" from="description">Label drag and drop item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="594027083086692935" datatype="html">
@@ -7881,20 +7872,12 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
           <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6410985429772619439" datatype="html">
-        <source>Successfully submitted form</source>
-        <target>Formular erfolgreich übermittelt</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
-          <context context-type="linenumber">74</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7643347378573807612" datatype="html">
         <source>Some fields are invalid, please check the form and submit again.</source>
         <target>Einige Angaben sind ungültig, bitte überprüfen Sie das Formular und senden es erneut ab.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4310513583397103775" datatype="html">
@@ -8967,7 +8950,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">admin menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6553415034664118139" datatype="html">
@@ -8976,7 +8959,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7429211262318065236" datatype="html">
@@ -8985,7 +8968,7 @@ Falls Sie einen Account für das System besitzen, prüfen Sie bitte auch, ob Sie
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1155564940038634158" datatype="html">
@@ -9400,17 +9383,6 @@ Lesen Sie die [Gesundheitsrichtlinien](https://example.com/guidelines), um detai
           <context context-type="linenumber">14,19</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2134050434291518708" datatype="html">
-        <source>If you want external people filling this form without logging in, the _Permission System_ also has to allow **&quot;public&quot;** users to create new records of this type.&lt;br&gt; 
-                        If you are seeing problems submitting the form, please contact your **technical support team**.</source>
-        <target>Wenn Sie m&amp;ouml;chten, dass externe Personen dieses Formular ausf&amp;uuml;llen, ohne sich anzumelden, muss das _Berechtigungssystem_ auch **&quot;&amp;ouml;ffentlichen&quot;** Benutzern erlauben, neue Datens&amp;auml;tze dieses Typs zu erstellen.&lt;br&gt;
-Wenn beim Absenden des Formulars Probleme auftreten, wenden Sie sich bitte an Ihr **technisches Supportteam**.</target>
-        <note priority="1" from="description">PublicFormConfig admin form</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">79,80</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="4975947364131483096" datatype="html">
         <source>Select Entity Field</source>
         <target>Datensatz-Feld auswählen</target>
@@ -9510,7 +9482,7 @@ Wenn beim Absenden des Formulars Probleme auftreten, wenden Sie sich bitte an Ih
         <note priority="1" from="description">Sign out of the app</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8874875360289253570" datatype="html">
@@ -9572,6 +9544,51 @@ Wenn beim Absenden des Formulars Probleme auftreten, wenden Sie sich bitte an Ih
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/recurring-interval/edit-recurring-interval/edit-recurring-interval.component.html</context>
           <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7258595972157967762" datatype="html">
+        <source>Download details</source>
+        <target>Details herunterladen</target>
+        <note priority="1" from="description">Download note details as CSV</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.html</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5965753758570204253" datatype="html">
+        <source>If you want external people filling this form without logging in, the _Permission System_ also has to allow **&quot;public&quot;** users to create new records of this type.&lt;br&gt;
+                        If you are seeing problems submitting the form, please contact your **technical support team**.</source>
+        <target>Wenn externe Personen dieses Formular ohne Login ausfüllen sollen, muss das Berechtigungs-System auch der öffentlichen (&quot;public&quot;) Nutzer-Rolle erlauben Datensätze dieses Typs zu erstellen.
+
+Falls Sie Probleme beim Absenden des Formulars feststellen, kontaktieren Sie bitte Ihr technisches Support-Team.</target>
+        <note priority="1" from="description">PublicFormConfig admin form</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
+          <context context-type="linenumber">81,82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="892832265477968679" datatype="html">
+        <source>Your form was successfully submitted!</source>
+        <target>Formular erfolgreich abgeschickt!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/submission-success/submission-success.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3210019799829053017" datatype="html">
+        <source>Thank you for your submission.</source>
+        <target>Danke für die Informationen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/submission-success/submission-success.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4481772573507899412" datatype="html">
+        <source> Submit Another Form </source>
+        <target> Weiteres Formular ausfüllen </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/submission-success/submission-success.component.html</context>
+          <context context-type="linenumber">14,16</context>
         </context-group>
       </trans-unit>
     </body>

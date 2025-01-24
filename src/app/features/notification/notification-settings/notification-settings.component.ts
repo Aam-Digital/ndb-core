@@ -117,7 +117,11 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   private async saveNotificationConfig(config: NotificationConfig) {
-    await this.entityMapper.save(config);
+    try {
+      await this.entityMapper.save(config);
+    } catch (err) {
+      Logging.error(err.message);
+    }
   }
 
   async addNewNotificationRule() {
