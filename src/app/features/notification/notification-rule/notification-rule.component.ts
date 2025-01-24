@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
@@ -34,7 +35,9 @@ import {
 import { DataFilter } from "../../../core/filter/filters/filters";
 import { NotificationService } from "../notification.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatDialog } from "@angular/material/dialog";
 import { Logging } from "../../../core/logging/logging.service";
+import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
 
 /**
  * Configure a single notification rule.
@@ -70,10 +73,8 @@ export class NotificationRuleComponent implements OnChanges {
 
   @Output() removeNotificationCondition = new EventEmitter<any>();
 
-  @Output() notificationConditionValueChange =
-    new EventEmitter<NotificationRule>();
-
   form: FormGroup;
+  readonly dialog = inject(MatDialog);
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
     { key: "push", label: $localize`:notification method option:Push` },
@@ -98,20 +99,17 @@ export class NotificationRuleComponent implements OnChanges {
       channels: new FormControl(
         this.parseChannelsToOptionsArray(this.value?.channels),
       ),
-      conditions: new FormArray(
-        this.parseConditionsObjectToArray(this.value?.conditions).map(
-          (c) =>
-            new FormGroup({
-              entityTypeField: new FormControl(c.entityTypeField),
-              operator: new FormControl(c.operator),
-              condition: new FormControl(c.condition),
-            }),
-        ),
-      ),
+      conditions: new FormArray([]),
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
       ),
     });
+
+    // Parse conditions from object to array and setup the form
+    const parsedConditions = this.parseConditionsObjectToArray(
+      this.value?.conditions,
+    );
+    this.setupConditionsArray(parsedConditions);
 
     this.updateEntityTypeControlState();
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
@@ -190,17 +188,48 @@ export class NotificationRuleComponent implements OnChanges {
     (this.form.get("conditions") as FormArray).push(newCondition);
   }
 
-  updateNotificationCondition(updateNotificationCondition: NotificationRule) {
-    this.notificationConditionValueChange.emit(updateNotificationCondition);
-  }
-
   removeCondition(notificationConditionIndex: number) {
     (this.form.get("conditions") as FormArray).removeAt(
       notificationConditionIndex,
     );
-    this.removeNotificationCondition.emit();
+    this.updateValue(this.form.value);
   }
 
+  /**
+   * Open the conditions JSON editor popup.
+   */
+  openConditionsInJsonEditorPopup() {
+    const notificationConditions = this.form.get("conditions")?.value;
+    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
+      data: {
+        value: this.parseConditionsArrayToObject(notificationConditions) ?? {},
+        closeButton: true,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.handleConditionsJsonEditorPopupClose(result);
+    });
+  }
+
+  /**
+   * Handle the result of the conditions JSON editor popup.
+   * @param result
+   * @private
+   */
+  private handleConditionsJsonEditorPopupClose(result: string[]) {
+    if (!result) {
+      return;
+    }
+
+    const parsedConditions = this.parseConditionsObjectToArray(result);
+    this.setupConditionsArray(parsedConditions);
+  }
+
+  /**
+   * Toggle the notification conditions accordion.
+   * @param notificationRuleItem
+   */
   handleToggleAccordion(notificationRuleItem: CdkAccordionItem) {
     if (!notificationRuleItem.expanded) {
       notificationRuleItem.toggle();
@@ -264,5 +293,22 @@ export class NotificationRuleComponent implements OnChanges {
       };
       return acc;
     }, {});
+  }
+
+  /**
+   * Setup the conditions array in the form.
+   * @param conditions
+   */
+  private setupConditionsArray(conditions: NotificationRuleCondition[] = []) {
+    const conditionsFormArray = this.form.get("conditions") as FormArray;
+    conditionsFormArray.clear();
+    conditions.forEach((condition) => {
+      const conditionGroup = new FormGroup({
+        entityTypeField: new FormControl(condition.entityTypeField),
+        operator: new FormControl(condition.operator),
+        condition: new FormControl(condition.condition),
+      });
+      conditionsFormArray.push(conditionGroup);
+    });
   }
 }

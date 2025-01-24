@@ -29,9 +29,10 @@
           <app-notification-rule
             [value]="notificationRule"
             (valueChange)="updateNotificationRule(notificationRule, $event)"
-            (notificationConditionValueChange)="updateNotificationCondition()"
             (removeNotificationRule)="confirmRemoveNotificationRule(index)"
-            (removeNotificationCondition)="updateNotificationCondition()"
+            (removeNotificationCondition)="
+              updateNotificationRule(notificationRule, $event)
+            "
             [accordionIndex]="index"
           ></app-notification-rule>
         </div>

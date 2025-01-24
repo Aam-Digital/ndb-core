@@ -10,6 +10,9 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
 import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
 import { NotificationRule } from "../../model/notification-config";
 
+/**
+ * Configure a single notification rule condition.
+ */
 @Component({
   selector: "app-notification-condition",
   standalone: true,
