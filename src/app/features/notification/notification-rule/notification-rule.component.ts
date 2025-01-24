@@ -20,7 +20,10 @@ import {
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { NotificationRule } from "../model/notification-config";
+import {
+  NotificationChannel,
+  NotificationRule,
+} from "../model/notification-config";
 import { CdkAccordionItem, CdkAccordionModule } from "@angular/cdk/accordion";
 import {
   NotificationConditionComponent,
@@ -30,6 +33,8 @@ import { DataFilter } from "../../../core/filter/filters/filters";
 import { NotificationService } from "../notification.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { Logging } from "../../../core/logging/logging.service";
+import { MatOption } from "@angular/material/core";
+import { MatSelect } from "@angular/material/select";
 
 /**
  * Configure a single notification rule.
@@ -50,6 +55,8 @@ import { Logging } from "../../../core/logging/logging.service";
     CdkAccordionModule,
     NotificationConditionComponent,
     MatProgressSpinnerModule,
+    MatOption,
+    MatSelect,
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "../notification-settings/notification-settings.component.scss",
@@ -68,6 +75,10 @@ export class NotificationRuleComponent implements OnChanges {
 
   form: FormGroup;
 
+  notificationMethods: { key: NotificationChannel; label: string }[] = [
+    { key: "push", label: $localize`:notification method option:Push` },
+  ];
+
   constructor(private notificationService: NotificationService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -84,6 +95,10 @@ export class NotificationRuleComponent implements OnChanges {
         disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
       }),
       enabled: new FormControl(this.value?.enabled || false),
+      // different format for form control
+      channels: new FormControl(
+        this.parseChannelsToOptionsArray(this.value?.channels),
+      ),
       conditions: new FormArray(
         this.parseConditionsObjectToArray(this.value?.conditions).map(
           (c) =>
@@ -91,9 +106,6 @@ export class NotificationRuleComponent implements OnChanges {
               entityTypeField: new FormControl(c.entityTypeField),
               operator: new FormControl(c.operator),
               condition: new FormControl(c.condition),
-              channels: new FormControl(
-                this.parseChannelsToOptionsArray(c.channels),
-              ),
             }),
         ),
       ),
@@ -131,6 +143,7 @@ export class NotificationRuleComponent implements OnChanges {
     if (entityTypeControl?.disabled) {
       value.entityType = entityTypeControl.value;
     }
+    value.channels = this.parseOptionsArrayToChannels(value.channels);
     value.conditions = this.parseConditionsArrayToObject(value.conditions);
 
     if (JSON.stringify(value) === JSON.stringify(this.value)) {
@@ -175,7 +188,6 @@ export class NotificationRuleComponent implements OnChanges {
       entityTypeField: new FormControl(""),
       operator: new FormControl(""),
       condition: new FormControl(""),
-      channels: new FormControl({}),
     });
     (this.form.get("conditions") as FormArray).push(newCondition);
   }
@@ -250,12 +262,8 @@ export class NotificationRuleComponent implements OnChanges {
         return acc;
       }
 
-      const channelsArray = Array.isArray(condition.channels)
-        ? condition.channels
-        : [];
       acc[condition.entityTypeField] = {
         [condition.operator]: condition.condition,
-        channels: this.parseOptionsArrayToChannels(channelsArray),
       };
       return acc;
     }, {});

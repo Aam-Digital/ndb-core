@@ -30,7 +30,6 @@ describe("NotificationConditionComponent", () => {
       entityTypeField: new FormControl(""),
       operator: new FormControl(""),
       condition: new FormControl(""),
-      channels: new FormControl({}),
     });
 
     fixture.detectChanges();

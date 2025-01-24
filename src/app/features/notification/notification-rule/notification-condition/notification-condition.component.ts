@@ -12,8 +12,6 @@ import {
   NotificationChannel,
   NotificationRule,
 } from "../../model/notification-config";
-import { MatOption } from "@angular/material/core";
-import { MatSelect } from "@angular/material/select";
 
 @Component({
   selector: "app-notification-condition",
@@ -28,8 +26,6 @@ import { MatSelect } from "@angular/material/select";
     CdkAccordionModule,
     EntityFieldSelectComponent,
     BasicAutocompleteComponent,
-    MatOption,
-    MatSelect,
   ],
   templateUrl: "./notification-condition.component.html",
   styleUrl: "../../notification-settings/notification-settings.component.scss",
@@ -42,10 +38,6 @@ export class NotificationConditionComponent implements OnInit {
   @Output() removeNotificationCondition = new EventEmitter<any>();
 
   conditionalOptions: SimpleDropdownValue[] = [];
-
-  notificationMethods: { key: NotificationChannel; label: string }[] = [
-    { key: "push", label: $localize`:notification method option:Push` },
-  ];
 
   optionsToLabel = (v: SimpleDropdownValue) => this.conditionMappings[v.value];
   optionsToValue = (v: SimpleDropdownValue) =>
@@ -87,5 +79,4 @@ export interface NotificationRuleCondition {
   entityTypeField: string;
   operator: string;
   condition: string;
-  channels: { [key in NotificationChannel]?: boolean };
 }
