@@ -55,7 +55,7 @@ describe("EditPrefilledValuesComponent", () => {
       }),
     );
 
-    component.removeRestrictedPrefilled(0);
+    component.removePrefilledFields(0);
 
     expect(component.prefilledValues.length).toBe(0);
   });

@@ -85,7 +85,7 @@ export class EditPrefilledValuesComponent
     });
   }
 
-  addRestrictedPrefilled(): void {
+  addPrefilledFields(): void {
     this.prefilledValues.push(
       this.fb.group({
         field: ["", Validators.required],
@@ -101,7 +101,7 @@ export class EditPrefilledValuesComponent
     return this.prefilledValues.invalid;
   }
 
-  removeRestrictedPrefilled(index: number): void {
+  removePrefilledFields(index: number): void {
     if (index < 0 || index >= this.prefilledValues.length) {
       return;
     }

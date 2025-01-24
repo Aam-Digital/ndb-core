@@ -120,14 +120,14 @@ const viewConfigs: ViewConfig[] = [
           ],
         },
         {
-          title: $localize`:PublicFormConfig admin form panel:Configure Default/Pre-filled Values`,
+          title: $localize`:PublicFormConfig admin form panel:Configure Default/Pre-filled Fields`,
           components: [
             {
               component: "Form",
               config: {
                 fieldGroups: [
                   {
-                    fields: ["restrictedPrefilled"],
+                    fields: ["prefilledFields"],
                   },
                 ],
               },

@@ -55,7 +55,7 @@ export class PublicFormConfig extends Entity {
   entity: string;
 
   @DatabaseField({
-    label: $localize`:PublicFormConfig:Columns`,
+    label: $localize`:PublicFormConfig:Fields`,
     editComponent: "EditPublicFormColumns",
     isArray: true,
   })
@@ -65,9 +65,9 @@ export class PublicFormConfig extends Entity {
   @DatabaseField() prefilled: { [key in string]: any };
 
   @DatabaseField({
-    label: $localize`:PublicFormConfig:Restricted Prefilled`,
+    label: $localize`:PublicFormConfig:Prefilled Fields`,
     editComponent: "EditPrefilledValuesComponent",
     isArray: true,
   })
-  restrictedPrefilled: FormFieldConfig[];
+  prefilledFields: FormFieldConfig[];
 }
