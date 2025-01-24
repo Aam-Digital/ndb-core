@@ -7,6 +7,10 @@ import { of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ActivatedRoute } from "@angular/router";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
 
 describe("NotificationComponent", () => {
   let component: NotificationComponent;
@@ -23,6 +27,7 @@ describe("NotificationComponent", () => {
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: SessionSubject, useValue: of(null) },
         { provide: ActivatedRoute, useValue: {} },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
 
