@@ -1,0 +1,17 @@
+@use "variables/sizes";
+
+.mat-typography {
+  max-height: 90vh;
+  margin-top: sizes.$large;
+  width: 60vw;
+}
+
+.json-editor-actions {
+  justify-content: end;
+  margin-top: sizes.$regular;
+  gap: sizes.$regular;
+}
+
+.json-editor-dialog {
+  height: 50vh;
+}
