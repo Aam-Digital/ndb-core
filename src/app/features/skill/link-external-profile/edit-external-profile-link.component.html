@@ -59,7 +59,6 @@
         <button
           mat-stroked-button
           class="flex-grow"
-          i18n
           matTooltip="Load the latest linked external profile and update the related fields of this record with the external data."
           i18n-matTooltip
           (click)="updateExternalData()"
@@ -67,14 +66,14 @@
         >
           @if (isLoading()) {
             <div style="display: flex">
-              <label>loading data...</label>
+              <label i18n>loading data...</label>
               <mat-spinner
                 diameter="18"
                 style="margin-left: 12px"
               ></mat-spinner>
             </div>
           } @else {
-            Update data
+            <span i18n>Update data</span>
           }
         </button>
       }

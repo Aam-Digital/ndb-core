@@ -29,8 +29,8 @@
       <div cdkDrag class="filter-field drop-item flex-row gap-small">
         <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
         <mat-form-field appearance="fill">
-          <mat-label
-            ><app-entity-field-label
+          <mat-label>
+            <app-entity-field-label
               [field]="filter"
               [entityType]="entityConstructor"
             ></app-entity-field-label>
@@ -47,8 +47,8 @@
     </div>
   </div>
 
-  <div class="table-content-preview" i18n>
-    Add Filter:
+  <div class="table-content-preview">
+    <span i18n>Add Filter:</span>
     <app-entity-fields-menu
       [entityType]="entityConstructor"
       [activeFields]="filters"
@@ -91,8 +91,8 @@
         }
       </div>
 
-      <div class="table-content-preview" i18n>
-        Drag & drop table column headers. Add columns:
+      <div class="table-content-preview">
+        <span i18n>Drag & drop table column headers. Add columns:</span>
         <app-entity-fields-menu
           [entityType]="entityConstructor"
           [(activeFields)]="item.columns"
