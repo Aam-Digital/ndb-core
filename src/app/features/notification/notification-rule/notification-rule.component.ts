@@ -99,20 +99,17 @@ export class NotificationRuleComponent implements OnChanges {
       channels: new FormControl(
         this.parseChannelsToOptionsArray(this.value?.channels),
       ),
-      conditions: new FormArray(
-        this.parseConditionsObjectToArray(this.value?.conditions).map(
-          (c) =>
-            new FormGroup({
-              entityTypeField: new FormControl(c.entityTypeField),
-              operator: new FormControl(c.operator),
-              condition: new FormControl(c.condition),
-            }),
-        ),
-      ),
+      conditions: new FormArray([]),
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
       ),
     });
+
+    // Parse conditions from object to array and setup the form
+    const parsedConditions = this.parseConditionsObjectToArray(
+      this.value?.conditions,
+    );
+    this.setupConditionsArray(parsedConditions);
 
     this.updateEntityTypeControlState();
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
@@ -225,17 +222,8 @@ export class NotificationRuleComponent implements OnChanges {
       return;
     }
 
-    const parsedObject = this.parseConditionsObjectToArray(result);
-    const conditionsFormArray = this.form.get("conditions") as FormArray;
-    conditionsFormArray.clear();
-    parsedObject.forEach((condition) => {
-      const conditionGroup = new FormGroup({
-        entityTypeField: new FormControl(condition.entityTypeField),
-        operator: new FormControl(condition.operator),
-        condition: new FormControl(condition.condition),
-      });
-      conditionsFormArray.push(conditionGroup);
-    });
+    const parsedConditions = this.parseConditionsObjectToArray(result);
+    this.setupConditionsArray(parsedConditions);
   }
 
   /**
@@ -305,5 +293,22 @@ export class NotificationRuleComponent implements OnChanges {
       };
       return acc;
     }, {});
+  }
+
+  /**
+   * Setup the conditions array in the form.
+   * @param conditions
+   */
+  private setupConditionsArray(conditions: NotificationRuleCondition[] = []) {
+    const conditionsFormArray = this.form.get("conditions") as FormArray;
+    conditionsFormArray.clear();
+    conditions.forEach((condition) => {
+      const conditionGroup = new FormGroup({
+        entityTypeField: new FormControl(condition.entityTypeField),
+        operator: new FormControl(condition.operator),
+        condition: new FormControl(condition.condition),
+      });
+      conditionsFormArray.push(conditionGroup);
+    });
   }
 }
