@@ -5,7 +5,7 @@
 
 .defaultvalue-container {
   overflow: hidden;
-  padding: 10px;
+  padding: sizes.$regular;
 
   &.disabled {
     opacity: 0.5;
@@ -15,16 +15,16 @@
 
 .container {
   @include mat-elevation.elevation(2);
-  border-radius: 10px;
+  border-radius: sizes.$regular;
   padding: 16px;
   background-color: colors.$background;
   margin-top: sizes.$regular;
   gap: 40px;
-  flex-direction: column;
+}
 
-  @media screen and (min-width: breakpoints.$xxl) {
-    flex-direction: row;
-  }
+.remove-button {
+  align-items: end;
+  justify-content: center;
 }
 
 .add-new-defaultvalue-field {
@@ -41,9 +41,9 @@
 }
 
 .component-info {
-  padding: 10px;
+  padding: sizes.$regular;
 }
 
 .new-defaultvalue-rule {
-  margin-left: 5px;
+  margin-left: sizes.$small;
 }
