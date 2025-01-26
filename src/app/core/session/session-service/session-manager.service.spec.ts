@@ -6,11 +6,10 @@ import {
   SyncStateSubject,
 } from "../session-type";
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { PouchDatabase } from "../../database/pouch-database";
+import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { Database } from "../../database/database";
 import { Router } from "@angular/router";
@@ -19,7 +18,6 @@ import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../user/demo-user-generator.service";
-import { Config } from "../../config/config";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("SessionManagerService", () => {
@@ -30,7 +28,6 @@ describe("SessionManagerService", () => {
   let mockNavigator: { onLine: boolean };
   let dbUser: SessionInfo;
   const userDBName = `${TEST_USER}-${environment.DB_NAME}`;
-  const deprecatedDBName = environment.DB_NAME;
   let initInMemorySpy: jasmine.Spy;
   let initIndexedSpy: jasmine.Spy;
 
@@ -67,15 +64,6 @@ describe("SessionManagerService", () => {
     loginStateSubject = TestBed.inject(LoginStateSubject);
     sessionInfo = TestBed.inject(SessionSubject);
 
-    const db = TestBed.inject(Database) as PouchDatabase;
-    initInMemorySpy = spyOn(db, "initInMemoryDB").and.callThrough();
-    initIndexedSpy = spyOn(db, "initIndexedDB").and.callThrough();
-    spyOn(TestBed.inject(SyncService), "startSync").and.callFake(() =>
-      TestBed.inject(EntityMapperService).save(
-        new Config(Config.CONFIG_KEY, {}),
-      ),
-    );
-
     TestBed.inject(LocalAuthService).saveUser(dbUser);
     environment.session_type = SessionType.mock;
     spyOn(service, "remoteLoginAvailable").and.returnValue(true);
@@ -84,8 +72,8 @@ describe("SessionManagerService", () => {
   afterEach(async () => {
     localStorage.clear();
     const tmpDB = new PouchDatabase();
-    await tmpDB.initInMemoryDB(userDBName).destroy();
-    await tmpDB.initInMemoryDB(deprecatedDBName).destroy();
+    tmpDB.init(userDBName);
+    await tmpDB.destroy();
   });
 
   it("should update the session info once authenticated", async () => {
@@ -101,7 +89,6 @@ describe("SessionManagerService", () => {
 
     expect(saveUserSpy).toHaveBeenCalledWith(updatedUser);
     expect(sessionInfo.value).toEqual(updatedUser);
-    expect(TestBed.inject(SyncService).startSync).toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
   });
 
@@ -258,55 +245,16 @@ describe("SessionManagerService", () => {
   });
 
   it("should use current user db if database has content", async () => {
-    await defineExistingDatabases(true, false);
+    await defineExistingDatabases();
 
     await service.remoteLogin();
 
     expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
   });
 
-  it("should use and reserve a deprecated db if it exists and current db has no content", async () => {
-    await defineExistingDatabases(false, true);
-
-    await service.remoteLogin();
-
-    expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
-    const dbReservation = window.localStorage.getItem(
-      service.DEPRECATED_DB_KEY,
-    );
-    expect(dbReservation).toBe(TEST_USER);
-  });
-
-  it("should open a new database if deprecated db is already in use", async () => {
-    await defineExistingDatabases(false, true, "other-user");
-
-    await service.remoteLogin();
-
-    expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
-  });
-
-  it("should use the deprecated database if it is reserved by the current user", async () => {
-    await defineExistingDatabases(false, true, TEST_USER);
-
-    await service.remoteLogin();
-
-    expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
-  });
-
-  async function defineExistingDatabases(
-    initUserDB: boolean,
-    initDeprecatedDB: boolean,
-    reserved?: string,
-  ) {
-    if (reserved) {
-      window.localStorage.setItem(service.DEPRECATED_DB_KEY, reserved);
-    }
+  async function defineExistingDatabases() {
     const tmpDB = new PouchDatabase();
-    if (initUserDB) {
-      await tmpDB.initInMemoryDB(userDBName).put({ _id: "someDoc" });
-    }
-    if (initDeprecatedDB) {
-      await tmpDB.initInMemoryDB(deprecatedDBName).put({ _id: "someDoc" });
-    }
+    tmpDB.init(userDBName);
+    await tmpDB.put({ _id: "someDoc" });
   }
 });

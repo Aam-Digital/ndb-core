@@ -1,30 +1,10 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
-import { Logging } from "../logging/logging.service";
+import { Database, GetAllOptions, GetOptions, QueryOptions } from "../database";
+import { Logging } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
-import memory from "pouchdb-adapter-memory";
-import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
+import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 import { HttpStatusCode } from "@angular/common/http";
-import { environment } from "../../../environments/environment";
-import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -35,52 +15,25 @@ import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.serv
  */
 export class PouchDatabase extends Database {
   /**
-   * Small helper function which creates a database with in-memory PouchDB initialized
-   */
-  static create(): PouchDatabase {
-    return new PouchDatabase().initInMemoryDB();
-  }
-
-  /**
    * The reference to the PouchDB instance
    * @private
    */
-  private pouchDB: PouchDB.Database;
+  protected pouchDB: PouchDB.Database;
 
   /**
    * A list of promises that resolve once all the (until now saved) indexes are created
    * @private
    */
-  private indexPromises: Promise<any>[] = [];
+  protected indexPromises: Promise<any>[] = [];
 
   /**
    * An observable that emits a value whenever the PouchDB receives a new change.
    * This change can come from the current user or remotely from the (live) synchronization
    * @private
    */
-  private changesFeed: Subject<any>;
+  protected changesFeed: Subject<any>;
 
-  private databaseInitialized = new Subject<void>();
-
-  /**
-   * Create a PouchDB database manager.
-   * @param authService (Optional) the authentication service that may require additional auth headers for remote DB access
-   */
-  constructor(private authService?: KeycloakAuthService) {
-    super();
-  }
-
-  /**
-   * Initialize the PouchDB with the in-memory adapter.
-   * See {@link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-adapter-memory}
-   * @param dbName the name for the database
-   */
-  initInMemoryDB(dbName = "in-memory-database"): PouchDatabase {
-    PouchDB.plugin(memory);
-    this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
-    this.databaseInitialized.complete();
-    return this;
-  }
+  protected databaseInitialized = new Subject<void>();
 
   /**
    * Initialize the PouchDB with the IndexedDB/in-browser adapter (default).
@@ -88,77 +41,17 @@ export class PouchDatabase extends Database {
    * @param dbName the name for the database under which the IndexedDB entries will be created
    * @param options PouchDB options which are directly passed to the constructor
    */
-  initIndexedDB(
+  init(
     dbName = "indexed-database",
     options?: PouchDB.Configuration.DatabaseConfiguration,
-  ): PouchDatabase {
+  ) {
     this.pouchDB = new PouchDB(dbName, options);
     this.databaseInitialized.complete();
-    return this;
   }
 
-  /**
-   * Initializes the PouchDB with the http adapter to directly access a remote CouchDB without replication
-   * See {@link https://pouchdb.com/adapters.html#pouchdb_over_http}
-   * @param dbName (relative) path to the remote database
-   * @param fetch a overwrite for the default fetch handler
-   */
-  initRemoteDB(
-    dbName = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}`,
-  ): PouchDatabase {
-    const options = {
-      adapter: "http",
-      skip_setup: true,
-      fetch: (url: string | Request, opts: RequestInit) =>
-        this.defaultFetch(url, opts),
-    };
-    this.pouchDB = new PouchDB(dbName, options);
-    this.databaseInitialized.complete();
-    return this;
+  override isInitialized(): boolean {
+    return !!this.pouchDB;
   }
-
-  private defaultFetch: Fetch = async (url: string | Request, opts: any) => {
-    if (typeof url !== "string") {
-      const err = new Error("PouchDatabase.fetch: url is not a string");
-      err["details"] = url;
-      throw err;
-    }
-
-    const remoteUrl =
-      environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
-    this.authService.addAuthHeader(opts.headers);
-
-    let result: Response;
-    try {
-      result = await PouchDB.fetch(remoteUrl, opts);
-    } catch (err) {
-      Logging.debug("navigator.onLine", navigator.onLine);
-      Logging.warn("Failed to fetch from DB", err);
-    }
-
-    // retry login if request failed with unauthorized
-    if (!result || result.status === HttpStatusCode.Unauthorized) {
-      try {
-        await this.authService.login();
-        this.authService.addAuthHeader(opts.headers);
-        result = await PouchDB.fetch(remoteUrl, opts);
-      } catch (err) {
-        Logging.debug("navigator.onLine", navigator.onLine);
-        Logging.warn("Failed to fetch from DB", err);
-      }
-    }
-
-    if (!result || result.status >= 500) {
-      Logging.debug("Actual DB Fetch response", result);
-      Logging.debug("navigator.onLine", navigator.onLine);
-      throw new DatabaseException({
-        error: "Failed to fetch from DB",
-        actualResponse: JSON.stringify(result),
-        actualResponseBody: await result?.text(),
-      });
-    }
-    return result;
-  };
 
   async getPouchDBOnceReady(): Promise<PouchDB.Database> {
     await firstValueFrom(this.databaseInitialized, {
@@ -350,18 +243,15 @@ export class PouchDatabase extends Database {
    */
   async destroy(): Promise<any> {
     await Promise.all(this.indexPromises);
+
+    // TODO: add functionality of reset here also?
+    //this.pouchDB = undefined;
+    //this.changesFeed = undefined;
+    //this.databaseInitialized = new Subject();
+
     if (this.pouchDB) {
       return this.pouchDB.destroy();
     }
-  }
-
-  /**
-   * Reset the database state so a new one can be opened.
-   */
-  reset() {
-    this.pouchDB = undefined;
-    this.changesFeed = undefined;
-    this.databaseInitialized = new Subject();
   }
 
   /**
@@ -470,7 +360,7 @@ export class PouchDatabase extends Database {
 /**
  * This overwrites PouchDB's error class which only logs limited information
  */
-class DatabaseException extends Error {
+export class DatabaseException extends Error {
   constructor(
     error: PouchDB.Core.Error | { [key: string]: any },
     entityId?: string,

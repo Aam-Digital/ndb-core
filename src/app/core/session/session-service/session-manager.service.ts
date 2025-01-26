@@ -18,7 +18,6 @@
 import { Inject, Injectable } from "@angular/core";
 
 import { SessionInfo, SessionSubject } from "../auth/session-info";
-import { SyncService } from "../../database/sync.service";
 import { LoginStateSubject, SessionType } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
@@ -32,7 +31,6 @@ import { filter, take } from "rxjs/operators";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
-import { Logging } from "../../logging/logging.service";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
@@ -49,7 +47,6 @@ export class SessionManagerService {
   constructor(
     private remoteAuthService: KeycloakAuthService,
     private localAuthService: LocalAuthService,
-    private syncService: SyncService,
     private sessionInfo: SessionSubject,
     private currentUser: CurrentUserSubject,
     private entityMapper: EntityMapperService,
@@ -165,7 +162,6 @@ export class SessionManagerService {
   private async handleRemoteLogin(user: SessionInfo) {
     this.remoteLoggedIn = true;
     await this.initializeUser(user);
-    this.syncService.startSync();
     this.localAuthService.saveUser(user);
   }
 }

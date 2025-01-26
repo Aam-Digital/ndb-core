@@ -15,6 +15,7 @@ export class DatabaseResolverService {
   static readonly DEFAULT_DB = "app";
 
   private databases: Map<string, Database> = new Map();
+  private fallbackToRemote = false;
 
   constructor(private databaseFactory: DatabaseFactoryService) {
     this.initDatabaseStubs();
@@ -33,10 +34,24 @@ export class DatabaseResolverService {
   }
 
   getDatabase(dbName: string = DatabaseResolverService.DEFAULT_DB): Database {
-    return this.databases.get(dbName);
+    let db = this.databases.get(dbName);
+    if (!db.isInitialized() && this.fallbackToRemote) {
+      db = this.databaseFactory.createRemoteDatabase();
+    }
+    return db;
   }
 
-  resetDatabases() {}
+  resetDatabases() {
+    // TODO: destroy or reset differently?
+    /* previous implementation in PouchDatabase (in addition to destroy method):
+          reset() {
+            this.pouchDB = undefined;
+            this.changesFeed = undefined;
+            this.databaseInitialized = new Subject();
+          }
+     */
+    this.getDatabase().destroy();
+  }
 
   async initDatabasesForSession(session: SessionInfo) {
     this.initializeAppDatabaseForCurrentUser(session);
@@ -45,11 +60,17 @@ export class DatabaseResolverService {
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
     const userDBName = `${user.name}-${environment.DB_NAME}`;
-    this.databaseFactory.initDatabase(
-      this.getDatabase(DatabaseResolverService.DEFAULT_DB),
-      userDBName,
-    );
+    this.getDatabase(DatabaseResolverService.DEFAULT_DB).init(userDBName);
 
-    // TODO: have removed fallback to old "app" IndexedDB database here; check sentry if this may cause larger impact
+    // TODO: have removed fallback to old "app" IndexedDB database here,
+    //  check sentry if this may cause larger impact (we are logging old db name format as a warning temporarily)
+  }
+
+  /**
+   * Resolve to a remote (direct server connection) database if the local database is not initialized yet
+   * (e.g. for public form submissions without logged-in user session).
+   */
+  enableFallbackToRemote() {
+    this.fallbackToRemote = true;
   }
 }

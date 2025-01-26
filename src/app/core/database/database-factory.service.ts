@@ -1,9 +1,17 @@
-import { inject, Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Database } from "./database";
-import { PouchDatabase } from "./pouch-database";
+import { PouchDatabase } from "./pouchdb/pouch-database";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { environment } from "../../../environments/environment";
-import { SessionType } from "../session/session-type";
+import {
+  LoginStateSubject,
+  SessionType,
+  SyncStateSubject,
+} from "../session/session-type";
+import { MemoryPouchDatabase } from "./pouchdb/memory-pouch-database";
+import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
+import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
+import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 
 /**
  * Provides a method to generate Database instances.
@@ -14,19 +22,31 @@ import { SessionType } from "../session/session-type";
   providedIn: "root",
 })
 export class DatabaseFactoryService {
-  private authService = inject(KeycloakAuthService);
+  constructor(
+    private authService: KeycloakAuthService,
+    private syncState: SyncStateSubject,
+    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
+    private loginStateSubject: LoginStateSubject,
+  ) {}
 
   createDatabase(): Database {
-    return new PouchDatabase(this.authService);
+    if (environment.session_type === SessionType.synced) {
+      return new SyncedPouchDatabase(
+        this.authService,
+        this.syncState,
+        this.navigator,
+        this.loginStateSubject,
+      );
+    } else if (environment.session_type === SessionType.local) {
+      return new PouchDatabase();
+    } else {
+      return new MemoryPouchDatabase();
+    }
   }
 
-  initDatabase(db: Database, dbName: string): void {
-    if (db instanceof PouchDatabase) {
-      if (environment.session_type === SessionType.mock) {
-        db.initInMemoryDB(dbName);
-      } else {
-        db.initIndexedDB(dbName);
-      }
-    }
+  createRemoteDatabase(dbName: string = environment.DB_NAME): Database {
+    const db = new RemotePouchDatabase(this.authService);
+    db.init(`${environment.DB_PROXY_PREFIX}/${dbName}`);
+    return db;
   }
 }

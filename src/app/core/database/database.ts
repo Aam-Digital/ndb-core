@@ -27,6 +27,18 @@ import { Observable } from "rxjs";
  */
 export abstract class Database {
   /**
+   * Initialize the database fully after its initial creation,
+   * e.g. once user details are available.
+   * @param dbName
+   */
+  abstract init(dbName: string);
+
+  /**
+   * Whether the database is already initialized and ready for use.
+   */
+  abstract isInitialized(): boolean;
+
+  /**
    * Load a single document by id from the database.
    * @param id The primary key of the document to be loaded
    * @param options Optional options for the database engine (PouchDB)

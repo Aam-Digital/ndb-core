@@ -1,39 +1,36 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { fakeAsync, tick } from "@angular/core/testing";
 
-import { SyncService } from "./sync.service";
 import { PouchDatabase } from "./pouch-database";
-import { Database } from "./database";
-import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
-import { LoginState } from "../session/session-states/login-state.enum";
-import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
+import {
+  LoginStateSubject,
+  SyncStateSubject,
+} from "../../session/session-type";
+import { LoginState } from "../../session/session-states/login-state.enum";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { Subject } from "rxjs";
-import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
-import { SyncState } from "../session/session-states/sync-state.enum";
+import { SyncState } from "../../session/session-states/sync-state.enum";
+import { SyncedPouchDatabase } from "./synced-pouch-database";
 
-describe("SyncService", () => {
-  let service: SyncService;
-  let loginState: LoginStateSubject;
+describe("SyncedPouchDatabase", () => {
+  let service: SyncedPouchDatabase;
+
   let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator;
-
   let mockSyncStateSubject: SyncStateSubject;
+  let loginState: LoginStateSubject;
 
   beforeEach(() => {
     mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
     mockNavigator = { onLine: true };
+    mockSyncStateSubject = new SyncStateSubject();
+    loginState = new LoginStateSubject();
 
-    TestBed.configureTestingModule({
-      providers: [
-        { provide: KeycloakAuthService, useValue: mockAuthService },
-        { provide: Database, useClass: PouchDatabase },
-        LoginStateSubject,
-        SyncStateSubject,
-        { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
-      ],
-    });
-    service = TestBed.inject(SyncService);
-    loginState = TestBed.inject(LoginStateSubject);
-    mockSyncStateSubject = TestBed.inject(SyncStateSubject);
+    service = new SyncedPouchDatabase(
+      mockAuthService,
+      mockSyncStateSubject,
+      mockNavigator,
+      loginState,
+    );
   });
 
   /**
@@ -42,7 +39,7 @@ describe("SyncService", () => {
    */
   function stopPeriodicTimer() {
     service.liveSyncEnabled = false;
-    tick(SyncService.SYNC_INTERVAL + 500);
+    tick(service.SYNC_INTERVAL + 500);
   }
 
   it("should be created", () => {
@@ -60,7 +57,7 @@ describe("SyncService", () => {
     const mockLocalDb = jasmine.createSpyObj(["sync"]);
     mockLocalDb.sync.and.resolveTo({});
 
-    const db = TestBed.inject(Database) as PouchDatabase;
+    const db = service;
     spyOn(db, "getPouchDB").and.returnValue(mockLocalDb);
     return { mockLocalDb, db };
   }
@@ -70,21 +67,19 @@ describe("SyncService", () => {
 
     loginState.next(LoginState.LOGGED_IN);
 
-    service.startSync();
-
     tick(1000);
     expect(mockLocalDb.sync).toHaveBeenCalled();
 
     mockLocalDb.sync.calls.reset();
     mockLocalDb.sync.and.rejectWith("sync request server error");
-    tick(SyncService.SYNC_INTERVAL);
+    tick(service.SYNC_INTERVAL);
     expect(mockLocalDb.sync).toHaveBeenCalled();
     // expect no errors thrown in service
 
     // continue sync intervals
     mockLocalDb.sync.calls.reset();
     mockLocalDb.sync.and.resolveTo({});
-    tick(SyncService.SYNC_INTERVAL);
+    tick(service.SYNC_INTERVAL);
     expect(mockLocalDb.sync).toHaveBeenCalled();
 
     stopPeriodicTimer();
@@ -97,7 +92,7 @@ describe("SyncService", () => {
 
     loginState.next(LoginState.LOGGED_IN);
 
-    service.startSync();
+    service.liveSync();
 
     tick(1000);
     expect(mockLocalDb.sync).toHaveBeenCalled();
@@ -117,13 +112,13 @@ describe("SyncService", () => {
 
     mockNavigator.onLine = false;
 
-    service.startSync();
+    service.liveSync();
 
     tick(1000);
     expect(mockLocalDb.sync).not.toHaveBeenCalled();
 
     mockNavigator.onLine = true;
-    tick(SyncService.SYNC_INTERVAL);
+    tick(service.SYNC_INTERVAL);
     expect(mockLocalDb.sync).toHaveBeenCalled();
 
     stopPeriodicTimer();
@@ -138,12 +133,12 @@ describe("SyncService", () => {
       async () => await new Promise((r) => setTimeout(r, LONG_SYNC_TIME)),
     );
 
-    service.startSync();
+    service.liveSync();
 
-    tick(SyncService.SYNC_INTERVAL);
+    tick(service.SYNC_INTERVAL);
     expect(mockLocalDb.sync).toHaveBeenCalledTimes(1);
 
-    tick(SyncService.SYNC_INTERVAL);
+    tick(service.SYNC_INTERVAL);
     expect(mockLocalDb.sync).toHaveBeenCalledTimes(1);
 
     tick(LONG_SYNC_TIME);

@@ -2,16 +2,19 @@ import { TestBed } from "@angular/core/testing";
 
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
-import { PouchDatabase } from "../../database/pouch-database";
+import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { DownloadService } from "../../export/download-service/download.service";
 import { DataTransformationService } from "../../export/data-transformation-service/data-transformation.service";
+import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
   let service: BackupService;
 
   beforeEach(() => {
-    db = PouchDatabase.create();
+    db = new MemoryPouchDatabase();
+    db.init();
+
     TestBed.configureTestingModule({
       providers: [
         BackupService,

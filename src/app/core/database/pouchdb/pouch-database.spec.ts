@@ -16,15 +16,14 @@
  */
 
 import { PouchDatabase } from "./pouch-database";
-import { fakeAsync, tick } from "@angular/core/testing";
-import PouchDB from "pouchdb-browser";
-import { HttpStatusCode } from "@angular/common/http";
+import { MemoryPouchDatabase } from "./memory-pouch-database";
 
 describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
 
   beforeEach(() => {
-    database = PouchDatabase.create();
+    database = new MemoryPouchDatabase();
+    database.init();
   });
 
   afterEach(() => database.destroy());
@@ -287,36 +286,4 @@ describe("PouchDatabase tests", () => {
 
     await expectAsync(database.isEmpty()).toBeResolvedTo(false);
   });
-
-  it("should try auto-login if fetch fails and fetch again", fakeAsync(() => {
-    const mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
-    database = new PouchDatabase(mockAuthService);
-    database.initRemoteDB("");
-
-    mockAuthService.login.and.resolveTo();
-    // providing "valid" token on second call
-    let calls = 0;
-    mockAuthService.addAuthHeader.and.callFake((headers) => {
-      headers.Authorization = calls % 2 === 1 ? "valid" : "invalid";
-    });
-    spyOn(PouchDB, "fetch").and.callFake(async (url, opts) => {
-      calls++;
-      if (opts.headers["Authorization"] === "valid") {
-        return new Response('{ "_id": "foo" }', { status: HttpStatusCode.Ok });
-      } else {
-        return {
-          status: HttpStatusCode.Unauthorized,
-          ok: false,
-        } as Response;
-      }
-    });
-
-    database.get("Entity:ABC");
-    tick();
-    tick();
-
-    expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
-    expect(mockAuthService.login).toHaveBeenCalled();
-    expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
-  }));
 });

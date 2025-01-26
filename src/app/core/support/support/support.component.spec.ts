@@ -19,19 +19,21 @@ import {
 import { MatDialogModule } from "@angular/material/dialog";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { PouchDatabase } from "../../database/pouch-database";
+import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { BackupService } from "../../admin/backup/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
-import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
 import { Entity } from "../../entity/model/entity";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { SyncedPouchDatabase } from "../../database/pouchdb/synced-pouch-database";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 class MockDeleteRequest {
   onsuccess: () => {};
+
   constructor() {
     setTimeout(() => this.onsuccess());
   }
@@ -112,7 +114,11 @@ describe("SupportComponent", () => {
 
   it("should correctly read sync and remote login status from local storage", async () => {
     const lastSync = new Date("2022-01-01").toISOString();
-    localStorage.setItem(SyncService.LAST_SYNC_KEY, lastSync);
+    localStorage.setItem(
+      SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX +
+        DatabaseResolverService.DEFAULT_DB,
+      lastSync,
+    );
     const lastRemoteLogin = new Date("2022-01-02").toISOString();
     localStorage.setItem(KeycloakAuthService.LAST_AUTH_KEY, lastRemoteLogin);
 

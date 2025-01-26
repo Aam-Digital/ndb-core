@@ -10,7 +10,7 @@ import { environment } from "../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionManagerService } from "../session/session-service/session-manager.service";
-import { PouchDatabase } from "../database/pouch-database";
+import { PouchDatabase } from "../database/pouchdb/pouch-database";
 import { Database } from "../database/database";
 import { LoginState } from "../session/session-states/login-state.enum";
 
@@ -42,7 +42,9 @@ describe("DemoDataInitializerService", () => {
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
     mockDemoDataService.publishDemoData.and.resolveTo();
     mockDialog = jasmine.createSpyObj(["open"]);
-    mockDialog.open.and.returnValue({ close: () => {} } as any);
+    mockDialog.open.and.returnValue({
+      close: () => {},
+    } as any);
     mockLocalAuth = jasmine.createSpyObj(["saveUser"]);
     sessionManager = jasmine.createSpyObj(["offlineLogin"]);
 
@@ -52,7 +54,6 @@ describe("DemoDataInitializerService", () => {
         LoginStateSubject,
         SessionSubject,
         { provide: MatDialog, useValue: mockDialog },
-        { provide: Database, useClass: PouchDatabase },
         { provide: DemoDataService, useValue: mockDemoDataService },
         { provide: LocalAuthService, useValue: mockLocalAuth },
         { provide: SessionManagerService, useValue: sessionManager },
@@ -63,9 +64,14 @@ describe("DemoDataInitializerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
+
     const tmpDB = new PouchDatabase();
-    await tmpDB.initInMemoryDB(demoUserDBName).destroy();
-    await tmpDB.initInMemoryDB(adminDBName).destroy();
+    tmpDB.init(demoUserDBName);
+    await tmpDB.destroy();
+
+    const tmpDB2 = new PouchDatabase();
+    tmpDB2.init(adminDBName);
+    await tmpDB2.destroy();
   });
 
   it("should be created", () => {
@@ -108,7 +114,7 @@ describe("DemoDataInitializerService", () => {
   it("should sync with existing demo data when another user logs in", fakeAsync(() => {
     service.run();
     const database = TestBed.inject(Database) as PouchDatabase;
-    database.initInMemoryDB(demoUserDBName);
+    database.init(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
 
     const userDoc = { _id: "userDoc" };
@@ -120,7 +126,7 @@ describe("DemoDataInitializerService", () => {
       id: adminUser.id,
       roles: [],
     });
-    database.initInMemoryDB(adminDBName);
+    database.init(adminDBName);
     TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_IN);
     tick();
 
@@ -152,7 +158,7 @@ describe("DemoDataInitializerService", () => {
       id: adminUser.id,
       roles: [],
     });
-    database.initInMemoryDB(adminDBName);
+    database.init(adminDBName);
     TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_IN);
     const adminUserDB = database.getPouchDB();
     tick();
@@ -167,7 +173,7 @@ describe("DemoDataInitializerService", () => {
     adminUserDB.put(unsyncedDoc);
     tick();
 
-    database.initInMemoryDB(demoUserDBName);
+    database.init(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
     expectAsync(defaultUserDB.get(syncedDoc._id)).toBeResolved();
     expectAsync(defaultUserDB.get(unsyncedDoc._id)).toBeRejected();

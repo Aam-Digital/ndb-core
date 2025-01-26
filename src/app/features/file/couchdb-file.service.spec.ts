@@ -31,17 +31,17 @@ import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../../core/session/session-type";
 import { map } from "rxjs/operators";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { SyncService } from "../../core/database/sync.service";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
+import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
   let mockHttp: jasmine.SpyObj<HttpClient>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
-  let mockSyncService: jasmine.SpyObj<SyncService>;
   let dismiss: jasmine.Spy;
   let updates: Subject<UpdatedEntity<Entity>>;
   const attachmentUrlPrefix = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}-attachments`;
@@ -50,8 +50,6 @@ describe("CouchdbFileService", () => {
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
     mockDialog = jasmine.createSpyObj(["open"]);
-    mockSyncService = jasmine.createSpyObj(["sync"]);
-    mockSyncService.sync.and.resolveTo();
     updates = new Subject();
     mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
     dismiss = jasmine.createSpy();
@@ -83,7 +81,6 @@ describe("CouchdbFileService", () => {
             bypassSecurityTrustUrl: (val: string) => val,
           },
         },
-        { provide: SyncService, useValue: mockSyncService },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
       ],
     });
@@ -127,9 +124,16 @@ describe("CouchdbFileService", () => {
     const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
 
+    let syncSpy = spyOn(
+      TestBed.inject(
+        DatabaseResolverService,
+      ).getDatabase() as SyncedPouchDatabase,
+      "sync",
+    ).and.resolveTo();
+
     service.uploadFile(file, entity, "testProp").subscribe(() => {
       // newly created entity has to be synced to server db for permission checks of attachment upload
-      expect(mockSyncService.sync).toHaveBeenCalled();
+      expect(syncSpy).toHaveBeenCalled();
 
       expect(mockHttp.put).toHaveBeenCalledWith(
         jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),

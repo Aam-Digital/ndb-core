@@ -10,15 +10,16 @@ import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { firstValueFrom } from "rxjs";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
-import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BackupService } from "../../admin/backup/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { SyncStateSubject } from "../../session/session-type";
-import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { Entity } from "../../entity/model/entity";
+import { SyncedPouchDatabase } from "../../database/pouchdb/synced-pouch-database";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 
 @Component({
   selector: "app-support",
@@ -45,7 +46,7 @@ export class SupportComponent implements OnInit {
     private sessionSubject: SessionSubject,
     private currentUserSubject: CurrentUserSubject,
     private sw: SwUpdate,
-    private database: PouchDatabase,
+    private databaseResolver: DatabaseResolverService,
     private confirmationDialog: ConfirmationDialogService,
     private http: HttpClient,
     private backupService: BackupService,
@@ -81,7 +82,11 @@ export class SupportComponent implements OnInit {
   }
 
   private initLastSync() {
-    this.lastSync = localStorage.getItem(SyncService.LAST_SYNC_KEY) || "never";
+    this.lastSync =
+      localStorage.getItem(
+        SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX +
+          DatabaseResolverService.DEFAULT_DB,
+      ) || "never";
   }
 
   private initLastRemoteLogin() {
@@ -114,13 +119,15 @@ export class SupportComponent implements OnInit {
   }
 
   private initDbInfo() {
-    if (!this.database || !this.database.getPouchDB()) {
+    const pouchDb: PouchDB.Database = (
+      this.databaseResolver.getDatabase() as PouchDatabase
+    )?.getPouchDB?.();
+    if (!pouchDb) {
       this.dbInfo = "db not initialized";
       return;
     }
 
-    return this.database
-      .getPouchDB()
+    return pouchDb
       .info()
       .then(
         (res) =>

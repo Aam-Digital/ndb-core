@@ -6,7 +6,7 @@ import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generatin
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
-import { PouchDatabase } from "../database/pouch-database";
+import { PouchDatabase } from "../database/pouchdb/pouch-database";
 import { environment } from "../../../environments/environment";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject, SessionType } from "../session/session-type";
