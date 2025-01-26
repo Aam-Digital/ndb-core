@@ -1,0 +1,42 @@
+<div class="router-container">
+  <mat-form-field
+    appearance="outline"
+    [class.disabled]="formControl.disabled"
+    floatLabel="always"
+  >
+    <mat-label>
+      <span i18n>Form Link ID </span>
+      <fa-icon
+        icon="question-circle"
+        matTooltip="The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID)."
+        i18n-matTooltip
+      ></fa-icon>
+    </mat-label>
+    <div
+      class="readonly-prefix"
+      [ngClass]="{ 'prefix-text-disabled': !formControl.disabled }"
+    >
+      {{ prefixValue }}
+    </div>
+    <input
+      matInput
+      [formControl]="formControl"
+      placeholder="Enter Form Link ID"
+      class="editable-input"
+    />
+    @if (formControl.invalid && formControl.touched) {
+      <mat-error>
+        <app-error-hint [form]="formControl"></app-error-hint>
+      </mat-error>
+    }
+  </mat-form-field>
+  <button
+    mat-icon-button
+    matTextSuffix
+    matTooltip="Copy the link to share or paste it somewhere else"
+    i18n-matTooltip
+    (click)="copyToClipboard()"
+  >
+    <fa-icon [icon]="['far', 'copy']" size="2x"></fa-icon>
+  </button>
+</div>
