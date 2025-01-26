@@ -8,10 +8,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
-import {
-  NotificationChannel,
-  NotificationRule,
-} from "../../model/notification-config";
+import { NotificationRule } from "../../model/notification-config";
 
 /**
  * Configure a single notification rule condition.
