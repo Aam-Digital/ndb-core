@@ -6,6 +6,7 @@ import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { firstValueFrom, mergeMap, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
+import { catchError } from "rxjs/operators";
 
 /**
  * Handles the interaction with Cloud Messaging.
@@ -161,13 +162,18 @@ export class NotificationService {
     this.authService.addAuthHeader(headers);
 
     return firstValueFrom(
-      this.httpClient.post(
-        this.NOTIFICATION_API_URL + "/message/device-test",
-        null,
-        {
+      this.httpClient
+        .post(this.NOTIFICATION_API_URL + "/message/device-test", null, {
           headers,
-        },
-      ),
+        })
+        .pipe(
+          catchError((err) => {
+            this.alertService.addWarning(
+              $localize`Error trying to send test notification. If this error persists, please try to disable and enable "push notifications" again.`,
+            );
+            throw err;
+          }),
+        ),
     );
   }
 
