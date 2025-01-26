@@ -6,6 +6,7 @@ import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { firstValueFrom, mergeMap, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
+import { catchError } from "rxjs/operators";
 
 /**
  * Handles the interaction with Cloud Messaging.
@@ -42,6 +43,13 @@ export class NotificationService {
 
     this.tokenSubscription = this.firebaseMessaging.requestToken.subscribe({
       next: (token) => {
+        if (!token) {
+          Logging.error("Could not get token for device.");
+          this.alertService.addInfo(
+            $localize`Please enable notification permissions to receive important updates.`,
+          );
+          return;
+        }
         this.registerNotificationToken(token)
           .then(() => {
             Logging.log("Device registered in aam-digital backend.");
@@ -91,9 +99,9 @@ export class NotificationService {
         next: (success: boolean) => {
           if (!success) {
             this.alertService.addInfo(
-              $localize`Could not un-register device from firebase.`,
+              $localize`Could not unregister device from firebase.`,
             );
-            Logging.error("Could not un-register device from firebase.");
+            Logging.error("Could not unregister device from firebase.");
             return;
           }
 
@@ -154,13 +162,18 @@ export class NotificationService {
     this.authService.addAuthHeader(headers);
 
     return firstValueFrom(
-      this.httpClient.post(
-        this.NOTIFICATION_API_URL + "/message/device-test",
-        null,
-        {
+      this.httpClient
+        .post(this.NOTIFICATION_API_URL + "/message/device-test", null, {
           headers,
-        },
-      ),
+        })
+        .pipe(
+          catchError((err) => {
+            this.alertService.addWarning(
+              $localize`Error trying to send test notification. If this error persists, please try to disable and enable "push notifications" again.`,
+            );
+            throw err;
+          }),
+        ),
     );
   }
 
@@ -180,5 +193,20 @@ export class NotificationService {
         Logging.error("Error while listening for messages.", err);
       },
     });
+  }
+
+  /**
+   * user given the notification permission to browser or not
+   * @returns boolean
+   */
+  hasNotificationPermissionGranted(): boolean {
+    switch (Notification.permission) {
+      case "granted":
+        return true;
+      case "denied":
+        return false;
+      default:
+        return false;
+    }
   }
 }

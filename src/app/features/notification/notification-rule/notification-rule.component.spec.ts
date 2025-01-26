@@ -21,6 +21,10 @@ describe("NotificationRuleComponent", () => {
   let mockNotificationService: jasmine.SpyObj<NotificationService>;
 
   beforeEach(async () => {
+    mockNotificationService = jasmine.createSpyObj([
+      "hasNotificationPermissionGranted",
+    ]);
+
     await TestBed.configureTestingModule({
       imports: [
         NotificationRuleComponent,
@@ -40,9 +44,10 @@ describe("NotificationRuleComponent", () => {
     component = fixture.componentInstance;
 
     mockValue = {
+      label: "label1",
       entityType: "entityType1",
+      changeType: ["created"],
       enabled: true,
-      channels: { push: true },
       conditions: {},
       notificationType: "entity_change",
     };
@@ -57,9 +62,10 @@ describe("NotificationRuleComponent", () => {
     component.ngOnChanges({ value: { currentValue: mockValue } } as any);
 
     expect(component.form.getRawValue()).toEqual({
+      label: "label1",
       entityType: "entityType1",
+      changeType: ["created"],
       enabled: true,
-      channels: ["push"], // expect channels value to be parsed into an array
       conditions: [],
       notificationType: "entity_change",
     });
@@ -70,18 +76,20 @@ describe("NotificationRuleComponent", () => {
     component.initForm();
 
     component.form.setValue({
+      label: "label2",
       entityType: "EventNote",
+      changeType: ["created", "updated"],
       notificationType: "entity_change",
-      channels: ["push"], // output from MatSelect
       conditions: [],
       enabled: true,
     });
 
     expect(component.valueChange.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({
+        label: "label2",
         entityType: "EventNote",
+        changeType: ["created", "updated"],
         notificationType: "entity_change",
-        channels: { push: true }, // expect channels value to be parsed into an object
         conditions: {},
         enabled: true,
       } as NotificationRule),

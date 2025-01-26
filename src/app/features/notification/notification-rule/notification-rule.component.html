@@ -1,41 +1,150 @@
 <form [formGroup]="form">
-  <cdk-accordion-item
-    #notificationRuleItem="cdkAccordionItem"
-    tabindex="0"
-    [attr.id]="'notification-rule-item-header-' + accordionIndex"
-    [attr.aria-expanded]="notificationRuleItem.expanded"
-    [attr.aria-controls]="'notification-rule-item-body-' + accordionIndex"
-    class="flex-column justify-space-between align-center notifications-options-container"
-  >
-    <div
-      class="flex-column justify-space-between align-center notification-options-wrapper"
-    >
+  <mat-expansion-panel class="padding-regular">
+    <mat-expansion-panel-header style="height: fit-content">
       <div
-        class="flex-row justify-content-center align-center notification-rule-option"
+        class="flex-row align-baseline gap-regular margin-right-large full-width"
       >
-        <mat-form-field
-          class="full-width-field"
-          (click)="handleToggleAccordion(notificationRuleItem)"
-        >
-          <mat-label i18n>Select an entity type</mat-label>
-          <app-entity-type-select
-            formControlName="entityType"
-          ></app-entity-type-select>
+        <mat-form-field class="full-width-field flex-grow">
+          <mat-label
+            i18n
+            matTooltip="Give this notification rule a description to make it easier managing different notification types."
+            i18n-matTooltip
+          >
+            Notify me about
+          </mat-label>
+          <input
+            matInput
+            formControlName="label"
+            (keydown)="$event.stopPropagation()"
+          />
         </mat-form-field>
-        <app-help-button
-          text="A notification type is based on the selected entity. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
-          i18n-text
-        ></app-help-button>
+
+        <mat-slide-toggle
+          formControlName="enabled"
+          class="notification-toggle"
+          matTooltip='You can enable or disable rules to "pause" these notifications. You can also completely delete a rule below.'
+          i18n-matTooltip
+        ></mat-slide-toggle>
+      </div>
+    </mat-expansion-panel-header>
+
+    <div class="flex-column gap-regular">
+      <div>
+        <div class="flex-row align-center">
+          <strong i18n>Define Notification Criteria</strong>
+          <app-help-button
+            text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
+            i18n-text
+          ></app-help-button>
+        </div>
+
+        <div class="flex-row">
+          <mat-form-field
+            class="full-width-field"
+            matTooltip="You cannot change the entity type once you have added conditions. Please first remove all conditions below."
+            i18n-matTooltip
+            [matTooltipDisabled]="!entityTypeControl.disabled"
+            matTooltipPositionAtOrigin
+            [matTooltipShowDelay]="500"
+          >
+            <mat-label i18n>Notify about changes for</mat-label>
+            <app-entity-type-select
+              formControlName="entityType"
+            ></app-entity-type-select>
+          </mat-form-field>
+          <app-help-button
+            text="Select the record type for which you want to get notified when data changes. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
+            i18n-text
+          ></app-help-button>
+
+          <mat-form-field>
+            <mat-label i18n>Type of change</mat-label>
+
+            <mat-select formControlName="changeType" multiple>
+              <mat-option value="created" i18n>created</mat-option>
+              <mat-option value="updated" i18n>updated</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        @for (
+          notificationCondition of form.get("conditions")?.["controls"] ?? [];
+          track notificationCondition;
+          let notificationConditionIndex = $index
+        ) {
+          <app-notification-condition
+            (removeNotificationCondition)="
+              removeCondition(notificationConditionIndex)
+            "
+            [form]="notificationCondition"
+            [notificationRule]="value"
+          />
+        }
+
+        <div class="flex-row gap-regular flex-wrap align-center">
+          <button
+            mat-stroked-button
+            class="new-rule-condition-button"
+            color="accent"
+            [disabled]="!value.entityType"
+            (click)="addNewNotificationCondition()"
+            matTooltip="Define another condition of notifications for your user account"
+            i18n-matTooltip
+          >
+            <fa-icon
+              aria-label="add element"
+              icon="plus-circle"
+              class="standard-icon-with-text"
+            ></fa-icon>
+            <span i18n class="new-notification-rule"
+              >Add Notification Criteria</span
+            >
+          </button>
+          <button
+            mat-icon-button
+            matTooltip="Update Notification Condition via JSON editor"
+            i18n-matTooltip
+            (click)="openConditionsInJsonEditorPopup()"
+            [disabled]="!value.entityType"
+          >
+            <fa-icon icon="tools"></fa-icon>
+          </button>
+        </div>
       </div>
 
-      <div
-        class="flex-row justify-content-center align-center notification-rule-option"
-      >
-        <mat-form-field
-          class="full-width-field"
-          (click)="handleToggleAccordion(notificationRuleItem)"
+      <div class="flex-row gap-regular flex-wrap align-center">
+        <button
+          mat-stroked-button
+          color="warn"
+          (click)="removeNotificationRule.emit()"
         >
-          <mat-label i18n>Notification method(s)</mat-label>
+          <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Delete</span>
+        </button>
+
+        <button
+          mat-stroked-button
+          color="accent"
+          (click)="testNotification()"
+          [disabled]="!pushNotificationsEnabled"
+          matTooltip="Show a sample notification (only available if push notifications are enabled)"
+          i18n-matTooltip
+        >
+          <fa-icon icon="paper-plane" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Test Notification</span>
+        </button>
+
+        <!-- TODO: re-enable selection of "per-rule notification channels or remove completely (currently hidden to simplify UX)
+        <mat-form-field class="flex-grow">
+          <mat-label
+            i18n
+            matTooltip="Define a notification method to receive notifications."
+            matTooltipPosition="above"
+            i18n-matTooltip
+            >Notification method(s)
+            <fa-icon icon="question-circle"></fa-icon>
+          </mat-label>
+
           <mat-select
             formControlName="channels"
             multiple
@@ -49,106 +158,8 @@
             }
           </mat-select>
         </mat-form-field>
-        <app-help-button
-          text="Define a notification method to receive notifications"
-          i18n-text
-        ></app-help-button>
+        -->
       </div>
     </div>
-
-    <div class="flex-row align-center notification-rule-actions">
-      <div class="flex-row align-center">
-        <mat-slide-toggle
-          formControlName="enabled"
-          class="notification-toggle"
-          matTooltip="You can enable or disable notifications. If you do not want to delete this notification rule, you can disable it to 'pause' these notifications."
-          i18n-matTooltip
-        ></mat-slide-toggle>
-      </div>
-
-      <button
-        (click)="removeNotificationRule.emit()"
-        mat-icon-button
-        matTooltip="Remove notification rule"
-        i18n-matTooltip
-      >
-        <fa-icon icon="trash"></fa-icon>
-      </button>
-
-      <button
-        mat-icon-button
-        (click)="testNotification()"
-        matTooltip="Test notification"
-        i18n-matTooltip
-      >
-        <fa-icon icon="paper-plane"></fa-icon>
-      </button>
-      <button
-        mat-icon-button
-        [matTooltip]="
-          notificationRuleItem?.expanded ? 'Collapse section' : 'Expand section'
-        "
-        (click)="notificationRuleItem.toggle()"
-        i18n-matTooltip
-      >
-        <fa-icon
-          [icon]="notificationRuleItem.expanded ? 'chevron-up' : 'chevron-down'"
-        ></fa-icon>
-      </button>
-    </div>
-  </cdk-accordion-item>
+  </mat-expansion-panel>
 </form>
-
-@if (notificationRuleItem.expanded) {
-  <div
-    [style.display]="notificationRuleItem.expanded ? '' : 'none'"
-    [attr.id]="'notification-rule-item-body-' + accordionIndex"
-    [attr.aria-labelledby]="'notification-rule-item-header-' + accordionIndex"
-  >
-    <div class="flex-row align-center notification-condition-section">
-      <strong i18n>Define Notification Criteria</strong>
-      <app-help-button
-        text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
-        i18n-text
-      ></app-help-button>
-    </div>
-    @for (
-      notificationCondition of form.get("conditions")?.["controls"] ?? [];
-      track notificationCondition;
-      let notificationConditionIndex = $index
-    ) {
-      <app-notification-condition
-        (removeNotificationCondition)="
-          removeCondition(notificationConditionIndex)
-        "
-        [form]="notificationCondition"
-        [notificationRule]="value"
-      />
-    }
-    <div class="flex-row align-center">
-      <button
-        mat-stroked-button
-        class="new-rule-condition-button"
-        color="accent"
-        [disabled]="!value.entityType"
-        (click)="addNewNotificationCondition()"
-        matTooltip="Define another condition of notifications for your user account"
-        i18n-matTooltip
-      >
-        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-        <span i18n class="new-notification-rule"
-          >Add Notification Criteria</span
-        >
-      </button>
-      <button
-        mat-icon-button
-        matTooltip="Update Notification Condition via JSON editor"
-        i18n-matTooltip
-        (click)="openConditionsInJsonEditorPopup()"
-        [disabled]="!value.entityType"
-      >
-        <fa-icon icon="tools"></fa-icon>
-      </button>
-    </div>
-  </div>
-}

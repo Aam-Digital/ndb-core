@@ -49,6 +49,19 @@
       </mat-tab-group>
     </div>
 
+    @if (!hasNotificationConfig) {
+      <button
+        mat-raised-button
+        color="accent"
+        class="margin-regular"
+        [routerLink]="['/user-account']"
+        [queryParams]="{ tabIndex: 1 }"
+        i18n
+      >
+        Activate Notifications
+      </button>
+    }
+
     <div class="flex-grow flex-column gap-small notification-list-body">
       @for (
         notification of selectedTab === 0

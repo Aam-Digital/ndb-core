@@ -16,6 +16,7 @@ import { Router, RouterLink } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../core/entity/model/entity-update";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { NotificationConfig } from "./model/notification-config";
 
 @UntilDestroy()
 @Component({
@@ -44,6 +45,9 @@ export class NotificationComponent implements OnInit {
   public selectedTab = 0;
   protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
+  /** whether an initial notification config exists for the user */
+  hasNotificationConfig = false;
+
   constructor(
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
@@ -51,13 +55,27 @@ export class NotificationComponent implements OnInit {
     private entityRegistry: EntityRegistry,
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.notificationsSubject.subscribe((notifications) => {
       this.filterUserNotifications(notifications);
     });
 
     this.loadAndProcessNotifications();
     this.listenToEntityUpdates();
+
+    this.checkNotificationConfigStatus();
+  }
+
+  private async checkNotificationConfigStatus() {
+    this.hasNotificationConfig = await this.entityMapper
+      .load<NotificationConfig>(NotificationConfig, this.userId)
+      .then((doc) => !!doc)
+      .catch(() => false);
+
+    this.entityMapper
+      .receiveUpdates(NotificationConfig)
+      .pipe(untilDestroyed(this))
+      .subscribe((next) => (this.hasNotificationConfig = !!next.entity));
   }
 
   /**
@@ -96,9 +114,13 @@ export class NotificationComponent implements OnInit {
    * Filters notifications based on the sender and read status.
    */
   private filterUserNotifications(notifications: NotificationEvent[]) {
-    this.allNotifications = notifications.filter(
-      (notification) => notification.notificationFor === this.userId,
-    );
+    this.allNotifications = notifications
+      .filter((notification) => notification.notificationFor === this.userId)
+      .sort(
+        (notificationA, notificationB) =>
+          notificationB.created.at.getTime() -
+          notificationA.created.at.getTime(),
+      );
     this.unreadNotifications = notifications.filter(
       (notification) =>
         notification.notificationFor === this.userId &&

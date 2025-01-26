@@ -17,9 +17,10 @@ import {
 import { SessionSubject } from "app/core/session/auth/session-info";
 import { NotificationRuleComponent } from "../notification-rule/notification-rule.component";
 import { MatTooltip } from "@angular/material/tooltip";
-import { AlertService } from "../../../core/alerts/alert.service";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { NotificationService } from "../notification.service";
+import { MatAccordion } from "@angular/material/expansion";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -36,6 +37,7 @@ import { NotificationService } from "../notification.service";
     NotificationRuleComponent,
     MatTooltip,
     CdkAccordionModule,
+    MatAccordion,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
@@ -48,8 +50,8 @@ export class NotificationSettingsComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
     private confirmationDialog: ConfirmationDialogService,
-    private alertService: AlertService,
     private notificationService: NotificationService,
+    private alertService: AlertService,
   ) {}
 
   /**
@@ -60,38 +62,67 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.initializeNotificationSettings();
-  }
-
-  private async initializeNotificationSettings() {
     this.notificationConfig = await this.loadNotificationConfig();
 
-    if (this.notificationConfig) {
+    if (this.notificationService.hasNotificationPermissionGranted()) {
       this.isPushNotificationEnabled =
-        this.notificationConfig?.channels?.push || false;
+        this.notificationConfig.channels?.push || false;
     }
   }
 
   private async loadNotificationConfig() {
+    let notificationConfig: NotificationConfig;
     try {
-      const notificationConfig =
-        await this.entityMapper.load<NotificationConfig>(
-          NotificationConfig,
-          this.userId,
-        );
-
-      if (!notificationConfig) {
-        return null;
-      }
-
-      return notificationConfig;
+      notificationConfig = await this.entityMapper.load<NotificationConfig>(
+        NotificationConfig,
+        this.userId,
+      );
     } catch (err) {
-      Logging.debug(err);
-
       if (err.status === 404) {
-        return new NotificationConfig(this.userId);
+        notificationConfig = this.generateDefaultNotificationConfig();
+        await this.saveNotificationConfig(notificationConfig);
+        this.alertService.addInfo(
+          $localize`Initial notification settings created and saved.`,
+        );
+      } else {
+        Logging.warn(err);
       }
     }
+
+    return notificationConfig;
+  }
+
+  private generateDefaultNotificationConfig(): NotificationConfig {
+    const config = new NotificationConfig(this.userId);
+
+    config.notificationRules = [
+      {
+        label: $localize`:Default notification rule label:a new Child being registered`,
+        notificationType: "entity_change",
+        entityType: "Child",
+        changeType: ["created"],
+        conditions: {},
+        enabled: true,
+      },
+      {
+        label: $localize`:Default notification rule label:Tasks assigned to me`,
+        notificationType: "entity_change",
+        entityType: "Todo",
+        changeType: ["created", "updated"],
+        conditions: { assignedTo: { $elemMatch: this.userId } },
+        enabled: true,
+      },
+      {
+        label: $localize`:Default notification rule label:Notes involving me`,
+        notificationType: "entity_change",
+        entityType: "Note",
+        changeType: ["created", "updated"],
+        conditions: { authors: { $elemMatch: this.userId } },
+        enabled: false,
+      },
+    ];
+
+    return config;
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {
@@ -100,25 +131,19 @@ export class NotificationSettingsComponent implements OnInit {
     } else {
       this.notificationService.unregisterDevice();
     }
+    this.isPushNotificationEnabled = event?.checked;
 
-    let notificationConfig = await this.loadNotificationConfig();
-
-    if (!notificationConfig) {
-      notificationConfig = new NotificationConfig(this.userId);
-    }
-
-    notificationConfig.channels = {
-      ...notificationConfig.channels,
+    this.notificationConfig.channels = {
+      ...this.notificationConfig.channels,
       push: this.isPushNotificationEnabled,
     };
 
-    await this.saveNotificationConfig(notificationConfig);
+    await this.saveNotificationConfig(this.notificationConfig);
   }
 
   private async saveNotificationConfig(config: NotificationConfig) {
     try {
       await this.entityMapper.save(config);
-      this.alertService.addInfo($localize`Notification settings saved.`);
     } catch (err) {
       Logging.error(err.message);
     }
@@ -155,14 +180,10 @@ export class NotificationSettingsComponent implements OnInit {
       $localize`Are you sure you want to remove this notification rule?`,
     );
     if (confirmed) {
-      await this.removeNotificationRule(index);
+      this.notificationConfig.notificationRules.splice(index, 1);
+      await this.saveNotificationConfig(this.notificationConfig);
       return true;
     }
     return false;
-  }
-
-  private async removeNotificationRule(index: number) {
-    this.notificationConfig.notificationRules.splice(index, 1);
-    await this.saveNotificationConfig(this.notificationConfig);
   }
 }

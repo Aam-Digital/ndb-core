@@ -45,6 +45,9 @@ export type NotificationChannel = "push";
  * Represents a specific notification type configuration.
  */
 export class NotificationRule {
+  /** human-readable title for this notification rule */
+  @DatabaseField() label?: string;
+
   /** The general type of notification (e.g. changes to entities, etc.) */
   @DatabaseField() notificationType: NotificationType;
 
@@ -54,11 +57,16 @@ export class NotificationRule {
   /**
    * override for the global notification channel(s).
    * e.g. define here if this specific notification rule should not show as email/push notification
+   *
+   * (optional) If not set, the global channels are used.
    */
-  @DatabaseField() channels: { [key in NotificationChannel]?: boolean };
+  @DatabaseField() channels?: { [key in NotificationChannel]?: boolean };
 
   /** (for "entity_change" notifications only): type of entities that can trigger notification */
-  @DatabaseField() entityType: string;
+  @DatabaseField() entityType?: string;
+
+  /** (for "entity_change" notifications only): type of document change that can trigger notification */
+  @DatabaseField() changeType?: ("created" | "updated")[];
 
   /** (for "entity_change" notifications only): conditions which changes cause notifications */
   @DatabaseField() conditions: DataFilter<any>;

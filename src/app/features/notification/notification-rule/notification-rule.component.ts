@@ -13,6 +13,7 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
+  AbstractControl,
   FormArray,
   FormControl,
   FormGroup,
@@ -21,13 +22,7 @@ import {
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import {
-  NotificationChannel,
-  NotificationRule,
-} from "../model/notification-config";
-import { MatOption } from "@angular/material/core";
-import { MatSelect } from "@angular/material/select";
-import { CdkAccordionItem, CdkAccordionModule } from "@angular/cdk/accordion";
+import { NotificationRule } from "../model/notification-config";
 import {
   NotificationConditionComponent,
   NotificationRuleCondition,
@@ -37,7 +32,13 @@ import { NotificationService } from "../notification.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
 import { Logging } from "../../../core/logging/logging.service";
+import { MatOption } from "@angular/material/core";
+import { MatSelect } from "@angular/material/select";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from "@angular/material/expansion";
 
 /**
  * Configure a single notification rule.
@@ -55,32 +56,30 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
     EntityTypeSelectComponent,
     HelpButtonComponent,
     ReactiveFormsModule,
-    MatOption,
-    MatSelect,
-    CdkAccordionModule,
     NotificationConditionComponent,
     MatProgressSpinnerModule,
+    MatOption,
+    MatSelect,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
   ],
   templateUrl: "./notification-rule.component.html",
-  styleUrl: "../notification-settings/notification-settings.component.scss",
+  styleUrl: "./notification-rule.component.scss",
 })
 export class NotificationRuleComponent implements OnChanges {
   @Input() value: NotificationRule;
-  @Input() accordionIndex: number;
   @Output() valueChange = new EventEmitter<NotificationRule>();
 
   @Output() removeNotificationRule = new EventEmitter<void>();
 
-  @Output() removeNotificationCondition = new EventEmitter<any>();
-
   form: FormGroup;
+  entityTypeControl: AbstractControl;
+
   readonly dialog = inject(MatDialog);
+  readonly notificationService = inject(NotificationService);
 
-  notificationMethods: { key: NotificationChannel; label: string }[] = [
-    { key: "push", label: $localize`:notification method option:Push` },
-  ];
-
-  constructor(private notificationService: NotificationService) {}
+  pushNotificationsEnabled =
+    this.notificationService.hasNotificationPermissionGranted();
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -90,20 +89,21 @@ export class NotificationRuleComponent implements OnChanges {
 
   initForm() {
     this.form = new FormGroup({
+      label: new FormControl(this.value?.label ?? ""),
       entityType: new FormControl({
         value: this.value?.entityType ?? "",
         disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
       }),
-      enabled: new FormControl(this.value?.enabled || false),
-      // different format for form control
-      channels: new FormControl(
-        this.parseChannelsToOptionsArray(this.value?.channels),
+      changeType: new FormControl(
+        this.value?.changeType ?? ["created", "updated"],
       ),
+      enabled: new FormControl(this.value?.enabled || false),
       conditions: new FormArray([]),
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
       ),
     });
+    this.entityTypeControl = this.form.get("entityType");
 
     // Parse conditions from object to array and setup the form
     const parsedConditions = this.parseConditionsObjectToArray(
@@ -126,11 +126,10 @@ export class NotificationRuleComponent implements OnChanges {
     }
     conditionsControl.valueChanges.subscribe(() => {
       const conditionsLength = (conditionsControl as FormArray).length;
-      const entityTypeControl = this.form.get("entityType");
       if (conditionsLength > 0) {
-        entityTypeControl.disable();
+        this.entityTypeControl.disable();
       } else {
-        entityTypeControl.enable();
+        this.entityTypeControl.enable();
       }
     });
   }
@@ -140,7 +139,6 @@ export class NotificationRuleComponent implements OnChanges {
     if (entityTypeControl?.disabled) {
       value.entityType = entityTypeControl.value;
     }
-    value.channels = this.parseOptionsArrayToChannels(value.channels);
     value.conditions = this.parseConditionsArrayToObject(value.conditions);
 
     if (JSON.stringify(value) === JSON.stringify(this.value)) {
@@ -150,24 +148,6 @@ export class NotificationRuleComponent implements OnChanges {
 
     this.value = value;
     this.valueChange.emit(value);
-  }
-
-  private parseChannelsToOptionsArray(channels?: {
-    [key: string]: boolean;
-  }): string[] {
-    return Object.entries(channels ?? [])
-      .filter(([key, value]) => value === true)
-      .map(([key, value]) => key);
-  }
-
-  private parseOptionsArrayToChannels(options: string[]): {
-    [key: string]: boolean;
-  } {
-    const channels = {};
-    for (let option of options ?? []) {
-      channels[option] = true;
-    }
-    return channels;
   }
 
   /**
@@ -181,6 +161,7 @@ export class NotificationRuleComponent implements OnChanges {
 
   addNewNotificationCondition() {
     const newCondition = new FormGroup({
+      label: new FormControl(""),
       entityTypeField: new FormControl(""),
       operator: new FormControl(""),
       condition: new FormControl(""),
@@ -224,16 +205,6 @@ export class NotificationRuleComponent implements OnChanges {
 
     const parsedConditions = this.parseConditionsObjectToArray(result);
     this.setupConditionsArray(parsedConditions);
-  }
-
-  /**
-   * Toggle the notification conditions accordion.
-   * @param notificationRuleItem
-   */
-  handleToggleAccordion(notificationRuleItem: CdkAccordionItem) {
-    if (!notificationRuleItem.expanded) {
-      notificationRuleItem.toggle();
-    }
   }
 
   /**
