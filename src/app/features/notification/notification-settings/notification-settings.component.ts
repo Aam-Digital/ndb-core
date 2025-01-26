@@ -20,6 +20,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { NotificationService } from "../notification.service";
 import { MatAccordion } from "@angular/material/expansion";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -50,6 +51,7 @@ export class NotificationSettingsComponent implements OnInit {
     private sessionInfo: SessionSubject,
     private confirmationDialog: ConfirmationDialogService,
     private notificationService: NotificationService,
+    private alertService: AlertService,
   ) {}
 
   /**
@@ -78,6 +80,10 @@ export class NotificationSettingsComponent implements OnInit {
     } catch (err) {
       if (err.status === 404) {
         notificationConfig = this.generateDefaultNotificationConfig();
+        await this.saveNotificationConfig(notificationConfig);
+        this.alertService.addInfo(
+          $localize`Initial notification settings created and saved.`,
+        );
       } else {
         Logging.warn(err);
       }
@@ -90,7 +96,30 @@ export class NotificationSettingsComponent implements OnInit {
     const config = new NotificationConfig(this.userId);
 
     config.notificationRules = [
-      // TODO: define default rules
+      {
+        label: $localize`:Default notification rule label:a new Child being registered`,
+        notificationType: "entity_change",
+        entityType: "Child",
+        changeType: ["created"],
+        conditions: {},
+        enabled: true,
+      },
+      {
+        label: $localize`:Default notification rule label:Tasks assigned to me`,
+        notificationType: "entity_change",
+        entityType: "Todo",
+        changeType: ["created", "updated"],
+        conditions: { assignedTo: { $elemMatch: this.userId } },
+        enabled: true,
+      },
+      {
+        label: $localize`:Default notification rule label:Notes involving me`,
+        notificationType: "entity_change",
+        entityType: "Note",
+        changeType: ["created", "updated"],
+        conditions: { authors: { $elemMatch: this.userId } },
+        enabled: false,
+      },
     ];
 
     return config;

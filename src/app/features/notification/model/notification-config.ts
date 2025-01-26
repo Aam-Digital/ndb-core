@@ -66,7 +66,7 @@ export class NotificationRule {
   @DatabaseField() entityType?: string;
 
   /** (for "entity_change" notifications only): type of document change that can trigger notification */
-  @DatabaseField() changeType?: "created" | "updated";
+  @DatabaseField() changeType?: ("created" | "updated")[];
 
   /** (for "entity_change" notifications only): conditions which changes cause notifications */
   @DatabaseField() conditions: DataFilter<any>;
