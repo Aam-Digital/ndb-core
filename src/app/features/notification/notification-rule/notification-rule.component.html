@@ -126,7 +126,8 @@
           mat-stroked-button
           color="accent"
           (click)="testNotification()"
-          matTooltip="Test/Sample notification"
+          [disabled]="!pushNotificationsEnabled"
+          matTooltip="Show a sample notification (only available if push notifications are enabled)"
           i18n-matTooltip
         >
           <fa-icon icon="paper-plane" class="standard-icon-with-text"></fa-icon>
