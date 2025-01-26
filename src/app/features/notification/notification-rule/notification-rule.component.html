@@ -38,10 +38,15 @@
           ></app-help-button>
         </div>
 
-        <div
-          class="flex-row justify-content-center align-center notification-rule-option"
-        >
-          <mat-form-field class="full-width-field">
+        <div class="flex-row">
+          <mat-form-field
+            class="full-width-field"
+            matTooltip="You cannot change the entity type once you have added conditions. Please first remove all conditions below."
+            i18n-matTooltip
+            [matTooltipDisabled]="!entityTypeControl.disabled"
+            matTooltipPositionAtOrigin
+            [matTooltipShowDelay]="500"
+          >
             <mat-label i18n>Notify about changes for</mat-label>
             <app-entity-type-select
               formControlName="entityType"
@@ -51,6 +56,15 @@
             text="Select the record type for which you want to get notified when data changes. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
             i18n-text
           ></app-help-button>
+
+          <mat-form-field>
+            <mat-label i18n>Type of change</mat-label>
+
+            <mat-select formControlName="changeType" multiple>
+              <mat-option value="created" i18n>created</mat-option>
+              <mat-option value="updated" i18n>updated</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         @for (

@@ -13,6 +13,7 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
+  AbstractControl,
   FormArray,
   FormControl,
   FormGroup,
@@ -75,6 +76,7 @@ export class NotificationRuleComponent implements OnChanges {
   @Output() removeNotificationRule = new EventEmitter<void>();
 
   form: FormGroup;
+  entityTypeControl: AbstractControl;
   readonly dialog = inject(MatDialog);
 
   notificationMethods: { key: NotificationChannel; label: string }[] = [
@@ -96,6 +98,9 @@ export class NotificationRuleComponent implements OnChanges {
         value: this.value?.entityType ?? "",
         disabled: Object.keys(this.value?.conditions ?? {}).length > 0,
       }),
+      changeType: new FormControl(
+        this.value?.changeType ?? ["created", "updated"],
+      ),
       enabled: new FormControl(this.value?.enabled || false),
       // different format for form control
       channels: new FormControl(
@@ -106,6 +111,7 @@ export class NotificationRuleComponent implements OnChanges {
         this.value?.notificationType ?? "entity_change",
       ),
     });
+    this.entityTypeControl = this.form.get("entityType");
 
     // Parse conditions from object to array and setup the form
     const parsedConditions = this.parseConditionsObjectToArray(
@@ -128,11 +134,10 @@ export class NotificationRuleComponent implements OnChanges {
     }
     conditionsControl.valueChanges.subscribe(() => {
       const conditionsLength = (conditionsControl as FormArray).length;
-      const entityTypeControl = this.form.get("entityType");
       if (conditionsLength > 0) {
-        entityTypeControl.disable();
+        this.entityTypeControl.disable();
       } else {
-        entityTypeControl.enable();
+        this.entityTypeControl.enable();
       }
     });
   }
