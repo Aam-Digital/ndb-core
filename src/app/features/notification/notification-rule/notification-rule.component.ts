@@ -22,10 +22,7 @@ import {
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import {
-  NotificationChannel,
-  NotificationRule,
-} from "../model/notification-config";
+import { NotificationRule } from "../model/notification-config";
 import {
   NotificationConditionComponent,
   NotificationRuleCondition,
@@ -77,13 +74,9 @@ export class NotificationRuleComponent implements OnChanges {
 
   form: FormGroup;
   entityTypeControl: AbstractControl;
+
   readonly dialog = inject(MatDialog);
-
-  notificationMethods: { key: NotificationChannel; label: string }[] = [
-    { key: "push", label: $localize`:notification method option:Push` },
-  ];
-
-  constructor(private notificationService: NotificationService) {}
+  readonly notificationService = inject(NotificationService);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -102,10 +95,6 @@ export class NotificationRuleComponent implements OnChanges {
         this.value?.changeType ?? ["created", "updated"],
       ),
       enabled: new FormControl(this.value?.enabled || false),
-      // different format for form control
-      channels: new FormControl(
-        this.parseChannelsToOptionsArray(this.value?.channels),
-      ),
       conditions: new FormArray([]),
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
@@ -147,7 +136,6 @@ export class NotificationRuleComponent implements OnChanges {
     if (entityTypeControl?.disabled) {
       value.entityType = entityTypeControl.value;
     }
-    value.channels = this.parseOptionsArrayToChannels(value.channels);
     value.conditions = this.parseConditionsArrayToObject(value.conditions);
 
     if (JSON.stringify(value) === JSON.stringify(this.value)) {
@@ -157,24 +145,6 @@ export class NotificationRuleComponent implements OnChanges {
 
     this.value = value;
     this.valueChange.emit(value);
-  }
-
-  private parseChannelsToOptionsArray(channels?: {
-    [key: string]: boolean;
-  }): string[] {
-    return Object.entries(channels ?? [])
-      .filter(([key, value]) => value === true)
-      .map(([key, value]) => key);
-  }
-
-  private parseOptionsArrayToChannels(options: string[]): {
-    [key: string]: boolean;
-  } {
-    const channels = {};
-    for (let option of options ?? []) {
-      channels[option] = true;
-    }
-    return channels;
   }
 
   /**

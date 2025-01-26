@@ -57,8 +57,10 @@ export class NotificationRule {
   /**
    * override for the global notification channel(s).
    * e.g. define here if this specific notification rule should not show as email/push notification
+   *
+   * (optional) If not set, the global channels are used.
    */
-  @DatabaseField() channels: { [key in NotificationChannel]?: boolean };
+  @DatabaseField() channels?: { [key in NotificationChannel]?: boolean };
 
   /** (for "entity_change" notifications only): type of entities that can trigger notification */
   @DatabaseField() entityType?: string;
