@@ -188,4 +188,19 @@ export class NotificationService {
       },
     });
   }
+
+  /**
+   * user given the notification permission to browser or not
+   * @returns boolean
+   */
+  hasNotificationPermissionGranted(): boolean {
+    switch (Notification.permission) {
+      case "granted":
+        return true;
+      case "denied":
+        return false;
+      default:
+        return false;
+    }
+  }
 }

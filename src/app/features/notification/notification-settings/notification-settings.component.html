@@ -1,41 +1,39 @@
-<div class="notifications-container">
-  <h1 class="notification-setting-title" i18n>Notifications Settings</h1>
+<div class="padding-regular">
+  <h1 i18n>Notifications Settings</h1>
   <div i18n>
     Notifications alert you to important system events, such as new
     registrations via public forms or tasks assigned to you. They appear in the
     toolbar and can be sent via email or push notifications.
   </div>
 
-  <div class="notification-types-container">
+  <!--
+    Notification Rules
+  -->
+  <div class="margin-top-large">
     <h3 class="no-margin" i18n>
       <strong>What notifications you receive</strong>
     </h3>
-    <div i18n>
+    <div i18n class="margin-bottom-regular">
       Define rules for events that you want to get notifications for. You can
-      add as many rules as you want. Disable a rule temporarily to pause these
-      notifications without deleting the conditions completely.
+      add as many different rules as you want and disable some temporarily to
+      pause these notifications.
     </div>
 
-    <cdk-accordion>
+    <mat-accordion>
       @for (
         notificationRule of notificationConfig?.notificationRules;
         track notificationRule;
         let index = $index
       ) {
-        <div class="notification-rule-accordion-item">
-          <app-notification-rule
-            [value]="notificationRule"
-            (valueChange)="updateNotificationRule(notificationRule, $event)"
-            (removeNotificationRule)="confirmRemoveNotificationRule(index)"
-            (removeNotificationCondition)="
-              updateNotificationRule(notificationRule, $event)
-            "
-            [accordionIndex]="index"
-          ></app-notification-rule>
-        </div>
+        <app-notification-rule
+          [value]="notificationRule"
+          (valueChange)="updateNotificationRule(notificationRule, $event)"
+          (removeNotificationRule)="confirmRemoveNotificationRule(index)"
+        ></app-notification-rule>
       }
-    </cdk-accordion>
-    <div class="flex-row justify-content-center add-new-notification-rule">
+    </mat-accordion>
+
+    <div class="flex-row justify-content-center margin-top-regular">
       <button
         mat-stroked-button
         class="add-new-rule-button"
@@ -44,16 +42,21 @@
         matTooltip="Define another type of notifications for your user account"
         i18n-matTooltip
       >
-        <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-        <span i18n class="new-notification-rule"
-          >Add new notification rule</span
-        >
+        <fa-icon
+          aria-label="add element"
+          icon="plus-circle"
+          class="standard-icon-with-text"
+        ></fa-icon>
+        <span i18n>Add new notification rule</span>
       </button>
     </div>
   </div>
 
-  <div class="browser-notifications-container">
-    <div class="browser-notifications-title">
+  <!--
+    Notification Channels
+  -->
+  <div class="margin-top-large">
+    <div>
       <h3 i18n class="no-margin flex-row align-center">
         <strong>Where you receive notifications</strong>
         @if (isPushNotificationEnabled) {
@@ -67,7 +70,7 @@
         } @else {
           <div
             class="disabled-text"
-            matTooltip="Push notifications are disabled. Turn them on in settings to stay informed about updates."
+            matTooltip="Push notifications are disabled. Turn them on in settings to also receive alerts outside of the app."
             i18n-matTooltip
           >
             Disabled
@@ -80,53 +83,58 @@
         notifications sent to you below.
       </div>
     </div>
-    <div class="receive-notifications-container">
-      <div>
-        <div class="flex-row">
+
+    <div class="receive-notifications-container flex-column gap-large">
+      <div class="flex-column">
+        <div class="flex-row gap-small">
           <fa-icon icon="window-maximize"></fa-icon>
-          <p class="notification-toggle" i18n>Browser</p>
+          <p i18n>Browser</p>
         </div>
-        <div
-          class="flex-row align-center justify-space-between browser-notification-list"
-        >
-          <div class="flex-row align-center">
+
+        <div class="flex-row gap-regular">
+          <div class="flex-row gap-regular align-center">
+            <mat-slide-toggle
+              checked
+              disabled
+              class="indented-item"
+              matTooltip="Always enabled"
+            ></mat-slide-toggle>
             <span i18n>Notification Center (in app)</span>
             <app-help-button
-              text="Click the bell icon in the top toolbar to access notifications any time. You can find all messages, including read ones, there. The Notification Center is always enabled."
+              text="Click the bell icon in the top toolbar to access notifications any time. You can find all messages, including read ones, there."
               i18n-text
             ></app-help-button>
           </div>
         </div>
-        <div class="flex-row align-center browser-notification-list">
-          <div class="flex-row align-center">
-            <span i18n>Push notifications</span>
-            <app-help-button
-              text="A notification on your system (e.g. a normal Android smartphone notification). You see these alerts even when your app is not opened at the moment."
-              i18n-text
-            ></app-help-button>
-          </div>
+
+        <div class="flex-row gap-regular align-center">
           <mat-slide-toggle
             (change)="togglePushNotifications($event)"
             [checked]="isPushNotificationEnabled"
-            class="receive-notification-section"
+            class="indented-item"
           />
+          <span i18n>Push notifications</span>
+          <app-help-button
+            text="A notification on your system (e.g. a normal Android smartphone notification). You see these alerts even when your app is not opened at the moment."
+            i18n-text
+          ></app-help-button>
         </div>
       </div>
 
       <div>
-        <div class="flex-row">
+        <div class="flex-row gap-small">
           <fa-icon icon="envelope"></fa-icon>
-          <p class="notification-toggle" i18n>Email</p>
+          <p i18n>Email</p>
         </div>
-        <div class="flex-row align-center browser-notification-list">
-          <div class="flex-row align-center notification-option">
-            <span i18n>Email</span>
-            <span class="coming-soon-label" i18n>Coming Soon</span>
-          </div>
+
+        <div class="flex-row gap-regular">
           <mat-slide-toggle
             disabled
-            class="receive-notification-section"
+            class="indented-item"
+            matTooltip="Not available yet"
           ></mat-slide-toggle>
+          <span i18n>Email</span>
+          <span class="coming-soon-label" i18n>Coming Soon</span>
         </div>
       </div>
     </div>

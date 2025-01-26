@@ -19,6 +19,7 @@ import { NotificationRuleComponent } from "../notification-rule/notification-rul
 import { MatTooltip } from "@angular/material/tooltip";
 import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { NotificationService } from "../notification.service";
+import { MatAccordion } from "@angular/material/expansion";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -35,6 +36,7 @@ import { NotificationService } from "../notification.service";
     NotificationRuleComponent,
     MatTooltip,
     CdkAccordionModule,
+    MatAccordion,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
@@ -58,40 +60,40 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.initializeNotificationSettings();
-  }
-
-  private async initializeNotificationSettings() {
     this.notificationConfig = await this.loadNotificationConfig();
 
-    if (this.notificationConfig) {
-      if (this.isNotificationPermissionGranted()) {
-        this.isPushNotificationEnabled =
-          this.notificationConfig.channels?.push || false;
-      }
+    if (this.notificationService.hasNotificationPermissionGranted()) {
+      this.isPushNotificationEnabled =
+        this.notificationConfig.channels?.push || false;
     }
   }
 
   private async loadNotificationConfig() {
+    let notificationConfig: NotificationConfig;
     try {
-      const notificationConfig =
-        await this.entityMapper.load<NotificationConfig>(
-          NotificationConfig,
-          this.userId,
-        );
-
-      if (!notificationConfig) {
-        return null;
-      }
-
-      return notificationConfig;
+      notificationConfig = await this.entityMapper.load<NotificationConfig>(
+        NotificationConfig,
+        this.userId,
+      );
     } catch (err) {
-      Logging.debug(err);
-
       if (err.status === 404) {
-        return new NotificationConfig(this.userId);
+        notificationConfig = this.generateDefaultNotificationConfig();
+      } else {
+        Logging.warn(err);
       }
     }
+
+    return notificationConfig;
+  }
+
+  private generateDefaultNotificationConfig(): NotificationConfig {
+    const config = new NotificationConfig(this.userId);
+
+    config.notificationRules = [
+      // TODO: define default rules
+    ];
+
+    return config;
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {
@@ -102,18 +104,12 @@ export class NotificationSettingsComponent implements OnInit {
     }
     this.isPushNotificationEnabled = event?.checked;
 
-    let notificationConfig = await this.loadNotificationConfig();
-
-    if (!notificationConfig) {
-      notificationConfig = new NotificationConfig(this.userId);
-    }
-
-    notificationConfig.channels = {
-      ...notificationConfig.channels,
+    this.notificationConfig.channels = {
+      ...this.notificationConfig.channels,
       push: this.isPushNotificationEnabled,
     };
 
-    await this.saveNotificationConfig(notificationConfig);
+    await this.saveNotificationConfig(this.notificationConfig);
   }
 
   private async saveNotificationConfig(config: NotificationConfig) {
@@ -155,33 +151,10 @@ export class NotificationSettingsComponent implements OnInit {
       $localize`Are you sure you want to remove this notification rule?`,
     );
     if (confirmed) {
-      await this.removeNotificationRule(index);
+      this.notificationConfig.notificationRules.splice(index, 1);
+      await this.saveNotificationConfig(this.notificationConfig);
       return true;
     }
     return false;
-  }
-
-  private async removeNotificationRule(index: number) {
-    this.notificationConfig.notificationRules.splice(index, 1);
-    await this.saveNotificationConfig(this.notificationConfig);
-  }
-
-  async updateNotificationCondition() {
-    await this.saveNotificationConfig(this.notificationConfig);
-  }
-
-  /**
-   * user given the notification permission to browser or not
-   * @returns boolean
-   */
-  isNotificationPermissionGranted(): boolean {
-    switch (Notification.permission) {
-      case "granted":
-        return true;
-      case "denied":
-        return false;
-      default:
-        return false;
-    }
   }
 }

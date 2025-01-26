@@ -25,7 +25,6 @@ import {
   NotificationChannel,
   NotificationRule,
 } from "../model/notification-config";
-import { CdkAccordionItem, CdkAccordionModule } from "@angular/cdk/accordion";
 import {
   NotificationConditionComponent,
   NotificationRuleCondition,
@@ -38,6 +37,10 @@ import { Logging } from "../../../core/logging/logging.service";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+} from "@angular/material/expansion";
 
 /**
  * Configure a single notification rule.
@@ -55,23 +58,21 @@ import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-edito
     EntityTypeSelectComponent,
     HelpButtonComponent,
     ReactiveFormsModule,
-    CdkAccordionModule,
     NotificationConditionComponent,
     MatProgressSpinnerModule,
     MatOption,
     MatSelect,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
   ],
   templateUrl: "./notification-rule.component.html",
-  styleUrl: "../notification-settings/notification-settings.component.scss",
+  styleUrl: "./notification-rule.component.scss",
 })
 export class NotificationRuleComponent implements OnChanges {
   @Input() value: NotificationRule;
-  @Input() accordionIndex: number;
   @Output() valueChange = new EventEmitter<NotificationRule>();
 
   @Output() removeNotificationRule = new EventEmitter<void>();
-
-  @Output() removeNotificationCondition = new EventEmitter<any>();
 
   form: FormGroup;
   readonly dialog = inject(MatDialog);
@@ -226,16 +227,6 @@ export class NotificationRuleComponent implements OnChanges {
 
     const parsedConditions = this.parseConditionsObjectToArray(result);
     this.setupConditionsArray(parsedConditions);
-  }
-
-  /**
-   * Toggle the notification conditions accordion.
-   * @param notificationRuleItem
-   */
-  handleToggleAccordion(notificationRuleItem: CdkAccordionItem) {
-    if (!notificationRuleItem.expanded) {
-      notificationRuleItem.toggle();
-    }
   }
 
   /**

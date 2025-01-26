@@ -1,27 +1,7 @@
 @use "variables/colors";
 @use "variables/sizes";
-@use "../../../../styles/variables/breakpoints";
 @use "@angular/material/core/style/elevation" as mat-elevation;
 
-.full-width {
-  width: 100%;
-}
-
-.notifications-container {
-  padding: 16px;
-}
-
-.notification-types-container {
-  margin-top: sizes.$large;
-}
-
-.browser-notifications-container {
-  margin-top: sizes.$large;
-}
-
-.notification-setting-title {
-  margin-bottom: sizes.$x-small;
-}
 
 .panel-wrapper {
   @include mat-elevation.elevation(2);
@@ -32,50 +12,12 @@
 .receive-notifications-container {
   @extend .panel-wrapper;
   background-color: colors.$background;
-}
-
-.notification-rule-accordion-item {
-  @extend .panel-wrapper;
-  background-color: colors.$background;
   margin-top: sizes.$regular;
-  cursor: pointer;
 }
 
-.notifications-options-container {
-  @extend .full-width;
-  gap: 40px;
-}
-
-.notification-options-wrapper {
-  @extend .full-width;
-
-  @media screen and (min-width: breakpoints.$xxl) {
-    flex-direction: row;
-  }
-}
-
-.notification-rule-actions {
-  gap: 15px;
-}
-
-.browser-notification-list {
-  margin: 0px 0px 16px 20px;
-}
-
-.notification-toggle {
-  margin-left: 10px;
-}
-
-.new-notification-rule {
-  margin-left: 5px;
-}
 
 .no-margin {
   margin: 0;
-}
-
-.add-new-notification-rule {
-  margin-top: 30px;
 }
 
 .add-new-rule-button {
@@ -85,32 +27,12 @@
   background-color: aliceblue;
 }
 
-.full-width-field {
-  @extend .full-width;
-  display: inline-block;
-
-  ::ng-deep mat-form-field {
-    @extend .full-width;
-  }
-}
-
-.notification-rule-option {
-  width: 80%;
-}
-
-.notification-rule-method {
-  width: 68%;
-}
-
 .coming-soon-label {
   color: colors.$inactive;
   margin-left: 10px;
   font-style: italic;
 }
 
-.browser-notifications-title {
-  margin-bottom: 20px;
-}
 
 .text-badge {
   font-size: 12px;
@@ -133,39 +55,7 @@
   background-color: #beddba;
 }
 
-.notification-condition-section {
-  margin-top: sizes.$regular;
-  margin-bottom: sizes.$regular;
-}
 
-.new-rule-condition-button {
-  background-color: transparent;
-  padding: sizes.$regular sizes.$large;
-  cursor: pointer;
-  border-radius: sizes.$large;
-}
-
-.notification-condition-operator {
+.indented-item {
   margin-left: sizes.$large;
-  margin-right: sizes.$large;
-}
-
-.receive-notification-section {
-  margin-left: sizes.$large;
-}
-
-.notification-option {
-  margin-right: sizes.$large;
-}
-
-.notification-method {
-  width: 40%;
-  margin-left: sizes.$large;
-}
-
-.test-notification-button {
-  padding: sizes.$regular sizes.$large;
-  cursor: pointer;
-  border-radius: sizes.$large;
-  margin-left: sizes.$small;
 }
