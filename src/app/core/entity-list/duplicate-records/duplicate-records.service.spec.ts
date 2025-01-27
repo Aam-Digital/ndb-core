@@ -4,18 +4,16 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { CoreModule } from "../../core.module";
 import { UpdateMetadata } from "../../entity/model/update-metadata";
-import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
+import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype";
 
-// TODO: Fix tests
-xdescribe("DuplicateRecordsService", () => {
+describe("DuplicateRecordsService", () => {
   let service: DuplicateRecordService;
   let entityMapperService: EntityMapperService;
-
-  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
 
   @DatabaseEntity("DuplicateTestEntity")
   class DuplicateTestEntity extends Entity {
@@ -29,11 +27,13 @@ xdescribe("DuplicateRecordsService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [CoreModule],
       providers: [
         DuplicateRecordService,
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         EntitySchemaService,
+        { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },
       ],
     });
     service = TestBed.inject(DuplicateRecordService);

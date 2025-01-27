@@ -332,6 +332,7 @@ const addDefaultNoteDetailsConfig: ConfigMigration = (key, configPart) => {
   if (
     // add at top-level of config
     configPart?.["_id"] === "Config:CONFIG_ENTITY" &&
+    configPart?.["data"] &&
     !configPart?.["data"]["view:note/:id"]
   ) {
     configPart["data"]["view:note/:id"] = {

@@ -5,7 +5,7 @@ import {
   SessionType,
   SyncStateSubject,
 } from "../session-type";
-import { TestBed, waitForAsync } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../auth/session-info";
@@ -19,9 +19,11 @@ import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
+import { Config } from "../../config/config";
+import { ConfigService } from "../../config/config.service";
 
-// TODO: Fix tests
-xdescribe("SessionManagerService", () => {
+describe("SessionManagerService", () => {
   let service: SessionManagerService;
   let loginStateSubject: LoginStateSubject;
   let sessionInfo: SessionSubject;
@@ -50,7 +52,7 @@ xdescribe("SessionManagerService", () => {
         CurrentUserSubject,
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(),
+          useValue: mockEntityMapper([new Config()]),
         },
         { provide: DatabaseResolverService, useValue: mockDatabaseResolver },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
@@ -75,7 +77,7 @@ xdescribe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    const tmpDB = new PouchDatabase(userDBName);
+    const tmpDB = new MemoryPouchDatabase(userDBName);
     tmpDB.init();
     await tmpDB.destroy();
   });
@@ -96,11 +98,12 @@ xdescribe("SessionManagerService", () => {
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
   });
 
-  it("should initialize current user as the entity to which a login is connected", async () => {
+  it("should initialize current user as the entity to which a login is connected", fakeAsync(() => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const loggedInUser = new TestEntity(TEST_USER);
     const otherUser = new TestEntity("other_user");
-    await entityMapper.saveAll([loggedInUser, otherUser]);
+    entityMapper.saveAll([loggedInUser, otherUser]);
+    tick();
     const currentUser = TestBed.inject(CurrentUserSubject);
 
     // first login with existing user entity
@@ -110,11 +113,18 @@ xdescribe("SessionManagerService", () => {
       roles: [],
       entityId: loggedInUser.getId(),
     });
-    await service.remoteLogin();
+    service.remoteLogin();
+    tick();
+
+    // we somehow need this in the Test as the replay doesn't trigger
+    TestBed.inject(ConfigService).entityUpdated.next(new Config());
+    tick();
+
     expect(currentUser.value).toEqual(loggedInUser);
 
     // logout -> user should reset
-    await service.logout();
+    service.logout();
+    tick();
     expect(currentUser.value).toBeUndefined();
 
     const adminUser = new TestEntity("admin-user");
@@ -125,14 +135,16 @@ xdescribe("SessionManagerService", () => {
       roles: ["admin"],
       entityId: adminUser.getId(),
     });
-    await service.remoteLogin();
+    service.remoteLogin();
+    tick();
 
     // user entity available -> user should be set
-    await entityMapper.save(adminUser);
+    entityMapper.save(adminUser);
+    tick();
     expect(currentUser.value).toEqual(adminUser);
-  });
+  }));
 
-  it("should not initialize the user entity if no entityId is set", async () => {
+  it("should not initialize the user entity if no entityId is set", fakeAsync(() => {
     const loadSpy = spyOn(TestBed.inject(EntityMapperService), "load");
 
     mockKeycloak.login.and.resolveTo({
@@ -140,14 +152,20 @@ xdescribe("SessionManagerService", () => {
       id: "101",
       roles: [],
     });
-    await service.remoteLogin();
+
+    service.remoteLogin();
+    tick();
+
+    // we somehow need this in the Test as the replay doesn't trigger
+    TestBed.inject(ConfigService).entityUpdated.next(new Config());
+    tick();
 
     expect(loadSpy).not.toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
     expect(TestBed.inject(CurrentUserSubject).value).toBeNull();
-  });
+  }));
 
-  it("should allow other entities to log in", async () => {
+  it("should allow other entities to log in", fakeAsync(() => {
     const loggedInChild = new TestEntity("123");
     const childSession: SessionInfo = {
       name: loggedInChild.getId(),
@@ -157,17 +175,24 @@ xdescribe("SessionManagerService", () => {
     };
     mockKeycloak.login.and.resolveTo(childSession);
     const otherChild = new TestEntity("456");
-    await TestBed.inject(EntityMapperService).saveAll([
+    TestBed.inject(EntityMapperService).saveAll([
       loggedInChild,
       otherChild,
+      new Config(),
     ]);
+    tick();
 
-    await service.remoteLogin();
+    service.remoteLogin();
+    tick();
+
+    // we somehow need this in the Test as the replay doesn't trigger
+    TestBed.inject(ConfigService).entityUpdated.next(new Config());
+    tick();
 
     expect(sessionInfo.value).toBe(childSession);
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
     expect(TestBed.inject(CurrentUserSubject).value).toEqual(loggedInChild);
-  });
+  }));
 
   it("should automatically login, if the session is still valid", async () => {
     await service.remoteLogin();
@@ -190,7 +215,7 @@ xdescribe("SessionManagerService", () => {
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
     expect(sessionInfo.value).toEqual(dbUser);
 
-    service.logout();
+    await service.logout();
 
     expect(mockKeycloak.logout).not.toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_OUT);
