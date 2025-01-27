@@ -194,6 +194,7 @@ export class EntityFormService {
 
     for (const f of formFields) {
       this.addFormControlConfig(formConfig, f, copy);
+      console.log(formConfig, "formConfig");
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
@@ -237,6 +238,12 @@ export class EntityFormService {
     }
 
     formConfig[field.id] = new FormControl(value, controlOptions);
+    if (
+      field.validators?.readonlyAfterSet &&
+      formConfig[field.id].value !== null
+    ) {
+      formConfig[field.id].disable({ onlySelf: true, emitEvent: false });
+    }
   }
 
   private disableReadOnlyFormControls<T extends Entity>(

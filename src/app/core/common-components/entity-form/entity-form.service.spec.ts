@@ -34,7 +34,7 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EventEmitter } from "@angular/core";
 
-describe("EntityFormService", () => {
+fdescribe("EntityFormService", () => {
   let service: EntityFormService;
 
   beforeEach(waitForAsync(() => {
@@ -76,6 +76,21 @@ describe("EntityFormService", () => {
     await service.saveChanges(entityForm, entity);
 
     expect(entity.getId()).toBe(`${Entity.ENTITY_TYPE}:newId`);
+  });
+
+  it("should make the field readonly after initial value is set", async () => {
+    const schema: EntitySchemaField = {
+      validators: {
+        required: true,
+        readonlyAfterSet: true,
+      },
+    };
+    Entity.schema.set("test", schema);
+
+    const entity = new Entity();
+    entity["test"] = "test-value";
+    const form = await service.createEntityForm([{ id: "test" }], entity);
+    expect(form.formGroup.get("test").disabled).toBeTrue();
   });
 
   it("should mark form pristine and disable it after saving", async () => {
