@@ -78,8 +78,7 @@ export class NotificationRuleComponent implements OnChanges {
   readonly dialog = inject(MatDialog);
   readonly notificationService = inject(NotificationService);
 
-  pushNotificationsEnabled =
-    this.notificationService.hasNotificationPermissionGranted();
+  pushNotificationsEnabled = this.notificationService.checkDeviceRegistered();
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
