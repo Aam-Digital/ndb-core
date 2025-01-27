@@ -209,4 +209,27 @@ export class NotificationService {
         return false;
     }
   }
+
+  /**
+   * Check if the device is already registered for notifications.
+   * @returns boolean
+   */
+  async checkDeviceRegistered(): Promise<boolean> {
+    if (!this.hasNotificationPermissionGranted()) {
+      return false;
+    }
+
+    const firebaseToken = await firstValueFrom(this.firebaseMessaging.getToken);
+    if (!firebaseToken) {
+      return false;
+    }
+
+    try {
+      await this.registerNotificationToken(firebaseToken);
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  }
 }
