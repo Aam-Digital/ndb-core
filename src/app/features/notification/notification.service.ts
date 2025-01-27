@@ -227,6 +227,7 @@ export class NotificationService {
     try {
       await this.registerNotificationToken(firebaseToken);
     } catch (error) {
+      Logging.error("Could not register device for notifications.", error);
       return false;
     }
 
