@@ -117,6 +117,12 @@ export abstract class Database {
   abstract isEmpty(): Promise<boolean>;
 
   /**
+   * Closes open connections and un-initializes the database
+   * (without deleting persisted data, see destroy() for that)
+   */
+  abstract reset(): Promise<any>;
+
+  /**
    * Closes all open connections to the database base and destroys it (clearing all data)
    */
   abstract destroy(): Promise<any>;

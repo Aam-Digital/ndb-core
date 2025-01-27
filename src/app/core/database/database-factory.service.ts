@@ -14,9 +14,8 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 
 /**
- * Provides a method to generate Database instances.
- *
- * (can be re-implemented to cater to different Database implementations).
+ * Provides a method to generate Database instances
+ * depending on context and environment configuration.
  */
 @Injectable({
   providedIn: "root",

@@ -41,21 +41,15 @@ export class DatabaseResolverService {
     return db;
   }
 
-  resetDatabases() {
-    // TODO: destroy or reset differently?
-    /* previous implementation in PouchDatabase (in addition to destroy method):
-          reset() {
-            this.pouchDB = undefined;
-            this.changesFeed = undefined;
-            this.databaseInitialized = new Subject();
-          }
-     */
-    this.getDatabase().destroy();
+  async resetDatabases() {
+    for (const db of this.databases.values()) {
+      await db.reset();
+    }
   }
 
   async initDatabasesForSession(session: SessionInfo) {
     this.initializeAppDatabaseForCurrentUser(session);
-    // TODO: init other DBs
+    // ... in future initialize additional DBs here
   }
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {

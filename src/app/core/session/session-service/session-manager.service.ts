@@ -146,7 +146,7 @@ export class SessionManagerService {
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;
-    this.databaseResolver.resetDatabases();
+    await this.databaseResolver.resetDatabases();
     return this.router.navigate(["/login"], {
       queryParams: { redirect_uri: this.router.routerState.snapshot.url },
     });

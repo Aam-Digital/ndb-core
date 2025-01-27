@@ -240,15 +240,18 @@ export class PouchDatabase extends Database {
    */
   async destroy(): Promise<any> {
     await Promise.all(this.indexPromises);
-
-    // TODO: add functionality of reset here also?
-    //this.pouchDB = undefined;
-    //this.changesFeed = undefined;
-    //this.databaseInitialized = new Subject();
-
     if (this.pouchDB) {
       return this.pouchDB.destroy();
     }
+  }
+
+  /**
+   * Reset the database state so a new one can be opened.
+   */
+  async reset() {
+    this.pouchDB = undefined;
+    this.changesFeed = undefined;
+    this.databaseInitialized = new Subject();
   }
 
   /**
