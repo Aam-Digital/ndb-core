@@ -12,9 +12,9 @@ export class MemoryPouchDatabase extends PouchDatabase {
    * See {@link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-adapter-memory}
    * @param dbName the name for the database
    */
-  override init(dbName = "in-memory-database") {
+  override init(dbName?: string) {
     PouchDB.plugin(memory);
-    this.pouchDB = new PouchDB(dbName, { adapter: "memory" });
+    this.pouchDB = new PouchDB(dbName ?? this.dbName, { adapter: "memory" });
     this.databaseInitialized.complete();
   }
 }

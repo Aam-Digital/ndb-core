@@ -26,12 +26,14 @@ import { Observable } from "rxjs";
  * Database is not an Angular Service and has to be accessed through the DatabaseResolverService.
  */
 export abstract class Database {
+  constructor(protected dbName: string) {}
+
   /**
    * Initialize the database fully after its initial creation,
    * e.g. once user details are available.
-   * @param dbName
+   * @param dbName A special database name, if different from the default name passed in the constructor
    */
-  abstract init(dbName: string);
+  abstract init(dbName?: string);
 
   /**
    * Whether the database is already initialized and ready for use.

@@ -9,8 +9,11 @@ import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.s
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
  */
 export class RemotePouchDatabase extends PouchDatabase {
-  constructor(private authService: KeycloakAuthService) {
-    super();
+  constructor(
+    dbName: string,
+    private authService: KeycloakAuthService,
+  ) {
+    super(dbName);
   }
 
   /**
@@ -18,14 +21,22 @@ export class RemotePouchDatabase extends PouchDatabase {
    * See {@link https://pouchdb.com/adapters.html#pouchdb_over_http}
    * @param dbName (relative) path to the remote database
    */
-  override init(dbName: string) {
+  override init(dbName?: string) {
+    if (dbName) {
+      this.dbName = dbName;
+    }
+
     const options = {
       adapter: "http",
       skip_setup: true,
       fetch: (url: string | Request, opts: RequestInit) =>
         this.defaultFetch(url, opts),
     };
-    this.pouchDB = new PouchDB(dbName, options);
+    // add the proxy prefix to the database name so that we get a correct remote URL
+    this.pouchDB = new PouchDB(
+      `${environment.DB_PROXY_PREFIX}/${this.dbName}`,
+      options,
+    );
     this.databaseInitialized.complete();
   }
 

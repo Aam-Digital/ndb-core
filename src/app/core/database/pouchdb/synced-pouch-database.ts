@@ -26,7 +26,10 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 export class SyncedPouchDatabase extends PouchDatabase {
   static LAST_SYNC_KEY_PREFIX = "LAST_SYNC_";
 
-  get LAST_SYNC_KEY(): string {
+  get LAST_SYNC_KEY(): string | undefined {
+    if (!this.pouchDB?.name) {
+      return undefined;
+    }
     return SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + this.pouchDB.name;
   }
 
@@ -36,14 +39,15 @@ export class SyncedPouchDatabase extends PouchDatabase {
   private remoteDatabase: RemotePouchDatabase;
 
   constructor(
+    dbName: string,
     authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
     @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
   ) {
-    super();
+    super(dbName);
 
-    this.remoteDatabase = new RemotePouchDatabase(authService);
+    this.remoteDatabase = new RemotePouchDatabase(dbName, authService);
 
     this.logSyncContext();
     this.syncStateSubject
@@ -64,9 +68,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * See {@link https://pouchdb.com/adapters.html#pouchdb_over_http}
    * @param dbName (relative) path to the remote database
    */
-  override init(dbName: string) {
-    super.init(dbName);
-    this.remoteDatabase.init(dbName);
+  override init(dbName?: string) {
+    super.init(dbName ?? this.dbName);
+
+    // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
+    this.remoteDatabase.init();
   }
 
   private async logSyncContext() {

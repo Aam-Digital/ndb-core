@@ -29,14 +29,14 @@ export class DatabaseResolverService {
   private initDatabaseStubs() {
     this.databases.set(
       DatabaseResolverService.DEFAULT_DB,
-      this.databaseFactory.createDatabase(),
+      this.databaseFactory.createDatabase(DatabaseResolverService.DEFAULT_DB),
     );
   }
 
   getDatabase(dbName: string = DatabaseResolverService.DEFAULT_DB): Database {
     let db = this.databases.get(dbName);
     if (!db.isInitialized() && this.fallbackToRemote) {
-      db = this.databaseFactory.createRemoteDatabase();
+      db = this.databaseFactory.createRemoteDatabase(dbName);
     }
     return db;
   }

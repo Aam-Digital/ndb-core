@@ -29,24 +29,25 @@ export class DatabaseFactoryService {
     private loginStateSubject: LoginStateSubject,
   ) {}
 
-  createDatabase(): Database {
+  createDatabase(dbName: string): Database {
     if (environment.session_type === SessionType.synced) {
       return new SyncedPouchDatabase(
+        dbName,
         this.authService,
         this.syncState,
         this.navigator,
         this.loginStateSubject,
       );
     } else if (environment.session_type === SessionType.local) {
-      return new PouchDatabase();
+      return new PouchDatabase(dbName);
     } else {
-      return new MemoryPouchDatabase();
+      return new MemoryPouchDatabase(dbName);
     }
   }
 
-  createRemoteDatabase(dbName: string = environment.DB_NAME): Database {
-    const db = new RemotePouchDatabase(this.authService);
-    db.init(`${environment.DB_PROXY_PREFIX}/${dbName}`);
+  createRemoteDatabase(dbName: string): Database {
+    const db = new RemotePouchDatabase(dbName, this.authService);
+    db.init(dbName);
     return db;
   }
 }
