@@ -11,7 +11,7 @@ describe("RemotePouchDatabase tests", () => {
 
   beforeEach(() => {
     mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
-    database = new RemotePouchDatabase(mockAuthService);
+    database = new RemotePouchDatabase("unit-test-db", mockAuthService);
   });
 
   afterEach(() => database.destroy());

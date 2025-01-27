@@ -7,6 +7,10 @@ import memory from "pouchdb-adapter-memory";
  * not persisting any data after the page is closed.
  */
 export class MemoryPouchDatabase extends PouchDatabase {
+  constructor(dbName: string = "in-memory-db") {
+    super(dbName);
+  }
+
   /**
    * Initialize the PouchDB with the in-memory adapter.
    * See {@link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-adapter-memory}

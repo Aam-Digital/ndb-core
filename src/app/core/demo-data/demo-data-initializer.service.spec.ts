@@ -65,12 +65,12 @@ describe("DemoDataInitializerService", () => {
   afterEach(async () => {
     localStorage.clear();
 
-    const tmpDB = new PouchDatabase();
-    tmpDB.init(demoUserDBName);
+    const tmpDB = new PouchDatabase(demoUserDBName);
+    tmpDB.init();
     await tmpDB.destroy();
 
-    const tmpDB2 = new PouchDatabase();
-    tmpDB2.init(adminDBName);
+    const tmpDB2 = new PouchDatabase(adminDBName);
+    tmpDB2.init();
     await tmpDB2.destroy();
   });
 

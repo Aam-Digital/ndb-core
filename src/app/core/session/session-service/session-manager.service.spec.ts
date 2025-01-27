@@ -71,8 +71,8 @@ describe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    const tmpDB = new PouchDatabase();
-    tmpDB.init(userDBName);
+    const tmpDB = new PouchDatabase(userDBName);
+    tmpDB.init();
     await tmpDB.destroy();
   });
 
@@ -253,8 +253,8 @@ describe("SessionManagerService", () => {
   });
 
   async function defineExistingDatabases() {
-    const tmpDB = new PouchDatabase();
-    tmpDB.init(userDBName);
+    const tmpDB = new PouchDatabase(userDBName);
+    tmpDB.init();
     await tmpDB.put({ _id: "someDoc" });
   }
 });

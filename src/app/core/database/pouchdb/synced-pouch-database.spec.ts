@@ -26,6 +26,7 @@ describe("SyncedPouchDatabase", () => {
     loginState = new LoginStateSubject();
 
     service = new SyncedPouchDatabase(
+      "unit-test-db",
       mockAuthService,
       mockSyncStateSubject,
       mockNavigator,
