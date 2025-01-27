@@ -211,7 +211,7 @@ export class NotificationService {
   }
 
   /**
-   * Check if the device is already registered for notifications.
+   * Check if the device is registered for notifications.
    * @returns boolean
    */
   async checkDeviceRegistered(): Promise<boolean> {
