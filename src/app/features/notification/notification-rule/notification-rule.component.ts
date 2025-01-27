@@ -4,6 +4,7 @@ import {
   inject,
   Input,
   OnChanges,
+  OnInit,
   Output,
   SimpleChanges,
 } from "@angular/core";
@@ -66,7 +67,7 @@ import {
   templateUrl: "./notification-rule.component.html",
   styleUrl: "./notification-rule.component.scss",
 })
-export class NotificationRuleComponent implements OnChanges {
+export class NotificationRuleComponent implements OnChanges, OnInit {
   @Input() value: NotificationRule;
   @Output() valueChange = new EventEmitter<NotificationRule>();
 
@@ -78,7 +79,12 @@ export class NotificationRuleComponent implements OnChanges {
   readonly dialog = inject(MatDialog);
   readonly notificationService = inject(NotificationService);
 
-  pushNotificationsEnabled = this.notificationService.checkDeviceRegistered();
+  pushNotificationsEnabled = false;
+
+  async ngOnInit() {
+    this.pushNotificationsEnabled =
+      await this.notificationService.checkDeviceRegistered();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
