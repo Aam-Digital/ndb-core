@@ -1,4 +1,5 @@
 import { PouchDatabase } from "./pouch-database";
+import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 
 /**

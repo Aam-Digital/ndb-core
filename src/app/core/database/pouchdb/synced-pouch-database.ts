@@ -2,8 +2,6 @@ import { PouchDatabase } from "./pouch-database";
 import { Logging } from "../../logging/logging.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { RemotePouchDatabase } from "./remote-pouch-database";
-import { Entity } from "../../entity/model/entity";
-import { Config } from "../../config/config";
 import {
   debounceTime,
   filter,
@@ -73,15 +71,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   private async logSyncContext() {
     const lastSyncTime = localStorage.getItem(this.LAST_SYNC_KEY);
-    const configRev = await this.get(
-      Entity.createPrefixedId(Config.ENTITY_TYPE, Config.CONFIG_KEY),
-    )
-      .catch(() => null)
-      .then((config) => config?._rev);
-
     Logging.addContext("Aam Digital sync", {
       "last sync completed": lastSyncTime,
-      "config _rev": configRev,
     });
   }
 
