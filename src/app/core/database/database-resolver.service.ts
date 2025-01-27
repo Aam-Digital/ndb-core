@@ -3,6 +3,7 @@ import { Database } from "./database";
 import { SessionInfo } from "../session/auth/session-info";
 import { environment } from "../../../environments/environment";
 import { DatabaseFactoryService } from "./database-factory.service";
+import { Entity } from "../entity/model/entity";
 
 /**
  * Manages access to individual databases,
@@ -12,8 +13,6 @@ import { DatabaseFactoryService } from "./database-factory.service";
   providedIn: "root",
 })
 export class DatabaseResolverService {
-  static readonly DEFAULT_DB = "app";
-
   private databases: Map<string, Database> = new Map();
   private fallbackToRemote = false;
 
@@ -28,12 +27,12 @@ export class DatabaseResolverService {
    */
   private initDatabaseStubs() {
     this.databases.set(
-      DatabaseResolverService.DEFAULT_DB,
-      this.databaseFactory.createDatabase(DatabaseResolverService.DEFAULT_DB),
+      Entity.DATABASE,
+      this.databaseFactory.createDatabase(Entity.DATABASE),
     );
   }
 
-  getDatabase(dbName: string = DatabaseResolverService.DEFAULT_DB): Database {
+  getDatabase(dbName: string = Entity.DATABASE): Database {
     let db = this.databases.get(dbName);
     if (!db.isInitialized() && this.fallbackToRemote) {
       db = this.databaseFactory.createRemoteDatabase(dbName);
@@ -47,6 +46,12 @@ export class DatabaseResolverService {
     }
   }
 
+  async destroyDatabases() {
+    for (const db of this.databases.values()) {
+      await db.destroy();
+    }
+  }
+
   async initDatabasesForSession(session: SessionInfo) {
     this.initializeAppDatabaseForCurrentUser(session);
     // ... in future initialize additional DBs here
@@ -54,7 +59,7 @@ export class DatabaseResolverService {
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
     const userDBName = `${user.name}-${environment.DB_NAME}`;
-    this.getDatabase(DatabaseResolverService.DEFAULT_DB).init(userDBName);
+    this.getDatabase(Entity.DATABASE).init(userDBName);
 
     // TODO: have removed fallback to old "app" IndexedDB database here,
     //  check sentry if this may cause larger impact (we are logging old db name format as a warning temporarily)

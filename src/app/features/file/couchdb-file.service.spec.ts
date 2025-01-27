@@ -34,8 +34,8 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
-import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -57,7 +57,8 @@ describe("CouchdbFileService", () => {
     Entity.schema.set("testProp", {
       dataType: FileDatatype.dataType,
     });
-
+    let mockDb = jasmine.createSpyObj(["sync"]);
+    mockDb.sync.and.resolveTo(null);
     mockNavigator = { onLine: true };
 
     TestBed.configureTestingModule({
@@ -80,6 +81,10 @@ describe("CouchdbFileService", () => {
           useValue: {
             bypassSecurityTrustUrl: (val: string) => val,
           },
+        },
+        {
+          provide: DatabaseResolverService,
+          useValue: { getDatabase: () => mockDb },
         },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
       ],
@@ -124,16 +129,15 @@ describe("CouchdbFileService", () => {
     const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
 
-    let syncSpy = spyOn(
-      TestBed.inject(
-        DatabaseResolverService,
-      ).getDatabase() as SyncedPouchDatabase,
-      "sync",
-    ).and.resolveTo();
-
     service.uploadFile(file, entity, "testProp").subscribe(() => {
       // newly created entity has to be synced to server db for permission checks of attachment upload
-      expect(syncSpy).toHaveBeenCalled();
+      expect(
+        (
+          TestBed.inject(
+            DatabaseResolverService,
+          ).getDatabase() as SyncedPouchDatabase
+        ).sync,
+      ).toHaveBeenCalled();
 
       expect(mockHttp.put).toHaveBeenCalledWith(
         jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),

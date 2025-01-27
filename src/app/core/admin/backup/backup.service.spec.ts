@@ -1,11 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 
 import { BackupService } from "./backup.service";
-import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { DownloadService } from "../../export/download-service/download.service";
 import { DataTransformationService } from "../../export/data-transformation-service/data-transformation.service";
 import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -20,7 +20,10 @@ describe("BackupService", () => {
         BackupService,
         DownloadService,
         { provide: DataTransformationService, useValue: {} },
-        { provide: Database, useValue: db },
+        {
+          provide: DatabaseResolverService,
+          useValue: { getDatabase: () => db },
+        },
       ],
     });
 

@@ -55,7 +55,7 @@ export class DatabaseIndexingService {
    */
   async createIndex(
     designDoc: any,
-    db: string = DatabaseResolverService.DEFAULT_DB,
+    db: string = Entity.DATABASE,
   ): Promise<void> {
     const indexDetails = designDoc._id.replace(/_design\//, "");
     const indexState: BackgroundProcessState = {
@@ -219,7 +219,7 @@ export class DatabaseIndexingService {
     indexName: string,
     options: QueryOptions,
     doNotWaitForIndexCreation?: boolean,
-    db: string = DatabaseResolverService.DEFAULT_DB,
+    db: string = Entity.DATABASE,
   ): Promise<any> {
     if (!doNotWaitForIndexCreation) {
       await this.waitForIndexAvailable(indexName);

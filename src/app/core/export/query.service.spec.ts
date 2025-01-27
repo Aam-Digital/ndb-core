@@ -13,7 +13,6 @@ import { defaultAttendanceStatusTypes } from "../config/default-config/default-a
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
-import { Database } from "../database/database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
@@ -23,6 +22,7 @@ import { ChildrenService } from "../../child-dev-project/children/children.servi
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { entityRegistry } from "../entity/database-entity.decorator";
+import { DatabaseResolverService } from "../database/database-resolver.service";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -56,7 +56,7 @@ describe("QueryService", () => {
     Child = entityRegistry.get("Child");
   }));
 
-  afterEach(() => TestBed.inject(Database).destroy());
+  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

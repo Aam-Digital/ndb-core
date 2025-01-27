@@ -2,7 +2,6 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceService } from "./attendance.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { Database } from "../../core/database/database";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";
 import { defaultInteractionTypes } from "../../core/config/default-config/default-interaction-types";
@@ -15,6 +14,7 @@ import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { Entity } from "../../core/entity/model/entity";
 import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -63,7 +63,7 @@ describe("AttendanceService", () => {
     entityMapper.save(e2_1);
   }));
 
-  afterEach(() => TestBed.inject(Database).destroy());
+  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

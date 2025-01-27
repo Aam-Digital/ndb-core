@@ -26,7 +26,6 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { UpdateMetadata } from "./update-metadata";
 import { EntityBlockConfig } from "../../basic-datatypes/entity/entity-block/entity-block-config";
 import { Logging } from "../../logging/logging.service";
-import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
  * This represents a static class of type <T>.
@@ -61,7 +60,7 @@ export class Entity {
   /**
    * The database where these entities are stored.
    */
-  static DATABASE = DatabaseResolverService.DEFAULT_DB;
+  static DATABASE = "app";
 
   /**
    * EntitySchema defining property transformations from/to the database.

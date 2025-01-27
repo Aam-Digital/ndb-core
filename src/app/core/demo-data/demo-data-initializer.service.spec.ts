@@ -11,8 +11,9 @@ import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { PouchDatabase } from "../database/pouchdb/pouch-database";
-import { Database } from "../database/database";
 import { LoginState } from "../session/session-states/login-state.enum";
+import { DatabaseResolverService } from "../database/database-resolver.service";
+import { MemoryPouchDatabase } from "../database/pouchdb/memory-pouch-database";
 
 describe("DemoDataInitializerService", () => {
   const normalUser: SessionInfo = {
@@ -35,6 +36,8 @@ describe("DemoDataInitializerService", () => {
   let demoUserDBName: string;
   let adminDBName: string;
 
+  let database: PouchDatabase;
+
   beforeEach(() => {
     environment.session_type = SessionType.mock;
     demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${environment.DB_NAME}`;
@@ -47,6 +50,7 @@ describe("DemoDataInitializerService", () => {
     } as any);
     mockLocalAuth = jasmine.createSpyObj(["saveUser"]);
     sessionManager = jasmine.createSpyObj(["offlineLogin"]);
+    database = new MemoryPouchDatabase();
 
     TestBed.configureTestingModule({
       providers: [
@@ -54,6 +58,10 @@ describe("DemoDataInitializerService", () => {
         LoginStateSubject,
         SessionSubject,
         { provide: MatDialog, useValue: mockDialog },
+        {
+          provide: DatabaseResolverService,
+          useValue: { getDatabase: () => database },
+        },
         { provide: DemoDataService, useValue: mockDemoDataService },
         { provide: LocalAuthService, useValue: mockLocalAuth },
         { provide: SessionManagerService, useValue: sessionManager },
@@ -113,7 +121,6 @@ describe("DemoDataInitializerService", () => {
 
   it("should sync with existing demo data when another user logs in", fakeAsync(() => {
     service.run();
-    const database = TestBed.inject(Database) as PouchDatabase;
     database.init(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
 
@@ -152,7 +159,6 @@ describe("DemoDataInitializerService", () => {
     service.run();
     tick();
 
-    const database = TestBed.inject(Database) as PouchDatabase;
     TestBed.inject(SessionSubject).next({
       name: adminUser.name,
       id: adminUser.id,

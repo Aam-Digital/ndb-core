@@ -18,7 +18,7 @@ import { DatabaseResolverService } from "../core/database/database-resolver.serv
  *
  * When using this module, make sure to destroy the Database in `afterEach` in order to have a fresh database in each test:
  * ```javascript
- *  afterEach(() => TestBed.inject(Database).destroy());
+ *  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
  * ```
  */
 @NgModule({

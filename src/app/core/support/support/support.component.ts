@@ -84,8 +84,7 @@ export class SupportComponent implements OnInit {
   private initLastSync() {
     this.lastSync =
       localStorage.getItem(
-        SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX +
-          DatabaseResolverService.DEFAULT_DB,
+        SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + Entity.DATABASE,
       ) || "never";
   }
 

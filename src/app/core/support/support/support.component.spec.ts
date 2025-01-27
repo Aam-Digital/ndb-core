@@ -67,6 +67,7 @@ describe("SupportComponent", () => {
       info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
     } as any);
     mockLocation = {};
+
     await TestBed.configureTestingModule({
       imports: [SupportComponent, MatDialogModule, NoopAnimationsModule],
       providers: [
@@ -84,6 +85,10 @@ describe("SupportComponent", () => {
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: BackupService, useValue: null },
         { provide: DownloadService, useValue: null },
+        {
+          provide: DatabaseResolverService,
+          useValue: { getDatabase: () => mockDB },
+        },
         SyncStateSubject,
         provideHttpClient(withInterceptorsFromDi()),
         provideHttpClientTesting(),
@@ -115,8 +120,7 @@ describe("SupportComponent", () => {
   it("should correctly read sync and remote login status from local storage", async () => {
     const lastSync = new Date("2022-01-01").toISOString();
     localStorage.setItem(
-      SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX +
-        DatabaseResolverService.DEFAULT_DB,
+      SyncedPouchDatabase.LAST_SYNC_KEY_PREFIX + Entity.DATABASE,
       lastSync,
     );
     const lastRemoteLogin = new Date("2022-01-02").toISOString();

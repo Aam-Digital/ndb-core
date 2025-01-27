@@ -49,7 +49,7 @@ export class PermissionEnforcerService {
         { category: "Migration" },
       );
       // TODO: is it enough to destroy the default DB or could other DBs also be affected?
-      await this.dbResolver.getDatabase().destroy();
+      await this.dbResolver.destroyDatabases();
       this.location.reload();
     }
     window.localStorage.setItem(this.getUserStorageKey(), userRulesString);
