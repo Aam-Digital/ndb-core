@@ -15,7 +15,7 @@ class MockKeycloakAuthService {
   }
 }
 
-fdescribe("NotificationService", () => {
+describe("NotificationService", () => {
   let service: NotificationService;
   let httpMock: HttpTestingController;
 
