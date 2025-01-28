@@ -55,6 +55,7 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Columns`,
+    editComponent: "EditPublicFormColumns",
     isArray: true,
   })
   columns: FieldGroup[];
