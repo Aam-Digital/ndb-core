@@ -127,7 +127,18 @@ export abstract class Database {
    */
   abstract destroy(): Promise<any>;
 
-  abstract changes(prefix: string): Observable<any>;
+  abstract changes(): Observable<DatabaseDocChange>;
+}
+
+/**
+ * Based upon PouchDb changes feed format.
+ */
+export interface DatabaseDocChange {
+  _id: string;
+  _rev: string;
+  _deleted?: boolean;
+
+  [key: string]: any;
 }
 
 /**

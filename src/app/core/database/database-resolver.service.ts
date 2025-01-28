@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
-import { Database } from "./database";
+import { Database, DatabaseDocChange } from "./database";
 import { SessionInfo } from "../session/auth/session-info";
 import { environment } from "../../../environments/environment";
 import { DatabaseFactoryService } from "./database-factory.service";
 import { Entity } from "../entity/model/entity";
+import { Observable, Subject } from "rxjs";
 
 /**
  * Manages access to individual databases,
@@ -14,9 +15,19 @@ import { Entity } from "../entity/model/entity";
 })
 export class DatabaseResolverService {
   private databases: Map<string, Database> = new Map();
-  private fallbackToRemote = false;
+
+  /**
+   * A stream of changes from all databases.
+   * Use pipe() where necessary to filter for specific changes.
+   */
+  get changesFeed(): Observable<DatabaseDocChange> {
+    return this._changesFeed.asObservable();
+  }
+
+  private _changesFeed: Subject<any>;
 
   constructor(private databaseFactory: DatabaseFactoryService) {
+    this._changesFeed = new Subject();
     this.initDatabaseStubs();
   }
 
@@ -26,10 +37,13 @@ export class DatabaseResolverService {
    * @private
    */
   private initDatabaseStubs() {
-    this.databases.set(
-      Entity.DATABASE,
-      this.databaseFactory.createDatabase(Entity.DATABASE),
-    );
+    this.registerDatabase(Entity.DATABASE);
+  }
+
+  private registerDatabase(dbName: string) {
+    const newDb = this.databaseFactory.createDatabase(Entity.DATABASE);
+    this.databases.set(Entity.DATABASE, newDb);
+    newDb.changes().subscribe((change) => this._changesFeed.next(change));
   }
 
   getDatabase(dbName: string = Entity.DATABASE): Database {

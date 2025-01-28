@@ -21,10 +21,11 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 import { Observable } from "rxjs";
 import { UpdatedEntity } from "../model/entity-update";
 import { EntityRegistry } from "../database-entity.decorator";
-import { map } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { UpdateMetadata } from "../model/update-metadata";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { DatabaseDocChange } from "../../database/database";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -117,23 +118,21 @@ export class EntityMapperService {
   ): Observable<UpdatedEntity<T>> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
-    return this.dbResolver
-      .getDatabase(ctor.DATABASE)
-      .changes(type + ":")
-      .pipe(
-        map((doc) => {
-          const entity = new ctor();
-          this.entitySchemaService.loadDataIntoEntity(entity, doc);
-          if (doc._deleted) {
-            return { type: "remove", entity: entity };
-          } else if (doc._rev.startsWith("1-")) {
-            // This does not cover all the cases as docs with higher rev-number might be synchronized for the first time
-            return { type: "new", entity: entity };
-          } else {
-            return { type: "update", entity: entity };
-          }
-        }),
-      );
+    return this.dbResolver.changesFeed.pipe(
+      filter((change) => change?._id.startsWith(type + ":")),
+      map((doc: DatabaseDocChange) => {
+        const entity = new ctor();
+        this.entitySchemaService.loadDataIntoEntity(entity, doc);
+        if (doc._deleted) {
+          return { type: "remove", entity: entity };
+        } else if (doc._rev.startsWith("1-")) {
+          // This does not cover all the cases as docs with higher rev-number might be synchronized for the first time
+          return { type: "new", entity: entity };
+        } else {
+          return { type: "update", entity: entity };
+        }
+      }),
+    );
   }
 
   /**

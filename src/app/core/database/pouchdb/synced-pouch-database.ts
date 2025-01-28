@@ -7,6 +7,7 @@ import {
   filter,
   mergeMap,
   retry,
+  takeUntil,
   takeWhile,
 } from "rxjs/operators";
 import { SyncState } from "../../session/session-states/sync-state.enum";
@@ -14,7 +15,7 @@ import {
   LoginStateSubject,
   SyncStateSubject,
 } from "../../session/session-type";
-import { from, interval, merge, of } from "rxjs";
+import { from, interval, merge, of, Subject } from "rxjs";
 import { Inject } from "@angular/core";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { LoginState } from "../../session/session-states/login-state.enum";
@@ -38,6 +39,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
   private remoteDatabase: RemotePouchDatabase;
 
+  /** trigger to unsubscribe any internal subscriptions */
+  private destroy$ = new Subject<void>();
+
   constructor(
     dbName: string,
     authService: KeycloakAuthService,
@@ -51,7 +55,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
 
     this.logSyncContext();
     this.syncStateSubject
-      .pipe(filter((state) => state === SyncState.COMPLETED))
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((state) => state === SyncState.COMPLETED),
+      )
       .subscribe(() => {
         const lastSyncTime = new Date().toISOString();
         localStorage.setItem(this.LAST_SYNC_KEY, lastSyncTime);
@@ -59,7 +66,10 @@ export class SyncedPouchDatabase extends PouchDatabase {
       });
 
     this.loginStateSubject
-      .pipe(filter((state) => state === LoginState.LOGGED_IN))
+      .pipe(
+        takeUntil(this.destroy$),
+        filter((state) => state === LoginState.LOGGED_IN),
+      )
       .subscribe(() => this.liveSync());
   }
 
@@ -124,7 +134,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       // re-sync at regular interval
       interval(this.SYNC_INTERVAL),
       // and immediately sync to upload any local changes
-      this.changes(""),
+      this.changes(),
     )
       .pipe(
         debounceTime(500),
@@ -139,6 +149,16 @@ export class SyncedPouchDatabase extends PouchDatabase {
         takeWhile(() => this.liveSyncEnabled),
       )
       .subscribe();
+  }
+
+  override async reset(): Promise<void> {
+    this.destroy$.next();
+    await super.reset();
+  }
+
+  override async destroy(): Promise<void> {
+    this.destroy$.next();
+    await super.destroy();
   }
 }
 

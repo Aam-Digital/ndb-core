@@ -3,7 +3,6 @@ import { Logging } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 import { firstValueFrom, Observable, Subject } from "rxjs";
-import { filter } from "rxjs/operators";
 import { HttpStatusCode } from "@angular/common/http";
 
 /**
@@ -204,12 +203,12 @@ export class PouchDatabase extends Database {
    * @param prefix for which document changes are emitted
    * @returns observable which emits the filtered changes
    */
-  changes(prefix: string): Observable<any> {
+  changes(): Observable<any> {
     if (!this.changesFeed) {
       this.changesFeed = new Subject();
       this.subscribeChanges();
     }
-    return this.changesFeed.pipe(filter((doc) => doc._id.startsWith(prefix)));
+    return this.changesFeed;
   }
 
   private async subscribeChanges() {
@@ -250,6 +249,7 @@ export class PouchDatabase extends Database {
    */
   async reset() {
     this.pouchDB = undefined;
+    this.changesFeed?.complete();
     this.changesFeed = undefined;
     this.databaseInitialized = new Subject();
   }

@@ -41,21 +41,28 @@ describe("EntityMapperService", () => {
   };
 
   beforeEach(waitForAsync(() => {
-    testDatabase = new MemoryPouchDatabase();
-    testDatabase.init();
-
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
         {
           provide: DatabaseResolverService,
-          useValue: { getDatabase: () => testDatabase },
+          useValue: new DatabaseResolverService({
+            createDatabase: (dbName: string) => {
+              const db = new MemoryPouchDatabase(dbName);
+              db.init();
+              return db;
+            },
+          } as any),
         },
         CurrentUserSubject,
         EntityMapperService,
       ],
     });
     entityMapper = TestBed.inject(EntityMapperService);
+
+    testDatabase = TestBed.inject(
+      DatabaseResolverService,
+    ).getDatabase() as MemoryPouchDatabase;
 
     return Promise.all([
       testDatabase.put(existingEntity),
