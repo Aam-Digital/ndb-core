@@ -1,11 +1,8 @@
 @use "variables/colors";
 @use "variables/sizes";
-@use "../../../../styles/variables/breakpoints";
-@use "@angular/material/core/style/elevation" as mat-elevation;
 
 .defaultvalue-container {
   overflow: hidden;
-  padding: sizes.$regular;
 
   &.disabled {
     opacity: 0.5;
@@ -14,17 +11,7 @@
 }
 
 .container {
-  @include mat-elevation.elevation(2);
   border-radius: sizes.$regular;
-  padding: 16px;
-  background-color: colors.$background;
-  margin-top: sizes.$regular;
-  gap: 40px;
-}
-
-.remove-button {
-  align-items: end;
-  justify-content: center;
 }
 
 .add-new-defaultvalue-field {
@@ -38,12 +25,4 @@
   border-radius: 20px;
   padding: 22px;
   background-color: aliceblue;
-}
-
-.component-info {
-  padding: sizes.$regular;
-}
-
-.new-defaultvalue-rule {
-  margin-left: sizes.$small;
 }

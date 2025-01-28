@@ -1,4 +1,4 @@
-<p i18n class="component-info">
+<p i18n class="padding-regular">
   You can configure some fields to be always be set to a certain value when this
   form is submitted. For example, make a "status" field always be set to "new"
   so that you can easily filter the new records submitted by external users; or
@@ -7,49 +7,49 @@
   pre-filled value can be changed by the person filling the form.
 </p>
 
-<div class="defaultvalue-container" [class.disabled]="formControl.disabled">
+<div
+  class="defaultvalue-container padding-regular"
+  [class.disabled]="formControl.disabled"
+>
   <form [formGroup]="prefilledValueSettings">
     <div formArrayName="prefilledValue">
       <div
         *ngFor="let fieldGroup of prefilledValues.controls; let i = index"
         [formGroupName]="i"
+        class="flex-row flex-wrap align-center gap-regular padding-regular margin-top-regular mat-elevation-z2 container"
       >
-        <div class="grid-layout margin-top-regular container">
-          <div class="flex-row align-center">
-            <mat-form-field class="full-width-field">
-              <mat-label i18n>Field</mat-label>
-              <app-entity-field-select
-                [entityType]="entityConstructor"
-                formControlName="field"
-              />
-            </mat-form-field>
-            <app-help-button
-              text="Select a field for which you want to set a default value."
-              i18n-text
-            ></app-help-button>
-          </div>
+        <div class="flex-row align-center">
+          <mat-form-field class="full-width-field">
+            <mat-label i18n>Field</mat-label>
+            <app-entity-field-select
+              [entityType]="entityConstructor"
+              formControlName="field"
+            />
+          </mat-form-field>
+          <app-help-button
+            text="Select a field for which you want to set a default value."
+            i18n-text
+          ></app-help-button>
+        </div>
 
-          <div class="entity-form-cell">
-            <div class="full-width-field">
-              <app-default-value-options
-                [value]="fieldGroup.get('defaultValue').value"
-                (valueChange)="fieldGroup.get('defaultValue').setValue($event)"
-                [entityType]="entityConstructor"
-              ></app-default-value-options>
-            </div>
-          </div>
-
-          <div class="entity-form-cell remove-button">
-            <button
-              mat-icon-button
-              (click)="removePrefilledFields(i)"
-              matTooltip="Remove default value"
-              i18n-matTooltip
-            >
-              <fa-icon icon="trash"></fa-icon>
-            </button>
+        <div class="flex-grow">
+          <div class="full-width-field">
+            <app-default-value-options
+              [value]="fieldGroup.get('defaultValue').value"
+              (valueChange)="fieldGroup.get('defaultValue').setValue($event)"
+              [entityType]="entityConstructor"
+            ></app-default-value-options>
           </div>
         </div>
+
+        <button
+          mat-icon-button
+          (click)="removePrefilledFields(i)"
+          matTooltip="Remove default value"
+          i18n-matTooltip
+        >
+          <fa-icon icon="trash"></fa-icon>
+        </button>
       </div>
     </div>
   </form>
@@ -64,8 +64,12 @@
       matTooltip="Add a fixed value for another field"
       i18n-matTooltip
     >
-      <fa-icon aria-label="add element" icon="plus-circle"></fa-icon>
-      <span i18n class="new-defaultvalue-rule">Add pre-filled value</span>
+      <fa-icon
+        aria-label="add element"
+        icon="plus-circle"
+        class="standard-icon-with-text"
+      ></fa-icon>
+      <span i18n>Add pre-filled value</span>
     </button>
   </div>
 </div>
