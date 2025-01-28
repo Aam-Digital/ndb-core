@@ -120,7 +120,7 @@ const viewConfigs: ViewConfig[] = [
           ],
         },
         {
-          title: $localize`:PublicFormConfig admin form panel:Configure Default/Pre-filled Fields`,
+          title: $localize`:PublicFormConfig admin form panel:Configure Pre-filled Values`,
           components: [
             {
               component: "Form",
