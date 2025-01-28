@@ -60,7 +60,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.databaseResolver.enableFallbackToRemote();
+    this.databaseResolver.initDatabasesForAnonymous();
 
     // wait for config to be initialized
     this.configService.configUpdates

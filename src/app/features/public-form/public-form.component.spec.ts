@@ -58,7 +58,7 @@ describe("PublicFormComponent", () => {
   beforeEach(() => {
     initRemoteDBSpy = spyOn(
       TestBed.inject(DatabaseResolverService),
-      "enableFallbackToRemote",
+      "initDatabasesForAnonymous",
     );
 
     fixture = TestBed.createComponent(PublicFormComponent<TestEntity>);

@@ -48,9 +48,6 @@ export class DatabaseResolverService {
 
   getDatabase(dbName: string = Entity.DATABASE): Database {
     let db = this.databases.get(dbName);
-    if (!db.isInitialized() && this.fallbackToRemote) {
-      db = this.databaseFactory.createRemoteDatabase(dbName);
-    }
     return db;
   }
 
@@ -79,11 +76,7 @@ export class DatabaseResolverService {
     //  check sentry if this may cause larger impact (we are logging old db name format as a warning temporarily)
   }
 
-  /**
-   * Resolve to a remote (direct server connection) database if the local database is not initialized yet
-   * (e.g. for public form submissions without logged-in user session).
-   */
-  enableFallbackToRemote() {
-    this.fallbackToRemote = true;
+  initDatabasesForAnonymous() {
+    this.getDatabase(Entity.DATABASE).init(null);
   }
 }

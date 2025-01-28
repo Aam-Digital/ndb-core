@@ -74,15 +74,22 @@ export class SyncedPouchDatabase extends PouchDatabase {
   }
 
   /**
-   * Initializes the PouchDB with the http adapter to directly access a remote CouchDB without replication
-   * See {@link https://pouchdb.com/adapters.html#pouchdb_over_http}
-   * @param dbName (relative) path to the remote database
+   * Initializes the PouchDB with local indexeddb as well as a remote server connection for syncing.
+   * @param dbName local database name (for the current user);
+   *                if explicitly passed as `null`, a remote-only, anonymous session is initialized
    */
-  override init(dbName?: string) {
-    super.init(dbName ?? this.dbName);
+  override init(dbName?: string | null) {
+    if (dbName === null) {
+      this.remoteDatabase.init();
+      // use the remote database as internal database driver
+      this.pouchDB = this.remoteDatabase.getPouchDB();
+      this.databaseInitialized.complete();
+    } else {
+      super.init(dbName ?? this.dbName);
 
-    // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
-    this.remoteDatabase.init();
+      // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
+      this.remoteDatabase.init();
+    }
   }
 
   private async logSyncContext() {
