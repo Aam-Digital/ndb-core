@@ -121,20 +121,28 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
 
     this.formConfig.prefilledFields.forEach((item) => {
-      if (item.id) {
-        const newField: FormFieldConfig = {
-          id: item.id,
-          defaultValue: item.defaultValue || null,
-          hideFromForm: item.hideFromForm ?? true,
-        };
-        const fieldGroup = this.fieldGroups.find((group) =>
-          group.fields.some((field) => field === item.id),
-        );
-        if (fieldGroup) {
-          fieldGroup.fields.push(newField);
-        } else {
-          this.fieldGroups.push({ fields: [newField] });
-        }
+      if (!item.id) {
+        return;
+      }
+
+      const newPrefilledField: FormFieldConfig = {
+        id: item.id,
+        defaultValue: item.defaultValue ?? null,
+        hideFromForm: item.hideFromForm ?? true,
+      };
+
+      const fieldGroup = this.fieldGroups.find((group) =>
+        group.fields.some((field) => field === item.id),
+      );
+
+      if (fieldGroup) {
+        newPrefilledField.hideFromForm = false;
+
+        const fieldIndex = fieldGroup.fields.indexOf(item.id);
+        fieldGroup.fields[fieldIndex] = newPrefilledField;
+      } else {
+        const lastColumn = this.formConfig.columns.at(-1);
+        lastColumn?.fields.push(newPrefilledField);
       }
     });
   }

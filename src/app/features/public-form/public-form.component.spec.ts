@@ -40,6 +40,18 @@ describe("PublicFormComponent", () => {
         ],
       },
     ];
+    testFormConfig.prefilledFields = [
+      {
+        id: "category",
+        defaultValue: { mode: "static", value: "default category" },
+        hideFromForm: true,
+      },
+      {
+        id: "health_bloodGroup",
+        defaultValue: { mode: "static", value: "default group" },
+        hideFromForm: true,
+      },
+    ];
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
@@ -196,6 +208,36 @@ describe("PublicFormComponent", () => {
 
     expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
     expect(component.error).toBe("not_found");
+  }));
+
+  it("should add a hidden field when a field in prefilledFields is not part of visible fields", fakeAsync(() => {
+    const config = new PublicFormConfig();
+
+    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(config);
+
+    initComponent();
+    tick();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+    expect(lastColumn?.fields).toContain(
+      jasmine.objectContaining({
+        id: "health_bloodGroup",
+        defaultValue: { mode: "static", value: "default group" },
+        hideFromForm: true,
+      }),
+    );
+  }));
+
+  it("should update defaultValue for a field in prefilledFields that is already visible", fakeAsync(() => {
+    const config = new PublicFormConfig();
+    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(config);
+
+    initComponent();
+    tick();
+
+    expect(component.form.formGroup.get("category")).toHaveValue(
+      "default category",
+    );
   }));
 
   function initComponent() {
