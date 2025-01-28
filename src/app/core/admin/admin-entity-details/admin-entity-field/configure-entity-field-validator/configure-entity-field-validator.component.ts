@@ -54,7 +54,7 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
         regex: [this.entitySchemaField.validators.pattern],
         validEmail: [this.entitySchemaField.validators.validEmail],
         uniqueId: [this.entitySchemaField.validators.uniqueId],
-        readOnly: [this.entitySchemaField.validators.readonlyAfterSet],
+        readonlyAfterSet: [this.entitySchemaField.validators.readonlyAfterSet],
       });
     } else {
       this.validatorForm = this.fb.group({
