@@ -13,22 +13,6 @@ import { uniqueIdValidator } from "../unique-id-validator/unique-id-validator";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 
 /**
- * Validator to ensure a field becomes readonly after it has been set once.
- * @example
- * readonlyAfterSet: true
- */
-function readonlyAfterSetValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.pristine && control.value) {
-      (control as FormControl).setErrors({ readonlyAfterSet: true });
-      // (control as FormControl).disable(); // Disable the control
-    }
-    return null;
-  };
-}
-
-
-/**
  * creates a pattern validator that also carries a predefined
  * message
  * @param pattern The pattern to check
@@ -97,8 +81,6 @@ export class DynamicValidatorsService {
         return value ? this.buildUniqueIdValidator(value) : null;
       case "required":
         return value ? { fn: Validators.required } : null;
-      case "readonlyAfterSet":
-        return value ? { fn: readonlyAfterSetValidator() } : null;
       default:
         Logging.warn(
           `Trying to generate validator ${key} but it does not exist`,
@@ -206,8 +188,6 @@ export class DynamicValidatorsService {
         return $localize`Please enter a valid number`;
       case "uniqueId":
         return validationValue;
-      case "readonlyAfterSet":
-        return $localize`This field is readonly after it has been set`;
       default:
         Logging.error(
           `No description defined for validator "${validator}": ${JSON.stringify(

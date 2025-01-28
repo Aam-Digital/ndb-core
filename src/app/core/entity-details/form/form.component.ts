@@ -93,7 +93,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     // Reapply the disabling logic for readonly fields
     this.entityFormService.disableReadonlyFields(this.form);
   }
-  
 }
 
 /**
