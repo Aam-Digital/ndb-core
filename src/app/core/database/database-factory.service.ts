@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouchdb/pouch-database";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
@@ -22,7 +22,7 @@ import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 })
 export class DatabaseFactoryService {
   constructor(
-    @Optional() private authService: KeycloakAuthService,
+    private authService: KeycloakAuthService,
     private syncState: SyncStateSubject,
     @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,

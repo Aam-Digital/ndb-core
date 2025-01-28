@@ -6,6 +6,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { ExtendedAlertConfig } from "../../alerts/alert-config";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
@@ -14,7 +15,6 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { MatListModule } from "@angular/material/list";
 import { RouteTarget } from "../../../route-target";
 import { AdminOverviewService } from "./admin-overview.service";
-import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -51,8 +51,11 @@ export class AdminOverviewComponent implements OnInit {
    * Send a reference of the PouchDB to the browser's developer console for real-time debugging.
    */
   debugDatabase() {
-    console.log(this.dbResolver);
-    console.log(this.dbResolver.getDatabase());
+    console.log(
+      'You can assign the following to a global variable in the browser console (right click > "Store as global variable") to run actions on the database with your scripts here:',
+    );
+    console.log("DatabaseResolverService", this.dbResolver);
+    console.log('"app" database', this.dbResolver.getDatabase());
   }
 
   /**

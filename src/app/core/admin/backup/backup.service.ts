@@ -14,7 +14,7 @@ export class BackupService {
 
   constructor(private dbResolver: DatabaseResolverService) {
     this.db = this.dbResolver.getDatabase();
-    // TODO: backup other databases?
+    // WARNING: currently only the default "app" database is backed up
   }
 
   /**
