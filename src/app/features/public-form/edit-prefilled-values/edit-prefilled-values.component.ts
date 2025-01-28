@@ -62,7 +62,7 @@ export class EditPrefilledValuesComponent
     this.entityConstructor = this.entities.get(this.entity["entity"]);
     this.initializePrefilledValues();
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
-      this.updateFieldGroups(value),
+      this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),
     );
   }
 
@@ -110,17 +110,24 @@ export class EditPrefilledValuesComponent
     this.formControl.markAsDirty();
   }
 
-  private updateFieldGroups(value): void {
+  private updateFieldGroups(value: { prefilledValue: PrefilledValue[] }): void {
     if (!value?.prefilledValue) return;
 
     const updatedFields: FormFieldConfig[] = value.prefilledValue.map(
-      (prefilledValue) => ({
-        id: prefilledValue.field,
-        defaultValue: prefilledValue.defaultValue,
-        hideFromForm: prefilledValue.hideFromForm ?? true,
+      ({ field, defaultValue, hideFromForm }) => ({
+        id: field,
+        defaultValue,
+        hideFromForm: hideFromForm ?? true,
       }),
     );
+
     this.formControl.setValue(updatedFields);
     this.formControl.markAsDirty();
   }
+}
+
+interface PrefilledValue {
+  field: string;
+  defaultValue: DefaultValueConfig;
+  hideFromForm?: boolean;
 }
