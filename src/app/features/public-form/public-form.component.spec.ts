@@ -10,13 +10,14 @@ import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -82,22 +83,22 @@ describe("PublicFormComponent", () => {
     expect(component.formConfig.title).toBe("Some test title");
   }));
 
-  it("should show a snackbar and reset form when the form has been submitted", fakeAsync(() => {
+  it("should navigate to the success page after form submission and show a link to submit another form", fakeAsync(() => {
     initComponent();
     tick();
     const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     saveSpy.and.resolveTo();
     component.form.formGroup.get("name").setValue("some name");
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.form.formGroup,
-      component.entity,
-    );
+    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
-    expect(openSnackbarSpy).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith([
+      "/public-form/submission-success",
+    ]);
   }));
 
   it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
@@ -110,10 +111,7 @@ describe("PublicFormComponent", () => {
 
     component.submit();
 
-    expect(saveSpy).toHaveBeenCalledWith(
-      component.form.formGroup,
-      component.entity,
-    );
+    expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
     expect(openSnackbarSpy).toHaveBeenCalledWith(
       jasmine.stringContaining("invalid"),
@@ -168,6 +166,36 @@ describe("PublicFormComponent", () => {
     tick();
 
     expect(component.form.formGroup.get("name")).toHaveValue("default name");
+  }));
+
+  it("should throw an error when do not have permissions to submit the form", fakeAsync(() => {
+    TestBed.inject(EntityAbility).update([
+      {
+        subject: "Child",
+        action: "create",
+      },
+    ]);
+    testFormConfig.entity = "School";
+    testFormConfig.title = "Some test title";
+
+    initComponent();
+    tick();
+
+    expect(component).toBeDefined();
+    expect(component.error).toBe("no_permissions");
+  }));
+
+  it("should display not found error when config does not exist", fakeAsync(() => {
+    const entityMapperSpy = spyOn(
+      TestBed.inject(EntityMapperService),
+      "loadType",
+    ).and.resolveTo([]);
+
+    initComponent();
+    tick();
+
+    expect(entityMapperSpy).toHaveBeenCalledWith(PublicFormConfig);
+    expect(component.error).toBe("not_found");
   }));
 
   function initComponent() {

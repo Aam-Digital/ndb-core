@@ -34,6 +34,7 @@ import { filter, take } from "rxjs/operators";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * This service handles the user session.
@@ -193,6 +194,7 @@ export class SessionManagerService {
       // Old database is available and can be used by the current user
       window.localStorage.setItem(this.DEPRECATED_DB_KEY, user.name);
       this.initDatabase(environment.DB_NAME);
+      Logging.warn('Using deprecated "app" database name for user', user.name);
       return;
     }
 

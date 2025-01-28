@@ -1,0 +1,17 @@
+<div class="success-container">
+  <fa-icon
+    [icon]="['fas', 'circle-check']"
+    class="margin-bottom-regular success-icon"
+    size="6x"
+  ></fa-icon>
+  <h1 i18n>Your form was successfully submitted!</h1>
+  <p i18n>Thank you for your submission.</p>
+  <button
+    mat-stroked-button
+    class="margin-top-regular"
+    (click)="submitAnotherForm()"
+    i18n
+  >
+    Submit Another Form
+  </button>
+</div>

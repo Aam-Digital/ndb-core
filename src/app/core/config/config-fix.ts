@@ -101,7 +101,7 @@ export const defaultJsonConfig = {
               {
                 label: $localize`:Dashboard shortcut widget|open public form:Public Registration Form`,
                 icon: "file-circle-check",
-                link: "/public-form/test"
+                link: "/public-form/form/test"
               }
             ]
           }
@@ -709,7 +709,8 @@ export const defaultJsonConfig = {
                       {
                         id: "_description_health",
                         editComponent: "EditDescriptionOnly",
-                        label: $localize`:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines.`
+                        label: $localize`:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines.
+                        Make sure to visit the [Health Guidelines](https://example.com/guidelines) for detailed recommendations and procedures.`
                       },
                       "health_lastDentalCheckup"
                     ]

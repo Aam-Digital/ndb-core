@@ -11,14 +11,25 @@ import {
   Directive,
   DoCheck,
   ElementRef,
+  EventEmitter,
   HostBinding,
   Input,
   OnDestroy,
+  Optional,
+  Output,
+  Self,
 } from "@angular/core";
 import { Subject } from "rxjs";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import { ErrorStateMatcher } from "@angular/material/core";
 
+/**
+ * Extend this base class to implement custom input controls to be used as form fields.
+ *
+ * also refer to available public resources on Custom Form Controls:
+ * - https://material.angular.io/guide/creating-a-custom-form-field-control
+ * - https://www.youtube.com/watch?v=CD_t3m2WMM8
+ */
 @Directive()
 export abstract class CustomFormControlDirective<T>
   implements ControlValueAccessor, MatFormFieldControl<T>, OnDestroy, DoCheck
@@ -34,10 +45,12 @@ export abstract class CustomFormControlDirective<T>
   get required() {
     return this._required;
   }
+
   set required(req: boolean) {
     this._required = coerceBooleanProperty(req);
     this.stateChanges.next();
   }
+
   private _required = false;
 
   stateChanges = new Subject<void>();
@@ -80,12 +93,14 @@ export abstract class CustomFormControlDirective<T>
 
   _value: T;
 
+  @Output() valueChange = new EventEmitter<T>();
+
   constructor(
     public elementRef: ElementRef<HTMLElement>,
     public errorStateMatcher: ErrorStateMatcher,
-    public ngControl: NgControl,
-    public parentForm: NgForm,
-    public parentFormGroup: FormGroupDirective,
+    @Optional() @Self() public ngControl: NgControl,
+    @Optional() public parentForm: NgForm,
+    @Optional() public parentFormGroup: FormGroupDirective,
   ) {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
@@ -126,6 +141,7 @@ export abstract class CustomFormControlDirective<T>
 
   writeValue(val: T): void {
     this.value = val;
+    this.valueChange.emit(val);
   }
 
   registerOnChange(fn: any): void {
