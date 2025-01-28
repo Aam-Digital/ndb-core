@@ -86,7 +86,7 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
-    additional?: string,
+    additional?: any,
   ): Promise<EntityType | EntityType[] | undefined> {
     if (schemaField.isArray) {
       return asArray(val).map((v) =>
