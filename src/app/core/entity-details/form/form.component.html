@@ -23,7 +23,7 @@
   <ng-container *ngIf="form?.formGroup.disabled && !entity?.anonymized">
     <button
       mat-raised-button
-      (click)="form?.formGroup.enable()"
+      (click)="editForm()"
       *appDisabledEntityOperation="{
         entity: entity,
         operation: 'update',

@@ -34,7 +34,7 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EventEmitter } from "@angular/core";
 
-fdescribe("EntityFormService", () => {
+describe("EntityFormService", () => {
   let service: EntityFormService;
 
   beforeEach(waitForAsync(() => {
@@ -76,21 +76,6 @@ fdescribe("EntityFormService", () => {
     await service.saveChanges(entityForm, entity);
 
     expect(entity.getId()).toBe(`${Entity.ENTITY_TYPE}:newId`);
-  });
-
-  it("should make the field readonly after initial value is set", async () => {
-    const schema: EntitySchemaField = {
-      validators: {
-        required: true,
-        readonlyAfterSet: true,
-      },
-    };
-    Entity.schema.set("test", schema);
-
-    const entity = new Entity();
-    entity["test"] = "test-value";
-    const form = await service.createEntityForm([{ id: "test" }], entity);
-    expect(form.formGroup.get("test").disabled).toBeTrue();
   });
 
   it("should mark form pristine and disable it after saving", async () => {
@@ -248,6 +233,34 @@ fdescribe("EntityFormService", () => {
     service.resetForm(form, new Entity());
 
     expect(unsavedChanges.pending).toBeFalse();
+  });
+
+  it("should not disable fields that are not readonly after set", () => {
+    const formGroup = new UntypedFormGroup({
+      field1: new UntypedFormControl("default-value"),
+    });
+    const entityForm = createMockEntityForm(new Entity(), formGroup);
+    entityForm.fieldConfigs = [
+      { id: "field1", validators: { required: true } },
+    ];
+
+    service.disableReadonlyFields(entityForm);
+
+    expect(formGroup.get("field1").enabled).toBeTrue();
+  });
+
+  it("should disable fields that are readonly after set and have a value", () => {
+    const formGroup = new UntypedFormGroup({
+      field1: new UntypedFormControl("default-value"),
+    });
+    const entityForm = createMockEntityForm(new Entity(), formGroup);
+    entityForm.fieldConfigs = [
+      { id: "field1", validators: { readonlyAfterSet: true } },
+    ];
+
+    service.disableReadonlyFields(entityForm);
+
+    expect(formGroup.get("field1").disabled).toBeTrue();
   });
 
   it("should reset form on cancel, including special fields with getter", async () => {

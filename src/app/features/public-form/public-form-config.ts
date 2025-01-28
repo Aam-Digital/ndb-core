@@ -49,12 +49,14 @@ export class PublicFormConfig extends Entity {
     editComponent: "EditEntityType",
     validators: {
       required: true,
+      readonlyAfterSet: true,
     },
   })
   entity: string;
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Columns`,
+    editComponent: "EditPublicFormColumns",
     isArray: true,
   })
   columns: FieldGroup[];

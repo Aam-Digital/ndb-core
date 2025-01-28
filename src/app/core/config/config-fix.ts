@@ -976,7 +976,8 @@ export const defaultJsonConfig = {
         dataType: "string",
         label: $localize`:Label for the name of a child:Name`,
         validators: {
-          required: true
+          required: true,
+          readonlyAfterSet: true
         }
       },
       projectNumber: {
@@ -996,7 +997,11 @@ export const defaultJsonConfig = {
         dataType: "configurable-enum",
         additional: "center",
         label: $localize`:Label for the center of a child:Center`,
-        anonymize: "retain"
+        anonymize: "retain",
+        validators: {
+          required: true,
+          readonlyAfterSet: true
+        }
       },
       gender: {
         dataType: "configurable-enum",

@@ -194,7 +194,6 @@ export class EntityFormService {
 
     for (const f of formFields) {
       this.addFormControlConfig(formConfig, f, copy);
-      console.log(formConfig, "formConfig");
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
@@ -238,12 +237,6 @@ export class EntityFormService {
     }
 
     formConfig[field.id] = new FormControl(value, controlOptions);
-    if (
-      field.validators?.readonlyAfterSet &&
-      formConfig[field.id].value !== null
-    ) {
-      formConfig[field.id].disable({ onlySelf: true, emitEvent: false });
-    }
   }
 
   private disableReadOnlyFormControls<T extends Entity>(
@@ -342,5 +335,20 @@ export class EntityFormService {
     form.markAsPristine();
     this.unsavedChanges.pending = false;
     entityForm.onFormStateChange.emit("cancelled");
+  }
+
+  disableReadonlyFields(form: EntityForm<any>) {
+    form.fieldConfigs.forEach((fieldConfig) => {
+      const fieldId = fieldConfig.id;
+      const formControl = form.formGroup.controls[fieldId];
+
+      if (
+        formControl &&
+        fieldConfig.validators?.readonlyAfterSet &&
+        formControl.value !== null
+      ) {
+        formControl.disable({ onlySelf: true, emitEvent: false });
+      }
+    });
   }
 }
