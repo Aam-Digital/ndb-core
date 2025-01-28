@@ -125,7 +125,6 @@ describe("AdminEntityComponent", () => {
       originalLabelOfExisting,
     );
     expect(AdminTestEntity.label).toBe("Admin Test");
-    console.log(AdminTestEntity, JSON.stringify(AdminTestEntity.schema));
 
     // cleanup
     AdminTestEntity.schema.delete("testCancelField");
