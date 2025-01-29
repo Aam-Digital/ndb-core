@@ -1,9 +1,36 @@
+/*
+ *     This file is part of ndb-core.
+ *
+ *     ndb-core is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ndb-core is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import { Injectable } from "@angular/core";
 import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ColumnMapping } from "../../import/column-mapping";
-import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service"
+import { Logging } from "app/core/logging/logging.service";
+
+/**
+ * Datatype for the EntitySchemaService to handle a single reference to another entity.
+ * Stored as simple id string.
+ *
+ * For example:
+ *
+ * `@DatabaseField({dataType: 'entity', additional: 'Child'}) relatedEntity: string;`
+ */
 
 @Injectable()
 export class EntityDatatype extends StringDatatype {
@@ -56,7 +83,7 @@ export class EntityDatatype extends StringDatatype {
       // Return the ID of the matched entity or undefined
       return matchedEntity?.getId();
     } catch (error) {
-      console.error("Error in EntityDatatype importMapFunction:", error);
+      Logging.error("Error in EntityDatatype importMapFunction:", error);
       return undefined;
     }
   }
