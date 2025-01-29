@@ -60,7 +60,7 @@
       class="add-new-defaultvalue-button"
       color="accent"
       (click)="addPrefilledFields()"
-      [disabled]="isAddDisabled"
+      [disabled]="prefilledValues.invalid"
       matTooltip="Add a fixed value for another field"
       i18n-matTooltip
     >

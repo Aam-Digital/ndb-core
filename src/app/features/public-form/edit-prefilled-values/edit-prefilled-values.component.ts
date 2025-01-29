@@ -13,7 +13,6 @@ import { EntityConstructor } from "app/core/entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { FormConfig } from "app/core/entity-details/form/form.component";
 import { DefaultValueConfig } from "app/core/entity/schema/default-value-config";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -44,12 +43,8 @@ export class EditPrefilledValuesComponent
   implements OnInit
 {
   entityConstructor: EntityConstructor;
-  formConfig: FormConfig;
-  FormFieldConfig: FormFieldConfig;
-  defaultValue: DefaultValueConfig;
 
   private entities = inject(EntityRegistry);
-
   private fb = inject(FormBuilder);
 
   prefilledValueSettings = this.fb.group({
@@ -97,10 +92,6 @@ export class EditPrefilledValuesComponent
     );
   }
 
-  get isAddDisabled(): boolean {
-    return this.prefilledValues.invalid;
-  }
-
   removePrefilledFields(index: number): void {
     if (index < 0 || index >= this.prefilledValues.length) {
       return;
@@ -112,6 +103,11 @@ export class EditPrefilledValuesComponent
 
   private updateFieldGroups(value: { prefilledValue: PrefilledValue[] }): void {
     if (!value?.prefilledValue) return;
+    if (this.prefilledValueSettings.invalid) {
+      this.formControl.setErrors({ invalid: true });
+      this.prefilledValueSettings.markAllAsTouched();
+      return;
+    }
 
     const updatedFields: FormFieldConfig[] = value.prefilledValue.map(
       ({ field, defaultValue, hideFromForm }) => ({
