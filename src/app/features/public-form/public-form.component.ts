@@ -16,7 +16,10 @@ import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "../../core/entity-details/form/field-group";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import {
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "app/core/common-components/entity-form/FormConfig";
 import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
@@ -109,7 +112,46 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
     this.formConfig = migratePublicFormConfig(this.formConfig);
     this.fieldGroups = this.formConfig.columns;
+    this.handlePrefilledFields();
+
     await this.initForm();
+  }
+
+  private handlePrefilledFields() {
+    if (!this.formConfig.prefilledFields?.length) {
+      return;
+    }
+
+    this.formConfig.prefilledFields.forEach((item) => {
+      if (!item.id) {
+        return;
+      }
+
+      const newPrefilledField: FormFieldConfig = {
+        id: item.id,
+        defaultValue: item.defaultValue ?? null,
+        hideFromForm: item.hideFromForm ?? true,
+      };
+
+      const findField = (field) =>
+        field === item.id ||
+        (typeof field === "object" && field.id === item.id);
+      const fieldGroup = this.fieldGroups.find((group) =>
+        group.fields.some(findField),
+      );
+
+      if (fieldGroup) {
+        const fieldIndex = fieldGroup.fields.findIndex(findField);
+        const existingField: FormFieldConfig = toFormFieldConfig(
+          fieldGroup.fields[fieldIndex],
+        );
+        existingField.defaultValue = item.defaultValue;
+        fieldGroup.fields[fieldIndex] = existingField;
+      } else {
+        const lastColumn = this.formConfig.columns.at(-1);
+        lastColumn?.fields.push(newPrefilledField);
+      }
+    });
   }
 
   private async initForm() {
