@@ -25,10 +25,12 @@ describe("PublicFormComponent", () => {
   let initRemoteDBSpy: jasmine.Spy;
   let testFormConfig: PublicFormConfig;
 
+  const FORM_ID = "form-id";
+
   beforeEach(waitForAsync(() => {
-    testFormConfig = new PublicFormConfig("form-id");
+    testFormConfig = new PublicFormConfig(FORM_ID);
     testFormConfig.title = "test form";
-    testFormConfig.entity = "TestEntity";
+    testFormConfig.entity = TestEntity.ENTITY_TYPE;
     testFormConfig.columns = [
       {
         fields: [
@@ -40,18 +42,6 @@ describe("PublicFormComponent", () => {
         ],
       },
     ];
-    testFormConfig.prefilledFields = [
-      {
-        id: "category",
-        defaultValue: { mode: "static", value: "default category" },
-        hideFromForm: true,
-      },
-      {
-        id: "health_bloodGroup",
-        defaultValue: { mode: "static", value: "default group" },
-        hideFromForm: true,
-      },
-    ];
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
@@ -59,7 +49,7 @@ describe("PublicFormComponent", () => {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-              paramMap: new Map([["id", testFormConfig.getId(true)]]),
+              paramMap: new Map([["id", FORM_ID]]),
             },
           },
         },
@@ -212,17 +202,23 @@ describe("PublicFormComponent", () => {
 
   it("should add a hidden field when a field in prefilledFields is not part of visible fields", fakeAsync(() => {
     const config = new PublicFormConfig();
+    config.columns = [{ fields: [] }];
+    config.prefilledFields = [
+      {
+        id: "other",
+        defaultValue: { mode: "static", value: "default value" },
+        hideFromForm: true,
+      },
+    ];
 
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(config);
-
-    initComponent();
+    initComponent(config);
     tick();
 
     const lastColumn = component.formConfig.columns.at(-1);
     expect(lastColumn?.fields).toContain(
       jasmine.objectContaining({
-        id: "health_bloodGroup",
-        defaultValue: { mode: "static", value: "default group" },
+        id: "other",
+        defaultValue: { mode: "static", value: "default value" },
         hideFromForm: true,
       }),
     );
@@ -230,18 +226,36 @@ describe("PublicFormComponent", () => {
 
   it("should update defaultValue for a field in prefilledFields that is already visible", fakeAsync(() => {
     const config = new PublicFormConfig();
-    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(config);
+    config.columns = [
+      {
+        fields: [
+          {
+            id: "category",
+            defaultValue: { mode: "static", value: "base default" },
+          },
+        ],
+      },
+    ];
+    config.prefilledFields = [
+      {
+        id: "category",
+        defaultValue: { mode: "static", value: "prefilled default" },
+        hideFromForm: true,
+      },
+    ];
 
-    initComponent();
+    initComponent(config);
     tick();
 
     expect(component.form.formGroup.get("category")).toHaveValue(
-      "default category",
+      "prefilled default",
     );
   }));
 
-  function initComponent() {
-    TestBed.inject(EntityMapperService).save(testFormConfig);
+  function initComponent(config: PublicFormConfig = testFormConfig): void {
+    config.route = config.route ?? FORM_ID;
+    config.entity = config.entity ?? TestEntity.ENTITY_TYPE;
+    TestBed.inject(EntityMapperService).save(config);
     const configService = TestBed.inject(ConfigService);
     configService.entityUpdated.next(configService["currentConfig"]);
   }
