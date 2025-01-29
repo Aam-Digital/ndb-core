@@ -235,7 +235,7 @@ describe("EntityFormService", () => {
     expect(unsavedChanges.pending).toBeFalse();
   });
 
-  it("should not disable fields that are not readonly after set", () => {
+  it("should not disable fields that have not readonlyAfterSet validator", () => {
     const formGroup = new UntypedFormGroup({
       field1: new UntypedFormControl("default-value"),
     });
@@ -249,7 +249,7 @@ describe("EntityFormService", () => {
     expect(formGroup.get("field1").enabled).toBeTrue();
   });
 
-  it("should disable fields that are readonly after set and have a value", () => {
+  it("should disable fields that have readonlyAfterSet validator and have a value", () => {
     const formGroup = new UntypedFormGroup({
       field1: new UntypedFormControl("default-value"),
     });
