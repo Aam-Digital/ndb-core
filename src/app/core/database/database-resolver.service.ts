@@ -77,6 +77,8 @@ export class DatabaseResolverService {
   }
 
   initDatabasesForAnonymous() {
-    this.getDatabase(Entity.DATABASE).init(null);
+    if (!this.getDatabase(Entity.DATABASE).isInitialized()) {
+      this.getDatabase(Entity.DATABASE).init(null);
+    }
   }
 }
