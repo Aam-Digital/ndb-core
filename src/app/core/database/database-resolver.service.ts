@@ -71,9 +71,6 @@ export class DatabaseResolverService {
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
     const userDBName = `${user.name}-${environment.DB_NAME}`;
     this.getDatabase(Entity.DATABASE).init(userDBName);
-
-    // TODO: have removed fallback to old "app" IndexedDB database here,
-    //  check sentry if this may cause larger impact (we are logging old db name format as a warning temporarily)
   }
 
   initDatabasesForAnonymous() {
