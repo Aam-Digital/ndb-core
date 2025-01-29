@@ -43,6 +43,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
       ).then((c) => c.EditPublicFormColumnsComponent),
   ],
   [
+    "EditPrefilledValuesComponent",
+    () =>
+      import(
+        "app/features/public-form/edit-prefilled-values/edit-prefilled-values.component"
+      ).then((c) => c.EditPrefilledValuesComponent),
+  ],
+  [
     "EditPublicformRoute",
     () =>
       import(
@@ -106,6 +113,21 @@ const viewConfigs: ViewConfig[] = [
                 fieldGroups: [
                   {
                     fields: ["columns"],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          title: $localize`:PublicFormConfig admin form panel:Configure Pre-filled Values`,
+          components: [
+            {
+              component: "Form",
+              config: {
+                fieldGroups: [
+                  {
+                    fields: ["prefilledFields"],
                   },
                 ],
               },
