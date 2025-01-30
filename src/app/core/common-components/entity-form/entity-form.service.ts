@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from "@angular/core";
+import { EventEmitter, Injectable } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -232,6 +232,7 @@ export class EntityFormService {
     if (field.validators) {
       const validators = this.dynamicValidator.buildValidators(
         field.validators,
+        entity,
       );
       Object.assign(controlOptions, validators);
     }
