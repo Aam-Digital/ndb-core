@@ -20,9 +20,12 @@
     >
     </ng-container>
   </div>
+
   <button
     *ngIf="_field?.validators?.readonlyAfterSet"
     mat-icon-button
+    i18n-matTooltip
+    matTooltip="This field value can only be set when creating a record and cannot be changed afterwards"
     type="button"
   >
     <fa-icon icon="warning"></fa-icon>
