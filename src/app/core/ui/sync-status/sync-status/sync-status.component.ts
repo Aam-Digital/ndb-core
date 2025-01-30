@@ -28,9 +28,6 @@ import { SyncStateSubject } from "../../../session/session-type";
 /**
  * A small indicator component that displays an icon when there is currently synchronization
  * with the remote server going on in the background.
- *
- * This component also triggers a blocking dialog box when an initial sync is detected that prevents
- * user login (because user accounts need to be synced first).
  */
 @UntilDestroy()
 @Component({

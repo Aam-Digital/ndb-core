@@ -18,6 +18,10 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from "@angular/core";
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
@@ -86,6 +90,7 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { SkillModule } from "./features/skill/skill.module";
+import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 import { NotificationService } from "./features/notification/notification.service";
 import { AngularFireModule } from "@angular/fire/compat";
 
@@ -138,6 +143,7 @@ import { AngularFireModule } from "@angular/fire/compat";
     // Global Angular Material modules
     MatSnackBarModule,
     MatDialogModule,
+    ApplicationLoadingComponent,
     AngularFireModule.initializeApp({
       projectId: "aam-digital-b8a7b",
       appId: "1:189059495005:web:151bb9f04d6bebb637c9b4",
@@ -177,6 +183,7 @@ import { AngularFireModule } from "@angular/fire/compat";
     },
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     APP_INITIALIZER_DEMO_DATA,
+    provideHttpClient(withInterceptorsFromDi()),
     {
       provide: APP_INITIALIZER,
       useFactory: (notificationService: NotificationService) => () => {
