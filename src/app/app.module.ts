@@ -89,6 +89,7 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { SkillModule } from "./features/skill/skill.module";
+import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 
 /**
  * Main entry point of the application.
@@ -139,6 +140,7 @@ import { SkillModule } from "./features/skill/skill.module";
     // Global Angular Material modules
     MatSnackBarModule,
     MatDialogModule,
+    ApplicationLoadingComponent,
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),
