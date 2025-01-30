@@ -996,11 +996,7 @@ export const defaultJsonConfig = {
         dataType: "configurable-enum",
         additional: "center",
         label: $localize`:Label for the center of a child:Center`,
-        anonymize: "retain",
-        validators: {
-          required: true,
-          readonlyAfterSet: true
-        }
+        anonymize: "retain"
       },
       gender: {
         dataType: "configurable-enum",
