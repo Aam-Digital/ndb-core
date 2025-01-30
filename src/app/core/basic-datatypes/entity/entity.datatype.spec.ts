@@ -22,7 +22,7 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-fdescribe("Schema data type: entity", () => {
+describe("Schema data type: entity", () => {
   testDatatype(new EntityDatatype(null as any, null as any), "1", "1", "User");
 
   describe("importMapFunction", () => {
