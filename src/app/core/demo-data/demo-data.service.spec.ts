@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { DemoDataServiceConfig, DemoDataService } from "./demo-data.service";
+import { DemoDataService, DemoDataServiceConfig } from "./demo-data.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { AlertService } from "../alerts/alert.service";
 import {
@@ -8,6 +8,7 @@ import {
   DemoChildGenerator,
 } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { Database } from "../database/database";
+import { DatabaseResolverService } from "../database/database-resolver.service";
 
 describe("DemoDataService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
@@ -35,7 +36,10 @@ describe("DemoDataService", () => {
           provide: DemoDataServiceConfig,
           useValue: { dataGeneratorProviders: mockGeneratorsProviders },
         },
-        { provide: Database, useValue: mockDatabase },
+        {
+          provide: DatabaseResolverService,
+          useValue: { getDatabase: () => mockDatabase },
+        },
         mockGeneratorsProviders,
       ],
     });

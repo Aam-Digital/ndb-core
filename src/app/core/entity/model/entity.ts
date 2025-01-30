@@ -58,6 +58,11 @@ export class Entity {
   static ENTITY_TYPE = "Entity";
 
   /**
+   * The database where these entities are stored.
+   */
+  static DATABASE = "app";
+
+  /**
    * EntitySchema defining property transformations from/to the database.
    * This is auto-generated from the property annotations `@DatabaseField()`.
    *

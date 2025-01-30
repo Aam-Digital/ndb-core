@@ -1,10 +1,10 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import moment from "moment";
-import { Database } from "../core/database/database";
 import { DemoDataService } from "../core/demo-data/demo-data.service";
 import { SessionType } from "../core/session/session-type";
 import { DatabaseTestingModule } from "./database-testing.module";
 import { environment } from "../../environments/environment";
+import { DatabaseResolverService } from "../core/database/database-resolver.service";
 
 xdescribe("Performance Tests", () => {
   beforeEach(waitForAsync(async () => {
@@ -21,7 +21,7 @@ xdescribe("Performance Tests", () => {
     console.log("finished publishing demo data", setup.getDuration());
   }));
 
-  afterEach(() => TestBed.inject(Database).destroy());
+  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("basic test example", async () => {
     await comparePerformance(

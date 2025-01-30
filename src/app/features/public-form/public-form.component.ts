@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { PouchDatabase } from "../../core/database/pouch-database";
 import { ActivatedRoute, Router } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
@@ -26,6 +25,7 @@ import { DisplayImgComponent } from "../file/display-img/display-img.component";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MarkdownPageModule } from "../markdown-page/markdown-page.module";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 @UntilDestroy()
 @Component({
@@ -51,7 +51,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   error: "not_found" | "no_permissions";
 
   constructor(
-    private database: PouchDatabase,
+    private databaseResolver: DatabaseResolverService,
     private route: ActivatedRoute,
     private entities: EntityRegistry,
     private entityMapper: EntityMapperService,
@@ -63,9 +63,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (!this.database["pouchDB"]) {
-      this.database.initRemoteDB();
-    }
+    this.databaseResolver.initDatabasesForAnonymous();
+
     // wait for config to be initialized
     this.configService.configUpdates
       .pipe(untilDestroyed(this))

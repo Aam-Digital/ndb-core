@@ -3,7 +3,6 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import moment from "moment";
-import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
 import { genders } from "./model/genders";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
@@ -14,6 +13,7 @@ import { AttendanceModule } from "../attendance/attendance.module";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 import { Entity } from "../../core/entity/model/entity";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -35,7 +35,7 @@ describe("ChildrenService", () => {
     service = TestBed.inject<ChildrenService>(ChildrenService);
   }));
 
-  afterEach(() => TestBed.inject(Database).destroy());
+  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

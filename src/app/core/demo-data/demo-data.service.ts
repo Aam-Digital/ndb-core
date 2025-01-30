@@ -24,7 +24,7 @@ import {
 } from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { Database } from "../database/database";
+import { DatabaseResolverService } from "../database/database-resolver.service";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -58,7 +58,7 @@ export class DemoDataService {
     private entityMapper: EntityMapperService,
     private injector: Injector,
     private config: DemoDataServiceConfig,
-    private database: Database,
+    private dbResolver: DatabaseResolverService,
   ) {}
 
   private registerAllProvidedDemoDataGenerators() {
@@ -75,7 +75,7 @@ export class DemoDataService {
    * and add all the generated entities to the Database.
    */
   async publishDemoData() {
-    if (!(await this.database.isEmpty())) {
+    if (!(await this.dbResolver.getDatabase().isEmpty())) {
       return;
     }
     this.registerAllProvidedDemoDataGenerators();

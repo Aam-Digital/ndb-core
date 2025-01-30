@@ -39,7 +39,6 @@ import { ConfigurableEnumModule } from "./core/basic-datatypes/configurable-enum
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { DatabaseModule } from "./core/database/database.module";
 import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 import {
   DEFAULT_LANGUAGE,
@@ -111,7 +110,6 @@ import { SkillModule } from "./features/skill/skill.module";
     // Core modules
     CoreModule,
     ConfigurableEnumModule,
-    DatabaseModule,
     LanguageModule,
     LatestChangesModule,
     PermissionsModule,

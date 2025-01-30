@@ -8,7 +8,6 @@ import {
 
 import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
-import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -18,6 +17,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -58,7 +58,10 @@ describe("PublicFormComponent", () => {
   }));
 
   beforeEach(() => {
-    initRemoteDBSpy = spyOn(TestBed.inject(PouchDatabase), "initRemoteDB");
+    initRemoteDBSpy = spyOn(
+      TestBed.inject(DatabaseResolverService),
+      "initDatabasesForAnonymous",
+    );
 
     fixture = TestBed.createComponent(PublicFormComponent<TestEntity>);
     component = fixture.componentInstance;
@@ -69,7 +72,7 @@ describe("PublicFormComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should initialize remote DB on startup", () => {
+  it("should initialize for remote DB on startup", () => {
     expect(initRemoteDBSpy).toHaveBeenCalled();
   });
 
