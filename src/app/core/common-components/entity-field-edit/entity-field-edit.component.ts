@@ -49,7 +49,6 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
 
   @Input() entity: T;
   @Input() form: EntityForm<T>;
-  isReadonlyAfterSet: boolean = false;
 
   /**
    * Whether to display the field in a limited space, hiding details like the help description button.
@@ -69,15 +68,10 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
       this._field = undefined;
       return;
     }
+
     this._field = this.entityFormService.extendFormFieldConfig(
       this.field,
       this.entity.getConstructor(),
     );
-    if (
-      this._field.validators?.readonlyAfterSet &&
-      this.form?.formGroup?.controls[this._field.id]?.value
-    ) {
-      this.isReadonlyAfterSet = true;
-    }
   }
 }
