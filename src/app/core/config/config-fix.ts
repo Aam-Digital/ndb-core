@@ -976,8 +976,7 @@ export const defaultJsonConfig = {
         dataType: "string",
         label: $localize`:Label for the name of a child:Name`,
         validators: {
-          required: true,
-          readonlyAfterSet: true
+          required: true
         }
       },
       projectNumber: {
