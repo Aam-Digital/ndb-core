@@ -29,7 +29,7 @@ export abstract class DiscreteDatatype<
   override async importMapFunction(
     val,
     schemaField: EntitySchemaField,
-    additional?: string,
+    additional: { [key: string]: any },
   ) {
     return super.importMapFunction(additional?.[val], schemaField);
   }
