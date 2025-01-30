@@ -20,6 +20,13 @@
     >
     </ng-container>
   </div>
+  <button
+    *ngIf="_field?.validators?.readonlyAfterSet"
+    mat-icon-button
+    type="button"
+  >
+    <fa-icon icon="warning"></fa-icon>
+  </button>
 
   <app-help-button
     *ngIf="!compactMode"

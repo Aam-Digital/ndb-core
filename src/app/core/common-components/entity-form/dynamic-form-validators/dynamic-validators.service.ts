@@ -45,6 +45,27 @@ export function patternWithMessage(
   };
 }
 
+/**
+ * Validator to ensure a field becomes readonly after it has been set once.
+ * @example
+ * readonlyAfterSet: true
+ */
+function readonlyAfterSetValidator(): AsyncPromiseValidatorFn {
+  return async (control: FormControl): Promise<ValidationErrors | null> => {
+    control.statusChanges.subscribe((v) => {
+      if (control.value == control.defaultValue) {
+        control.disable({
+          onlySelf: true,
+          emitEvent: false,
+        });
+      }
+      return null;
+    });
+
+    return null;
+  };
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -81,6 +102,8 @@ export class DynamicValidatorsService {
         return value ? this.buildUniqueIdValidator(value) : null;
       case "required":
         return value ? { fn: Validators.required } : null;
+      case "readonlyAfterSet":
+        return value ? this.buildreadonlyValidator() : null;
       default:
         Logging.warn(
           `Trying to generate validator ${key} but it does not exist`,
@@ -188,6 +211,8 @@ export class DynamicValidatorsService {
         return $localize`Please enter a valid number`;
       case "uniqueId":
         return validationValue;
+      case "readonlyAfterSet":
+        return validationValue;
       default:
         Logging.error(
           `No description defined for validator "${validator}": ${JSON.stringify(
@@ -210,6 +235,16 @@ export class DynamicValidatorsService {
           .then((entities) => entities.map((entity) => entity.getId())),
       ),
       async: true,
+    };
+  }
+
+  private buildreadonlyValidator(): {
+    async: true;
+    fn: AsyncPromiseValidatorFn;
+  } {
+    return {
+      async: true,
+      fn: readonlyAfterSetValidator(),
     };
   }
 }

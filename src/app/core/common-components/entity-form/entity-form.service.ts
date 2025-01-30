@@ -336,19 +336,4 @@ export class EntityFormService {
     this.unsavedChanges.pending = false;
     entityForm.onFormStateChange.emit("cancelled");
   }
-
-  disableReadonlyFields(form: EntityForm<any>) {
-    form.fieldConfigs.forEach((fieldConfig) => {
-      const fieldId = fieldConfig.id;
-      const formControl = form.formGroup.controls[fieldId];
-
-      if (
-        formControl &&
-        fieldConfig.validators?.readonlyAfterSet &&
-        formControl.value !== null
-      ) {
-        formControl.disable({ onlySelf: true, emitEvent: false });
-      }
-    });
-  }
 }

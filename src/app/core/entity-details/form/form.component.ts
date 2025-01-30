@@ -87,12 +87,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     this.entityFormService.resetForm(this.form, this.entity);
     this.form.formGroup.disable();
   }
-
-  editForm() {
-    this.form?.formGroup.enable();
-    // Reapply the disabling logic for readonly fields
-    this.entityFormService.disableReadonlyFields(this.form);
-  }
 }
 
 /**
