@@ -237,13 +237,20 @@ describe("EntityFormService", () => {
 
   it("should disable fields that have readonlyAfterSet validator and have a value", fakeAsync(async () => {
     const formFields = [{ id: "name", validators: { readonlyAfterSet: true } }];
-    const formGroup = await service.createEntityForm(
+    const formWithNewEntity = await service.createEntityForm(
       formFields,
       new TestEntity(),
     );
-    formGroup.formGroup.controls["name"].setValue("test");
+    formWithNewEntity.formGroup.controls["name"].setValue("test");
     tick();
-    expect(formGroup.formGroup.get("name").disabled).toBeTrue();
+    // should not disable while still editing the first time
+    expect(formWithNewEntity.formGroup.get("name").disabled).toBeFalse();
+
+    const formWithExistingEntity = await service.createEntityForm(
+      formFields,
+      TestEntity.create({ name: "existing name", _rev: "1" }),
+    );
+    expect(formWithExistingEntity.formGroup.get("name").disabled).toBeTrue();
   }));
 
   it("should reset form on cancel, including special fields with getter", async () => {
