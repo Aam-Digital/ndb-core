@@ -11,6 +11,7 @@ import {
 import { Logging } from "../../../logging/logging.service";
 import { uniqueIdValidator } from "../unique-id-validator/unique-id-validator";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { buildReadonlyValidator } from "./readonly-after-set.validator";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -42,27 +43,6 @@ export function patternWithMessage(
       });
     }
     return errors;
-  };
-}
-
-/**
- * Validator to ensure a field becomes readonly after it has been set once.
- * @example
- * readonlyAfterSet: true
- */
-function readonlyAfterSetValidator(): AsyncPromiseValidatorFn {
-  return async (control: FormControl): Promise<ValidationErrors | null> => {
-    control.statusChanges.subscribe((v) => {
-      if (control.value == control.defaultValue) {
-        control.disable({
-          onlySelf: true,
-          emitEvent: false,
-        });
-      }
-      return null;
-    });
-
-    return null;
   };
 }
 
@@ -103,7 +83,7 @@ export class DynamicValidatorsService {
       case "required":
         return value ? { fn: Validators.required } : null;
       case "readonlyAfterSet":
-        return value ? this.buildreadonlyValidator() : null;
+        return value ? buildReadonlyValidator() : null;
       default:
         Logging.warn(
           `Trying to generate validator ${key} but it does not exist`,
@@ -235,16 +215,6 @@ export class DynamicValidatorsService {
           .then((entities) => entities.map((entity) => entity.getId())),
       ),
       async: true,
-    };
-  }
-
-  private buildreadonlyValidator(): {
-    async: true;
-    fn: AsyncPromiseValidatorFn;
-  } {
-    return {
-      async: true,
-      fn: readonlyAfterSetValidator(),
     };
   }
 }
