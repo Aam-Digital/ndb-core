@@ -54,7 +54,6 @@ describe("DashboardComponent", () => {
     ]);
     component.widgets = widgets;
     tick();
-    console.log("widgets", component.widgets);
     expect(component.widgets).toEqual([widgets[0], widgets[1], widgets[3]]);
 
     // No read permissions

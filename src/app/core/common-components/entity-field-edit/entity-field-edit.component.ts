@@ -10,6 +10,9 @@ import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { NgClass, NgIf } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { InheritedValueButtonComponent } from "../../default-values/inherited-value-button/inherited-value-button.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Generic component to display one entity property field's editComponent.
@@ -31,6 +34,9 @@ import { InheritedValueButtonComponent } from "../../default-values/inherited-va
     EntityFieldViewComponent,
     InheritedValueButtonComponent,
     NgClass,
+    FontAwesomeModule,
+    MatButtonModule,
+    MatTooltipModule,
   ],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>

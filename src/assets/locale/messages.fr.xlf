@@ -2271,6 +2271,10 @@
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
           <context context-type="linenumber">112</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="3453820570447962676" datatype="html">
         <source>Select default value or clear default value mode</source>
@@ -2633,7 +2637,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">28</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
@@ -3506,7 +3510,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Doit être supérieur à <x id="PH" equiv-text="validationValue.min"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">182</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5851191097234880874" datatype="html">
@@ -3514,7 +3518,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Ne peut pas être supérieur à <x id="PH" equiv-text="validationValue.max"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">174</context>
+          <context context-type="linenumber">184</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8938912551189798711" datatype="html">
@@ -3522,7 +3526,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Veuillez entrer un modèle valide</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">179</context>
+          <context context-type="linenumber">189</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">
@@ -3530,7 +3534,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target> Ce champ doit être rempli </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">192</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8134695558272106554" datatype="html">
@@ -3538,7 +3542,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Veuillez entrer une adresse électronique valide</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">184</context>
+          <context context-type="linenumber">194</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9109500675543184751" datatype="html">
@@ -3546,7 +3550,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Entrez une date valide</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">186</context>
+          <context context-type="linenumber">196</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1191324740438751530" datatype="html">
@@ -3554,7 +3558,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Entrez un numéro valide</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">188</context>
+          <context context-type="linenumber">198</context>
         </context-group>
       </trans-unit>
       <trans-unit id="266664346458430650" datatype="html">
@@ -3562,7 +3566,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Entrée invalide</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">197</context>
+          <context context-type="linenumber">209</context>
         </context-group>
       </trans-unit>
       <trans-unit id="848068633991631534" datatype="html">
@@ -3570,7 +3574,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Echec pour sauvegarder <x id="PH" equiv-text="entity.getType()"/>: <x id="PH_1" equiv-text="err"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/entity-form.service.ts</context>
-          <context context-type="linenumber">286</context>
+          <context context-type="linenumber">287</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1784555372833983723" datatype="html">
@@ -3578,7 +3582,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>L&apos;utilisateur actuel n&apos;est pas autorisé à enregistrer ces modifications :<x id="PH" equiv-text="JSON.stringify(           conditions,         )"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/entity-form.service.ts</context>
-          <context context-type="linenumber">322,324</context>
+          <context context-type="linenumber">323,325</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6370500058550589280" datatype="html">
@@ -4339,7 +4343,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">42</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/skill/skill.ts</context>
@@ -7429,6 +7433,10 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.html</context>
           <context context-type="linenumber">32</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-publicform-route/edit-publicform-route.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="4077530094273310479" datatype="html">
         <source>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</source>
@@ -7823,7 +7831,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Certains champs ne sont pas valides, vérifier le formulaire et le soumettre à nouveau.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4310513583397103775" datatype="html">
@@ -8799,7 +8807,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">17</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6284159000764410402" datatype="html">
@@ -8808,7 +8816,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4069795629674572555" datatype="html">
@@ -8817,16 +8825,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4899197196105570158" datatype="html">
-        <source>The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID)</source>
-        <target>L&apos;identifiant qui fait partie du lien (URL) par lequel les utilisateurs peuvent accéder à ce formulaire (par exemple demo.aam-digital.com/public-form/MY_FORM_LINK_ID)</target>
-        <note priority="1" from="description">PublicFormConfig</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7693952740891603217" datatype="html">
@@ -8835,7 +8834,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2875460883262985052" datatype="html">
@@ -8844,16 +8843,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">PublicFormConfig</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">46</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="843548054527451651" datatype="html">
-        <source>Columns</source>
-        <target>Colonnes</target>
-        <note priority="1" from="description">PublicFormConfig</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2202615822095431007" datatype="html">
@@ -8903,7 +8893,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7429211262318065236" datatype="html">
@@ -8912,7 +8902,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">PublicFormConfig admin form panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">108</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1155564940038634158" datatype="html">
@@ -9509,7 +9499,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <note priority="1" from="description">PublicFormConfig admin form</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
-          <context context-type="linenumber">81,82</context>
+          <context context-type="linenumber">95,96</context>
         </context-group>
       </trans-unit>
       <trans-unit id="892832265477968679" datatype="html">
@@ -9534,6 +9524,117 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/submission-success/submission-success.component.html</context>
           <context context-type="linenumber">14,16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2909404927171511973" datatype="html">
+        <source>Form Link ID </source>
+        <target>ID du formulaire</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-publicform-route/edit-publicform-route.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2255268372858574831" datatype="html">
+        <source>The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID).</source>
+        <target>L&apos;identifiant qui fait partie du lien (URL) par lequel les utilisateurs peuvent accéder à ce formulaire (par exemple demo.aam-digital.com/public-form/MY_FORM_LINK_ID).</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-publicform-route/edit-publicform-route.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5910380241111403899" datatype="html">
+        <source>Public Form</source>
+        <target>Formulaire public</target>
+        <note priority="1" from="description">PublicFormConfig</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6488235897339728134" datatype="html">
+        <source>Public Forms</source>
+        <target>Formulaires publics</target>
+        <note priority="1" from="description">PublicFormConfig</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7292432350269008428" datatype="html">
+        <source> You can configure some fields to be always be set to a certain value when this form is submitted. For example, make a &quot;status&quot; field always be set to &quot;new&quot; so that you can easily filter the new records submitted by external users; or make a &quot;signed up on&quot; date field to always show the current date. If you add the same field(s) in the &quot;Configure Fields&quot; section to show to the user, this pre-filled value can be changed by the person filling the form.
+</source>
+        <target> Vous pouvez configurer certains champs pour qu&apos;ils soient toujours définis sur une certaine valeur lorsque ce formulaire est soumis. Par exemple, définissez toujours un champ «statut» sur «nouveau» afin de pouvoir filtrer facilement les nouveaux enregistrements soumis par des utilisateurs externes ; ou définissez un champ de date «inscription le» pour toujours afficher la date du jour. Si vous ajoutez le(s) même(s) champ(s) dans la section «Configurer les champs» pour qu&apos;ils s&apos;affichent à l&apos;utilisateur, cette valeur préremplie peut être modifiée par la personne qui remplit le formulaire.
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
+          <context context-type="linenumber">1,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4820528532769775314" datatype="html">
+        <source>Field</source>
+        <target>Champ</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2759657450881315009" datatype="html">
+        <source>Select a field for which you want to set a default value.</source>
+        <target>Sélectionnez un champ pour lequel vous souhaitez définir une valeur par défaut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7814003160847476846" datatype="html">
+        <source>Add a fixed value for another field</source>
+        <target>Ajouter une valeur fixe pour un autre champ</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2683074819143881476" datatype="html">
+        <source>Add pre-filled value</source>
+        <target>Ajouter une valeur prédéfinie</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9033045811000879464" datatype="html">
+        <source>Fields</source>
+        <target>Champs</target>
+        <note priority="1" from="description">PublicFormConfig</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8848898824669006186" datatype="html">
+        <source>Prefilled Fields</source>
+        <target>Champs Prédéfinis</target>
+        <note priority="1" from="description">PublicFormConfig</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4031813318110112851" datatype="html">
+        <source>Configure Pre-filled Values</source>
+        <target>Configurer les valeurs prédéfinies</target>
+        <note priority="1" from="description">PublicFormConfig admin form panel</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.module.ts</context>
+          <context context-type="linenumber">123</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7201028907562937044" datatype="html">
+        <source>This field value can only be set when creating a record and cannot be changed afterwards</source>
+        <target>Ce champ ne peut être défini que lors de la création d&apos;un enregistrement et ne peut pas être modifié par la suite</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/entity-field-edit/entity-field-edit.component.html</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
     </body>

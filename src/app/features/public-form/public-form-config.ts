@@ -3,6 +3,7 @@ import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "app/core/basic-datatypes/string/long-text.datatype";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 /**
  * Each entity of this type defines a new publicly accessible form
@@ -10,6 +11,8 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
  */
 @DatabaseEntity("PublicFormConfig")
 export class PublicFormConfig extends Entity {
+  static override label = $localize`:PublicFormConfig:Public Form`;
+  static override labelPlural = $localize`:PublicFormConfig:Public Forms`;
   static override route = "admin/public-form";
   static override toStringAttributes = ["title"];
 
@@ -28,10 +31,10 @@ export class PublicFormConfig extends Entity {
 
   @DatabaseField({
     label: $localize`:PublicFormConfig:Form Link ID`,
-    description: $localize`:PublicFormConfig:The identifier that is part of the link (URL) through which users can access this form (e.g. demo.aam-digital.com/public-form/MY_FORM_LINK_ID)`,
     validators: {
       required: true,
     },
+    editComponent: "EditPublicformRoute",
   })
   route: string;
 
@@ -47,16 +50,25 @@ export class PublicFormConfig extends Entity {
     editComponent: "EditEntityType",
     validators: {
       required: true,
+      readonlyAfterSet: true,
     },
   })
   entity: string;
 
   @DatabaseField({
-    label: $localize`:PublicFormConfig:Columns`,
+    label: $localize`:PublicFormConfig:Fields`,
+    editComponent: "EditPublicFormColumns",
     isArray: true,
   })
   columns: FieldGroup[];
 
   /** @deprecated use ColumnConfig directly in the columns array instead */
   @DatabaseField() prefilled: { [key in string]: any };
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Prefilled Fields`,
+    editComponent: "EditPrefilledValuesComponent",
+    isArray: true,
+  })
+  prefilledFields: FormFieldConfig[];
 }

@@ -1,0 +1,28 @@
+@use "variables/colors";
+@use "variables/sizes";
+
+.defaultvalue-container {
+  overflow: hidden;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.container {
+  border-radius: sizes.$regular;
+}
+
+.add-new-defaultvalue-field {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.add-new-defaultvalue-button {
+  width: 50%;
+  border-radius: 20px;
+  padding: 22px;
+  background-color: aliceblue;
+}
