@@ -12,6 +12,7 @@ import { Database } from "../../../core/database/database";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
 
 describe("CompareRevComponent", () => {
   let component: CompareRevComponent;
@@ -47,7 +48,10 @@ describe("CompareRevComponent", () => {
       imports: [CompareRevComponent, MatSnackBarModule, NoopAnimationsModule],
       providers: [
         { provide: ConfirmationDialogService, useValue: confDialogMock },
-        { provide: Database, useValue: mockDatabase },
+        {
+          provide: DatabaseResolverService,
+          useValue: { getDatabase: () => mockDatabase },
+        },
         { provide: AutoResolutionService, useValue: mockResolutionService },
       ],
     }).compileComponents();

@@ -19,12 +19,12 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
 import { AppModule } from "./app.module";
 import { environment } from "../environments/environment";
-import { Database } from "./core/database/database";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
 import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from "@angular/common/http";
+import { DatabaseResolverService } from "./core/database/database-resolver.service";
 
 describe("AppComponent", () => {
   let component: AppComponent;
@@ -52,7 +52,7 @@ describe("AppComponent", () => {
   afterEach(waitForAsync(() => {
     environment.demo_mode = false;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = intervalBefore;
-    return TestBed.inject(Database).destroy();
+    return TestBed.inject(DatabaseResolverService).destroyDatabases();
   }));
 
   it("should be created", () => {

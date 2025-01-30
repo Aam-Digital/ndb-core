@@ -11,6 +11,7 @@ import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
+import { Logging } from "../logging/logging.service";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -30,6 +31,13 @@ export class ConfigService extends LatestEntityLoader<Config> {
     super.startLoading();
     this.entityUpdated.subscribe(async (config) => {
       this.currentConfig = this.applyMigrations(config);
+      this.logConfigRev();
+    });
+  }
+
+  private logConfigRev() {
+    Logging.addContext("Aam Digital config", {
+      "config _rev": this.currentConfig._rev,
     });
   }
 
@@ -324,6 +332,7 @@ const addDefaultNoteDetailsConfig: ConfigMigration = (key, configPart) => {
   if (
     // add at top-level of config
     configPart?.["_id"] === "Config:CONFIG_ENTITY" &&
+    configPart?.["data"] &&
     !configPart?.["data"]["view:note/:id"]
   ) {
     configPart["data"]["view:note/:id"] = {

@@ -4,10 +4,10 @@ import { SearchService } from "./search.service";
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Database } from "../../database/database";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Entity } from "../../entity/model/entity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 describe("SearchService", () => {
   let service: SearchService;
@@ -21,7 +21,7 @@ describe("SearchService", () => {
   afterEach(() => {
     TestEntity.toStringAttributes = childToStringBefore;
     ChildSchoolRelation.toStringAttributes = csrToStringBefore;
-    return TestBed.inject(Database).destroy();
+    return TestBed.inject(DatabaseResolverService).destroyDatabases();
   });
 
   /**
