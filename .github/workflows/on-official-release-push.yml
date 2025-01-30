@@ -1,8 +1,6 @@
 name: Semantic Release
 on:
-  push:
-    branches:
-      - official-release
+  workflow_dispatch
 
 jobs:
   pre-releases-cleanup:

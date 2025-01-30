@@ -17,7 +17,7 @@
     <mat-form-field>
       <mat-label>{{ col.column }}</mat-label>
       <app-entity-field-select
-        [entityType]="entityCtor.label"
+        [entityType]="entityCtor"
         [hideOption]="isUsed"
         [(ngModel)]="col.propertyName"
         (ngModelChange)="updateMapping(col)"
