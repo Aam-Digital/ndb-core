@@ -235,33 +235,16 @@ describe("EntityFormService", () => {
     expect(unsavedChanges.pending).toBeFalse();
   });
 
-  it("should not disable fields that have not readonlyAfterSet validator", () => {
-    const formGroup = new UntypedFormGroup({
-      field1: new UntypedFormControl("default-value"),
-    });
-    const entityForm = createMockEntityForm(new Entity(), formGroup);
-    entityForm.fieldConfigs = [
-      { id: "field1", validators: { required: true } },
-    ];
-
-    // service.disableReadonlyFields(entityForm);
-
-    expect(formGroup.get("field1").enabled).toBeTrue();
-  });
-
-  it("should disable fields that have readonlyAfterSet validator and have a value", () => {
-    const formGroup = new UntypedFormGroup({
-      field1: new UntypedFormControl("default-value"),
-    });
-    const entityForm = createMockEntityForm(new Entity(), formGroup);
-    entityForm.fieldConfigs = [
-      { id: "field1", validators: { readonlyAfterSet: true } },
-    ];
-
-    // service.disableReadonlyFields(entityForm);
-
-    expect(formGroup.get("field1").disabled).toBeTrue();
-  });
+  it("should disable fields that have readonlyAfterSet validator and have a value", fakeAsync(async () => {
+    const formFields = [{ id: "name", validators: { readonlyAfterSet: true } }];
+    const formGroup = await service.createEntityForm(
+      formFields,
+      new TestEntity(),
+    );
+    formGroup.formGroup.controls["name"].setValue("test");
+    tick();
+    expect(formGroup.formGroup.get("name").disabled).toBeTrue();
+  }));
 
   it("should reset form on cancel, including special fields with getter", async () => {
     class MockEntity extends Entity {
