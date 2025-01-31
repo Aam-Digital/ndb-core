@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ConflictResolutionListComponent } from "./conflict-resolution-list.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Database } from "../../../core/database/database";
+import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
 
 describe("ConflictResolutionListComponent", () => {
   let component: ConflictResolutionListComponent;
@@ -21,7 +22,12 @@ describe("ConflictResolutionListComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [ConflictResolutionListComponent, NoopAnimationsModule],
-      providers: [{ provide: Database, useValue: mockDatabase }],
+      providers: [
+        {
+          provide: DatabaseResolverService,
+          useValue: { getDatabase: () => mockDatabase },
+        },
+      ],
     }).compileComponents();
   }));
 

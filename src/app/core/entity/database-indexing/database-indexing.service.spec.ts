@@ -45,7 +45,9 @@ describe("DatabaseIndexingService", () => {
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
-    service = new DatabaseIndexingService(mockDb, null);
+    const mockResolver = jasmine.createSpyObj("mockResolver", ["getDatabase"]);
+    mockResolver.getDatabase.and.callFake(() => mockDb);
+    service = new DatabaseIndexingService(mockResolver, null);
   });
 
   it("should pass through any query to the database", async () => {

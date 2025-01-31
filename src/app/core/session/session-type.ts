@@ -30,6 +30,12 @@ export class LoginStateSubject extends BehaviorSubject<LoginState> {
   }
 }
 
+/**
+ * State of synchronization with server-side database
+ * for the main "app" database.
+ *
+ * (other databases are currently not covered by this sync state)
+ */
 @Injectable()
 export class SyncStateSubject extends BehaviorSubject<SyncState> {
   constructor() {
