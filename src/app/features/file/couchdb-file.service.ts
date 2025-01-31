@@ -86,9 +86,10 @@ export class CouchdbFileService extends FileService {
    * @private
    */
   private ensureDocIsSynced(): Observable<SyncState> {
-    let sync: () => Promise<any> =
-      (this.databaseResolver.getDatabase() as SyncedPouchDatabase).sync ??
-      (() => Promise.resolve());
+    const mainDb = this.databaseResolver.getDatabase();
+    let sync: () => Promise<any> = (mainDb as SyncedPouchDatabase).sync
+      ? () => (mainDb as SyncedPouchDatabase).sync()
+      : () => Promise.resolve();
 
     return from(sync()).pipe(map(() => this.syncState.value));
   }

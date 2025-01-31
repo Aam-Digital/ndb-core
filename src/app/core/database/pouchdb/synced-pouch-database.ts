@@ -16,8 +16,6 @@ import {
   SyncStateSubject,
 } from "../../session/session-type";
 import { from, interval, merge, of, Subject } from "rxjs";
-import { Inject } from "@angular/core";
-import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { LoginState } from "../../session/session-states/login-state.enum";
 
 /**
@@ -46,7 +44,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     dbName: string,
     authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
-    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
+    private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
   ) {
     super(dbName);
