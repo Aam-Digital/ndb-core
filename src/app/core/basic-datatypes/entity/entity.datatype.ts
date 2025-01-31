@@ -82,17 +82,17 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Normalizes a value for comparison, converting it to a string or number.
+   * Normalizes a value for comparison, converting it to a standardized string format.
+   * Ensures both numbers and strings are treated consistently.
+   *
    * @param val The value to normalize.
-   * @returns The normalized value as a string or number.
+   * @returns The normalized value as a string.
    */
-  private normalizeValue(val: any): string | number {
-    if (typeof val === "string" || typeof val === "number") {
-      return val;
+  private normalizeValue(val: any): string {
+    if (val == null) {
+      return "";
     }
-    
-    const numVal = Number(val);
-    return !isNaN(numVal) ? numVal : String(val);
+    return String(val).trim(); // Convert everything to string and trim spaces
   }
 
   /**
@@ -105,32 +105,27 @@ export class EntityDatatype extends StringDatatype {
   }
 
   /**
-   * Recursively anonymizes a referenced entity.
-   * @param value The entity reference value.
-   * @param schemaField The schema field containing reference details.
-   * @param parent The parent entity (not used in this method).
-   * @returns The original value if anonymization is successful.
+   * Recursively calls anonymize on the referenced entity and saves it.
+   * @param value
+   * @param schemaField
+   * @param parent
    */
   override async anonymize(
-    value: string,
+    value,
     schemaField: EntitySchemaField,
-    parent: any
+    parent,
   ): Promise<string> {
-    try {
-      const referencedEntity = await this.entityMapper.load(
-        schemaField.additional,
-        value
-      );
-      
-      if (!referencedEntity) {
-        return value;
-      }
+    const referencedEntity = await this.entityMapper.load(
+      schemaField.additional,
+      value,
+    );
 
-      await this.removeService.anonymize(referencedEntity);
-      return value;
-    } catch (error) {
-      Logging.error("Error in EntityDatatype anonymize:", error);
+    if (!referencedEntity) {
+      // TODO: remove broken references?
       return value;
     }
+
+    await this.removeService.anonymize(referencedEntity);
+    return value;
   }
 }

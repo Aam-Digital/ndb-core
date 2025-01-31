@@ -25,7 +25,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 describe("Schema data type: entity", () => {
   testDatatype(new EntityDatatype(null as any, null as any), "1", "1", "User");
 
-  describe("importMapFunction", () => {
+  
     let entityMapper: ReturnType<typeof mockEntityMapper>;
     let dataType: EntityDatatype;
     let schema: EntitySchemaField;
@@ -66,37 +66,43 @@ describe("Schema data type: entity", () => {
       // "simple" case: imported value is string already
       await expectAsync(dataType.importMapFunction("456", schema, "other"))
         .toBeResolvedTo(c3.getId());
-      // "advanced" case: imported value is number but should match also
-      await expectAsync(dataType.importMapFunction(456, schema, "other"))
-        .toBeResolvedTo(c3.getId());
     });
-  });
 
-  describe("anonymize", () => {
+    it("should handle numeric value correctly", async () => {
+      const c4 = new TestEntity();
+      c4.other = "456"; // Ensure it's a string
+      entityMapper = mockEntityMapper([c4]);
+      dataType = new EntityDatatype(entityMapper, null as any);
+      
+       // "advanced" case: imported value is number but should match also
+       await expectAsync(dataType.importMapFunction(456, schema, "other"))
+       .toBeResolvedTo(c4.getId());  
+    });
+
+
     it("should anonymize entity recursively", async () => {
       const referencedEntity = new TestEntity("ref-1");
       referencedEntity.name = "test";
-
+  
       const entityMapper = mockEntityMapper([referencedEntity]);
       spyOn(entityMapper, "save");
       const mockRemoveService: jasmine.SpyObj<EntityActionsService> =
         jasmine.createSpyObj("EntityRemoveService", ["anonymize"]);
       const dataType = new EntityDatatype(entityMapper, mockRemoveService);
-
+  
       const testValue = referencedEntity.getId();
       const testSchemaField: EntitySchemaField = {
         additional: TestEntity.ENTITY_TYPE,
         dataType: "entity",
       };
-
+  
       const anonymizedValue = await dataType.anonymize(
         testValue,
         testSchemaField,
         null,
       );
-
+  
       expect(anonymizedValue).toEqual(testValue);
       expect(mockRemoveService.anonymize).toHaveBeenCalledWith(referencedEntity);
     });
   });
-});
