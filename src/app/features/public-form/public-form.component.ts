@@ -121,6 +121,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     if (!this.formConfig.prefilledFields?.length) {
       return;
     }
+    
 
     this.formConfig.prefilledFields.forEach((item) => {
       if (!item.id) {
