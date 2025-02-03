@@ -25,84 +25,87 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 describe("Schema data type: entity", () => {
   testDatatype(new EntityDatatype(null as any, null as any), "1", "1", "User");
 
-  
-    let entityMapper: ReturnType<typeof mockEntityMapper>;
-    let dataType: EntityDatatype;
-    let schema: EntitySchemaField;
+  let entityMapper: ReturnType<typeof mockEntityMapper>;
+  let dataType: EntityDatatype;
+  let schema: EntitySchemaField;
 
-    let c1: TestEntity;
-    let c2: TestEntity;
+  let c1: TestEntity;
+  let c2: TestEntity;
 
-    beforeEach(() => {
-      c1 = TestEntity.create("first");
-      c2 = new TestEntity();
-      c2.other = "123"; // Ensure other is a string
-      entityMapper = mockEntityMapper([c1, c2]);
-      dataType = new EntityDatatype(entityMapper, null as any);
-      schema = TestEntity.schema.get("ref") as EntitySchemaField;
-    });
-
-    it("should map to the referenced entity by name", async () => {
-      await expectAsync(dataType.importMapFunction("first", schema, "name"))
-        .toBeResolvedTo(c1.getId());
-    });
-
-    it("should map to the referenced entity by other field", async () => {
-      await expectAsync(dataType.importMapFunction("123", schema, "other"))
-        .toBeResolvedTo(c2.getId());
-    });
-
-    it("should return undefined when no matching entity is found", async () => {
-      await expectAsync(dataType.importMapFunction("345", schema, "other"))
-        .toBeResolvedTo(undefined);
-    });
-
-    it("should handle numeric-string mismatches correctly", async () => {
-      const c3 = new TestEntity();
-      c3.other = "456"; // Ensure it's a string
-      entityMapper = mockEntityMapper([c3]);
-      dataType = new EntityDatatype(entityMapper, null as any);
-      
-      // "simple" case: imported value is string already
-      await expectAsync(dataType.importMapFunction("456", schema, "other"))
-        .toBeResolvedTo(c3.getId());
-    });
-
-    it("should handle numeric value correctly", async () => {
-      const c4 = new TestEntity();
-      c4.other = "456"; // Ensure it's a string
-      entityMapper = mockEntityMapper([c4]);
-      dataType = new EntityDatatype(entityMapper, null as any);
-      
-       // "advanced" case: imported value is number but should match also
-       await expectAsync(dataType.importMapFunction(456, schema, "other"))
-       .toBeResolvedTo(c4.getId());  
-    });
-
-
-    it("should anonymize entity recursively", async () => {
-      const referencedEntity = new TestEntity("ref-1");
-      referencedEntity.name = "test";
-  
-      const entityMapper = mockEntityMapper([referencedEntity]);
-      spyOn(entityMapper, "save");
-      const mockRemoveService: jasmine.SpyObj<EntityActionsService> =
-        jasmine.createSpyObj("EntityRemoveService", ["anonymize"]);
-      const dataType = new EntityDatatype(entityMapper, mockRemoveService);
-  
-      const testValue = referencedEntity.getId();
-      const testSchemaField: EntitySchemaField = {
-        additional: TestEntity.ENTITY_TYPE,
-        dataType: "entity",
-      };
-  
-      const anonymizedValue = await dataType.anonymize(
-        testValue,
-        testSchemaField,
-        null,
-      );
-  
-      expect(anonymizedValue).toEqual(testValue);
-      expect(mockRemoveService.anonymize).toHaveBeenCalledWith(referencedEntity);
-    });
+  beforeEach(() => {
+    c1 = TestEntity.create("first");
+    c2 = new TestEntity();
+    c2.other = "123"; // Ensure other is a string
+    entityMapper = mockEntityMapper([c1, c2]);
+    dataType = new EntityDatatype(entityMapper, null as any);
+    schema = TestEntity.schema.get("ref") as EntitySchemaField;
   });
+
+  it("should map to the referenced entity by name", async () => {
+    await expectAsync(
+      dataType.importMapFunction("first", schema, "name"),
+    ).toBeResolvedTo(c1.getId());
+  });
+
+  it("should map to the referenced entity by other field", async () => {
+    await expectAsync(
+      dataType.importMapFunction("123", schema, "other"),
+    ).toBeResolvedTo(c2.getId());
+  });
+
+  it("should return undefined when no matching entity is found", async () => {
+    await expectAsync(
+      dataType.importMapFunction("345", schema, "other"),
+    ).toBeResolvedTo(undefined);
+  });
+
+  it("should handle numeric-string mismatches correctly", async () => {
+    const c3 = new TestEntity();
+    c3.other = "456"; // Ensure it's a string
+    entityMapper = mockEntityMapper([c3]);
+    dataType = new EntityDatatype(entityMapper, null as any);
+
+    // "simple" case: imported value is string already
+    await expectAsync(
+      dataType.importMapFunction("456", schema, "other"),
+    ).toBeResolvedTo(c3.getId());
+  });
+
+  it("should handle numeric value correctly", async () => {
+    const c4 = new TestEntity();
+    c4.other = "456"; // Ensure it's a string
+    entityMapper = mockEntityMapper([c4]);
+    dataType = new EntityDatatype(entityMapper, null as any);
+
+    // "advanced" case: imported value is number but should match also
+    await expectAsync(
+      dataType.importMapFunction(456, schema, "other"),
+    ).toBeResolvedTo(c4.getId());
+  });
+
+  it("should anonymize entity recursively", async () => {
+    const referencedEntity = new TestEntity("ref-1");
+    referencedEntity.name = "test";
+
+    const entityMapper = mockEntityMapper([referencedEntity]);
+    spyOn(entityMapper, "save");
+    const mockRemoveService: jasmine.SpyObj<EntityActionsService> =
+      jasmine.createSpyObj("EntityRemoveService", ["anonymize"]);
+    const dataType = new EntityDatatype(entityMapper, mockRemoveService);
+
+    const testValue = referencedEntity.getId();
+    const testSchemaField: EntitySchemaField = {
+      additional: TestEntity.ENTITY_TYPE,
+      dataType: "entity",
+    };
+
+    const anonymizedValue = await dataType.anonymize(
+      testValue,
+      testSchemaField,
+      null,
+    );
+
+    expect(anonymizedValue).toEqual(testValue);
+    expect(mockRemoveService.anonymize).toHaveBeenCalledWith(referencedEntity);
+  });
+});

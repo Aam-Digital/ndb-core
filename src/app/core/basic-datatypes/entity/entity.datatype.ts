@@ -42,7 +42,7 @@ export class EntityDatatype extends StringDatatype {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private removeService: EntityActionsService
+    private removeService: EntityActionsService,
   ) {
     super();
   }
@@ -59,7 +59,7 @@ export class EntityDatatype extends StringDatatype {
   override async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
-    additional?: string
+    additional?: string,
   ): Promise<string | undefined> {
     if (!additional || val == null) {
       return undefined;
