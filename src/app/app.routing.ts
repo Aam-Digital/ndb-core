@@ -16,7 +16,6 @@
  */
 
 import { Routes } from "@angular/router";
-import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./core/config/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { SupportComponent } from "./core/support/support/support.component";
@@ -61,7 +60,7 @@ export const allRoutes: Routes = [
   {
     path: "**",
     pathMatch: "full",
-    component: ApplicationLoadingComponent,
+    component: NotFoundComponent,
     canActivate: [AuthGuard],
   },
 ];

@@ -3,6 +3,7 @@ import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { LongTextDatatype } from "app/core/basic-datatypes/string/long-text.datatype";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 /**
  * Each entity of this type defines a new publicly accessible form
@@ -49,12 +50,13 @@ export class PublicFormConfig extends Entity {
     editComponent: "EditEntityType",
     validators: {
       required: true,
+      readonlyAfterSet: true,
     },
   })
   entity: string;
 
   @DatabaseField({
-    label: $localize`:PublicFormConfig:Columns`,
+    label: $localize`:PublicFormConfig:Fields`,
     editComponent: "EditPublicFormColumns",
     isArray: true,
   })
@@ -62,4 +64,11 @@ export class PublicFormConfig extends Entity {
 
   /** @deprecated use ColumnConfig directly in the columns array instead */
   @DatabaseField() prefilled: { [key in string]: any };
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Prefilled Fields`,
+    editComponent: "EditPrefilledValuesComponent",
+    isArray: true,
+  })
+  prefilledFields: FormFieldConfig[];
 }

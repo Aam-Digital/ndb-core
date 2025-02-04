@@ -3,7 +3,6 @@ import { EditPublicFormColumnsComponent } from "./edit-public-form-columns.compo
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { FormControl } from "@angular/forms";
-import { Database } from "app/core/database/database";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -32,7 +31,6 @@ describe("EditPublicFormColumnsComponent", () => {
   ];
 
   beforeEach(() => {
-    let mockDatabase: jasmine.SpyObj<Database>;
     mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
       "createEntityForm",
       "extendFormFieldConfig",
@@ -49,7 +47,6 @@ describe("EditPublicFormColumnsComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: Database, useValue: mockDatabase },
         { provide: EntityRegistry, useValue: mockEntityRegistry },
         { provide: EntityFormService, useValue: mockEntityFormService },
         { provide: EntityMapperService, useValue: entityMapper },

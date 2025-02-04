@@ -45,7 +45,6 @@ export function expectEntitiesToMatch(
   // write arrays to console for easier debugging of complex mismatching objects
   console.log("expected objects", cleanExpected);
   console.log("actual objects", cleanActual);
-  console.log("Differences:");
   printDifferences("entities", cleanExpected, cleanActual);
 
   for (let i = 0; i < cleanExpected.length; i++) {

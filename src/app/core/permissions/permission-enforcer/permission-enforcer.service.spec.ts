@@ -4,7 +4,6 @@ import { PermissionEnforcerService } from "./permission-enforcer.service";
 import { DatabaseRule } from "../permission-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Database } from "../../database/database";
 import { AbilityService } from "../ability/ability.service";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { Subject } from "rxjs";
@@ -15,6 +14,7 @@ import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -43,7 +43,10 @@ describe("PermissionEnforcerService", () => {
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     service = TestBed.inject(PermissionEnforcerService);
     TestBed.inject(AbilityService).initializeRules();
-    destroySpy = spyOn(TestBed.inject(Database), "destroy");
+    destroySpy = spyOn(
+      TestBed.inject(DatabaseResolverService),
+      "destroyDatabases",
+    );
     trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
   }));
 
