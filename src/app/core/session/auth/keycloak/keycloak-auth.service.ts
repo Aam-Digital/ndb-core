@@ -52,14 +52,16 @@ export class KeycloakAuthService {
 
       // third-party-authentication session information
       const tpaSessionParam = this.params["tpa_session"];
+      let idpHint = "";
       if (tpaSessionParam) {
-        acr.values.push("tpa_session:" + tpaSessionParam);
+        idpHint = "tpa_session:" + tpaSessionParam;
       }
 
       // Forward to the keycloak login page.
       await this.keycloak.login({
         redirectUri: location.href,
-        acr: acr,
+        idpHint: idpHint,
+        loginHint: idpHint,
       });
       token = await this.keycloak.getToken();
     }
