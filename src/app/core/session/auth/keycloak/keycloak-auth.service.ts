@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../../../../environments/environment";
@@ -9,6 +9,8 @@ import { Entity } from "../../../entity/model/entity";
 import { ParsedJWT, parseJwt } from "../../session-utils";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 import { switchMap } from "rxjs/operators";
+import { ActivatedRoute, Params } from "@angular/router";
+import { Acr } from "keycloak-js";
 
 /**
  * Handles the remote session with keycloak
@@ -23,10 +25,17 @@ export class KeycloakAuthService {
   private keycloakInitialised = false;
   accessToken: string;
 
+  private routes = inject(ActivatedRoute);
+  private params: Params | null = null;
+
   constructor(
     private httpClient: HttpClient,
     private keycloak: KeycloakService,
-  ) {}
+  ) {
+    this.routes.queryParams.subscribe((params) => {
+      this.params = params;
+    });
+  }
 
   /**
    * Check for an existing session or forward to the login page.
@@ -39,8 +48,19 @@ export class KeycloakAuthService {
     await this.keycloak.updateToken();
     let token = await this.keycloak.getToken();
     if (!token) {
+      let acr: Acr = { values: [], essential: false };
+
+      // third-party-authentication session information
+      const tpaSessionParam = this.params["tpa_session"];
+      if (tpaSessionParam) {
+        acr.values.push("tpa_session:" + tpaSessionParam);
+      }
+
       // Forward to the keycloak login page.
-      await this.keycloak.login({ redirectUri: location.href });
+      await this.keycloak.login({
+        redirectUri: location.href,
+        acr: acr,
+      });
       token = await this.keycloak.getToken();
     }
 
