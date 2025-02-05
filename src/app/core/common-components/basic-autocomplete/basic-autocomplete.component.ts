@@ -243,10 +243,8 @@ export class BasicAutocompleteComponent<O, V = O>
 
   ngAfterViewInit() {
     window.addEventListener("focus", () => {
-      if (this.autocomplete && this.autocomplete.panelOpen) {
-        if (this.autocomplete?.panelOpen) {
-          this.showAutocomplete();
-        }
+      if (this.autocomplete && this.autocomplete?.panelOpen) {
+        this.showAutocomplete();
       }
     });
   }
