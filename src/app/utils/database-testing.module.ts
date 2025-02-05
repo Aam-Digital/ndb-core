@@ -1,5 +1,4 @@
 import { NgModule } from "@angular/core";
-import { PouchDatabase } from "../core/database/pouch-database";
 import { ConfigService } from "../core/config/config.service";
 import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
@@ -10,6 +9,7 @@ import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-en
 import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
 import { EntityConfigService } from "../core/entity/entity-config.service";
+import { DatabaseResolverService } from "../core/database/database-resolver.service";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -18,7 +18,7 @@ import { EntityConfigService } from "../core/entity/entity-config.service";
  *
  * When using this module, make sure to destroy the Database in `afterEach` in order to have a fresh database in each test:
  * ```javascript
- *  afterEach(() => TestBed.inject(Database).destroy());
+ *  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
  * ```
  */
 @NgModule({
@@ -34,13 +34,13 @@ import { EntityConfigService } from "../core/entity/entity-config.service";
 })
 export class DatabaseTestingModule {
   constructor(
-    pouchDatabase: PouchDatabase,
+    databaseResolver: DatabaseResolverService,
     components: ComponentRegistry,
     entityConfigService: EntityConfigService,
   ) {
     entityConfigService.setupEntitiesFromConfig();
     environment.session_type = SessionType.mock;
-    pouchDatabase.initInMemoryDB();
+    databaseResolver.getDatabase().init("test-db");
     components.allowDuplicates();
   }
 }

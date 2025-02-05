@@ -11,6 +11,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FormsModule } from "@angular/forms";
+import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
 
 /**
  * Visualize one specific conflicting document revision and offer resolution options.
@@ -58,12 +59,16 @@ export class CompareRevComponent {
   /** whether/how this conflict has been resolved */
   resolution: string = null;
 
+  private readonly db: Database;
+
   constructor(
-    private db: Database,
+    dbResolver: DatabaseResolverService,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
     private conflictResolver: AutoResolutionService,
-  ) {}
+  ) {
+    this.db = dbResolver.getDatabase();
+  }
 
   /**
    * Load the document version (revision) to be displayed and generate the diffs to be visualized.

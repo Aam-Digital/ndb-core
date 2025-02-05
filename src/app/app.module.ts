@@ -39,7 +39,6 @@ import { ConfigurableEnumModule } from "./core/basic-datatypes/configurable-enum
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { DatabaseModule } from "./core/database/database.module";
 import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
 import {
   DEFAULT_LANGUAGE,
@@ -90,6 +89,7 @@ import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initia
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { SkillModule } from "./features/skill/skill.module";
+import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 
 /**
  * Main entry point of the application.
@@ -111,7 +111,6 @@ import { SkillModule } from "./features/skill/skill.module";
     // Core modules
     CoreModule,
     ConfigurableEnumModule,
-    DatabaseModule,
     LanguageModule,
     LatestChangesModule,
     PermissionsModule,
@@ -141,6 +140,7 @@ import { SkillModule } from "./features/skill/skill.module";
     // Global Angular Material modules
     MatSnackBarModule,
     MatDialogModule,
+    ApplicationLoadingComponent,
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),

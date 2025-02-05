@@ -50,6 +50,7 @@ export class PublicFormConfig extends Entity {
     editComponent: "EditEntityType",
     validators: {
       required: true,
+      readonlyAfterSet: true,
     },
   })
   entity: string;

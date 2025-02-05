@@ -13,6 +13,7 @@ describe("ImportSelectTypeComponent", () => {
 
   class TestEntity extends Entity {
     static override _isCustomizedType = true; // set by config service applying custom definitions
+    static override label = "some-label"; // set by config service applying custom definitions
   }
 
   let mockRegistry: EntityRegistry;
