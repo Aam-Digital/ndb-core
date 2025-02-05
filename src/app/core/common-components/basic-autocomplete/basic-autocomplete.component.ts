@@ -241,6 +241,16 @@ export class BasicAutocompleteComponent<O, V = O>
     }
   }
 
+  ngAfterViewInit() {
+    window.addEventListener("focus", () => {
+      if (this.autocomplete && this.autocomplete.panelOpen) {
+        if (this.autocomplete?.panelOpen) {
+          this.showAutocomplete();
+        }
+      }
+    });
+  }
+
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
