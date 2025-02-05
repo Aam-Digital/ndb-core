@@ -18,7 +18,7 @@ import { EntityArchivedInfoComponent } from "../../entity-details/entity-archive
 import { FieldGroup } from "../../entity-details/form/field-group";
 import { EntityFieldEditComponent } from "../../common-components/entity-field-edit/entity-field-edit.component";
 import { EntityFieldViewComponent } from "../../common-components/entity-field-view/entity-field-view.component";
-import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
+import { ViewComponentContext } from "app/core/ui/abstract-view/ViewComponentContext";
 
 /**
  * Data interface that must be given when opening the dialog
