@@ -15,22 +15,24 @@ export function buildReadonlyValidator(entity: Entity): {
   async: true;
   fn: AsyncPromiseValidatorFn;
 } {
-  let isDisabled = !entity.isNew;
+  let keepDisabled: boolean = !entity.isNew;
 
   return {
     async: true,
     fn: async (control: FormControl): Promise<ValidationErrors | null> => {
-      // Disable if already flagged
-      if (isDisabled) {
-        control.disable({ onlySelf: true, emitEvent: false });
-        return null;
-      }
+      control.statusChanges.subscribe((status: FormControlStatus) => {
+        if (status === "DISABLED") {
+          // after the form was disabled once, keep this disabled now
+          keepDisabled = true;
+        }
 
-      // For new entities, disable upon setting a value
-      if (entity.isNew && control.value) {
-        isDisabled = true;
-        control.disable({ onlySelf: true, emitEvent: false });
-      }
+        if (keepDisabled) {
+          control.disable({
+            onlySelf: true,
+            emitEvent: false,
+          });
+        }
+      });
 
       return null;
     },
