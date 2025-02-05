@@ -8,7 +8,6 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
-
 /**
  * Generate ASER results every 12 months for each Child until passing.
  * Builds upon the generated demo Child entities.

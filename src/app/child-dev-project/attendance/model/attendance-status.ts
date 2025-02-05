@@ -1,6 +1,5 @@
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
-
 /**
  * logical type of an attendance status, i.e. how it will be considered for statistics and analysis.
  */

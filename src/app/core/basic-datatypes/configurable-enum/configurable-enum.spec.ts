@@ -1,4 +1,3 @@
-
 import { ConfigurableEnum } from "./configurable-enum";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
 

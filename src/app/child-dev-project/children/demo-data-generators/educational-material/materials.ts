@@ -1,6 +1,5 @@
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
-
 export const materials: ConfigurableEnumValue[] = [
   {
     id: "OTHER",

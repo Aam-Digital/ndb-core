@@ -14,9 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-import {
-  ConfigurableEnumConfig,
-} from "../configurable-enum.interface";
+import { ConfigurableEnumConfig } from "../configurable-enum.interface";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";

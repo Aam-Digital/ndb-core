@@ -1,4 +1,3 @@
-
 import { Ordering } from "./configurable-enum-ordering";
 import { ConfigurableEnumValue } from "./configurable-enum.types";
 

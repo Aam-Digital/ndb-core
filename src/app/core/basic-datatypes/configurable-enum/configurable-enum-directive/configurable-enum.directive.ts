@@ -2,7 +2,6 @@ import { Directive, Input, TemplateRef, ViewContainerRef } from "@angular/core";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
 
-
 /**
  * Enumerate over all {@link ConfigurableEnumConfig} values for the given enum config id.
  *

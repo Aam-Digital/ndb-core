@@ -1,4 +1,3 @@
-
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { Injectable } from "@angular/core";

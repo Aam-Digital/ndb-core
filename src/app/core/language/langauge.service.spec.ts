@@ -8,7 +8,6 @@ import { Subject } from "rxjs";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
 
-
 describe("LanguageService", () => {
   let service: LanguageService;
   let reloadSpy: jasmine.Spy;

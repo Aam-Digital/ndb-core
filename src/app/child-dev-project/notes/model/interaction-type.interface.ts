@@ -1,6 +1,5 @@
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
-
 /**
  * Additional properties defined in the "interaction-type" {@link ConfigurableEnumValue} values
  * providing special context for {@link Note} categories.

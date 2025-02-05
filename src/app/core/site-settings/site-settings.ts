@@ -4,7 +4,6 @@ import { DatabaseField } from "../entity/database-field.decorator";
 import { availableLocales, LOCALE_ENUM_ID } from "../language/languages";
 import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
 
-
 /**
  * Global settings like styling and title to customize an instance of the app.
  * The settings are applied at runtime.

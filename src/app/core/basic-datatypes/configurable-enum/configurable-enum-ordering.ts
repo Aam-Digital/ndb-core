@@ -1,4 +1,4 @@
-import { ConfigurableEnumValue, HasOrdinal , } from "./configurable-enum.types";
+import { ConfigurableEnumValue, HasOrdinal } from "./configurable-enum.types";
 import { isObject } from "lodash-es";
 
 export namespace Ordering {
@@ -6,7 +6,9 @@ export namespace Ordering {
     return isObject(value) && "_ordinal" in value;
   }
 
-  export type EnumValue<T extends ConfigurableEnumValue = ConfigurableEnumValue> = T & HasOrdinal;
+  export type EnumValue<
+    T extends ConfigurableEnumValue = ConfigurableEnumValue,
+  > = T & HasOrdinal;
 
   export type Config<T extends ConfigurableEnumValue> = Array<T & HasOrdinal>;
 

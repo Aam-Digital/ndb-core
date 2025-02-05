@@ -1,4 +1,3 @@
-
 import moment from "moment/moment";
 import { GeoLocation } from "app/features/location/GeoLocation";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
