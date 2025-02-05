@@ -3,7 +3,7 @@ import { MatButton, MatIconButton } from "@angular/material/button";
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult } from "../geo.service";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";

@@ -13,7 +13,7 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 
 describe("AddressSearchComponent", () => {
   let component: AddressSearchComponent;

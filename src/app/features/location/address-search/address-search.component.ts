@@ -25,7 +25,7 @@ import { concatMap, debounceTime, filter, map, tap } from "rxjs/operators";
 import { Logging } from "../../../core/logging/logging.service";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 
 /**
  * A search box integrated with OpenStreetMaps lookup of the entered address,

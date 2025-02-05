@@ -41,7 +41,7 @@ import {
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
-import { GeoLocation } from "../../location/location.datatype";
+import { GeoLocation } from "app/features/location/GeoLocation";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */

@@ -1,6 +1,6 @@
 import { StoryFn } from "@storybook/angular";
 import { generateFormFieldStory } from "../../../core/entity/default-datatype/edit-component-story-utils";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 
 const formFieldStory = generateFormFieldStory("EditLocation", {
   locationString: "some custom address",

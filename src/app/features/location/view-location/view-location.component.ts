@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @DynamicComponent("ViewLocation")

@@ -13,7 +13,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { GeoResult, GeoService } from "../geo.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 
 describe("MapPopupComponent", () => {
   let component: MapPopupComponent;

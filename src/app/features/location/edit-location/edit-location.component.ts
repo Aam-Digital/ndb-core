@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 import { LocationInputComponent } from "../location-input/location-input.component";
 import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";

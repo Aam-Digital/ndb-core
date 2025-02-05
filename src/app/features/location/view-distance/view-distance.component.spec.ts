@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ViewDistanceComponent } from "./view-distance.component";
 import { Subject } from "rxjs";
 import { Coordinates } from "../coordinates";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("ViewDistanceComponent", () => {

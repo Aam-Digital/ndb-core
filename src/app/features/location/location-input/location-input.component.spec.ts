@@ -13,7 +13,7 @@ import {
   MapPopupComponent,
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../GeoLocation";
 
 describe("LocationInputComponent", () => {
   let component: LocationInputComponent;
