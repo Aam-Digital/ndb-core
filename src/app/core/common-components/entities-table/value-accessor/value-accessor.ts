@@ -1,6 +1,7 @@
-import { ConfigurableEnumValue } from "../../../basic-datatypes/configurable-enum/configurable-enum.interface";
+
 import moment from "moment/moment";
 import { GeoLocation } from "app/features/location/GeoLocation";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 /**
  * Transform a whole object into a readable format.

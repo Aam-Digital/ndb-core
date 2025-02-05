@@ -6,7 +6,8 @@ import { mathLevels, readingLevels } from "./skill-levels";
 import { WarningLevel } from "../../../warning-level";
 import { Entity } from "../../../../core/entity/model/entity";
 import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
-import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+
 
 /**
  * Generate ASER results every 12 months for each Child until passing.

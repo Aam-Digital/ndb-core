@@ -16,7 +16,6 @@
  */
 import {
   ConfigurableEnumConfig,
-  ConfigurableEnumValue,
 } from "../configurable-enum.interface";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
@@ -27,6 +26,7 @@ import { ConfigurableEnumService } from "../configurable-enum.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumDatatype } from "./configurable-enum.datatype";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { ConfigurableEnumValue } from "../configurable-enum.types";
 
 describe("Schema data type: configurable-enum", () => {
   const GENDER_MALE = genders.find((e) => e.id === "M");

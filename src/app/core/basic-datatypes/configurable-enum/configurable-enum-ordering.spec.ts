@@ -1,5 +1,6 @@
-import { ConfigurableEnumValue } from "./configurable-enum.interface";
+
 import { Ordering } from "./configurable-enum-ordering";
+import { ConfigurableEnumValue } from "./configurable-enum.types";
 
 describe("Configurable Enum Ordering", () => {
   function mockEnumValues(): ConfigurableEnumValue[] {
