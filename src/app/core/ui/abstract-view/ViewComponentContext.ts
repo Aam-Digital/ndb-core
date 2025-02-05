@@ -11,5 +11,5 @@ export class ViewComponentContext {
   title: ViewTitleComponent;
   actions: ViewActionsComponent;
 
-  constructor(public isDialog: boolean) { }
+  constructor(public isDialog: boolean) {}
 }

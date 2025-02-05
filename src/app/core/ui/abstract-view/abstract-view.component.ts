@@ -19,4 +19,3 @@ export abstract class AbstractViewComponent {
     });
   }
 }
-
