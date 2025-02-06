@@ -108,37 +108,28 @@ export class DefaultValueService {
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
   ) {
-    const rawValue = fieldConfig.defaultValue.value;
-    let transformedValue: any;
+    const staticDefaultValue = fieldConfig.defaultValue.value;
+    let transformedDefaultValue: any = staticDefaultValue;
 
-    if (fieldConfig.dataType == "configurable-enum") {
+    if (fieldConfig.dataType === "configurable-enum") {
       const enumValues = this.enumService.getEnumValues(fieldConfig.additional);
-      // Check if rawValue matches any id in the enum values
       const matchedEnum = enumValues.find(
-        (enumValue) => enumValue.id === rawValue,
+        (enumValue) => enumValue.id === staticDefaultValue,
       );
 
-      if (matchedEnum) {
-        transformedValue = this.entitySchemaService.valueToEntityFormat(
-          matchedEnum.id,
-          fieldConfig,
-          rawValue,
-        );
-        console.log("transformedValue", transformedValue);
-      } else {
-        transformedValue = null;
-      }
+      transformedDefaultValue = matchedEnum
+        ? this.entitySchemaService.valueToEntityFormat(
+            staticDefaultValue,
+            fieldConfig,
+          )
+        : null;
     }
 
-    if (fieldConfig.isArray) {
-      targetFormControl.setValue([
-        transformedValue ? transformedValue : rawValue,
-      ]);
-    } else {
-      targetFormControl.setValue(
-        transformedValue ? transformedValue : rawValue,
-      );
-    }
+    targetFormControl.setValue(
+      fieldConfig.isArray
+        ? [transformedDefaultValue ?? staticDefaultValue]
+        : (transformedDefaultValue ?? staticDefaultValue),
+    );
   }
 
   getDefaultValueUiHint<T extends Entity>(
