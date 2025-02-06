@@ -7,6 +7,8 @@ import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
 import { InheritedValueService } from "./inherited-value.service";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 
 /**
  * Handle default values like the current date or user for forms when editing an Entity.
@@ -18,6 +20,8 @@ export class DefaultValueService {
   constructor(
     private dynamicPlaceholderValueService: DynamicPlaceholderValueService,
     private inheritedValueService: InheritedValueService,
+    private entitySchemaService: EntitySchemaService,
+    private enumService: ConfigurableEnumService,
   ) {}
 
   async handleEntityForm<T extends Entity>(
@@ -104,10 +108,36 @@ export class DefaultValueService {
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
   ) {
+    const rawValue = fieldConfig.defaultValue.value;
+    let transformedValue: any;
+
+    if (fieldConfig.dataType == "configurable-enum") {
+      const enumValues = this.enumService.getEnumValues(fieldConfig.additional);
+      // Check if rawValue matches any id in the enum values
+      const matchedEnum = enumValues.find(
+        (enumValue) => enumValue.id === rawValue,
+      );
+
+      if (matchedEnum) {
+        transformedValue = this.entitySchemaService.valueToEntityFormat(
+          matchedEnum.id,
+          fieldConfig,
+          rawValue,
+        );
+        console.log("transformedValue", transformedValue);
+      } else {
+        transformedValue = null;
+      }
+    }
+
     if (fieldConfig.isArray) {
-      targetFormControl.setValue([fieldConfig.defaultValue.value]);
+      targetFormControl.setValue([
+        transformedValue ? transformedValue : rawValue,
+      ]);
     } else {
-      targetFormControl.setValue(fieldConfig.defaultValue.value);
+      targetFormControl.setValue(
+        transformedValue ? transformedValue : rawValue,
+      );
     }
   }
 
