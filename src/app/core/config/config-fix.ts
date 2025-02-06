@@ -1002,7 +1002,11 @@ export const defaultJsonConfig = {
         dataType: "configurable-enum",
         label: $localize`:Label for the gender of a child:Gender`,
         additional: "genders",
-        anonymize: "retain"
+        anonymize: "retain",
+        defaultValue: {
+          mode: "static",
+          value: "M"
+        },
       },
       admissionDate: {
         dataType: "date-only",
