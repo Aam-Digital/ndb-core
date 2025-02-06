@@ -8,6 +8,8 @@ import { DefaultValueService } from "./default-value.service";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
 import { InheritedValueService } from "./inherited-value.service";
 import { EventEmitter } from "@angular/core";
+import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 
 /**
  * Helper function to add some custom schema fields to Entity for testing.
@@ -90,6 +92,10 @@ describe("DefaultValueService", () => {
       providers: [
         CurrentUserSubject,
         { provide: InheritedValueService, useValue: mockInheritedValueService },
+        {
+          provide: ConfigurableEnumService,
+          useValue: createTestingConfigurableEnumService(),
+        },
       ],
     });
     service = TestBed.inject(DefaultValueService);
