@@ -18,7 +18,7 @@ import { NgClass, NgIf } from "@angular/common";
     MatInputModule,
     ErrorHintComponent,
     NgIf,
-    NgClass
+    NgClass,
   ],
   standalone: true,
 })
