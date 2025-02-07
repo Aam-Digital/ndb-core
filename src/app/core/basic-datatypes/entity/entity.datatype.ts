@@ -65,14 +65,9 @@ export class EntityDatatype extends StringDatatype {
       return undefined;
     }
 
-    const normalizedVal = this.normalizeValue(val);
-
     try {
       const entities = await this.entityMapper.loadType(schemaField.additional);
-      const matchedEntity = entities.find((entity) => {
-        const entityFieldValue = this.normalizeValue(entity[additional]);
-        return entityFieldValue === normalizedVal;
-      });
+      const matchedEntity = entities.find((entity) => this.normalizeValue(entity[additional]) === this.normalizeValue(val));
 
       return matchedEntity?.getId();
     } catch (error) {
