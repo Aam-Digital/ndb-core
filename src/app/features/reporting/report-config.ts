@@ -24,15 +24,51 @@ class ReportConfig extends Entity {
   @DatabaseField() mode?: string;
 
   /**
-   * (sql only) list of arguments needed for the sql query. Placeholder "?" will be replaced.
+   * version of ReportConfig syntax. Just relevant for SqlReports
+   */
+  @DatabaseField() version?: number = 1;
+
+  /**
+   * (sql v1 only) list of arguments needed for the sql query. Placeholder "?" will be replaced.
    */
   @DatabaseField() neededArgs?: string[] = [];
 
-  /** the definitions to calculate the report's aggregations */
+  /** (reporting/exporting only, in browser reports) the definitions to calculate the report's aggregations */
   @DatabaseField() aggregationDefinitions: any[] = [];
 
-  /** (sql only) the definition to calculate the report */
+  /** (sql v1 only) the definition to calculate the report */
   @DatabaseField() aggregationDefinition: string | undefined = undefined;
+
+  /**
+   *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
+   *  example: {startDate: ["SQL_FROM_DATE"], endDate: ["SQL_TO_DATE"]}
+   */
+  @DatabaseField() transformations: {
+    [key: string]: string[];
+  };
+
+  /**
+   *  (sql v2 only) ReportDefinitionItem, ether ReportQuery or ReportGroup
+   *
+   *  Can be ReportQuery:
+   *  {query: "SELECT * FROM foo"}
+   *
+   *  Can be ReportGroup:
+   *  {groupTitle: "This is a group", items: [...]}
+   *
+   */
+  @DatabaseField() reportDefinition: ReportDefinitionDto[];
+}
+
+export interface ReportDefinitionDto {
+  /** an SQL query */
+  query?: string;
+
+  /** title (human-readable) for a set of hierarchically grouped sub-items */
+  groupTitle?: String;
+
+  /** hierarchical child items, building a recursive set of report groups display in an indented way */
+  items?: ReportDefinitionDto[];
 }
 
 /**
@@ -69,13 +105,31 @@ export interface ExportingReport extends ReportConfig {
  */
 export interface SqlReport extends ReportConfig {
   mode: "sql";
+
   /**
-   * a valid SQL SELECT statements, can contain "?" placeholder for arguments
+   * version of the ReportConfiguration, currently 1 or 2
+   */
+  version: number;
+
+  /**
+   * a valid SQL SELECT statements, can contain "?" placeholder for arguments (only v1)
    */
   aggregationDefinition: string;
 
   /**
-   * a list of arguments, passed into the sql statement
+   * a list of arguments, passed into the sql statement (only v1)
    */
   neededArgs: string[];
+
+  /**
+   * see ReportConfig docs
+   */
+  transformations: {
+    [key: string]: string[];
+  };
+
+  /**
+   *  see ReportConfig docs
+   */
+  reportDefinition: ReportDefinitionDto[];
 }

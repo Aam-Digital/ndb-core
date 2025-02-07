@@ -7,7 +7,7 @@ import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { waitForChangeTo } from "../../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../../core/session/session-states/sync-state.enum";
-import { firstValueFrom } from "rxjs";
+import { filter, firstValueFrom } from "rxjs";
 import { PercentPipe } from "@angular/common";
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -43,6 +43,13 @@ export class ProgressDashboardComponent
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
 
+  @Input() subtitle: string =
+    $localize`:dashboard widget subtitle: Progress Overview`;
+  @Input() explanation: string =
+    $localize`:dashboard widget explanation: Shows the progress of different parts of project tasks. You can use this to track any kind of targets.`;
+
+  overallPercentage: number;
+
   constructor(
     private entityMapper: EntityMapperService,
     private dialog: MatDialog,
@@ -58,12 +65,26 @@ export class ProgressDashboardComponent
         .then(() => this.loadConfigFromDatabase())
         .catch(() => this.createDefaultConfig()),
     );
+
+    this.entityMapper
+      .receiveUpdates(ProgressDashboardConfig)
+      .pipe(
+        filter(
+          (entity) => entity.entity.getId(true) === this.dashboardConfigId,
+        ),
+      )
+      .subscribe((update) => this.updateConfig(update.entity));
+  }
+
+  private updateConfig(updatedConfig: ProgressDashboardConfig) {
+    this.data = updatedConfig;
+    this.overallPercentage = this.getOverallProgressPercentage();
   }
 
   private loadConfigFromDatabase() {
     return this.entityMapper
       .load(ProgressDashboardConfig, this.dashboardConfigId)
-      .then((config) => (this.data = config));
+      .then((config) => this.updateConfig(config));
   }
 
   private createDefaultConfig() {
@@ -90,5 +111,22 @@ export class ProgressDashboardComponent
           await this.save();
         }
       });
+  }
+
+  // Method to calculate the overall progress percentage
+  getOverallProgressPercentage(): number {
+    if (!this.data?.parts || this.data.parts.length === 0) {
+      return 0;
+    }
+
+    let totalCurrent = 0;
+    let totalTarget = 0;
+
+    this.data.parts.forEach((entry) => {
+      totalCurrent += entry.currentValue;
+      totalTarget += entry.targetValue;
+    });
+
+    return totalTarget ? totalCurrent / totalTarget : 0;
   }
 }

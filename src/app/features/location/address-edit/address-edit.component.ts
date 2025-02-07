@@ -8,6 +8,7 @@ import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -25,6 +26,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     MatTooltip,
     MatIconButton,
     FaIconComponent,
+    AddressGpsLocationComponent,
   ],
   templateUrl: "./address-edit.component.html",
   styleUrl: "./address-edit.component.scss",
@@ -114,8 +116,12 @@ export class AddressEditComponent {
       geoLookup: value?.geoLookup,
     });
   }
-}
 
-function matchGeoResults(a: GeoResult, b: GeoResult) {
-  return a.lat === b.lat && a.lon === b.lon;
+  onGpsLocationSelected(geoResult: GeoResult) {
+    const newLocation: GeoLocation = {
+      locationString: geoResult.display_name,
+      geoLookup: geoResult,
+    };
+    this.updateFromAddressSearch(newLocation, true);
+  }
 }

@@ -16,7 +16,8 @@
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "ng run ndb-core:storybook",
     "build-storybook": "ng run ndb-core:build-storybook",
-    "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/ && xliffmerge --profile xliffmerge.json"
+    "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/",
+    "extract-i18n-locally": "ng extract-i18n --output-path ./src/assets/locale/ && xliffmerge --profile xliffmerge.json"
   },
   "private": true,
   "browser": {
@@ -45,7 +46,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@ngneat/until-destroy": "^10.0.0",
-    "@sentry/angular": "^8.35.0",
+    "@sentry/angular": "^8.48.0",
     "angulartics2": "^14.1.0",
     "assert": "^2.1.0",
     "crypto-es": "^2.1.0",
@@ -69,6 +70,7 @@
     "tslib": "^2.8.0",
     "util": "^0.12.5",
     "uuid": "^10.0.0",
+    "vanilla-jsoneditor": "^2.3.3",
     "webpack": "^5.95.0",
     "zone.js": "^0.14.10"
   },

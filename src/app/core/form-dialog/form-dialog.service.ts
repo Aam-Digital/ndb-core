@@ -63,7 +63,7 @@ export class FormDialogService {
     const columns: FormFieldConfig[] = this.inferFormFieldColumns(
       columnsOverall,
       entity,
-    ).filter((col) => !col.hideFromForm);
+    );
 
     const columnsToDisplay = columns
       .filter((col) => col.editComponent)

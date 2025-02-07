@@ -139,3 +139,8 @@ $toolbar-width: 300px;
 .drop-list.cdk-drop-list-dragging .admin-form-field:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}

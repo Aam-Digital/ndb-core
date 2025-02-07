@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { EventEmitter, Injectable } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -19,7 +19,6 @@ import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value.service";
-import { DefaultValueConfig } from "../../entity/schema/default-value-config";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -35,9 +34,11 @@ export interface EntityForm<T extends Entity> {
   entity: T;
 
   /**
-   * map of field ids to the default value configuration for that field
+   * (possible overridden) field configurations for that form
    */
-  defaultValueConfigs: Map<string, DefaultValueConfig>;
+  fieldConfigs: FormFieldConfig[];
+
+  onFormStateChange: EventEmitter<"saved" | "cancelled">;
 
   /**
    * map of field ids to the current value to be inherited from the referenced parent entities' field
@@ -87,6 +88,7 @@ export class EntityFormService {
     forTable = false,
   ): FormFieldConfig {
     const fullField = toFormFieldConfig(formField);
+
     try {
       return this.addSchemaToFormField(
         fullField,
@@ -102,11 +104,15 @@ export class EntityFormService {
 
   private addSchemaToFormField(
     formField: FormFieldConfig,
-    propertySchema: EntitySchemaField,
+    propertySchema: EntitySchemaField | undefined,
     forTable: boolean,
   ): FormFieldConfig {
     // formField config has precedence over schema
-    const fullField = Object.assign({}, propertySchema, formField);
+    const fullField = Object.assign(
+      {},
+      JSON.parse(JSON.stringify(propertySchema ?? {})), // deep copy to avoid modifying the original schema
+      formField,
+    );
 
     fullField.editComponent =
       fullField.editComponent ||
@@ -143,20 +149,21 @@ export class EntityFormService {
     forTable = false,
     withPermissionCheck = true,
   ): Promise<EntityForm<T>> {
-    const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
-      formFields,
-      entity,
-      forTable,
-      withPermissionCheck,
+    const fields = formFields.map((f) =>
+      this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
     );
 
-    const defaultValueConfigs =
-      DefaultValueService.getDefaultValueConfigs(entity);
+    const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
+      fields,
+      entity,
+      withPermissionCheck,
+    );
 
     const entityForm: EntityForm<T> = {
       formGroup: typedFormGroup,
       entity: entity,
-      defaultValueConfigs: defaultValueConfigs,
+      fieldConfigs: fields,
+      onFormStateChange: new EventEmitter(),
       inheritedParentValues: new Map(),
       watcher: new Map(),
     };
@@ -166,10 +173,16 @@ export class EntityFormService {
     return entityForm;
   }
 
+  /**
+   *
+   * @param formFields The field configs in their final form (will not be extended by schema automatically)
+   * @param entity
+   * @param withPermissionCheck
+   * @private
+   */
   private createFormGroup<T extends Entity>(
-    formFields: ColumnConfig[],
+    formFields: FormFieldConfig[],
     entity: T,
-    forTable = false,
     withPermissionCheck = true,
   ): EntityFormGroup<T> {
     const formConfig = {};
@@ -180,7 +193,7 @@ export class EntityFormService {
     );
 
     for (const f of formFields) {
-      this.addFormControlConfig(formConfig, f, copy, forTable);
+      this.addFormControlConfig(formConfig, f, copy);
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
@@ -204,29 +217,22 @@ export class EntityFormService {
   /**
    * Add a property with form control initialization config to the given formConfig object.
    * @param formConfig
-   * @param fieldConfig
+   * @param field The final field config (will not be automatically extended by schema)
    * @param entity
-   * @param forTable
    * @private
    */
   private addFormControlConfig(
     formConfig: { [key: string]: FormControl },
-    fieldConfig: ColumnConfig,
+    field: FormFieldConfig,
     entity: Entity,
-    forTable: boolean,
   ) {
-    const field = this.extendFormFieldConfig(
-      fieldConfig,
-      entity.getConstructor(),
-      forTable,
-    );
-
     let value = entity[field.id];
 
     const controlOptions: FormControlOptions = { nonNullable: true };
     if (field.validators) {
       const validators = this.dynamicValidator.buildValidators(
         field.validators,
+        entity,
       );
       Object.assign(controlOptions, validators);
     }
@@ -255,15 +261,20 @@ export class EntityFormService {
    * @returns a copy of the input entity with the changes from the form group
    */
   public async saveChanges<T extends Entity>(
-    form: EntityFormGroup<T>,
+    entityForm: EntityForm<T>,
     entity: T,
   ): Promise<T> {
+    const form: EntityFormGroup<T> = entityForm.formGroup;
+
     this.checkFormValidity(form);
 
     const updatedEntity = entity.copy() as T;
     for (const [key, value] of Object.entries(form.getRawValue())) {
       if (value !== null) {
         updatedEntity[key] = value;
+      } else {
+        // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
+        delete updatedEntity[key];
       }
     }
 
@@ -279,7 +290,10 @@ export class EntityFormService {
     this.unsavedChanges.pending = false;
     form.markAsPristine();
     form.disable();
-    return Object.assign(entity, updatedEntity);
+    Object.assign(entity, updatedEntity);
+
+    entityForm.onFormStateChange.emit("saved");
+    return entity;
   }
 
   private checkFormValidity<T extends Entity>(form: EntityFormGroup<T>) {
@@ -313,12 +327,14 @@ export class EntityFormService {
     }
   }
 
-  resetForm<E extends Entity>(form: EntityFormGroup<E>, entity: E) {
+  resetForm<E extends Entity>(entityForm: EntityForm<E>, entity: E) {
+    const form = entityForm.formGroup;
     for (const key of Object.keys(form.controls)) {
       form.get(key).setValue(entity[key]);
     }
 
     form.markAsPristine();
     this.unsavedChanges.pending = false;
+    entityForm.onFormStateChange.emit("cancelled");
   }
 }

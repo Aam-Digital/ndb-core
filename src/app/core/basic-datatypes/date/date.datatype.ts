@@ -32,7 +32,7 @@ import { Logging } from "../../logging/logging.service";
  * `@DatabaseField() myDate: Date; // will be a valid Date even if the database previously had "2020-01-15" as string`
  */
 @Injectable()
-export class DateDatatype<DBFormat = any> extends DefaultDatatype<
+export class DateDatatype<DBFormat = string> extends DefaultDatatype<
   Date,
   DBFormat
 > {
@@ -54,7 +54,7 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
   ) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
-      Logging.warn(
+      Logging.debug(
         `failed to convert data '${value}' to Date object for ${parent?._id}`,
       );
       return undefined;

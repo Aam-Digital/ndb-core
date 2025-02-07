@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditDescriptionOnlyComponent } from "./edit-description-only.component";
+import { ComponentRegistry } from "app/dynamic-components";
 
 describe("EditDescriptionOnlyComponent", () => {
   let component: EditDescriptionOnlyComponent;
@@ -8,6 +9,7 @@ describe("EditDescriptionOnlyComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EditDescriptionOnlyComponent],
+      providers: [ComponentRegistry],
     }).compileComponents();
   });
 

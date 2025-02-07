@@ -4,10 +4,10 @@ import { TodosRelatedToEntityComponent } from "./todos-related-to-entity.compone
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { Todo } from "../model/todo";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { Database } from "../../../core/database/database";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
+import { DatabaseResolverService } from "../../../core/database/database-resolver.service";
 
 describe("TodosRelatedToEntityComponent", () => {
   let component: TodosRelatedToEntityComponent;
@@ -28,7 +28,7 @@ describe("TodosRelatedToEntityComponent", () => {
     fixture.detectChanges();
   }));
 
-  afterEach(() => TestBed.inject(Database).destroy());
+  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("should create", () => {
     expect(component).toBeTruthy();

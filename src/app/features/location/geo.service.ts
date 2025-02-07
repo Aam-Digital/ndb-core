@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { Coordinates } from "./coordinates";
 import { HttpClient } from "@angular/common/http";
 import { ConfigService } from "../../core/config/config.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { environment } from "../../../environments/environment";
 import { MAP_CONFIG_KEY, MapConfig } from "./map-config";
-import { map } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -87,9 +87,15 @@ export class GeoService {
    * @param coordinates of a place (`lat` and `lon`)
    */
   reverseLookup(coordinates: Coordinates): Observable<GeoResult> {
+    const fallback: GeoResult = {
+      display_name: $localize`[selected coordinates: ${coordinates.lat} - ${coordinates.lon}]`,
+      ...coordinates,
+    };
+
     this.analytics.eventTrack("reverse_lookup_executed", {
       category: "Map",
     });
+
     return this.http
       .get<OpenStreetMapsSearchResult>(`${this.remoteUrl}/reverse`, {
         params: {
@@ -98,7 +104,10 @@ export class GeoService {
           lon: coordinates.lon,
         },
       })
-      .pipe(map((result) => this.reformatDisplayName(result)));
+      .pipe(
+        map((result) => this.reformatDisplayName(result)),
+        catchError(() => of(fallback)),
+      );
   }
 }
 

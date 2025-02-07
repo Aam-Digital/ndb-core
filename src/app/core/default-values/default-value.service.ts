@@ -24,40 +24,38 @@ export class DefaultValueService {
     form: EntityForm<T>,
     entity: Entity,
   ): Promise<void> {
-    if (!(form.defaultValueConfigs?.size > 0)) {
+    if (!(form.fieldConfigs?.length > 0)) {
       return;
     }
 
-    const entitySchema: EntitySchema = entity.getSchema();
     await this.inheritedValueService.initEntityForm(form);
     this.enableChangeListener(form);
 
-    for (const [key, entitySchemaField] of entitySchema) {
-      let targetFormControl = form.formGroup.get(key);
+    for (const fieldConfig of form.fieldConfigs) {
+      let targetFormControl = form.formGroup.get(fieldConfig.id);
       if (
         !this.preConditionsFulfilled(
           entity.isNew,
           targetFormControl,
-          entitySchemaField,
+          fieldConfig,
         )
       ) {
         continue;
       }
-
-      switch (entitySchemaField.defaultValue?.mode) {
+      switch (fieldConfig.defaultValue?.mode) {
         case "static":
-          this.handleStaticMode(targetFormControl, entitySchemaField);
+          this.handleStaticMode(targetFormControl, fieldConfig);
           break;
         case "dynamic":
           this.dynamicPlaceholderValueService.setDefaultValue(
             targetFormControl,
-            entitySchemaField,
+            fieldConfig,
           );
           break;
         case "inherited":
-          this.inheritedValueService.setDefaultValue(
+          await this.inheritedValueService.setDefaultValue(
             targetFormControl,
-            entitySchemaField,
+            fieldConfig,
             form,
           );
           break;
@@ -121,9 +119,12 @@ export class DefaultValueService {
       return;
     }
 
-    const mode = form?.defaultValueConfigs?.get(fieldId)?.mode;
-    if (mode === "inherited") {
-      return this.inheritedValueService.getDefaultValueUiHint(form, fieldId);
+    const fieldConfig = form?.fieldConfigs?.find((x) => x.id === fieldId);
+    if (fieldConfig?.defaultValue?.mode === "inherited") {
+      return this.inheritedValueService.getDefaultValueUiHint(
+        form,
+        fieldConfig,
+      );
     }
   }
 

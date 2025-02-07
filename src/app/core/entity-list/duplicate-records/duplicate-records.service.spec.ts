@@ -1,27 +1,19 @@
 import { TestBed } from "@angular/core/testing";
 import { DuplicateRecordService } from "./duplicate-records.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import {
-  DatabaseEntity,
-  entityRegistry,
-  EntityRegistry,
-} from "../../entity/database-entity.decorator";
-import { Database } from "../../database/database";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { CoreModule } from "../../core.module";
-import { ComponentRegistry } from "../../../dynamic-components";
 import { UpdateMetadata } from "../../entity/model/update-metadata";
-import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { FileService } from "../../../features/file/file.service";
-import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
+import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype";
 
 describe("DuplicateRecordsService", () => {
   let service: DuplicateRecordService;
   let entityMapperService: EntityMapperService;
-
-  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
 
   @DatabaseEntity("DuplicateTestEntity")
   class DuplicateTestEntity extends Entity {
@@ -35,17 +27,13 @@ describe("DuplicateRecordsService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [CoreModule],
       providers: [
         DuplicateRecordService,
-        Database,
-        EntityMapperService,
-        { provide: EntityRegistry, useValue: entityRegistry },
-        { provide: MatDialog, useValue: {} },
-        { provide: MatSnackBar, useValue: {} },
-        { provide: FileService, useValue: {} },
-        { provide: KeycloakAuthService, useValue: mockAuthService },
-        ComponentRegistry,
+        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        EntitySchemaService,
+        { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },
       ],
     });
     service = TestBed.inject(DuplicateRecordService);

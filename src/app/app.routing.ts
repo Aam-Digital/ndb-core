@@ -16,13 +16,13 @@
  */
 
 import { Routes } from "@angular/router";
-import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 import { NotFoundComponent } from "./core/config/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
 import { AdminModule } from "./core/admin/admin.module";
+import { PublicFormModule } from "./features/public-form/public-form.module";
 
 /**
  * All routes configured for the main app routing.
@@ -45,11 +45,8 @@ export const allRoutes: Routes = [
   { path: "support", component: SupportComponent },
   // this can't be configured in config as the config is only loaded on login
   {
-    path: "public-form/:id",
-    loadComponent: () =>
-      import("./features/public-form/public-form.component").then(
-        (c) => c.PublicFormComponent,
-      ),
+    path: "public-form",
+    children: PublicFormModule.routes,
   },
   {
     path: "admin",
@@ -63,7 +60,7 @@ export const allRoutes: Routes = [
   {
     path: "**",
     pathMatch: "full",
-    component: ApplicationLoadingComponent,
+    component: NotFoundComponent,
     canActivate: [AuthGuard],
   },
 ];

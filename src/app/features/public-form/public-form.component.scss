@@ -10,3 +10,25 @@ button {
   margin-left: 2.5%;
   margin-bottom: 10px;
 }
+
+.public-form-container {
+  display: flex;
+  justify-content: center;
+}
+
+.card-container {
+  width: 100%;
+}
+
+.public-form-image {
+  max-width: 100%;
+  height: 100px;
+  object-fit: contain;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
