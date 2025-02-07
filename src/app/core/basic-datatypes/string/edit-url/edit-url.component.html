@@ -1,4 +1,7 @@
-<mat-form-field (click)="openLinkIfDisabled()">
+<mat-form-field
+  [ngClass]="{ 'disabled-field': formControl.disabled }"
+  (click)="openLinkIfDisabled()"
+>
   <mat-label>{{ label }}</mat-label>
 
   <!-- Single input field for both editable and disabled states -->
@@ -8,7 +11,6 @@
     [title]="label"
     type="url"
     [readonly]="formControl.disabled"
-    [class.disabled-link]="formControl.disabled"
   />
 
   <!-- Error message for invalid URL format -->
