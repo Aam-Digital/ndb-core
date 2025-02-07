@@ -282,8 +282,7 @@ export class EntitiesTableComponent<T extends Entity> {
     const targetElement = event.target as HTMLElement;
 
     // Check if the clicked element has the 'clickable' class
-    if (targetElement.closest(".clickable")) {
-      event.stopPropagation();
+    if (targetElement && targetElement.closest(".clickable")) {
       return;
     }
     if (row.formGroup && !row.formGroup.disabled) {
