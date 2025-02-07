@@ -41,8 +41,8 @@ export class DatabaseResolverService {
   }
 
   private registerDatabase(dbName: string) {
-    const newDb = this.databaseFactory.createDatabase(Entity.DATABASE);
-    this.databases.set(Entity.DATABASE, newDb);
+    const newDb = this.databaseFactory.createDatabase(dbName);
+    this.databases.set(dbName, newDb);
     newDb.changes().subscribe((change) => this._changesFeed.next(change));
   }
 
