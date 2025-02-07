@@ -258,8 +258,8 @@ export const coreComponents: ComponentTuple[] = [
   [
     "DisplayUrl",
     () =>
-      import(
-        "./basic-datatypes/string/display-url/display-url.component"
-        ).then((c) => c.DisplayUrlComponent),
+      import("./basic-datatypes/string/display-url/display-url.component").then(
+        (c) => c.DisplayUrlComponent,
+      ),
   ],
 ];

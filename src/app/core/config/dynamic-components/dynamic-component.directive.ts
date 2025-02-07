@@ -6,7 +6,7 @@ import {
   SimpleChange,
   SimpleChanges,
   Type,
-  ViewContainerRef
+  ViewContainerRef,
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { ComponentRegistry } from "../../../dynamic-components";
