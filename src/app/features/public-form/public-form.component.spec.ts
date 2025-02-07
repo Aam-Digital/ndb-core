@@ -250,9 +250,9 @@ describe("PublicFormComponent", () => {
     initComponent(config);
     tick();
 
-    expect(component.form.formGroup.get("category")).toHaveValue(
-      "prefilled default",
-    );
+    expect(
+      component.form.formGroup.get("category").value.isInvalidOption,
+    ).toBeTrue();
   }));
 
   function initComponent(config: PublicFormConfig = testFormConfig): void {

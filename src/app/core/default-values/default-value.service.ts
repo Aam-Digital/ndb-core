@@ -108,32 +108,15 @@ export class DefaultValueService {
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
   ) {
-    if (fieldConfig.isArray) {
-      targetFormControl.setValue([fieldConfig.defaultValue.value]);
-    } else {
-      targetFormControl.setValue(fieldConfig.defaultValue.value);
-    }
     const staticDefaultValue = fieldConfig.defaultValue.value;
-    let transformedDefaultValue: any = staticDefaultValue;
-
-    if (fieldConfig.dataType === "configurable-enum") {
-      const enumValues = this.enumService.getEnumValues(fieldConfig.additional);
-      const matchedEnum = enumValues.find(
-        (enumValue) => enumValue.id === staticDefaultValue,
+    const transformedDefaultValue =
+      this.entitySchemaService.valueToEntityFormat(
+        staticDefaultValue,
+        fieldConfig,
       );
 
-      transformedDefaultValue = matchedEnum
-        ? this.entitySchemaService.valueToEntityFormat(
-            staticDefaultValue,
-            fieldConfig,
-          )
-        : null;
-    }
-
     targetFormControl.setValue(
-      fieldConfig.isArray
-        ? [transformedDefaultValue ?? staticDefaultValue]
-        : (transformedDefaultValue ?? staticDefaultValue),
+      fieldConfig.isArray ? [transformedDefaultValue] : transformedDefaultValue,
     );
   }
 
