@@ -184,12 +184,13 @@ describe("EntitiesTableComponent", () => {
 
   it("should notify when an entity is clicked", (done) => {
     const child = new TestEntity();
+    const mockEvent = new MouseEvent("click");
     component.entityClick.subscribe((entity) => {
       expect(entity).toEqual(child);
       done();
     });
 
-    component.onRowClick({ record: child });
+    component.onRowClick({ record: child }, mockEvent);
   });
 
   it("should filter data based on filter definition", () => {
