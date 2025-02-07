@@ -83,7 +83,7 @@ export class EntityDatatype extends StringDatatype {
    * @param val The value to normalize.
    * @returns The normalized value as a string.
    */
-  private normalizeValue(val: any): string {
+  function normalizeValue(val: any): string {
     if (val == null) {
       return "";
     }
