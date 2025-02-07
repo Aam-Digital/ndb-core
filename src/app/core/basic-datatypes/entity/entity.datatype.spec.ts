@@ -43,9 +43,8 @@ describe("Schema data type: entity", () => {
 
     // "simple" case: imported value is string already
     await expectAsync(
-      dataType.importMapFunction("456", schema, "other")
+      dataType.importMapFunction("456", schema, "other"),
     ).toBeResolvedTo(c1.getId());
-
   });
 
   it("should handle numeric value correctly", async () => {
@@ -54,9 +53,9 @@ describe("Schema data type: entity", () => {
     entityMapper = mockEntityMapper([c2]);
     dataType = new EntityDatatype(entityMapper, null as any);
 
-   // "advanced" case: imported value is number but should match also
+    // "advanced" case: imported value is number but should match also
     await expectAsync(
-      dataType.importMapFunction(456, schema, "other")
+      dataType.importMapFunction(456, schema, "other"),
     ).toBeResolvedTo(c2.getId());
   });
 
@@ -79,7 +78,7 @@ describe("Schema data type: entity", () => {
     const anonymizedValue = await dataType.anonymize(
       testValue,
       testSchemaField,
-      null
+      null,
     );
 
     expect(anonymizedValue).toEqual(testValue);

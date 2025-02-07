@@ -19,7 +19,6 @@ import { Injectable } from "@angular/core";
 import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { ColumnMapping } from "../../import/column-mapping";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { Logging } from "app/core/logging/logging.service";
 
@@ -35,7 +34,6 @@ import { Logging } from "app/core/logging/logging.service";
 export class EntityDatatype extends StringDatatype {
   static override dataType = "entity";
   static override label: string = $localize`:datatype-label:link to another record`;
-
   override editComponent = "EditEntity";
   override viewComponent = "DisplayEntity";
   override importConfigComponent = "EntityImportConfig";
@@ -65,38 +63,18 @@ export class EntityDatatype extends StringDatatype {
       return undefined;
     }
 
+    const normalizedVal = normalizeValue(val);
+
     try {
       const entities = await this.entityMapper.loadType(schemaField.additional);
-      const matchedEntity = entities.find((entity) => this.normalizeValue(entity[additional]) === this.normalizeValue(val));
-
+      const matchedEntity = entities.find(
+        (entity) => normalizeValue(entity[additional]) === normalizedVal,
+      );
       return matchedEntity?.getId();
     } catch (error) {
       Logging.error("Error in EntityDatatype importMapFunction:", error);
       return undefined;
     }
-  }
-
-  /**
-   * Normalizes a value for comparison, converting it to a standardized string format.
-   * Ensures both numbers and strings are treated consistently.
-   *
-   * @param val The value to normalize.
-   * @returns The normalized value as a string.
-   */
-  function normalizeValue(val: any): string {
-    if (val == null) {
-      return "";
-    }
-    return String(val).trim(); // Convert everything to string and trim spaces
-  }
-
-  /**
-   * Returns a badge indicator if additional config is missing.
-   * @param col The column mapping object.
-   * @returns "?" if additional config is missing, otherwise undefined.
-   */
-  override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    return col.additional ? undefined : "?";
   }
 
   /**
@@ -123,4 +101,18 @@ export class EntityDatatype extends StringDatatype {
     await this.removeService.anonymize(referencedEntity);
     return value;
   }
+}
+
+/**
+ * Normalizes a value for comparison, converting it to a standardized string format.
+ * Ensures both numbers and strings are treated consistently.
+ *
+ * @param val The value to normalize.
+ * @returns The normalized value as a string.
+ */
+function normalizeValue(val: any): string {
+  if (val == null) {
+    return "";
+  }
+  return String(val).trim(); // Convert everything to string and trim spaces
 }
