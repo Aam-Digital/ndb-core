@@ -7,6 +7,7 @@ import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
 import { InheritedValueService } from "./inherited-value.service";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 /**
  * Handle default values like the current date or user for forms when editing an Entity.
@@ -18,6 +19,7 @@ export class DefaultValueService {
   constructor(
     private dynamicPlaceholderValueService: DynamicPlaceholderValueService,
     private inheritedValueService: InheritedValueService,
+    private entitySchemaService: EntitySchemaService,
   ) {}
 
   async handleEntityForm<T extends Entity>(
@@ -104,11 +106,12 @@ export class DefaultValueService {
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
   ) {
-    if (fieldConfig.isArray) {
-      targetFormControl.setValue([fieldConfig.defaultValue.value]);
-    } else {
-      targetFormControl.setValue(fieldConfig.defaultValue.value);
-    }
+    const transformedDefaultValue =
+      this.entitySchemaService.valueToEntityFormat(
+        fieldConfig.defaultValue.value,
+        fieldConfig,
+      );
+    targetFormControl.setValue(transformedDefaultValue);
   }
 
   getDefaultValueUiHint<T extends Entity>(
