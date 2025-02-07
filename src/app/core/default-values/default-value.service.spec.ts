@@ -10,7 +10,6 @@ import { InheritedValueService } from "./inherited-value.service";
 import { EventEmitter } from "@angular/core";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
 import { ConfigurableEnumDatatype } from "../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
@@ -83,7 +82,6 @@ export async function testDefaultValueCase(
 describe("DefaultValueService", () => {
   let service: DefaultValueService;
   let mockInheritedValueService: jasmine.SpyObj<InheritedValueService>;
-  let mockEntitySchemaService: EntitySchemaService;
 
   beforeEach(() => {
     mockInheritedValueService = jasmine.createSpyObj([
@@ -108,7 +106,6 @@ describe("DefaultValueService", () => {
       ],
     });
     service = TestBed.inject(DefaultValueService);
-    mockEntitySchemaService = TestBed.inject(EntitySchemaService);
   });
 
   afterEach(() => {
@@ -156,6 +153,39 @@ describe("DefaultValueService", () => {
     };
 
     testDefaultValueCase(service, fieldConfig, testEnumValue);
+    tick();
+  }));
+
+  it("should transform configurable-enum array and set the default value", fakeAsync(() => {
+    const enumId = "genders";
+    const testEnumValue = { id: "M", label: "male" };
+    const enumService = TestBed.inject(ConfigurableEnumService);
+    spyOn(enumService, "getEnumValues")
+      .withArgs(enumId)
+      .and.returnValue([testEnumValue]);
+
+    const fieldConfig: EntitySchemaField = {
+      dataType: "configurable-enum",
+      additional: enumId,
+      isArray: true,
+      defaultValue: {
+        mode: "static",
+        value: [testEnumValue.id],
+      },
+    };
+    testDefaultValueCase(service, fieldConfig, [testEnumValue]);
+    tick();
+
+    const fieldConfig2: EntitySchemaField = {
+      dataType: "configurable-enum",
+      additional: enumId,
+      isArray: true,
+      defaultValue: {
+        mode: "static",
+        value: testEnumValue.id, // should also work with single value
+      },
+    };
+    testDefaultValueCase(service, fieldConfig2, [testEnumValue]);
     tick();
   }));
 

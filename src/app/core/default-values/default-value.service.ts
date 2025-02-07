@@ -108,16 +108,12 @@ export class DefaultValueService {
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
   ) {
-    const staticDefaultValue = fieldConfig.defaultValue.value;
     const transformedDefaultValue =
       this.entitySchemaService.valueToEntityFormat(
-        staticDefaultValue,
+        fieldConfig.defaultValue.value,
         fieldConfig,
       );
-
-    targetFormControl.setValue(
-      fieldConfig.isArray ? [transformedDefaultValue] : transformedDefaultValue,
-    );
+    targetFormControl.setValue(transformedDefaultValue);
   }
 
   getDefaultValueUiHint<T extends Entity>(
