@@ -1,4 +1,4 @@
-<mat-form-field>
+<mat-form-field (click)="openLinkIfDisabled()">
   <mat-label>{{ label }}</mat-label>
 
   <!-- Single input field for both editable and disabled states -->
@@ -8,7 +8,6 @@
     [title]="label"
     type="url"
     [readonly]="formControl.disabled"
-    (click)="openLinkIfDisabled()"
     [class.disabled-link]="formControl.disabled"
   />
 

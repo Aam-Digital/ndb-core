@@ -2,3 +2,7 @@
   cursor: pointer;
   color: #6c757d;
 }
+
+input[disabled] {
+  pointer-events: none;
+}
