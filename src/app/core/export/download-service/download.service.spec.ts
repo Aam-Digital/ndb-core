@@ -10,7 +10,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
 import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { GeoLocation } from "app/features/location/GeoLocation";
+import { GeoLocation } from "app/features/location/geo-location";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("DownloadService", () => {

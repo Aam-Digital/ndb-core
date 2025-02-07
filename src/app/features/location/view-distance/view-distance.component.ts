@@ -7,7 +7,7 @@ import { Observable } from "rxjs";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ReadonlyFunctionComponent } from "../../../core/common-components/display-readonly-function/readonly-function.component";
-import { GeoLocation } from "../GeoLocation";
+import { GeoLocation } from "../geo-location";
 
 /**
  * Config for displaying the distance between two entities

@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { of } from "rxjs";
 import { LocationDatatype } from "./location.datatype";
-import { GeoLocation } from "./GeoLocation";
+import { GeoLocation } from "./geo-location";
 import { GeoResult, GeoService } from "./geo.service";
 
 describe("Schema data type: location", () => {

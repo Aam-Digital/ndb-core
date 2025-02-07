@@ -11,7 +11,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { GeoLocation } from "../GeoLocation";
+import { GeoLocation } from "../geo-location";
 
 describe("AddressEditComponent", () => {
   let component: AddressEditComponent;

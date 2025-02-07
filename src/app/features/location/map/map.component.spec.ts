@@ -14,7 +14,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EMPTY, of, Subject } from "rxjs";
-import { GeoLocation } from "../GeoLocation";
+import { GeoLocation } from "../geo-location";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("MapComponent", () => {
