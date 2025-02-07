@@ -8,7 +8,6 @@ import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
 import { InheritedValueService } from "./inherited-value.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 
 /**
  * Handle default values like the current date or user for forms when editing an Entity.
@@ -21,7 +20,6 @@ export class DefaultValueService {
     private dynamicPlaceholderValueService: DynamicPlaceholderValueService,
     private inheritedValueService: InheritedValueService,
     private entitySchemaService: EntitySchemaService,
-    private enumService: ConfigurableEnumService,
   ) {}
 
   async handleEntityForm<T extends Entity>(
