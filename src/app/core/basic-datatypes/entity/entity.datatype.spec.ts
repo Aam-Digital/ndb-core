@@ -35,7 +35,7 @@ describe("Schema data type: entity", () => {
     schema = TestEntity.schema.get("ref") as EntitySchemaField;
   });
 
-  it("should handle numeric-string mismatches correctly", async () => {
+  it("should importMap by matching string correctly", async () => {
     const c1 = new TestEntity();
     c1.other = "456"; // Ensure "other" is a string
     entityMapper = mockEntityMapper([c1]);
@@ -47,7 +47,7 @@ describe("Schema data type: entity", () => {
     ).toBeResolvedTo(c1.getId());
   });
 
-  it("should handle numeric value correctly", async () => {
+  it("should importMap by matching numeric value correctly", async () => {
     const c2 = new TestEntity();
     c2.other = "456"; // Ensure "other" is a string
     entityMapper = mockEntityMapper([c2]);

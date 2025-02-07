@@ -63,12 +63,10 @@ export class EntityDatatype extends StringDatatype {
       return undefined;
     }
 
-    const normalizedVal = normalizeValue(val);
-
     try {
       const entities = await this.entityMapper.loadType(schemaField.additional);
       const matchedEntity = entities.find(
-        (entity) => normalizeValue(entity[additional]) === normalizedVal,
+        (entity) => normalizeValue(entity[additional]) === normalizeValue(val),
       );
       return matchedEntity?.getId();
     } catch (error) {
