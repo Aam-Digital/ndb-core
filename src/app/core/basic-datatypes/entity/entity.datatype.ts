@@ -53,7 +53,7 @@ export class EntityDatatype extends StringDatatype {
    *
    * @param val The value from an import that should be mapped to an entity reference.
    * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
-   * @param additional The field of the referenced entity that should be compared with the val.
+   * @param additional The field of the referenced entity that should be compared with the val. (e.g. if we run importMapFunction for a field that is an entity-reference to a "School" entity, this could be "name" if the "School" entity has a "name" property and the import should use that name to match the correct school)
    * @returns Promise resolving to the ID of the matched entity or undefined if no match is found.
    */
   override async importMapFunction(
