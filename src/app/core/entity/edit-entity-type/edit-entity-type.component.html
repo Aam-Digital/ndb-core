@@ -4,4 +4,9 @@
     [formControl]="formControl"
     [multi]="multi"
   ></app-entity-type-select>
+  @if (formControl.invalid && formControl.touched) {
+    <mat-error>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
+  }
 </mat-form-field>
