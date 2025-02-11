@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { NgIf } from "@angular/common";
+import { NgClass, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
@@ -18,7 +18,7 @@ import { PillComponent } from "../pill/pill.component";
   selector: "app-entity-field-view",
   templateUrl: "./entity-field-view.component.html",
   styleUrls: ["./entity-field-view.component.scss"],
-  imports: [NgIf, DynamicComponentDirective, PillComponent],
+  imports: [NgIf, DynamicComponentDirective, PillComponent, NgClass],
   standalone: true,
 })
 export class EntityFieldViewComponent<E extends Entity = Entity>
