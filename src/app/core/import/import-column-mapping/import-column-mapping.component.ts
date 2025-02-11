@@ -22,6 +22,7 @@ import { ComponentRegistry } from "../../../dynamic-components";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { EditImportColumnMappingComponent } from "../edit-import-column-mapping/edit-import-column-mapping.component";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -33,6 +34,7 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
   styleUrls: ["./import-column-mapping.component.scss"],
   standalone: true,
   imports: [
+    EditImportColumnMappingComponent,
     HelpButtonComponent,
     NgForOf,
     MatInputModule,
@@ -126,6 +128,16 @@ export class ImportColumnMappingComponent implements OnChanges {
 
     // Emitting copy of array to trigger change detection; values have been updated in place through data binding
     this.columnMappingChange.emit([...this.columnMapping]);
+  }
+
+  getUsedColNames(currentCol: ColumnMapping): Set<string> {
+    const used = new Set<string>();
+    for (const col of this.columnMapping) {
+      if (col !== currentCol && col.propertyName) {
+        used.add(col.propertyName);
+      }
+    }
+    return used;
   }
 
   // TODO: infer column mapping from data. The following is from old DataImportModule (#1942)

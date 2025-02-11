@@ -14,30 +14,14 @@
 
 <div>
   <div *ngFor="let col of columnMapping">
-    <mat-form-field>
-      <mat-label>{{ col.column }}</mat-label>
-      <app-entity-field-select
-        [entityType]="entityCtor"
-        [hideOption]="isUsed"
-        [(ngModel)]="col.propertyName"
-        (ngModelChange)="updateMapping(col)"
-      />
-    </mat-form-field>
-
-    @if (dataTypeMap[col.propertyName]?.importConfigComponent) {
-      <button
-        class="margin-left-small"
-        mat-stroked-button
-        (click)="openMappingComponent(col)"
-        i18n="
-          import - column mapping - configure additional transformation button
-        "
-        [matBadge]="mappingAdditionalWarning?.[col.column]"
-        [matBadgeHidden]="!mappingAdditionalWarning?.[col.column]"
-        matBadgeColor="warn"
-      >
-        Configure value mapping
-      </button>
-    }
+    <app-edit-import-column-mapping
+      [col]="col"
+      [entityCtor]="entityCtor"
+      [dataTypeMap]="dataTypeMap"
+      [mappingAdditionalWarning]="mappingAdditionalWarning?.[col.column]"
+      [UsedColNames]="getUsedColNames(col)"
+      (propertyNameChange)="updateMapping($event)"
+      (openMapping)="openMappingComponent(col)"
+    />
   </div>
 </div>
