@@ -1,14 +1,18 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, Input, Output, EventEmitter, inject } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { MatDialog } from "@angular/material/dialog";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { MatInputModule } from "@angular/material/input";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
+import { MappingDialogData } from "../import-column-mapping/import-column-mapping.component";
 
 @Component({
   selector: "app-edit-import-column-mapping",
@@ -25,23 +29,65 @@ import { MatBadgeModule } from "@angular/material/badge";
   ],
 })
 export class EditImportColumnMappingComponent {
+  private dialog = inject(MatDialog);
+  private componentRegistry = inject(ComponentRegistry);
+  private schemaService = inject(EntitySchemaService);
+
   @Input() col: ColumnMapping;
-  @Output() propertyNameChange = new EventEmitter<ColumnMapping>();
-
   @Input() entityCtor: EntityConstructor;
-  @Input() UsedColNames: Set<string>;
+  @Input() usedColNames: Set<string>;
+  @Input() rawData: any[];
+  @Input() columnMapping: ColumnMapping[] = [];
 
-  // TODO: remove? @Input() dataTypeMap: Record<string, DefaultDatatype>;
+  @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
+
   currentlyMappedDatatype: DefaultDatatype;
+
+  /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: string;
-  openMapping = new EventEmitter<void>(); // TODO: move the method from parent to this here without output
 
-  hideOption = (option: FormFieldConfig) => this.UsedColNames.has(option.id);
+  hideOption = (option: FormFieldConfig) => this.usedColNames.has(option.id);
 
-  onPropertyNameChange() {
-    this.propertyNameChange.emit(this.col);
+  async openMappingComponent() {
+    const uniqueValues = new Set<any>();
+    this.rawData.forEach((obj) => uniqueValues.add(obj[this.col.column]));
 
-    // TODO: update this.currentlyMappedDatatype to the new one
-    // TODO: get mappingAdditionalWarning from the new Datatype
+    const configComponent = await this.componentRegistry.get(
+      this.currentlyMappedDatatype.importConfigComponent,
+    )();
+
+    this.dialog
+      .open<any, MappingDialogData>(configComponent, {
+        data: {
+          col: this.col,
+          values: [...uniqueValues],
+          entityType: this.entityCtor,
+        },
+        width: "80vw",
+        disableClose: true,
+      })
+      .afterClosed()
+      .subscribe(() => this.updateMapping(true));
+  }
+
+  updateMapping(settingAdditional = false) {
+    if (!settingAdditional) {
+      delete this.col.additional;
+    }
+
+    this.updateDatatypeAndWarning();
+    this.columnMappingChange.emit([...this.columnMapping]);
+  }
+
+  private updateDatatypeAndWarning() {
+    const schema = this.entityCtor.schema.get(this.col.propertyName);
+    this.currentlyMappedDatatype = schema
+      ? this.schemaService.getDatatypeOrDefault(schema.dataType)
+      : null;
+
+    this.mappingAdditionalWarning =
+      this.currentlyMappedDatatype?.importIncompleteAdditionalConfigBadge?.(
+        this.col,
+      );
   }
 }

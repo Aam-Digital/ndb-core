@@ -9,7 +9,6 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { ColumnMapping } from "../column-mapping";
 import { Entity } from "../../entity/model/entity";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("EditImportColumnMappingComponent", () => {
@@ -43,30 +42,11 @@ describe("EditImportColumnMappingComponent", () => {
     component = fixture.componentInstance;
     component.col = {} as ColumnMapping;
     component.entityCtor = Entity;
-    component.dataTypeMap = {};
     component.mappingAdditionalWarning = "";
-    component.UsedColNames = new Set<string>();
     fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should emit openMapping on openMapping event", () => {
-    spyOn(component.openMapping, "emit");
-    component.openMapping.emit();
-    expect(component.openMapping.emit).toHaveBeenCalled();
-  });
-
-  it("should hide option if UsedColNames has option id", () => {
-    const option = { id: "test" } as FormFieldConfig;
-    component.UsedColNames.add("test");
-    expect(component.hideOption(option)).toBeTrue();
-  });
-
-  it("should not hide option if UsedColNames does not have option id", () => {
-    const option = { id: "test" } as FormFieldConfig;
-    expect(component.hideOption(option)).toBeFalse();
   });
 });

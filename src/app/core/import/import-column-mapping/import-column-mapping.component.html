@@ -17,11 +17,9 @@
     <app-edit-import-column-mapping
       [col]="col"
       [entityCtor]="entityCtor"
-      [dataTypeMap]="dataTypeMap"
-      [mappingAdditionalWarning]="mappingAdditionalWarning?.[col.column]"
-      [UsedColNames]="getUsedColNames(col)"
-      (propertyNameChange)="updateMapping($event)"
-      (openMapping)="openMappingComponent(col)"
+      [usedColNames]="getUsedColNames(col)"
+      [rawData]="rawData"
+      [columnMapping]="columnMapping"
     />
   </div>
 </div>

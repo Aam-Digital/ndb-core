@@ -4,15 +4,15 @@
     [entityType]="entityCtor"
     [hideOption]="hideOption"
     [(ngModel)]="col.propertyName"
-    (ngModelChange)="onPropertyNameChange()"
+    (ngModelChange)="updateMapping()"
   />
 </mat-form-field>
 
-@if (currentlyMappedDatatype.importConfigComponent) {
+@if (currentlyMappedDatatype?.importConfigComponent) {
   <button
     class="margin-left-small"
     mat-stroked-button
-    (click)="openMapping.emit()"
+    (click)="openMappingComponent()"
     i18n="import - column mapping - configure additional transformation button"
     [matBadge]="mappingAdditionalWarning"
     [matBadgeHidden]="!mappingAdditionalWarning"

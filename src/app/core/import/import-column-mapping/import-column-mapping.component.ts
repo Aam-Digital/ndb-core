@@ -71,61 +71,19 @@ export class ImportColumnMappingComponent implements OnChanges {
   /** properties that need further adjustments through a component */
   dataTypeMap: { [name: string]: DefaultDatatype };
 
-  /** warning label badges for a mapped column that requires user configuration for the "additional" details */
-  mappingAdditionalWarning: { [key: string]: string } = {};
-
   constructor(
     private entities: EntityRegistry,
     private schemaService: EntitySchemaService,
-    private componentRegistry: ComponentRegistry,
-    private dialog: MatDialog,
     private importColumnMappingService: ImportColumnMappingService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.columnMapping) {
-      console.log("changes changed", changes.columnMapping);
       this.importColumnMappingService.automaticallySelectMappings(
         this.columnMapping,
         this.entityCtor.schema,
       );
     }
-  }
-
-  async openMappingComponent(col: ColumnMapping) {
-    const uniqueValues = new Set<any>();
-    this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
-    const configComponent = await this.componentRegistry.get(
-      this.dataTypeMap[col.propertyName].importConfigComponent,
-    )();
-
-    this.dialog
-      .open<any, MappingDialogData>(configComponent, {
-        data: {
-          col: col,
-          values: [...uniqueValues],
-          entityType: this.entityCtor,
-        },
-        width: "80vw",
-        disableClose: true,
-      })
-      .afterClosed()
-      .subscribe(() => this.updateMapping(col, true));
-  }
-
-  updateMapping(col: ColumnMapping, settingAdditional: boolean = false) {
-    if (!settingAdditional) {
-      // reset additional, because mapping changed
-      delete col.additional;
-    }
-
-    this.mappingAdditionalWarning[col.column] =
-      this.dataTypeMap[
-        col.propertyName
-      ]?.importIncompleteAdditionalConfigBadge?.(col);
-
-    // Emitting copy of array to trigger change detection; values have been updated in place through data binding
-    this.columnMappingChange.emit([...this.columnMapping]);
   }
 
   getUsedColNames(currentCol: ColumnMapping): Set<string> {
