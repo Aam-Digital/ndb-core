@@ -9,7 +9,6 @@ import {
 import { ColumnMapping } from "../column-mapping";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityConstructor } from "../../entity/model/entity";
-import { MatDialog } from "@angular/material/dialog";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { NgForOf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
@@ -18,10 +17,8 @@ import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { ComponentRegistry } from "../../../dynamic-components";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { EditImportColumnMappingComponent } from "../edit-import-column-mapping/edit-import-column-mapping.component";
 
 /**
@@ -96,24 +93,8 @@ export class ImportColumnMappingComponent implements OnChanges {
     return used;
   }
 
-  // TODO: infer column mapping from data. The following is from old DataImportModule (#1942)
-  /**
-   * Try to guess mappings of import file columns to entity properties.
-   * (e.g. based on column headers)
-   * @private
-   */
-  private inferColumnPropertyMapping() {
-    //const columnMap: ImportColumnMap = {};
-    //    for (const p of this.properties) {
-    //      const match = this.importData?.fields.find(
-    //        (f) => f === p.label || f === p.key
-    //      );
-    //      if (match) {
-    //        columnMap[match] = p;
-    //      }
-    //    }
-    //
-    //    this.loadColumnMapping(columnMap);
+  updateColumnMapping() {
+    this.columnMappingChange.emit([...this.columnMapping]);
   }
 }
 

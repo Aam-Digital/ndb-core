@@ -39,7 +39,7 @@ export class EditImportColumnMappingComponent {
   @Input() rawData: any[];
   @Input() columnMapping: ColumnMapping[] = [];
 
-  @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
+  @Output() valueChange = new EventEmitter<ColumnMapping[]>();
 
   currentlyMappedDatatype: DefaultDatatype;
 
@@ -76,7 +76,7 @@ export class EditImportColumnMappingComponent {
     }
 
     this.updateDatatypeAndWarning();
-    this.columnMappingChange.emit([...this.columnMapping]);
+    this.valueChange.emit([...this.columnMapping]);
   }
 
   private updateDatatypeAndWarning() {

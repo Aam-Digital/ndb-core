@@ -19,7 +19,7 @@
       [entityCtor]="entityCtor"
       [usedColNames]="getUsedColNames(col)"
       [rawData]="rawData"
-      [columnMapping]="columnMapping"
+      (valueChange)="updateColumnMapping()"
     />
   </div>
 </div>
