@@ -186,4 +186,13 @@ export class NotificationSettingsComponent implements OnInit {
     }
     return false;
   }
+
+  /**
+   * Sends a test push-notification.
+   */
+  testNotification() {
+    this.notificationService.testNotification().catch((reason) => {
+      Logging.error("Could not send test notification: " + reason.message);
+    });
+  }
 }

@@ -100,15 +100,6 @@
               >Add Notification Criteria</span
             >
           </button>
-          <button
-            mat-icon-button
-            matTooltip="Update Notification Condition via JSON editor"
-            i18n-matTooltip
-            (click)="openConditionsInJsonEditorPopup()"
-            [disabled]="!value.entityType"
-          >
-            <fa-icon icon="tools"></fa-icon>
-          </button>
         </div>
       </div>
 
@@ -123,15 +114,13 @@
         </button>
 
         <button
-          mat-stroked-button
-          color="accent"
-          (click)="testNotification()"
-          [disabled]="!pushNotificationsEnabled"
-          matTooltip="Show a sample notification (only available if push notifications are enabled)"
+          mat-icon-button
+          matTooltip="Update Notification Condition via JSON editor"
           i18n-matTooltip
+          (click)="openConditionsInJsonEditorPopup()"
+          [disabled]="!value.entityType"
         >
-          <fa-icon icon="paper-plane" class="standard-icon-with-text"></fa-icon>
-          <span i18n>Test Notification</span>
+          <fa-icon icon="tools"></fa-icon>
         </button>
 
         <!-- TODO: re-enable selection of "per-rule notification channels or remove completely (currently hidden to simplify UX)

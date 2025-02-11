@@ -28,10 +28,8 @@ import {
   NotificationRuleCondition,
 } from "./notification-condition/notification-condition.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
-import { NotificationService } from "../notification.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
-import { Logging } from "../../../core/logging/logging.service";
 import { MatOption } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { JsonEditorDialogComponent } from "app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component";
@@ -76,10 +74,6 @@ export class NotificationRuleComponent implements OnChanges {
   entityTypeControl: AbstractControl;
 
   readonly dialog = inject(MatDialog);
-  readonly notificationService = inject(NotificationService);
-
-  pushNotificationsEnabled =
-    this.notificationService.hasNotificationPermissionGranted();
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
@@ -148,15 +142,6 @@ export class NotificationRuleComponent implements OnChanges {
 
     this.value = value;
     this.valueChange.emit(value);
-  }
-
-  /**
-   * Sends a test notification.
-   */
-  testNotification() {
-    this.notificationService.testNotification().catch((reason) => {
-      Logging.error("Could not send test notification: " + reason.message);
-    });
   }
 
   addNewNotificationCondition() {

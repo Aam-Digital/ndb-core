@@ -118,6 +118,21 @@
             text="A notification on your system (e.g. a normal Android smartphone notification). You see these alerts even when your app is not opened at the moment."
             i18n-text
           ></app-help-button>
+
+          <button
+            mat-stroked-button
+            color="accent"
+            (click)="testNotification()"
+            [disabled]="!isPushNotificationEnabled"
+            matTooltip="Show a sample notification (only available if push notifications are enabled)"
+            i18n-matTooltip
+          >
+            <fa-icon
+              icon="paper-plane"
+              class="standard-icon-with-text"
+            ></fa-icon>
+            <span i18n>Test Notification</span>
+          </button>
         </div>
       </div>
 
