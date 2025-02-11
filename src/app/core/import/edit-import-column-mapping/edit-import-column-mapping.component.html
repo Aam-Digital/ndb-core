@@ -1,0 +1,23 @@
+<mat-form-field>
+  <mat-label>{{ col.column }}</mat-label>
+  <app-entity-field-select
+    [entityType]="entityCtor"
+    [hideOption]="hideOption"
+    [(ngModel)]="col.propertyName"
+    (ngModelChange)="onPropertyNameChange()"
+  />
+</mat-form-field>
+
+@if (dataTypeMap[col.propertyName]?.importConfigComponent) {
+  <button
+    class="margin-left-small"
+    mat-stroked-button
+    (click)="openMapping.emit()"
+    i18n="import - column mapping - configure additional transformation button"
+    [matBadge]="mappingAdditionalWarning"
+    [matBadgeHidden]="!mappingAdditionalWarning"
+    matBadgeColor="warn"
+  >
+    Configure value mapping
+  </button>
+}
