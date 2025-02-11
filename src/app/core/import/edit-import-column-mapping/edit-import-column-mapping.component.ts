@@ -26,17 +26,22 @@ import { MatBadgeModule } from "@angular/material/badge";
 })
 export class EditImportColumnMappingComponent {
   @Input() col: ColumnMapping;
+  @Output() propertyNameChange = new EventEmitter<ColumnMapping>();
+
   @Input() entityCtor: EntityConstructor;
-  @Input() dataTypeMap: Record<string, DefaultDatatype>;
-  @Input() mappingAdditionalWarning: string;
   @Input() UsedColNames: Set<string>;
 
-  @Output() propertyNameChange = new EventEmitter<ColumnMapping>();
-  @Output() openMapping = new EventEmitter<void>();
+  // TODO: remove? @Input() dataTypeMap: Record<string, DefaultDatatype>;
+  currentlyMappedDatatype: DefaultDatatype;
+  mappingAdditionalWarning: string;
+  openMapping = new EventEmitter<void>(); // TODO: move the method from parent to this here without output
 
   hideOption = (option: FormFieldConfig) => this.UsedColNames.has(option.id);
 
   onPropertyNameChange() {
     this.propertyNameChange.emit(this.col);
+
+    // TODO: update this.currentlyMappedDatatype to the new one
+    // TODO: get mappingAdditionalWarning from the new Datatype
   }
 }
