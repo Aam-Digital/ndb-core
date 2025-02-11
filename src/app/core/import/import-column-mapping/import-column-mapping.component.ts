@@ -74,9 +74,6 @@ export class ImportColumnMappingComponent implements OnChanges {
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: { [key: string]: string } = {};
 
-  isUsed = (option: FormFieldConfig) =>
-    this.columnMapping.some(({ propertyName }) => propertyName === option.id);
-
   constructor(
     private entities: EntityRegistry,
     private schemaService: EntitySchemaService,
@@ -87,6 +84,7 @@ export class ImportColumnMappingComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.columnMapping) {
+      console.log("changes changed", changes.columnMapping);
       this.importColumnMappingService.automaticallySelectMappings(
         this.columnMapping,
         this.entityCtor.schema,
