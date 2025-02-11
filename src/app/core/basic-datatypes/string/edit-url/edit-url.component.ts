@@ -23,9 +23,30 @@ import { NgClass, NgIf } from "@angular/common";
   standalone: true,
 })
 export class EditUrlComponent extends EditComponent<string> {
+  
+  /**
+   * Checks if the current formControl value is a valid URL.
+   * Returns true only if it is a properly formatted http/https URL.
+   */
+  isValidUrl(value: string | null): boolean {
+    if (!value) return false;
+    try {
+      const url = new URL(value);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Opens the URL in a new tab only if:
+   * - The input field is disabled
+   * - The value is a valid URL
+   */
   openLinkIfDisabled() {
-    if (this.formControl.disabled && this.formControl.value) {
+    if (this.formControl.disabled && this.isValidUrl(this.formControl.value)) {
       window.open(this.formControl.value, "_blank");
     }
   }
 }
+

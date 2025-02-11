@@ -1,4 +1,7 @@
-<div *ngIf="_field" [ngClass]="{ clickable: _field.dataType === 'url' }">
+<div 
+  *ngIf="_field" 
+  [ngClass]="{ clickable: isValidUrl(entity[_field.id]) }"
+>
   <div *ngIf="showLabel === 'above'" class="label">
     {{ _field.label }}
   </div>
@@ -17,3 +20,4 @@
     }"
   ></ng-container>
 </div>
+

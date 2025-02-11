@@ -52,4 +52,18 @@ export class EntityFieldViewComponent<E extends Entity = Entity>
       this.entity.getConstructor(),
     );
   }
+
+  /**
+   * Checks if a given value is a valid URL.
+   * Returns true only if it is a properly formatted http/https URL.
+   */
+  isValidUrl(value: string | null): boolean {
+    if (!value) return false;
+    try {
+      const url = new URL(value);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch (error) {
+      return false;
+    }
+  }
 }

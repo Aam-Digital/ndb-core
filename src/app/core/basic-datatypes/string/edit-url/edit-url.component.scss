@@ -2,6 +2,19 @@ input[disabled] {
   pointer-events: none;
 }
 
+/* Apply underline only for valid URLs */
 .disabled-field {
+  text-decoration: underline;
+}
+
+.clickable {
+  pointer-events: all;
   cursor: pointer;
 }
+
+.clickable:hover {
+  text-decoration: underline;
+}
+
+
+

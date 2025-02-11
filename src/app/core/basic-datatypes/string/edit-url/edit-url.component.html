@@ -1,5 +1,8 @@
 <mat-form-field
-  [ngClass]="{ 'disabled-field': formControl.disabled }"
+  [ngClass]="{ 
+    'disabled-field': formControl.disabled && isValidUrl(formControl.value), 
+    'clickable': formControl.disabled && isValidUrl(formControl.value) 
+  }"
   (click)="openLinkIfDisabled()"
 >
   <mat-label>{{ label }}</mat-label>
@@ -21,3 +24,5 @@
     <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
 </mat-form-field>
+
+
