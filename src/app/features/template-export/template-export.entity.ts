@@ -49,6 +49,7 @@ export class TemplateExport extends Entity {
     labelShort: $localize`:TemplateExport:Entity Types`,
     editComponent: "EditEntityType",
     isArray: true,
+    validators: { required: true },
   })
   applicableForEntityTypes: string[];
 

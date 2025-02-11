@@ -12,19 +12,26 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
 import { DefaultValueService } from "./default-value.service";
 import { EventEmitter } from "@angular/core";
+import { EntityAbility } from "../permissions/ability/entity-ability";
+import { UpdatedEntity } from "../entity/model/entity-update";
+import { Config } from "../config/config";
+import { Subject } from "rxjs";
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
   let defaultValueService: DefaultValueService;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
+  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
-    mockEntityMapperService = jasmine.createSpyObj(["load"]);
-
+    mockEntityMapperService = jasmine.createSpyObj(["load", "receiveUpdates"]);
+    mockEntityMapperService.receiveUpdates.and.returnValue(updateSubject);
     TestBed.configureTestingModule({
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapperService },
         { provide: DynamicPlaceholderValueService, useValue: null },
+        { provide: EntityAbility, useValue: mockAbility },
       ],
     });
     service = TestBed.inject(InheritedValueService);

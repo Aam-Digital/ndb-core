@@ -233,7 +233,7 @@ describe("PublicFormComponent", () => {
       {
         fields: [
           {
-            id: "category",
+            id: "other",
             defaultValue: { mode: "static", value: "base default" },
           },
         ],
@@ -241,7 +241,7 @@ describe("PublicFormComponent", () => {
     ];
     config.prefilledFields = [
       {
-        id: "category",
+        id: "other",
         defaultValue: { mode: "static", value: "prefilled default" },
         hideFromForm: true,
       },
@@ -250,7 +250,7 @@ describe("PublicFormComponent", () => {
     initComponent(config);
     tick();
 
-    expect(component.form.formGroup.get("category")).toHaveValue(
+    expect(component.form.formGroup.get("other")).toHaveValue(
       "prefilled default",
     );
   }));

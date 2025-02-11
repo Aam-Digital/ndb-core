@@ -4919,15 +4919,6 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4753559457281797116" datatype="html">
-        <source>The application will be ready in a moment</source>
-        <target>L&apos;application sera prête dans un instant</target>
-        <note priority="1" from="description">Sync notification line 2</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/config/dynamic-routing/empty/application-loading.component.html</context>
-          <context context-type="linenumber">2</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="6578397717654172779" datatype="html">
         <source>Page Not Found</source>
         <target>Page non trouvée</target>
@@ -5411,7 +5402,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Préparation des données (Indexing)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/database-indexing/database-indexing.service.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2296681895307893686" datatype="html">
@@ -5723,7 +5714,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Entity.toString fallback for anonymized record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/model/entity.ts</context>
-          <context context-type="linenumber">312,314</context>
+          <context context-type="linenumber">317,319</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6116431777503568524" datatype="html">
@@ -6589,7 +6580,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Title user feedback dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">158</context>
+          <context context-type="linenumber">164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7476504920536064818" datatype="html">
@@ -6598,7 +6589,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Subtitle user feedback dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">159</context>
+          <context context-type="linenumber">165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7471826153403325742" datatype="html">
@@ -6744,7 +6735,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Synchronisation de la base de données</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/sync-status/sync-status/sync-status.component.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7609250563997703714" datatype="html">
@@ -6752,7 +6743,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Base de données à jour</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/sync-status/sync-status/sync-status.component.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3509065538891964357" datatype="html">
@@ -7077,7 +7068,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>suppression automatique d&apos;un conflit trivial</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">88</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7658918903045242875" datatype="html">
@@ -7085,7 +7076,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Supprimer la version en conflit?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">116</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4087848196794777278" datatype="html">
@@ -7093,7 +7084,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Êtes-vous sûr de vouloir garder la version actuelle et supprimer la version en conflit? <x id="PH" equiv-text="this.stringify(         docToDelete       )"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">112,114</context>
+          <context context-type="linenumber">117,119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4374216362447708678" datatype="html">
@@ -7101,7 +7092,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Version en conflit supprimée</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6850466916630326370" datatype="html">
@@ -7109,7 +7100,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Erreur lors de la suppression de la version en conflit: <x id="PH" equiv-text="errorMessage"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">132</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="273913944732208159" datatype="html">
@@ -7117,7 +7108,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Erreur lors de la sauvegarde de la version: <x id="PH" equiv-text="errorMessage"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">150</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8041967268116003385" datatype="html">
@@ -7125,7 +7116,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Sauvegarder les modifications pour la résolution des conflits?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">168</context>
+          <context context-type="linenumber">173</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1114868388167698944" datatype="html">
@@ -7133,7 +7124,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Êtes-vous sûr de vouloir sauvegarder les modifications suivantes et supprimer la version en conflit? <x id="PH" equiv-text="this.stringify(         newChanges       )"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">169,171</context>
+          <context context-type="linenumber">174,176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7864365699295940113" datatype="html">
@@ -7141,7 +7132,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Version en conflit sélectionnée</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">178</context>
+          <context context-type="linenumber">183</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7569438921171218080" datatype="html">
@@ -7149,7 +7140,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Résolu manuellement</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/conflict-resolution/compare-rev/compare-rev.component.ts</context>
-          <context context-type="linenumber">180</context>
+          <context context-type="linenumber">185</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6142285405615208332" datatype="html">
@@ -7443,7 +7434,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Téléchargement de &quot;<x id="PH" equiv-text="file.name"/>&quot;</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4204232858147199020" datatype="html">
@@ -7831,7 +7822,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Certains champs ne sont pas valides, vérifier le formulaire et le soumettre à nouveau.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
-          <context context-type="linenumber">82</context>
+          <context context-type="linenumber">81</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4310513583397103775" datatype="html">
@@ -9635,6 +9626,17 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-field-edit/entity-field-edit.component.html</context>
           <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2286125960560188437" datatype="html">
+        <source> We are downloading your system configuration and setting things up. The application will be ready in a moment ...
+</source>
+        <target> Nous téléchargeons la configuration de votre système et mettons les choses en place. L&apos;application sera prête dans quelques instants ...
+</target>
+        <note priority="1" from="description">Sync notification line 2</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/config/dynamic-routing/empty/application-loading.component.html</context>
+          <context context-type="linenumber">2,5</context>
         </context-group>
       </trans-unit>
     </body>
