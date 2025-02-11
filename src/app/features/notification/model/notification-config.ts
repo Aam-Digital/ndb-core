@@ -30,9 +30,15 @@ export class NotificationConfig extends Entity {
 
   /**
    * Helper method to access the user ID for whom this config is.
+   *
+   * Persisted to the database as to make permission checks easier.
    */
-  getUserId(): string {
-    return this.getId();
+  @DatabaseField() get userId(): string {
+    return this.getId(true);
+  }
+
+  set userId(value: string) {
+    // do not set manually, this is inferred from _id only
   }
 }
 
