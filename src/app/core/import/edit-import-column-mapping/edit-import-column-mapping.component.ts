@@ -37,7 +37,7 @@ export class EditImportColumnMappingComponent {
   private componentRegistry = inject(ComponentRegistry);
   private schemaService = inject(EntitySchemaService);
 
-  @Input() col: ColumnMapping;
+  @Input() value: ColumnMapping;
   @Input() entityCtor: EntityConstructor;
   @Input() usedColNames: Set<string>;
   @Input() rawData: any[];
@@ -55,7 +55,7 @@ export class EditImportColumnMappingComponent {
   async openMappingComponent() {
     this.updateDatatypeAndWarning();
     const uniqueValues = new Set<any>();
-    this.rawData.forEach((obj) => uniqueValues.add(obj[this.col.column]));
+    this.rawData.forEach((obj) => uniqueValues.add(obj[this.value.column]));
 
     const configComponent = await this.componentRegistry.get(
       this.currentlyMappedDatatype.importConfigComponent,
@@ -64,7 +64,7 @@ export class EditImportColumnMappingComponent {
     this.dialog
       .open<any, MappingDialogData>(configComponent, {
         data: {
-          col: this.col,
+          col: this.value,
           values: [...uniqueValues],
           entityType: this.entityCtor,
         },
@@ -77,7 +77,7 @@ export class EditImportColumnMappingComponent {
 
   updateMapping(settingAdditional = false) {
     if (!settingAdditional) {
-      delete this.col.additional;
+      delete this.value.additional;
     }
 
     this.updateDatatypeAndWarning();
@@ -85,14 +85,14 @@ export class EditImportColumnMappingComponent {
   }
 
   private updateDatatypeAndWarning() {
-    const schema = this.entityCtor.schema.get(this.col.propertyName);
+    const schema = this.entityCtor.schema.get(this.value.propertyName);
     this.currentlyMappedDatatype = schema
       ? this.schemaService.getDatatypeOrDefault(schema.dataType)
       : null;
 
     this.mappingAdditionalWarning =
       this.currentlyMappedDatatype?.importIncompleteAdditionalConfigBadge?.(
-        this.col,
+        this.value,
       );
   }
 }

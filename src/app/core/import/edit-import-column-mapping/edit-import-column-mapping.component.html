@@ -1,9 +1,9 @@
 <mat-form-field>
-  <mat-label>{{ col.column }}</mat-label>
+  <mat-label>{{ value.column }}</mat-label>
   <app-entity-field-select
     [entityType]="entityCtor"
     [hideOption]="hideOption"
-    [(ngModel)]="col.propertyName"
+    [(ngModel)]="value.propertyName"
     (ngModelChange)="updateMapping()"
   />
 </mat-form-field>

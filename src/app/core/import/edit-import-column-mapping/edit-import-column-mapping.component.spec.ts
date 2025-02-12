@@ -36,7 +36,7 @@ describe("EditImportColumnMappingComponent", () => {
 
     fixture = TestBed.createComponent(EditImportColumnMappingComponent);
     component = fixture.componentInstance;
-    component.col = columnMapping;
+    component.value = columnMapping;
     component.rawData = rawData;
     fixture.detectChanges();
 
@@ -60,7 +60,7 @@ describe("EditImportColumnMappingComponent", () => {
 
     const genderColumn = component.columnMapping[1];
     genderColumn.propertyName = "category";
-    component.col = genderColumn;
+    component.value = genderColumn;
     await component.openMappingComponent();
 
     expect(dialogSpy.open).toHaveBeenCalledWith(
