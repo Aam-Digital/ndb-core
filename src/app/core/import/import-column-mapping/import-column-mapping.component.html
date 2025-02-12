@@ -15,9 +15,9 @@
 <div>
   <div *ngFor="let col of columnMapping">
     <app-edit-import-column-mapping
-      [value]="col"
+      [columnMapping]="col"
       [entityCtor]="entityCtor"
-      [usedColNames]="getUsedColNames(col)"
+      [usedColNames]="usedColNames.get(col)"
       [rawData]="rawData"
       (valueChange)="updateColumnMapping()"
     />

@@ -45,12 +45,12 @@ export class ImportColumnMappingComponent implements OnChanges {
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   entityCtor: EntityConstructor;
+  usedColNames: Map<ColumnMapping, Set<string>> = new Map();
 
   @Input() set entityType(value: string) {
     if (!value) {
       return;
     }
-
     this.entityCtor = this.entities.get(value);
   }
 
@@ -65,10 +65,18 @@ export class ImportColumnMappingComponent implements OnChanges {
         this.columnMapping,
         this.entityCtor.schema,
       );
+      this.updateUsedColNames();
     }
   }
 
-  getUsedColNames(currentCol: ColumnMapping): Set<string> {
+  private updateUsedColNames(): void {
+    this.usedColNames.clear();
+    for (const col of this.columnMapping) {
+      this.usedColNames.set(col, this.computeUsedColNames(col));
+    }
+  }
+
+  private computeUsedColNames(currentCol: ColumnMapping): Set<string> {
     const used = new Set<string>();
     for (const col of this.columnMapping) {
       if (col !== currentCol && col.propertyName) {
