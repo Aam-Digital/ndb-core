@@ -13,6 +13,7 @@ import { LoginStateSubject, SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
 import PouchDB from "pouchdb-browser";
 import { DatabaseResolverService } from "../database/database-resolver.service";
+import { Entity } from "../entity/model/entity";
 
 /**
  * This service handles everything related to the demo-mode
@@ -79,7 +80,7 @@ export class DemoDataInitializerService {
   }
 
   private async syncWithDemoUserDB() {
-    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${environment.DB_NAME}`;
+    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${Entity.DATABASE}`;
     let demoUserDB: PouchDB.Database;
     if (environment.session_type === SessionType.mock) {
       PouchDB.plugin(memory);

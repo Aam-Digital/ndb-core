@@ -40,7 +40,10 @@ export class PouchDatabase extends Database {
    * @param dbName the name for the database under which the IndexedDB entries will be created
    * @param options PouchDB options which are directly passed to the constructor
    */
-  init(dbName?: string, options?: PouchDB.Configuration.DatabaseConfiguration) {
+  init(
+    dbName?: string,
+    options?: PouchDB.Configuration.DatabaseConfiguration | any,
+  ) {
     this.pouchDB = new PouchDB(dbName ?? this.dbName, options);
     this.databaseInitialized.complete();
   }

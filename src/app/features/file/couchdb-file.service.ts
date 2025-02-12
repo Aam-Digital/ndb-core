@@ -31,7 +31,7 @@ import { SyncedPouchDatabase } from "app/core/database/pouchdb/synced-pouch-data
  */
 @Injectable()
 export class CouchdbFileService extends FileService {
-  private attachmentsUrl = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}-attachments`;
+  private attachmentsUrl = `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
   private cache: { [key: string]: Observable<string> } = {};

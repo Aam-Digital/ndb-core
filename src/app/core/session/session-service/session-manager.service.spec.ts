@@ -30,7 +30,7 @@ describe("SessionManagerService", () => {
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator: { onLine: boolean };
   let dbUser: SessionInfo;
-  const userDBName = `${TEST_USER}-${environment.DB_NAME}`;
+  const userDBName = `${TEST_USER}-app`;
   let mockDatabaseResolver: jasmine.SpyObj<DatabaseResolverService>;
 
   beforeEach(waitForAsync(() => {
