@@ -47,7 +47,7 @@ describe("EditImportColumnMappingComponent", () => {
     dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
     component.entityCtor = TestEntity;
 
-    await component.openMappingComponent(columnMapping);
+    await component.openMappingComponent();
 
     expect(component.valueChange.emit).toHaveBeenCalled();
   });
@@ -60,7 +60,8 @@ describe("EditImportColumnMappingComponent", () => {
 
     const genderColumn = component.columnMapping[1];
     genderColumn.propertyName = "category";
-    await component.openMappingComponent(genderColumn);
+    component.col = genderColumn;
+    await component.openMappingComponent();
 
     expect(dialogSpy.open).toHaveBeenCalledWith(
       DiscreteImportConfigComponent,

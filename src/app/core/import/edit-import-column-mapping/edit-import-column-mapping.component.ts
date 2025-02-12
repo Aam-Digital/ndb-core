@@ -52,10 +52,10 @@ export class EditImportColumnMappingComponent {
 
   hideOption = (option: FormFieldConfig) => this.usedColNames.has(option.id);
 
-  async openMappingComponent(col: ColumnMapping) {
+  async openMappingComponent() {
     this.updateDatatypeAndWarning();
     const uniqueValues = new Set<any>();
-    this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
+    this.rawData.forEach((obj) => uniqueValues.add(obj[this.col.column]));
 
     const configComponent = await this.componentRegistry.get(
       this.currentlyMappedDatatype.importConfigComponent,
@@ -64,7 +64,7 @@ export class EditImportColumnMappingComponent {
     this.dialog
       .open<any, MappingDialogData>(configComponent, {
         data: {
-          col: col,
+          col: this.col,
           values: [...uniqueValues],
           entityType: this.entityCtor,
         },
