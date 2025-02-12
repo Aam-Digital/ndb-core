@@ -73,4 +73,15 @@ describe("EditImportColumnMappingComponent", () => {
       }),
     );
   });
+
+  it("should emit changes after selected entity-field is changed", async () => {
+    component.columnMapping = [{ column: "name" }];
+    component.entityCtor = TestEntity;
+
+    component.updateMapping();
+
+    expect(component.valueChange.emit).toHaveBeenCalledWith(
+      jasmine.arrayContaining([jasmine.objectContaining({ column: "name" })]),
+    );
+  });
 });
