@@ -4,6 +4,8 @@ import { SessionInfo } from "../session/auth/session-info";
 import { DatabaseFactoryService } from "./database-factory.service";
 import { Entity } from "../entity/model/entity";
 import { Observable, Subject } from "rxjs";
+import { NotificationEvent } from "app/features/notification/model/notification-event";
+import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 
 /**
  * Manages access to individual databases,
@@ -58,12 +60,23 @@ export class DatabaseResolverService {
 
   async initDatabasesForSession(session: SessionInfo) {
     this.initializeAppDatabaseForCurrentUser(session);
-    // ... in future initialize additional DBs here
+    this.initializeNotificationsDatabaseForCurrentUser(session);
   }
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
     const userDBName = `${user.name}-${Entity.DATABASE}`;
     this.getDatabase(Entity.DATABASE).init(userDBName);
+  }
+
+  private initializeNotificationsDatabaseForCurrentUser(user: SessionInfo) {
+    const db = this.getDatabase(NotificationEvent.DATABASE);
+    const serverDbName = `${NotificationEvent.DATABASE}_${user.id}`;
+    const browserDbName = serverDbName;
+    if (db instanceof SyncedPouchDatabase) {
+      db.init(browserDbName, serverDbName);
+    } else {
+      db.init(browserDbName);
+    }
   }
 
   initDatabasesForAnonymous() {
