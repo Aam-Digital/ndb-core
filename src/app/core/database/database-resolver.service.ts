@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Database, DatabaseDocChange } from "./database";
 import { SessionInfo } from "../session/auth/session-info";
-import { environment } from "../../../environments/environment";
 import { DatabaseFactoryService } from "./database-factory.service";
 import { Entity } from "../entity/model/entity";
 import { Observable, Subject } from "rxjs";
@@ -69,7 +68,7 @@ export class DatabaseResolverService {
   }
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
-    const userDBName = `${user.name}-${environment.DB_NAME}`;
+    const userDBName = `${user.name}-${Entity.DATABASE}`;
     this.getDatabase(Entity.DATABASE).init(userDBName);
   }
 
