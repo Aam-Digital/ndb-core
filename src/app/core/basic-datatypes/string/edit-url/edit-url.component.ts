@@ -39,13 +39,10 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
       return;
     }
 
-    try {
-      const url = new URL(value);
-      const isValid = url.protocol === "http:" || url.protocol === "https:";
-
-      this.formControl.setErrors(isValid ? null : { invalid: true });
-    } catch (e) {
+    const urlPattern = /^(https?:\/\/)[^\s$.?#].[^\s]*$/i; // Regex to check if URL starts with http:// or https://
+    if (!urlPattern.test(value)) {
       this.formControl.setErrors({ invalid: true });
+      return;
     }
   }
 
