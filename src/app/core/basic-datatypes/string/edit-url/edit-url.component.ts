@@ -25,30 +25,48 @@ import { NgClass, NgIf } from "@angular/common";
 export class EditUrlComponent extends EditComponent<string> implements OnInit {
   override ngOnInit() {
     super.ngOnInit();
+
     this.formControl.valueChanges.subscribe((value) => {
-      this.validateUrl(value);
+      if (value) {
+        this.processUrlInput(value);
+      }
     });
   }
 
   /**
-   * Checks if the current formControl value is a valid URL.
+   * Ensures the URL starts with 'https://' while preventing duplication.
    */
-  validateUrl(value: string): void {
+  processUrlInput(value: string): void {
     if (!value) {
-      this.formControl.setErrors(null);
       return;
     }
 
-    const urlPattern = /^(https?:\/\/)[^\s$.?#].[^\s]*$/i; // Regex to check if URL starts with http:// or https://
-    if (!urlPattern.test(value)) {
-      this.formControl.setErrors({ invalid: true });
+    // Trim leading/trailing spaces
+    value = value.trim();
+
+    // If input is just "https://" or "http://", don't modify
+    if (value === "https://" || value === "http://") {
       return;
+    }
+
+    let updatedValue = value;
+
+    // If the user is typing and hasn't added http/https, prepend 'https://'
+    if (!updatedValue.startsWith("http://") && !updatedValue.startsWith("https://")) {
+      updatedValue = `https://${updatedValue}`;
+    } else {
+      // If they paste a full URL, ensure no duplicate 'https://'
+      updatedValue = updatedValue.replace(/^https?:\/\//, "https://");
+    }
+
+    // Only update if the value actually changes to prevent unnecessary updates
+    if (updatedValue !== value) {
+      this.formControl.setValue(updatedValue, { emitEvent: false });
     }
   }
 
   /**
-   * Opens the URL in a new tab only if:
-   * - The input field is disabled
+   * Opens the URL in a new tab if the input field is disabled.
    */
   openLinkIfDisabled() {
     if (this.formControl.disabled && this.formControl.value) {
@@ -56,3 +74,4 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
     }
   }
 }
+
