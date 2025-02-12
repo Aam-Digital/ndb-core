@@ -14,6 +14,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MappingDialogData } from "../import-column-mapping/import-column-mapping.component";
 
+/**
+ * Component to edit a single imported column's mapping to an entity field
+ * (including special transformations, if applicable).
+ */
 @Component({
   selector: "app-edit-import-column-mapping",
   templateUrl: "./edit-import-column-mapping.component.html",
