@@ -27,16 +27,6 @@ export class DatabaseResolverService {
 
   constructor(private databaseFactory: DatabaseFactoryService) {
     this._changesFeed = new Subject();
-    this.initDatabaseStubs();
-  }
-
-  /**
-   * Generate Database objects so that change subscriptions and other operations
-   * can already be performed during bootstrap.
-   * @private
-   */
-  private initDatabaseStubs() {
-    this.registerDatabase(Entity.DATABASE);
   }
 
   private registerDatabase(dbName: string) {
@@ -46,6 +36,10 @@ export class DatabaseResolverService {
   }
 
   getDatabase(dbName: string = Entity.DATABASE): Database {
+    if (!this.databases.has(dbName)) {
+      this.registerDatabase(dbName);
+    }
+
     let db = this.databases.get(dbName);
     return db;
   }
