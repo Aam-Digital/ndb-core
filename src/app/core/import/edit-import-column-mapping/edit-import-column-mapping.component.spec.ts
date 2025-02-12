@@ -1,52 +1,76 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditImportColumnMappingComponent } from "./edit-import-column-mapping.component";
-import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
-import { MatInputModule } from "@angular/material/input";
-import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
-import { FormsModule } from "@angular/forms";
-import { MatButtonModule } from "@angular/material/button";
-import { MatBadgeModule } from "@angular/material/badge";
+import { MockedTestingModule } from "app/utils/mocked-testing.module";
+import { MatDialog } from "@angular/material/dialog";
+import { of } from "rxjs";
 import { ColumnMapping } from "../column-mapping";
-import { Entity } from "../../entity/model/entity";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { componentRegistry, ComponentRegistry } from "app/dynamic-components";
+import { DiscreteImportConfigComponent } from "app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
 
-describe("EditImportColumnMappingComponent", () => {
+fdescribe("EditImportColumnMappingComponent", () => {
   let component: EditImportColumnMappingComponent;
   let fixture: ComponentFixture<EditImportColumnMappingComponent>;
-  let mockEntityRegistry: Partial<EntityRegistry>;
+  let dialogSpy: jasmine.SpyObj<MatDialog>;
+
+  const columnMapping: ColumnMapping = {
+    column: "test",
+    propertyName: "category",
+  };
+
+  const rawData = [
+    { name: "first", gender: "male" },
+    { name: "second", gender: "female" },
+    { name: "third", gender: "female" },
+  ];
 
   beforeEach(async () => {
-    mockEntityRegistry = {
-      get: jasmine.createSpy("get").and.returnValue(Entity),
-    };
-
+    dialogSpy = jasmine.createSpyObj("MatDialog", ["open"]);
     await TestBed.configureTestingModule({
-      declarations: [],
-      imports: [
-        EditImportColumnMappingComponent,
-        HelpButtonComponent,
-        MatInputModule,
-        EntityFieldSelectComponent,
-        FormsModule,
-        MatButtonModule,
-        MatBadgeModule,
-        BrowserAnimationsModule,
+      imports: [MockedTestingModule, EditImportColumnMappingComponent],
+      providers: [
+        { provide: MatDialog, useValue: dialogSpy },
+        { provide: ComponentRegistry, useValue: componentRegistry },
       ],
-      providers: [{ provide: EntityRegistry, useValue: mockEntityRegistry }],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(EditImportColumnMappingComponent);
     component = fixture.componentInstance;
-    component.col = {} as ColumnMapping;
-    component.entityCtor = Entity;
-    component.mappingAdditionalWarning = "";
+    component.col = columnMapping;
+    component.rawData = rawData;
     fixture.detectChanges();
+
+    spyOn(component.valueChange, "emit");
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
+  it("should emit changes after popup is closed", async () => {
+    dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
+    component.entityCtor = TestEntity;
+
+    await component.openMappingComponent(columnMapping);
+
+    expect(component.valueChange.emit).toHaveBeenCalled();
+  });
+
+  it("should open mapping component with required data", async () => {
+    component.rawData = rawData;
+    component.entityCtor = TestEntity;
+    component.columnMapping = [{ column: "name" }, { column: "gender" }];
+    dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
+
+    const genderColumn = component.columnMapping[1];
+    genderColumn.propertyName = "category";
+    await component.openMappingComponent(genderColumn);
+
+    expect(dialogSpy.open).toHaveBeenCalledWith(
+      DiscreteImportConfigComponent,
+      jasmine.objectContaining({
+        data: {
+          col: genderColumn,
+          values: ["male", "female"],
+          entityType: TestEntity,
+        },
+      }),
+    );
   });
 });
