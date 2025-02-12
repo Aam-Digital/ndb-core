@@ -1,7 +1,7 @@
 import { Entity } from "../../entity/model/entity";
 import { DateRangeFilterConfigOption } from "../../entity-list/EntityListConfig";
 import { DateRange } from "@angular/material/datepicker";
-import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { calculateDateRange } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils";
 import moment from "moment";
 import { DataFilter, Filter } from "./filters";
 import { isValidDate } from "../../../utils/utils";
