@@ -16,8 +16,6 @@ import { EntityFieldSelectComponent } from "../../entity/entity-field-select/ent
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
 import { EditImportColumnMappingComponent } from "../edit-import-column-mapping/edit-import-column-mapping.component";
 
@@ -54,23 +52,10 @@ export class ImportColumnMappingComponent implements OnChanges {
     }
 
     this.entityCtor = this.entities.get(value);
-    this.dataTypeMap = {};
-
-    [...this.entityCtor.schema.entries()]
-      .filter(([_, schema]) => schema.label)
-      .map(([name, schema]) => {
-        this.dataTypeMap[name] = this.schemaService.getDatatypeOrDefault(
-          schema.dataType,
-        );
-      });
   }
-
-  /** properties that need further adjustments through a component */
-  dataTypeMap: { [name: string]: DefaultDatatype };
 
   constructor(
     private entities: EntityRegistry,
-    private schemaService: EntitySchemaService,
     private importColumnMappingService: ImportColumnMappingService,
   ) {}
 
