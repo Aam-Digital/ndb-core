@@ -52,14 +52,11 @@ export class EditImportColumnMappingComponent {
   hideOption = (option: FormFieldConfig) => this.usedColNames.has(option.id);
 
   async openMappingComponent() {
+    this.updateDatatypeAndWarning();
     const uniqueValues = new Set<any>();
     this.rawData.forEach((obj) =>
       uniqueValues.add(obj[this.columnMapping.column]),
     );
-    const schema = this.entityCtor.schema.get(this.columnMapping.propertyName);
-    this.currentlyMappedDatatype = schema
-      ? this.schemaService.getDatatypeOrDefault(schema.dataType)
-      : null;
 
     const configComponent = await this.componentRegistry.get(
       this.currentlyMappedDatatype.importConfigComponent,
@@ -84,11 +81,15 @@ export class EditImportColumnMappingComponent {
       delete this.columnMapping.additional;
     }
 
-    this.updateWarning();
+    this.updateDatatypeAndWarning();
     this.valueChange.emit(this.columnMapping);
   }
 
-  private updateWarning() {
+  private updateDatatypeAndWarning() {
+    const schema = this.entityCtor.schema.get(this.columnMapping.propertyName);
+    this.currentlyMappedDatatype = schema
+      ? this.schemaService.getDatatypeOrDefault(schema.dataType)
+      : null;
     this.mappingAdditionalWarning =
       this.currentlyMappedDatatype?.importIncompleteAdditionalConfigBadge?.(
         this.columnMapping,
