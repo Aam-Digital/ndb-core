@@ -35,15 +35,18 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
    */
   validateUrl(value: string): void {
     if (!value) {
-      this.formControl.setErrors(null); // Allow empty values
+      this.formControl.setErrors(null);
       return;
     }
 
-    const urlPattern =
-      /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6}\.?)(\/[\w.-]*)*\/?$/i;
-    this.formControl.setErrors(
-      urlPattern.test(value) ? null : { invalid: true },
-    );
+    try {
+      const url = new URL(value);
+      const isValid = url.protocol === "http:" || url.protocol === "https:";
+
+      this.formControl.setErrors(isValid ? null : { invalid: true });
+    } catch (e) {
+      this.formControl.setErrors({ invalid: true });
+    }
   }
 
   /**
@@ -51,7 +54,7 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
    * - The input field is disabled
    */
   openLinkIfDisabled() {
-    if (this.formControl.disabled) {
+    if (this.formControl.disabled && this.formControl.value) {
       window.open(this.formControl.value, "_blank");
     }
   }
