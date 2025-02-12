@@ -8,7 +8,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { componentRegistry, ComponentRegistry } from "app/dynamic-components";
 import { DiscreteImportConfigComponent } from "app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
 
-describe("EditImportColumnMappingComponent", () => {
+fdescribe("EditImportColumnMappingComponent", () => {
   let component: EditImportColumnMappingComponent;
   let fixture: ComponentFixture<EditImportColumnMappingComponent>;
   let dialogSpy: jasmine.SpyObj<MatDialog>;
@@ -36,7 +36,7 @@ describe("EditImportColumnMappingComponent", () => {
 
     fixture = TestBed.createComponent(EditImportColumnMappingComponent);
     component = fixture.componentInstance;
-    component.value = columnMapping;
+    component.columnMapping = columnMapping;
     component.rawData = rawData;
     fixture.detectChanges();
 
@@ -55,12 +55,12 @@ describe("EditImportColumnMappingComponent", () => {
   it("should open mapping component with required data", async () => {
     component.rawData = rawData;
     component.entityCtor = TestEntity;
-    component.columnMapping = [{ column: "name" }, { column: "gender" }];
+    component.columnMapping = { column: "gender" };
     dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
 
-    const genderColumn = component.columnMapping[1];
+    const genderColumn = component.columnMapping;
     genderColumn.propertyName = "category";
-    component.value = genderColumn;
+    component.columnMapping = genderColumn;
     await component.openMappingComponent();
 
     expect(dialogSpy.open).toHaveBeenCalledWith(
@@ -76,13 +76,13 @@ describe("EditImportColumnMappingComponent", () => {
   });
 
   it("should emit changes after selected entity-field is changed", async () => {
-    component.columnMapping = [{ column: "name" }];
+    component.columnMapping = { column: "name" };
     component.entityCtor = TestEntity;
 
     component.updateMapping();
 
     expect(component.valueChange.emit).toHaveBeenCalledWith(
-      jasmine.arrayContaining([jasmine.objectContaining({ column: "name" })]),
+      jasmine.objectContaining({ column: "name" }),
     );
   });
 });

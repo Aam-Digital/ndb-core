@@ -37,13 +37,12 @@ export class EditImportColumnMappingComponent {
   private componentRegistry = inject(ComponentRegistry);
   private schemaService = inject(EntitySchemaService);
 
-  @Input() value: ColumnMapping;
+  @Input() columnMapping: ColumnMapping;
   @Input() entityCtor: EntityConstructor;
   @Input() usedColNames: Set<string>;
   @Input() rawData: any[];
-  @Input() columnMapping: ColumnMapping[] = [];
 
-  @Output() valueChange = new EventEmitter<ColumnMapping[]>();
+  @Output() valueChange = new EventEmitter<ColumnMapping>();
 
   currentlyMappedDatatype: DefaultDatatype;
 
@@ -55,7 +54,9 @@ export class EditImportColumnMappingComponent {
   async openMappingComponent() {
     this.updateDatatypeAndWarning();
     const uniqueValues = new Set<any>();
-    this.rawData.forEach((obj) => uniqueValues.add(obj[this.value.column]));
+    this.rawData.forEach((obj) =>
+      uniqueValues.add(obj[this.columnMapping.column]),
+    );
 
     const configComponent = await this.componentRegistry.get(
       this.currentlyMappedDatatype.importConfigComponent,
@@ -64,7 +65,7 @@ export class EditImportColumnMappingComponent {
     this.dialog
       .open<any, MappingDialogData>(configComponent, {
         data: {
-          col: this.value,
+          col: this.columnMapping,
           values: [...uniqueValues],
           entityType: this.entityCtor,
         },
@@ -77,22 +78,22 @@ export class EditImportColumnMappingComponent {
 
   updateMapping(settingAdditional = false) {
     if (!settingAdditional) {
-      delete this.value.additional;
+      delete this.columnMapping.additional;
     }
 
     this.updateDatatypeAndWarning();
-    this.valueChange.emit([...this.columnMapping]);
+    this.valueChange.emit(this.columnMapping);
   }
 
   private updateDatatypeAndWarning() {
-    const schema = this.entityCtor.schema.get(this.value.propertyName);
+    const schema = this.entityCtor.schema.get(this.columnMapping.propertyName);
     this.currentlyMappedDatatype = schema
       ? this.schemaService.getDatatypeOrDefault(schema.dataType)
       : null;
 
     this.mappingAdditionalWarning =
       this.currentlyMappedDatatype?.importIncompleteAdditionalConfigBadge?.(
-        this.value,
+        this.columnMapping,
       );
   }
 }
