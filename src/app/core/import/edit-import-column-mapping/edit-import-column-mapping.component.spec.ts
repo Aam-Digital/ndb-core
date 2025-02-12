@@ -8,7 +8,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { componentRegistry, ComponentRegistry } from "app/dynamic-components";
 import { DiscreteImportConfigComponent } from "app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
 
-fdescribe("EditImportColumnMappingComponent", () => {
+describe("EditImportColumnMappingComponent", () => {
   let component: EditImportColumnMappingComponent;
   let fixture: ComponentFixture<EditImportColumnMappingComponent>;
   let dialogSpy: jasmine.SpyObj<MatDialog>;
