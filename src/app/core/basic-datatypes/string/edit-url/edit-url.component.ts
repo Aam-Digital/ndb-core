@@ -1,4 +1,4 @@
-import { Component, OnChanges } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../../../entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -22,11 +22,9 @@ import { NgClass, NgIf } from "@angular/common";
   ],
   standalone: true,
 })
-export class EditUrlComponent
-  extends EditComponent<string>
-  implements OnChanges
-{
-  override ngOnChanges() {
+export class EditUrlComponent extends EditComponent<string> implements OnInit {
+  override ngOnInit() {
+    super.ngOnInit();
     this.formControl.valueChanges.subscribe((value) => {
       this.validateUrl(value);
     });
@@ -36,16 +34,21 @@ export class EditUrlComponent
    * Checks if the current formControl value is a valid URL.
    */
   validateUrl(value: string): void {
+    if (!value) {
+      this.formControl.setErrors(null); // Allow empty values
+      return;
+    }
+
     const urlPattern =
       /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6}\.?)(\/[\w.-]*)*\/?$/i;
     this.formControl.setErrors(
       urlPattern.test(value) ? null : { invalid: true },
     );
   }
+
   /**
    * Opens the URL in a new tab only if:
    * - The input field is disabled
-   * - The value is a valid URL
    */
   openLinkIfDisabled() {
     if (this.formControl.disabled) {
