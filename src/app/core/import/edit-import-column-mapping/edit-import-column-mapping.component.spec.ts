@@ -46,6 +46,7 @@ describe("EditImportColumnMappingComponent", () => {
   it("should emit changes after popup is closed", async () => {
     dialogSpy.open.and.returnValue({ afterClosed: () => of(undefined) } as any);
     component.entityCtor = TestEntity;
+    component.updateMapping();
 
     await component.openMappingComponent();
 
@@ -60,6 +61,8 @@ describe("EditImportColumnMappingComponent", () => {
 
     const genderColumn = component.columnMapping;
     genderColumn.propertyName = "category";
+
+    component.updateMapping();
     component.columnMapping = genderColumn;
     await component.openMappingComponent();
 
