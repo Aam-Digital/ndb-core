@@ -379,7 +379,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this._selectedOptions = this._options.filter((o) => o.selected);
       this.value = this._selectedOptions.map((o) => o.asValue);
       // re-open autocomplete to select next option
-      this.showAutocomplete();
+      setTimeout(() => this.showAutocomplete());
     } else {
       this._selectedOptions = [option];
       this.value = option.asValue;
