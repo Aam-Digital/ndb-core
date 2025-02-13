@@ -296,7 +296,7 @@ export class BasicAutocompleteComponent<O, V = O>
     this.isInSearchMode.set(true);
 
     // update virtual scroll as the container remains empty until the user scrolls initially
-    this.virtualScrollViewport.checkViewportSize();
+    setTimeout(() => this.virtualScrollViewport.checkViewportSize());
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
