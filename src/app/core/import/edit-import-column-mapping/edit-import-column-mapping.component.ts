@@ -40,6 +40,11 @@ export class EditImportColumnMappingComponent {
   @Input() columnMapping: ColumnMapping;
   @Input() entityCtor: EntityConstructor;
   @Input() usedColNames: Set<string>;
+
+  /**
+   * the actually imported data
+   * (to let this component configure special transformations, e.g. to map values to dropdown categories)
+   */
   @Input() rawData: any[];
 
   @Output() valueChange = new EventEmitter<ColumnMapping>();
