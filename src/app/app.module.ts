@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { LOCALE_ID, NgModule } from "@angular/core";
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from "@angular/core";
 import {
   provideHttpClient,
   withInterceptorsFromDi,
@@ -25,6 +25,7 @@ import {
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
+
 import { SessionModule } from "./core/session/session.module";
 import { LatestChangesModule } from "./core/ui/latest-changes/latest-changes.module";
 
@@ -90,6 +91,8 @@ import { TemplateExportModule } from "./features/template-export/template-export
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { SkillModule } from "./features/skill/skill.module";
 import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
+import { NotificationService } from "./features/notification/notification.service";
+import { AngularFireModule } from "@angular/fire/compat";
 
 /**
  * Main entry point of the application.
@@ -141,6 +144,14 @@ import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty
     MatSnackBarModule,
     MatDialogModule,
     ApplicationLoadingComponent,
+    AngularFireModule.initializeApp({
+      projectId: "aam-digital-b8a7b",
+      appId: "1:189059495005:web:151bb9f04d6bebb637c9b4",
+      storageBucket: "aam-digital-b8a7b.firebasestorage.app",
+      apiKey: "AIzaSyAVxpEeaCL8b4KQPwMqvWRW7lpcgDYZHdw",
+      authDomain: "aam-digital-b8a7b.firebaseapp.com",
+      messagingSenderId: "189059495005",
+    }),
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),
@@ -173,6 +184,14 @@ import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     APP_INITIALIZER_DEMO_DATA,
     provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (notificationService: NotificationService) => () => {
+        notificationService.init();
+      },
+      deps: [NotificationService],
+      multi: true,
+    },
   ],
 })
 export class AppModule {

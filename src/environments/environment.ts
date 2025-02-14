@@ -33,8 +33,8 @@ export const environment = {
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
 
   demo_mode: true,
-  session_type: SessionType.mock,
-  account_url: "https://accounts.aam-digital.net",
+  session_type: SessionType.synced,
+  account_url: "https://aam.localhost/accounts-backend",
   email: undefined,
 
   /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
@@ -42,4 +42,6 @@ export const environment = {
 
   /** Name of the database that is used */
   DB_NAME: "app",
+
+  enableNotificationModule: true,
 };
