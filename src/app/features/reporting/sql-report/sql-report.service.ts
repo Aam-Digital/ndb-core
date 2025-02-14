@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import moment from "moment";
 import { map, switchMap, takeWhile } from "rxjs/operators";
 import { firstValueFrom, interval, lastValueFrom, Observable } from "rxjs";
+import { MOCK_HTTP } from "./mock";
 
 /**
  * represents a TableRow of a SqlReportDataEntry
@@ -48,7 +49,9 @@ export interface ReportCalculation {
 export class SqlReportService {
   static QUERY_PROXY = "/query";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.http = MOCK_HTTP as any;
+  }
 
   /**
    * Get the combines results of the SQL statements in the report
