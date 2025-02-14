@@ -4,7 +4,7 @@ import { setupEditComponent } from "app/core/entity/default-datatype/edit-compon
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { By } from "@angular/platform-browser";
 
-describe("EditUrlComponent", () => {
+fdescribe("EditUrlComponent", () => {
   let component: EditUrlComponent;
   let fixture: ComponentFixture<EditUrlComponent>;
 

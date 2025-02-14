@@ -26,40 +26,41 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
   override ngOnInit() {
     super.ngOnInit();
 
-    this.formControl.valueChanges.subscribe((value) => {
-      if (value) {
-        this.processUrlInput(value);
-      }
-    });
+    this.formControl.valueChanges.subscribe((value) =>
+      this.processUrlInput(value),
+    );
   }
 
   /**
    * Ensures the URL starts with 'https://' while preventing duplication.
    */
-  processUrlInput(value: string): void {
-    if (!value) {
-      return;
-    }
+  private processUrlInput(value: string): void {
+    if (!value) return;
 
-    // Trim leading/trailing spaces
-    value = value.trim();
-
+    const trimmedValue = value.trim();
     // If input is just "https://" or "http://", don't modify
-    if (value === "https://" || value === "http://") {
+    if (trimmedValue === "http://" || trimmedValue === "https://") {
       this.formControl.setValue("", { emitEvent: false });
       return;
     }
 
-    // If the user is typing and hasn't added http/https, prepend 'https://'
-    let updatedValue =
-      value.startsWith("http://") || value.startsWith("https://")
-        ? value.replace(/^https?:\/\//, "https://")
-        : `https://${value}`;
+    const urlPattern =
+      /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6}\.?)(\/[\w.-]*)*\/?$/i;
 
-    // Only update if the value actually changes to prevent unnecessary updates
-    if (updatedValue !== value) {
-      this.formControl.setValue(updatedValue, { emitEvent: false });
+    // Prepend 'https://' if not already present
+    if (!/^https?:\/\//.test(trimmedValue)) {
+      this.formControl.setValue(`https://${trimmedValue}`, {
+        emitEvent: false,
+      });
+    } else if (trimmedValue.startsWith("http://")) {
+      this.formControl.setValue(
+        trimmedValue.replace(/^http:\/\//, "https://"),
+        { emitEvent: false },
+      );
     }
+    this.formControl.setErrors(
+      urlPattern.test(trimmedValue) ? null : { invalid: true },
+    );
   }
 
   /**
