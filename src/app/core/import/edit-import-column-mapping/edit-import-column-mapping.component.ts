@@ -43,7 +43,7 @@ export class EditImportColumnMappingComponent {
   /**
    * Entity fields that are already mapped and should not be offered to the user for selecting here.
    */
-  @Input() usedColumnNames: Set<string>;
+  @Input() usedColumnName: Set<string>;
 
   /**
    * the actually imported data
@@ -58,7 +58,9 @@ export class EditImportColumnMappingComponent {
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: string;
 
-  hideOption = (option: FormFieldConfig) => this.usedColumnNames.has(option.id);
+  hideOption = (option: FormFieldConfig) =>
+    this.usedColumnName.has(option.id) &&
+    option.id !== this.columnMapping.propertyName;
 
   async openMappingComponent() {
     const uniqueValues = new Set<any>();

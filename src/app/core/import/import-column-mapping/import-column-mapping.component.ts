@@ -45,7 +45,7 @@ export class ImportColumnMappingComponent implements OnChanges {
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   entityCtor: EntityConstructor;
-  usedColumnNames: Map<ColumnMapping, Set<string>> = new Map();
+  usedColumnName: Set<string> = new Set();
 
   @Input() set entityType(value: string) {
     if (!value) {
@@ -70,20 +70,12 @@ export class ImportColumnMappingComponent implements OnChanges {
   }
 
   private updateUsedColNames(): void {
-    this.usedColumnNames.clear();
+    this.usedColumnName.clear();
     for (const col of this.columnMapping) {
-      this.usedColumnNames.set(col, this.computeUsedColNames(col));
-    }
-  }
-
-  private computeUsedColNames(currentCol: ColumnMapping): Set<string> {
-    const used = new Set<string>();
-    for (const col of this.columnMapping) {
-      if (col !== currentCol && col.propertyName) {
-        used.add(col.propertyName);
+      if (col.propertyName) {
+        this.usedColumnName.add(col.propertyName);
       }
     }
-    return used;
   }
 
   updateColumnMapping() {

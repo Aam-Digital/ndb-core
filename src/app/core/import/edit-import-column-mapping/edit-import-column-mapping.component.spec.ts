@@ -40,7 +40,7 @@ describe("EditImportColumnMappingComponent", () => {
     component.rawData = rawData;
     fixture.detectChanges();
 
-    spyOn(component.valueChange, "emit");
+    spyOn(component.columnMappingChange, "emit");
   });
 
   it("should emit changes after popup is closed", async () => {
@@ -50,7 +50,7 @@ describe("EditImportColumnMappingComponent", () => {
 
     await component.openMappingComponent();
 
-    expect(component.valueChange.emit).toHaveBeenCalled();
+    expect(component.columnMappingChange.emit).toHaveBeenCalled();
   });
 
   it("should open mapping component with required data", async () => {
@@ -84,7 +84,7 @@ describe("EditImportColumnMappingComponent", () => {
 
     component.updateMapping();
 
-    expect(component.valueChange.emit).toHaveBeenCalledWith(
+    expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({ column: "name" }),
     );
   });
