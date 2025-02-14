@@ -92,6 +92,7 @@ export class EditImportColumnMappingComponent {
     }
 
     this.updateDatatypeAndWarning();
+    this.columnMapping = { ...this.columnMapping };
     this.columnMappingChange.emit(this.columnMapping);
   }
 
