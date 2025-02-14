@@ -46,18 +46,15 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
 
     // If input is just "https://" or "http://", don't modify
     if (value === "https://" || value === "http://") {
+      this.formControl.setValue("", { emitEvent: false });
       return;
     }
 
-    let updatedValue = value;
-
     // If the user is typing and hasn't added http/https, prepend 'https://'
-    if (!updatedValue.startsWith("http://") && !updatedValue.startsWith("https://")) {
-      updatedValue = `https://${updatedValue}`;
-    } else {
-      // If they paste a full URL, ensure no duplicate 'https://'
-      updatedValue = updatedValue.replace(/^https?:\/\//, "https://");
-    }
+    let updatedValue =
+      value.startsWith("http://") || value.startsWith("https://")
+        ? value.replace(/^https?:\/\//, "https://")
+        : `https://${value}`;
 
     // Only update if the value actually changes to prevent unnecessary updates
     if (updatedValue !== value) {
@@ -74,4 +71,3 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
     }
   }
 }
-
