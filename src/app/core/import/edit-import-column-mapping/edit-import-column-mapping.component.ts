@@ -51,14 +51,14 @@ export class EditImportColumnMappingComponent {
    */
   @Input() rawData: any[];
 
-  @Output() valueChange = new EventEmitter<ColumnMapping>();
+  @Output() columnMappingChange = new EventEmitter<ColumnMapping>();
 
   currentlyMappedDatatype: DefaultDatatype;
 
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: string;
 
-  hideOption = (option: FormFieldConfig) => this.usedColNames.has(option.id);
+  hideOption = (option: FormFieldConfig) => this.usedColumnNames.has(option.id);
 
   async openMappingComponent() {
     const uniqueValues = new Set<any>();
@@ -90,7 +90,7 @@ export class EditImportColumnMappingComponent {
     }
 
     this.updateDatatypeAndWarning();
-    this.valueChange.emit(this.columnMapping);
+    this.columnMappingChange.emit(this.columnMapping);
   }
 
   private updateDatatypeAndWarning() {

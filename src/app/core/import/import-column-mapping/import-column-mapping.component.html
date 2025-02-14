@@ -17,9 +17,9 @@
     <app-edit-import-column-mapping
       [columnMapping]="col"
       [entityCtor]="entityCtor"
-      [usedColNames]="usedColNames.get(col)"
+      [usedColumnNames]="usedColumnNames.get(col)"
       [rawData]="rawData"
-      (valueChange)="updateColumnMapping()"
+      (columnMappingChange)="updateColumnMapping()"
     />
   </div>
 </div>
