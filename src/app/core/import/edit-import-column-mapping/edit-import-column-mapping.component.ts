@@ -39,7 +39,11 @@ export class EditImportColumnMappingComponent {
 
   @Input() columnMapping: ColumnMapping;
   @Input() entityCtor: EntityConstructor;
-  @Input() usedColNames: Set<string>;
+
+  /**
+   * Entity fields that are already mapped and should not be offered to the user for selecting here.
+   */
+  @Input() usedColumnNames: Set<string>;
 
   /**
    * the actually imported data
