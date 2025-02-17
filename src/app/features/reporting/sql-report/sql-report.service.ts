@@ -315,7 +315,7 @@ export class SqlReportService {
     );
   }
 
-  getCsv(sqlData: SqlReportRow[]): any {
+  getCsvforV2(sqlData: SqlReportRow[]): any {
     let deepestLevel: number = sqlData.reduce(
       (previousValue, currentValue) =>
         Math.max(previousValue, currentValue.level),

@@ -73,7 +73,7 @@ describe("ReportingComponent", () => {
     mockReportingService.calculateReport.and.resolveTo([]);
     mockSqlReportService = jasmine.createSpyObj([
       "query",
-      "getCsv",
+      "getCsvforV2",
       "flattenData",
       "fetchReportCalculation",
       "createReportCalculation",
