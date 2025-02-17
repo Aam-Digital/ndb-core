@@ -24,14 +24,14 @@ describe("ImportColumnMappingComponent", () => {
     };
     const newColumnMapping: ColumnMapping = {
       column: "Name",
-      propertyName: "Tes2",
+      propertyName: "Test2",
     };
 
     spyOn(component.columnMappingChange, "emit");
 
     component.updateColumnMapping(originalColumnMapping, newColumnMapping);
 
-    expect(originalColumnMapping.propertyName).toBe("updatedTest");
+    expect(originalColumnMapping.propertyName).toBe("Test2");
     expect(component.columnMappingChange.emit).toHaveBeenCalledWith([
       ...component.columnMapping,
     ]);
