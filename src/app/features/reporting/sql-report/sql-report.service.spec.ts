@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import {
   ReportCalculation,
   ReportData,
+  SqlReportRow,
   SqlReportService,
 } from "./sql-report.service";
 import { entityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -11,7 +12,7 @@ import { of } from "rxjs";
 import { ReportEntity, SqlReport } from "../report-config";
 import moment from "moment";
 
-describe("SqlReportService", () => {
+fdescribe("SqlReportService", () => {
   let service: SqlReportService;
 
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
@@ -261,5 +262,39 @@ describe("SqlReportService", () => {
         level: 0,
       },
     ]);
+  });
+  it("should convert sql type report into CSV string", () => {
+    const mockSqlData: SqlReportRow[] = [
+      {
+        key: "Total students",
+        value: 6,
+        level: 0,
+      },
+      {
+        key: "Students gender",
+        value: 10,
+        level: 0,
+      },
+      {
+        key: "Male",
+        value: 6,
+        level: 1,
+      },
+      {
+        key: "Female",
+        value: 4,
+        level: 1,
+      },
+    ];
+
+    const result = service.getCsv(mockSqlData);
+
+    const expectedCsv = `Name,,Value
+"Total students",,"6"
+"Students gender",,"10"
+,"Male","6"
+,"Female","4"
+`;
+    expect(result).toEqual(expectedCsv);
   });
 });
