@@ -19,7 +19,7 @@
       [entityCtor]="entityCtor"
       [usedColumnName]="usedColumnName"
       [rawData]="rawData"
-      (columnMappingChange)="updateColumnMapping()"
+      (columnMappingChange)="updateColumnMapping(col, $event)"
     />
   </div>
 </div>

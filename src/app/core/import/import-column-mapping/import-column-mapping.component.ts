@@ -78,7 +78,12 @@ export class ImportColumnMappingComponent implements OnChanges {
     }
   }
 
-  updateColumnMapping() {
+  updateColumnMapping(
+    originalColumnMapping: ColumnMapping,
+    newColumnMapping: ColumnMapping,
+  ) {
+    Object.assign(originalColumnMapping, newColumnMapping);
+
     this.columnMappingChange.emit([...this.columnMapping]);
   }
 }

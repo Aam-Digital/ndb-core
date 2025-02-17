@@ -17,18 +17,23 @@ describe("ImportColumnMappingComponent", () => {
     fixture.detectChanges();
   });
 
-  it("it should emit columnMappingChange when updateColumnMapping is called", () => {
-    const mockColumnMapping: ColumnMapping[] = [
-      { column: "Name", propertyName: "test" },
-      { column: "Age", propertyName: "age" },
-    ];
+  it("should update the original column mapping and emit columnMappingChange", () => {
+    const originalColumnMapping: ColumnMapping = {
+      column: "Name",
+      propertyName: "test",
+    };
+    const newColumnMapping: ColumnMapping = {
+      column: "Name",
+      propertyName: "Tes2",
+    };
 
-    component.columnMapping = mockColumnMapping;
     spyOn(component.columnMappingChange, "emit");
-    component.updateColumnMapping();
 
-    expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
-      mockColumnMapping,
-    );
+    component.updateColumnMapping(originalColumnMapping, newColumnMapping);
+
+    expect(originalColumnMapping.propertyName).toBe("updatedTest");
+    expect(component.columnMappingChange.emit).toHaveBeenCalledWith([
+      ...component.columnMapping,
+    ]);
   });
 });
