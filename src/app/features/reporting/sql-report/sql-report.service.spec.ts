@@ -287,7 +287,7 @@ fdescribe("SqlReportService", () => {
       },
     ];
 
-    const result = service.getCsvforV2(mockSqlData);
+    const result = service.getCsv(mockSqlData);
 
     const expectedCsv = `Name,,Value
 "Total students",,"6"
