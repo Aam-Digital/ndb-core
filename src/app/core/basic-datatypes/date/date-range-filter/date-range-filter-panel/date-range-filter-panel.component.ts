@@ -16,7 +16,7 @@ import { NgForOf } from "@angular/common";
 import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
 import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
-import { DateFilter } from "../../../../filter/filters/dateFilter";
+import { DateFilter } from "app/core/filter/filters/dateFilter";
 import { calculateDateRange } from "./date-range-utils";
 
 export const defaultDateFilters: DateRangeFilterConfigOption[] = [

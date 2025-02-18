@@ -6,7 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { dateToString, isValidDate } from "../../../../utils/utils";
-import { DateFilter } from "../../../filter/filters/dateFilter";
+import { DateFilterBase } from "../../../filter/filters/date-filter-base";
 
 @Component({
   selector: "app-date-range-filter",
@@ -19,7 +19,7 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
   fromDate: Date;
   toDate: Date;
 
-  @Input() filterConfig: DateFilter<T>;
+  @Input() filterConfig: DateFilterBase<T>;
 
   constructor(private dialog: MatDialog) {}
 

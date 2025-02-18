@@ -13,7 +13,7 @@ import { DateRange } from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
 
-import { DateFilter } from "../../../../filter/filters/dateFilter";
+import { DateFilter } from "app/core/filter/filters/dateFilter";
 
 describe("DateRangeFilterPanelComponent", () => {
   let component: DateRangeFilterPanelComponent;
