@@ -106,7 +106,7 @@ export class ReportingComponent {
   private getSqlExportableData() {
     return this.currentReport.version == 1
       ? this.data
-      : this.sqlReportService.getCsv(
+      : this.sqlReportService.getCsvforV2(
           this.sqlReportService.flattenData(this.data),
         );
   }

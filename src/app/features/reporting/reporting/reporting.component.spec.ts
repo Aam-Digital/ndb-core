@@ -73,7 +73,7 @@ describe("ReportingComponent", () => {
     mockReportingService.calculateReport.and.resolveTo([]);
     mockSqlReportService = jasmine.createSpyObj([
       "query",
-      "getCsv",
+      "getCsvforV2",
       "flattenData",
       "fetchReportCalculation",
       "createReportCalculation",
@@ -331,10 +331,8 @@ describe("ReportingComponent", () => {
 
   it("should return raw data for version 1 SQL reports", () => {
     const mockData = [
-      { key: "Total students", value: 6 },
-      { key: "Students gender", value: 10 },
-      { key: "Male", value: 6 },
-      { key: "Female", value: 4 },
+      { child_gender: "M", child_name: "child1" },
+      { child_gender: "X", child_name: "child2" },
     ];
 
     component.data = mockData;
@@ -343,7 +341,6 @@ describe("ReportingComponent", () => {
     component.currentReport = report;
 
     const result = component["getSqlExportableData"]();
-    component.exportableData = result;
 
     expect(result).toEqual(mockData);
   });

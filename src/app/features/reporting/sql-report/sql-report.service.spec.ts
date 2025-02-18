@@ -264,7 +264,7 @@ describe("SqlReportService", () => {
     ]);
   });
 
-  it("should convert report into CSV string for version 1 SQL", () => {
+  it("should convert report into CSV string for version 2 SQL", () => {
     const mockSqlData: SqlReportRow[] = [
       {
         key: "Total students",
@@ -288,7 +288,7 @@ describe("SqlReportService", () => {
       },
     ];
 
-    const result = service.getCsv(mockSqlData);
+    const result = service.getCsvforV2(mockSqlData);
 
     // extra empty column to allow for indentation of name at child levels
     const expectedCsv = `Name,,Value
