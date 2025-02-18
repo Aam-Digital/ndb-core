@@ -289,6 +289,7 @@ describe("SqlReportService", () => {
 
     const result = service.getCsv(mockSqlData);
 
+    // extra empty column to allow for indentation of name at child levels
     const expectedCsv = `Name,,Value
 "Total students",,"6"
 "Students gender",,"10"
