@@ -139,7 +139,7 @@ export class ReportingComponent {
           ),
         );
         if (this.reportCalculation?.endDate) {
-          // Convert the UTC to local timezone
+          // Convert the UTC to local timezone (as the date string doesn't include timezone information (e.g. ending with "Z") we have to handle this explicitly
           this.localTime = moment
             .utc(this.reportCalculation.endDate)
             .local()
