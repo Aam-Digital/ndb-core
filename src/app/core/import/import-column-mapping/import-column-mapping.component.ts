@@ -12,7 +12,6 @@ import { EntityConstructor } from "../../entity/model/entity";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { NgForOf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
-import { EntityFieldSelectComponent } from "../../entity/entity-field-select/entity-field-select.component";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
@@ -33,7 +32,6 @@ import { EditImportColumnMappingComponent } from "../edit-import-column-mapping/
     HelpButtonComponent,
     NgForOf,
     MatInputModule,
-    EntityFieldSelectComponent,
     FormsModule,
     MatButtonModule,
     MatBadgeModule,
@@ -45,7 +43,7 @@ export class ImportColumnMappingComponent implements OnChanges {
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   entityCtor: EntityConstructor;
-  usedColumnName: Set<string> = new Set();
+  usedPropertyNames: Set<string> = new Set();
 
   @Input() set entityType(value: string) {
     if (!value) {
@@ -65,15 +63,19 @@ export class ImportColumnMappingComponent implements OnChanges {
         this.columnMapping,
         this.entityCtor.schema,
       );
-      this.updateUsedColNames();
+      this.updateUsedPropertyNames();
     }
   }
 
-  private updateUsedColNames(): void {
-    this.usedColumnName.clear();
+  /**
+   * Check which fields are already used in a mapping.
+   * @private
+   */
+  private updateUsedPropertyNames(): void {
+    this.usedPropertyNames.clear();
     for (const col of this.columnMapping) {
       if (col.propertyName) {
-        this.usedColumnName.add(col.propertyName);
+        this.usedPropertyNames.add(col.propertyName);
       }
     }
   }

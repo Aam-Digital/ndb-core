@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject } from "@angular/core";
+import { Component, EventEmitter, inject, Input, Output } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
@@ -6,7 +6,6 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { MatDialog } from "@angular/material/dialog";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { MatInputModule } from "@angular/material/input";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { FormsModule } from "@angular/forms";
@@ -24,7 +23,6 @@ import { MappingDialogData } from "../import-column-mapping/import-column-mappin
   styleUrls: ["./edit-import-column-mapping.component.scss"],
   standalone: true,
   imports: [
-    HelpButtonComponent,
     MatInputModule,
     EntityFieldSelectComponent,
     FormsModule,
@@ -44,9 +42,11 @@ export class EditImportColumnMappingComponent {
     }
     this._columnMapping = JSON.parse(newValueString);
   }
+
   get columnMapping(): ColumnMapping {
     return this._columnMapping;
   }
+
   /** internal deep-copy to not change properties of object by reference */
   private _columnMapping: ColumnMapping;
 
@@ -55,7 +55,7 @@ export class EditImportColumnMappingComponent {
   /**
    * Entity fields that are already mapped and should not be offered to the user for selecting here.
    */
-  @Input() usedColumnName: Set<string>;
+  @Input() usedPropertyNames: Set<string>;
 
   /**
    * the actually imported data
@@ -71,7 +71,7 @@ export class EditImportColumnMappingComponent {
   mappingAdditionalWarning: string;
 
   hideOption = (option: FormFieldConfig) =>
-    this.usedColumnName.has(option.id) &&
+    this.usedPropertyNames.has(option.id) &&
     option.id !== this.columnMapping.propertyName;
 
   async openMappingComponent() {
