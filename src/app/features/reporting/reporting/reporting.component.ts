@@ -94,15 +94,21 @@ export class ReportingComponent {
         this.exportableData = this.flattenReportRows();
         break;
       case "sql":
-        this.exportableData = this.sqlReportService.getCsv(
-          this.sqlReportService.flattenData(this.data),
-        );
+        this.exportableData = this.getSqlExportableData();
         break;
       default:
         this.exportableData = this.data;
     }
 
     this.isLoading = false;
+  }
+
+  private getSqlExportableData() {
+    return this.currentReport.version == 1
+      ? this.data
+      : this.sqlReportService.getCsvforV2(
+          this.sqlReportService.flattenData(this.data),
+        );
   }
 
   private async getReportResults(
@@ -126,7 +132,6 @@ export class ReportingComponent {
           to,
           this.reportCalculation !== null,
         );
-
         this.reportCalculation = await firstValueFrom(
           this.sqlReportService.fetchReportCalculation(
             reportData.calculation.id,
