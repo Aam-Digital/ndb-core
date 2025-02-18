@@ -263,6 +263,7 @@ describe("SqlReportService", () => {
       },
     ]);
   });
+
   it("should convert report into CSV string for version 1 SQL", () => {
     const mockSqlData: SqlReportRow[] = [
       {
