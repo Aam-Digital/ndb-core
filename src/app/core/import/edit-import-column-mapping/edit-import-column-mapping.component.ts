@@ -37,7 +37,19 @@ export class EditImportColumnMappingComponent {
   private componentRegistry = inject(ComponentRegistry);
   private schemaService = inject(EntitySchemaService);
 
-  @Input() columnMapping: ColumnMapping;
+  @Input() set columnMapping(value: ColumnMapping) {
+    const newValueString = JSON.stringify(value);
+    if (newValueString === JSON.stringify(this._columnMapping)) {
+      return;
+    }
+    this._columnMapping = JSON.parse(newValueString);
+  }
+  get columnMapping(): ColumnMapping {
+    return this._columnMapping;
+  }
+  /** internal deep-copy to not change properties of object by reference */
+  private _columnMapping: ColumnMapping;
+
   @Input() entityCtor: EntityConstructor;
 
   /**
@@ -92,7 +104,6 @@ export class EditImportColumnMappingComponent {
     }
 
     this.updateDatatypeAndWarning();
-    this.columnMapping = { ...this.columnMapping };
     this.columnMappingChange.emit(this.columnMapping);
   }
 
