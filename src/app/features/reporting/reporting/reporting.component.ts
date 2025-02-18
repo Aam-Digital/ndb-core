@@ -47,6 +47,7 @@ export class ReportingComponent {
   isLoading: boolean;
   isError: boolean = false;
   errorDetails: string | null = null;
+  localTime: Date;
 
   reportCalculation: ReportCalculation | null = null;
 
@@ -137,7 +138,13 @@ export class ReportingComponent {
             reportData.calculation.id,
           ),
         );
-
+        if (this.reportCalculation?.endDate) {
+          // Convert the UTC to local timezone
+          this.localTime = moment
+            .utc(this.reportCalculation.endDate)
+            .local()
+            .toDate();
+        }
         return reportData.data;
       default:
         return this.dataAggregationService.calculateReport(
