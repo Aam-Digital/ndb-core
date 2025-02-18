@@ -3,14 +3,15 @@ import { DownloadService } from "./download.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
-import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
+
 import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { GeoLocation } from "../../../features/location/location.datatype";
+import { GeoLocation } from "app/features/location/geo-location";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("DownloadService", () => {
   let service: DownloadService;

@@ -2,11 +2,12 @@ import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
 import { Entity } from "../../core/entity/model/entity";
 import { DatabaseField } from "../../core/entity/database-field.decorator";
 import { EntityDatatype } from "../../core/basic-datatypes/entity/entity.datatype";
-import { ConfigurableEnumValue } from "../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+
 import { ConfigurableEnumDatatype } from "../../core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DateWithAge } from "../../core/basic-datatypes/date-with-age/dateWithAge";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { EntityBlockConfig } from "../../core/basic-datatypes/entity/entity-block/entity-block-config";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 /**
  * Basic Entity type for unit tests, so that we don't have to create custom entity classes for every test.

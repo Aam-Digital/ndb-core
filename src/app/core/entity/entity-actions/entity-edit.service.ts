@@ -11,7 +11,7 @@ import {
 } from "./entity-bulk-edit/entity-bulk-edit.component";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 
 /**
  * Bulk edit fields of multiple entities at once.

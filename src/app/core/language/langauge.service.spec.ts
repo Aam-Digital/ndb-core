@@ -6,7 +6,7 @@ import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
 import { Subject } from "rxjs";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
-import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("LanguageService", () => {
   let service: LanguageService;

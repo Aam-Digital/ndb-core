@@ -2,14 +2,7 @@ import { DefaultDatatype } from "../../core/entity/default-datatype/default.data
 import { Injectable } from "@angular/core";
 import { GeoResult, GeoService } from "./geo.service";
 import { lastValueFrom } from "rxjs";
-
-/**
- * A location both as custom string and an optional geo location lookup.
- */
-export interface GeoLocation {
-  locationString?: string;
-  geoLookup?: GeoResult;
-}
+import { GeoLocation } from "./geo-location";
 
 @Injectable()
 export class LocationDatatype extends DefaultDatatype<

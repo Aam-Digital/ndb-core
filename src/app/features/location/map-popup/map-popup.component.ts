@@ -13,7 +13,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { AddressEditComponent } from "../address-edit/address-edit.component";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../geo-location";
 
 export interface MapPopupConfig {
   marked?: Coordinates[];
