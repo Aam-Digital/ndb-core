@@ -19,7 +19,7 @@
 
 <div style="color: gray; padding: 10px" *ngIf="reportCalculation" i18n>
   This report was calculated at:
-  {{ reportCalculation?.endDate | date: "dd.MM.yyyy HH:mm" }} <br />
+  {{ localTime | date: "dd.MM.yyyy HH:mm" }} <br />
   Click again on "Calculate" to re-calculate the report including any changes of
   records since then.
 </div>
