@@ -48,6 +48,7 @@ describe("EditImportColumnMappingComponent", () => {
     component.entityCtor = TestEntity;
     component.updateMapping();
 
+    (component.columnMappingChange.emit as jasmine.Spy).calls.reset(); // ignore previous emit calls
     await component.openMappingComponent();
 
     expect(component.columnMappingChange.emit).toHaveBeenCalled();
