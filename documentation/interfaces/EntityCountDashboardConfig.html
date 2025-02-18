@@ -1,0 +1,542 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  EntityCountDashboardConfig</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Configuration (stored in Config document in the DB) for the dashboard widget.</p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#entityType" 
+>
+                                            entityType
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#groupBy" 
+>
+                                            groupBy
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="entityType"></a>
+                                        <span class="name "><b>entityType</b>
+                                            <a href="#entityType">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>entityType:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="groupBy"></a>
+                                        <span class="name "><b>groupBy</b>
+                                            <a href="#groupBy">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>groupBy:     <code>string[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>string[]</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, Input, OnInit } from &quot;@angular/core&quot;;
+import { Router } from &quot;@angular/router&quot;;
+import { ConfigurableEnumValue } from &quot;../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface&quot;;
+import { DynamicComponent } from &quot;../../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import {
+  Entity,
+  EntityConstructor,
+} from &quot;../../../../core/entity/model/entity&quot;;
+import { EntityRegistry } from &quot;../../../../core/entity/database-entity.decorator&quot;;
+import { IconName } from &quot;@fortawesome/fontawesome-svg-core&quot;;
+import { MatTableModule } from &quot;@angular/material/table&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { Angulartics2Module } from &quot;angulartics2&quot;;
+import { groupBy } from &quot;../../../../utils/utils&quot;;
+import { DashboardListWidgetComponent } from &quot;../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component&quot;;
+import { DashboardWidget } from &quot;../../../../core/dashboard/dashboard-widget/dashboard-widget&quot;;
+import { EntityDatatype } from &quot;../../../../core/basic-datatypes/entity/entity.datatype&quot;;
+import { EntityBlockComponent } from &quot;../../../../core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
+import { NgIf } from &quot;@angular/common&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { MatIconButton } from &quot;@angular/material/button&quot;;
+import { EntityFieldLabelComponent } from &quot;../../../../core/common-components/entity-field-label/entity-field-label.component&quot;;
+
+/**
+ * Configuration (stored in Config document in the DB) for the dashboard widget.
+ */
+export interface EntityCountDashboardConfig {
+  entityType?: string;
+  groupBy?: string[];
+}
+
+/**
+ * Details of one row of disaggregated counts (e.g. for a specific category value) to be displayed.
+ */
+interface GroupCountRow {
+  label: string;
+  id: string;
+
+  /**
+   * The count of entities part of this group
+   */
+  value: number;
+
+  /**
+   * if the groupBy field is an entity reference this holds the related entity type,
+   * so that the entity block will be displayed instead of an id string,
+   * otherwise undefined, to display simply the group label.
+   */
+  groupedByEntity: string;
+}
+
+@DynamicComponent(&quot;ChildrenCountDashboard&quot;)
+@DynamicComponent(&quot;EntityCountDashboard&quot;)
+@Component({
+  selector: &quot;app-entity-count-dashboard-widget&quot;,
+  templateUrl: &quot;./entity-count-dashboard.component.html&quot;,
+  styleUrls: [&quot;./entity-count-dashboard.component.scss&quot;],
+  imports: [
+    MatTableModule,
+    FontAwesomeModule,
+    Angulartics2Module,
+    DashboardListWidgetComponent,
+    EntityBlockComponent,
+    NgIf,
+    MatTooltipModule,
+    MatIconButton,
+    EntityFieldLabelComponent,
+  ],
+  standalone: true,
+})
+export class EntityCountDashboardComponent
+  extends DashboardWidget
+  implements EntityCountDashboardConfig, OnInit
+{
+  getPrev() {
+    this.currentGroupIndex &#x3D;
+      (this.currentGroupIndex - 1 + this.groupBy.length) % this.groupBy.length;
+  }
+
+  getNext() {
+    this.currentGroupIndex &#x3D; (this.currentGroupIndex + 1) % this.groupBy.length;
+  }
+
+  static override getRequiredEntities(config: EntityCountDashboardConfig) {
+    return config?.entityType || &quot;Child&quot;;
+  }
+
+  /**
+   * Entity name which should be grouped
+   * @param value
+   */
+  @Input() set entityType(value: string) {
+    this._entity &#x3D; this.entities.get(value);
+  }
+
+  protected _entity: EntityConstructor;
+
+  /**
+   * The property of the entities to group counts by.
+   *
+   * Default is &quot;center&quot;.
+   */
+  @Input() groupBy: string[] &#x3D; [&quot;center&quot;, &quot;gender&quot;];
+
+  /**
+   * The counts of entities for each of the groupBy fields.
+   */
+  entityGroupCounts: { [groupBy: string]: GroupCountRow[] } &#x3D; {};
+
+  /**
+   * Index of the currently displayed groupBy field / entityGroupCounts entry.
+   */
+  currentGroupIndex &#x3D; 0;
+
+  totalEntities: number;
+
+  /**
+   * The label of the entity type (displayed as an overall dashboard widget subtitle)
+   */
+  label: string;
+  entityIcon: IconName;
+
+  @Input() subtitle: string;
+  @Input() explanation: string &#x3D;
+    $localize&#x60;:dashboard widget explanation:Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.&#x60;;
+
+  constructor(
+    private entityMapper: EntityMapperService,
+    private router: Router,
+    private entities: EntityRegistry,
+  ) {
+    super();
+  }
+
+  async ngOnInit() {
+    if (!this._entity) {
+      this.entityType &#x3D; &quot;Child&quot;;
+    }
+    this.label &#x3D; this._entity.labelPlural;
+    this.entityIcon &#x3D; this._entity.icon;
+
+    // Load all entities of the specified type
+    const entities &#x3D; await this.entityMapper.loadType(this._entity);
+
+    // Filter entities to only include active ones for the total count
+    const activeEntities &#x3D; entities.filter((e) &#x3D;&gt; e.isActive);
+
+    this.totalEntities &#x3D; activeEntities.length;
+    for (const groupByField of this.groupBy) {
+      this.entityGroupCounts[groupByField] &#x3D; this.calculateGroupCounts(
+        activeEntities,
+        groupByField,
+      );
+    }
+  }
+
+  private calculateGroupCounts(
+    entities: Entity[],
+    groupByField: string,
+  ): GroupCountRow[] {
+    const groupByType &#x3D; this._entity.schema.get(groupByField);
+    const groups &#x3D; groupBy(entities, groupByField as keyof Entity);
+    return groups.map(([group, entities]) &#x3D;&gt; {
+      const label &#x3D; extractHumanReadableLabel(group);
+      const groupedByEntity &#x3D;
+        groupByType.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType
+          ? groupByType.additional
+          : undefined;
+      return {
+        label: label,
+        value: entities.length,
+        id: group?.[&quot;id&quot;] || label,
+        groupedByEntity: groupedByEntity,
+      };
+    });
+  }
+
+  goToEntityList(filterId: string) {
+    const params &#x3D; {};
+    params[this.groupBy[this.currentGroupIndex]] &#x3D; filterId;
+
+    this.router.navigate([this._entity.route], { queryParams: params });
+  }
+}
+
+/**
+ * Get a human-readable string from the given value as a label.
+ * @param value
+ */
+function extractHumanReadableLabel(
+  value: string | ConfigurableEnumValue | any,
+): string {
+  if (value &#x3D;&#x3D;&#x3D; undefined) {
+    return &quot;&quot;;
+  }
+  if (typeof value &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+    return value;
+  }
+  if (value?.label) {
+    return value.label;
+  }
+
+  return String(value);
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'EntityCountDashboardConfig.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
