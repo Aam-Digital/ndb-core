@@ -19,6 +19,11 @@ export class ImportColumnMappingService {
     const allPropertyNames = Array.from(entitySchema.keys());
 
     for (const colMap of columnMapping) {
+      if (!!colMap.propertyName) {
+        // skip already mapped columns
+        continue;
+      }
+
       const lowerCaseColumn = colMap.column.toLowerCase();
 
       for (const propertyName of allPropertyNames) {
