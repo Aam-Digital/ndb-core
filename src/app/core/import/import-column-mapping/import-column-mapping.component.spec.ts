@@ -26,14 +26,17 @@ describe("ImportColumnMappingComponent", () => {
       column: "Name",
       propertyName: "Test2",
     };
+    component.columnMapping = [originalColumnMapping];
 
     spyOn(component.columnMappingChange, "emit");
 
     component.updateColumnMapping(originalColumnMapping, newColumnMapping);
 
-    expect(originalColumnMapping.propertyName).toBe("Test2");
     expect(component.columnMappingChange.emit).toHaveBeenCalledWith([
-      ...component.columnMapping,
+      jasmine.objectContaining({
+        column: "Name",
+        propertyName: "Test2",
+      }),
     ]);
   });
 });
