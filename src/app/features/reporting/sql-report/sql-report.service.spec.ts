@@ -12,7 +12,7 @@ import { of } from "rxjs";
 import { ReportEntity, SqlReport } from "../report-config";
 import moment from "moment";
 
-fdescribe("SqlReportService", () => {
+describe("SqlReportService", () => {
   let service: SqlReportService;
 
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
