@@ -11,7 +11,6 @@ import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
 import { AdditionalImportAction } from "./additional-import-action";
-import { ImportService } from "../import.service";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -20,6 +19,7 @@ import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { MatButtonModule } from "@angular/material/button";
+import { ImportAdditionalService } from "./import-additional.service";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -64,7 +64,7 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   constructor(
     private entityMapper: EntityMapperService,
     private entityTypeLabelPipe: EntityTypeLabelPipe,
-    private importService: ImportService,
+    private importAdditionalService: ImportAdditionalService,
   ) {
     this.linkEntityForm
       .get("type")
@@ -85,9 +85,8 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     if (!this.entityType) {
       this.linkEntityForm.disable();
     } else {
-      this.linkableEntityTypes = this.importService.getLinkableEntities(
-        this.entityType,
-      );
+      this.linkableEntityTypes =
+        this.importAdditionalService.getLinkableEntities(this.entityType);
       this.linkEntityForm.enable();
       this.updateSelectableOptions(undefined);
     }
