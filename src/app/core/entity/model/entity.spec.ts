@@ -4,8 +4,9 @@ import { DatabaseField } from "../database-field.decorator";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { fakeAsync, TestBed, waitForAsync } from "@angular/core/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { genders } from "app/child-dev-project/children/model/genders";
 
-describe("Entity", () => {
+fdescribe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
 
   testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
@@ -122,6 +123,20 @@ describe("Entity", () => {
     anonymizedEntity.anonymized = true;
 
     expect(anonymizedEntity.toString()).toBe("[anonymized TestEntity]");
+  });
+
+  it("should handle nested toStringAttributes", () => {
+    @DatabaseEntity("TestNestedToString")
+    class TestNestedToString extends Entity {
+      static override toStringAttributes = ["gender", "age"];
+      static override label = "TestNested";
+      gender = genders[1];
+      age = 25;
+    }
+
+    const testEntity = new TestNestedToString();
+    console.log(testEntity.toString(), "test");
+    expect(testEntity.toString()).toBe("male 25");
   });
 });
 

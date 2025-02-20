@@ -320,7 +320,9 @@ export class Entity {
     }
 
     return this.getConstructor()
-      .toStringAttributes.map((attr) => this[attr])
+      .toStringAttributes.map((attr) =>
+        this[attr].label ? this[attr].label : this[attr],
+      )
       .join(" ");
   }
 
