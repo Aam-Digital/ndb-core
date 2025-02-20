@@ -18,11 +18,14 @@ import { DatabaseEntity } from "../../entity/database-entity.decorator";
 describe("ImportAdditionalService", () => {
   let service: ImportAdditionalService;
 
+  let testEntities: Entity[];
+  let testActivity: RecurringActivity;
+
   // ensure the "Child" entityType is registered
   @DatabaseEntity("Child")
   class Child extends Entity {}
 
-  beforeEach(() => {
+  beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
@@ -30,24 +33,66 @@ describe("ImportAdditionalService", () => {
       ],
     });
     service = TestBed.inject(ImportAdditionalService);
-  });
 
-  it("should link imported data to other entities", async () => {
-    const testEntities: Entity[] = [
+    // set up basic test data:
+    testEntities = [
       createEntityOfType("Child", "1"),
       createEntityOfType("Child", "2"),
     ];
-    const activity = new RecurringActivity("3");
+    testActivity = new RecurringActivity("3");
     const entityMapper = TestBed.inject(EntityMapperService);
-    await entityMapper.save(activity);
+    await entityMapper.save(testActivity);
+  });
 
+  it("should add IDs of imported data to other entity with linkDirectly action", async () => {
     const testImportSettings: ImportSettings = {
       entityType: "Child",
       columnMapping: undefined,
       additionalActions: [
-        { type: "RecurringActivity", id: "RecurringActivity:3" },
-        { type: "School", id: "School:4" },
+        { type: "RecurringActivity", id: testActivity.getId() },
       ],
+    };
+    await service.executeImport(testEntities, testImportSettings);
+
+    const activityAfter = await TestBed.inject(EntityMapperService).load(
+      testActivity.getConstructor(),
+      testActivity.getId(),
+    );
+    expect(activityAfter.participants).toEqual(["Child:1", "Child:2"]);
+  });
+
+  it("should remove IDs from reference field in other entity with undo", async () => {
+    const importMeta = new ImportMetadata();
+    importMeta.config = {
+      entityType: "Child",
+      columnMapping: undefined,
+      additionalActions: [{ type: "RecurringActivity", id: "3" }],
+    };
+    importMeta.ids = ["Child:1", "Child:2"];
+    testActivity.participants = ["Child:3", "Child:2", "Child:1"];
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.saveAll([testActivity]);
+
+    await service.undoImport(importMeta);
+
+    const activityAfter = await TestBed.inject(EntityMapperService).load(
+      testActivity.getConstructor(),
+      testActivity.getId(),
+    );
+    expect(activityAfter.participants).toEqual(["Child:3"]);
+  });
+
+  it("should create relationship entities for imported data with linkIndirectly action", async () => {
+    const testEntities: Entity[] = [
+      createEntityOfType("Child", "1"),
+      createEntityOfType("Child", "2"),
+    ];
+    const entityMapper = TestBed.inject(EntityMapperService);
+
+    const testImportSettings: ImportSettings = {
+      entityType: "Child",
+      columnMapping: undefined,
+      additionalActions: [{ type: "School", id: "School:4" }],
     };
     await service.executeImport(testEntities, testImportSettings);
 
@@ -57,43 +102,27 @@ describe("ImportAdditionalService", () => {
       { childId: "Child:2", schoolId: "School:4" },
     ].map((e) => Object.assign(new ChildSchoolRelation(), e));
     expectEntitiesToMatch(createRelations, expectedRelations, true);
-
-    expect(activity.participants).toEqual(["Child:1", "Child:2"]);
   });
 
-  it("should allow to remove relationship entities with undo", async () => {
+  it("should remove relationship entities with undo", async () => {
     const importMeta = new ImportMetadata();
     importMeta.config = {
       entityType: "Child",
       columnMapping: undefined,
-      additionalActions: [
-        { type: "RecurringActivity", id: "3" },
-        { type: "School", id: "4" },
-      ],
+      additionalActions: [{ type: "School", id: "4" }],
     };
     importMeta.ids = ["Child:1", "Child:2"];
     const relations = [
-      { childId: "1", schoolId: "4" },
-      { childId: "2", schoolId: "4" },
-      { childId: "3", schoolId: "4" }, // Other child same school -> keep
-      { childId: "2", schoolId: "3" }, // Imported child different school -> remove
+      { childId: "Child:1", schoolId: "School:4" },
+      { childId: "Child:2", schoolId: "School:4" },
+      { childId: "Child:3", schoolId: "School:4" }, // Other child same school -> keep
+      { childId: "Child:2", schoolId: "School:3" }, // Imported child different school -> remove
     ].map((e) => Object.assign(new ChildSchoolRelation(), e));
-    const activity = new RecurringActivity("3");
-    activity.participants = ["3", "2", "1"];
-    const children = ["1", "2", "3"].map((id) =>
-      createEntityOfType("Child", id),
-    );
     const entityMapper = TestBed.inject(EntityMapperService);
-    await entityMapper.saveAll([
-      ...children,
-      ...relations,
-      activity,
-      importMeta,
-    ]);
+    await entityMapper.saveAll([...relations]);
 
     await service.undoImport(importMeta);
 
     await expectEntitiesToBeInDatabase([relations[2]], false, true);
-    expect(activity.participants).toEqual(["3"]);
   });
 });

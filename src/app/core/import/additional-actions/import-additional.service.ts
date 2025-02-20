@@ -2,8 +2,9 @@ import { inject, Injectable } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 
 /**
  * Service to handle additional import actions
@@ -14,24 +15,49 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 })
 export class ImportAdditionalService {
   private readonly entityMapper = inject(EntityMapperService);
+  private readonly entityRegistry = inject(EntityRegistry);
 
   private linkableEntities: {
     [key: string]: {
       [key: string]: {
         create: (entities: Entity[], id: string) => Promise<any>;
-        undo: (importMeta: ImportMetadata, id: string) => Promise<any>;
+        undo: (entities: string[], id: string) => Promise<any>;
       };
     };
   } = {
     // TODO: generalize this somehow by analyzing schemas?
     ["Child"]: {
       [RecurringActivity.ENTITY_TYPE]: {
-        create: this.linkToActivity.bind(this),
-        undo: this.undoActivityLink.bind(this),
+        create: (entities: Entity[], id: string) =>
+          this.linkDirectly(
+            entities,
+            RecurringActivity.ENTITY_TYPE,
+            id,
+            "participants",
+          ),
+        undo: (entities: string[], id: string) =>
+          this.undoLinkDirectly(
+            entities,
+            RecurringActivity.ENTITY_TYPE,
+            id,
+            "participants",
+          ),
       },
       ["School"]: {
-        create: this.linkToSchool.bind(this),
-        undo: this.undoSchoolLink.bind(this),
+        create: (entities: Entity[], id: string) =>
+          this.linkIndirectly(
+            entities,
+            ChildSchoolRelation.ENTITY_TYPE,
+            "childId",
+            "schoolId",
+            id,
+          ),
+        undo: (entities: string[], id: string) =>
+          this.undoLinkIndirectly(
+            entities,
+            ChildSchoolRelation.ENTITY_TYPE,
+            "childId",
+          ),
       },
     },
   };
@@ -58,43 +84,103 @@ export class ImportAdditionalService {
     const undoes =
       importMeta.config.additionalActions?.map(({ type, id }) =>
         this.linkableEntities[importMeta.config.entityType][type].undo(
-          importMeta,
+          importMeta.ids,
           id,
         ),
       ) ?? [];
     await Promise.all(undoes);
   }
 
-  private linkToSchool(entities: Entity[], id: string) {
-    const relations = entities.map((entity) => {
-      const relation = new ChildSchoolRelation();
-      relation.childId = entity.getId();
-      relation.schoolId = id;
+  /**
+   * Link the imported entities "indirectly"
+   * by creating "relationship entities" between the imported entities and a given target entity.
+   * @param entitiesToBeLinked An array of imported entities for which the additional linking should be done
+   * @param relationshipEntityType EntityType of the relationship entity (used to reference both the imported and the target, e.g. "ChildSchoolRelation")
+   * @param relationshipProperty Attribute of the relationship entity that references the imported entity
+   * @param relationshipTargetProperty Attribute of the relationship entity that references the target entity
+   * @param targetId ID of the target entity (to which the entities should be linked via the relationship entity)
+   * @private
+   */
+  private linkIndirectly(
+    entitiesToBeLinked: Entity[],
+    relationshipEntityType: string,
+    relationshipProperty: string,
+    relationshipTargetProperty: string,
+    targetId: string,
+  ) {
+    const relationCtr = this.entityRegistry.get(relationshipEntityType);
+
+    const relations = entitiesToBeLinked.map((entity) => {
+      const relation = new relationCtr();
+      relation[relationshipProperty] = entity.getId();
+      relation[relationshipTargetProperty] = targetId;
       return relation;
     });
     return this.entityMapper.saveAll(relations);
   }
 
-  private async undoSchoolLink(importMeta: ImportMetadata) {
-    const relations = await this.entityMapper.loadType(ChildSchoolRelation);
+  /**
+   * Undo the `linkIndirectly` action and delete relationship entities linking imported entities to other entity.
+   * @param entitiesToBeUnlinked An array of imported entities for which the additional linking was done
+   * @param relationshipEntityType EntityType of the relationship entity (used to reference both the imported and the target, e.g. "ChildSchoolRelation")
+   * @param relationshipProperty Attribute of the relationship entity that references the imported entity
+   * @private
+   */
+  private async undoLinkIndirectly(
+    entitiesToBeUnlinked: string[],
+    relationshipEntityType: string,
+    relationshipProperty: string,
+  ) {
+    const relations = await this.entityMapper.loadType(relationshipEntityType);
     const imported = relations.filter((rel) =>
-      importMeta.ids.includes(Entity.createPrefixedId("Child", rel.childId)),
+      entitiesToBeUnlinked.includes(rel[relationshipProperty]),
     );
-    return Promise.all(imported.map((rel) => this.entityMapper.remove(rel)));
+    await Promise.all(imported.map((rel) => this.entityMapper.remove(rel)));
   }
 
-  private async linkToActivity(entities: Entity[], id: string) {
-    const activity = await this.entityMapper.load(RecurringActivity, id);
-    const ids = entities.map((e) => e.getId());
-    activity.participants.push(...ids);
-    return this.entityMapper.save(activity);
+  /**
+   * Link the imported entities "directly"
+   * by updating and entity-reference field in a given other entity.
+   * @param entitiesToBeLinked An array of imported entities for which the additional linking should be done
+   * @param targetType EntityType of the target entity (into which the entities should be linked)
+   * @param targetId ID of the target entity (into which the entities should be linked)
+   * @param targetProperty Attribute of the target entity to which the linked entities should be added
+   * @private
+   */
+  private async linkDirectly(
+    entitiesToBeLinked: Entity[],
+    targetType: string,
+    targetId: string,
+    targetProperty: string,
+  ) {
+    const targetEntity = await this.entityMapper.load(targetType, targetId);
+    const ids = entitiesToBeLinked.map((e) => e.getId());
+
+    if (!targetEntity[targetProperty]) {
+      targetEntity[targetProperty] = [];
+    }
+    targetEntity[targetProperty].push(...ids);
+    return this.entityMapper.save(targetEntity);
   }
 
-  private async undoActivityLink(importMeta: ImportMetadata, id: string) {
-    const activity = await this.entityMapper.load(RecurringActivity, id);
-    activity.participants = activity.participants.filter(
-      (p) => !importMeta.ids.includes(Entity.createPrefixedId("Child", p)),
+  /**
+   * Undo the `linkDirectly` action and remove references to the imported entities from the target entity.
+   * @param entitiesToBeUnlinked An array of imported entities for which the additional linking was done
+   * @param targetType EntityType of the target entity (into which the entities have been linked)
+   * @param targetId ID of the target entity (into which the entities have been linked)
+   * @param targetProperty Attribute of the target entity to which the linked entities should be removed
+   * @private
+   */
+  private async undoLinkDirectly(
+    entitiesToBeUnlinked: string[],
+    targetType: string,
+    targetId: string,
+    targetProperty: string,
+  ) {
+    const targetEntity = await this.entityMapper.load(targetType, targetId);
+    targetEntity[targetProperty] = targetEntity[targetProperty]?.filter(
+      (e) => !entitiesToBeUnlinked.includes(e),
     );
-    return this.entityMapper.save(activity);
+    return this.entityMapper.save(targetEntity);
   }
 }
