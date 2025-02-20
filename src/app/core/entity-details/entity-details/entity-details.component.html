@@ -15,6 +15,35 @@
     [navigateOnDelete]="true"
     [showExpanded]="true"
   >
+    <!-- Import related records -->
+    @for (
+      importEntityType of importAdditionalEntityTypes;
+      track importEntityType
+    ) {
+      <button
+        mat-menu-item
+        angulartics2On="click"
+        [angularticsCategory]="entityType"
+        angularticsAction="import_related"
+        [routerLink]="['/import']"
+        [queryParams]="{
+          entityType: importEntityType,
+          additionalActionToId: entity.getId(),
+        }"
+      >
+        <fa-icon
+          class="color-accent standard-icon-with-text"
+          aria-label="import file"
+          icon="file-import"
+        ></fa-icon>
+        <span i18n
+          >Import related {{ importEntityType | entityTypeLabel: true }} for
+          this {{ entityConstructor?.label }}</span
+        >
+      </button>
+    }
+
+    <!-- Edit Data Structure -->
     <button
       mat-menu-item
       [routerLink]="['/admin/entity', entity?.getType()]"

@@ -1,20 +1,14 @@
 <p i18n>Select the import target type:</p>
 
 <div class="flex-row align-center">
-  <mat-form-field>
+  <mat-form-field class="full-width">
     <mat-label i18n>Import as</mat-label>
-    <mat-select
-      [(value)]="entityType"
-      (selectionChange)="entityTypeChange.emit($event.value)"
-    >
-      <mat-option
-        *ngFor="let entity of entityTypes"
-        [value]="entity.key"
-        [hidden]="true"
-      >
-        {{ entity.value.label }}
-      </mat-option>
-    </mat-select>
+    <app-entity-type-select
+      [(ngModel)]="entityType"
+      (ngModelChange)="onSelectedTypeChange($event)"
+      [multi]="false"
+      [showInternalTypes]="expertMode"
+    ></app-entity-type-select>
   </mat-form-field>
 
   <app-help-button
@@ -23,7 +17,6 @@
   >
   </app-help-button>
 
-  <span class="flex-grow"></span>
   <mat-slide-toggle [(ngModel)]="expertMode" i18n="Toggle label"
     >Expert Mode</mat-slide-toggle
   >
