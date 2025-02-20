@@ -17,6 +17,37 @@ export class ImportAdditionalService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
 
+  private GP_INDIVIDUAL_LINKABLE_ENTITIES = {
+    ["Event"]: {
+      create: (entities: Entity[], id: string) =>
+        this.linkIndirectly(
+          entities,
+          "Participant2Event",
+          "participant",
+          "event",
+          id,
+        ),
+      undo: (entities: string[], id: string) =>
+        this.undoLinkIndirectly(entities, "Participant2Event", "participant"),
+    },
+    ["organisation"]: {
+      create: (entities: Entity[], id: string) =>
+        this.linkIndirectly(
+          entities,
+          "Individual2Organisation",
+          "individual",
+          "organisation",
+          id,
+        ),
+      undo: (entities: string[], id: string) =>
+        this.undoLinkIndirectly(
+          entities,
+          "Individual2Organisation",
+          "individual",
+        ),
+    },
+  };
+
   private linkableEntities: {
     [key: string]: {
       [key: string]: {
@@ -26,21 +57,22 @@ export class ImportAdditionalService {
     };
   } = {
     // TODO: generalize this somehow by analyzing schemas?
+    ["Individual"]: this.GP_INDIVIDUAL_LINKABLE_ENTITIES,
     ["Child"]: {
       [RecurringActivity.ENTITY_TYPE]: {
         create: (entities: Entity[], id: string) =>
           this.linkDirectly(
             entities,
             RecurringActivity.ENTITY_TYPE,
-            id,
             "participants",
+            id,
           ),
         undo: (entities: string[], id: string) =>
           this.undoLinkDirectly(
             entities,
             RecurringActivity.ENTITY_TYPE,
-            id,
             "participants",
+            id,
           ),
       },
       ["School"]: {
@@ -143,15 +175,15 @@ export class ImportAdditionalService {
    * by updating and entity-reference field in a given other entity.
    * @param entitiesToBeLinked An array of imported entities for which the additional linking should be done
    * @param targetType EntityType of the target entity (into which the entities should be linked)
-   * @param targetId ID of the target entity (into which the entities should be linked)
    * @param targetProperty Attribute of the target entity to which the linked entities should be added
+   * @param targetId ID of the target entity (into which the entities should be linked)
    * @private
    */
   private async linkDirectly(
     entitiesToBeLinked: Entity[],
     targetType: string,
-    targetId: string,
     targetProperty: string,
+    targetId: string,
   ) {
     const targetEntity = await this.entityMapper.load(targetType, targetId);
     const ids = entitiesToBeLinked.map((e) => e.getId());
@@ -167,15 +199,15 @@ export class ImportAdditionalService {
    * Undo the `linkDirectly` action and remove references to the imported entities from the target entity.
    * @param entitiesToBeUnlinked An array of imported entities for which the additional linking was done
    * @param targetType EntityType of the target entity (into which the entities have been linked)
-   * @param targetId ID of the target entity (into which the entities have been linked)
    * @param targetProperty Attribute of the target entity to which the linked entities should be removed
+   * @param targetId ID of the target entity (into which the entities have been linked)
    * @private
    */
   private async undoLinkDirectly(
     entitiesToBeUnlinked: string[],
     targetType: string,
-    targetId: string,
     targetProperty: string,
+    targetId: string,
   ) {
     const targetEntity = await this.entityMapper.load(targetType, targetId);
     targetEntity[targetProperty] = targetEntity[targetProperty]?.filter(
