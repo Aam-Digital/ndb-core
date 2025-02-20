@@ -125,17 +125,16 @@ fdescribe("Entity", () => {
     expect(anonymizedEntity.toString()).toBe("[anonymized TestEntity]");
   });
 
-  it("should handle nested toStringAttributes", () => {
-    @DatabaseEntity("TestNestedToString")
-    class TestNestedToString extends Entity {
+  it("should handle configurableenum toStringAttributes", () => {
+    @DatabaseEntity("TestconfigurableenumToString")
+    class TestconfigurableenumToString extends Entity {
       static override toStringAttributes = ["gender", "age"];
-      static override label = "TestNested";
+      static override label = "Testconfigurableenum";
       gender = genders[1];
       age = 25;
     }
 
-    const testEntity = new TestNestedToString();
-    console.log(testEntity.toString(), "test");
+    const testEntity = new TestconfigurableenumToString();
     expect(testEntity.toString()).toBe("male 25");
   });
 });
