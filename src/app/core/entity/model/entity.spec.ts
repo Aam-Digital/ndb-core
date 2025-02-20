@@ -6,7 +6,7 @@ import { fakeAsync, TestBed, waitForAsync } from "@angular/core/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { genders } from "app/child-dev-project/children/model/genders";
 
-fdescribe("Entity", () => {
+describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
 
   testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
