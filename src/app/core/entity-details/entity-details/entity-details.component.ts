@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 import { MatButtonModule } from "@angular/material/button";
@@ -12,7 +18,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { CommonModule, NgForOf, NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
-import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
 import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
 import { UntilDestroy } from "@ngneat/until-destroy";
@@ -20,6 +25,8 @@ import { AbilityModule } from "@casl/angular";
 import { RouteTarget } from "../../../route-target";
 import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
+import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
+import { ImportAdditionalService } from "../../import/additional-actions/import-additional.service";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -47,13 +54,13 @@ import { ViewActionsComponent } from "../../common-components/view-actions/view-
     NgForOf,
     ViewTitleComponent,
     DynamicComponentDirective,
-    DisableEntityOperationDirective,
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
     RouterLink,
     AbilityModule,
     CommonModule,
     ViewActionsComponent,
+    EntityTypeLabelPipe,
   ],
 })
 export class EntityDetailsComponent
@@ -65,12 +72,21 @@ export class EntityDetailsComponent
    */
   @Input() panels: Panel[] = [];
 
+  private readonly importAdditionalService = inject(ImportAdditionalService);
+  importAdditionalEntityTypes: string[];
+
   override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
     if (changes.id || changes.entity || changes.panels) {
       this.initPanels();
+      this.updateImportOptions();
     }
+  }
+
+  private updateImportOptions() {
+    this.importAdditionalEntityTypes =
+      this.importAdditionalService.getEntitiesLinkingTo(this.entityType);
   }
 
   private initPanels() {
