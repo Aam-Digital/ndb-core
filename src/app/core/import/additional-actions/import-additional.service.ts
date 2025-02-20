@@ -94,8 +94,30 @@ export class ImportAdditionalService {
     },
   };
 
+  /**
+   * Get the entity types that data of the given entity type can be linked to during its import.
+   * (e.g. for "Child" entityType, the result could be ["School"], indicating that during import of children, they can be linked to a school)
+   * @param entityType
+   */
   getLinkableEntities(entityType: string): string[] {
     return Object.keys(this.linkableEntities[entityType] ?? {});
+  }
+
+  /**
+   * Get the entity types that during their import can be linked to the given target entity type.
+   * (e.g. for "School" targetEntityType, the result could be ["Child"], indicating that during import of children, they can be linked to a school)
+   * @param targetEntityType
+   */
+  getEntitiesLinkingTo(targetEntityType: string): string[] {
+    const linkingTypes: string[] = [];
+
+    for (const entityType in this.linkableEntities) {
+      if (this.linkableEntities[entityType][targetEntityType]) {
+        linkingTypes.push(entityType);
+      }
+    }
+
+    return linkingTypes;
   }
 
   /**
