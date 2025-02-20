@@ -4,7 +4,7 @@ import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
+import { AdditionalImportAction } from "../additional-actions/additional-import-action";
 import { ImportMetadata } from "../import-metadata";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -16,7 +16,7 @@ import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/e
 import { ImportEntityTypeComponent } from "../import-entity-type/import-entity-type.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
-import { ImportAdditionalActionsComponent } from "../import-additional-actions/import-additional-actions.component";
+import { ImportAdditionalActionsComponent } from "../additional-actions/import-additional-actions.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ImportColumnMappingComponent } from "../import-column-mapping/import-column-mapping.component";
 import { ImportReviewDataComponent } from "../import-review-data/import-review-data.component";
