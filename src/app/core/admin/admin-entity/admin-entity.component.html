@@ -5,7 +5,9 @@
       i18n="page title"
       [displayInPlace]="true"
     >
-      Editing data structure for "{{ entityType | entityTypeLabel }}" records
+      Editing data structure for "{{
+        (entityType | entityTypeLabel) ?? entityType
+      }}" records
     </app-view-title>
 
     <div class="flex-row gap-small save-buttons">
