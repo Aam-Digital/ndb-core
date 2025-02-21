@@ -14,6 +14,7 @@ import {
   TrackByFunction,
   ViewChild,
   WritableSignal,
+  AfterViewInit,
 } from "@angular/core";
 import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -95,7 +96,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
 })
 export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
-  implements OnChanges, OnInit
+  implements OnChanges, OnInit, AfterViewInit
 {
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
   // `_elementRef` is protected in `MapInput`
