@@ -21,8 +21,9 @@ import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
-import { ConfigurableEnumValue } from "../../../basic-datatypes/configurable-enum/configurable-enum.interface";
+
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("EntityInlineEditActionsComponent", () => {
   let component: EntityInlineEditActionsComponent<InlineEditEntity>;

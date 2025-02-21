@@ -1,5 +1,5 @@
-import { ConfigurableEnumValue } from "./configurable-enum.interface";
 import { ConfigurableEnum } from "./configurable-enum";
+import { ConfigurableEnumValue } from "./configurable-enum.types";
 
 describe("ConfigurableEnum", () => {
   let sampleValues: ConfigurableEnumValue[];

@@ -13,7 +13,7 @@ import { Location, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
+import { ViewComponentContext } from "app/core/ui/abstract-view/ViewComponentContext";
 
 /**
  * Building block for views, providing a consistent layout to a title section
