@@ -329,6 +329,7 @@ export class EntityListComponent<T extends Entity>
       this.entityConstructor,
     );
     this.selectedRows = undefined;
+    await this.loadEntities();
   }
 
   async deleteRecords() {
