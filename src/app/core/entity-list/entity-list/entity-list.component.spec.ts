@@ -22,7 +22,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-describe("EntityListComponent", () => {
+fdescribe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
   let fixture: ComponentFixture<EntityListComponent<Entity>>;
   let loader: HarnessLoader;
@@ -217,6 +217,24 @@ describe("EntityListComponent", () => {
     tick();
 
     expect(component.allEntities).toEqual([]);
+  }));
+
+  it("should fallback to the first group if default and mobile group does not exist", fakeAsync(() => {
+    createComponent();
+    component.columnGroups = {
+      default: "Overview",
+      mobile: "Overview",
+      groups: [
+        { name: "Basic Info", columns: ["name", "age", "category"] },
+        { name: "School Info", columns: ["name", "age", "other"] },
+      ],
+    };
+
+    component.ngOnChanges({ listConfig: null });
+    tick();
+
+    expect(component.defaultColumnGroup).toEqual("Basic Info");
+    expect(component.mobileColumnGroup).toEqual("Basic Info");
   }));
 
   function createComponent() {
