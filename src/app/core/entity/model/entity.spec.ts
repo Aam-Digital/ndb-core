@@ -129,14 +129,17 @@ describe("Entity", () => {
   it("should handle configurableenum toStringAttributes", () => {
     @DatabaseEntity("TestconfigurableenumToString")
     class TestconfigurableenumToString extends Entity {
-      static override toStringAttributes = ["gender", "age"];
+      static override toStringAttributes = ["gender", "age", "testDate"];
       static override label = "Testconfigurableenum";
       gender: ConfigurableEnumValue = genders[1];
+      testDate = new Date("2025-01-31");
       age = 25;
     }
 
     const testEntity = new TestconfigurableenumToString();
-    expect(testEntity.toString()).toBe("male 25");
+    expect(testEntity.toString()).toBe(
+      "male 25 " + new Date("2025-01-31").toLocaleDateString(),
+    );
   });
 });
 
