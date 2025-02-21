@@ -1,0 +1,268 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>How to create a new Datatype</h1>
+<p>&quot;Datatypes&quot; define how a single field (i.e. entity property) is stored and displayed.
+They are core building blocks for all entities and can enable advanced functionality, like displaying a streetmap for an address.</p>
+<p>The Aam Digital core defines most commonly known datatypes already (see <code>CoreModule</code>).
+The architecture of datatypes is designed for extension however, so you can easily add further types.</p>
+<p>A datatype consists of three parts that can be provided as custom implementations:</p>
+<ol>
+<li>A <code>DefaultDatatype</code> implementation, defining a &quot;name&quot; for the type, how the values are stored in the DB and which components are used for it in the UI</li>
+<li>An <code>EditComponent</code> implementation, defining a component that provides special UI for the FormField through which this type of values can be edited and viewed in Detail Views.</li>
+<li>A <code>DisplayComponent</code> implementation, defining a component for showing the value in a read-only way (e.g. in table columns)</li>
+</ol>
+<p>You can reuse the components of existing datatypes, if your type does not require customization for one of these aspects. However, you should implement a class extending the DefaultDatatype in order to register in the admin and configuration system.</p>
+<h2>The base: Extending <code>DefaultDatatype</code></h2>
+<p><code>DefaultDatatype</code> is the base class for all implementations of custom datatypes.
+It implements default logic for all the required aspects so that you can override only those parts that are relevant for your new type.</p>
+<p>Implementations of new datatypes extend the <code>DefaultDatatype</code> and override the static attributes, that configure the name and UI for the new type, as well as (optionally) override the default method for transforming values for storage in the database and imports.</p>
+<p>Datatype implementations are Angular Services.
+You can use Angular&#39;s dependency injection to access any other services, if needed for more complex logic.</p>
+<h2>Defining a new Datatype</h2>
+<ol>
+<li>Create a new  class (according to our file name convention it should follow the pattern <code>my-custom.datatype.ts</code>)</li>
+<li>Use inheritance to extend the <code>DefaultDatatype</code> class</li>
+<li>Define your datatype identifier (which is used in <code>@DatabaseField</code> annotations in their <code>EntitySchemaField.dataType</code> definitions to use this type) by setting the <code>static override dataType = &quot;my-custom&quot;</code> property of your class</li>
+<li>Define other important properties:<ul>
+<li><code>label</code>: To allow admin users to select this type in the form builder under this human-readable name</li>
+<li><code>viewComponent</code>: The string ID for the DisplayComponent (see below) used for read-only presentation of the value in tables</li>
+<li><code>editComponent</code>: The string ID for the EditComponent (see below) used for form field UI of the value in detail views</li>
+</ul>
+</li>
+<li>Override any of the other aspects and methods if you want to customize, like the data transformation methods (see below)</li>
+<li><strong>Register the datatype</strong> using Angular DI system as a &quot;multi&quot; provider in your feature module to make it available to the system overall:
+<code>{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true }</code></li>
+</ol>
+<p>This could result in a Datatype class like this:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">&#64;Injectable()
+export class MyCustomDatatype extends DefaultDatatype&lt;SpecialObject, string&gt; {
+  static override dataType = &quot;my-custom&quot;;
+  static override label: string = $localize`:datatype-label:My Custom Type`;
+
+  override editComponent = &quot;EditMyCustom&quot;;
+  override viewComponent = &quot;DisplayText&quot;;
+  // make sure to register your new components in the ComponentRegistry (see below)
+
+  constructor() {
+    super();
+    // use constructor to simply inject other services you need
+    // alternatively you can also use Angular&#39;s `inject()` function
+  }
+
+  transformToDatabaseFormat(value: SpecialObject): string {
+    // storing as string in the database for whatever reason
+    return value.toString();
+  }
+
+  transformToObjectFormat(value: string): SpecialObject {
+    return transformToSpecialObject(value);
+  }
+
+  importConfigComponent = &quot;SpecialImportValueMapping&quot;;
+
+  importMapFunction(value: any, schemaField: EntitySchemaField, additional?: any) {
+    return SpecialValueParserForDifferentImportFormats(value);
+  }
+}</code></pre></div><p>Please also refer to the extensive JsDoc code comments in the <code>DefaultDatatype</code> class.</p>
+<h2>Registering the new Datatype</h2>
+<p>Provide your datatype service using Angular dependency injection:
+<code>{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true },</code></p>
+<p>The EntitySchemaService, that handles all data transformations, and other platform modules automatically pick up your datatype
+and use it for any entity properties that use the <code>dataType</code> identifier of your implementation.</p>
+<h2>Implementing a custom EditComponent</h2>
+<p>To provide a custom UI, you can implement an Angular component that extends the <code>EditComponent</code> and configure it to be used for the datatype as shown above.</p>
+<p>Such a component is a standard Angular component.
+It has to extend the abstract &quot;EditComponent&quot; base class however
+and needs to ensure changes are set into the <code>formControl</code> input property that the base class defines. This is the channel for editing to be picked up by the overall form, which takes care of saving changes also.</p>
+<p>The <code>EditComponent</code> base class also provides access to a number of other <code>@Input</code> properties from the current context (i.e. the entity and field configuration).
+You can use these to provide a custom UI and functionality, possibly even accessing other form fields or properties of the current entity.
+Please refer to the code and comments in <code>EditComponent</code>.</p>
+<h3>Registering the new Component</h3>
+<p>In order to make a component accessible under a string ID required for the configuration system, you need to explicitly register it beyond the standard Angular imports:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">constructor(components: ComponentRegistry) {
+  components.addAll([
+    [
+      &quot;EditMyCustom&quot;, // This string ID can be used in config objects, like `Datatype.editComponent`
+      () =&gt;
+        // We import the components in this indirect way to support lazy-loading
+        import(&quot;./edit-my-custom/edit-my-custom.component&quot;).then(
+          (c) =&gt; c.EditMyCustomComponent,
+        ),
+    ],
+  ]);
+}</code></pre></div><p>We usually implement this registration code in the constructor of the feature module.
+It is important that this has been called before other components during runtime might try to access the component.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'create-a-new-datatype.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

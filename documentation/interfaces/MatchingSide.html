@@ -1,0 +1,1004 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  MatchingSide</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/matching-entities/matching-entities/matching-entities.component.ts</code>
+        </p>
+
+
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../interfaces/MatchingSideConfig.html" target="_self" >MatchingSideConfig</a></code>
+            </p>
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#availableEntities" 
+>
+                                            availableEntities
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#distanceColumn" 
+>
+                                            distanceColumn
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#entityType" 
+>
+                                            entityType
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#filterObj" 
+>
+                                            filterObj
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#highlightedSelected" 
+>
+                                            highlightedSelected
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#multiSelect" 
+>
+                                            multiSelect
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#selected" 
+>
+                                            selected
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#selectMatch" 
+>
+                                            selectMatch
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="availableEntities"></a>
+                                        <span class="name "><b>availableEntities</b>
+                                            <a href="#availableEntities">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>availableEntities:         <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="distanceColumn"></a>
+                                        <span class="name "><b>distanceColumn</b>
+                                            <a href="#distanceColumn">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>distanceColumn:     <code>literal type</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="entityType"></a>
+                                        <span class="name "><b>entityType</b>
+                                            <a href="#entityType">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>entityType:         <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="filterObj"></a>
+                                        <span class="name "><b>filterObj</b>
+                                            <a href="#filterObj">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>filterObj:         <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter&lt;Entity&gt;</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#DataFilter" target="_self" >DataFilter&lt;Entity&gt;</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>pass along filters from app-filter to subrecord component</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="highlightedSelected"></a>
+                                        <span class="name "><b>highlightedSelected</b>
+                                            <a href="#highlightedSelected">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>highlightedSelected:         <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>item of <code>selected</code> that is currently highlighted</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="multiSelect"></a>
+                                        <span class="name "><b>multiSelect</b>
+                                            <a href="#multiSelect">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>multiSelect:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>whether this allows to select more than one selected match</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="selected"></a>
+                                        <span class="name "><b>selected</b>
+                                            <a href="#selected">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>selected:         <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="selectMatch"></a>
+                                        <span class="name "><b>selectMatch</b>
+                                            <a href="#selectMatch">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>selectMatch:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+} from &quot;@angular/core&quot;;
+import { DynamicComponent } from &quot;../../../core/config/dynamic-components/dynamic-component.decorator&quot;;
+import { Entity, EntityConstructor } from &quot;../../../core/entity/model/entity&quot;;
+import { EntityMapperService } from &quot;../../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityRegistry } from &quot;../../../core/entity/database-entity.decorator&quot;;
+import {
+  MatchingEntitiesConfig,
+  MatchingSideConfig,
+  NewMatchAction,
+} from &quot;./matching-entities-config&quot;;
+import { DynamicComponentConfig } from &quot;../../../core/config/dynamic-components/dynamic-component-config.interface&quot;;
+import { ActivatedRoute } from &quot;@angular/router&quot;;
+import { FormDialogService } from &quot;../../../core/form-dialog/form-dialog.service&quot;;
+import { addAlphaToHexColor } from &quot;../../../utils/style-utils&quot;;
+import { BehaviorSubject } from &quot;rxjs&quot;;
+import { ConfigService } from &quot;../../../core/config/config.service&quot;;
+import { MatTableModule } from &quot;@angular/material/table&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { NgForOf, NgIf } from &quot;@angular/common&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { EntityFieldViewComponent } from &quot;../../../core/common-components/entity-field-view/entity-field-view.component&quot;;
+import { MapComponent } from &quot;../../location/map/map.component&quot;;
+import { FilterComponent } from &quot;../../../core/filter/filter/filter.component&quot;;
+import { Coordinates } from &quot;../../location/coordinates&quot;;
+import { FilterService } from &quot;../../../core/filter/filter.service&quot;;
+import { LocationProperties } from &quot;../../location/map/map-properties-popup/map-properties-popup.component&quot;;
+import { getLocationProperties } from &quot;../../location/map-utils&quot;;
+import { FlattenArrayPipe } from &quot;../../../utils/flatten-array/flatten-array.pipe&quot;;
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from &quot;../../../core/common-components/entity-form/FormConfig&quot;;
+import { RouteTarget } from &quot;../../../route-target&quot;;
+import { EntitiesTableComponent } from &quot;../../../core/common-components/entities-table/entities-table.component&quot;;
+import { DataFilter } from &quot;../../../core/filter/filters/filters&quot;;
+import { GeoLocation } from &quot;../../location/location.datatype&quot;;
+
+export interface MatchingSide extends MatchingSideConfig {
+  /** pass along filters from app-filter to subrecord component */
+  filterObj?: DataFilter&lt;Entity&gt;;
+
+  availableEntities?: Entity[];
+  selectMatch?: (e) &#x3D;&gt; void;
+  entityType: EntityConstructor;
+
+  /** whether this allows to select more than one selected match */
+  multiSelect: boolean;
+
+  selected?: Entity[];
+
+  /** item of &#x60;selected&#x60; that is currently highlighted */
+  highlightedSelected: Entity;
+
+  distanceColumn: {
+    coordinatesProperties: string[];
+    compareCoordinates: BehaviorSubject&lt;Coordinates[]&gt;;
+  };
+}
+
+@RouteTarget(&quot;MatchingEntities&quot;)
+@DynamicComponent(&quot;MatchingEntities&quot;)
+@Component({
+  selector: &quot;app-matching-entities&quot;,
+  templateUrl: &quot;./matching-entities.component.html&quot;,
+  styleUrls: [&quot;./matching-entities.component.scss&quot;],
+  imports: [
+    MatTableModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    NgForOf,
+    EntitiesTableComponent,
+    EntityFieldViewComponent,
+    MapComponent,
+    FilterComponent,
+    FlattenArrayPipe,
+  ],
+  standalone: true,
+})
+export class MatchingEntitiesComponent implements OnInit {
+  static DEFAULT_CONFIG_KEY &#x3D; &quot;appConfig:matching-entities&quot;;
+
+  @Input() entity: Entity;
+  @Input() leftSide: MatchingSideConfig &#x3D; {};
+  @Input() rightSide: MatchingSideConfig &#x3D; {};
+  /**
+   * Column mapping of property pairs of left and right entity that should be compared side by side.
+   * @param value
+   */
+  @Input() columns: [ColumnConfig, ColumnConfig][] &#x3D; [];
+  @Input()
+  matchActionLabel: string &#x3D; $localize&#x60;:Matching button label:create matching&#x60;;
+  @Input() onMatch: NewMatchAction;
+
+  @ViewChild(&quot;matchComparison&quot;, { static: true })
+  matchComparisonElement: ElementRef;
+
+  columnsToDisplay &#x3D; [];
+  lockedMatching &#x3D; false;
+  sideDetails: [MatchingSide, MatchingSide];
+
+  mapVisible &#x3D; false;
+  filteredMapEntities: Entity[] &#x3D; [];
+  displayedLocationProperties: LocationProperties &#x3D; {};
+
+  constructor(
+    private route: ActivatedRoute,
+    private formDialog: FormDialogService,
+    private entityMapper: EntityMapperService,
+    private configService: ConfigService,
+    private entityRegistry: EntityRegistry,
+    private filterService: FilterService,
+    private changeDetector: ChangeDetectorRef,
+  ) {
+    const config: MatchingEntitiesConfig &#x3D;
+      this.configService.getConfig&lt;MatchingEntitiesConfig&gt;(
+        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY,
+      ) ?? {};
+    Object.assign(this, JSON.parse(JSON.stringify(config)));
+
+    this.route.data.subscribe(
+      (data: DynamicComponentConfig&lt;MatchingEntitiesConfig&gt;) &#x3D;&gt; {
+        if (
+          !data?.config?.leftSide &amp;&amp;
+          !data?.config?.rightSide &amp;&amp;
+          !data?.config?.columns
+        ) {
+          return;
+        }
+        Object.assign(this, JSON.parse(JSON.stringify(data.config)));
+      },
+    );
+  }
+
+  // TODO: fill selection on hover already?
+
+  async ngOnInit() {
+    this.sideDetails &#x3D; [
+      await this.initSideDetails(this.leftSide, 0),
+      await this.initSideDetails(this.rightSide, 1),
+    ];
+    this.sideDetails.forEach((side, index) &#x3D;&gt;
+      this.initDistanceColumn(side, index),
+    );
+    this.filterMapEntities();
+    this.columnsToDisplay &#x3D; [&quot;side-0&quot;, &quot;side-1&quot;];
+    // needed due to async
+    this.changeDetector.detectChanges();
+  }
+
+  /**
+   * Generate setup for a side of the matching view template based on the component input properties.
+   * @param side
+   * @param sideIndex
+   * @private
+   */
+  private async initSideDetails(
+    side: MatchingSideConfig,
+    sideIndex: number,
+  ): Promise&lt;MatchingSide&gt; {
+    const newSide &#x3D; Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
+
+    if (!newSide.entityType) {
+      newSide.selected &#x3D; newSide.selected ?? [this.entity];
+      newSide.highlightedSelected &#x3D; newSide.selected[0];
+      newSide.entityType &#x3D; newSide.highlightedSelected?.getConstructor();
+    }
+
+    let entityType &#x3D; newSide.entityType;
+    if (typeof entityType &#x3D;&#x3D;&#x3D; &quot;string&quot;) {
+      entityType &#x3D; this.entityRegistry.get(entityType);
+    }
+    newSide.entityType &#x3D;
+      entityType ?? newSide.highlightedSelected?.getConstructor();
+
+    newSide.columns &#x3D;
+      newSide.columns ??
+      this.columns.map((p) &#x3D;&gt; p[sideIndex]).filter((c) &#x3D;&gt; !!c);
+
+    newSide.multiSelect &#x3D; this.checkIfMultiSelect(
+      this.onMatch.newEntityType,
+      sideIndex &#x3D;&#x3D;&#x3D; 0
+        ? this.onMatch.newEntityMatchPropertyLeft
+        : this.onMatch.newEntityMatchPropertyRight,
+    );
+
+    if (newSide.multiSelect) {
+      newSide.selectMatch &#x3D; this.getMultiSelectFunction(newSide);
+    } else {
+      newSide.selectMatch &#x3D; this.getSingleSelectFunction(newSide);
+    }
+
+    if (!newSide.selected &amp;&amp; newSide.entityType) {
+      newSide.availableEntities &#x3D; await this.entityMapper.loadType(
+        newSide.entityType,
+      );
+      newSide.availableFilters &#x3D; newSide.availableFilters ?? [];
+      newSide.filterObj &#x3D; { ...(side.prefilter ?? {}) };
+    }
+
+    this.mapVisible &#x3D;
+      this.mapVisible || getLocationProperties(newSide.entityType).length &gt; 0;
+
+    return newSide;
+  }
+
+  private checkIfMultiSelect(
+    onMatchEntityType: string,
+    onMatchProperty: string,
+  ) {
+    const schemaField &#x3D; this.entityRegistry
+      .get(onMatchEntityType)
+      .schema.get(onMatchProperty);
+
+    return schemaField.isArray;
+  }
+
+  private getMultiSelectFunction(newSide: MatchingSide) {
+    return (e: Entity) &#x3D;&gt; {
+      if (!newSide.selected) {
+        newSide.selected &#x3D; [];
+      }
+
+      if (newSide.selected.includes(e)) {
+        // unselect
+        this.highlightSelectedRow(e, true);
+        newSide.selected &#x3D; newSide.selected.filter((s) &#x3D;&gt; s !&#x3D;&#x3D; e);
+        if (newSide.highlightedSelected &#x3D;&#x3D;&#x3D; e) {
+          newSide.highlightedSelected &#x3D; newSide.selected[0];
+        }
+      } else {
+        this.highlightSelectedRow(e);
+        newSide.selected &#x3D; [...newSide.selected, e];
+        newSide.highlightedSelected &#x3D; e;
+      }
+
+      this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(newSide);
+    };
+  }
+
+  private getSingleSelectFunction(newSide: MatchingSide) {
+    return (e: Entity) &#x3D;&gt; {
+      this.highlightSelectedRow(e);
+      if (newSide.highlightedSelected) {
+        this.highlightSelectedRow(newSide.highlightedSelected, true);
+      }
+      newSide.selected &#x3D; [e];
+      newSide.highlightedSelected &#x3D; e;
+      this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(newSide);
+    };
+  }
+
+  private highlightSelectedRow(newSelectedEntity: Entity, unHighlight &#x3D; false) {
+    if (unHighlight) {
+      newSelectedEntity.getColor &#x3D;
+        newSelectedEntity.getConstructor().prototype.getColor;
+    } else {
+      newSelectedEntity.getColor &#x3D; () &#x3D;&gt;
+        addAlphaToHexColor(newSelectedEntity.getConstructor().color, 0.2);
+    }
+  }
+
+  async createMatch() {
+    const newMatchEntity &#x3D; new (this.entityRegistry.get(
+      this.onMatch.newEntityType,
+    ))();
+
+    const leftMatch &#x3D; this.sideDetails[0].selected;
+    const rightMatch &#x3D; this.sideDetails[1].selected;
+
+    newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] &#x3D; this
+      .sideDetails[0].multiSelect
+      ? leftMatch.map((e) &#x3D;&gt; e.getId())
+      : leftMatch[0].getId();
+    newMatchEntity[this.onMatch.newEntityMatchPropertyRight] &#x3D; this
+      .sideDetails[1].multiSelect
+      ? rightMatch.map((e) &#x3D;&gt; e.getId())
+      : rightMatch[0].getId();
+
+    // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
+    newMatchEntity[&quot;date&quot;] &#x3D; new Date();
+    newMatchEntity[&quot;start&quot;] &#x3D; new Date();
+    newMatchEntity[&quot;name&quot;] &#x3D;
+      newMatchEntity.getConstructor().label +
+      &quot; &quot; +
+      leftMatch.map((e) &#x3D;&gt; e.toString()).join(&quot;, &quot;) +
+      &quot; - &quot; +
+      rightMatch.map((e) &#x3D;&gt; e.toString()).join(&quot;, &quot;);
+
+    if (this.onMatch.columnsToReview) {
+      this.formDialog
+        .openFormPopup(newMatchEntity, this.onMatch.columnsToReview)
+        .afterClosed()
+        .subscribe((result) &#x3D;&gt; {
+          if (result instanceof newMatchEntity.getConstructor()) {
+            this.lockedMatching &#x3D; true;
+          }
+        });
+    } else {
+      await this.entityMapper.save(newMatchEntity);
+      this.lockedMatching &#x3D; true;
+    }
+  }
+
+  applySelectedFilters(side: MatchingSide, filter: DataFilter&lt;Entity&gt;) {
+    side.filterObj &#x3D; { ...side.prefilter, ...filter };
+    this.filterMapEntities();
+  }
+
+  private filterMapEntities() {
+    this.filteredMapEntities &#x3D; [];
+    this.sideDetails.forEach((side) &#x3D;&gt; {
+      if (side.filterObj) {
+        const predicate &#x3D; this.filterService.getFilterPredicate(side.filterObj);
+        const filtered &#x3D; side.availableEntities.filter(predicate);
+        this.filteredMapEntities.push(...filtered);
+      } else {
+        this.filteredMapEntities.push(...(side.availableEntities ?? []));
+      }
+    });
+  }
+
+  entityInMapClicked(entity: Entity) {
+    const side &#x3D; this.sideDetails.find(
+      (s) &#x3D;&gt; s.entityType &#x3D;&#x3D;&#x3D; entity.getConstructor(),
+    );
+    if (side) {
+      side.selectMatch(entity);
+    }
+  }
+
+  /**
+   * Initialize distance column for columns of side and columns of EntitySubrecord
+   * @param side
+   * @param index of the side
+   * @private
+   */
+  private initDistanceColumn(side: MatchingSide, index: number) {
+    const sideIndex &#x3D; side.columns.findIndex((col) &#x3D;&gt; col &#x3D;&#x3D;&#x3D; &quot;distance&quot;);
+    if (sideIndex !&#x3D;&#x3D; -1) {
+      const columnConfig &#x3D; this.getDistanceColumnConfig(side);
+      side.columns[sideIndex] &#x3D; columnConfig;
+      side.distanceColumn &#x3D; columnConfig.additional;
+      const colIndex &#x3D; this.columns.findIndex(
+        (row) &#x3D;&gt; row[index] &#x3D;&#x3D;&#x3D; &quot;distance&quot;,
+      );
+      if (colIndex !&#x3D;&#x3D; -1) {
+        this.columns[colIndex][index] &#x3D; columnConfig;
+      }
+    }
+  }
+
+  private getDistanceColumnConfig(side: MatchingSide): FormFieldConfig {
+    return {
+      id: &quot;distance&quot;,
+      label: $localize&#x60;:Matching View column name:Distance&#x60;,
+      viewComponent: &quot;DisplayDistance&quot;,
+      additional: {
+        coordinatesProperties:
+          this.displayedLocationProperties[side.entityType.ENTITY_TYPE],
+        compareCoordinates: new BehaviorSubject&lt;Coordinates[]&gt;([]),
+      },
+    };
+  }
+
+  updateMarkersAndDistances() {
+    this.sideDetails.forEach((side) &#x3D;&gt; {
+      const sideProperties &#x3D;
+        this.displayedLocationProperties[side.entityType.ENTITY_TYPE];
+      if (side.distanceColumn) {
+        side.distanceColumn.coordinatesProperties &#x3D; sideProperties;
+        const lastValue &#x3D; side.distanceColumn.compareCoordinates.value;
+        side.distanceColumn.compareCoordinates.next(lastValue);
+      }
+      if (side.highlightedSelected) {
+        this.updateDistanceColumn(side);
+      }
+    });
+  }
+
+  private updateDistanceColumn(side: MatchingSide) {
+    const locationProperties &#x3D;
+      this.displayedLocationProperties[side.highlightedSelected?.getType()];
+    const otherIndex &#x3D; this.sideDetails[0] &#x3D;&#x3D;&#x3D; side ? 1 : 0;
+    const distanceColumn &#x3D; this.sideDetails[otherIndex].distanceColumn;
+    if (locationProperties &amp;&amp; distanceColumn) {
+      const coordinates: Coordinates[] &#x3D; locationProperties.map(
+        (prop) &#x3D;&gt; (side.highlightedSelected[prop] as GeoLocation)?.geoLookup,
+      );
+      distanceColumn.compareCoordinates.next(coordinates);
+    }
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'MatchingSide.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

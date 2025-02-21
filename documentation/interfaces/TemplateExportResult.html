@@ -1,0 +1,478 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  TemplateExportResult</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/features/template-export/template-export-api/template-export-api.service.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#file" 
+>
+                                            file
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#filename" 
+>
+                                            filename
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="file"></a>
+                                        <span class="name "><b>file</b>
+                                            <a href="#file">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>file:     <code>ArrayBuffer</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>ArrayBuffer</code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="filename"></a>
+                                        <span class="name "><b>filename</b>
+                                            <a href="#filename">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>filename:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Inject, Injectable } from &quot;@angular/core&quot;;
+import { FileService } from &quot;../../file/file.service&quot;;
+import { SafeUrl } from &quot;@angular/platform-browser&quot;;
+import { Entity } from &quot;app/core/entity/model/entity&quot;;
+import { Observable, of, throwError } from &quot;rxjs&quot;;
+import { EntityMapperService } from &quot;../../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { EntityRegistry } from &quot;../../../core/entity/database-entity.decorator&quot;;
+import { SyncStateSubject } from &quot;../../../core/session/session-type&quot;;
+import { HttpResponse } from &quot;@angular/common/http&quot;;
+import { NotAvailableOfflineError } from &quot;../../../core/session/not-available-offline.error&quot;;
+import { NAVIGATOR_TOKEN } from &quot;../../../utils/di-tokens&quot;;
+import { switchMap } from &quot;rxjs/operators&quot;;
+import { TemplateExport } from &quot;../template-export.entity&quot;;
+import { Logging } from &quot;../../../core/logging/logging.service&quot;;
+
+/**
+ * Format of API response body upon uploading a new template file.
+ */
+interface TemplateUploadResponseDto {
+  templateId: string;
+}
+
+/**
+ * Format of API request body to render a PDF from a template.
+ * TemplateId is provided via URL path.
+ */
+interface TemplateRenderRequestDto {
+  /**
+   * target file type (e.g. &quot;pdf&quot;)
+   */
+  convertTo: string;
+
+  /**
+   * The data used to fill placeholders in the template.
+   */
+  data: Object;
+}
+
+export interface TemplateExportResult {
+  filename: string;
+  file: ArrayBuffer;
+}
+
+/**
+ * Interact with the PDF Template Generation API that uses File Templates to generate custom pdf documents.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class TemplateExportApiService extends FileService {
+  readonly BACKEND_URL &#x3D; &quot;/query/api/v1/export/&quot;;
+
+  constructor(
+    entityMapper: EntityMapperService,
+    entities: EntityRegistry,
+    syncState: SyncStateSubject,
+    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
+  ) {
+    super(entityMapper, entities, syncState);
+  }
+
+  /*
+  --- FileService methods ---
+  */
+
+  /**
+   * Upload a new template file to the API.
+   * @param file to be uploaded to the API as a template
+   * @param entity
+   * @param property
+   * @return The template ID generated by the API
+   */
+  uploadFile(
+    file: File,
+    entity: TemplateExport,
+    property: string,
+  ): Observable&lt;string&gt; {
+    if (!this.navigator.onLine) {
+      return throwError(() &#x3D;&gt; new NotAvailableOfflineError(&quot;File Attachments&quot;));
+    }
+
+    const formData &#x3D; new FormData();
+    formData.append(&quot;template&quot;, file, file.name);
+
+    return this.httpClient.post(this.BACKEND_URL + &quot;template&quot;, formData).pipe(
+      switchMap(async (res: TemplateUploadResponseDto) &#x3D;&gt; {
+        entity.templateId &#x3D; res.templateId;
+        await this.entityMapper.save(entity);
+        return res.templateId;
+      }),
+    );
+  }
+
+  protected override getShowFileUrl(
+    entity: TemplateExport,
+    property: string,
+  ): string {
+    return this.BACKEND_URL + &quot;template/&quot; + entity.getId();
+  }
+
+  loadFile(entity: Entity, property: string): Observable&lt;SafeUrl&gt; {
+    // should not be required for our use cases of the Template Export API
+    throw new Error(&quot;Method not implemented.&quot;);
+  }
+
+  removeFile(entity: Entity, property: string): Observable&lt;any&gt; {
+    // we do not do explicit file removal due to the design of the API
+    Logging.debug(&quot;skipping file removal for Template Export API&quot;);
+    return of(true);
+  }
+  removeAllFiles(entity: Entity): Observable&lt;any&gt; {
+    Logging.debug(&quot;skipping file removal for Template Export API&quot;);
+    return of(true);
+  }
+
+  /*
+  --- PDF Generation API methods ---
+  */
+
+  /**
+   * Generate a PDF applying actual data to an existing template.
+   * @param templateEntityId The id of the TemplateExport entity (not the template ID of the PDF API)
+   * @param data The data object (typically an entity) to be applied to the template
+   * @return An array buffer of the generated PDF
+   */
+  generatePdfFromTemplate(
+    templateEntityId: string,
+    data: Object,
+  ): Observable&lt;TemplateExportResult&gt; {
+    return this.httpClient
+      .post(
+        this.BACKEND_URL + &quot;render/&quot; + templateEntityId,
+        {
+          convertTo: &quot;pdf&quot;,
+          data: data,
+        } as TemplateRenderRequestDto,
+        { observe: &quot;response&quot;, responseType: &quot;arraybuffer&quot; },
+      )
+      .pipe(
+        switchMap(async (res: HttpResponse&lt;ArrayBuffer&gt;) &#x3D;&gt; {
+          // the API returns the filename in the Content-Disposition header as a URL-encoded string with special delimiters
+          const filenameMatch &#x3D; decodeURIComponent(
+            res.headers.get(&quot;Content-Disposition&quot;),
+          ).match(/filename&#x3D;&quot;(.+)&quot;/);
+
+          let fileName: string;
+          if (filenameMatch &amp;&amp; filenameMatch.length &gt; 1) {
+            fileName &#x3D; filenameMatch[1];
+          } else {
+            fileName &#x3D; templateEntityId.replace(&quot;:&quot;, &quot;_&quot;);
+          }
+
+          return {
+            filename: fileName,
+            file: res.body,
+          };
+        }),
+      );
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'TemplateExportResult.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

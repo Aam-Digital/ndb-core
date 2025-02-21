@@ -1,0 +1,646 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >LatestChangesService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/ui/latest-changes/latest-changes.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Manage the changelog information and display it to the user
+on request or automatically on the first visit of a new version after update.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#getChangelogsBeforeVersion" >getChangelogsBeforeVersion</a>
+                            </li>
+                            <li>
+                                <a href="#getChangelogsBetweenVersions" >getChangelogsBetweenVersions</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(http: HttpClient, alertService: <a href="../injectables/AlertService.html" target="_self">AlertService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:32</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>http</td>
+                                                  
+                                                        <td>
+                                                                    <code>HttpClient</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>alertService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AlertService.html" target="_self" >AlertService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChangelogsBeforeVersion"></a>
+                    <span class="name">
+                        <span ><b>getChangelogsBeforeVersion</b></span>
+                        <a href="#getChangelogsBeforeVersion"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getChangelogsBeforeVersion(version: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, count: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:79</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load the changelog information of a number of releases before (excluding) the given version.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>version</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The version for which preceding releases should be returned.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>count</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The number of releases before the given version to be returned</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Changelog.html" target="_self" >Observable&lt;Changelog[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChangelogsBetweenVersions"></a>
+                    <span class="name">
+                        <span ><b>getChangelogsBetweenVersions</b></span>
+                        <a href="#getChangelogsBetweenVersions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getChangelogsBetweenVersions(currentVersion: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, previousVersion?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="44"
+                                    class="link-to-prism">src/app/core/ui/latest-changes/latest-changes.service.ts:44</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load the changelog information of changes since the last update.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentVersion</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The current version for which changes are to be loaded.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>previousVersion</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>(Optional) The older version since which changes of all versions until the currentVersion will be loaded.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Changelog.html" target="_self" >Observable&lt;Changelog[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { catchError, map } from &quot;rxjs/operators&quot;;
+import { Injectable } from &quot;@angular/core&quot;;
+import { Observable, throwError } from &quot;rxjs&quot;;
+import { Changelog } from &quot;./changelog&quot;;
+import { AlertService } from &quot;../../alerts/alert.service&quot;;
+import { HttpClient } from &quot;@angular/common/http&quot;;
+import { environment } from &quot;../../../../environments/environment&quot;;
+
+/**
+ * Manage the changelog information and display it to the user
+ * on request or automatically on the first visit of a new version after update.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class LatestChangesService {
+  private static GITHUB_API &#x3D; &quot;https://api.github.com/repos/&quot;;
+
+  constructor(
+    private http: HttpClient,
+    private alertService: AlertService,
+  ) {}
+
+  /**
+   * Load the changelog information of changes since the last update.
+   * @param currentVersion The current version for which changes are to be loaded.
+   * @param previousVersion (Optional) The older version since which changes of all versions until the currentVersion will be loaded.
+   */
+  getChangelogsBetweenVersions(
+    currentVersion: string,
+    previousVersion?: string,
+  ): Observable&lt;Changelog[]&gt; {
+    return this.getChangelogs((releases) &#x3D;&gt;
+      this.filterReleasesBetween(releases, currentVersion, previousVersion),
+    );
+  }
+
+  private filterReleasesBetween(
+    releases: Changelog[],
+    currentVersion: string,
+    previousVersion?: string,
+  ) {
+    const releasesUpToCurrentVersion &#x3D; releases.filter(
+      (r) &#x3D;&gt; this.compareVersion(r.tag_name, currentVersion) &lt;&#x3D; 0,
+    );
+    if (releasesUpToCurrentVersion.length &lt; 1) {
+      return [];
+    }
+
+    if (previousVersion) {
+      return releasesUpToCurrentVersion
+        .filter((r) &#x3D;&gt; this.compareVersion(r.tag_name, previousVersion) &gt; 0)
+        .sort((a, b) &#x3D;&gt; this.compareVersion(b.tag_name, a.tag_name));
+    } else {
+      return [releasesUpToCurrentVersion[0]];
+    }
+  }
+
+  /**
+   * Load the changelog information of a number of releases before (excluding) the given version.
+   * @param version The version for which preceding releases should be returned.
+   * @param count The number of releases before the given version to be returned
+   */
+  getChangelogsBeforeVersion(
+    version: string,
+    count: number,
+  ): Observable&lt;Changelog[]&gt; {
+    return this.getChangelogs((releases: Changelog[]) &#x3D;&gt;
+      this.filterReleasesBefore(releases, version, count),
+    );
+  }
+
+  private filterReleasesBefore(
+    releases: Changelog[],
+    version: string,
+    count: number,
+  ) {
+    return releases
+      .filter((r) &#x3D;&gt; (version ? r.tag_name &lt; version : true))
+      .sort((a, b) &#x3D;&gt; this.compareVersion(b.tag_name, a.tag_name))
+      .slice(0, count);
+  }
+
+  private compareVersion(a: string, b: string) {
+    return a.localeCompare(b, &quot;en&quot;, { numeric: true });
+  }
+
+  /**
+   * Load release information from GitHub based on a given filter to select relevant releases.
+   * @param releaseFilter Filter function that is selecting relevant objects from the array of GitHub releases
+   */
+  private getChangelogs(
+    releaseFilter: (releases: Changelog[]) &#x3D;&gt; Changelog[],
+  ): Observable&lt;Changelog[]&gt; {
+    return this.http
+      .get&lt;
+        Changelog[]
+      &gt;(&#x60;${LatestChangesService.GITHUB_API}${environment.repositoryId}/releases&#x60;)
+      .pipe(
+        map(excludePrereleases),
+        map(releaseFilter),
+        map((relevantReleases) &#x3D;&gt;
+          relevantReleases.map((r) &#x3D;&gt; this.parseGithubApiRelease(r)),
+        ),
+        catchError((error) &#x3D;&gt; {
+          this.alertService.addWarning(
+            $localize&#x60;Could not load latest changes: ${error}&#x60;,
+          );
+          return throwError(() &#x3D;&gt; new Error(&quot;Could not load latest changes.&quot;));
+        }),
+      );
+
+    function excludePrereleases(releases: Changelog[]): Changelog[] {
+      return releases.filter(
+        (release) &#x3D;&gt; !release.prerelease &amp;&amp; !release.draft,
+      );
+    }
+  }
+
+  private parseGithubApiRelease(githubResponse: Changelog): Changelog {
+    const cleanedReleaseNotes &#x3D; githubResponse.body
+      .replace(
+        // remove heading
+        /#{1,2}[^###]*/,
+        &quot;&quot;,
+      )
+      .replace(
+        // remove commit refs
+        / \(\[\w{7}\]\([^\)]*\)\)/g,
+        &quot;&quot;,
+      )
+      .replace(
+        // remove lines starting with &quot;.&quot; after markdown characters
+        /^(\*|\#)* *\.(.*)(\n|\r\n)/gm,
+        &quot;&quot;,
+      );
+
+    return {
+      tag_name: githubResponse.tag_name,
+      name: githubResponse.name,
+      published_at: githubResponse.published_at,
+      body: cleanedReleaseNotes,
+    };
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'LatestChangesService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

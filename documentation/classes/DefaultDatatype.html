@@ -1,0 +1,1193 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >DefaultDatatype</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/entity/default-datatype/default.datatype.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Extend this class to define new data types (i.e. for properties of entities)
+and provide your implementation using Angular DI:
+<code>{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true },</code></p>
+<p>This class is also used as the default fallback Datatype for the EntitySchemaService that keeps values unchanged between database and entity instance.
+This type is automatically used whenever no fitting Datatype can be found for that config or TypeScript type.</p>
+
+            </p>
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#dataType" >dataType</a>
+                            </li>
+                            <li>
+                                <a href="#editComponent" >editComponent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Optional</span>
+                                <a href="#importConfigComponent" >importConfigComponent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                <a href="#label" >label</a>
+                            </li>
+                            <li>
+                                <a href="#viewComponent" >viewComponent</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#anonymize" >anonymize</a>
+                            </li>
+                            <li>
+                                <a href="#importIncompleteAdditionalConfigBadge" >importIncompleteAdditionalConfigBadge</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#importMapFunction" >importMapFunction</a>
+                            </li>
+                            <li>
+                                <a href="#transformToDatabaseFormat" >transformToDatabaseFormat</a>
+                            </li>
+                            <li>
+                                <a href="#transformToObjectFormat" >transformToObjectFormat</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Accessors</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                    <a href="#dataType" >dataType</a>
+                                </li>
+                                <li>
+                                    <a href="#label" >label</a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="dataType"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>dataType</b></span>
+                        <a href="#dataType"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:41</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.</p>
+<p>for example <code>@DatabaseField({dataType: &#39;foo&#39;}) myField</code> will trigger the datatype implementation with <code>name</code> &quot;foo&quot;.</p>
+<p>If you set the name to a TypeScript type, class properties with this type will automatically use
+that EntitySchemaDatatype without the need to explicitly state the dataType config in the annotation
+(e.g. <code>@DatabaseField() myField: string</code> is triggering the EntitySchemaDatatype with <code>name</code> &quot;string&quot;.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="editComponent"></a>
+                    <span class="name">
+                        <span ><b>editComponent</b></span>
+                        <a href="#editComponent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;EditText&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:61</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="importConfigComponent"></a>
+                    <span class="name">
+                            <span class="modifier">Optional</span>
+                        <span ><b>importConfigComponent</b></span>
+                        <a href="#importConfigComponent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="121" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:121</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>A component to be display as a dialog to configure the transformation function
+(e.g. defining a format or mapping)</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="label"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                        <span ><b>label</b></span>
+                        <a href="#label"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>$localize&#x60;:datatype-label:any&#x60;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:49</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The human-readable name for this dataType, used in config UIs.</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="viewComponent"></a>
+                    <span class="name">
+                        <span ><b>viewComponent</b></span>
+                        <a href="#viewComponent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;DisplayText&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="60" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:60</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>The default component how this datatype should be displayed in lists and forms.</p>
+<p>The edit component has to be a registered component. Components that are registered contain the <code>DynamicComponent</code>
+decorator</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="anonymize"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>anonymize</b></span>
+                        <a href="#anonymize"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>anonymize(value: <a href="../classes/Entity.html" target="_self">EntityType</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, parent: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="137"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:137</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>(Partially) anonymize to &quot;retain-anonymized&quot; for reporting purposes without personal identifiable information.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The original value to be anonymized</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>parent</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="importIncompleteAdditionalConfigBadge"></a>
+                    <span class="name">
+                        <span ><b>importIncompleteAdditionalConfigBadge</b></span>
+                        <a href="#importIncompleteAdditionalConfigBadge"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>importIncompleteAdditionalConfigBadge(col: <a href="../interfaces/ColumnMapping.html" target="_self">ColumnMapping</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="129"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:129</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Output a label indicating whether the given column mapping needs user configuration for the &quot;additional&quot; config
+or has a valid, complete &quot;additional&quot; config.
+returns &quot;undefined&quot; if no user action is required.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>col</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ColumnMapping.html" target="_self" >ColumnMapping</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="importMapFunction"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>importMapFunction</b></span>
+                        <a href="#importMapFunction"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>importMapFunction(val: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, schemaField: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, additional?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="103"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:103</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>The function used to map values from the import data to values in the entities to be created.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>val</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The value from an imported cell to be mapped</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The schema field definition for the target property into which the value is mapped</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>additional</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>config as returned by the configComponent</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;EntityType | []&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="transformToDatabaseFormat"></a>
+                    <span class="name">
+                        <span ><b>transformToDatabaseFormat</b></span>
+                        <a href="#transformToDatabaseFormat"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>transformToDatabaseFormat(value: <a href="../classes/Entity.html" target="_self">EntityType</a>, schemaField?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, parent?: <a href="../classes/Entity.html" target="_self">Entity</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="72"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:72</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Transformation function taking a value in the format that is used in entity instances and returning the value
+in the format used in database objects.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">     This can be set as a parameter to the `&#64;DatabaseField()` annotation in Entity classes.</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >EntityType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The value (in Entity format) to be transformed</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The EntitySchemaField configuration providing details of how the value should be transformed.
+This can be set as a parameter to the <code>@DatabaseField()</code> annotation in Entity classes.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>parent</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The full entity instance this value is part of (e.g. to allow cross-related transformations)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>DBType</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="transformToObjectFormat"></a>
+                    <span class="name">
+                        <span ><b>transformToObjectFormat</b></span>
+                        <a href="#transformToObjectFormat"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>transformToObjectFormat(value: DBType, schemaField?: <a href="../interfaces/EntitySchemaField.html" target="_self">EntitySchemaField</a>, parent?: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="89"
+                                    class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:89</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Transformation function taking a value in the format that is used in database objects and returning the value
+in the format used in entity instances.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">     This can be set as a parameter to the `&#64;DatabaseField()` annotation in Entity classes.</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>value</td>
+                                            <td>
+                                                        <code>DBType</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The value (in database format) to be transformed</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>schemaField</td>
+                                            <td>
+                                                            <code><a href="../interfaces/EntitySchemaField.html" target="_self" >EntitySchemaField</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The EntitySchemaField configuration providing details of how the value should be transformed.
+This can be set as a parameter to the <code>@DatabaseField()</code> annotation in Entity classes.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>parent</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The full entity instance this value is part of (e.g. to allow cross-related transformations)</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >EntityType</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+            <section data-compodoc="block-accessors">
+    <h3 id="accessors">
+        Accessors
+    </h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="dataType"></a>
+                        <span class="name"><b>dataType</b><a href="#dataType"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>dataType()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="42" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:42</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="label"></a>
+                        <span class="name"><b>label</b><a href="#label"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <span class="accessor"><b>get</b><code>label()</code></span>
+                    </td>
+                </tr>
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-line">Defined in <a href="" data-line="50" class="link-to-prism">src/app/core/entity/default-datatype/default.datatype.ts:50</a></div>
+                                </td>
+                            </tr>
+
+            </tbody>
+        </table>
+</section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { EntitySchemaField } from &quot;../schema/entity-schema-field&quot;;
+import { Entity } from &quot;../model/entity&quot;;
+import { ColumnMapping } from &quot;../../import/column-mapping&quot;;
+import { asArray } from &quot;../../../utils/utils&quot;;
+
+/**
+ * Extend this class to define new data types (i.e. for properties of entities)
+ * and provide your implementation using Angular DI:
+ * &#x60;{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true },&#x60;
+ *
+ * This class is also used as the default fallback Datatype for the EntitySchemaService that keeps values unchanged between database and entity instance.
+ * This type is automatically used whenever no fitting Datatype can be found for that config or TypeScript type.
+ */
+export class DefaultDatatype&lt;EntityType &#x3D; any, DBType &#x3D; any&gt; {
+  /**
+   * Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.
+   *
+   * for example &#x60;@DatabaseField({dataType: &#x27;foo&#x27;}) myField&#x60; will trigger the datatype implementation with &#x60;name&#x60; &quot;foo&quot;.
+   *
+   * If you set the name to a TypeScript type, class properties with this type will automatically use
+   * that EntitySchemaDatatype without the need to explicitly state the dataType config in the annotation
+   * (e.g. &#x60;@DatabaseField() myField: string&#x60; is triggering the EntitySchemaDatatype with &#x60;name&#x60; &quot;string&quot;.
+   */
+  static dataType: string &#x3D; &quot;&quot;;
+  get dataType(): string {
+    return (this.constructor as typeof DefaultDatatype).dataType;
+  }
+
+  /**
+   * The human-readable name for this dataType, used in config UIs.
+   */
+  static label: string &#x3D; $localize&#x60;:datatype-label:any&#x60;;
+  get label(): string {
+    return (this.constructor as typeof DefaultDatatype).label;
+  }
+
+  /**
+   * The default component how this datatype should be displayed in lists and forms.
+   *
+   * The edit component has to be a registered component. Components that are registered contain the &#x60;DynamicComponent&#x60;
+   * decorator
+   */
+  viewComponent &#x3D; &quot;DisplayText&quot;;
+  editComponent &#x3D; &quot;EditText&quot;;
+
+  /**
+   * Transformation function taking a value in the format that is used in entity instances and returning the value
+   * in the format used in database objects.
+   *
+   * @param value The value (in Entity format) to be transformed
+   * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
+   *          This can be set as a parameter to the &#x60;@DatabaseField()&#x60; annotation in Entity classes.
+   * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
+   */
+  transformToDatabaseFormat(
+    value: EntityType,
+    schemaField?: EntitySchemaField,
+    parent?: Entity,
+  ): DBType {
+    return value as any;
+  }
+
+  /**
+   * Transformation function taking a value in the format that is used in database objects and returning the value
+   * in the format used in entity instances.
+   *
+   * @param value The value (in database format) to be transformed
+   * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
+   *          This can be set as a parameter to the &#x60;@DatabaseField()&#x60; annotation in Entity classes.
+   * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
+   */
+  transformToObjectFormat(
+    value: DBType,
+    schemaField?: EntitySchemaField,
+    parent?: any,
+  ): EntityType {
+    return value as any;
+  }
+
+  /**
+   * The function used to map values from the import data to values in the entities to be created.
+   * @param val The value from an imported cell to be mapped
+   * @param schemaField The schema field definition for the target property into which the value is mapped
+   * @param additional config as returned by the configComponent
+   */
+  async importMapFunction(
+    val: any,
+    schemaField: EntitySchemaField,
+    additional?: any,
+  ): Promise&lt;EntityType | EntityType[]&gt; {
+    if (schemaField.isArray) {
+      return asArray(val).map((v) &#x3D;&gt;
+        this.transformToObjectFormat(v, schemaField),
+      );
+    } else {
+      return this.transformToObjectFormat(val, schemaField);
+    }
+  }
+
+  /**
+   * A component to be display as a dialog to configure the transformation function
+   * (e.g. defining a format or mapping)
+   */
+  importConfigComponent?: string;
+
+  /**
+   * Output a label indicating whether the given column mapping needs user configuration for the &quot;additional&quot; config
+   * or has a valid, complete &quot;additional&quot; config.
+   * returns &quot;undefined&quot; if no user action is required.
+   * @param col
+   */
+  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
+    return undefined;
+  }
+
+  /**
+   * (Partially) anonymize to &quot;retain-anonymized&quot; for reporting purposes without personal identifiable information.
+   * @param value The original value to be anonymized
+   */
+  async anonymize(
+    value: EntityType,
+    schemaField: EntitySchemaField,
+    parent: any,
+  ): Promise&lt;any&gt; {
+    return undefined;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'DefaultDatatype.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
