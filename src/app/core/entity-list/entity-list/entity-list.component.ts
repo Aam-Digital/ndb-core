@@ -265,8 +265,14 @@ export class EntityListComponent<T extends Entity>
     if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
       this.defaultColumnGroup =
-        columnGroup.default || columnGroup.groups[0].name;
-      this.mobileColumnGroup = columnGroup.mobile || columnGroup.groups[0].name;
+        columnGroup.default && this.configuredTabExists(columnGroup.default)
+          ? columnGroup.default
+          : columnGroup.groups[0].name;
+
+      this.mobileColumnGroup =
+        columnGroup.mobile && this.configuredTabExists(columnGroup.mobile)
+          ? columnGroup.mobile
+          : columnGroup.groups[0].name;
     } else {
       this.groups = [
         {
@@ -277,6 +283,10 @@ export class EntityListComponent<T extends Entity>
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
     }
+  }
+
+  private configuredTabExists(groupName: string): boolean {
+    return this.groups.some((group) => group.name === groupName);
   }
 
   applyFilter(filterValue: string) {
