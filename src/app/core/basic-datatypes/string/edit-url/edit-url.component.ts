@@ -5,7 +5,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
-import { NgClass, NgIf } from "@angular/common";
+import { NgIf } from "@angular/common";
 
 @DynamicComponent("EditUrl")
 @Component({
@@ -18,7 +18,6 @@ import { NgClass, NgIf } from "@angular/common";
     MatInputModule,
     ErrorHintComponent,
     NgIf,
-    NgClass,
   ],
   standalone: true,
 })
@@ -27,7 +26,7 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
 
   override ngOnInit() {
     super.ngOnInit();
-    this.lastValue = this.formControl.value || '';
+    this.lastValue = this.formControl.value || "";
 
     this.formControl.valueChanges.subscribe((value) =>
       this.processUrlInput(value),
@@ -38,15 +37,11 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
    * Ensures the URL starts with 'http://' or 'https://' while preventing duplication.
    */
   private processUrlInput(value: string): void {
+    if (this.lastValue === value) return;
+
     if (!value) return;
 
     let trimmedValue = value.trim();
-
-    // Check if the user is deleting the URL character by character
-    if (this.lastValue.length > trimmedValue.length) {
-      this.lastValue = trimmedValue;
-      return;
-    }
 
     // Handle specific case where initial value starts with "ttps://"
     if (trimmedValue.startsWith("ttps://")) {
@@ -75,10 +70,16 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
       /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6}\.?)(\/[\w.-]*)*\/?$/i;
 
     // Ensure 'http://' or 'https://' is not duplicated
-    if (!/^https?:\/\//.test(trimmedValue) && !/^http?:\/\//.test(trimmedValue)) {
+    if (
+      !/^https?:\/\//.test(trimmedValue) &&
+      !/^http?:\/\//.test(trimmedValue)
+    ) {
       trimmedValue = `http://${trimmedValue}`;
       this.formControl.setValue(trimmedValue, { emitEvent: false });
-    } else if (trimmedValue.startsWith("http://") || trimmedValue.startsWith("https://")) {
+    } else if (
+      trimmedValue.startsWith("http://") ||
+      trimmedValue.startsWith("https://")
+    ) {
       this.formControl.setValue(trimmedValue, { emitEvent: false });
     }
 
