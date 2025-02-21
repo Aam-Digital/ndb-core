@@ -22,7 +22,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-fdescribe("EntityListComponent", () => {
+describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
   let fixture: ComponentFixture<EntityListComponent<Entity>>;
   let loader: HarnessLoader;
