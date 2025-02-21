@@ -22,11 +22,8 @@ import { NgIf } from "@angular/common";
   standalone: true,
 })
 export class EditUrlComponent extends EditComponent<string> implements OnInit {
-  private lastValue: string;
-
   override ngOnInit() {
     super.ngOnInit();
-    this.lastValue = this.formControl.value || "";
 
     this.formControl.valueChanges.subscribe((value) =>
       this.processUrlInput(value),
@@ -37,56 +34,33 @@ export class EditUrlComponent extends EditComponent<string> implements OnInit {
    * Ensures the URL starts with 'http://' or 'https://' while preventing duplication.
    */
   private processUrlInput(value: string): void {
-    if (this.lastValue === value) return;
-
     if (!value) return;
 
-    let trimmedValue = value.trim();
+    let newValue = value.trim();
 
-    // Handle specific case where initial value starts with "ttps://"
-    if (trimmedValue.startsWith("ttps://")) {
-      trimmedValue = `h${trimmedValue}`;
-      this.formControl.setValue(trimmedValue, { emitEvent: false });
-      this.lastValue = trimmedValue;
+    if (newValue.startsWith("http://") || newValue.startsWith("https://")) {
+      // if newValue has valid prefix, don't modify
+    } else if (newValue.includes("://")) {
+      // replace the prefix 'https://'
+      newValue = "https://" + newValue.substring(newValue.indexOf("://") + 3);
+    } else if ("https://".startsWith(newValue) && newValue.length > 1) {
+      // delete the whole prefix if the user is deleting the prefix
+      newValue = "";
+    } else {
+      newValue = "https://" + newValue;
+    }
+
+    if (this.formControl.value === newValue) {
+      // nothing changed, don't update the form control
       return;
     }
 
-    // Handle specific case where initial value starts with "ttp://"
-    if (trimmedValue.startsWith("ttp://")) {
-      trimmedValue = `h${trimmedValue}`;
-      this.formControl.setValue(trimmedValue, { emitEvent: false });
-      this.lastValue = trimmedValue;
-      return;
-    }
-
-    // If input is just "https://" or "http://", don't modify
-    if (trimmedValue === "http://" || trimmedValue === "https://") {
-      this.formControl.setValue("", { emitEvent: false });
-      this.lastValue = "";
-      return;
-    }
+    this.formControl.setValue(newValue, { emitEvent: false });
 
     const urlPattern =
       /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6}\.?)(\/[\w.-]*)*\/?$/i;
-
-    // Ensure 'http://' or 'https://' is not duplicated
-    if (
-      !/^https?:\/\//.test(trimmedValue) &&
-      !/^http?:\/\//.test(trimmedValue)
-    ) {
-      trimmedValue = `http://${trimmedValue}`;
-      this.formControl.setValue(trimmedValue, { emitEvent: false });
-    } else if (
-      trimmedValue.startsWith("http://") ||
-      trimmedValue.startsWith("https://")
-    ) {
-      this.formControl.setValue(trimmedValue, { emitEvent: false });
-    }
-
-    this.lastValue = trimmedValue;
-
     this.formControl.setErrors(
-      urlPattern.test(trimmedValue) ? null : { invalid: true },
+      urlPattern.test(newValue) ? null : { invalid: true },
     );
   }
 
