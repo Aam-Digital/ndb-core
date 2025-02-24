@@ -23,10 +23,13 @@ export const defaultJsonConfig = {
         link: "/"
       },
       {
-        label: $localize`:Menu item:Children`,
-        icon: "child",
-        link: "/child"
+        entityType: "Child",
       },
+      // {
+      //   label: $localize`:Menu item:Children`,
+      //   icon: "child",
+      //   link: "/child"
+      // },
       {
         label: $localize`:Menu item:Schools`,
         icon: "university",
