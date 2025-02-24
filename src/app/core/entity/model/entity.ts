@@ -320,7 +320,16 @@ export class Entity {
     }
 
     return this.getConstructor()
-      .toStringAttributes.map((attr) => this[attr])
+      .toStringAttributes.map((attr) => {
+        let value = this[attr];
+        if (value?.label) {
+          value = value.label;
+        }
+        if (value instanceof Date) {
+          value = value.toLocaleDateString();
+        }
+        return value;
+      })
       .join(" ");
   }
 
