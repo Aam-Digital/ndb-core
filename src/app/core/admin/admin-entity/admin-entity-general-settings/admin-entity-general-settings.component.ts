@@ -27,6 +27,8 @@ import { StringDatatype } from "../../../basic-datatypes/string/string.datatype"
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -144,7 +146,11 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     )
       .filter(
         ([key, field]) =>
-          field.dataType === StringDatatype.dataType &&
+          [
+            StringDatatype.dataType,
+            ConfigurableEnumDatatype.dataType,
+            DateOnlyDatatype.dataType,
+          ].includes(field.dataType) &&
           field.label &&
           !selectedOptions.includes(key),
       )

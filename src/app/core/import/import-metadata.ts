@@ -2,7 +2,7 @@ import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { ColumnMapping } from "./column-mapping";
-import { AdditionalImportAction } from "./import-additional-actions/additional-import-action";
+import { AdditionalImportAction } from "./additional-actions/additional-import-action";
 
 /**
  * Details of a previously executed import of data saved to the database to keep a history.

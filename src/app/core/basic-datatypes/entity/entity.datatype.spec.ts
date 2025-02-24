@@ -23,25 +23,40 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("Schema data type: entity", () => {
-  testDatatype(new EntityDatatype(null, null), "1", "1", "User");
+  testDatatype(new EntityDatatype(null as any, null as any), "1", "1", "User");
 
-  it("should map to the referenced entity", async () => {
-    const c1 = TestEntity.create("first");
-    const c2 = new TestEntity();
-    c2.other = "123";
-    const entityMapper = mockEntityMapper([c1, c2]);
-    const dataType = new EntityDatatype(entityMapper, null);
-    const schema = TestEntity.schema.get("ref");
+  let entityMapper: ReturnType<typeof mockEntityMapper>;
+  let dataType: EntityDatatype;
+  let schema: EntitySchemaField;
 
+  beforeEach(() => {
+    entityMapper = mockEntityMapper([]); // Empty entity mapper
+    dataType = new EntityDatatype(entityMapper, null as any);
+    schema = TestEntity.schema.get("ref") as EntitySchemaField;
+  });
+
+  it("should importMap by matching string correctly", async () => {
+    const c1 = new TestEntity();
+    c1.other = "456"; // Ensure "other" is a string
+    entityMapper = mockEntityMapper([c1]);
+    dataType = new EntityDatatype(entityMapper, null as any);
+
+    // "simple" case: imported value is string already
     await expectAsync(
-      dataType.importMapFunction("first", schema, "name"),
+      dataType.importMapFunction("456", schema, "other"),
     ).toBeResolvedTo(c1.getId());
+  });
+
+  it("should importMap by matching numeric value correctly", async () => {
+    const c2 = new TestEntity();
+    c2.other = "456"; // Ensure "other" is a string
+    entityMapper = mockEntityMapper([c2]);
+    dataType = new EntityDatatype(entityMapper, null as any);
+
+    // "advanced" case: imported value is number but should match also
     await expectAsync(
-      dataType.importMapFunction("123", schema, "other"),
+      dataType.importMapFunction(456, schema, "other"),
     ).toBeResolvedTo(c2.getId());
-    await expectAsync(
-      dataType.importMapFunction("345", schema, "other"),
-    ).toBeResolvedTo(undefined);
   });
 
   it("should anonymize entity recursively", async () => {

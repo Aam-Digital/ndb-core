@@ -16,7 +16,7 @@ import {
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
 import { ImportMetadata } from "../import-metadata";
-import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
+import { AdditionalImportAction } from "../additional-actions/additional-import-action";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
