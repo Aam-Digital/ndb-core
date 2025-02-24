@@ -4,6 +4,8 @@ import { DatabaseField } from "../database-field.decorator";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { fakeAsync, TestBed, waitForAsync } from "@angular/core/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { genders } from "app/child-dev-project/children/model/genders";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.interface";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -122,6 +124,22 @@ describe("Entity", () => {
     anonymizedEntity.anonymized = true;
 
     expect(anonymizedEntity.toString()).toBe("[anonymized TestEntity]");
+  });
+
+  it("should handle configurableenum toStringAttributes", () => {
+    @DatabaseEntity("TestconfigurableenumToString")
+    class TestconfigurableenumToString extends Entity {
+      static override toStringAttributes = ["gender", "age", "testDate"];
+      static override label = "Testconfigurableenum";
+      gender: ConfigurableEnumValue = genders[1];
+      testDate = new Date("2025-01-31");
+      age = 25;
+    }
+
+    const testEntity = new TestconfigurableenumToString();
+    expect(testEntity.toString()).toBe(
+      "male 25 " + new Date("2025-01-31").toLocaleDateString(),
+    );
   });
 });
 
