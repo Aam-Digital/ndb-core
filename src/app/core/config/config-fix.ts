@@ -25,15 +25,8 @@ export const defaultJsonConfig = {
       {
         entityType: "Child",
       },
-      // {
-      //   label: $localize`:Menu item:Children`,
-      //   icon: "child",
-      //   link: "/child"
-      // },
       {
-        label: $localize`:Menu item:Schools`,
-        icon: "university",
-        link: "/school"
+        entityType: "School",
       },
       {
         label: $localize`:Menu item:Attendance`,
@@ -41,14 +34,7 @@ export const defaultJsonConfig = {
         link: "/attendance"
       },
       {
-        label: $localize`:Menu item:Notes`,
-        icon: "file-alt",
-        link: "/note"
-      },
-      {
-        label: $localize`:Menu item:Tasks`,
-        icon: "tasks",
-        link: "/todo"
+        entityType: "Todo",
       },
       {
         label: $localize`:Menu item:Import`,
