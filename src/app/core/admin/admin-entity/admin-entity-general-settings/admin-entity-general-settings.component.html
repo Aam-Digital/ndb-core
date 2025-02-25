@@ -87,6 +87,7 @@
               [valueMapper]="objectToValue"
               [multi]="true"
               [reorder]="true"
+              (reorderdOptions)="reorderedStringAttributesOptions($event)"
             ></app-basic-autocomplete>
           </mat-form-field>
         </div>

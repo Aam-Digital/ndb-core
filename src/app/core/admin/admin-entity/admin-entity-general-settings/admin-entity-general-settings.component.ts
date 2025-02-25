@@ -101,6 +101,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     });
   }
 
+  reorderedStringAttributesOptions(reorderedOptions: SimpleDropdownValue[]) {
+    this.toStringAttributesOptions = [...reorderedOptions]; // Replace with your actual array name
+  }
+
   fetchAnonymizationTableData() {
     if (this.showPIIDetails) {
       const fields = Array.from(this.entityConstructor.schema.entries())
