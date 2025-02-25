@@ -109,7 +109,7 @@ export class NavigationComponent {
 
     const menuItems = config.items.map((item) => {
       if ("entityType" in item) {
-        return this.getMenuItem(item as EntityMenuItem);
+        return this.generateMenuItemForEntityType(item as EntityMenuItem);
       }
       return item as MenuItem;
     });
