@@ -124,7 +124,7 @@ export class NavigationComponent {
   /**
    * parse ... by looking up the entityType from EntityRegistry and then using its config:
    */
-  private getMenuItem(item: EntityMenuItem): MenuItem {
+  private generateMenuItemForEntityType(item: EntityMenuItem): MenuItem {
     const entityType = this.entities.get(item.entityType);
     return {
       label: entityType.labelPlural,
