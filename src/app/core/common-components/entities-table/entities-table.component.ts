@@ -276,7 +276,13 @@ export class EntitiesTableComponent<T extends Entity> {
    * Show one record's details in a modal dialog (if configured).
    * @param row The entity whose details should be displayed.
    */
-  onRowClick(row: TableRow<T>) {
+  onRowClick(row: TableRow<T>, event: MouseEvent) {
+    const targetElement = event.target as HTMLElement;
+
+    // Check if the clicked element has the 'clickable' class
+    if (targetElement && targetElement.closest(".clickable")) {
+      return;
+    }
     if (row.formGroup && !row.formGroup.disabled) {
       return;
     }
@@ -284,14 +290,13 @@ export class EntitiesTableComponent<T extends Entity> {
       this.selectRow(row, !this.selectedRecords?.includes(row.record));
       return;
     }
-
     this.showEntity(row.record);
     this.entityClick.emit(row.record);
   }
 
   onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
     if (!this._selectable) {
-      this.onRowClick(row);
+      this.onRowClick(row, event);
       return;
     }
 
@@ -335,7 +340,7 @@ export class EntitiesTableComponent<T extends Entity> {
     }
 
     if (isCheckboxClick) {
-      this.onRowClick(row);
+      this.onRowClick(row, event);
     }
   }
 

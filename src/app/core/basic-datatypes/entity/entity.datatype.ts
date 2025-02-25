@@ -19,14 +19,14 @@ import { Injectable } from "@angular/core";
 import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { ColumnMapping } from "../../import/column-mapping";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { Logging } from "app/core/logging/logging.service";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
- * Stored as simple id string.
+ * Stored as a simple ID string.
  *
- * For example:
+ * Example:
  *
  * `@DatabaseField({dataType: 'entity', additional: 'Child'}) relatedEntity: string;`
  */
@@ -34,7 +34,6 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 export class EntityDatatype extends StringDatatype {
   static override dataType = "entity";
   static override label: string = $localize`:datatype-label:link to another record`;
-
   override editComponent = "EditEntity";
   override viewComponent = "DisplayEntity";
   override importConfigComponent = "EntityImportConfig";
@@ -46,21 +45,34 @@ export class EntityDatatype extends StringDatatype {
     super();
   }
 
-  override importMapFunction(
+  /**
+   * Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.
+   * Handles type conversion between numbers and strings to improve matching.
+   *
+   * @param val The value from an import that should be mapped to an entity reference.
+   * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
+   * @param additional The field of the referenced entity that should be compared with the val. (e.g. if we run importMapFunction for a field that is an entity-reference to a "School" entity, this could be "name" if the "School" entity has a "name" property and the import should use that name to match the correct school)
+   * @returns Promise resolving to the ID of the matched entity or undefined if no match is found.
+   */
+  override async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
-    additional?: any,
-  ) {
-    if (!additional) {
-      return Promise.resolve(undefined);
+    additional?: string,
+  ): Promise<string | undefined> {
+    if (!additional || val == null) {
+      return undefined;
     }
-    return this.entityMapper
-      .loadType(schemaField.additional)
-      .then((res) => res.find((e) => e[additional] === val)?.getId());
-  }
 
-  override importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    return col.additional ? undefined : "?";
+    try {
+      const entities = await this.entityMapper.loadType(schemaField.additional);
+      const matchedEntity = entities.find(
+        (entity) => normalizeValue(entity[additional]) === normalizeValue(val),
+      );
+      return matchedEntity?.getId();
+    } catch (error) {
+      Logging.error("Error in EntityDatatype importMapFunction:", error);
+      return undefined;
+    }
   }
 
   /**
@@ -87,4 +99,18 @@ export class EntityDatatype extends StringDatatype {
     await this.removeService.anonymize(referencedEntity);
     return value;
   }
+}
+
+/**
+ * Normalizes a value for comparison, converting it to a standardized string format.
+ * Ensures both numbers and strings are treated consistently.
+ *
+ * @param val The value to normalize.
+ * @returns The normalized value as a string.
+ */
+function normalizeValue(val: any): string {
+  if (val == null) {
+    return "";
+  }
+  return String(val).trim(); // Convert everything to string and trim spaces
 }

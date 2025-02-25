@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { Entity } from "../model/entity";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
+import { UpdatedEntity } from "../model/entity-update";
 
 export enum LoaderMethod {
   ChildrenService = "ChildrenService",
@@ -28,6 +29,18 @@ export class EntitySpecialLoaderService {
     if (loaderMethod === LoaderMethod.ChildrenService) {
       return this.childrenService.getChildren() as Promise<E[]>;
     }
+  }
+
+  async extendUpdatedEntity<T extends Entity = Entity>(
+    loaderMethod: LoaderMethod,
+    updatedEntity: UpdatedEntity<T>,
+  ): Promise<UpdatedEntity<T>> {
+    if (loaderMethod === LoaderMethod.ChildrenService) {
+      updatedEntity.entity = (await this.childrenService.getChild(
+        updatedEntity.entity.getId(),
+      )) as T;
+    }
+    return updatedEntity;
   }
 
   async loadDataFor<E extends Entity = Entity>(

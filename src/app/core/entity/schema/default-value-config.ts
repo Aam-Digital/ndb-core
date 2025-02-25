@@ -18,7 +18,7 @@ export interface DefaultValueConfig {
   mode: DefaultValueMode;
 
   /** used as default value in "static" and "dynamic" mode */
-  value?: string | number;
+  value?: any;
 
   /** local field holding the reference to an Entity (for inherited only) */
   localAttribute?: string;

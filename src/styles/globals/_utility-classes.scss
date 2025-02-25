@@ -33,6 +33,17 @@
   }
 }
 
+/**
+ * Display the cursor as a pointer and underline the element which has entitylinked when hovered
+ */
+.clickable {
+  pointer-events: all;
+  cursor: pointer;
+}
+.clickable:hover {
+  text-decoration: underline;
+}
+
 /*
  * Hide the element that this is applied on when on a desktop device
  */

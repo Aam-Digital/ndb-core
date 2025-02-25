@@ -39,3 +39,10 @@
 .inactive-row {
   color: colors.$inactive;
 }
+
+/* adjust action coloumn width to use least possible width */
+.mat-column-__edit {
+  flex: 0 0 auto !important;
+  width: 78px;
+  padding-right: 0;
+}
