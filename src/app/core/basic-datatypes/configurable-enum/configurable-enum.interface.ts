@@ -8,3 +8,5 @@ export const EMPTY: ConfigurableEnumValue = {
   id: "",
   label: "",
 };
+
+export { ConfigurableEnumValue };
