@@ -102,7 +102,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   reorderedStringAttributesOptions(reorderedOptions: SimpleDropdownValue[]) {
-    this.toStringAttributesOptions = [...reorderedOptions]; // Replace with your actual array name
+    this.toStringAttributesOptions = [...reorderedOptions];
   }
 
   fetchAnonymizationTableData() {
