@@ -17,7 +17,10 @@
           (change)="onSelectValue(field.key, selectedValues[field.key])"
         >
           <mat-radio-button [value]="entitiesToMerge[0][field.key]">
-            {{ entitiesToMerge[0][field.key] }}
+            {{
+              entitiesToMerge[0][field.key]?.label ||
+                entitiesToMerge[0][field.key]
+            }}
           </mat-radio-button>
         </mat-radio-group>
       </div>
@@ -29,7 +32,10 @@
           (change)="onSelectValue(field.key, selectedValues[field.key])"
         >
           <mat-radio-button [value]="entitiesToMerge[1][field.key]">
-            {{ entitiesToMerge[1][field.key] }}
+            {{
+              entitiesToMerge[1][field.key]?.label ||
+                entitiesToMerge[1][field.key]
+            }}
           </mat-radio-button>
         </mat-radio-group>
       </div>
@@ -40,7 +46,7 @@
     </ng-container>
   </div>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
+<mat-dialog-actions>
   <button mat-button (click)="cancel()" i18n>Cancel</button>
   <button mat-button color="primary" (click)="merge()" i18n>Merge</button>
 </mat-dialog-actions>

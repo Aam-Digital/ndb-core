@@ -26,7 +26,7 @@ import { CommonModule } from "@angular/common";
     ReactiveFormsModule,
     FormsModule,
     MatRadioModule,
-    // MatButtonModule,
+    MatButtonModule,
     CommonModule,
     // MatRadioGroup,
   ],
@@ -72,6 +72,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.mergeFields.forEach((field) => {
       this.selectedValues[field.key] = undefined;
     });
+    console.log(this.entitiesToMerge);
   }
 
   /**
