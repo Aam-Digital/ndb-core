@@ -1,5 +1,10 @@
 /* Keep the input disabled but visible */
 input[disabled] {
-  pointer-events: none;
+  pointer-events: none; 
   text-decoration: underline;
+}
+
+
+mat-form-field.clickable {
+  cursor: pointer;
 }

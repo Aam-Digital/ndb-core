@@ -1,4 +1,7 @@
-<mat-form-field (click)="openLinkIfDisabled()">
+<mat-form-field
+  (click)="openLinkIfDisabled()"
+  [class.clickable]="formControl.disabled"
+>
   <mat-label>{{ label }}</mat-label>
 
   <input
