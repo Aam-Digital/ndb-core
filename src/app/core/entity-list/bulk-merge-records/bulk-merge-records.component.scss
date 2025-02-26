@@ -1,0 +1,24 @@
+.merge-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+  text-align: left;
+  align-items: center;
+
+  .header {
+    font-weight: bold;
+    background-color: #f0f0f0;
+    padding: 0.5rem;
+    border-bottom: 2px solid #ccc;
+  }
+
+  .label-cell {
+    font-weight: bold;
+    padding: 0.5rem;
+  }
+
+  .record-cell,
+  .preview-cell {
+    padding: 0.5rem;
+  }
+}
