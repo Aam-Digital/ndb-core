@@ -64,6 +64,7 @@ import {
   DialogViewComponent,
   DialogViewData,
 } from "../../ui/dialog-view/dialog-view.component";
+import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -175,6 +176,8 @@ export class EntityListComponent<T extends Entity>
     };
   }
 
+
+
   constructor(
     private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
@@ -186,6 +189,7 @@ export class EntityListComponent<T extends Entity>
     private entityActionsService: EntityActionsService,
     private entityEditService: EntityEditService,
     @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
+    components: ComponentRegistry
   ) {
     this.screenWidthObserver
       .platform()
@@ -202,6 +206,8 @@ export class EntityListComponent<T extends Entity>
 
         this.isDesktop = isDesktop;
       });
+    components.addAll(this.dynamicComponents);
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -351,6 +357,24 @@ export class EntityListComponent<T extends Entity>
     this.selectedRows = undefined;
   }
 
+  mergeRecords() {
+    this.dialog.open(DialogViewComponent, {
+      width: "98vw",
+      maxWidth: "100vw",
+      height: "98vh",
+      maxHeight: "100vh",
+
+      data: {
+        component: "BulkMergeRecordsComponent",
+        config: {
+          entities: this.selectedRows,
+        },
+      } as DialogViewData,
+    });
+
+    this.selectedRows = undefined;
+  }
+
   async deleteRecords() {
     await this.entityActionsService.delete(this.selectedRows);
     this.selectedRows = undefined;
@@ -387,4 +411,15 @@ export class EntityListComponent<T extends Entity>
   onRowClick(row: T) {
     this.elementClick.emit(row);
   }
+
+
+private dynamicComponents: [string, AsyncComponent][] = [
+  [
+    "BulkMergeRecordsComponent",
+    () =>
+      import(
+        "../bulk-merge-records/bulk-merge-records.component"
+      ).then((c) => c.BulkMergeRecordsComponent),
+  ],
+];
 }

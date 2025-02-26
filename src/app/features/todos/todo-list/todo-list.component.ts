@@ -48,6 +48,7 @@ import { AbilityModule } from "@casl/angular";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 import { EntityActionsMenuComponent } from "../../../core/entity-details/entity-actions-menu/entity-actions-menu.component";
 import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.service";
+import { ComponentRegistry } from "app/dynamic-components";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -114,6 +115,7 @@ export class TodoListComponent
     duplicateRecord: DuplicateRecordService,
     private currentUser: CurrentUserSubject,
     private formDialog: FormDialogService,
+    components: ComponentRegistry
   ) {
     super(
       screenWidthObserver,
@@ -126,6 +128,7 @@ export class TodoListComponent
       entityActionsService,
       entityEditService,
       null,
+      components
     );
   }
 
