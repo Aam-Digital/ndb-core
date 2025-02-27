@@ -29,10 +29,7 @@ import {
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
-import {
-  EntityFormGroup,
-  EntityFormService,
-} from "../entity-form/entity-form.service";
+import { EntityFormService } from "../entity-form/entity-form.service";
 import { tableSort } from "./table-sort/table-sort";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
@@ -45,6 +42,7 @@ import { EntityCreateButtonComponent } from "../entity-create-button/entity-crea
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { TableRow } from "./table-row";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -465,12 +463,4 @@ export class EntitiesTableComponent<T extends Entity> {
       filter["isActive"] = true;
     }
   }
-}
-
-/**
- * Wrapper to keep additional form data for each row of an entity, required for inline editing.
- */
-export interface TableRow<T extends Entity> {
-  record: T;
-  formGroup?: EntityFormGroup<T>;
 }

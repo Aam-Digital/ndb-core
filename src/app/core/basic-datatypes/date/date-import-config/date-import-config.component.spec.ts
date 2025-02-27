@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DateImportConfigComponent } from "./date-import-config.component";
-import { MappingDialogData } from "../../../import/import-column-mapping/import-column-mapping.component";
+import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import moment from "moment";

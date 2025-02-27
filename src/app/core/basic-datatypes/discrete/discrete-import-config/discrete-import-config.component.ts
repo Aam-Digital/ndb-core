@@ -7,7 +7,7 @@ import {
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { MappingDialogData } from "../../../import/import-column-mapping/import-column-mapping.component";
+import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { KeyValuePipe, NgForOf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";

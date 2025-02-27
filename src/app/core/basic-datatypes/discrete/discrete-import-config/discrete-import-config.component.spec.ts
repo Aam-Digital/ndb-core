@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DiscreteImportConfigComponent } from "./discrete-import-config.component";
-import { MappingDialogData } from "../../../import/import-column-mapping/import-column-mapping.component";
+import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";

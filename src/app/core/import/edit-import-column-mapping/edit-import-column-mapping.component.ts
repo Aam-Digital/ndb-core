@@ -11,7 +11,7 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
-import { MappingDialogData } from "../import-column-mapping/import-column-mapping.component";
+import { MappingDialogData } from "../import-column-mapping/mapping-dialog-data";
 
 /**
  * Component to edit a single imported column's mapping to an entity field

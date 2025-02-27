@@ -15,7 +15,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
+import { ViewComponentContext } from "app/core/ui/abstract-view/ViewComponentContext";
 import { EntityActionsMenuService } from "./entity-actions-menu.service";
 import { EntityAction } from "./entity-action.interface";
 

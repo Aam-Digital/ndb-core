@@ -1,8 +1,9 @@
 import { Entity } from "../../entity/model/entity";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
-import { ConfigurableEnumValue } from "./configurable-enum.interface";
+
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { Logging } from "../../logging/logging.service";
+import { ConfigurableEnumValue } from "./configurable-enum.types";
 
 @DatabaseEntity("ConfigurableEnum")
 export class ConfigurableEnum extends Entity {

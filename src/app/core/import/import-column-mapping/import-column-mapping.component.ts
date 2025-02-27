@@ -89,9 +89,3 @@ export class ImportColumnMappingComponent implements OnChanges {
     this.columnMappingChange.emit([...this.columnMapping]);
   }
 }
-
-export interface MappingDialogData {
-  col: ColumnMapping;
-  values: any[];
-  entityType: EntityConstructor;
-}

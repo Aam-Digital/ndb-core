@@ -7,7 +7,7 @@ import {
 import moment from "moment/moment";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { MappingDialogData } from "../../../import/import-column-mapping/import-column-mapping.component";
+import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MatInputModule } from "@angular/material/input";
 import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
