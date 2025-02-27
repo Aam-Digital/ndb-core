@@ -29,7 +29,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  mergeFields: { key: string; label: string; dataType: any }[] = [];
+  mergeFields: { key: string; label: string; dataType: string }[] = [];
   mergeForm: FormGroup;
   trackByFieldKey(index: number, field: any) {
     return field.key;
