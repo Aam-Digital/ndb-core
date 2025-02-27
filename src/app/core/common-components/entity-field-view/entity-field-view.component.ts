@@ -1,10 +1,9 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { NgClass, NgIf } from "@angular/common";
+import { NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { PillComponent } from "../pill/pill.component";
 
 /**
  * Generic component to display one entity property field's viewComponent.
@@ -18,7 +17,7 @@ import { PillComponent } from "../pill/pill.component";
   selector: "app-entity-field-view",
   templateUrl: "./entity-field-view.component.html",
   styleUrls: ["./entity-field-view.component.scss"],
-  imports: [NgIf, DynamicComponentDirective, PillComponent, NgClass],
+  imports: [NgIf, DynamicComponentDirective],
   standalone: true,
 })
 export class EntityFieldViewComponent<E extends Entity = Entity>
@@ -51,19 +50,5 @@ export class EntityFieldViewComponent<E extends Entity = Entity>
       this.field,
       this.entity.getConstructor(),
     );
-  }
-
-  /**
-   * Checks if a given value is a valid URL.
-   * Returns true only if it is a properly formatted http/https URL.
-   */
-  isValidUrl(value: string | null): boolean {
-    if (!value) return false;
-    try {
-      const url = new URL(value);
-      return url.protocol === "http:" || url.protocol === "https:";
-    } catch (error) {
-      return false;
-    }
   }
 }

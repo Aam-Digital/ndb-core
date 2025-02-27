@@ -10,7 +10,9 @@ import { CommonModule } from "@angular/common";
 @Component({
   selector: "app-display-url",
   template: `
-    <a *ngIf="value" [href]="value" target="_blank">{{ value }}</a>
+    <a *ngIf="value" [href]="value" target="_blank" class="clickable">{{
+      value
+    }}</a>
     <span *ngIf="!value">-</span>
   `,
   standalone: true,
