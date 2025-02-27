@@ -6,9 +6,12 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { Entity } from "../../entity/model/entity";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
 import { AdditionalImportAction } from "./additional-import-action";
 import { MatListModule } from "@angular/material/list";
@@ -20,6 +23,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ImportAdditionalService } from "./import-additional.service";
+import { EntitySelectComponent } from "../../common-components/entity-select/entity-select.component";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -41,6 +45,7 @@ import { ImportAdditionalService } from "./import-additional.service";
     BasicAutocompleteComponent,
     MatButtonModule,
     NgIf,
+    EntitySelectComponent,
   ],
   providers: [EntityTypeLabelPipe],
 })
@@ -50,61 +55,50 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   @Input() importActions: AdditionalImportAction[] = [];
   @Output() importActionsChange = new EventEmitter<AdditionalImportAction[]>();
 
-  linkableEntityTypes: string[] = [];
-  typeToString = (val) => this.entityTypeLabelPipe.transform(val);
-  linkableEntities: Entity[] = [];
-  entityToId = (e: Entity) => e.getId();
+  availableImportActions: AdditionalImportAction[] = [];
+
+  // TODO: may need more distinction --> like in ImportModule?
+  actionToString = (val: AdditionalImportAction) => val?.targetType;
 
   linkEntityForm = new FormGroup({
-    type: new FormControl({ value: "", disabled: true }),
-    id: new FormControl({ value: "", disabled: true }),
+    action: new FormControl({ value: "", disabled: true }, Validators.required),
+    targetId: new FormControl(
+      { value: "", disabled: true },
+      Validators.required,
+    ),
   });
-  actionSelected: boolean;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private entityTypeLabelPipe: EntityTypeLabelPipe,
-    private importAdditionalService: ImportAdditionalService,
-  ) {
+  constructor(private importAdditionalService: ImportAdditionalService) {
     this.linkEntityForm
-      .get("type")
-      .valueChanges.subscribe((val) => this.updateSelectableOptions(val));
-    this.linkEntityForm
-      .get("id")
-      .valueChanges.subscribe((val) => (this.actionSelected = !!val));
+      .get("action")
+      .valueChanges.subscribe((val) =>
+        !!val
+          ? this.linkEntityForm.get("targetId").enable()
+          : this.linkEntityForm.get("targetId").disable(),
+      );
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("entityType")) {
-      this.updateSelectableTypes();
-    }
-  }
+      this.availableImportActions =
+        this.importAdditionalService.getActionsLinkingFor(this.entityType);
 
-  private updateSelectableTypes() {
-    this.linkEntityForm.reset();
-    if (!this.entityType) {
-      this.linkEntityForm.disable();
-    } else {
-      this.linkableEntityTypes =
-        this.importAdditionalService.getLinkableEntities(this.entityType);
-      this.linkEntityForm.enable();
-      this.updateSelectableOptions(undefined);
-    }
-  }
-
-  private async updateSelectableOptions(newLinkType: string) {
-    if (newLinkType) {
-      this.linkableEntities = await this.entityMapper.loadType(newLinkType);
-      this.linkEntityForm.get("id").enable();
-    } else {
-      this.linkableEntities = [];
-      this.linkEntityForm.get("id").disable();
+      this.linkEntityForm.reset();
+      if (this.entityType) {
+        this.linkEntityForm.get("action").enable();
+      }
     }
   }
 
   addAction() {
-    const newAction = this.linkEntityForm.getRawValue();
-    this.importActions = [...(this.importActions ?? []), newAction];
+    const newAction = this.linkEntityForm.get("action").getRawValue();
+    this.importActions = [
+      ...(this.importActions ?? []),
+      {
+        ...newAction,
+        targetId: this.linkEntityForm.get("targetId").value,
+      },
+    ];
     this.linkEntityForm.reset();
     this.importActionsChange.emit(this.importActions);
   }

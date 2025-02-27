@@ -62,12 +62,20 @@ describe("ImportAdditionalService", () => {
   });
 
   it("should getLinkableEntities for the given imported type", async () => {
-    const exampleResult = service.getLinkableEntities("Child");
-    expect(exampleResult).toEqual(["RecurringActivity", "School"]);
+    const exampleResult = service.getActionsLinkingFor("Child");
+    expect(exampleResult).toEqual([
+      jasmine.objectContaining({ targetType: "RecurringActivity" }),
+      jasmine.objectContaining({ targetType: "School" }),
+    ]);
 
     // general case
-    const actual = service.getLinkableEntities(TestEntity.ENTITY_TYPE);
-    expect(actual).toEqual([DirectlyLinkingEntity.ENTITY_TYPE, "Other"]);
+    const actual = service.getActionsLinkingFor(TestEntity.ENTITY_TYPE);
+    expect(actual).toEqual([
+      jasmine.objectContaining({
+        targetType: DirectlyLinkingEntity.ENTITY_TYPE,
+      }),
+      jasmine.objectContaining({ targetType: "Other" }),
+    ]);
   });
 
   it("should getEntitiesLinkingTo for the given imported type for directly linked type", async () => {

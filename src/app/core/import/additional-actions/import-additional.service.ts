@@ -28,17 +28,17 @@ export class ImportAdditionalService {
   };
 
   /**
-   * Get the entity types that data of the given entity type can be linked to during its import.
-   * (e.g. for "Child" entityType, the result could be ["School"], indicating that during import of children, they can be linked to a school)
+   * Get the entity actions that data of the given entity type can be linked to during its import.
+   * (e.g. for "Child" entityType, the result could be [{ targetType: "School" ...}], indicating that during import of children, they can be linked to a school)
    * @param entityType
    */
-  getLinkableEntities(entityType: string): string[] {
-    return (this.linkableEntities[entityType] ?? []).map((a) => a.targetType);
+  getActionsLinkingFor(entityType: string): AdditionalImportAction[] {
+    return this.linkableEntities[entityType] ?? [];
   }
 
   /**
    * Get the entity types that during their import can be linked to the given target entity type.
-   * (e.g. for "School" targetEntityType, the result could be ["Child"], indicating that during import of children, they can be linked to a school)
+   * (e.g. for "School" targetEntityType, the result could be [{ sourceType: "Child" ... }], indicating that during import of children, they can be linked to a school)
    * @param targetEntityType
    */
   getActionsLinkingTo(targetEntityType: string): AdditionalImportAction[] {
