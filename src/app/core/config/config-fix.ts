@@ -23,10 +23,10 @@ export const defaultJsonConfig = {
         link: "/"
       },
       {
-        entityType: "Child",
+        entityType: "Child"
       },
       {
-        entityType: "School",
+        entityType: "School"
       },
       {
         label: $localize`:Menu item:Attendance`,
@@ -34,7 +34,10 @@ export const defaultJsonConfig = {
         link: "/attendance"
       },
       {
-        entityType: "Todo",
+        entityType: "Note"
+      },
+      {
+        entityType: "Todo"
       },
       {
         label: $localize`:Menu item:Import`,

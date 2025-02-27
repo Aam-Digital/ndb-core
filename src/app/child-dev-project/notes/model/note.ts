@@ -33,12 +33,14 @@ import {
 import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
   static override toStringAttributes = ["subject"];
   static override label = $localize`:label for entity:Note`;
   static override labelPlural = $localize`:label (plural) for entity:Notes`;
+  static override icon: IconName = "file-alt";
   static override hasPII = true;
 
   static create(
