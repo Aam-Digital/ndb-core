@@ -1,6 +1,6 @@
 <mat-form-field
   (click)="openLinkIfDisabled()"
-  [class.clickable]="formControl.disabled"
+  [class.clickable]="formControl.disabled && formControl.value"
 >
   <mat-label>{{ label }}</mat-label>
 
