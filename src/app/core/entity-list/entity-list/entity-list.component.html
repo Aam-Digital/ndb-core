@@ -314,6 +314,16 @@
         Link External Profile
       </button>
 
+      <button
+        mat-raised-button
+        (click)="mergeRecords()"
+        [disabled]="selectedRows.length === 0"
+        color="accent"
+        i18n="bulk action button"
+      >
+        Merge
+      </button>
+
       <button mat-raised-button (click)="selectedRows = undefined" i18n>
         Cancel
       </button>
