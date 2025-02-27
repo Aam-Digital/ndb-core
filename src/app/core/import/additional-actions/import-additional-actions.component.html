@@ -11,11 +11,11 @@
         class="existing-action-remove"
       ></fa-icon>
       <div matListItemTitle i18n>
-        Link all imported records to {{ action.type | entityTypeLabel }}
+        Link all imported records to {{ action.targetType | entityTypeLabel }}
       </div>
       <div matListItemLine>
         <app-entity-block
-          [entityId]="action.id"
+          [entityId]="action.targetId"
           [linkDisabled]="true"
         ></app-entity-block>
       </div>

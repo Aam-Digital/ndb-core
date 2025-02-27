@@ -14,6 +14,8 @@ import {
 } from "../../../utils/expect-entity-data.spec";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("ImportAdditionalService", () => {
   let service: ImportAdditionalService;
@@ -24,6 +26,21 @@ describe("ImportAdditionalService", () => {
   // ensure the "Child" entityType is registered
   @DatabaseEntity("Child")
   class Child extends Entity {}
+
+  @DatabaseEntity("DirectlyLinkingEntity")
+  class DirectlyLinkingEntity extends Entity {
+    @DatabaseField({ dataType: "entity", additional: TestEntity.ENTITY_TYPE })
+    participant: string;
+  }
+
+  @DatabaseEntity("RelationshipEntity")
+  class RelationshipEntity extends Entity {
+    @DatabaseField({ dataType: "entity", additional: TestEntity.ENTITY_TYPE })
+    participant: string;
+
+    @DatabaseField({ dataType: "entity", additional: "Other" })
+    group: string;
+  }
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
@@ -44,12 +61,65 @@ describe("ImportAdditionalService", () => {
     await entityMapper.save(testActivity);
   });
 
+  it("should getLinkableEntities for the given imported type", async () => {
+    const exampleResult = service.getLinkableEntities("Child");
+    expect(exampleResult).toEqual(["RecurringActivity", "School"]);
+
+    // general case
+    const actual = service.getLinkableEntities(TestEntity.ENTITY_TYPE);
+    expect(actual).toEqual([DirectlyLinkingEntity.ENTITY_TYPE, "Other"]);
+  });
+
+  it("should getEntitiesLinkingTo for the given imported type for directly linked type", async () => {
+    const exampleResult = service.getActionsLinkingTo("RecurringActivity");
+    expect(exampleResult).toEqual([
+      jasmine.objectContaining({ sourceType: "Child" }),
+    ]);
+
+    // general case
+    const actual = service.getActionsLinkingTo(
+      DirectlyLinkingEntity.ENTITY_TYPE,
+    );
+    expect(actual).toEqual([
+      jasmine.objectContaining({
+        sourceType: TestEntity.ENTITY_TYPE,
+        targetProperty: "participant",
+        targetType: DirectlyLinkingEntity.ENTITY_TYPE,
+      }),
+    ]);
+  });
+
+  it("should getEntitiesLinkingTo for the given imported type for indirectly linked type", async () => {
+    const exampleResult = service.getActionsLinkingTo("School");
+    expect(exampleResult).toEqual([
+      jasmine.objectContaining({ sourceType: "Child" }),
+    ]);
+
+    // general case
+    const actual = service.getActionsLinkingTo("Other");
+    expect(actual).toEqual([
+      jasmine.objectContaining({
+        sourceType: TestEntity.ENTITY_TYPE,
+        targetType: "Other",
+        relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
+        relationshipProperty: "group",
+        relationshipTargetProperty: "participant",
+      }),
+    ]);
+  });
+
   it("should add IDs of imported data to other entity with linkDirectly action", async () => {
     const testImportSettings: ImportSettings = {
       entityType: "Child",
       columnMapping: undefined,
       additionalActions: [
-        { type: "RecurringActivity", id: testActivity.getId() },
+        {
+          mode: "direct",
+          targetType: "RecurringActivity",
+          targetProperty: "participants",
+          targetId: testActivity.getId(),
+          sourceType: "Child",
+        },
       ],
     };
     await service.executeImport(testEntities, testImportSettings);
@@ -66,7 +136,15 @@ describe("ImportAdditionalService", () => {
     importMeta.config = {
       entityType: "Child",
       columnMapping: undefined,
-      additionalActions: [{ type: "RecurringActivity", id: "3" }],
+      additionalActions: [
+        {
+          mode: "direct",
+          targetType: "RecurringActivity",
+          targetProperty: "participants",
+          targetId: testActivity.getId(),
+          sourceType: "Child",
+        },
+      ],
     };
     importMeta.ids = ["Child:1", "Child:2"];
     testActivity.participants = ["Child:3", "Child:2", "Child:1"];
@@ -92,7 +170,17 @@ describe("ImportAdditionalService", () => {
     const testImportSettings: ImportSettings = {
       entityType: "Child",
       columnMapping: undefined,
-      additionalActions: [{ type: "School", id: "School:4" }],
+      additionalActions: [
+        {
+          mode: "indirect",
+          sourceType: "Child",
+          targetType: "School",
+          relationshipEntityType: "ChildSchoolRelation",
+          relationshipProperty: "childId",
+          relationshipTargetProperty: "schoolId",
+          targetId: "School:4",
+        },
+      ],
     };
     await service.executeImport(testEntities, testImportSettings);
 
@@ -109,7 +197,17 @@ describe("ImportAdditionalService", () => {
     importMeta.config = {
       entityType: "Child",
       columnMapping: undefined,
-      additionalActions: [{ type: "School", id: "4" }],
+      additionalActions: [
+        {
+          mode: "indirect",
+          sourceType: "Child",
+          targetType: "School",
+          relationshipEntityType: "ChildSchoolRelation",
+          relationshipProperty: "childId",
+          relationshipTargetProperty: "schoolId",
+          targetId: "School:4",
+        },
+      ],
     };
     importMeta.ids = ["Child:1", "Child:2"];
     const relations = [

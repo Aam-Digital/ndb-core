@@ -22,7 +22,6 @@ import { ImportColumnMappingComponent } from "../import-column-mapping/import-co
 import { ImportReviewDataComponent } from "../import-review-data/import-review-data.component";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { RouteTarget } from "../../../route-target";
-import { Entity } from "../../entity/model/entity";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -73,14 +72,9 @@ export class ImportComponent {
       if (params.has("entityType")) {
         this.entityType = params.get("entityType");
       }
-      if (params.has("additionalActionToId")) {
-        const targetId = params.get("additionalActionToId");
-        this.additionalImportActions = [
-          {
-            type: Entity.extractTypeFromId(targetId),
-            id: targetId,
-          },
-        ];
+      if (params.has("additionalAction")) {
+        const action = JSON.parse(params.get("additionalAction"));
+        this.additionalImportActions = [action];
       }
     });
   }

@@ -16,10 +16,7 @@
     [showExpanded]="true"
   >
     <!-- Import related records -->
-    @for (
-      importEntityType of importAdditionalEntityTypes;
-      track importEntityType
-    ) {
+    @for (importAction of importAdditionalEntityTypes; track importAction) {
       <button
         mat-menu-item
         angulartics2On="click"
@@ -27,8 +24,8 @@
         angularticsAction="import_related"
         [routerLink]="['/import']"
         [queryParams]="{
-          entityType: importEntityType,
-          additionalActionToId: entity.getId(),
+          entityType: importAction.sourceType,
+          additionalAction: importAction._json,
         }"
       >
         <fa-icon
@@ -37,9 +34,33 @@
           icon="file-import"
         ></fa-icon>
         <span i18n
-          >Import related {{ importEntityType | entityTypeLabel: true }} for
-          this {{ entityConstructor?.label }}</span
+          >Import related
+          {{ importAction.sourceType | entityTypeLabel: true }} for this
+          {{ entityConstructor?.label }}</span
         >
+
+        @if (
+          importAction.mode === "direct" &&
+          importAdditionalEntityTypes.length > 1
+        ) {
+          <span i18n
+            >as
+            <app-entity-field-label
+              [entityType]="importAction.targetType"
+              [field]="importAction['targetProperty']"
+            ></app-entity-field-label
+          ></span>
+        } @else if (
+          importAction.mode === "indirect" &&
+          importAdditionalEntityTypes.length > 1
+        ) {
+          <span i18n
+            >through
+            {{
+              importAction["relationshipEntityType"] | entityTypeLabel: true
+            }}</span
+          >
+        }
       </button>
     }
 

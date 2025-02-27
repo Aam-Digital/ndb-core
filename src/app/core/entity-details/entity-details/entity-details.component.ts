@@ -27,6 +27,8 @@ import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstr
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
 import { ImportAdditionalService } from "../../import/additional-actions/import-additional.service";
+import { AdditionalImportAction } from "../../import/additional-actions/additional-import-action";
+import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -61,6 +63,7 @@ import { ImportAdditionalService } from "../../import/additional-actions/import-
     CommonModule,
     ViewActionsComponent,
     EntityTypeLabelPipe,
+    EntityFieldLabelComponent,
   ],
 })
 export class EntityDetailsComponent
@@ -73,7 +76,7 @@ export class EntityDetailsComponent
   @Input() panels: Panel[] = [];
 
   private readonly importAdditionalService = inject(ImportAdditionalService);
-  importAdditionalEntityTypes: string[];
+  importAdditionalEntityTypes: (AdditionalImportAction & { _json: string })[];
 
   override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
@@ -85,8 +88,10 @@ export class EntityDetailsComponent
   }
 
   private updateImportOptions() {
-    this.importAdditionalEntityTypes =
-      this.importAdditionalService.getEntitiesLinkingTo(this.entityType);
+    this.importAdditionalEntityTypes = this.importAdditionalService
+      .getActionsLinkingTo(this.entityType)
+      .map((a) => ({ ...a, targetId: this.entity.getId() }))
+      .map((a) => ({ ...a, _json: JSON.stringify(a) }));
   }
 
   private initPanels() {
