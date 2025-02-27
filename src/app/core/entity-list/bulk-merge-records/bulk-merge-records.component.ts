@@ -29,8 +29,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  mergeFields: { key: string; label: string }[] = [];
+  mergeFields: { key: string; label: string; dataType: any }[] = [];
   mergeForm: FormGroup;
+  trackByFieldKey(index: number, field: any) {
+    return field.key;
+  }
+  selectedValues: { [key: string]: string[] } = {};
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -57,30 +61,49 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
    * Hidden fields are initialized with the values of the first record. They are not shown in the form.
    */
   private initMerge() {
-    this.mergeFields = Array.from(this.entityConstructor.schema.entries())
-      .filter(([_, field]) => field.label)
-      .map(([key, field]) => ({
-        key: key,
-        label: field.label,
-      }));
-
-    const hiddenFields = Array.from(this.entityConstructor.schema.entries())
-      .filter(([_, field]) => !field.label)
-      .map(([key]) => key);
-
-    this.mergeFields.forEach((field) => {
-      this.mergeForm.addControl(field.key, this.fb.control(null));
-    });
-
-    // Initialize hidden fields with values from the first record
-    hiddenFields.forEach((key) => {
-      this.mergedEntity[key] = this.entitiesToMerge[0][key];
+    this.entityConstructor.schema.forEach((field, key) => {
+      if (field.label) {
+        this.mergeFields.push({
+          key,
+          label: field.label,
+          dataType: field.dataType,
+        });
+        this.mergeForm.addControl(key, this.fb.control(null));
+      } else {
+        // Initialize hidden fields with values from the first record
+        this.mergedEntity[key] = this.entitiesToMerge[0][key];
+      }
     });
   }
 
-  /**
-   * Confirm the merge action and close the dialog with merged data.
-   */
+  toggleSelection(key: string, option: "entity1" | "entity2") {
+    const selectedValue =
+      this.entitiesToMerge[option === "entity1" ? 0 : 1][key];
+    const isStringType =
+      this.mergeFields.find((f) => f.key === key)?.dataType === "string";
+
+    if (isStringType) {
+      this.selectedValues[key] = this.selectedValues[key] || [];
+
+      const index = this.selectedValues[key].indexOf(selectedValue);
+
+      index === -1
+        ? this.selectedValues[key].push(selectedValue)
+        : this.selectedValues[key].splice(index, 1);
+
+      this.mergeForm.get(key)?.setValue(this.selectedValues[key].join(", "));
+    } else {
+      this.selectedValues[key] = [selectedValue];
+      this.mergeForm.get(key)?.setValue(selectedValue);
+    }
+  }
+
+  isSelected(key: string, option: "entity1" | "entity2"): boolean {
+    return this.selectedValues[key]?.includes(
+      this.entitiesToMerge[option === "entity1" ? 0 : 1][key],
+    );
+  }
+
   merge() {
     Object.keys(this.mergeForm.value).forEach((key) => {
       this.mergedEntity[key] = this.mergeForm.value[key];
@@ -88,9 +111,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.dialogRef.close(this.mergedEntity);
   }
 
-  /**
-   * Cancel the merge action and close the dialog.
-   */
   cancel() {
     this.dialogRef.close();
   }

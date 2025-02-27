@@ -6,17 +6,18 @@
       <div class="header" i18n>Record B</div>
       <div class="header" i18n>Merge Preview</div>
 
-      <ng-container *ngFor="let field of mergeFields">
+      <ng-container *ngFor="let field of mergeFields; trackBy: trackByFieldKey">
         <div class="label-cell">
           <strong>{{ field.label }}</strong>
         </div>
 
         <div class="record-cell">
-          <mat-radio-group
-            [formControlName]="field.key"
-            (change)="mergeForm.get(field.key)?.setValue($event.value)"
-          >
-            <mat-radio-button [value]="entitiesToMerge[0][field.key]">
+          <mat-radio-group>
+            <mat-radio-button
+              [value]="entitiesToMerge[0][field.key]"
+              (click)="toggleSelection(field.key, 'entity1')"
+              [checked]="isSelected(field.key, 'entity1')"
+            >
               {{
                 entitiesToMerge[0][field.key]?.label ||
                   entitiesToMerge[0][field.key]
@@ -26,11 +27,12 @@
         </div>
 
         <div class="record-cell">
-          <mat-radio-group
-            [formControlName]="field.key"
-            (change)="mergeForm.get(field.key)?.setValue($event.value)"
-          >
-            <mat-radio-button [value]="entitiesToMerge[1][field.key]">
+          <mat-radio-group>
+            <mat-radio-button
+              [value]="entitiesToMerge[1][field.key]"
+              (click)="toggleSelection(field.key, 'entity2')"
+              [checked]="isSelected(field.key, 'entity2')"
+            >
               {{
                 entitiesToMerge[1][field.key]?.label ||
                   entitiesToMerge[1][field.key]
