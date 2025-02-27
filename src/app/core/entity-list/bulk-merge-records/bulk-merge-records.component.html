@@ -1,56 +1,66 @@
 <mat-dialog-content>
-  <div class="merge-grid">
-    <div class="header">Labels</div>
-    <div class="header">Record A</div>
-    <div class="header">Record B</div>
-    <div class="header">Merge Preview</div>
+  <form [formGroup]="mergeForm">
+    <div class="merge-grid">
+      <div class="header">Labels</div>
+      <div class="header">Record A</div>
+      <div class="header">Record B</div>
+      <div class="header">Merge Preview</div>
 
-    <ng-container *ngFor="let field of mergeFields">
-      <div class="label-cell">
-        <strong>{{ field.label }}</strong>
-      </div>
+      <ng-container *ngFor="let field of mergeFields">
+        <div class="label-cell">
+          <strong>{{ field.label }}</strong>
+        </div>
 
-      <div class="record-cell">
-        <mat-radio-group
-          [name]="field.key"
-          [(ngModel)]="selectedValues[field.key]"
-          (change)="onSelectValue(field.key, selectedValues[field.key])"
-        >
-          <mat-radio-button [value]="entitiesToMerge[0][field.key]">
-            {{
-              entitiesToMerge[0][field.key]?.label ||
-                entitiesToMerge[0][field.key]
-            }}
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
+        <div class="record-cell">
+          <mat-radio-group
+            [formControlName]="field.key"
+            (change)="mergeForm.get(field.key)?.setValue($event.value)"
+          >
+            <mat-radio-button [value]="entitiesToMerge[0][field.key]">
+              {{
+                entitiesToMerge[0][field.key]?.label ||
+                  entitiesToMerge[0][field.key]
+              }}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
 
-      <div class="record-cell">
-        <mat-radio-group
-          [name]="field.key"
-          [(ngModel)]="selectedValues[field.key]"
-          (change)="onSelectValue(field.key, selectedValues[field.key])"
-        >
-          <mat-radio-button [value]="entitiesToMerge[1][field.key]">
-            {{
-              entitiesToMerge[1][field.key]?.label ||
-                entitiesToMerge[1][field.key]
-            }}
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
+        <div class="record-cell">
+          <mat-radio-group
+            [formControlName]="field.key"
+            (change)="mergeForm.get(field.key)?.setValue($event.value)"
+          >
+            <mat-radio-button [value]="entitiesToMerge[1][field.key]">
+              {{
+                entitiesToMerge[1][field.key]?.label ||
+                  entitiesToMerge[1][field.key]
+              }}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
 
-      <div class="preview-cell">
-        {{
-          mergedEntity[field.key]?.label ||
-            mergedEntity[field.key] ||
-            "No Selection"
-        }}
-      </div>
-    </ng-container>
-  </div>
+        <!-- Merge Preview -->
+        <div class="preview-cell">
+          {{
+            mergeForm.get(field.key)?.value?.label ||
+              mergeForm.get(field.key)?.value ||
+              "No Selection"
+          }}
+        </div>
+      </ng-container>
+    </div>
+  </form>
 </mat-dialog-content>
+
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancel()" i18n>Cancel</button>
-  <button mat-raised-button color="accent" (click)="merge()" i18n>Merge</button>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="merge()"
+    [disabled]="mergeForm.invalid"
+    i18n
+  >
+    Merge
+  </button>
 </mat-dialog-actions>
