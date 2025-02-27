@@ -15,56 +15,6 @@
     [navigateOnDelete]="true"
     [showExpanded]="true"
   >
-    <!-- Import related records -->
-    @for (importAction of importAdditionalEntityTypes; track importAction) {
-      <button
-        mat-menu-item
-        angulartics2On="click"
-        [angularticsCategory]="entityType"
-        angularticsAction="import_related"
-        [routerLink]="['/import']"
-        [queryParams]="{
-          entityType: importAction.sourceType,
-          additionalAction: importAction._json,
-        }"
-      >
-        <fa-icon
-          class="color-accent standard-icon-with-text"
-          aria-label="import file"
-          icon="file-import"
-        ></fa-icon>
-        <span i18n
-          >Import related
-          {{ importAction.sourceType | entityTypeLabel: true }} for this
-          {{ entityConstructor?.label }}</span
-        >
-
-        @if (
-          importAction.mode === "direct" &&
-          importAdditionalEntityTypes.length > 1
-        ) {
-          <span i18n
-            >as
-            <app-entity-field-label
-              [entityType]="importAction.targetType"
-              [field]="importAction['targetProperty']"
-            ></app-entity-field-label
-          ></span>
-        } @else if (
-          importAction.mode === "indirect" &&
-          importAdditionalEntityTypes.length > 1
-        ) {
-          <span i18n
-            >through
-            {{
-              importAction["relationshipEntityType"] | entityTypeLabel: true
-            }}</span
-          >
-        }
-      </button>
-    }
-
-    <!-- Edit Data Structure -->
     <button
       mat-menu-item
       [routerLink]="['/admin/entity', entity?.getType()]"

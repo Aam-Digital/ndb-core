@@ -1,10 +1,4 @@
-import {
-  Component,
-  inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 import { MatButtonModule } from "@angular/material/button";
@@ -25,10 +19,6 @@ import { AbilityModule } from "@casl/angular";
 import { RouteTarget } from "../../../route-target";
 import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
-import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
-import { ImportAdditionalService } from "../../import/additional-actions/import-additional.service";
-import { AdditionalImportAction } from "../../import/additional-actions/additional-import-action";
-import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -62,8 +52,6 @@ import { EntityFieldLabelComponent } from "../../common-components/entity-field-
     AbilityModule,
     CommonModule,
     ViewActionsComponent,
-    EntityTypeLabelPipe,
-    EntityFieldLabelComponent,
   ],
 })
 export class EntityDetailsComponent
@@ -75,23 +63,12 @@ export class EntityDetailsComponent
    */
   @Input() panels: Panel[] = [];
 
-  private readonly importAdditionalService = inject(ImportAdditionalService);
-  importAdditionalEntityTypes: (AdditionalImportAction & { _json: string })[];
-
   override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
     if (changes.id || changes.entity || changes.panels) {
       this.initPanels();
-      this.updateImportOptions();
     }
-  }
-
-  private updateImportOptions() {
-    this.importAdditionalEntityTypes = this.importAdditionalService
-      .getActionsLinkingTo(this.entityType)
-      .map((a) => ({ ...a, targetId: this.entity.getId() }))
-      .map((a) => ({ ...a, _json: JSON.stringify(a) }));
   }
 
   private initPanels() {
