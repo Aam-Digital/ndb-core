@@ -1,24 +1,36 @@
+@use "variables/colors";
+
 .merge-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1rem;
-  text-align: left;
-  align-items: center;
 
   .header {
     font-weight: bold;
-    background-color: #f0f0f0;
+    background-color: colors.$primary;
+    color: white;
     padding: 0.5rem;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
   }
 
   .label-cell {
-    font-weight: bold;
     padding: 0.5rem;
   }
 
   .record-cell,
   .preview-cell {
+    display: flex;
+    align-items: center;
     padding: 0.5rem;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .record-cell {
+    justify-content: flex-start;
+  }
+
+  .preview-cell {
+    justify-content: center;
   }
 }

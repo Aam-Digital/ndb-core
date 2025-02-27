@@ -41,12 +41,16 @@
       </div>
 
       <div class="preview-cell">
-        {{ mergedEntity[field.key] || "No Selection" }}
+        {{
+          mergedEntity[field.key]?.label ||
+            mergedEntity[field.key] ||
+            "No Selection"
+        }}
       </div>
     </ng-container>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button (click)="cancel()" i18n>Cancel</button>
-  <button mat-button color="primary" (click)="merge()" i18n>Merge</button>
+  <button mat-raised-button (click)="cancel()" i18n>Cancel</button>
+  <button mat-raised-button color="accent" (click)="merge()" i18n>Merge</button>
 </mat-dialog-actions>
