@@ -19,8 +19,7 @@ export interface MenuItem {
 }
 
 /**
- * A alternative MenuItem details of an entry in the main navigation.
- * If a base MenuItem property (like "label") is defined, it overwrites the inferred value from the Entity type.
+ * An alternative MenuItem details of an entry in the main navigation.
  */
 export interface EntityMenuItem extends MenuItem {
   /**
