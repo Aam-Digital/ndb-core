@@ -383,7 +383,8 @@ export const defaultJsonConfig = {
           label: $localize`Children`
         },
         "privateSchool",
-        "language"
+        "language",
+        "website"
       ],
       filters: [{ id: "privateSchool" }]
     }
@@ -402,7 +403,7 @@ export const defaultJsonConfig = {
               config: {
                 fieldGroups: [
                   { fields: ["name", "privateSchool", "parentSchool"] },
-                  { fields: ["address", "phone"] },
+                  { fields: ["address", "phone", "website"] },
                   { fields: ["language", "timing"] },
                   { fields: ["remarks"] }
                 ]
@@ -1093,9 +1094,13 @@ export const defaultJsonConfig = {
       },
       remarks: {
         dataType: "string",
-        label: $localize`:Label for the remarks for a school:Remarks`
-      }
-    }
+        label: $localize`:Label for the remarks for a school:Remarks`,
+      },
+      website: {
+        dataType: "url",
+        label: $localize`:Label for the website of a school:Website`,
+      },
+    },
   },
   "entity:HistoricalEntityData": {
     hasPII: true,
