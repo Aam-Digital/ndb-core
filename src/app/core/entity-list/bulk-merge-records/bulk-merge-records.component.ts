@@ -52,7 +52,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   /**
-   * Initialize the merge fields and form controls.
+   * Initialize the merge form with the fields to merge
+   * and the values of the first record.
+   * Hidden fields are initialized with the values of the first record. They are not shown in the form.
    */
   private initMerge() {
     this.mergeFields = Array.from(this.entityConstructor.schema.entries())
@@ -62,8 +64,17 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         label: field.label,
       }));
 
+    const hiddenFields = Array.from(this.entityConstructor.schema.entries())
+      .filter(([_, field]) => !field.label)
+      .map(([key]) => key);
+
     this.mergeFields.forEach((field) => {
       this.mergeForm.addControl(field.key, this.fb.control(null));
+    });
+
+    // Initialize hidden fields with values from the first record
+    hiddenFields.forEach((key) => {
+      this.mergedEntity[key] = this.entitiesToMerge[0][key];
     });
   }
 

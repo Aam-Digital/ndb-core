@@ -3,9 +3,9 @@ import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../model/entity";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
-import { EntityActionsService } from "./entity-actions.service";
 import { BulkMergeRecordsComponent } from "app/core/entity-list/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
+import { EntityDeleteService } from "./entity-delete.service";
 
 @Injectable({
   providedIn: "root",
@@ -14,8 +14,8 @@ export class EntityMergeService {
   constructor(
     private entityMapper: EntityMapperService,
     private matDialog: MatDialog,
-    private entityActionsService: EntityActionsService,
     private alert: AlertService,
+    private entityDeleteService: EntityDeleteService,
   ) {}
 
   /**
@@ -30,7 +30,7 @@ export class EntityMergeService {
   ): Promise<void> {
     if (entitiesToMerge.length !== 2) {
       this.alert.addWarning(
-        "You can only select 2 rows for merging right now.",
+        $localize`You can only select 2 rows for merging right now.`,
       );
       return;
     }
@@ -43,7 +43,9 @@ export class EntityMergeService {
 
     if (mergedEntity) {
       await this.entityMapper.save(mergedEntity);
-      this.alert.addWarning("Records merged successfully.");
+
+      await this.entityDeleteService.deleteEntity(entitiesToMerge[1]);
+      this.alert.addInfo($localize`Records merged successfully.`);
     }
   }
 }
