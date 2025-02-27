@@ -1,0 +1,931 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >DownloadService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/export/download-service/download.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>This service allows to start a download process from the browser.
+Depending on the browser and the setting this might open a popup or directly download the file.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#SEPARATOR_COL" >SEPARATOR_COL</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Static</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#SEPARATOR_ROW" >SEPARATOR_ROW</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createCsv" >createCsv</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#exportFile" >exportFile</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#triggerDownload" >triggerDownload</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(dataTransformationService: <a href="../injectables/DataTransformationService.html" target="_self">DataTransformationService</a>, papa: Papa, entityMapperService: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/export/download-service/download.service.ts:22</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>dataTransformationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/DataTransformationService.html" target="_self" >DataTransformationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>papa</td>
+                                                  
+                                                        <td>
+                                                                    <code>Papa</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityMapperService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createCsv"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createCsv</b></span>
+                        <a href="#createCsv"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createCsv(data: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="105"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:105</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Creates a CSV string of the input data</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>an array of elements</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>string a valid CSV string of the input data</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="exportFile"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>exportFile</b></span>
+                        <a href="#exportFile"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>exportFile(data: any[], entityConstructor: <a href="../undefineds/EntityConstructor.html" target="_self">EntityConstructor</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="129"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:129</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>entityConstructor</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="triggerDownload"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>triggerDownload</b></span>
+                        <a href="#triggerDownload"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>triggerDownload(data: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, format: <a href="../undefineds/FileDownloadFormat.html" target="_self">FileDownloadFormat</a>, filename: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, exportConfig?: <a href="../interfaces/ExportColumnConfig.html" target="_self">ExportColumnConfig[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="37"
+                                    class="link-to-prism">src/app/core/export/download-service/download.service.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Starts the download process with the provided data</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>data</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>content of the file that will be downloaded</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>format</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/typealiases.html#FileDownloadFormat" target="_self" >FileDownloadFormat</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>extension of the file that will be downloaded, support is &#39;csv&#39; and &#39;json&#39;</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>filename</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>of the file that will be downloaded</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>exportConfig</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>special configuration that will be applied to the &#39;data&#39; before triggering the download</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SEPARATOR_COL"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>SEPARATOR_COL</b></span>
+                        <a href="#SEPARATOR_COL"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;,&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/app/core/export/download-service/download.service.ts:22</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>CSV column/field separator</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SEPARATOR_ROW"></a>
+                    <span class="name">
+                            <span class="modifier">Static</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>SEPARATOR_ROW</b></span>
+                        <a href="#SEPARATOR_ROW"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;\n&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/core/export/download-service/download.service.ts:20</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>CSV row separator</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { ExportColumnConfig } from &quot;../data-transformation-service/export-column-config&quot;;
+import { Logging } from &quot;../../logging/logging.service&quot;;
+import { DataTransformationService } from &quot;../data-transformation-service/data-transformation.service&quot;;
+import { transformToReadableFormat } from &quot;../../common-components/entities-table/value-accessor/value-accessor&quot;;
+import { Papa } from &quot;ngx-papaparse&quot;;
+import { Entity, EntityConstructor } from &quot;app/core/entity/model/entity&quot;;
+import { EntityDatatype } from &quot;app/core/basic-datatypes/entity/entity.datatype&quot;;
+import { EntityMapperService } from &quot;app/core/entity/entity-mapper/entity-mapper.service&quot;;
+
+export type FileDownloadFormat &#x3D; &quot;csv&quot; | &quot;json&quot; | &quot;pdf&quot;;
+
+/**
+ * This service allows to start a download process from the browser.
+ * Depending on the browser and the setting this might open a popup or directly download the file.
+ */
+@Injectable({ providedIn: &quot;root&quot; })
+export class DownloadService {
+  /** CSV row separator */
+  static readonly SEPARATOR_ROW &#x3D; &quot;\n&quot;;
+  /** CSV column/field separator */
+  static readonly SEPARATOR_COL &#x3D; &quot;,&quot;;
+
+  constructor(
+    private dataTransformationService: DataTransformationService,
+    private papa: Papa,
+    private entityMapperService: EntityMapperService,
+  ) {}
+
+  /**
+   * Starts the download process with the provided data
+   * @param data content of the file that will be downloaded
+   * @param format extension of the file that will be downloaded, support is &#x27;csv&#x27; and &#x27;json&#x27;
+   * @param filename of the file that will be downloaded
+   * @param exportConfig special configuration that will be applied to the &#x27;data&#x27; before triggering the download
+   */
+  async triggerDownload(
+    data: any,
+    format: FileDownloadFormat,
+    filename: string,
+    exportConfig?: ExportColumnConfig[],
+  ) {
+    const blobData &#x3D; await this.getFormattedBlobData(
+      data,
+      format,
+      exportConfig,
+    );
+    const filenameWithExtension &#x3D; filename.endsWith(&quot;.&quot; + format)
+      ? filename
+      : filename + &quot;.&quot; + format;
+    const link &#x3D; this.createDownloadLink(blobData, filenameWithExtension);
+    link.click();
+  }
+
+  private async getFormattedBlobData(
+    data: any,
+    format: FileDownloadFormat,
+    exportConfig?: ExportColumnConfig[],
+  ): Promise&lt;Blob&gt; {
+    let result &#x3D; &quot;&quot;;
+
+    if (exportConfig) {
+      data &#x3D; await this.dataTransformationService.transformData(
+        data,
+        exportConfig,
+      );
+    }
+
+    switch (format.toLowerCase()) {
+      case &quot;json&quot;:
+        result &#x3D; typeof data &#x3D;&#x3D;&#x3D; &quot;string&quot; ? data : JSON.stringify(data); // TODO: support exportConfig for json format
+        return new Blob([result], { type: &quot;application/json&quot; });
+      case &quot;csv&quot;:
+        if (Array.isArray(data)) {
+          result &#x3D; await this.createCsv(data);
+        } else {
+          // assume raw csv data
+          result &#x3D; data;
+        }
+        return new Blob([result], { type: &quot;text/csv&quot; });
+      case &quot;pdf&quot;:
+        return new Blob([data], { type: &quot;application/pdf&quot; });
+      default:
+        Logging.warn(&#x60;Not supported format: ${format}&#x60;);
+        return new Blob([&quot;&quot;]);
+    }
+  }
+
+  private createDownloadLink(blobData, filename: string): HTMLAnchorElement {
+    const link &#x3D; document.createElement(&quot;a&quot;);
+    link.setAttribute(&quot;style&quot;, &quot;display:none;&quot;);
+    document.body.appendChild(link);
+    link.href &#x3D; window.URL.createObjectURL(blobData);
+    link.download &#x3D; filename;
+    link.addEventListener(&quot;click&quot;, () &#x3D;&gt; window.URL.revokeObjectURL(blobData));
+    return link;
+  }
+
+  /**
+   * Creates a CSV string of the input data
+   *
+   * @param data an array of elements
+   * @returns string a valid CSV string of the input data
+   */
+  async createCsv(data: any[]): Promise&lt;string&gt; {
+    let entityConstructor: any;
+
+    if (data.length &gt; 0 &amp;&amp; typeof data[0]?.getConstructor &#x3D;&#x3D;&#x3D; &quot;function&quot;) {
+      entityConstructor &#x3D; data[0].getConstructor();
+    }
+    const keys &#x3D; new Set&lt;string&gt;();
+    data.forEach((row) &#x3D;&gt; Object.keys(row).forEach((key) &#x3D;&gt; keys.add(key)));
+
+    data &#x3D; data.map(transformToReadableFormat);
+
+    if (!entityConstructor) {
+      return this.papa.unparse(data, {
+        quotes: true,
+        header: true,
+        newline: DownloadService.SEPARATOR_ROW,
+        columns: [...keys],
+      });
+    }
+
+    const result &#x3D; await this.exportFile(data, entityConstructor);
+    return result;
+  }
+
+  async exportFile(data: any[], entityConstructor: EntityConstructor) {
+    const entitySchema &#x3D; entityConstructor.schema;
+    const columnLabels &#x3D; new Map&lt;string, string&gt;();
+
+    for (const [id, field] of entitySchema.entries()) {
+      if (!field.label) {
+        // skip &quot;technical&quot; fields without an explicit label
+        continue;
+      }
+
+      columnLabels.set(id, field.label);
+
+      if (field.dataType &#x3D;&#x3D;&#x3D; EntityDatatype.dataType) {
+        columnLabels.set(id + &quot;_readable&quot;, field.label + &quot; (readable)&quot;);
+      }
+    }
+
+    const exportEntities &#x3D; await Promise.all(
+      data.map((item) &#x3D;&gt; this.mapEntityToExportRow(item, columnLabels)),
+    );
+
+    const columnKeys: string[] &#x3D; Array.from(columnLabels.keys());
+    const labels: any[] &#x3D; Array.from(columnLabels.values());
+    const orderedData: any[] &#x3D; exportEntities.map((item) &#x3D;&gt;
+      columnKeys.map((key) &#x3D;&gt; item[key]),
+    );
+
+    return this.papa.unparse(
+      {
+        fields: labels,
+        data: orderedData,
+      },
+      {
+        quotes: true,
+        newline: DownloadService.SEPARATOR_ROW,
+      },
+    );
+  }
+
+  private async mapEntityToExportRow(
+    item: Entity,
+    columnLabels: Map&lt;string, string&gt;,
+  ): Promise&lt;Object&gt; {
+    const newItem &#x3D; {};
+    for (const key in item) {
+      if (columnLabels.has(key)) {
+        newItem[key] &#x3D; item[key];
+      }
+
+      if (columnLabels.has(key + &quot;_readable&quot;)) {
+        newItem[key + &quot;_readable&quot;] &#x3D; await this.loadRelatedEntitiesToString(
+          item[key],
+        );
+      }
+    }
+    return newItem;
+  }
+
+  private async loadRelatedEntitiesToString(value: string | string[]) {
+    const relatedEntitiesToStrings: string[] &#x3D; [];
+
+    const relatedEntitiesIds: string[] &#x3D; Array.isArray(value) ? value : [value];
+    for (const relatedEntityId of relatedEntitiesIds) {
+      relatedEntitiesToStrings.push(
+        (
+          await this.entityMapperService
+            .load(Entity.extractTypeFromId(relatedEntityId), relatedEntityId)
+            .catch((e) &#x3D;&gt; &quot;&lt;not_found&gt;&quot;)
+        ).toString(),
+      );
+    }
+
+    return relatedEntitiesToStrings;
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'DownloadService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -1,0 +1,279 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Reports</h1>
+<p>The reporting module allows organizations to automatically create reports of aggregated data for a given timespan.
+This can be used to track indicators and export anonymous data.</p>
+<p>There are currently two systems available to generate reports, both using the same config documents (<code>ReportConfig:*</code>): </p>
+<ul>
+<li>SQL-based queries executed server-side using the SQS server</li>
+<li>(legacy) client-side generator using the aggregation &amp; query syntax below</li>
+</ul>
+<h1>SQL Reports</h1>
+<p>For this feature, we have integrated the (optional) <a href="https://neighbourhood.ie/products-and-services/structured-query-server">structured-query-service (SQS)</a>
+(this creates a read-only copy of the data in the CouchDB and allows to run Sqlite queries against it).
+SQS enables the possibility to create SQL based queries in reports.</p>
+<p>The SQS image is not available as open source and needs a licence. It is pulled from a private container registry.</p>
+<h2>Deployment</h2>
+<p>To activate it for an application, simply activate &quot;aam-backend-service&quot; profile (<code>COMPOSE_PROFILES=aam-backend-service</code>) in the applications <code>.env</code> file and run <code>docker compose up -d</code>.</p>
+<h2>Configuration</h2>
+<p>The reports can be defined as <code>ReportConfig:*</code> entities.</p>
+<p>There are different modes for <code>ReportConfig</code>:</p>
+<h3>sql</h3>
+<p>Requirements: SQS</p>
+<p>Some useful SQL query snippets for Aam Digital contexts are collected here: <a href="https://docs.google.com/document/d/14JqS6xgZzC1xHUogDho5n1kyNLzX1Eoyv6MeZtRejuM/edit?usp=sharing">Aam Digital SQL Snippets</a></p>
+<h4>Simple SQL Report</h4>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">// app/ReportConfig:test-report
+{
+  &quot;_id&quot;: &quot;ReportConfig:test-report&quot;,
+  &quot;title&quot;: &quot;Test Report&quot;,
+  &quot;mode&quot;: &quot;sql&quot;,
+  &quot;aggregationDefinition&quot;: &quot;SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c&quot;,
+  &quot;neededArgs&quot;: []
+}</code></pre></div><h4>SQL Report With Arguments</h4>
+<p>Additional arguments for the query (like a from and to date parameter) can be used in the SQL query directly using &quot;?&quot;. The &quot;neededArgs&quot; array defines what arguments are filled for the &quot;?&quot; placeholders in the given order.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">// app/ReportConfig:test-report
+{
+  &quot;_id&quot;: &quot;ReportConfig:test-report&quot;,
+  &quot;title&quot;: &quot;Test Report&quot;,
+  &quot;mode&quot;: &quot;sql&quot;,
+  &quot;aggregationDefinition&quot;: &quot;SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE created_at BETWEEN ? AND ?&quot;,
+  &quot;neededArgs&quot;: [
+    &quot;from&quot;,
+    &quot;to&quot;
+  ]
+}</code></pre></div><h1>JSON-Query Reports (legacy)</h1>
+<h4>Aggregation structure</h4>
+<p>Inside the <code>aggregationDefinitions</code> an array of aggregations can be added.
+The following example shows the structure of an aggregation.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;label&quot;: &quot;Events&quot;,
+  &quot;query&quot;: &quot;EventNote:toArray[*date &gt;= ? &amp; date &lt;= ?]&quot;,
+  &quot;groupBy&quot;: [&quot;category&quot;],
+  &quot;aggregations&quot;: [
+    {
+      &quot;query&quot;: &quot;:getParticipantsWithAttendance(PRESENT):unique:addPrefix(Child):toEntities&quot;,
+      &quot;groupBy&quot;: [&quot;gender&quot;, &quot;religion&quot;],
+      &quot;label&quot;: &quot;Participants&quot;
+    }
+  ]
+}</code></pre></div><ul>
+<li>The <code>label</code> will be used to display the length of the <code>query</code> result in the final report.</li>
+<li>The <code>query</code> defines a valid <a href="https://github.com/auditassistant/json-query#queries">JSON-Query</a>.</li>
+<li><code>groupBy</code> defines an array of properties by which the results of the <code>query</code> are grouped,
+these results will be nested in the top-level query.</li>
+<li>The <code>aggregations</code> array can be filled with further aggregations with the same structure.
+They will be executed on the result of the <code>query</code> as well as on each <code>groupBy</code> result.</li>
+</ul>
+<h4><code>query</code> syntax</h4>
+<p>A full documentation can be found <a href="https://github.com/auditassistant/json-query#queries">here</a>.
+The most top-level aggregation has to start with the entity which should be queried.
+This can be done by selecting the entity type and chaining it with <code>:toArray</code>: e.g. <code>Child:toArray</code>.
+Now the array of all children is ready to be aggregated.
+You could for example be interested in all the children older than 10: <code>Child:toArray[* age &gt; 10]</code>.
+The <code>*</code> tells the query language to select all the children and not just one.
+The simple <code>age</code> call refers to the <code>get age()</code> function of the child entity.
+If you are interested in all female children older than 10 the call would look like <code>Child:toArray[* age&gt;10 &amp; gender=F]</code>.
+If you are only interested in the names of these children <code>Child:toArray[* age&gt;10 &amp; gender=M].name</code> will transform the
+array of children into an array of strings.</p>
+<p>To navigate between different entities a set of functions extends the query syntax.
+The full documentation for all the available functions can be found and extended in the
+<a href="../../injectables/QueryService.html">QueryService</a>.
+The first function you already know <code>:toArray</code> which creates an object into an array of values of this object.
+The following functions also exist:</p>
+<ul>
+<li><code>:unique</code> removes all duplicates from an array</li>
+<li><code>:addPrefix(&lt;ENTITY_TYPE&gt;)</code> adds the prefix <code>&lt;ENTITY_TYPE&gt;</code> to all strings in the input array.
+This is necessary to use the <code>:toEntities</code> function.
+The prefix will only be added if it is not set yet.</li>
+<li><code>:toEntities</code> transforms an array of entity-ids into an array of entities.
+The IDs need to have the full format e.g. <code>Child:1234-5678</code>.
+Therefore <code>:addPrefix</code> should always be used to add the correct entity before calling <code>:toEntities</code>.</li>
+<li><code>:getRelated(&lt;ENTITY_TYPE&gt;, &lt;PROPERTY_NAME&gt;)</code> is used to get the entity or entities which are mentioned through ids
+on a property of another entity e.g., to get all children that are part of a set of notes write <code>Note:toArray:getRelated(Child, children)</code></li>
+<li><code>:getIds(&lt;PROPERTY_NAME&gt;)</code> works similar to <code>:getRelated</code> but does not transform the ids into entities.</li>
+<li><code>:filterByObjectAttribute(&lt;PROPERTY_NAME&gt;, &lt;KEY&gt;, &lt;VALUE&gt;)</code> is used to filter by an attribute which is a complex
+object like a <code>configurable-enum</code>. <code>&lt;PROPERTY_NAME&gt;</code> refers to the name of the property of the parent attribute,
+<code>&lt;KEY&gt;</code> refers to a key of this property and <code>&lt;VALUE&gt;</code> refers to the value(s) for which should be filtered.
+<code>&lt;VALUE&gt;</code> can be a string of multiple matches which are separated by <code>|</code>.
+E.g., to get all notes which are home visits or guardian talks write:
+<code>Note:toArray:filterByObjectAttribute(category, id, HOME_VISIT|GUARDIAN_TALK)</code></li>
+<li><code>:getParticipantsWithAttendance(&lt;ATTENDANCE_STATUS&gt;)</code> only returns the children with the given attendance for a set
+of notes. The attendance refers to the <code>:countAs</code> attribute. To get all present children write
+<code>Note:toArray:getParticipantsWithAttendance(PRESENT)</code></li>
+<li><code>:addEntities(&lt;ENTITY_TYPE&gt;)</code> can be used to create an array holding multiple entity types.
+E.g., to create an array holding notes and event notes write <code>Note:toArray:addEntities(EventNote)</code>.</li>
+</ul>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'create-a-report.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
