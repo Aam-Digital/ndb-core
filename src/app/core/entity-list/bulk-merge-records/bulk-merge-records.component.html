@@ -19,7 +19,8 @@
               [checked]="isSelected(field.key, 'entity1')"
             >
               {{
-                entitiesToMerge[0][field.key]?.label ||
+                entitiesToMerge[0][field.key]?.locationString ||
+                  entitiesToMerge[0][field.key]?.label ||
                   entitiesToMerge[0][field.key]
               }}
             </mat-radio-button>
@@ -34,7 +35,8 @@
               [checked]="isSelected(field.key, 'entity2')"
             >
               {{
-                entitiesToMerge[1][field.key]?.label ||
+                entitiesToMerge[1][field.key]?.locationString ||
+                  entitiesToMerge[1][field.key]?.label ||
                   entitiesToMerge[1][field.key]
               }}
             </mat-radio-button>
@@ -44,7 +46,8 @@
         <!-- Merge Preview -->
         <div class="preview-cell">
           {{
-            mergeForm.get(field.key)?.value?.label ||
+            mergeForm.get(field.key)?.value?.locationString ||
+              mergeForm.get(field.key)?.value?.label ||
               mergeForm.get(field.key)?.value ||
               "No Selection"
           }}

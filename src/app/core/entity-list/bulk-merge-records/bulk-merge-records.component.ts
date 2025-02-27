@@ -108,6 +108,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     Object.keys(this.mergeForm.value).forEach((key) => {
       this.mergedEntity[key] = this.mergeForm.value[key];
     });
+    console.log(this.mergedEntity);
     this.dialogRef.close(this.mergedEntity);
   }
 
