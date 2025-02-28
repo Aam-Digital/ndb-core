@@ -8,7 +8,6 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
@@ -25,13 +24,11 @@ import { EntityAction } from "./entity-action.interface";
   styleUrls: ["./entity-actions-menu.component.scss"],
   standalone: true,
   imports: [
-    NgIf,
     MatButtonModule,
     FontAwesomeModule,
     MatMenuModule,
     Angulartics2Module,
     DisableEntityOperationDirective,
-    NgForOf,
     MatTooltipModule,
   ],
 })
@@ -69,7 +66,7 @@ export class EntityActionsMenuComponent implements OnChanges {
 
   private filterAvailableActions() {
     this.actions = this.entityActionsMenuService
-      .getActions()
+      .getActions(this.entity)
       .filter((action) => {
         if (!this.entity) {
           return false;

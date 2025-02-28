@@ -11,11 +11,11 @@
         class="existing-action-remove"
       ></fa-icon>
       <div matListItemTitle i18n>
-        Link all imported records to {{ action.type | entityTypeLabel }}
+        Link all imported records to {{ action.targetType | entityTypeLabel }}
       </div>
       <div matListItemLine>
         <app-entity-block
-          [entityId]="action.id"
+          [entityId]="action.targetId"
           [linkDisabled]="true"
         ></app-entity-block>
       </div>
@@ -40,36 +40,30 @@
   </div>
 
   <div class="flex-row gap-regular">
-    <mat-form-field>
+    <mat-form-field class="full-width">
       <mat-label i18n="Label for linked entity type input"
-        >Linked record type
+        >Link all imported records to:
       </mat-label>
       <app-basic-autocomplete
-        formControlName="type"
-        [options]="linkableEntityTypes"
-        [optionToString]="typeToString"
+        formControlName="action"
+        [multi]="false"
+        [options]="availableImportActions"
+        [optionToString]="actionToString"
       ></app-basic-autocomplete>
     </mat-form-field>
 
-    <mat-form-field>
-      <mat-label i18n="Label for linked entity input">Linked record</mat-label>
-      <app-basic-autocomplete
-        formControlName="id"
-        [options]="linkableEntities"
-        [valueMapper]="entityToId"
-      >
-        <ng-template let-item>
-          <app-entity-block
-            [entity]="item"
-            [linkDisabled]="true"
-          ></app-entity-block>
-        </ng-template>
-      </app-basic-autocomplete>
-    </mat-form-field>
+    <app-entity-select
+      [form]="linkEntityForm.controls['targetId']"
+      [entityType]="linkEntityForm.controls['action'].value?.['targetType']"
+      [multi]="false"
+      label="for record"
+      i18n-label
+    >
+    </app-entity-select>
 
     <button
       (click)="addAction()"
-      [disabled]="!actionSelected"
+      [disabled]="!linkEntityForm.valid"
       mat-stroked-button
       color="accent"
       class="action-add-button"

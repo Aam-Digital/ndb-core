@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntityAction } from "./entity-action.interface";
+import { Entity } from "../../entity/model/entity";
 
 /**
  * Register and access actions that can be performed on an entity
@@ -14,12 +15,22 @@ import { EntityAction } from "./entity-action.interface";
 })
 export class EntityActionsMenuService {
   private actions: EntityAction[] = [];
+  private actionsFactories: EntityActionsFactory[] = [];
 
-  getActions() {
-    return this.actions;
+  getActions(entity?: Entity): EntityAction[] {
+    return [
+      ...this.actions,
+      ...this.actionsFactories.flatMap((factory) => factory(entity)),
+    ];
   }
 
   registerActions(newActions: EntityAction[]) {
     this.actions.push(...newActions);
   }
+
+  registerActionsFactories(newActions: EntityActionsFactory[]) {
+    this.actionsFactories.push(...newActions);
+  }
 }
+
+export type EntityActionsFactory = (entity: Entity) => EntityAction[];
