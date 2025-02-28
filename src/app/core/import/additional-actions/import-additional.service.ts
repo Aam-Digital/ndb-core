@@ -44,6 +44,7 @@ export class ImportAdditionalService {
         this.linkableEntities.delete(entityTypeId);
       }
     }
+    console.log("Import Actions", this.linkableEntities);
   }
 
   private generateLinkActionsFor(sourceType: string): AdditionalImportAction[] {
@@ -60,17 +61,25 @@ export class ImportAdditionalService {
       const targetTypeCtr = this.entityRegistry.get(targetType);
 
       for (const field of fields) {
-        directActions.push({
-          sourceType,
-          mode: "direct",
-          targetType,
-          targetProperty: field.id,
-        });
+        // direct linking to the target entity
+        if (field.isArray) {
+          directActions.push({
+            sourceType,
+            mode: "direct",
+            targetType,
+            targetProperty: field.id,
+          });
+        }
 
         // other types these referencing types are also linking to (so they can serve as a connection relationship entity)
         for (const [fieldId2, field2] of targetTypeCtr.schema.entries()) {
           if (fieldId2 === field.id) continue; // skip the same field
           if (field2.dataType !== EntityDatatype.dataType) continue; // skip non-entity fields
+          if (
+            !field2.additional ||
+            (Array.isArray(field2.additional) && field2.additional.length === 0)
+          )
+            continue; // skip if no reference type is enabled
 
           indirectActions.push({
             sourceType,
@@ -85,7 +94,6 @@ export class ImportAdditionalService {
     }
 
     // TODO: hide those used as indirect from direct actions
-    console.log("Import Actions", [...directActions, ...indirectActions]);
 
     return [...directActions, ...indirectActions];
 
