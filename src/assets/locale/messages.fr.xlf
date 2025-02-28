@@ -136,7 +136,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">194</context>
+          <context context-type="linenumber">200</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
@@ -670,11 +670,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1104</context>
+          <context context-type="linenumber">1097</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1243</context>
+          <context context-type="linenumber">1240</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4960954872484116356" datatype="html">
@@ -792,7 +792,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">792</context>
+          <context context-type="linenumber">785</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9099121471164431783" datatype="html">
@@ -805,19 +805,19 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">465</context>
+          <context context-type="linenumber">458</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">556</context>
+          <context context-type="linenumber">549</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1071</context>
+          <context context-type="linenumber">1064</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1300</context>
+          <context context-type="linenumber">1297</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5560057304612443507" datatype="html">
@@ -839,7 +839,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1221</context>
+          <context context-type="linenumber">1218</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5866254605255506989" datatype="html">
@@ -852,7 +852,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1231</context>
+          <context context-type="linenumber">1228</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8836042473971054084" datatype="html">
@@ -865,7 +865,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1226</context>
+          <context context-type="linenumber">1223</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3036695099328175425" datatype="html">
@@ -1218,7 +1218,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1309</context>
+          <context context-type="linenumber">1306</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/related-time-period-entities/time-period.ts</context>
@@ -1230,7 +1230,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1006138510285524819" datatype="html">
@@ -1243,7 +1243,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1310</context>
+          <context context-type="linenumber">1307</context>
         </context-group>
       </trans-unit>
       <trans-unit id="126074860850048964" datatype="html">
@@ -1260,7 +1260,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1315</context>
+          <context context-type="linenumber">1312</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/related-time-period-entities/time-period.ts</context>
@@ -1281,7 +1281,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1316</context>
+          <context context-type="linenumber">1313</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5743999575330197666" datatype="html">
@@ -1860,11 +1860,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">195</context>
+          <context context-type="linenumber">201</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">17</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html</context>
@@ -1985,11 +1985,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">82</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">865</context>
+          <context context-type="linenumber">858</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5626190928095412575" datatype="html">
@@ -1997,7 +1997,7 @@
         <target> autoriser plusieurs valeurs (sélection multiple) </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">90,92</context>
+          <context context-type="linenumber">96,98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4834247353465426071" datatype="html">
@@ -2005,7 +2005,7 @@
         <target>Sélectionnez un ensemble d’options existant à partager entre plusieurs champs ou créez une nouvelle liste indépendante d’options déroulantes.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5855341483124183158" datatype="html">
@@ -2013,7 +2013,7 @@
         <target>Sélectionnez le type d&apos;enregistrements que l&apos;utilisateur peut sélectionner et lier à ce champ.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">129</context>
+          <context context-type="linenumber">135</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4823065374684823570" datatype="html">
@@ -2021,7 +2021,7 @@
         <target>Options avancées et validation</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">149</context>
+          <context context-type="linenumber">155</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8799362079868541767" datatype="html">
@@ -2029,7 +2029,7 @@
         <target>Anonymiser</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">165</context>
+          <context context-type="linenumber">171</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
@@ -2041,7 +2041,7 @@
         <target>En option, cela supprimera toutes les informations personnelles (PII) liées de manière permanente à ce champ.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">168</context>
+          <context context-type="linenumber">174</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2086294539661962129" datatype="html">
@@ -2060,7 +2060,7 @@
           <context context-type="linenumber">16</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
@@ -2494,12 +2494,12 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3826197724850782348" datatype="html">
-        <source> Editing data structure for &quot;<x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/>&quot; records </source>
+        <source> Editing data structure for &quot;<x id="INTERPOLATION" equiv-text="{{         (entityType | entityTypeLabel) ?? entityType       }}"/>&quot; records </source>
         <target> Modification de la structure de données pour &quot;<x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/>&quot; enregistrements </target>
         <note priority="1" from="description">page title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">7,9</context>
+          <context context-type="linenumber">7,11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3620188369327429839" datatype="html">
@@ -2507,7 +2507,7 @@
         <target> Sauvegarder </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">12,14</context>
+          <context context-type="linenumber">14,16</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/form/form.component.html</context>
@@ -2528,7 +2528,7 @@
         <note priority="1" from="description">admin entity: nav item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">25,27</context>
+          <context context-type="linenumber">27,29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9063646718692793907" datatype="html">
@@ -2537,7 +2537,7 @@
         <note priority="1" from="description">admin entity: nav item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">32,34</context>
+          <context context-type="linenumber">34,36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8517972670959969610" datatype="html">
@@ -2546,7 +2546,7 @@
         <note priority="1" from="description">admin entity: nav item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">39,41</context>
+          <context context-type="linenumber">41,43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8589026079134671263" datatype="html">
@@ -2554,7 +2554,7 @@
         <target> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">63,67</context>
+          <context context-type="linenumber">65,69</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5103146006962696736" datatype="html">
@@ -2633,7 +2633,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">859</context>
+          <context context-type="linenumber">852</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -2851,7 +2851,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">132,134</context>
+          <context context-type="linenumber">136,138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="436909138378324478" datatype="html">
@@ -3034,7 +3034,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">454</context>
+          <context context-type="linenumber">447</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6115610944303081778" datatype="html">
@@ -3670,19 +3670,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">170</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">178</context>
+          <context context-type="linenumber">383</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">391</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">963</context>
+          <context context-type="linenumber">956</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7026624912846603653" datatype="html">
@@ -3691,11 +3687,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">31</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1072</context>
+          <context context-type="linenumber">1065</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4817207543436133742" datatype="html">
@@ -3704,11 +3696,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">32</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">677</context>
+          <context context-type="linenumber">670</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8104421162933956065" datatype="html">
@@ -3717,23 +3709,19 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">42</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">113</context>
+          <context context-type="linenumber">115</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">166</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">174</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">205</context>
+          <context context-type="linenumber">197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6904866445262015585" datatype="html">
@@ -3741,12 +3729,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Tâches</target>
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">46</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1071721880474488785" datatype="html">
@@ -3755,7 +3739,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4555457172864212828" datatype="html">
@@ -3764,11 +3748,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="linenumber">67</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1162</context>
+          <context context-type="linenumber">1159</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1868606282505332204" datatype="html">
@@ -3777,7 +3761,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7911416166208830577" datatype="html">
@@ -3786,7 +3770,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5041354590769758251" datatype="html">
@@ -3795,7 +3779,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2935152225387412918" datatype="html">
@@ -3805,7 +3789,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="meaning">Dashboard shortcut widget</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2111561618518210212" datatype="html">
@@ -3815,7 +3799,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="meaning">Dashboard shortcut widget</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7749314122565677607" datatype="html">
@@ -3825,7 +3809,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="meaning">Dashboard shortcut widget</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8955128195791312286" datatype="html">
@@ -3834,7 +3818,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Attendance week dashboard widget label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">141</context>
+          <context context-type="linenumber">133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2329598843423950672" datatype="html">
@@ -3843,7 +3827,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Attendance week dashboard widget label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">148</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6802197953477344728" datatype="html">
@@ -3852,7 +3836,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Attendance week dashboard widget label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">155</context>
+          <context context-type="linenumber">147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4388879716045736175" datatype="html">
@@ -3861,11 +3845,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">label for entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">41</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">173</context>
+          <context context-type="linenumber">165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3973931101896534797" datatype="html">
@@ -3874,27 +3858,27 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the date of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">99</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">191</context>
+          <context context-type="linenumber">183</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">819</context>
+          <context context-type="linenumber">812</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1113</context>
+          <context context-type="linenumber">1110</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1212</context>
+          <context context-type="linenumber">1209</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1258</context>
+          <context context-type="linenumber">1255</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9127604588498960753" datatype="html">
@@ -3903,15 +3887,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the subject of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">110</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">201</context>
+          <context context-type="linenumber">193</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1806667489382256324" datatype="html">
@@ -3920,11 +3904,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the category of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">135</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">219</context>
+          <context context-type="linenumber">211</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3829669008932370621" datatype="html">
@@ -3932,11 +3916,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Pièce jointe</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">141</context>
+          <context context-type="linenumber">143</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">225</context>
+          <context context-type="linenumber">217</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5032142018133486821" datatype="html">
@@ -3945,11 +3929,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">label for the related Entities</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">234</context>
+          <context context-type="linenumber">226</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5944812089887969249" datatype="html">
@@ -3962,15 +3946,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">173</context>
+          <context context-type="linenumber">175</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">242</context>
+          <context context-type="linenumber">234</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">876</context>
+          <context context-type="linenumber">869</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5611592591303869712" datatype="html">
@@ -3979,19 +3963,19 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Status of a note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">183</context>
+          <context context-type="linenumber">185</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">250</context>
+          <context context-type="linenumber">242</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">520</context>
+          <context context-type="linenumber">513</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1014</context>
+          <context context-type="linenumber">1007</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1813769493203572551" datatype="html">
@@ -4000,7 +3984,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Title for notes overview</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">260</context>
+          <context context-type="linenumber">252</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2798807656507405918" datatype="html">
@@ -4009,11 +3993,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Translated name of default column group</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">264</context>
+          <context context-type="linenumber">256</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">268</context>
+          <context context-type="linenumber">260</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1002165214775409029" datatype="html">
@@ -4022,19 +4006,19 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Translated name of mobile column group</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">265</context>
+          <context context-type="linenumber">257</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">272</context>
+          <context context-type="linenumber">264</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">491</context>
+          <context context-type="linenumber">484</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">544</context>
+          <context context-type="linenumber">537</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6309181788204949218" datatype="html">
@@ -4043,7 +4027,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">348</context>
+          <context context-type="linenumber">340</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8878700331247603166" datatype="html">
@@ -4052,7 +4036,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">360</context>
+          <context context-type="linenumber">352</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7910125616758063638" datatype="html">
@@ -4061,7 +4045,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Filename of markdown help page (make sure the filename you enter as a translation actually exists on the server!)</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">373</context>
+          <context context-type="linenumber">365</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8781767917622107949" datatype="html">
@@ -4070,15 +4054,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">405</context>
+          <context context-type="linenumber">398</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">577</context>
+          <context context-type="linenumber">570</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">913</context>
+          <context context-type="linenumber">906</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2562531496877210322" datatype="html">
@@ -4087,7 +4071,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">422</context>
+          <context context-type="linenumber">415</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2309808536212982229" datatype="html">
@@ -4096,7 +4080,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">431</context>
+          <context context-type="linenumber">424</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8953033926734869941" datatype="html">
@@ -4105,19 +4089,19 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Column title for ChildBlockComponents</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">449</context>
+          <context context-type="linenumber">442</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">977</context>
+          <context context-type="linenumber">970</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1077</context>
+          <context context-type="linenumber">1070</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1168</context>
+          <context context-type="linenumber">1165</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
@@ -4138,11 +4122,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Column label for class which child attends</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">460</context>
+          <context context-type="linenumber">453</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1304</context>
+          <context context-type="linenumber">1301</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8539945035792949854" datatype="html">
@@ -4151,7 +4135,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Column label for school attendance of child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">472</context>
+          <context context-type="linenumber">465</context>
         </context-group>
       </trans-unit>
       <trans-unit id="249709194006018190" datatype="html">
@@ -4160,7 +4144,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Column label for coaching attendance of child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">481</context>
+          <context context-type="linenumber">474</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7691138136265271231" datatype="html">
@@ -4169,11 +4153,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Translated name of default column group</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">490</context>
+          <context context-type="linenumber">483</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">494</context>
+          <context context-type="linenumber">487</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3007651244935433751" datatype="html">
@@ -4182,7 +4166,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Column group name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">507</context>
+          <context context-type="linenumber">500</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2041675390931385838" datatype="html">
@@ -4191,11 +4175,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Column group name</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">530</context>
+          <context context-type="linenumber">523</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">699</context>
+          <context context-type="linenumber">692</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3465962430409924123" datatype="html">
@@ -4204,7 +4188,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Header for form section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">587</context>
+          <context context-type="linenumber">580</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2332815950113444124" datatype="html">
@@ -4213,7 +4197,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Header for form section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">596</context>
+          <context context-type="linenumber">589</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4030110180919534153" datatype="html">
@@ -4222,7 +4206,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Header for form section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">600</context>
+          <context context-type="linenumber">593</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8020402390620783618" datatype="html">
@@ -4231,7 +4215,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">608</context>
+          <context context-type="linenumber">601</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3222319974146977156" datatype="html">
@@ -4240,7 +4224,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Title inside a panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">611</context>
+          <context context-type="linenumber">604</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3424557526203996215" datatype="html">
@@ -4249,7 +4233,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Title inside a panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">631</context>
+          <context context-type="linenumber">624</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5318391578409221199" datatype="html">
@@ -4258,7 +4242,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Child details section title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">665</context>
+          <context context-type="linenumber">658</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6315228090956745353" datatype="html">
@@ -4267,7 +4251,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">686</context>
+          <context context-type="linenumber">679</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6935402381663920930" datatype="html">
@@ -4276,7 +4260,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Title inside a panel</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">722</context>
+          <context context-type="linenumber">715</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5656406101358002984" datatype="html">
@@ -4285,7 +4269,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Table header, Short for Body Mass Index</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">733</context>
+          <context context-type="linenumber">726</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7290235740931562779" datatype="html">
@@ -4294,7 +4278,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Tooltip for BMI info</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">734</context>
+          <context context-type="linenumber">727</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5035769065128916110" datatype="html">
@@ -4303,7 +4287,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">748</context>
+          <context context-type="linenumber">741</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3778494590546555291" datatype="html">
@@ -4312,7 +4296,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">773</context>
+          <context context-type="linenumber">766</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4158424023747658445" datatype="html">
@@ -4321,7 +4305,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">The material which has been borrowed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">826</context>
+          <context context-type="linenumber">819</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6533918067030990396" datatype="html">
@@ -4330,7 +4314,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">The amount of the material which has been borrowed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">835</context>
+          <context context-type="linenumber">828</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4902817035128594900" datatype="html">
@@ -4339,7 +4323,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">An additional description for the borrowed material</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">846</context>
+          <context context-type="linenumber">839</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form-config.ts</context>
@@ -4355,7 +4339,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4639885659149595318" datatype="html">
@@ -4368,7 +4352,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">852</context>
+          <context context-type="linenumber">845</context>
         </context-group>
       </trans-unit>
       <trans-unit id="134488380944428715" datatype="html">
@@ -4381,7 +4365,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">853</context>
+          <context context-type="linenumber">846</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3481736869685494304" datatype="html">
@@ -4394,15 +4378,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">80</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">870</context>
+          <context context-type="linenumber">863</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">928</context>
+          <context context-type="linenumber">921</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/demo-report-config-generator.service.ts</context>
@@ -4419,7 +4403,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">882</context>
+          <context context-type="linenumber">875</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1926074981483556431" datatype="html">
@@ -4432,7 +4416,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">888</context>
+          <context context-type="linenumber">881</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6470725856224531255" datatype="html">
@@ -4441,7 +4425,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Panel title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">947</context>
+          <context context-type="linenumber">940</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3933358723756013068" datatype="html">
@@ -4450,11 +4434,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">962</context>
+          <context context-type="linenumber">955</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1290</context>
+          <context context-type="linenumber">1287</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4540981870704644649" datatype="html">
@@ -4463,7 +4447,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the project number of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">984</context>
+          <context context-type="linenumber">977</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2283054349785348898" datatype="html">
@@ -4472,7 +4456,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Short label for the project number</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">985</context>
+          <context context-type="linenumber">978</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3179148736830644140" datatype="html">
@@ -4481,7 +4465,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the date of birth of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">991</context>
+          <context context-type="linenumber">984</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1663229577059136066" datatype="html">
@@ -4490,7 +4474,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Short label for the date of birth</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">992</context>
+          <context context-type="linenumber">985</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4369844267709449786" datatype="html">
@@ -4499,7 +4483,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the center of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">998</context>
+          <context context-type="linenumber">991</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3948439187870398089" datatype="html">
@@ -4508,7 +4492,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the gender of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1003</context>
+          <context context-type="linenumber">996</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5133492730804332637" datatype="html">
@@ -4517,7 +4501,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the admission date of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1009</context>
+          <context context-type="linenumber">1002</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5676017837022350033" datatype="html">
@@ -4526,7 +4510,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the dropout date of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1018</context>
+          <context context-type="linenumber">1011</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7081950995640986326" datatype="html">
@@ -4535,7 +4519,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the type of dropout of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1023</context>
+          <context context-type="linenumber">1016</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5149072201424405436" datatype="html">
@@ -4544,7 +4528,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the remarks about a dropout of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1028</context>
+          <context context-type="linenumber">1021</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5750485945694679561" datatype="html">
@@ -4553,7 +4537,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the file field of a photo of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1032</context>
+          <context context-type="linenumber">1025</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8194554728555410336" datatype="html">
@@ -4562,11 +4546,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the phone number of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1036</context>
+          <context context-type="linenumber">1029</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1096</context>
+          <context context-type="linenumber">1089</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6304432362546770951" datatype="html">
@@ -4575,11 +4559,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the address of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1040</context>
+          <context context-type="linenumber">1033</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1092</context>
+          <context context-type="linenumber">1085</context>
         </context-group>
       </trans-unit>
       <trans-unit id="326998402864900242" datatype="html">
@@ -4588,7 +4572,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1044</context>
+          <context context-type="linenumber">1037</context>
         </context-group>
       </trans-unit>
       <trans-unit id="744862547206313189" datatype="html">
@@ -4597,7 +4581,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the religion of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1048</context>
+          <context context-type="linenumber">1041</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3701890980067993407" datatype="html">
@@ -4606,7 +4590,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the mother tongue of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1052</context>
+          <context context-type="linenumber">1045</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5917260200950510520" datatype="html">
@@ -4615,7 +4599,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Tooltip description for the mother tongue of a child</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1053</context>
+          <context context-type="linenumber">1046</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8073272694481457912" datatype="html">
@@ -4624,7 +4608,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1057</context>
+          <context context-type="linenumber">1050</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6479918860876850014" datatype="html">
@@ -4633,7 +4617,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1061</context>
+          <context context-type="linenumber">1054</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6187083324285537481" datatype="html">
@@ -4642,7 +4626,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for if a school is a private school</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1084</context>
+          <context context-type="linenumber">1077</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2826581353496868063" datatype="html">
@@ -4651,7 +4635,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the language of a school</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1088</context>
+          <context context-type="linenumber">1081</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1350851235390292372" datatype="html">
@@ -4660,7 +4644,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the timing of a school</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1100</context>
+          <context context-type="linenumber">1093</context>
         </context-group>
       </trans-unit>
       <trans-unit id="491478187387824276" datatype="html">
@@ -4669,7 +4653,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1129</context>
+          <context context-type="linenumber">1126</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5554741364017709807" datatype="html">
@@ -4678,7 +4662,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Description for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1130</context>
+          <context context-type="linenumber">1127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9160848464711606837" datatype="html">
@@ -4687,7 +4671,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1135</context>
+          <context context-type="linenumber">1132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6624198636467931210" datatype="html">
@@ -4696,7 +4680,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Description for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1136</context>
+          <context context-type="linenumber">1133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7677901685281516160" datatype="html">
@@ -4705,7 +4689,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1141</context>
+          <context context-type="linenumber">1138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6491820978569500382" datatype="html">
@@ -4714,7 +4698,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Description for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1142</context>
+          <context context-type="linenumber">1139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6408161334810687727" datatype="html">
@@ -4723,7 +4707,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1147</context>
+          <context context-type="linenumber">1144</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8707102520644001588" datatype="html">
@@ -4732,7 +4716,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Description for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1148</context>
+          <context context-type="linenumber">1145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3032098280590391265" datatype="html">
@@ -4741,7 +4725,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1153</context>
+          <context context-type="linenumber">1150</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5793656352870786735" datatype="html">
@@ -4750,7 +4734,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Description for a child attribute</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1154</context>
+          <context context-type="linenumber">1151</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2392488717875840729" datatype="html">
@@ -4759,7 +4743,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">label for entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1161</context>
+          <context context-type="linenumber">1158</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7922989125096435449" datatype="html">
@@ -4768,7 +4752,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label of user phone</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1172</context>
+          <context context-type="linenumber">1169</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3080099711511142058" datatype="html">
@@ -4777,7 +4761,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label of the Math ASER result</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1236</context>
+          <context context-type="linenumber">1233</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8707841696823248687" datatype="html">
@@ -4786,7 +4770,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for height in cm of a health check</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1267</context>
+          <context context-type="linenumber">1264</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7599111074127802789" datatype="html">
@@ -4795,7 +4779,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for weight in kg of a health check</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1273</context>
+          <context context-type="linenumber">1270</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2525230676386818985" datatype="html">
@@ -4804,7 +4788,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Label for the percentage result of a relation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">1321</context>
+          <context context-type="linenumber">1318</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4663189107944878630" datatype="html">
@@ -5080,7 +5064,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">162,164</context>
+          <context context-type="linenumber">166,168</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
@@ -5776,7 +5760,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Link all imported records to <x id="INTERPOLATION" equiv-text="{{ action.type | entityTypeLabel }}"/> </source>
         <target> Lier tous les enregistrements importés à <x id="INTERPOLATION" equiv-text="{{ action.type | entityTypeLabel }}"/> </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
           <context context-type="linenumber">13,15</context>
         </context-group>
       </trans-unit>
@@ -5785,7 +5769,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target> aucune action supplémentaire sélectionnée </target>
         <note priority="1" from="description">import additional actions</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
           <context context-type="linenumber">29,31</context>
         </context-group>
       </trans-unit>
@@ -5793,7 +5777,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Select an Import Target Type before defining additional actions. </source>
         <target> Sélectionnez un type de cible d’importation avant de définir des actions supplémentaires. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
           <context context-type="linenumber">37,39</context>
         </context-group>
       </trans-unit>
@@ -5802,7 +5786,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Type d&apos;enregistrement lié </target>
         <note priority="1" from="description">Label for linked entity type input</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
           <context context-type="linenumber">45,46</context>
         </context-group>
       </trans-unit>
@@ -5811,7 +5795,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Enregistrement lié</target>
         <note priority="1" from="description">Label for linked entity input</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
           <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
@@ -5819,7 +5803,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Add Action </source>
         <target> Ajouter une action </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
           <context context-type="linenumber">77,79</context>
         </context-group>
       </trans-unit>
@@ -5848,8 +5832,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target> Configurer le mappage de valeurs </target>
         <note priority="1" from="description">import - column mapping - configure additional transformation button</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-column-mapping/import-column-mapping.component.html</context>
-          <context context-type="linenumber">38,40</context>
+          <context context-type="sourcefile">src/app/core/import/edit-import-column-mapping/edit-import-column-mapping.component.html</context>
+          <context context-type="linenumber">20,22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2302014745600966288" datatype="html">
@@ -5922,7 +5906,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">import - select type - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-entity-type/import-entity-type.component.html</context>
-          <context context-type="linenumber">21</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="793619946657035541" datatype="html">
@@ -5931,7 +5915,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Toggle label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-entity-type/import-entity-type.component.html</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4518357326640436030" datatype="html">
@@ -6109,11 +6093,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">124,126</context>
+          <context context-type="linenumber">128,130</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">154,156</context>
+          <context context-type="linenumber">158,160</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2318206129072588787" datatype="html">
@@ -6121,19 +6105,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Actions d&apos;importation avancées [facultatif]</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">87</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2090976789720217738" datatype="html">
-        <source>In addition to creating new records directly for the imported data you can also define additional actions
-                    (e.g. to make all imported records members of an existing activity or group).
-                    This is an advanced functionality you do not have to use.
-                    If uncertain, please refer to the user guides, videos or support contact.</source>
-        <target>En plus de créer de nouveaux enregistrements directement à partir des données importées, vous pouvez également définir des actions supplémentaires (par exemple, pour que tous les enregistrements importés deviennent membres d&apos;une activité ou d&apos;un groupe existant). Il s&apos;agit d&apos;une fonctionnalité avancée que vous n&apos;êtes pas obligé d&apos;utiliser. En cas de doute, veuillez vous référer aux guides d&apos;utilisation, aux vidéos ou au contact d&apos;assistance.</target>
-        <note priority="1" from="description">import - additional actions - help text</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">90,93</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8655236304154513649" datatype="html">
@@ -6142,7 +6114,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Import Step - map columns</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">115</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7485506369297106816" datatype="html">
@@ -6151,7 +6123,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Import Step - map columns - sub-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">117,119</context>
+          <context context-type="linenumber">121,123</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5807588556271438398" datatype="html">
@@ -6160,7 +6132,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Import Step - review data</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">148,150</context>
+          <context context-type="linenumber">152,154</context>
         </context-group>
       </trans-unit>
       <trans-unit id="337608868269561556" datatype="html">
@@ -8027,7 +7999,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
       </trans-unit>
       <trans-unit id="8925682277016699787" datatype="html">
-        <source> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Click again on &quot;Calculate&quot; to re-calculate the report including any changes of records since then.
+        <source> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ localTime | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Click again on &quot;Calculate&quot; to re-calculate the report including any changes of records since then.
 </source>
         <target> Ce rapport a été calculé à: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Cliquez à nouveau sur «Calculer» pour recalculer le rapport en incluant toutes les modifications d’enregistrements depuis lors.
 </target>
@@ -8197,7 +8169,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">TemplateExport</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1532134828462979794" datatype="html">
@@ -8206,7 +8178,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">TemplateExport</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
-          <context context-type="linenumber">60</context>
+          <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7873150375551239187" datatype="html">
@@ -8215,7 +8187,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">TemplateExport</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2457281208979739045" datatype="html">
@@ -8224,7 +8196,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">TemplateExport</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6019588592701270147" datatype="html">
@@ -8233,7 +8205,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">TemplateExport</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/template-export/template-export.entity.ts</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2802527336682245295" datatype="html">
@@ -8355,7 +8327,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">label for entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3108168000666137165" datatype="html">
@@ -8364,7 +8336,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">Label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3482147988988085984" datatype="html">
@@ -8373,7 +8345,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">Description</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8235419386075820707" datatype="html">
@@ -8382,7 +8354,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">Label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">59</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2365282192455083444" datatype="html">
@@ -8391,7 +8363,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">label for Todo entity property</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4200563526108969174" datatype="html">
@@ -8400,7 +8372,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">repetition interval option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5223228686581774646" datatype="html">
@@ -8409,7 +8381,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">repetition interval option</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">96</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7510279840486540181" datatype="html">
@@ -8418,7 +8390,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">label for Todo entity property</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">106</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-completion/display-todo-completion/display-todo-completion.component.html</context>
@@ -8759,11 +8731,11 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">Label for the social worker(s) who created the note</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">122</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">208</context>
+          <context context-type="linenumber">200</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3669965328407098697" datatype="html">
@@ -8772,7 +8744,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">Menu item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6281284727431074654" datatype="html">
@@ -8930,7 +8902,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">admin entity: nav item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">46,48</context>
+          <context context-type="linenumber">48,50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4303523903756679916" datatype="html">
@@ -8941,7 +8913,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">description section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
-          <context context-type="linenumber">712,713</context>
+          <context context-type="linenumber">705,706</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1031122388236550844" datatype="html">
@@ -9357,7 +9329,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <target> Détails du type (options déroulantes définies)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4547943984640918103" datatype="html">
@@ -9365,7 +9337,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <target> Détails du type (type d&apos;enregistrement cible)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8396045255145755036" datatype="html">
@@ -9637,6 +9609,65 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/dynamic-routing/empty/application-loading.component.html</context>
           <context context-type="linenumber">2,5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5123315869847240803" datatype="html">
+        <source>Enter URL</source>
+        <target>Entrez l&apos;URL</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/string/edit-url/edit-url.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4743703046972762929" datatype="html">
+        <source>Invalid URL format</source>
+        <target>Format d&apos;URL non valide</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/string/edit-url/edit-url.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2375260419993138758" datatype="html">
+        <source>URL</source>
+        <target>URL</target>
+        <note priority="1" from="description">datatype-label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/string/url.datatype.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5481284030283031915" datatype="html">
+        <source>Website</source>
+        <target>Site web</target>
+        <note priority="1" from="description">Label for the website of a school</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
+          <context context-type="linenumber">1101</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6258204389259741887" datatype="html">
+        <source>In addition to creating new records directly for the imported data you can also define additional actions
+                    (e.g. to make all imported records members of an existing activity or group).
+                    This is an advanced functionality you do not have to use.
+                    First select an import type above to enable this section.
+                    If uncertain, please refer to the user guides, videos or support contact.</source>
+        <target>En plus de créer de nouveaux enregistrements directement pour les données importées, vous pouvez également définir des actions supplémentaires
+(par exemple, pour que tous les enregistrements importés deviennent membres d&apos;une activité ou d&apos;un groupe existant).
+Il s&apos;agit d&apos;une fonctionnalité avancée que vous n&apos;êtes pas obligé d&apos;utiliser.
+Sélectionnez d&apos;abord un type d&apos;importation ci-dessus pour activer cette section.
+En cas de doute, veuillez vous référer aux guides d&apos;utilisation, aux vidéos ou au contact d&apos;assistance.</target>
+        <note priority="1" from="description">import - additional actions - help text</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
+          <context context-type="linenumber">93,97</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="399391272249108022" datatype="html">
+        <source> Invalid ID pattern. Only letters, numbers, and underscores are allowed.</source>
+        <target> Modèle d&apos;identification non valide. Seuls les lettres, les chiffres et les traits de soulignement sont autorisés.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">71,73</context>
         </context-group>
       </trans-unit>
     </body>
