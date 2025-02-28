@@ -9,3 +9,12 @@ export interface ConfigurableEnumValue extends HasOrdinal {
   isInvalidOption?: boolean;
   style?: string;
 }
+
+export const EMPTY: ConfigurableEnumValue = {
+  id: "",
+  label: "",
+};
+
+export type ConfigurableEnumConfig<
+  T extends ConfigurableEnumValue = ConfigurableEnumValue,
+> = Array<T>;

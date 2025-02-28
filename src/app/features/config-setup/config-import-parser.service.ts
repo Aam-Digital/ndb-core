@@ -8,7 +8,6 @@ import {
   Panel,
   PanelComponent,
 } from "../../core/entity-details/EntityDetailsConfig";
-import { ConfigurableEnumConfig } from "../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 import { ConfigFieldRaw } from "./config-field.raw";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
@@ -16,6 +15,7 @@ import { defaultJsonConfig } from "../../core/config/config-fix";
 import { EntityConfig } from "../../core/entity/entity-config";
 import { EntityConfigService } from "../../core/entity/entity-config.service";
 import { generateIdFromLabel } from "../../utils/generate-id-from-label/generate-id-from-label";
+import { ConfigurableEnumConfig } from "../../core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 @Injectable({
   providedIn: "root",

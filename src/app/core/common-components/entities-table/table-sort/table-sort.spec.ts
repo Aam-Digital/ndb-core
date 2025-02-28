@@ -1,9 +1,11 @@
 import { tableSort } from "./table-sort";
 import moment from "moment";
-import { ConfigurableEnumConfig } from "../../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { Entity } from "../../../entity/model/entity";
 import { Ordering } from "../../../basic-datatypes/configurable-enum/configurable-enum-ordering";
-import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import {
+  ConfigurableEnumConfig,
+  ConfigurableEnumValue,
+} from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("TableSort", () => {
   class E extends Entity {
@@ -11,6 +13,7 @@ describe("TableSort", () => {
       super();
     }
   }
+
   it("should sort strings with partial numbers correctly", () => {
     testSort(["PN1", "PN2", "PN12"]);
   });
