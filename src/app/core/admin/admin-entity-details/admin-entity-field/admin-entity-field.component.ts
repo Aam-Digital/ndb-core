@@ -122,10 +122,7 @@ export class AdminEntityFieldComponent implements OnChanges {
 
   private initSettings() {
     this.fieldIdForm = this.fb.control(this.fieldId, {
-      validators: [
-        Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9_]*$/), // Only allow alphanumeric and underscores
-      ],
+      validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
       asyncValidators: [
         uniqueIdValidator(Array.from(this.entityType.schema.keys())),
       ],
