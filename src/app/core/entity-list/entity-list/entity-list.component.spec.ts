@@ -219,6 +219,24 @@ describe("EntityListComponent", () => {
     expect(component.allEntities).toEqual([]);
   }));
 
+  it("should fallback to the first group if default and mobile group does not exist", fakeAsync(() => {
+    createComponent();
+    component.columnGroups = {
+      default: "Overview",
+      mobile: "Overview",
+      groups: [
+        { name: "Basic Info", columns: ["name", "age", "category"] },
+        { name: "School Info", columns: ["name", "age", "other"] },
+      ],
+    };
+
+    component.ngOnChanges({ listConfig: null });
+    tick();
+
+    expect(component.defaultColumnGroup).toEqual("Basic Info");
+    expect(component.mobileColumnGroup).toEqual("Basic Info");
+  }));
+
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);

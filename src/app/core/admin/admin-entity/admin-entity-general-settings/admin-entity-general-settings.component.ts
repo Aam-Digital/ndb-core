@@ -27,6 +27,8 @@ import { StringDatatype } from "../../../basic-datatypes/string/string.datatype"
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -95,8 +97,21 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.initToStringAttributesOptions();
 
     this.basicSettingsForm.valueChanges.subscribe((value) => {
-      this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue()); // Optionally, emit the initial value
+      this.reorderedStringAttributesOptions();
+      this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
     });
+  }
+
+  private reorderedStringAttributesOptions() {
+    const selectedKeys = this.basicSettingsForm.get("toStringAttributes").value;
+    const allOptions = [...this.toStringAttributesOptions];
+
+    this.toStringAttributesOptions = [
+      ...selectedKeys
+        .map((key) => allOptions.find((o) => o.key === key))
+        .filter(Boolean),
+      ...allOptions.filter((o) => !selectedKeys.includes(o.key)),
+    ];
   }
 
   fetchAnonymizationTableData() {
@@ -144,7 +159,11 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     )
       .filter(
         ([key, field]) =>
-          field.dataType === StringDatatype.dataType &&
+          [
+            StringDatatype.dataType,
+            ConfigurableEnumDatatype.dataType,
+            DateOnlyDatatype.dataType,
+          ].includes(field.dataType) &&
           field.label &&
           !selectedOptions.includes(key),
       )

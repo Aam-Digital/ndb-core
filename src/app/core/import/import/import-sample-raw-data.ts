@@ -1,5 +1,5 @@
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
+import { AdditionalImportAction } from "../additional-actions/additional-import-action";
 import { Entity } from "../../entity/model/entity";
 import { ColumnMapping } from "../column-mapping";
 import { genders } from "../../../child-dev-project/children/model/genders";

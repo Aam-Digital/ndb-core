@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import {
   ReportCalculation,
   ReportData,
+  SqlReportRow,
   SqlReportService,
 } from "./sql-report.service";
 import { entityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -261,5 +262,41 @@ describe("SqlReportService", () => {
         level: 0,
       },
     ]);
+  });
+
+  it("should convert report into CSV string for version 2 SQL", () => {
+    const mockSqlData: SqlReportRow[] = [
+      {
+        key: "Total students",
+        value: 6,
+        level: 0,
+      },
+      {
+        key: "Students gender",
+        value: 10,
+        level: 0,
+      },
+      {
+        key: "Male",
+        value: 6,
+        level: 1,
+      },
+      {
+        key: "Female",
+        value: 4,
+        level: 1,
+      },
+    ];
+
+    const result = service.getCsvforV2(mockSqlData);
+
+    // extra empty column to allow for indentation of name at child levels
+    const expectedCsv = `Name,,Value
+"Total students",,"6"
+"Students gender",,"10"
+,"Male","6"
+,"Female","4"
+`;
+    expect(result).toEqual(expectedCsv);
   });
 });

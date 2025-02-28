@@ -31,7 +31,7 @@ import { UserRoleGuard } from "../../../permissions/permission-guard/user-role.g
 import { Event, NavigationEnd, Router } from "@angular/router";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityPermissionGuard } from "../../../permissions/permission-guard/entity-permission.guard";
-import { NavigationMenuConfig } from "../menu-item";
+import { EntityMenuItem, NavigationMenuConfig } from "../menu-item";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -156,4 +156,22 @@ describe("NavigationComponent", () => {
     routerEvents.next(new NavigationEnd(42, "/child/1", "/child/1"));
     expect(component.activeLink).toBe("/child");
   });
+
+  it("should parse EntityMenuItem and keep simple MenuItem unchanged", fakeAsync(() => {
+    const testConfig: NavigationMenuConfig = {
+      items: [
+        { label: "Home", icon: "home", link: "/" },
+        { entityType: "TestEntity" } as EntityMenuItem,
+      ],
+    };
+
+    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigUpdated.next(null);
+    tick();
+
+    expect(component.menuItems).toEqual([
+      { label: "Home", icon: "home", link: "/" },
+      { label: "Test Entities", icon: "child", link: "/test-entity" },
+    ]);
+  }));
 });
