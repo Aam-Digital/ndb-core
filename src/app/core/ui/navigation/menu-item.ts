@@ -19,6 +19,16 @@ export interface MenuItem {
 }
 
 /**
+ * An alternative MenuItem details of an entry in the main navigation.
+ */
+export interface EntityMenuItem extends MenuItem {
+  /**
+   * The entity type to whose list this item should link.
+   */
+  entityType: string;
+}
+
+/**
  * Object specifying overall navigation menu
  * as stored in the config database
  */
