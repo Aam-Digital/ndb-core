@@ -36,6 +36,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
   SYNC_INTERVAL = 30000;
 
   private remoteDatabase: RemotePouchDatabase;
+  private syncState: SyncStateSubject = new SyncStateSubject();
 
   /** trigger to unsubscribe any internal subscriptions */
   private destroy$ = new Subject<void>();
@@ -43,7 +44,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
   constructor(
     dbName: string,
     authService: KeycloakAuthService,
-    private syncStateSubject: SyncStateSubject,
+    private globalSyncState: SyncStateSubject,
     private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
   ) {
@@ -52,7 +53,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
     this.remoteDatabase = new RemotePouchDatabase(dbName, authService);
 
     this.logSyncContext();
-    this.syncStateSubject
+    this.syncState
       .pipe(
         takeUntil(this.destroy$),
         filter((state) => state === SyncState.COMPLETED),
@@ -62,6 +63,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
         localStorage.setItem(this.LAST_SYNC_KEY, lastSyncTime);
         this.logSyncContext();
       });
+
+    // forward sync state to global sync state (combining state from all synced databases)
+    this.syncState
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((state: SyncState) => this.globalSyncState.next(state));
 
     this.loginStateSubject
       .pipe(
@@ -75,8 +81,9 @@ export class SyncedPouchDatabase extends PouchDatabase {
    * Initializes the PouchDB with local indexeddb as well as a remote server connection for syncing.
    * @param dbName local database name (for the current user);
    *                if explicitly passed as `null`, a remote-only, anonymous session is initialized
+   * @param remoteDbName (optional) remote database name (if different from local browser database name)
    */
-  override init(dbName?: string | null) {
+  override init(dbName?: string | null, remoteDbName?: string) {
     if (dbName === null) {
       this.remoteDatabase.init();
       // use the remote database as internal database driver
@@ -86,7 +93,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       super.init(dbName ?? this.dbName);
 
       // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
-      this.remoteDatabase.init();
+      this.remoteDatabase.init(remoteDbName);
     }
   }
 
@@ -103,24 +110,25 @@ export class SyncedPouchDatabase extends PouchDatabase {
   sync(): Promise<SyncResult> {
     if (!this.navigator.onLine) {
       Logging.debug("Not syncing because offline");
-      this.syncStateSubject.next(SyncState.UNSYNCED);
+      this.syncState.next(SyncState.UNSYNCED);
       return Promise.resolve({});
     }
 
-    this.syncStateSubject.next(SyncState.STARTED);
+    this.syncState.next(SyncState.STARTED);
 
     return this.getPouchDB()
       .sync(this.remoteDatabase.getPouchDB(), {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       })
       .then((res) => {
+        if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
-        this.syncStateSubject.next(SyncState.COMPLETED);
+        this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
       .catch((err) => {
         Logging.debug("sync error", err);
-        this.syncStateSubject.next(SyncState.FAILED);
+        this.syncState.next(SyncState.FAILED);
         throw err;
       });
   }
@@ -144,7 +152,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       .pipe(
         debounceTime(500),
         mergeMap(() => {
-          if (this.syncStateSubject.value == SyncState.STARTED) {
+          if (this.syncState.value == SyncState.STARTED) {
             return of();
           } else {
             return from(this.sync());
