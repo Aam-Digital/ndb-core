@@ -1,7 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import {
@@ -9,6 +8,9 @@ import {
   AdditionalIndirectLinkAction,
   AdditonalDirectLinkAction,
 } from "./additional-import-action";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { ConfigService } from "../../config/config.service";
 
 /**
  * Service to handle additional import actions
@@ -21,44 +23,75 @@ export class ImportAdditionalService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
 
-  private linkableEntities: { [key: string]: AdditionalImportAction[] } = {
-    // TODO: generalize this somehow by analyzing schemas?
-    ["Child"]: this.createLinkActionDetails("Child"),
-    ["Individual"]: this.createLinkActionDetails("Individual"),
-  };
+  private linkableEntities = new Map<string, AdditionalImportAction[]>();
 
-  /**
-   * Get the entity actions that data of the given entity type can be linked to during its import.
-   * (e.g. for "Child" entityType, the result could be [{ targetType: "School" ...}], indicating that during import of children, they can be linked to a school)
-   * @param entityType
-   */
-  getActionsLinkingFor(entityType: string): AdditionalImportAction[] {
-    return this.linkableEntities[entityType] ?? [];
+  constructor(private configService: ConfigService) {
+    this.updateLinkableEntities();
+    this.configService.configUpdates.subscribe(() =>
+      // need to wait until EntityConfigService has updated the entityRegistry after the configUpdate
+      // TODO: better way to wait for EntityConfig updates?
+      setTimeout(() => this.updateLinkableEntities()),
+    );
   }
 
-  /**
-   * Get the entity types that during their import can be linked to the given target entity type.
-   * (e.g. for "School" targetEntityType, the result could be [{ sourceType: "Child" ... }], indicating that during import of children, they can be linked to a school)
-   * @param targetEntityType
-   */
-  getActionsLinkingTo(targetEntityType: string): AdditionalImportAction[] {
-    const linkingTypes: AdditionalImportAction[] = [];
+  private updateLinkableEntities() {
+    this.linkableEntities.clear();
+    for (const [entityTypeId, entityType] of this.entityRegistry.entries()) {
+      const actions = this.generateLinkActionsFor(entityTypeId);
+      if (actions.length > 0) {
+        this.linkableEntities.set(entityTypeId, actions);
+      } else {
+        this.linkableEntities.delete(entityTypeId);
+      }
+    }
+  }
 
-    for (const entityType in this.linkableEntities) {
-      const matchingActions = (this.linkableEntities[entityType] ?? []).filter(
-        (a) => a.targetType === targetEntityType,
+  private generateLinkActionsFor(sourceType: string): AdditionalImportAction[] {
+    const refs: { [entityType: string]: FormFieldConfig[] } =
+      EntityDatatype.findFieldsReferencingEntityType(
+        sourceType,
+        this.entityRegistry,
       );
-      linkingTypes.push(...matchingActions);
+
+    const directActions: AdditonalDirectLinkAction[] = [];
+    const indirectActions: AdditionalIndirectLinkAction[] = [];
+
+    for (const [targetType, fields] of Object.entries(refs)) {
+      const targetTypeCtr = this.entityRegistry.get(targetType);
+
+      for (const field of fields) {
+        directActions.push({
+          sourceType,
+          mode: "direct",
+          targetType,
+          targetProperty: field.id,
+        });
+
+        // other types these referencing types are also linking to (so they can serve as a connection relationship entity)
+        for (const [fieldId2, field2] of targetTypeCtr.schema.entries()) {
+          if (fieldId2 === field.id) continue; // skip the same field
+          if (field2.dataType !== EntityDatatype.dataType) continue; // skip non-entity fields
+
+          indirectActions.push({
+            sourceType,
+            mode: "indirect",
+            relationshipEntityType: targetType,
+            relationshipProperty: field.id,
+            relationshipTargetProperty: fieldId2,
+            targetType: field2.additional,
+          });
+        }
+      }
     }
 
-    return linkingTypes;
-  }
+    // TODO: hide those used as indirect from direct actions
+    console.log("Import Actions", [...directActions, ...indirectActions]);
 
-  private createLinkActionDetails(
-    importedEntityType: string,
-    targetEntityType?: string,
-  ): AdditionalImportAction[] {
-    if (importedEntityType === "Child") {
+    return [...directActions, ...indirectActions];
+
+    // old code: to be removed
+    /*
+    if (sourceType === "Child") {
       return [
         {
           sourceType: "Child",
@@ -77,7 +110,7 @@ export class ImportAdditionalService {
       ];
     }
 
-    if (importedEntityType === "Individual") {
+    if (sourceType === "Individual") {
       return [
         {
           sourceType: "Individual",
@@ -99,6 +132,34 @@ export class ImportAdditionalService {
     }
 
     return [];
+     */
+  }
+
+  /**
+   * Get the entity actions that data of the given entity type can be linked to during its import.
+   * (e.g. for "Child" entityType, the result could be [{ targetType: "School" ...}], indicating that during import of children, they can be linked to a school)
+   * @param entityType
+   */
+  getActionsLinkingFor(entityType: string): AdditionalImportAction[] {
+    return this.linkableEntities.get(entityType) ?? [];
+  }
+
+  /**
+   * Get the entity types that during their import can be linked to the given target entity type.
+   * (e.g. for "School" targetEntityType, the result could be [{ sourceType: "Child" ... }], indicating that during import of children, they can be linked to a school)
+   * @param targetEntityType
+   */
+  getActionsLinkingTo(targetEntityType: string): AdditionalImportAction[] {
+    const linkingTypes: AdditionalImportAction[] = [];
+
+    for (const entityType of this.linkableEntities.keys()) {
+      const matchingActions = (
+        this.linkableEntities.get(entityType) ?? []
+      ).filter((a) => a.targetType === targetEntityType);
+      linkingTypes.push(...matchingActions);
+    }
+
+    return linkingTypes;
   }
 
   /**

@@ -15,7 +15,6 @@ import {
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 describe("ImportAdditionalService", () => {
   let service: ImportAdditionalService;
@@ -27,15 +26,24 @@ describe("ImportAdditionalService", () => {
   @DatabaseEntity("Child")
   class Child extends Entity {}
 
+  @DatabaseEntity("ImportedEntity")
+  class ImportedEntity extends Entity {}
+
   @DatabaseEntity("DirectlyLinkingEntity")
   class DirectlyLinkingEntity extends Entity {
-    @DatabaseField({ dataType: "entity", additional: TestEntity.ENTITY_TYPE })
+    @DatabaseField({
+      dataType: "entity",
+      additional: ImportedEntity.ENTITY_TYPE,
+    })
     participant: string;
   }
 
   @DatabaseEntity("RelationshipEntity")
   class RelationshipEntity extends Entity {
-    @DatabaseField({ dataType: "entity", additional: TestEntity.ENTITY_TYPE })
+    @DatabaseField({
+      dataType: "entity",
+      additional: ImportedEntity.ENTITY_TYPE,
+    })
     participant: string;
 
     @DatabaseField({ dataType: "entity", additional: "Other" })
@@ -61,57 +69,56 @@ describe("ImportAdditionalService", () => {
     await entityMapper.save(testActivity);
   });
 
-  it("should getLinkableEntities for the given imported type", async () => {
-    const exampleResult = service.getActionsLinkingFor("Child");
-    expect(exampleResult).toEqual([
-      jasmine.objectContaining({ targetType: "RecurringActivity" }),
-      jasmine.objectContaining({ targetType: "School" }),
-    ]);
-
-    // general case
-    const actual = service.getActionsLinkingFor(TestEntity.ENTITY_TYPE);
+  it("should get actions linking for the given imported type", async () => {
+    const actual = service.getActionsLinkingFor(ImportedEntity.ENTITY_TYPE);
     expect(actual).toEqual([
-      jasmine.objectContaining({
+      {
+        sourceType: ImportedEntity.ENTITY_TYPE,
+        mode: "direct",
         targetType: DirectlyLinkingEntity.ENTITY_TYPE,
-      }),
-      jasmine.objectContaining({ targetType: "Other" }),
+        targetProperty: "participant",
+      },
+      // TODO: maybe the following should be hidden because it's also a indirect/relationship entity?
+      {
+        sourceType: ImportedEntity.ENTITY_TYPE,
+        mode: "direct",
+        targetType: RelationshipEntity.ENTITY_TYPE,
+        targetProperty: "participant",
+      },
+      {
+        sourceType: ImportedEntity.ENTITY_TYPE,
+        mode: "indirect",
+        relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
+        relationshipProperty: "participant",
+        relationshipTargetProperty: "group",
+        targetType: "Other",
+      },
     ]);
   });
 
-  it("should getEntitiesLinkingTo for the given imported type for directly linked type", async () => {
-    const exampleResult = service.getActionsLinkingTo("RecurringActivity");
-    expect(exampleResult).toEqual([
-      jasmine.objectContaining({ sourceType: "Child" }),
-    ]);
-
-    // general case
+  it("should get actions linking imported data to the given type for directly linked", async () => {
     const actual = service.getActionsLinkingTo(
       DirectlyLinkingEntity.ENTITY_TYPE,
     );
     expect(actual).toEqual([
       jasmine.objectContaining({
-        sourceType: TestEntity.ENTITY_TYPE,
+        sourceType: ImportedEntity.ENTITY_TYPE,
         targetProperty: "participant",
         targetType: DirectlyLinkingEntity.ENTITY_TYPE,
       }),
     ]);
   });
 
-  it("should getEntitiesLinkingTo for the given imported type for indirectly linked type", async () => {
-    const exampleResult = service.getActionsLinkingTo("School");
-    expect(exampleResult).toEqual([
-      jasmine.objectContaining({ sourceType: "Child" }),
-    ]);
-
-    // general case
+  it("should  get actions linking imported data to the given type for indirectly linked", async () => {
     const actual = service.getActionsLinkingTo("Other");
     expect(actual).toEqual([
       jasmine.objectContaining({
-        sourceType: TestEntity.ENTITY_TYPE,
-        targetType: "Other",
+        sourceType: ImportedEntity.ENTITY_TYPE,
+        mode: "indirect",
         relationshipEntityType: RelationshipEntity.ENTITY_TYPE,
-        relationshipProperty: "group",
-        relationshipTargetProperty: "participant",
+        relationshipProperty: "participant",
+        relationshipTargetProperty: "group",
+        targetType: "Other",
       }),
     ]);
   });
