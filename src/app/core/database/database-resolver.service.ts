@@ -58,6 +58,11 @@ export class DatabaseResolverService {
     }
   }
 
+  /**
+   * Connect the database(s) for the current user's "session",
+   * i.e. configuring the access for that account after login
+   * (especially for local and remote database modes)
+   */
   async initDatabasesForSession(session: SessionInfo) {
     this.initializeAppDatabaseForCurrentUser(session);
     this.initializeNotificationsDatabaseForCurrentUser(session);

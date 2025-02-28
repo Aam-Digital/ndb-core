@@ -121,9 +121,8 @@ export class SyncedPouchDatabase extends PouchDatabase {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       })
       .then((res) => {
-        if (res) res["dbName"] = this.dbName;
+        if (res) res["dbName"] = this.dbName; // add for debugging information
         Logging.debug("sync completed", res);
-
         this.syncState.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
