@@ -132,7 +132,6 @@ export class BasicAutocompleteComponent<O, V = O>
   );
   autocompleteFilterFunction: (option: O) => boolean;
   @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
-  @Output() reorderdOptions = new EventEmitter<O[]>();
   /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
   showAddOption = false;
 
@@ -256,10 +255,6 @@ export class BasicAutocompleteComponent<O, V = O>
         event.previousIndex,
         event.currentIndex,
       );
-      const reorderedOriginalOptions = this.autocompleteOptions.map(
-        (o) => o.initial,
-      );
-      this.reorderdOptions.emit(reorderedOriginalOptions);
     }
     this._selectedOptions = this.autocompleteOptions.filter((o) => o.selected);
     if (this.multi) {

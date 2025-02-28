@@ -97,12 +97,21 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.initToStringAttributesOptions();
 
     this.basicSettingsForm.valueChanges.subscribe((value) => {
-      this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue()); // Optionally, emit the initial value
+      this.reorderedStringAttributesOptions();
+      this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
     });
   }
 
-  reorderedStringAttributesOptions(reorderedOptions: SimpleDropdownValue[]) {
-    this.toStringAttributesOptions = [...reorderedOptions];
+  private reorderedStringAttributesOptions() {
+    const selectedKeys = this.basicSettingsForm.get("toStringAttributes").value;
+    const allOptions = [...this.toStringAttributesOptions];
+
+    this.toStringAttributesOptions = [
+      ...selectedKeys
+        .map((key) => allOptions.find((o) => o.key === key))
+        .filter(Boolean),
+      ...allOptions.filter((o) => !selectedKeys.includes(o.key)),
+    ];
   }
 
   fetchAnonymizationTableData() {
