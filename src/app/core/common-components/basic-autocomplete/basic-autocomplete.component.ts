@@ -133,6 +133,7 @@ export class BasicAutocompleteComponent<O, V = O>
   );
   autocompleteFilterFunction: (option: O) => boolean;
   @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
+
   /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
   showAddOption = false;
 
