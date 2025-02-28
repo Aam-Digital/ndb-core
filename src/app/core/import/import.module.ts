@@ -6,18 +6,12 @@ import { ImportAdditionalService } from "./additional-actions/import-additional.
 import { EntityAction } from "../entity-details/entity-actions-menu/entity-action.interface";
 import { Entity } from "../entity/model/entity";
 import { Router } from "@angular/router";
-import { EntityTypeLabelPipe } from "../common-components/entity-type-label/entity-type-label.pipe";
-import {
-  AdditionalIndirectLinkAction,
-  AdditonalDirectLinkAction,
-} from "./additional-actions/additional-import-action";
 
 /**
  * UI enabling users to import data from spreadsheets through a guided workflow.
  */
 @NgModule({
   imports: [DiscreteImportConfigComponent],
-  providers: [EntityTypeLabelPipe],
 })
 export class ImportModule {
   constructor(
@@ -25,7 +19,6 @@ export class ImportModule {
     entityActionsMenu: EntityActionsMenuService,
     private importAdditionalService: ImportAdditionalService,
     private router: Router,
-    private entityTypeLabelPipe: EntityTypeLabelPipe,
   ) {
     components.addAll(importComponents);
 
@@ -45,18 +38,12 @@ export class ImportModule {
       .map((a) => ({ ...a, targetId: entity.getId() }));
 
     for (const importAction of importActions) {
-      let label: string = $localize`Import related ${this.entityTypeLabelPipe.transform(importAction.sourceType, true)} for this ${entity.getConstructor().label}`;
-      if (
-        importActions.filter((a) => a.sourceType === importAction.sourceType)
-          .length > 1
-      ) {
-        // there are multiple imports for the same source type, so we need to distinguish them with additional info:
-        label += ` (${(importAction as AdditonalDirectLinkAction).targetProperty ?? this.entityTypeLabelPipe.transform((importAction as AdditionalIndirectLinkAction).relationshipEntityType)})`;
-      }
-
       actions.push({
         action: "import_related",
-        label: label,
+        label: this.importAdditionalService.createActionLabel(
+          importAction,
+          true,
+        ),
         icon: "file-import",
         execute: () =>
           this.router.navigate(["import"], {

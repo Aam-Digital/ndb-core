@@ -58,7 +58,8 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   availableImportActions: AdditionalImportAction[] = [];
 
   // TODO: may need more distinction --> like in ImportModule?
-  actionToString = (val: AdditionalImportAction) => val?.targetType;
+  actionToString = (a: AdditionalImportAction) =>
+    this.importAdditionalService.createActionLabel(a);
 
   linkEntityForm = new FormGroup({
     action: new FormControl({ value: "", disabled: true }, Validators.required),

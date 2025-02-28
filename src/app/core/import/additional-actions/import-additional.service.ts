@@ -302,4 +302,38 @@ export class ImportAdditionalService {
     ]?.filter((e) => !entitiesToBeUnlinked.includes(e));
     return this.entityMapper.save(targetEntity);
   }
+
+  /**
+   *
+   * @param importAction
+   * @param forTargetType (Optional) If true, phrased for the context menu of the target type to import the source type and link back
+   */
+  createActionLabel(
+    importAction: AdditionalImportAction,
+    forTargetType: boolean = false,
+  ): string {
+    const sourceType = this.entityRegistry.get(importAction.sourceType);
+    const targetType = this.entityRegistry.get(importAction.targetType);
+    const relationshipType = importAction["relationshipEntityType"]
+      ? this.entityRegistry.get(importAction["relationshipEntityType"])
+      : null;
+
+    let label: string;
+    if (!forTargetType) {
+      label = $localize`Link imported ${sourceType.labelPlural} to a ${targetType.label}`;
+    } else {
+      label = $localize`Import related ${sourceType.labelPlural} for this ${targetType.label}`;
+    }
+
+    // add additional context details
+    if ((importAction as AdditonalDirectLinkAction).targetProperty) {
+      label += ` (as ${targetType.schema.get((importAction as AdditonalDirectLinkAction).targetProperty).label})`;
+    } else if (
+      (importAction as AdditionalIndirectLinkAction).relationshipEntityType
+    ) {
+      label += ` (through ${relationshipType?.labelPlural})`;
+    }
+
+    return label;
+  }
 }
