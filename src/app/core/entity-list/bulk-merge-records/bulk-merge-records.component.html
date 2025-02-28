@@ -1,0 +1,71 @@
+<mat-dialog-content>
+  <form [formGroup]="mergeForm">
+    <div class="merge-grid">
+      <div class="header" i18n>Labels</div>
+      <div class="header" i18n>Record A</div>
+      <div class="header" i18n>Record B</div>
+      <div class="header" i18n>Merge Preview</div>
+
+      <ng-container *ngFor="let field of mergeFields; trackBy: trackByFieldKey">
+        <div class="label-cell">
+          <strong>{{ field.label }}</strong>
+        </div>
+
+        <div class="record-cell">
+          <mat-radio-group>
+            <mat-radio-button
+              [value]="entitiesToMerge[0][field.key]"
+              (click)="toggleSelection(field.key, 'entity1')"
+              [checked]="isSelected(field.key, 'entity1')"
+            >
+              {{
+                entitiesToMerge[0][field.key]?.locationString ||
+                  entitiesToMerge[0][field.key]?.label ||
+                  entitiesToMerge[0][field.key]
+              }}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <div class="record-cell">
+          <mat-radio-group>
+            <mat-radio-button
+              [value]="entitiesToMerge[1][field.key]"
+              (click)="toggleSelection(field.key, 'entity2')"
+              [checked]="isSelected(field.key, 'entity2')"
+            >
+              {{
+                entitiesToMerge[1][field.key]?.locationString ||
+                  entitiesToMerge[1][field.key]?.label ||
+                  entitiesToMerge[1][field.key]
+              }}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <!-- Merge Preview -->
+        <div class="preview-cell">
+          {{
+            mergeForm.get(field.key)?.value?.locationString ||
+              mergeForm.get(field.key)?.value?.label ||
+              mergeForm.get(field.key)?.value ||
+              "No Selection"
+          }}
+        </div>
+      </ng-container>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button (click)="cancel()" i18n>Cancel</button>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="merge()"
+    [disabled]="mergeForm.invalid"
+    i18n
+  >
+    Merge
+  </button>
+</mat-dialog-actions>
