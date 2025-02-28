@@ -8,14 +8,13 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ViewComponentContext } from "app/core/ui/abstract-view/ViewComponentContext";
+import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 import { EntityActionsMenuService } from "./entity-actions-menu.service";
 import { EntityAction } from "./entity-action.interface";
 
@@ -25,13 +24,11 @@ import { EntityAction } from "./entity-action.interface";
   styleUrls: ["./entity-actions-menu.component.scss"],
   standalone: true,
   imports: [
-    NgIf,
     MatButtonModule,
     FontAwesomeModule,
     MatMenuModule,
     Angulartics2Module,
     DisableEntityOperationDirective,
-    NgForOf,
     MatTooltipModule,
   ],
 })

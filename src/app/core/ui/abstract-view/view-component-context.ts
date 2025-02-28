@@ -6,7 +6,6 @@ import { ViewTitleComponent } from "app/core/common-components/view-title/view-t
  * in dialogs (wrapped by DialogViewComponent) and
  * in full screen (wrapped by RoutedViewComponent).
  */
-
 export class ViewComponentContext {
   title: ViewTitleComponent;
   actions: ViewActionsComponent;

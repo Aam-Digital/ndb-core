@@ -10,15 +10,13 @@ import { DialogCloseComponent } from "../../common-components/dialog-close/dialo
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { PillComponent } from "../../common-components/pill/pill.component";
-import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DialogButtonsComponent } from "../dialog-buttons/dialog-buttons.component";
 import { EntityArchivedInfoComponent } from "../../entity-details/entity-archived-info/entity-archived-info.component";
 import { FieldGroup } from "../../entity-details/form/field-group";
-import { EntityFieldEditComponent } from "../../common-components/entity-field-edit/entity-field-edit.component";
 import { EntityFieldViewComponent } from "../../common-components/entity-field-view/entity-field-view.component";
-import { ViewComponentContext } from "app/core/ui/abstract-view/ViewComponentContext";
+import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -47,10 +45,8 @@ export interface DetailsComponentData {
     PillComponent,
     MatTooltipModule,
     NgIf,
-    DynamicComponentDirective,
     DialogButtonsComponent,
     EntityArchivedInfoComponent,
-    EntityFieldEditComponent,
     EntityFieldViewComponent,
   ],
   viewProviders: [

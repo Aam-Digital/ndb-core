@@ -1,5 +1,5 @@
 import { Injector } from "@angular/core";
-import { ViewComponentContext } from "./ViewComponentContext";
+import { ViewComponentContext } from "./view-component-context";
 
 /**
  * Base class for wrapper components like RoutedViewComponent or DialogViewComponent

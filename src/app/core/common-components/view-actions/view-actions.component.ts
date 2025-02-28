@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
-import { ViewComponentContext } from "app/core/ui/abstract-view/ViewComponentContext";
+import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 
 /**
  * Building block for views, providing a consistent layout to action buttons and menus
