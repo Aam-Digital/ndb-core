@@ -28,7 +28,7 @@ test.describe('Dashboard Page Tests', () => {
     await setFixedDate(page, '1/1/2025');
 
     // Navigate to the application after the date is set
-    await page.goto('http://localhost:4200/');
+    await page.goto("/");
   });
 
   test('Verify Quick Actions widget', async ({ page }) => {
@@ -53,7 +53,7 @@ test.describe('Dashboard Page Tests', () => {
   test("Verify Tasks Due widget and tasks", async ({ page }) => {
     // Check "Tasks Due" widget is visible
     await page.waitForSelector("text=Tasks due");
-    const tasksDueElement = page.getByText('Tasks due');
+    const tasksDueElement = page.getByText("Tasks due");
     await expect(tasksDueElement).toBeVisible();
 
     // Verify at least one task is listed
@@ -64,7 +64,10 @@ test.describe('Dashboard Page Tests', () => {
 
   test("Navigate to Attendance page and verify sections", async ({ page }) => {
     // Navigate to the Attendance page
-    await page.locator("mat-list-item").filter({ hasText: "Attendance" }).click();
+    await page
+      .locator("mat-list-item")
+      .filter({ hasText: "Attendance" })
+      .click();
     await expect(page).toHaveURL(/.*attendance/);
 
     // Verify "Record Attendance" section
@@ -85,34 +88,51 @@ test.describe('Dashboard Page Tests', () => {
   });
 
   test("Record Attendance button navigation", async ({ page }) => {
-    await page.locator('mat-list-item').filter({ hasText: 'Attendance' }).click();
+    await page
+      .locator("mat-list-item")
+      .filter({ hasText: "Attendance" })
+      .click();
     const recordButton = page.getByRole("button", { name: "Record" });
     await expect(recordButton).toBeVisible();
     await recordButton.click();
 
     // Check navigation to "Record Attendance" page
-    await expect(page).toHaveURL("http://localhost:4200/attendance/add-day");
-    await expect(page.getByRole("heading", { name: "Record Attendance" })).toBeVisible();
+    await expect(page).toHaveURL("/attendance/add-day");
+    await expect(
+      page.getByRole("heading", { name: "Record Attendance" }),
+    ).toBeVisible();
     await page.goBack();
   });
 
   test("Manage Activities button navigation", async ({ page }) => {
-    await page.locator('mat-list-item').filter({ hasText: 'Attendance' }).click();
-    const manageActivitiesButton = page.getByRole("button", { name: "Manage Activities" });
+    await page
+      .locator("mat-list-item")
+      .filter({ hasText: "Attendance" })
+      .click();
+    const manageActivitiesButton = page.getByRole("button", {
+      name: "Manage Activities",
+    });
     await expect(manageActivitiesButton).toBeVisible();
     await manageActivitiesButton.click();
 
     // Check navigation to "Manage Activities" page
-    await expect(page).toHaveURL("http://localhost:4200/attendance/recurring-activity");
-    await expect(page.getByRole("heading", { name: "Recurring Activities" })).toBeVisible();
+    await expect(page).toHaveURL("/attendance/recurring-activity");
+    await expect(
+      page.getByRole("heading", { name: "Recurring Activities" }),
+    ).toBeVisible();
     await page.goBack();
   });
 
   test("Recurring Activities page elements", async ({ page }) => {
     // Navigate to Recurring Activities page
-    await page.locator('mat-list-item').filter({ hasText: 'Attendance' }).click();
+    await page
+      .locator("mat-list-item")
+      .filter({ hasText: "Attendance" })
+      .click();
     await page.getByRole("button", { name: "Manage Activities" }).click();
-    await expect(page.getByRole("heading", { name: "Recurring Activities" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Recurring Activities" }),
+    ).toBeVisible();
 
     // Verify "Add New" button is visible
     const addNewButton = page.getByRole("button", {

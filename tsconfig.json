@@ -31,7 +31,8 @@
       "dom"
     ],
     "types": [
-      "jasmine"
+      "jasmine",
+      "node"
     ],
     "paths": {
       "stream": [

@@ -29,7 +29,7 @@ test.describe('Dashboard Page Tests', () => {
     await setFixedDate(page, '1/23/2025');
 
     // Navigate to the application after the date is set
-    await page.goto('http://localhost:4200/');
+    await page.goto("/");
   });
 
 
