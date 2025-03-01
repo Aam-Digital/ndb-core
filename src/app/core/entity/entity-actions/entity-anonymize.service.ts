@@ -9,7 +9,7 @@ import { firstValueFrom } from "rxjs";
 import { FileDatatype } from "../../../features/file/file.datatype";
 import { FileService } from "../../../features/file/file.service";
 import { Entity } from "../model/entity";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 
 /**
  * Anonymize an entity including handling references with related entities.

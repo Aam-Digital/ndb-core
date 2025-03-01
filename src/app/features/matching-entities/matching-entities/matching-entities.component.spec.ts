@@ -21,7 +21,7 @@ import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { GeoLocation } from "../../location/location.datatype";
+import { GeoLocation } from "app/features/location/geo-location";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 

@@ -1,5 +1,5 @@
 import { FormControl, ValidationErrors } from "@angular/forms";
-import { AsyncPromiseValidatorFn } from "../dynamic-form-validators/dynamic-validators.service";
+import { AsyncPromiseValidatorFn } from "../dynamic-form-validators/validator-types";
 
 export function uniqueIdValidator(
   existingIds: string[] | (() => Promise<string[]>),
