@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 async function setFixedDate(page, fixedDate) {
   const fakeNow = new Date(fixedDate).valueOf(); // Convert the fixed date to a timestamp
@@ -20,18 +20,18 @@ async function setFixedDate(page, fixedDate) {
 
 test.describe.configure({ timeout: 120000 });
 
-test.describe('Dashboard Page Tests', () => {
+test.describe("Dashboard Page Tests", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running test case - ${testInfo.title}`);
-    
+
     // Set fixed date before navigating to the app
-    await setFixedDate(page, '1/1/2025');
+    await setFixedDate(page, "1/1/2025");
 
     // Navigate to the application after the date is set
     await page.goto("/");
   });
 
-  test('Verify Quick Actions widget', async ({ page }) => {
+  test("Verify Quick Actions widget", async ({ page }) => {
     // Check "Quick Actions" widget is visible
     await page.waitForSelector("text=Quick actions");
     const quickActionsElement = page.locator("text=Quick actions");
