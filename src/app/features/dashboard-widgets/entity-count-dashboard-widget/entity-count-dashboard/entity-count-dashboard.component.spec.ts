@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityCountDashboardComponent } from "./entity-count-dashboard.component";
-import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
   mockEntityMapper,
@@ -11,6 +11,7 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { Note } from "../../../../child-dev-project/notes/model/note";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { Entity } from "../../../../core/entity/model/entity";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;

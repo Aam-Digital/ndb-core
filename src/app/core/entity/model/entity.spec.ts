@@ -5,7 +5,7 @@ import { DatabaseEntity } from "../database-entity.decorator";
 import { fakeAsync, TestBed, waitForAsync } from "@angular/core/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { genders } from "app/child-dev-project/children/model/genders";
-import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;

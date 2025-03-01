@@ -1,7 +1,7 @@
 import { ConfigurableEnumDirective } from "./configurable-enum.directive";
 import { ViewContainerRef } from "@angular/core";
-import { ConfigurableEnumConfig } from "../configurable-enum.interface";
 import { ConfigurableEnumService } from "../configurable-enum.service";
+import { ConfigurableEnumConfig } from "../configurable-enum.types";
 
 describe("ConfigurableEnumDirective", () => {
   let testTemplateRef;
