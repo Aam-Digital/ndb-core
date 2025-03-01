@@ -1,0 +1,507 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >DemoNoteConfig</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts</code>
+        </p>
+
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#groupNotes" >groupNotes</a>
+                            </li>
+                            <li>
+                                <a href="#maxNotesPerChild" >maxNotesPerChild</a>
+                            </li>
+                            <li>
+                                <a href="#minNotesPerChild" >minNotesPerChild</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="groupNotes"></a>
+                    <span class="name">
+                        <span ><b>groupNotes</b></span>
+                        <a href="#groupNotes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="20" class="link-to-prism">src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts:20</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="maxNotesPerChild"></a>
+                    <span class="name">
+                        <span ><b>maxNotesPerChild</b></span>
+                        <a href="#maxNotesPerChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts:19</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="minNotesPerChild"></a>
+                    <span class="name">
+                        <span ><b>minNotesPerChild</b></span>
+                        <a href="#minNotesPerChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/app/child-dev-project/notes/demo-data/demo-note-generator.service.ts:18</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { DemoChildGenerator } from &quot;../../children/demo-data-generators/demo-child-generator.service&quot;;
+import { DemoDataGenerator } from &quot;../../../core/demo-data/demo-data-generator&quot;;
+import { Injectable } from &quot;@angular/core&quot;;
+import { Note } from &quot;../model/note&quot;;
+import { faker } from &quot;../../../core/demo-data/faker&quot;;
+import { noteIndividualStories } from &quot;./notes_individual-stories&quot;;
+import { noteGroupStories } from &quot;./notes_group-stories&quot;;
+import { centersUnique } from &quot;../../children/demo-data-generators/fixtures/centers&quot;;
+import { absenceRemarks } from &quot;./remarks&quot;;
+import moment from &quot;moment&quot;;
+import { AttendanceLogicalStatus } from &quot;../../attendance/model/attendance-status&quot;;
+import { DemoUserGeneratorService } from &quot;../../../core/user/demo-user-generator.service&quot;;
+import { defaultAttendanceStatusTypes } from &quot;../../../core/config/default-config/default-attendance-status-types&quot;;
+import { warningLevels } from &quot;../../warning-level&quot;;
+import { Entity } from &quot;../../../core/entity/model/entity&quot;;
+
+export class DemoNoteConfig {
+  minNotesPerChild: number;
+  maxNotesPerChild: number;
+  groupNotes: number;
+}
+
+/**
+ * Generate a number of Note entities for each Child.
+ * Builds upon the generated demo Child entities.
+ */
+@Injectable()
+export class DemoNoteGeneratorService extends DemoDataGenerator&lt;Note&gt; {
+  /**
+   * This function returns a provider object to be used in an Angular Module configuration:
+   *   &#x60;providers: [DemoNoteGeneratorService.provider()]&#x60;
+   */
+  static provider(
+    config: DemoNoteConfig &#x3D; {
+      minNotesPerChild: 2,
+      maxNotesPerChild: 10,
+      groupNotes: 5,
+    },
+  ) {
+    return [
+      { provide: DemoNoteGeneratorService, useClass: DemoNoteGeneratorService },
+      { provide: DemoNoteConfig, useValue: config },
+    ];
+  }
+
+  constructor(
+    private config: DemoNoteConfig,
+    private demoChildren: DemoChildGenerator,
+    private demoUsers: DemoUserGeneratorService,
+  ) {
+    super();
+  }
+
+  public generateEntities(): Note[] {
+    const data &#x3D; [];
+
+    for (const child of this.demoChildren.entities) {
+      if (!child.isActive) {
+        continue;
+      }
+
+      let numberOfNotes &#x3D; faker.number.int({
+        min: this.config.minNotesPerChild,
+        max: this.config.maxNotesPerChild,
+      });
+
+      // generate a recent note for the last week for some children to have data for dashboard
+      if (numberOfNotes &gt; 0 &amp;&amp; faker.number.int(100) &lt; 40) {
+        data.push(
+          this.generateNoteForChild(
+            child,
+            faker.date.between({
+              from: moment().subtract(6, &quot;days&quot;).toDate(),
+              to: moment().toDate(),
+            }),
+          ),
+        );
+        numberOfNotes--;
+      }
+
+      for (let i &#x3D; 0; i &lt; numberOfNotes; i++) {
+        data.push(this.generateNoteForChild(child));
+      }
+    }
+
+    for (const center of centersUnique) {
+      const children: Entity[] &#x3D; this.demoChildren.entities.filter(
+        (c) &#x3D;&gt; c[&quot;center&quot;] &#x3D;&#x3D;&#x3D; center,
+      );
+      for (let i &#x3D; 0; i &lt; this.config.groupNotes; i++) {
+        data.push(this.generateGroupNote(children));
+      }
+    }
+
+    return data;
+  }
+
+  private generateNoteForChild(child: Entity, date?: Date): Note {
+    const note &#x3D; new Note();
+
+    const selectedStory &#x3D; faker.helpers.arrayElement(noteIndividualStories);
+    Object.assign(note, selectedStory);
+
+    note.addChild(child.getId());
+    note.authors &#x3D; [
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+    ];
+
+    if (!date) {
+      date &#x3D; faker.date.between({
+        from: child[&quot;admissionDate&quot;],
+        to: faker.getEarlierDateOrToday(child[&quot;dropoutDate&quot;]),
+      });
+    }
+    note.date &#x3D; date;
+
+    this.removeFollowUpMarkerForOldNotes(note);
+
+    return note;
+  }
+
+  /**
+   * Set all older notes to be &quot;resolved&quot; in order to keep the list of notes needing follow-up limited in the demo.
+   */
+  private removeFollowUpMarkerForOldNotes(note: Note) {
+    const lastMonths &#x3D; new Date();
+    lastMonths.setMonth(lastMonths.getMonth() - 1);
+    if (note.date &lt; lastMonths) {
+      note.warningLevel &#x3D; warningLevels.find((level) &#x3D;&gt; level.id &#x3D;&#x3D;&#x3D; &quot;OK&quot;);
+    }
+  }
+
+  private generateGroupNote(children: Entity[]) {
+    const note &#x3D; new Note();
+
+    const selectedStory &#x3D; faker.helpers.arrayElement(noteGroupStories);
+    Object.assign(note, selectedStory);
+
+    note.children &#x3D; children.map((c) &#x3D;&gt; c.getId());
+    children.forEach((child) &#x3D;&gt; {
+      const attendance &#x3D; note.getAttendance(child.getId());
+      // get an approximate presence of 85%
+      if (faker.number.int(100) &lt;&#x3D; 15) {
+        attendance.status &#x3D; defaultAttendanceStatusTypes.find(
+          (t) &#x3D;&gt; t.countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.ABSENT,
+        );
+        attendance.remarks &#x3D; faker.helpers.arrayElement(absenceRemarks);
+      } else {
+        attendance.status &#x3D; defaultAttendanceStatusTypes.find(
+          (t) &#x3D;&gt; t.countAs &#x3D;&#x3D;&#x3D; AttendanceLogicalStatus.PRESENT,
+        );
+      }
+    });
+
+    note.authors &#x3D; [
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+    ];
+
+    note.date &#x3D; faker.date.past({ years: 1 });
+
+    this.removeFollowUpMarkerForOldNotes(note);
+
+    return note;
+  }
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'DemoNoteConfig.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
