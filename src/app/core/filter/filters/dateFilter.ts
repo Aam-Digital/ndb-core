@@ -9,6 +9,7 @@ import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-
 
 /**
  * Represents a filter for date values.
+ * The filter can either be one of the predefined options or two manually entered dates.
  */
 export class DateFilter<T extends Entity> extends Filter<T> {
   override component = DateRangeFilterComponent;
