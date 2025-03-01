@@ -13,7 +13,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { GeoResult, GeoService } from "../geo.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../geo-location";
 
 describe("MapPopupComponent", () => {
   let component: MapPopupComponent;
@@ -62,6 +62,15 @@ describe("MapPopupComponent", () => {
     component.markedLocations.subscribe((res) => (updatedLocations = res));
 
     const mockedClick: Coordinates = { lat: 1, lon: 2 };
+
+    mockGeoService.reverseLookup.and.returnValue(
+      of({
+        lat: mockedClick.lat,
+        lon: mockedClick.lon,
+        display_name: `[selected on map: ${mockedClick.lat} - ${mockedClick.lon}]`,
+      }),
+    );
+
     component.mapClicked(mockedClick);
     tick();
 

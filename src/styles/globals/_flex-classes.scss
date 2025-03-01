@@ -68,6 +68,13 @@
 /**
  * aligns the items (i.e. places the items on the non main axis)
  */
+.align-start {
+  align-items: start;
+}
+
+/**
+ * aligns the items (i.e. places the items on the non main axis)
+ */
 .align-center {
   align-items: center;
 }

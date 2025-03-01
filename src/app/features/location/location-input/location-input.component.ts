@@ -6,7 +6,7 @@ import {
   NgForm,
 } from "@angular/forms";
 import { MatFormFieldControl, MatSuffix } from "@angular/material/form-field";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../geo-location";
 import { MatInput } from "@angular/material/input";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -75,6 +75,7 @@ export class LocationInputComponent extends CustomFormControlDirective<GeoLocati
 
     const ref = this.dialog.open(MapPopupComponent, {
       width: "90%",
+      height: "95vh",
       autoFocus: ".address-search-input",
       restoreFocus: false,
       data: config,

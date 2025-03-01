@@ -13,7 +13,19 @@ export interface MenuItem {
   /**
    * The url fragment to which the item will route to (e.g. '/dashboard')
    */
-  link: string;
+  link?: string;
+
+  subMenu?: MenuItem[];
+}
+
+/**
+ * An alternative MenuItem details of an entry in the main navigation.
+ */
+export interface EntityMenuItem extends MenuItem {
+  /**
+   * The entity type to whose list this item should link.
+   */
+  entityType: string;
 }
 
 /**

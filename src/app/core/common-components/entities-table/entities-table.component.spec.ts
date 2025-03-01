@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
 
 import { EntitiesTableComponent } from "./entities-table.component";
 import { Entity } from "../../entity/model/entity";
-import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
+
 import { Note } from "../../../child-dev-project/notes/model/note";
 import moment from "moment/moment";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -19,6 +19,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -184,12 +185,13 @@ describe("EntitiesTableComponent", () => {
 
   it("should notify when an entity is clicked", (done) => {
     const child = new TestEntity();
+    const mockEvent = new MouseEvent("click");
     component.entityClick.subscribe((entity) => {
       expect(entity).toEqual(child);
       done();
     });
 
-    component.onRowClick({ record: child });
+    component.onRowClick({ record: child }, mockEvent);
   });
 
   it("should filter data based on filter definition", () => {

@@ -3,6 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import {
   ReportCalculation,
   ReportData,
+  SqlReportRow,
   SqlReportService,
 } from "./sql-report.service";
 import { entityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -187,5 +188,115 @@ describe("SqlReportService", () => {
     // Then
     expect(mockHttpClient.post).not.toHaveBeenCalled();
     expect(result).toEqual(validReportDataResponse);
+  });
+
+  it("should convert data into SqlReportRow[]", async () => {
+    // Given
+    let data = [
+      [
+        {
+          "New students": 6,
+        },
+      ],
+      {
+        "Students gender": [
+          [
+            {
+              "Male students": 6,
+            },
+          ],
+          [
+            {
+              "Female students": 4,
+            },
+          ],
+        ],
+      },
+      [
+        {
+          count: 3,
+          project: "FOO",
+          school: "SchoolA",
+        },
+        {
+          anzahl: 1,
+          project: "BAR",
+          school: "SchoolB",
+        },
+      ],
+    ];
+
+    // When
+    const result = service.flattenData(data);
+
+    // Then
+    expect(result).toEqual([
+      {
+        key: "New students",
+        value: 6,
+        level: 0,
+      },
+      {
+        key: "Students gender",
+        value: 10,
+        level: 0,
+      },
+      {
+        key: "Male students",
+        value: 6,
+        level: 1,
+      },
+      {
+        key: "Female students",
+        value: 4,
+        level: 1,
+      },
+      {
+        key: "project: FOO, school: SchoolA",
+        value: 3,
+        level: 0,
+      },
+      {
+        key: "project: BAR, school: SchoolB",
+        value: 1,
+        level: 0,
+      },
+    ]);
+  });
+
+  it("should convert report into CSV string for version 2 SQL", () => {
+    const mockSqlData: SqlReportRow[] = [
+      {
+        key: "Total students",
+        value: 6,
+        level: 0,
+      },
+      {
+        key: "Students gender",
+        value: 10,
+        level: 0,
+      },
+      {
+        key: "Male",
+        value: 6,
+        level: 1,
+      },
+      {
+        key: "Female",
+        value: 4,
+        level: 1,
+      },
+    ];
+
+    const result = service.getCsvforV2(mockSqlData);
+
+    // extra empty column to allow for indentation of name at child levels
+    const expectedCsv = `Name,,Value
+"Total students",,"6"
+"Students gender",,"10"
+,"Male","6"
+,"Female","4"
+`;
+    expect(result).toEqual(expectedCsv);
   });
 });

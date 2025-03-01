@@ -1,31 +1,16 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-import { Component } from "@angular/core";
-import { MenuItem, NavigationMenuConfig } from "../menu-item";
+import { Component, inject } from "@angular/core";
+import { EntityMenuItem, MenuItem, NavigationMenuConfig } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { NavigationEnd, Router, RouterLink } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
 import { MatListModule } from "@angular/material/list";
-import { NgForOf } from "@angular/common";
+import { CommonModule, NgForOf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
-import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
+import { MatMenuModule } from "@angular/material/menu";
+import { MenuItemComponent } from "../menu-item/menu-item.component";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 
 /**
  * Main app menu listing.
@@ -39,12 +24,15 @@ import { RoutePermissionsService } from "../../../config/dynamic-routing/route-p
     MatListModule,
     NgForOf,
     Angulartics2Module,
-    RouterLink,
-    FaDynamicIconComponent,
+    MatMenuModule,
+    CommonModule,
+    MenuItemComponent,
   ],
   standalone: true,
 })
 export class NavigationComponent {
+  private entities = inject(EntityRegistry);
+
   /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
 
@@ -82,9 +70,10 @@ export class NavigationComponent {
    */
   private computeActiveLink(newUrl: string): string {
     // conservative filter matching all items that could fit to the given url
-    const items: MenuItem[] = this.menuItems.filter((item) =>
-      newUrl.startsWith(item.link),
-    );
+    // flatten nested submenu items to parse all
+    const items: MenuItem[] = this.menuItems
+      .reduce((acc, item) => acc.concat(item, item.subMenu || []), [])
+      .filter((item) => newUrl.startsWith(item.link));
     switch (items.length) {
       case 0:
         return "";
@@ -118,11 +107,29 @@ export class NavigationComponent {
       this.CONFIG_ID,
     );
 
-    this.menuItems = await this.routePermissionService.filterPermittedRoutes(
-      config.items,
-    );
+    const menuItems = config.items.map((item) => {
+      if ("entityType" in item) {
+        return this.generateMenuItemForEntityType(item as EntityMenuItem);
+      }
+      return item as MenuItem;
+    });
+
+    this.menuItems =
+      await this.routePermissionService.filterPermittedRoutes(menuItems);
 
     // re-select active menu item after menu has been fully initialized
     this.activeLink = this.computeActiveLink(location.pathname);
+  }
+
+  /**
+   * parse ... by looking up the entityType from EntityRegistry and then using its config:
+   */
+  private generateMenuItemForEntityType(item: EntityMenuItem): MenuItem {
+    const entityType = this.entities.get(item.entityType);
+    return {
+      label: entityType.labelPlural,
+      icon: entityType.icon,
+      link: entityType.route,
+    };
   }
 }

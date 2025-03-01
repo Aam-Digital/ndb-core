@@ -1,8 +1,6 @@
 name: Semantic Release
 on:
-  push:
-    branches:
-      - official-release
+  workflow_dispatch
 
 jobs:
   pre-releases-cleanup:
@@ -35,6 +33,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
+          branches: |
+            [{"name": "master", "prerelease": false}]
           extra_plugins: |
             semantic-release-replace-plugin@1.2.6
             @semantic-release/git

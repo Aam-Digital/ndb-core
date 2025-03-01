@@ -6,6 +6,8 @@ import { CurrentUserSubject } from "../session/current-user-subject";
 import { testDefaultValueCase } from "./default-value.service.spec";
 import { DefaultValueService } from "./default-value.service";
 import { InheritedValueService } from "./inherited-value.service";
+import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 
 describe("DynamicPlaceholderValueService", () => {
   let service: DynamicPlaceholderValueService;
@@ -18,6 +20,10 @@ describe("DynamicPlaceholderValueService", () => {
         {
           provide: InheritedValueService,
           useValue: jasmine.createSpyObj(["initEntityForm"]),
+        },
+        {
+          provide: ConfigurableEnumService,
+          useValue: createTestingConfigurableEnumService(),
         },
       ],
     });

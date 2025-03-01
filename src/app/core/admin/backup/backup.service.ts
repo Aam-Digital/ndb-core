@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { Config } from "../../config/config";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
  * Create and load backups of the database.
@@ -9,7 +10,12 @@ import { Config } from "../../config/config";
   providedIn: "root",
 })
 export class BackupService {
-  constructor(private db: Database) {}
+  private db: Database;
+
+  constructor(private dbResolver: DatabaseResolverService) {
+    this.db = this.dbResolver.getDatabase();
+    // WARNING: currently only the default "app" database is backed up
+  }
 
   /**
    * Creates an array holding all elements of the database.

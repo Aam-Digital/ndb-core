@@ -1,6 +1,6 @@
 {
   "realm": "dummy-realm",
-  "auth-server-url": "http://localhost:8080/",
+  "auth-server-url": "https://aam.localhost/auth",
   "ssl-required": "external",
   "resource": "app",
   "public-client": true,

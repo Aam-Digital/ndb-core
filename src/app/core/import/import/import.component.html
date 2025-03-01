@@ -81,7 +81,10 @@
         [(entityType)]="entityType"
       ></app-import-entity-type>
 
-      <mat-expansion-panel [expanded]="additionalImportActions?.length > 0">
+      <mat-expansion-panel
+        [expanded]="additionalImportActions?.length > 0"
+        [disabled]="!entityType"
+      >
         <mat-expansion-panel-header>
           <mat-panel-title>
             <span i18n>Advanced Import Actions [optional]</span>
@@ -90,6 +93,7 @@
               text="In addition to creating new records directly for the imported data you can also define additional actions
                     (e.g. to make all imported records members of an existing activity or group).
                     This is an advanced functionality you do not have to use.
+                    First select an import type above to enable this section.
                     If uncertain, please refer to the user guides, videos or support contact."
               i18n-text="import - additional actions - help text"
             >

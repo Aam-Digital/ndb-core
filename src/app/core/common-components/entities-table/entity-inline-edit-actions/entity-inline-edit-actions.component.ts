@@ -4,7 +4,7 @@ import { Angulartics2OnModule } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
-import { TableRow } from "../entities-table.component";
+import { TableRow } from "../table-row";
 import { Entity } from "../../../entity/model/entity";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 import {
@@ -61,7 +61,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   async save(): Promise<void> {
     try {
       this.row.record = await this.entityFormService.saveChanges(
-        this.row.formGroup,
+        this.form,
         this.row.record,
       );
       delete this.row.formGroup;

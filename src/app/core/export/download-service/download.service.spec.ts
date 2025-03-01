@@ -3,13 +3,15 @@ import { DownloadService } from "./download.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
-import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
+
 import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { GeoLocation } from "app/features/location/geo-location";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 describe("DownloadService", () => {
   let service: DownloadService;
@@ -130,6 +132,7 @@ describe("DownloadService", () => {
       @DatabaseField({ dataType: "entity", label: "referenced entity 2" })
       relatedEntity2: string;
     }
+
     const relatedEntity = testSchool;
     const relatedEntity2 = testChild;
 
@@ -158,6 +161,7 @@ describe("DownloadService", () => {
       })
       relatedEntitiesArray: string[];
     }
+
     const testEntity = new EntityRefDownloadTestEntity();
     testEntity.relatedEntitiesArray = [testSchool.getId(), testChild.getId()];
 
@@ -179,6 +183,7 @@ describe("DownloadService", () => {
       })
       relatedEntitiesArray: string[];
     }
+
     const testEntity = new EntityRefDownloadTestEntity();
     testEntity.relatedEntitiesArray = ["undefined-id", testChild.getId()];
 
@@ -263,6 +268,27 @@ describe("DownloadService", () => {
     expect(results).toEqual([
       '"date","number","string"',
       `"${dateString}","10","someString"`,
+    ]);
+  });
+
+  it("should export a location as its locationString only", async () => {
+    const locationObject: GeoLocation = {
+      locationString: "Test Location",
+      geoLookup: { lat: 0, lon: 0, display_name: "lookup location" },
+    };
+
+    const exportData = [
+      {
+        address: locationObject,
+      },
+    ];
+
+    const csv = await service.createCsv(exportData);
+
+    const results = csv.split(DownloadService.SEPARATOR_ROW);
+    expect(results).toEqual([
+      '"address"',
+      `"${locationObject.locationString}"`,
     ]);
   });
 });

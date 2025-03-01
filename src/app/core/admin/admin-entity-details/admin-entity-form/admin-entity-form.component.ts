@@ -1,4 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   EntityForm,
@@ -59,7 +66,37 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
-  @Input() config: FormConfig;
+  @Input() set config(value: FormConfig) {
+    if (value === this._config) {
+      // may be caused by two-way binding re-inputting the recently emitted change
+      // skip in this case
+      return;
+    }
+
+    // assign default value and make a deep copy to avoid side effects
+    if (!value) {
+      value = { fieldGroups: [] };
+    }
+    value = JSON.parse(JSON.stringify(value));
+    if (!value.fieldGroups) {
+      value.fieldGroups = [];
+    }
+
+    this._config = value;
+  }
+
+  get config(): FormConfig {
+    return this._config;
+  }
+
+  private _config: FormConfig;
+
+  @Output() configChange = new EventEmitter<FormConfig>();
+
+  /**
+   * Whether the UI is readonly, not allowing the user to drag or edit things.
+   */
+  @Input() isDisabled: boolean = false;
 
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
@@ -89,7 +126,7 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (changes.config) {
+    if (Object.hasOwn(changes, "config")) {
       await this.initForm();
     }
   }
@@ -132,6 +169,10 @@ export class AdminEntityFormComponent implements OnChanges {
       this.createNewTextPlaceholder,
       ...unusedFields,
     ];
+  }
+
+  protected emitUpdatedConfig() {
+    this.configChange.emit(this.config);
   }
 
   /**
@@ -204,6 +245,8 @@ export class AdminEntityFormComponent implements OnChanges {
       // ensure available fields have consistent order
       this.initAvailableFields();
     }
+
+    this.emitUpdatedConfig();
   }
 
   /**
@@ -253,7 +296,10 @@ export class AdminEntityFormComponent implements OnChanges {
 
     // the schema update has added the new field to the available fields already, remove it from there
     this.availableFields.splice(this.availableFields.indexOf(newFieldId), 1);
+
+    this.emitUpdatedConfig();
   }
+
   /**
    * drop handler specifically for the "create new Text field" item
    * @param event
@@ -278,6 +324,8 @@ export class AdminEntityFormComponent implements OnChanges {
 
     // the schema update has added the new Text field to the available fields already, remove it from there
     this.availableFields.splice(this.availableFields.indexOf(newTextField), 1);
+
+    this.emitUpdatedConfig();
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
@@ -290,11 +338,15 @@ export class AdminEntityFormComponent implements OnChanges {
   removeGroup(i: number) {
     const [removedFieldGroup] = this.config.fieldGroups.splice(i, 1);
     this.initAvailableFields();
+
+    this.emitUpdatedConfig();
   }
 
   hideField(field: ColumnConfig, group: FieldGroup) {
     const fieldIndex = group.fields.indexOf(field);
     group.fields.splice(fieldIndex, 1);
     this.initAvailableFields();
+
+    this.emitUpdatedConfig();
   }
 }

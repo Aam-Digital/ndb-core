@@ -6,7 +6,7 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { defaultDateFilters } from "./date-range-filter-panel/date-range-filter-panel.component";
 import moment from "moment";
-import { DateFilter } from "../../../filter/filters/dateFilter";
+import { DateFilter } from "app/core/filter/filters/dateFilter";
 
 describe("DateRangeFilterComponent", () => {
   let component: DateRangeFilterComponent<any>;

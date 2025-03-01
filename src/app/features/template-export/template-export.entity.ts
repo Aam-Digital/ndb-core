@@ -47,8 +47,9 @@ export class TemplateExport extends Entity {
   @DatabaseField({
     label: $localize`:TemplateExport:Applicable Entity Types`,
     labelShort: $localize`:TemplateExport:Entity Types`,
-    editComponent: "EditEntityTypeDropdown",
+    editComponent: "EditEntityType",
     isArray: true,
+    validators: { required: true },
   })
   applicableForEntityTypes: string[];
 

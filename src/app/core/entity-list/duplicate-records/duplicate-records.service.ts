@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
 
@@ -10,7 +9,6 @@ import { Entity } from "../../entity/model/entity";
 export class DuplicateRecordService {
   constructor(
     private entitymapperservice: EntityMapperService,
-    private entityTypes: EntityRegistry,
     private entityService: EntitySchemaService,
   ) {}
 

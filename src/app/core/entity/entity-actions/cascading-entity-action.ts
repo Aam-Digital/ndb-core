@@ -1,5 +1,5 @@
 import { Entity } from "../model/entity";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 

@@ -241,10 +241,25 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.RelatedEntitiesWithSummaryComponent),
   ],
   [
-    "EditEntityTypeDropdown",
+    "EditEntityType",
     () =>
-      import(
-        "./entity/edit-entity-type-dropdown/edit-entity-type-dropdown.component"
-      ).then((c) => c.EditEntityTypeDropdownComponent),
+      import("./entity/edit-entity-type/edit-entity-type.component").then(
+        (c) => c.EditEntityTypeComponent,
+      ),
+  ],
+
+  [
+    "EditUrl",
+    () =>
+      import("./basic-datatypes/string/edit-url/edit-url.component").then(
+        (c) => c.EditUrlComponent,
+      ),
+  ],
+  [
+    "DisplayUrl",
+    () =>
+      import("./basic-datatypes/string/display-url/display-url.component").then(
+        (c) => c.DisplayUrlComponent,
+      ),
   ],
 ];

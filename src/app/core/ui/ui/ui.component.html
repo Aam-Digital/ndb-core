@@ -91,21 +91,18 @@
             (click)="closeSidenavOnMobile()"
             mat-button
             routerLink="user-account"
-            i18n="Navigate to user profile page"
             class="footer-cell width-1-2"
           >
-            <fa-icon icon="user"></fa-icon>
-            Profile
+            <fa-icon icon="user" class="standard-icon-with-text"></fa-icon>
+            <span i18n="Navigate to user profile page">Profile</span>
           </button>
 
-          <button
-            mat-button
-            (click)="logout()"
-            i18n="Sign out of the app"
-            class="footer-cell width-1-2"
-          >
-            <fa-icon icon="sign-out-alt"></fa-icon>
-            Sign out
+          <button mat-button (click)="logout()" class="footer-cell width-1-2">
+            <fa-icon
+              icon="sign-out-alt"
+              class="standard-icon-with-text"
+            ></fa-icon>
+            <span i18n="Sign out of the app">Sign out</span>
           </button>
         </div>
 

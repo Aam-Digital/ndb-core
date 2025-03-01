@@ -18,7 +18,7 @@
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity } from "../model/entity";
 import { ColumnMapping } from "../../import/column-mapping";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 
 /**
  * Extend this class to define new data types (i.e. for properties of entities)

@@ -40,6 +40,17 @@ describe("Schema data type: date-only", () => {
     expect(date.getDate()).toBe(1);
   });
 
+  it("should not try to parse non-string values to iso-date", () => {
+    let date: Date = dataType.transformToObjectFormat(true);
+    expect(date).toBe(undefined);
+
+    date = dataType.transformToObjectFormat(undefined);
+    expect(date).toBe(undefined);
+
+    date = dataType.transformToObjectFormat(123);
+    expect(date).toBe(undefined);
+  });
+
   it("should migrate ISO date strings (created with timezone offsets) to a date-only", () => {
     const testCases = [
       { input: "2022-01-01", expected: "2022-01-01" },

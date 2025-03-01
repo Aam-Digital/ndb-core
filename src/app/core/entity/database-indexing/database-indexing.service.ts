@@ -16,12 +16,13 @@
  */
 
 import { Injectable } from "@angular/core";
-import { Database, QueryOptions } from "../../database/database";
+import { QueryOptions } from "../../database/database";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
 import { BackgroundProcessState } from "../../ui/sync-status/background-process-state.interface";
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { first } from "rxjs/operators";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -41,7 +42,7 @@ export class DatabaseIndexingService {
   }
 
   constructor(
-    private db: Database,
+    private dbResolver: DatabaseResolverService,
     private entitySchemaService: EntitySchemaService,
   ) {}
 
@@ -52,7 +53,10 @@ export class DatabaseIndexingService {
    *
    * @param designDoc The design document (see @link{Database}) describing the query/index.
    */
-  async createIndex(designDoc: any): Promise<void> {
+  async createIndex(
+    designDoc: any,
+    db: string = Entity.DATABASE,
+  ): Promise<void> {
     const indexDetails = designDoc._id.replace(/_design\//, "");
     const indexState: BackgroundProcessState = {
       title: $localize`Preparing data (Indexing)`,
@@ -60,7 +64,9 @@ export class DatabaseIndexingService {
       pending: true,
     };
 
-    const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
+    const indexCreationPromise = this.dbResolver
+      .getDatabase(db)
+      .saveDatabaseIndex(designDoc);
     this._indicesRegistered.next([
       ...this._indicesRegistered.value.filter(
         (state) => state.details !== indexDetails,
@@ -213,12 +219,13 @@ export class DatabaseIndexingService {
     indexName: string,
     options: QueryOptions,
     doNotWaitForIndexCreation?: boolean,
+    db: string = Entity.DATABASE,
   ): Promise<any> {
     if (!doNotWaitForIndexCreation) {
       await this.waitForIndexAvailable(indexName);
     }
 
-    return this.db.query(indexName, options);
+    return this.dbResolver.getDatabase(db).query(indexName, options);
   }
 
   /**

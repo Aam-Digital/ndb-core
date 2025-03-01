@@ -7,6 +7,11 @@ import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { DefaultValueService } from "./default-value.service";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
 import { InheritedValueService } from "./inherited-value.service";
+import { EventEmitter } from "@angular/core";
+import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
+import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
+import { ConfigurableEnumDatatype } from "../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
 /**
  * Helper function to add some custom schema fields to Entity for testing.
@@ -28,9 +33,12 @@ export function getDefaultInheritedForm(
 
   return {
     entity: entity,
-    defaultValueConfigs: DefaultValueService.getDefaultValueConfigs(entity),
+    fieldConfigs: Array.from(entity.getSchema().entries()).map(
+      ([key, fieldConfig]) => ({ id: key, ...fieldConfig }),
+    ),
     inheritedParentValues: new Map(),
     watcher: new Map(),
+    onFormStateChange: new EventEmitter<"saved" | "cancelled">(),
     formGroup: new FormBuilder().group<any>({
       field: new FormControl(),
       field2: new FormControl(),
@@ -38,6 +46,7 @@ export function getDefaultInheritedForm(
     }),
   };
 }
+
 /**
  * Helper function to remove custom schema fields from Entity
  * that have been created using getDefaultInheritedForm().
@@ -83,8 +92,17 @@ describe("DefaultValueService", () => {
 
     TestBed.configureTestingModule({
       providers: [
+        {
+          provide: DefaultDatatype,
+          useClass: ConfigurableEnumDatatype,
+          multi: true,
+        },
         CurrentUserSubject,
         { provide: InheritedValueService, useValue: mockInheritedValueService },
+        {
+          provide: ConfigurableEnumService,
+          useValue: createTestingConfigurableEnumService(),
+        },
       ],
     });
     service = TestBed.inject(DefaultValueService);
@@ -115,6 +133,60 @@ describe("DefaultValueService", () => {
 
     // then
     expect(form.formGroup.get("field").value).toEqual(null);
+  }));
+
+  it("should transform configurable-enum and set the default value", fakeAsync(() => {
+    const enumId = "genders";
+    const testEnumValue = { id: "M", label: "male" };
+    const enumService = TestBed.inject(ConfigurableEnumService);
+    spyOn(enumService, "getEnumValues")
+      .withArgs(enumId)
+      .and.returnValue([testEnumValue]);
+
+    const fieldConfig: EntitySchemaField = {
+      dataType: "configurable-enum",
+      additional: enumId,
+      defaultValue: {
+        mode: "static",
+        value: "M",
+      },
+    };
+
+    testDefaultValueCase(service, fieldConfig, testEnumValue);
+    tick();
+  }));
+
+  it("should transform configurable-enum array and set the default value", fakeAsync(() => {
+    const enumId = "genders";
+    const testEnumValue = { id: "M", label: "male" };
+    const enumService = TestBed.inject(ConfigurableEnumService);
+    spyOn(enumService, "getEnumValues")
+      .withArgs(enumId)
+      .and.returnValue([testEnumValue]);
+
+    const fieldConfig: EntitySchemaField = {
+      dataType: "configurable-enum",
+      additional: enumId,
+      isArray: true,
+      defaultValue: {
+        mode: "static",
+        value: [testEnumValue.id],
+      },
+    };
+    testDefaultValueCase(service, fieldConfig, [testEnumValue]);
+    tick();
+
+    const fieldConfig2: EntitySchemaField = {
+      dataType: "configurable-enum",
+      additional: enumId,
+      isArray: true,
+      defaultValue: {
+        mode: "static",
+        value: testEnumValue.id, // should also work with single value
+      },
+    };
+    testDefaultValueCase(service, fieldConfig2, [testEnumValue]);
+    tick();
   }));
 
   it("should not set default value on FormControl, if target field is dirty and not empty", fakeAsync(() => {

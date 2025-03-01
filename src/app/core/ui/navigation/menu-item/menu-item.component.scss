@@ -1,0 +1,23 @@
+@use "../../../../../styles/variables/sizes";
+@use "../../../../../styles/variables/colors";
+
+/* ensures that all icons have the same width */
+.nav-icon {
+  min-width: sizes.$max-icon-width;
+}
+
+.matched-background {
+  background-color: colors.$background !important;
+}
+
+.submenu {
+  padding-left: 20px;
+}
+
+.indent-item {
+  margin-left: 8px;
+  padding-left: 8px;
+  width: auto;
+  border-end-end-radius: 0;
+  border-start-end-radius: 0;
+}

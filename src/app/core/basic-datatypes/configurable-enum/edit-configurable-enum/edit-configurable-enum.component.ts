@@ -1,13 +1,12 @@
 import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../../../entity/default-datatype/edit-component";
-import { ConfigurableEnumValue } from "../configurable-enum.interface";
+
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
-import { ConfigurableEnumDirective } from "../configurable-enum-directive/configurable-enum.directive";
-import { NgIf } from "@angular/common";
 import { EnumDropdownComponent } from "../enum-dropdown/enum-dropdown.component";
+import { ConfigurableEnumValue } from "../configurable-enum.types";
 
 @DynamicComponent("EditConfigurableEnum")
 @Component({
@@ -17,8 +16,6 @@ import { EnumDropdownComponent } from "../enum-dropdown/enum-dropdown.component"
     MatFormFieldModule,
     ReactiveFormsModule,
     MatSelectModule,
-    ConfigurableEnumDirective,
-    NgIf,
     EnumDropdownComponent,
   ],
   standalone: true,

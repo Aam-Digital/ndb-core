@@ -11,19 +11,27 @@ import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.serv
 import { FormControl, FormGroup } from "@angular/forms";
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
 import { DefaultValueService } from "./default-value.service";
+import { EventEmitter } from "@angular/core";
+import { EntityAbility } from "../permissions/ability/entity-ability";
+import { UpdatedEntity } from "../entity/model/entity-update";
+import { Config } from "../config/config";
+import { Subject } from "rxjs";
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
   let defaultValueService: DefaultValueService;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
+  let mockAbility: jasmine.SpyObj<EntityAbility>;
+  const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
-    mockEntityMapperService = jasmine.createSpyObj(["load"]);
-
+    mockEntityMapperService = jasmine.createSpyObj(["load", "receiveUpdates"]);
+    mockEntityMapperService.receiveUpdates.and.returnValue(updateSubject);
     TestBed.configureTestingModule({
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapperService },
         { provide: DynamicPlaceholderValueService, useValue: null },
+        { provide: EntityAbility, useValue: mockAbility },
       ],
     });
     service = TestBed.inject(InheritedValueService);
@@ -46,8 +54,9 @@ describe("InheritedValueService", () => {
       formGroup: new FormGroup<any>({
         field1: new FormControl(),
       }),
+      onFormStateChange: new EventEmitter(),
       entity: entity,
-      defaultValueConfigs: new Map(),
+      fieldConfigs: [],
       watcher: new Map(),
       inheritedParentValues: new Map(),
     };
@@ -85,8 +94,9 @@ describe("InheritedValueService", () => {
         field1: new FormControl(),
         field2: new FormControl(),
       }),
+      onFormStateChange: new EventEmitter(),
       entity: entity,
-      defaultValueConfigs: new Map(),
+      fieldConfigs: [],
       watcher: new Map(),
       inheritedParentValues: new Map(),
     };
@@ -125,16 +135,17 @@ describe("InheritedValueService", () => {
 
     let form: EntityForm<any> = {
       formGroup: new FormGroup<any>({
-        field1: new FormControl(),
-        field2: new FormControl(),
+        newField1: new FormControl(),
+        newField2: new FormControl(),
       }),
+      onFormStateChange: new EventEmitter(),
       entity: entity,
-      defaultValueConfigs: new Map(),
+      fieldConfigs: [],
       watcher: new Map(),
       inheritedParentValues: new Map(),
     };
 
-    let targetFormControl = form.formGroup.get("field1");
+    let targetFormControl = form.formGroup.get("newField1");
 
     // when
     service.setDefaultValue(
@@ -144,7 +155,7 @@ describe("InheritedValueService", () => {
         defaultValue: {
           mode: "inherited",
           field: "foo",
-          localAttribute: "field2",
+          localAttribute: "newField2",
         },
       },
       form,
@@ -152,11 +163,13 @@ describe("InheritedValueService", () => {
 
     // when
     tick();
-    form.formGroup.get("field2").setValue("Entity:0");
+    form.formGroup.get("newField2").setValue("Entity:0");
     tick(10); // fetching reference is always async
 
     // then
-    expect(form.watcher.has("sourceFormControlValueChanges_field2")).toBeTrue();
+    expect(
+      form.watcher.has("sourceFormControlValueChanges_newField2"),
+    ).toBeTrue();
     expect(targetFormControl.value).toEqual(["bar", "doo"]);
   }));
 

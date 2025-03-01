@@ -9,7 +9,7 @@ import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { merge } from "rxjs";
+import { filter, firstValueFrom, merge } from "rxjs";
 import { map } from "rxjs/operators";
 
 /**
@@ -52,26 +52,23 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
     // If rules object is empty, everything is allowed
-    const userRules: DatabaseRule[] = rules
-      ? await this.getRulesForUser(rules)
+    const rawUserRules: DatabaseRule[] = rules
+      ? this.getRulesForUser(rules)
       : [{ action: "manage", subject: "all" }];
 
-    if (userRules.length === 0) {
-      // No rules or only default rules defined
-      const user = this.sessionInfo.value;
-      Logging.warn(
-        `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
-      );
-    }
+    const userRules: DatabaseRule[] =
+      await this.interpolateUserVariables(rawUserRules);
+
     this.ability.update(userRules);
     return this.permissionEnforcer.enforcePermissionsOnLocalData(userRules);
   }
 
-  private async getRulesForUser(rules: DatabaseRules): Promise<DatabaseRule[]> {
+  private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
     const sessionInfo = this.sessionInfo.value;
     if (!sessionInfo) {
       return rules.public ?? [];
     }
+
     const rawUserRules: DatabaseRule[] = [];
     if (rules.default) {
       rawUserRules.push(...rules.default);
@@ -80,39 +77,57 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       const rulesForRole = rules[role] || [];
       rawUserRules.push(...rulesForRole);
     });
-    return this.interpolateUser(rawUserRules, sessionInfo);
+
+    if (rawUserRules.length === 0 && sessionInfo) {
+      // No rules or only default rules defined
+      Logging.warn(
+        `no rules found for user "${sessionInfo.name}" with roles "${sessionInfo.roles}"`,
+      );
+    }
+
+    return rawUserRules;
   }
 
-  private interpolateUser(
+  private async interpolateUserVariables(
     rules: DatabaseRule[],
-    sessionInfo: SessionInfo,
-  ): DatabaseRule[] {
-    const user = this.currentUser.value;
+  ): Promise<DatabaseRule[]> {
+    const sessionInfo: SessionInfo = this.sessionInfo.value;
+    if (!sessionInfo) {
+      // for unauthenticated users, no user variables are available and interpolated
+      return rules;
+    }
 
+    const user = await firstValueFrom(
+      // only emit once user entity is loaded (or "null" for user account without entity)
+      this.currentUser.pipe(filter((x) => x !== undefined)),
+    );
     if (user && user["projects"]) {
       sessionInfo.projects = user["projects"];
     } else {
       sessionInfo.projects = [];
     }
 
+    const dynamicPlaceholders = {
+      user: sessionInfo,
+    };
     return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
       if (rawValue[0] !== "$") {
         return rawValue;
       }
 
-      let name = rawValue.slice(2, -1);
+      let name = rawValue.slice(2, -1); // extract name from "${name}"
       if (name === "user.name") {
         // the user account related entity (assured with prefix) is now stored in user.entityId
         // mapping the previously valid ${user.name} here for backwards compatibility
         name = "user.entityId";
       }
-      const value = get({ user: sessionInfo }, name);
+      const value = get(dynamicPlaceholders, name);
 
       if (typeof value === "undefined") {
         throw new ReferenceError(`Variable ${name} is not defined`);
       }
 
       return value;
-    });
+    }) as DatabaseRule[];
   }
 }

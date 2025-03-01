@@ -54,13 +54,16 @@ import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { AbilityModule } from "@casl/angular";
-import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import {
   EntitySpecialLoaderService,
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.service";
+import {
+  DialogViewComponent,
+  DialogViewData,
+} from "../../ui/dialog-view/dialog-view.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -101,7 +104,6 @@ import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.se
     EntityCreateButtonComponent,
     AbilityModule,
     AsyncPipe,
-    EntityActionsMenuComponent,
     ViewActionsComponent,
     // WARNING: all imports here also need to be set for components extending EntityList, like ChildrenListComponent
   ],
@@ -249,22 +251,38 @@ export class EntityListComponent<T extends Entity>
   private updateSubscription: Subscription;
 
   private listenToEntityUpdates() {
-    if (!this.updateSubscription && this.entityConstructor) {
-      this.updateSubscription = this.entityMapperService
-        .receiveUpdates(this.entityConstructor)
-        .pipe(untilDestroyed(this))
-        .subscribe((next) => {
-          this.allEntities = applyUpdate(this.allEntities, next);
-        });
+    if (this.updateSubscription || !this.entityConstructor) {
+      return;
     }
+
+    this.updateSubscription = this.entityMapperService
+      .receiveUpdates(this.entityConstructor)
+      .pipe(untilDestroyed(this))
+      .subscribe(async (updatedEntity) => {
+        // get specially enhanced entity if necessary
+        if (this.loaderMethod && this.entitySpecialLoader) {
+          updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
+            this.loaderMethod,
+            updatedEntity,
+          );
+        }
+
+        this.allEntities = applyUpdate(this.allEntities, updatedEntity);
+      });
   }
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
     if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
       this.defaultColumnGroup =
-        columnGroup.default || columnGroup.groups[0].name;
-      this.mobileColumnGroup = columnGroup.mobile || columnGroup.groups[0].name;
+        columnGroup.default && this.configuredTabExists(columnGroup.default)
+          ? columnGroup.default
+          : columnGroup.groups[0].name;
+
+      this.mobileColumnGroup =
+        columnGroup.mobile && this.configuredTabExists(columnGroup.mobile)
+          ? columnGroup.mobile
+          : columnGroup.groups[0].name;
     } else {
       this.groups = [
         {
@@ -275,6 +293,10 @@ export class EntityListComponent<T extends Entity>
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
     }
+  }
+
+  private configuredTabExists(groupName: string): boolean {
+    return this.groups.some((group) => group.name === groupName);
   }
 
   applyFilter(filterValue: string) {
@@ -328,6 +350,7 @@ export class EntityListComponent<T extends Entity>
     );
     this.selectedRows = undefined;
   }
+
   async deleteRecords() {
     await this.entityActionsService.delete(this.selectedRows);
     this.selectedRows = undefined;
@@ -340,6 +363,24 @@ export class EntityListComponent<T extends Entity>
 
   async anonymizeRecords() {
     await this.entityActionsService.anonymize(this.selectedRows);
+    this.selectedRows = undefined;
+  }
+
+  linkExternalProfiles() {
+    this.dialog.open(DialogViewComponent, {
+      width: "98vw",
+      maxWidth: "100vw",
+      height: "98vh",
+      maxHeight: "100vh",
+
+      data: {
+        component: "BulkLinkExternalProfiles",
+        config: {
+          entities: this.selectedRows,
+        },
+      } as DialogViewData,
+    });
+
     this.selectedRows = undefined;
   }
 

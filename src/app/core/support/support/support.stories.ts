@@ -4,7 +4,7 @@ import { SupportComponent } from "./support.component";
 import { SwUpdate } from "@angular/service-worker";
 import { UpdateManagerService } from "../../ui/latest-changes/update-manager.service";
 import { importProvidersFrom } from "@angular/core";
-import { PouchDatabase } from "../../database/pouch-database";
+import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 
 // TODO: fix layout of SupportComponent buttons on mobile
 

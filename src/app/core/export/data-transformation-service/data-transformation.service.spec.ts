@@ -2,7 +2,6 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { DataTransformationService } from "./data-transformation.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Database } from "../../database/database";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ExportColumnConfig } from "./export-column-config";
@@ -13,6 +12,7 @@ import { RecurringActivity } from "../../../child-dev-project/attendance/model/r
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 describe("DataTransformationService", () => {
   let service: DataTransformationService;
@@ -29,7 +29,7 @@ describe("DataTransformationService", () => {
     entityMapper = TestBed.inject(EntityMapperService);
   }));
 
-  afterEach(() => TestBed.inject(Database).destroy());
+  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("should be created", () => {
     expect(service).toBeTruthy();
