@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { startApp } from "../utils/core-e2e-utils";
 
 async function setFixedDate(page, fixedDate) {
   const fakeNow = new Date(fixedDate).valueOf(); // Convert the fixed date to a timestamp
@@ -18,8 +19,6 @@ async function setFixedDate(page, fixedDate) {
   }`);
 }
 
-test.describe.configure({ timeout: 120000 });
-
 test.describe("Dashboard Page Tests", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running test case - ${testInfo.title}`);
@@ -27,13 +26,11 @@ test.describe("Dashboard Page Tests", () => {
     // Set fixed date before navigating to the app
     await setFixedDate(page, "1/1/2025");
 
-    // Navigate to the application after the date is set
-    await page.goto("/");
+    await startApp(page);
   });
 
   test("Verify Quick Actions widget", async ({ page }) => {
     // Check "Quick Actions" widget is visible
-    await page.waitForSelector("text=Quick actions");
     const quickActionsElement = page.locator("text=Quick actions");
     await expect(quickActionsElement).toBeVisible();
 
@@ -45,14 +42,12 @@ test.describe("Dashboard Page Tests", () => {
   });
 
   test("Verify children count is displayed", async ({ page }) => {
-    await page.waitForSelector("text=Children");
     const childrenCount = page.locator("app-entity-count-dashboard-widget");
     await expect(childrenCount).toContainText(/107/);
   });
 
   test("Verify Tasks Due widget and tasks", async ({ page }) => {
     // Check "Tasks Due" widget is visible
-    await page.waitForSelector("text=Tasks due");
     const tasksDueElement = page.getByText("Tasks due");
     await expect(tasksDueElement).toBeVisible();
 

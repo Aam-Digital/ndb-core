@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
-import path from "path"; // Import the path module for file path operations
+import path from "path";
+import { startApp } from "../utils/core-e2e-utils"; // Import the path module for file path operations
 
 async function setFixedDate(page, fixedDate) {
   const fakeNow = new Date(fixedDate).valueOf(); // Convert the fixed date to a timestamp
@@ -19,8 +20,6 @@ async function setFixedDate(page, fixedDate) {
   }`);
 }
 
-test.describe.configure({ timeout: 120000 });
-
 test.describe("Dashboard Page Tests", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running test case - ${testInfo.title}`);
@@ -28,8 +27,7 @@ test.describe("Dashboard Page Tests", () => {
     // Set fixed date before navigating to the app
     await setFixedDate(page, "1/23/2025");
 
-    // Navigate to the application after the date is set
-    await page.goto("/");
+    await startApp(page);
   });
 
   // Verify the date field displays the current date
