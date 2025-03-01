@@ -1,23 +1,30 @@
-import { DateFilterBase } from "./date-filter-base";
 import { DateRange } from "@angular/material/datepicker";
 import moment from "moment";
 import { calculateDateRange } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { isValidDate } from "../../../utils/utils";
 import { Entity } from "../../entity/model/entity";
-import { DataFilter } from "./filters";
+import { DataFilter, Filter } from "./filters";
+import { DateRangeFilterConfigOption } from "../../entity-list/EntityListConfig";
+import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-filter/date-range-filter.component";
 
 /**
  * Represents a filter for date values.
  */
-export class DateFilter<T extends Entity> extends DateFilterBase<T> {
+export class DateFilter<T extends Entity> extends Filter<T> {
+  override component = DateRangeFilterComponent;
+
   constructor(
     public override name: string,
     public override label: string = name,
-    public override rangeOptions: any[],
+    public rangeOptions: DateRangeFilterConfigOption[],
   ) {
-    super(name, label, rangeOptions);
+    super(name, label);
+    this.selectedOptionValues = [];
   }
 
+  /**
+   * Returns the date range according to the selected option or dates
+   */
   getDateRange(): DateRange<Date> {
     const selectedOption = this.getSelectedOption();
     if (selectedOption) {
