@@ -6,7 +6,7 @@
       <div class="header" i18n>Record B</div>
       <div class="header" i18n>Merge Preview</div>
 
-      <ng-container *ngFor="let field of mergeFields; trackBy: trackByFieldKey">
+      <ng-container *ngFor="let field of fieldsToMerge; trackBy: trackByFn">
         <div class="label-cell">
           <strong>{{ field.label }}</strong>
         </div>
@@ -15,8 +15,8 @@
           <mat-radio-group>
             <mat-radio-button
               [value]="entitiesToMerge[0][field.key]"
-              (click)="toggleSelection(field.key, 'entity1')"
-              [checked]="isSelected(field.key, 'entity1')"
+              (click)="selectMergeValue(field.key, 0)"
+              [checked]="isSelected(field.key, 0)"
             >
               <app-entity-field-view
                 [field]="field.key"
@@ -30,8 +30,8 @@
           <mat-radio-group>
             <mat-radio-button
               [value]="entitiesToMerge[1][field.key]"
-              (click)="toggleSelection(field.key, 'entity2')"
-              [checked]="isSelected(field.key, 'entity2')"
+              (click)="selectMergeValue(field.key, 1)"
+              [checked]="isSelected(field.key, 1)"
             >
               <app-entity-field-view
                 [field]="field.key"
@@ -60,11 +60,11 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-raised-button (click)="cancel()" i18n>Cancel</button>
+  <button mat-raised-button (click)="cancelMerge()" i18n>Cancel</button>
   <button
     mat-raised-button
     color="accent"
-    (click)="merge()"
+    (click)="confirmMerge()"
     [disabled]="mergeForm.invalid"
     i18n
   >

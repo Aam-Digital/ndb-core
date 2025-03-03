@@ -31,12 +31,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  mergeFields: { key: string; label: string; dataType: string }[] = [];
+  fieldsToMerge: { key: string; label: string; dataType: string }[] = [];
   mergeForm: FormGroup;
-  trackByFieldKey(index: number, field: any) {
-    return field.key;
-  }
-  selectedValues: { [key: string]: string[] } = {};
+  selectedValues: Record<string, string[]> = {};
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -54,10 +51,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initMerge();
+    this.initializeMergeForm();
     this.mergeForm.valueChanges.subscribe((values) => {
-      Object.keys(values).forEach((key) => {
-        this.mergedEntity[key] = values[key];
+      Object.entries(values).forEach(([key, value]) => {
+        this.mergedEntity[key] = value;
       });
     });
   }
@@ -67,10 +64,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
    * and the values of the first record.
    * Hidden fields are initialized with the values of the first record. They are not shown in the form.
    */
-  private initMerge() {
+  private initializeMergeForm(): void {
     this.entityConstructor.schema.forEach((field, key) => {
       if (field.label) {
-        this.mergeFields.push({
+        this.fieldsToMerge.push({
           key,
           label: field.label,
           dataType: field.dataType,
@@ -83,42 +80,48 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     });
   }
 
-  toggleSelection(key: string, option: "entity1" | "entity2") {
-    const selectedValue =
-      this.entitiesToMerge[option === "entity1" ? 0 : 1][key];
+  trackByFn(index: number, field: { key: string }): string {
+    return field.key;
+  }
+
+  /**
+   * Selects a value from one of the records for merging.
+   */
+  selectMergeValue(fieldKey: string, entityIndex: 0 | 1): void {
+    const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const isStringType =
-      this.mergeFields.find((f) => f.key === key)?.dataType === "string";
+      this.fieldsToMerge.find((f) => f.key === fieldKey)?.dataType === "string";
 
     if (isStringType) {
-      this.selectedValues[key] = this.selectedValues[key] || [];
-
-      const index = this.selectedValues[key].indexOf(selectedValue);
-
+      this.selectedValues[fieldKey] ??= [];
+      const index = this.selectedValues[fieldKey].indexOf(selectedValue);
       index === -1
-        ? this.selectedValues[key].push(selectedValue)
-        : this.selectedValues[key].splice(index, 1);
-
-      this.mergeForm.get(key)?.setValue(this.selectedValues[key].join(", "));
+        ? this.selectedValues[fieldKey].push(selectedValue)
+        : this.selectedValues[fieldKey].splice(index, 1);
+      this.mergeForm
+        .get(fieldKey)
+        ?.setValue(this.selectedValues[fieldKey].join(", "));
     } else {
-      this.selectedValues[key] = [selectedValue];
-      this.mergeForm.get(key)?.setValue(selectedValue);
+      this.selectedValues[fieldKey] = [selectedValue];
+      this.mergeForm.get(fieldKey)?.setValue(selectedValue);
     }
   }
 
-  isSelected(key: string, option: "entity1" | "entity2"): boolean {
-    return this.selectedValues[key]?.includes(
-      this.entitiesToMerge[option === "entity1" ? 0 : 1][key],
+  /**
+   * Checks if a value is selected for merging.
+   */
+  isSelected(fieldKey: string, entityIndex: 0 | 1): boolean {
+    return this.selectedValues[fieldKey]?.includes(
+      this.entitiesToMerge[entityIndex][fieldKey],
     );
   }
 
-  merge() {
-    Object.keys(this.mergeForm.value).forEach((key) => {
-      this.mergedEntity[key] = this.mergeForm.value[key];
-    });
+  confirmMerge(): void {
+    Object.assign(this.mergedEntity, this.mergeForm.value);
     this.dialogRef.close(this.mergedEntity);
   }
 
-  cancel() {
+  cancelMerge(): void {
     this.dialogRef.close();
   }
 }
