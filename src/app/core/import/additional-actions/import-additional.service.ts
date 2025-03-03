@@ -86,51 +86,6 @@ export class ImportAdditionalService {
     }
 
     return [...directActions, ...indirectActions];
-
-    // old code: to be removed
-    /*
-    if (sourceType === "Child") {
-      return [
-        {
-          sourceType: "Child",
-          mode: "direct",
-          targetType: RecurringActivity.ENTITY_TYPE,
-          targetProperty: "participants",
-        },
-        {
-          sourceType: "Child",
-          mode: "indirect",
-          relationshipEntityType: "ChildSchoolRelation",
-          relationshipProperty: "childId",
-          relationshipTargetProperty: "schoolId",
-          targetType: "School",
-        },
-      ];
-    }
-
-    if (sourceType === "Individual") {
-      return [
-        {
-          sourceType: "Individual",
-          mode: "indirect",
-          relationshipEntityType: "Participant2Event",
-          relationshipProperty: "participant",
-          relationshipTargetProperty: "event",
-          targetType: "Event",
-        },
-        {
-          sourceType: "Individual",
-          mode: "indirect",
-          relationshipEntityType: "Individual2Organisation",
-          relationshipProperty: "individual",
-          relationshipTargetProperty: "organisation",
-          targetType: "organisation",
-        },
-      ];
-    }
-
-    return [];
-     */
   }
 
   private findIndirectLinkActionsForField(
