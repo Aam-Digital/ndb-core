@@ -10,6 +10,7 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
+import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -21,6 +22,7 @@ import { CommonModule } from "@angular/common";
     MatRadioModule,
     MatButtonModule,
     CommonModule,
+    EntityFieldViewComponent,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -29,6 +31,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
+  previewEntity: E;
   mergeFields: { key: string; label: string; dataType: string }[] = [];
   mergeForm: FormGroup;
   trackByFieldKey(index: number, field: any) {
@@ -49,10 +52,16 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.entitiesToMerge = data.entitiesToMerge;
     this.mergedEntity = new this.entityConstructor() as E;
     this.mergeForm = this.fb.group({});
+    this.previewEntity = new this.entityConstructor() as E;
   }
 
   ngOnInit(): void {
     this.initMerge();
+    this.mergeForm.valueChanges.subscribe((values) => {
+      Object.keys(values).forEach((key) => {
+        this.mergedEntity[key] = values[key];
+      });
+    });
   }
 
   /**

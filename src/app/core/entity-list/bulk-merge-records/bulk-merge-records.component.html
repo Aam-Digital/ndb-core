@@ -18,11 +18,10 @@
               (click)="toggleSelection(field.key, 'entity1')"
               [checked]="isSelected(field.key, 'entity1')"
             >
-              {{
-                entitiesToMerge[0][field.key]?.locationString ||
-                  entitiesToMerge[0][field.key]?.label ||
-                  entitiesToMerge[0][field.key]
-              }}
+              <app-entity-field-view
+                [field]="field.key"
+                [entity]="entitiesToMerge[0]"
+              ></app-entity-field-view>
             </mat-radio-button>
           </mat-radio-group>
         </div>
@@ -34,23 +33,34 @@
               (click)="toggleSelection(field.key, 'entity2')"
               [checked]="isSelected(field.key, 'entity2')"
             >
-              {{
-                entitiesToMerge[1][field.key]?.locationString ||
-                  entitiesToMerge[1][field.key]?.label ||
-                  entitiesToMerge[1][field.key]
-              }}
+              <app-entity-field-view
+                [field]="field.key"
+                [entity]="entitiesToMerge[1]"
+              ></app-entity-field-view>
             </mat-radio-button>
           </mat-radio-group>
         </div>
 
+        <!-- <div class="preview-cell">
+          <app-entity-field-view
+            *ngIf="mergeForm.get(field.key)?.value; else noSelection"
+            [field]="field.key"
+            [entity]="getEntityField(field)"
+          ></app-entity-field-view>
+          <ng-template #noSelection>No Selection</ng-template>
+        </div> -->
         <!-- Merge Preview -->
         <div class="preview-cell">
-          {{
-            mergeForm.get(field.key)?.value?.locationString ||
-              mergeForm.get(field.key)?.value?.label ||
-              mergeForm.get(field.key)?.value ||
-              "No Selection"
-          }}
+          <ng-container *ngIf="mergedEntity[field.key]; else noSelection">
+            <app-entity-field-view
+              [field]="field.key"
+              [entity]="mergedEntity"
+              showLabel="none"
+            ></app-entity-field-view>
+          </ng-container>
+          <ng-template #noSelection>
+            <span class="no-selection">No Selection</span>
+          </ng-template>
         </div>
       </ng-container>
     </div>
