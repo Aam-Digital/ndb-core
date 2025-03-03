@@ -6,7 +6,7 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "../../notes/model/interaction-type.interface";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {

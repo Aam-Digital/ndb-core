@@ -14,7 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
-import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
+import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component

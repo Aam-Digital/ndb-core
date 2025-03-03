@@ -13,6 +13,7 @@ import { uniqueIdValidator } from "../unique-id-validator/unique-id-validator";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { buildReadonlyValidator } from "./readonly-after-set.validator";
 import { Entity } from "../../../entity/model/entity";
+import { AsyncPromiseValidatorFn } from "./validator-types";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -225,7 +226,3 @@ export class DynamicValidatorsService {
     };
   }
 }
-
-export type AsyncPromiseValidatorFn = (
-  control: FormControl,
-) => Promise<ValidationErrors | null>;

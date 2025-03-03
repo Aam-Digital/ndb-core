@@ -21,7 +21,7 @@ import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { EntityRegistry } from "../database-entity.decorator";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 
 /**
  * Transform between entity instances and database objects
