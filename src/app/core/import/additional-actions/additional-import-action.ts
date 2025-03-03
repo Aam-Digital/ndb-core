@@ -1,7 +1,11 @@
 /**
  * Definition of an additional generic import action, e.g. linking imported records to an existing group entity.
  */
-export interface AdditionalImportAction {
+export type AdditionalImportAction =
+  | AdditonalDirectLinkAction
+  | AdditionalIndirectLinkAction;
+
+interface AdditionalImportBaseAction {
   mode: "direct" | "indirect";
 
   /**
@@ -23,7 +27,7 @@ export interface AdditionalImportAction {
  * Details of an import action that is executed in addition to creating the primary imported entities,
  * linking imported data directly to another existing entity (by updating that entity).
  */
-export interface AdditonalDirectLinkAction extends AdditionalImportAction {
+export interface AdditonalDirectLinkAction extends AdditionalImportBaseAction {
   mode: "direct";
 
   /**
@@ -46,7 +50,8 @@ export interface AdditonalDirectLinkAction extends AdditionalImportAction {
  * Details of an import action that is executed in addition to creating the primary imported entities,
  * linking imported data indirectly to another existing entity (by creating new "relationship" entities).
  */
-export interface AdditionalIndirectLinkAction extends AdditionalImportAction {
+export interface AdditionalIndirectLinkAction
+  extends AdditionalImportBaseAction {
   mode: "indirect";
 
   /**
