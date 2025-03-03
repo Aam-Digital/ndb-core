@@ -122,7 +122,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     Object.assign(this.mergedEntity, this.mergeForm.value);
     if (
       !(await this.confirmationDialog.getConfirmation(
-        $localize`:Merge confirmation title:Are you sure you want Merge This?`,
+        $localize`:Merge confirmation title: Are you sure you want to Merge this?`,
         $localize`:Merge confirmation dialog: Merging of two records will permanently delete the data that is not merged. This action cannot be undone \n(Once the two records are merged, there will be only one record available in the system)`,
       ))
     ) {
