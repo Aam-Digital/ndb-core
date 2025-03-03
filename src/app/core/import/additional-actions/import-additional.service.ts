@@ -11,6 +11,9 @@ import {
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { ConfigService } from "../../config/config.service";
+import { Note } from "../../../child-dev-project/notes/model/note";
+import { EventNote } from "../../../child-dev-project/attendance/model/event-note";
+import { Todo } from "../../../features/todos/model/todo";
 
 /**
  * Service to handle additional import actions
@@ -58,42 +61,29 @@ export class ImportAdditionalService {
     const indirectActions: AdditionalIndirectLinkAction[] = [];
 
     for (const [targetType, fields] of Object.entries(refs)) {
-      const targetTypeCtr = this.entityRegistry.get(targetType);
-
       for (const field of fields) {
-        // direct linking to the target entity
-        if (field.isArray) {
-          directActions.push({
-            sourceType,
-            mode: "direct",
-            targetType,
-            targetProperty: field.id,
-          });
-        }
-
-        // other types these referencing types are also linking to (so they can serve as a connection relationship entity)
-        for (const [fieldId2, field2] of targetTypeCtr.schema.entries()) {
-          if (fieldId2 === field.id) continue; // skip the same field
-          if (field2.dataType !== EntityDatatype.dataType) continue; // skip non-entity fields
-          if (
-            !field2.additional ||
-            (Array.isArray(field2.additional) && field2.additional.length === 0)
-          )
-            continue; // skip if no reference type is enabled
-
-          indirectActions.push({
-            sourceType,
-            mode: "indirect",
-            relationshipEntityType: targetType,
-            relationshipProperty: field.id,
-            relationshipTargetProperty: fieldId2,
-            targetType: field2.additional,
-          });
+        if (field.entityReferenceRole === "composite") {
+          // for "relationship" types that only serve as connections, do not add a "direct" link import but an "indirect" one
+          indirectActions.push(
+            ...this.findIndirectLinkActionsForField(
+              targetType,
+              field,
+              sourceType,
+            ),
+          );
+        } else {
+          // direct linking to the target entity
+          if (field.isArray) {
+            directActions.push({
+              sourceType,
+              mode: "direct",
+              targetType,
+              targetProperty: field.id,
+            });
+          }
         }
       }
     }
-
-    // TODO: hide those used as indirect from direct actions
 
     return [...directActions, ...indirectActions];
 
@@ -143,6 +133,43 @@ export class ImportAdditionalService {
      */
   }
 
+  private findIndirectLinkActionsForField(
+    targetType: string,
+    targetField: FormFieldConfig,
+    sourceType: string,
+  ) {
+    const indirectActions: AdditionalIndirectLinkAction[] = [];
+    const targetTypeCtr = this.entityRegistry.get(targetType);
+
+    // other types these referencing types are also linking to (so they can serve as a connection relationship entity)
+    for (const [fieldId2, field2] of targetTypeCtr.schema.entries()) {
+      if (targetField.entityReferenceRole !== "composite") continue; // only use explicit relationship fields for indirect actions
+      if (fieldId2 === targetField.id) continue; // skip the same field
+      if (field2.dataType !== EntityDatatype.dataType) continue; // skip non-entity fields
+      if (
+        !field2.additional ||
+        (Array.isArray(field2.additional) && field2.additional.length === 0)
+      )
+        continue; // skip if no reference type is enabled
+
+      indirectActions.push({
+        sourceType,
+        mode: "indirect",
+        relationshipEntityType: targetType,
+        relationshipProperty: targetField.id,
+        relationshipTargetProperty: fieldId2,
+        targetType: field2.additional,
+        expertOnly:
+          targetType === sourceType ||
+          [Note.ENTITY_TYPE, EventNote.ENTITY_TYPE, Todo.ENTITY_TYPE].includes(
+            targetType,
+          ),
+      });
+    }
+
+    return indirectActions;
+  }
+
   /**
    * Get the entity actions that data of the given entity type can be linked to during its import.
    * (e.g. for "Child" entityType, the result could be [{ targetType: "School" ...}], indicating that during import of children, they can be linked to a school)
@@ -184,10 +211,16 @@ export class ImportAdditionalService {
 
       switch (additionalImport.mode) {
         case "direct":
-          action = this.linkDirectly(entities, additionalImport);
+          action = this.linkDirectly(
+            entities,
+            additionalImport as AdditonalDirectLinkAction,
+          );
           break;
         case "indirect":
-          action = this.linkIndirectly(entities, additionalImport);
+          action = this.linkIndirectly(
+            entities,
+            additionalImport as AdditionalIndirectLinkAction,
+          );
           break;
       }
 
@@ -205,10 +238,16 @@ export class ImportAdditionalService {
 
       switch (additionalImport.mode) {
         case "direct":
-          action = this.undoLinkDirectly(importMeta.ids, additionalImport);
+          action = this.undoLinkDirectly(
+            importMeta.ids,
+            additionalImport as AdditonalDirectLinkAction,
+          );
           break;
         case "indirect":
-          action = this.undoLinkIndirectly(importMeta.ids, additionalImport);
+          action = this.undoLinkIndirectly(
+            importMeta.ids,
+            additionalImport as AdditionalIndirectLinkAction,
+          );
           break;
       }
 
@@ -313,16 +352,18 @@ export class ImportAdditionalService {
     forTargetType: boolean = false,
   ): string {
     const sourceType = this.entityRegistry.get(importAction.sourceType);
-    const targetType = this.entityRegistry.get(importAction.targetType);
+    const targetType = importAction["targetType"]
+      ? this.entityRegistry.get(importAction["targetType"])
+      : null;
     const relationshipType = importAction["relationshipEntityType"]
       ? this.entityRegistry.get(importAction["relationshipEntityType"])
       : null;
 
     let label: string;
     if (!forTargetType) {
-      label = $localize`Link imported ${sourceType.labelPlural} to a ${targetType.label}`;
+      label = $localize`Link imported ${sourceType.toString(true)} to a ${targetType.toString()}`;
     } else {
-      label = $localize`Import related ${sourceType.labelPlural} for this ${targetType.label}`;
+      label = $localize`Import related ${sourceType.toString(true)} for this ${targetType.toString()}`;
     }
 
     // add additional context details
@@ -331,7 +372,7 @@ export class ImportAdditionalService {
     } else if (
       (importAction as AdditionalIndirectLinkAction).relationshipEntityType
     ) {
-      label += ` (through ${relationshipType?.labelPlural})`;
+      label += ` (through ${relationshipType?.toString(true)})`;
     }
 
     return label;

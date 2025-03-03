@@ -81,8 +81,14 @@ export class ImportAdditionalActionsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("entityType")) {
-      this.availableImportActions =
-        this.importAdditionalService.getActionsLinkingFor(this.entityType);
+      this.availableImportActions = this.importAdditionalService
+        .getActionsLinkingFor(this.entityType)
+        .sort((a, b) => {
+          // show "non-expert" actions first
+          if (a.expertOnly === b.expertOnly) return 0;
+          else if (a.expertOnly) return 1;
+          else return -1;
+        });
 
       this.linkEntityForm.reset();
       if (this.entityType) {

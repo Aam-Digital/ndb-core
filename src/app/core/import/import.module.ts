@@ -35,11 +35,12 @@ export class ImportModule {
     const actions: EntityAction[] = [];
     const importActions = this.importAdditionalService
       .getActionsLinkingTo(entity.getType())
-      .map((a) => ({ ...a, targetId: entity.getId() }));
+      .map((a) => ({ ...a, targetId: entity.getId() }))
+      .filter((a) => !a.expertOnly); // hide advanced actions for simplicity
 
     for (const importAction of importActions) {
       actions.push({
-        action: "import_related",
+        action: JSON.stringify(importAction),
         label: this.importAdditionalService.createActionLabel(
           importAction,
           true,
