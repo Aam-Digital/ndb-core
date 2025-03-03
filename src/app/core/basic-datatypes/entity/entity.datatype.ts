@@ -106,7 +106,7 @@ export class EntityDatatype extends StringDatatype {
    * Find all entity schema fields from any entity type that reference the given entity type.
    * @param searchedEntityType The entity type to search for references to.
    * @param entityRegistry
-   * @returns A map of all other entity types with their field or field's that reference the given entity type.
+   * @returns A map of all other entity types with their fields that reference the given entity type.
    */
   static findFieldsReferencingEntityType(
     searchedEntityType: string,

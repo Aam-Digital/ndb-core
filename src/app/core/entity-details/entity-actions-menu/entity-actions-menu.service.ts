@@ -24,10 +24,17 @@ export class EntityActionsMenuService {
     ];
   }
 
+  /**
+   * Add (static) actions to be shown for all entity actions context menus.
+   */
   registerActions(newActions: EntityAction[]) {
     this.actions.push(...newActions);
   }
 
+  /**
+   * Add factory functions to generate additional actions for the entity context menu
+   * depending on the specific entity for which the menu is displayed (e.g. only for entities of specific states).
+   */
   registerActionsFactories(newActions: EntityActionsFactory[]) {
     this.actionsFactories.push(...newActions);
   }
