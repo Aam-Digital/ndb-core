@@ -11,6 +11,7 @@ import { MatRadioModule } from "@angular/material/radio";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
+import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -43,6 +44,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     },
     private dialogRef: MatDialogRef<BulkMergeRecordsComponent<E>>,
     private fb: FormBuilder,
+    private confirmationDialog: ConfirmationDialogService,
   ) {
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
@@ -116,8 +118,16 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     );
   }
 
-  confirmMerge(): void {
+  async confirmMerge(): Promise<boolean> {
     Object.assign(this.mergedEntity, this.mergeForm.value);
+    if (
+      !(await this.confirmationDialog.getConfirmation(
+        $localize`:Merge confirmation title:Are you sure you want Merge This?`,
+        $localize`:Merge confirmation dialog: Merging of two records will permanently delete the data that is not merged. This action cannot be undone \n(Once the two records are merged, there will be only one record available in the system)`,
+      ))
+    ) {
+      return false;
+    }
     this.dialogRef.close(this.mergedEntity);
   }
 
