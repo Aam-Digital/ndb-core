@@ -1,5 +1,5 @@
-import { Component } from "@angular/core";
-import { MenuItem, NavigationMenuConfig } from "../menu-item";
+import { Component, inject } from "@angular/core";
+import { EntityMenuItem, MenuItem, NavigationMenuConfig } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";
@@ -10,6 +10,7 @@ import { Angulartics2Module } from "angulartics2";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { MenuItemComponent } from "../menu-item/menu-item.component";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 
 /**
  * Main app menu listing.
@@ -30,6 +31,8 @@ import { MenuItemComponent } from "../menu-item/menu-item.component";
   standalone: true,
 })
 export class NavigationComponent {
+  private entities = inject(EntityRegistry);
+
   /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
 
@@ -104,11 +107,29 @@ export class NavigationComponent {
       this.CONFIG_ID,
     );
 
-    this.menuItems = await this.routePermissionService.filterPermittedRoutes(
-      config.items,
-    );
+    const menuItems = config.items.map((item) => {
+      if ("entityType" in item) {
+        return this.generateMenuItemForEntityType(item as EntityMenuItem);
+      }
+      return item as MenuItem;
+    });
+
+    this.menuItems =
+      await this.routePermissionService.filterPermittedRoutes(menuItems);
 
     // re-select active menu item after menu has been fully initialized
     this.activeLink = this.computeActiveLink(location.pathname);
+  }
+
+  /**
+   * parse ... by looking up the entityType from EntityRegistry and then using its config:
+   */
+  private generateMenuItemForEntityType(item: EntityMenuItem): MenuItem {
+    const entityType = this.entities.get(item.entityType);
+    return {
+      label: entityType.labelPlural,
+      icon: entityType.icon,
+      link: entityType.route,
+    };
   }
 }

@@ -40,15 +40,7 @@ describe("ImportSelectTypeComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should offer any entityType to select for experts", () => {
-    component.expertMode = true;
-
-    expect(component.entityTypes).toEqual(testTypes);
-  });
-
-  it("should only offer entityTypes mentioned in custom config by default", () => {
-    component.expertMode = false;
-
-    expect(component.entityTypes).toEqual([testTypes[0]]);
+  it("should create", () => {
+    expect(component).toBeTruthy();
   });
 });

@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import {
-  calculateDateRange,
   DateRangeFilterPanelComponent,
   defaultDateFilters,
 } from "./date-range-filter-panel.component";
+import { calculateDateRange } from "./date-range-utils";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
@@ -13,7 +13,7 @@ import { DateRange } from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
 
-import { DateFilter } from "../../../../filter/filters/dateFilter";
+import { DateFilter } from "app/core/filter/filters/dateFilter";
 
 describe("DateRangeFilterPanelComponent", () => {
   let component: DateRangeFilterPanelComponent;

@@ -67,6 +67,12 @@
                 icon="lock"
                 matSuffix
               ></fa-icon>
+              <mat-error *ngIf="fieldIdForm.hasError('pattern')">
+                <span i18n>
+                  Invalid ID pattern. Only letters, numbers, and underscores are
+                  allowed.</span
+                >
+              </mat-error>
               <mat-error *ngIf="fieldIdForm.hasError('uniqueId')">
                 {{ fieldIdForm.getError("uniqueId") }}
               </mat-error>

@@ -3,7 +3,7 @@ import {
   FormControlStatus,
   ValidationErrors,
 } from "@angular/forms";
-import { AsyncPromiseValidatorFn } from "./dynamic-validators.service";
+import { AsyncPromiseValidatorFn } from "./validator-types";
 import { Entity } from "../../../entity/model/entity";
 
 /**
