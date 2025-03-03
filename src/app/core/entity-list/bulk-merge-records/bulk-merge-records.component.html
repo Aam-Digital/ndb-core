@@ -41,14 +41,6 @@
           </mat-radio-group>
         </div>
 
-        <!-- <div class="preview-cell">
-          <app-entity-field-view
-            *ngIf="mergeForm.get(field.key)?.value; else noSelection"
-            [field]="field.key"
-            [entity]="getEntityField(field)"
-          ></app-entity-field-view>
-          <ng-template #noSelection>No Selection</ng-template>
-        </div> -->
         <!-- Merge Preview -->
         <div class="preview-cell">
           <ng-container *ngIf="mergedEntity[field.key]; else noSelection">

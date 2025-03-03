@@ -31,7 +31,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  previewEntity: E;
   mergeFields: { key: string; label: string; dataType: string }[] = [];
   mergeForm: FormGroup;
   trackByFieldKey(index: number, field: any) {
@@ -52,7 +51,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.entitiesToMerge = data.entitiesToMerge;
     this.mergedEntity = new this.entityConstructor() as E;
     this.mergeForm = this.fb.group({});
-    this.previewEntity = new this.entityConstructor() as E;
   }
 
   ngOnInit(): void {
@@ -79,7 +77,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         });
         this.mergeForm.addControl(key, this.fb.control(null));
       } else {
-        // Initialize hidden fields with values from the first record
+        // Initialize hidden fields with values from the first record(to be megerd on existing entity _id)
         this.mergedEntity[key] = this.entitiesToMerge[0][key];
       }
     });
@@ -117,7 +115,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     Object.keys(this.mergeForm.value).forEach((key) => {
       this.mergedEntity[key] = this.mergeForm.value[key];
     });
-    console.log(this.mergedEntity);
     this.dialogRef.close(this.mergedEntity);
   }
 
