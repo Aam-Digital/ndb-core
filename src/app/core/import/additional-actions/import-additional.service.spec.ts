@@ -34,6 +34,7 @@ describe("ImportAdditionalService", () => {
     @DatabaseField({
       dataType: "entity",
       additional: ImportedEntity.ENTITY_TYPE,
+      isArray: true, // this must take multiple values so that a whole import can be linked
     })
     participant: string;
   }
@@ -43,6 +44,7 @@ describe("ImportAdditionalService", () => {
     @DatabaseField({
       dataType: "entity",
       additional: ImportedEntity.ENTITY_TYPE,
+      entityReferenceRole: "composite", // to ensure it's shown as indirect link
     })
     participant: string;
 
@@ -78,13 +80,13 @@ describe("ImportAdditionalService", () => {
         targetType: DirectlyLinkingEntity.ENTITY_TYPE,
         targetProperty: "participant",
       },
-      // TODO: maybe the following should be hidden because it's also a indirect/relationship entity?
-      {
+      // the following should be hidden because it's also an indirect/relationship entity
+      /* {
         sourceType: ImportedEntity.ENTITY_TYPE,
         mode: "direct",
         targetType: RelationshipEntity.ENTITY_TYPE,
         targetProperty: "participant",
-      },
+      }, */
       {
         sourceType: ImportedEntity.ENTITY_TYPE,
         mode: "indirect",
@@ -92,6 +94,7 @@ describe("ImportAdditionalService", () => {
         relationshipProperty: "participant",
         relationshipTargetProperty: "group",
         targetType: "Other",
+        expertOnly: false,
       },
     ]);
   });
