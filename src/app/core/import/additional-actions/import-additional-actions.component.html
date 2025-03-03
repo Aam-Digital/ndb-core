@@ -32,44 +32,51 @@
 </div>
 
 <!-- Create new additional action -->
-<form [formGroup]="linkEntityForm">
-  <div>
-    <mat-error *ngIf="linkEntityForm.disabled" i18n>
-      Select an Import Target Type before defining additional actions.
-    </mat-error>
-  </div>
+@if (availableImportActions?.length > 0) {
+  <form [formGroup]="linkEntityForm">
+    <div>
+      <mat-error *ngIf="linkEntityForm.disabled" i18n>
+        Select an Import Target Type before defining additional actions.
+      </mat-error>
+    </div>
 
-  <div class="flex-row gap-regular">
-    <mat-form-field class="full-width">
-      <mat-label i18n="Label for linked entity type input"
-        >Link all imported records to:
-      </mat-label>
-      <app-basic-autocomplete
-        formControlName="action"
+    <div class="flex-row gap-regular">
+      <mat-form-field class="full-width">
+        <mat-label i18n="Label for linked entity type input"
+          >Link all imported records to:
+        </mat-label>
+        <app-basic-autocomplete
+          formControlName="action"
+          [multi]="false"
+          [options]="availableImportActions"
+          [optionToString]="actionToString"
+        ></app-basic-autocomplete>
+      </mat-form-field>
+
+      <app-entity-select
+        [form]="linkEntityForm.controls['targetId']"
+        [entityType]="linkEntityForm.controls['action'].value?.['targetType']"
         [multi]="false"
-        [options]="availableImportActions"
-        [optionToString]="actionToString"
-      ></app-basic-autocomplete>
-    </mat-form-field>
+        label="for record"
+        i18n-label
+      >
+      </app-entity-select>
 
-    <app-entity-select
-      [form]="linkEntityForm.controls['targetId']"
-      [entityType]="linkEntityForm.controls['action'].value?.['targetType']"
-      [multi]="false"
-      label="for record"
-      i18n-label
-    >
-    </app-entity-select>
-
-    <button
-      (click)="addAction()"
-      [disabled]="!linkEntityForm.valid"
-      mat-stroked-button
-      color="accent"
-      class="action-add-button"
-      i18n
-    >
-      Add Action
-    </button>
-  </div>
-</form>
+      <button
+        (click)="addAction()"
+        [disabled]="!linkEntityForm.valid"
+        mat-stroked-button
+        color="accent"
+        class="action-add-button"
+        i18n
+      >
+        Add Action
+      </button>
+    </div>
+  </form>
+} @else if (entityType) {
+  <p i18n>
+    No special import actions are available for importing
+    {{ entityType | entityTypeLabel: true }} records.
+  </p>
+}
