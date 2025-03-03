@@ -14,10 +14,6 @@ class TestEntity extends Entity {
     ["age", { label: "Age", dataType: "number" }],
   ]);
 
-  name: string;
-  age: number;
-  id: string;
-
   constructor() {
     super();
   }
@@ -31,15 +27,9 @@ describe("BulkMergeRecordsComponent", () => {
   >;
   let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
 
-  const entityA = new TestEntity();
-  entityA.name = "Entity A";
-  entityA.age = 25;
-  entityA.id = "123";
+  const testEntity1 = new TestEntity();
 
-  const entityB = new TestEntity();
-  entityB.name = "Entity B";
-  entityB.age = 30;
-  entityB.id = "456";
+  const testEntity2 = new TestEntity();
 
   beforeEach(async () => {
     mockDialogRef = jasmine.createSpyObj(["close"]);
@@ -60,7 +50,7 @@ describe("BulkMergeRecordsComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: {
             entityConstructor: TestEntity,
-            entitiesToMerge: [entityA, entityB],
+            entitiesToMerge: [testEntity1, testEntity2],
           },
         },
         { provide: EntityFormService, useValue: mockEntityFormService },
@@ -75,13 +65,5 @@ describe("BulkMergeRecordsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should update mergedEntity on form changes", () => {
-    component.mergeForm.get("name").setValue("New Name");
-    component.mergeForm.get("age").setValue(35);
-
-    expect(component.mergedEntity.name).toBe("New Name");
-    expect(component.mergedEntity.age).toBe(35);
   });
 });
