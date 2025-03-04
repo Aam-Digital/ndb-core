@@ -22,7 +22,7 @@ jobs:
         if: always()
         with:
           name: playwright-videos
-          path: test-results/**/video.webm
+          path: playwright-report/**/video.webm
           retention-days: 30
       - name: Run Playwright tests
         run: npx playwright test
