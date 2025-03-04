@@ -324,7 +324,8 @@ export class ImportAdditionalService {
     if ((importAction as AdditonalDirectLinkAction).targetProperty) {
       label += ` (as ${targetType.schema.get((importAction as AdditonalDirectLinkAction).targetProperty).label})`;
     } else if (
-      (importAction as AdditionalIndirectLinkAction).relationshipEntityType
+      (importAction as AdditionalIndirectLinkAction).relationshipEntityType &&
+      relationshipType?.label
     ) {
       label += ` (through ${relationshipType?.toString(true)})`;
     }
