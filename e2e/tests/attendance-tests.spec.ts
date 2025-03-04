@@ -163,12 +163,12 @@ test.describe("Dashboard Page Tests", () => {
     const endDateLabel = formatDateLabel(endDate); // e.g., "January 22, 2025"
 
     // Click the start date
-    // await page.locator(`[aria-label="${startDateLabel}"]`).click();
+    await page.locator(`[aria-label="${startDateLabel}"]`).click();
 
-    // // Click the end date
-    // await page.locator(`[aria-label="${endDateLabel}"]`).click();
+    // Click the end date
+    await page.locator(`[aria-label="${endDateLabel}"]`).click();
 
-    // await page.getByRole("button", { name: "Calculate" }).click();
+    await page.getByRole("button", { name: "Calculate" }).click();
 
     // Verify the names , class , school , total , present , rate and late columns are visible
     await expect(
