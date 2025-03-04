@@ -47,7 +47,6 @@ export class ImportAdditionalService {
         this.linkableEntities.delete(entityTypeId);
       }
     }
-    console.log("Import Actions", this.linkableEntities);
   }
 
   private generateLinkActionsFor(sourceType: string): AdditionalImportAction[] {
@@ -298,7 +297,7 @@ export class ImportAdditionalService {
   }
 
   /**
-   *
+   * Create a human-readable label for the given import action.
    * @param importAction
    * @param forTargetType (Optional) If true, phrased for the context menu of the target type to import the source type and link back
    */

@@ -83,12 +83,7 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     if (changes.hasOwnProperty("entityType")) {
       this.availableImportActions = this.importAdditionalService
         .getActionsLinkingFor(this.entityType)
-        .sort((a, b) => {
-          // show "non-expert" actions first
-          if (a.expertOnly === b.expertOnly) return 0;
-          else if (a.expertOnly) return 1;
-          else return -1;
-        });
+        .sort(sortExportOnlyLast);
 
       this.linkEntityForm.reset();
       if (this.entityType) {
@@ -114,4 +109,14 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     this.importActions = this.importActions.filter((a) => a !== actionToRemove);
     this.importActionsChange.emit(this.importActions);
   }
+}
+
+function sortExportOnlyLast(
+  a: AdditionalImportAction,
+  b: AdditionalImportAction,
+) {
+  // show "non-expert" actions first
+  if (a.expertOnly === b.expertOnly) return 0;
+  else if (a.expertOnly) return 1;
+  else return -1;
 }
