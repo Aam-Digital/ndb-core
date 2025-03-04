@@ -20,7 +20,7 @@ async function setFixedDate(page, fixedDate) {
   }`);
 }
 
-test.describe("Dashboard Page Tests", () => {
+test.describe("Attendance Module", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running test case - ${testInfo.title}`);
 
