@@ -44,7 +44,7 @@ export class BulkMergeService {
     if (mergedEntity) {
       await this.entityMapper.save(mergedEntity);
 
-      await this.entityDeleteService.deleteEntity(entitiesToMerge[1]);
+      await this.entityMapper.remove(entitiesToMerge[1]);
       this.alert.addInfo($localize`Records merged successfully.`);
     }
   }
