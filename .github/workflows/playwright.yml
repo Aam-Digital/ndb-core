@@ -17,16 +17,26 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Upload playwright video
+
+      - name: Build Angular App (Optimize for CI)
+        run: npm run build --configuration=production
+
+      - name: Start Angular Server
+        run: nohup npx http-server dist/YOUR_PROJECT_NAME -p 4200 &
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - name: Upload Playwright Videos
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-videos
           path: playwright-report/**/video.webm
           retention-days: 30
-      - name: Run Playwright tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
