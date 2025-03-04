@@ -72,6 +72,10 @@ export class ImportComponent {
       if (params.has("entityType")) {
         this.entityType = params.get("entityType");
       }
+      if (params.has("additionalAction")) {
+        const action = JSON.parse(params.get("additionalAction"));
+        this.additionalImportActions = [action];
+      }
     });
   }
 
