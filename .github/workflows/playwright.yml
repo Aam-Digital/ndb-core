@@ -17,28 +17,16 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-
-      - name: Start  Server
-        run: npm run start
-
-      - name: Debug - Check Running Services
-        run: |
-          sleep 10  # Wait for server to start
-          curl -v http://localhost:4200 || true  # Check if the app is reachable
-
-      - name: Run Playwright tests
-        run: npx playwright test
-
-      - name: Upload Playwright Videos
+      - name: Upload playwright video
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-videos
           path: playwright-report/**/video.webm
           retention-days: 30
-
-      - name: Upload Playwright Report
-        uses: actions/upload-artifact@v4
+      - name: Run Playwright tests
+        run: npx playwright test
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
