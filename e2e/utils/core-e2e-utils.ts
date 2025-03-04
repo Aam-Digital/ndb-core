@@ -10,11 +10,11 @@ export async function startApp(page: Page) {
 
   // wait for initial demo data and indexing is done:
   // The sync popup should first appear and then disappear after a while when tasks are completed
-  const backgroundTasksDetailsElement = "#backgroundProcessingTasksDetails";
-  await page.waitForSelector(backgroundTasksDetailsElement);
-  //console.log("app is preparing (background tasks & indices running)");
-  await page.waitForSelector(backgroundTasksDetailsElement, {
-    state: "detached", // i.e. the element has been removed again
-  });
+  // const backgroundTasksDetailsElement = "#backgroundProcessingTasksDetails";
+  // await page.waitForSelector(backgroundTasksDetailsElement);
+  // //console.log("app is preparing (background tasks & indices running)");
+  // await page.waitForSelector(backgroundTasksDetailsElement, {
+  //   state: "detached", // i.e. the element has been removed again
+  // });
   //console.log("app ready (background tasks completed)");
 }
