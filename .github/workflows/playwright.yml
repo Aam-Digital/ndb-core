@@ -1,9 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [main, master, e2e_Tests]
+    branches: [ main, master, e2e_Tests ]
   pull_request:
-    branches: [main, master, e2e_Tests]
+    branches: [ main, master, e2e_Tests ]
 jobs:
   test:
     timeout-minutes: 60
@@ -17,13 +17,6 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-      - name: Upload playwright video
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-videos
-          path: playwright-report/**/video.webm
-          retention-days: 30
       - name: Run Playwright tests
         run: npx playwright test
       - uses: actions/upload-artifact@v4
