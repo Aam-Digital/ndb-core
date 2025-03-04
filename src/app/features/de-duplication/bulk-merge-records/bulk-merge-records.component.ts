@@ -1,11 +1,10 @@
-import { Component, EventEmitter, Inject, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
   MatDialogActions,
   MatDialogContent,
 } from "@angular/material/dialog";
-import { FormGroup, FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatRadioModule } from "@angular/material/radio";
 import { MatButtonModule } from "@angular/material/button";
@@ -14,7 +13,11 @@ import { EntityFieldViewComponent } from "app/core/common-components/entity-fiel
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import {
+  EntityForm,
+  EntityFormService,
+} from "app/core/common-components/entity-form/entity-form.service";
+import { ReactiveFormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -22,12 +25,12 @@ import { EntityFormService } from "app/core/common-components/entity-form/entity
   imports: [
     MatDialogActions,
     MatDialogContent,
-    ReactiveFormsModule,
     MatRadioModule,
     MatButtonModule,
     CommonModule,
     EntityFieldViewComponent,
     EntityFieldEditComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -37,7 +40,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entitiesToMerge: E[];
   mergedEntity: E;
   fieldsToMerge: FormFieldConfig[] = [];
-  mergeForm: FormGroup;
+  mergeForm: EntityForm<E>;
   selectedValues: Record<string, string[]> = {};
 
   constructor(
@@ -47,22 +50,23 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       entitiesToMerge: E[];
     },
     private dialogRef: MatDialogRef<BulkMergeRecordsComponent<E>>,
-    private fb: FormBuilder,
     private confirmationDialog: ConfirmationDialogService,
     private entityFormService: EntityFormService,
   ) {
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
     this.mergedEntity = new this.entityConstructor() as E;
-    this.mergeForm = this.fb.group({});
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.initializeMergeForm();
-    this.mergeForm.valueChanges.subscribe((values) => {
-      Object.entries(values).forEach(([key, value]) => {
-        this.mergedEntity[key] = value;
-      });
+    this.mergeForm = await this.entityFormService.createEntityForm(
+      this.fieldsToMerge,
+      this.mergedEntity,
+    );
+
+    this.mergeForm.formGroup.valueChanges.subscribe((values) => {
+      Object.assign(this.mergedEntity, values);
     });
   }
 
@@ -75,7 +79,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
             this.entityConstructor,
           );
         this.fieldsToMerge.push(formField);
-        this.mergeForm.addControl(key, this.fb.control(null));
       } else {
         this.mergedEntity[key] = this.entitiesToMerge[0][key];
       }
@@ -96,12 +99,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       index === -1
         ? this.selectedValues[fieldKey].push(selectedValue)
         : this.selectedValues[fieldKey].splice(index, 1);
-      this.mergeForm
+      this.mergeForm.formGroup
         .get(fieldKey)
-        ?.setValue(this.selectedValues[fieldKey].join(", "));
+        ?.patchValue(this.selectedValues[fieldKey] as any);
     } else {
       this.selectedValues[fieldKey] = [selectedValue];
-      this.mergeForm.get(fieldKey)?.setValue(selectedValue);
+      this.mergeForm.formGroup.get(fieldKey)?.patchValue(selectedValue);
     }
   }
 
@@ -112,7 +115,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   async confirmMerge(): Promise<boolean> {
-    Object.assign(this.mergedEntity, this.mergeForm.value);
+    this.mergeForm.formGroup.markAllAsTouched();
+    if (this.mergeForm.formGroup.invalid) return;
+
+    Object.assign(this.mergedEntity, this.mergeForm.formGroup.value);
     if (
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Merge confirmation title: Are you sure you want to Merge this?`,

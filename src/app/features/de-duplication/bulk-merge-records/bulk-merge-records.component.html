@@ -1,5 +1,5 @@
 <mat-dialog-content>
-  <form [formGroup]="mergeForm">
+  <form>
     <div class="merge-grid">
       <div class="header" i18n>Labels</div>
       <div class="header" i18n>Record A</div>
@@ -46,6 +46,7 @@
           <app-entity-field-edit
             [field]="field"
             [entity]="mergedEntity"
+            [form]="mergeForm"
             [compactMode]="true"
           >
           </app-entity-field-edit>
@@ -57,13 +58,7 @@
 
 <mat-dialog-actions>
   <button mat-raised-button (click)="cancelMerge()" i18n>Cancel</button>
-  <button
-    mat-raised-button
-    color="accent"
-    (click)="confirmMerge()"
-    [disabled]="mergeForm.invalid"
-    i18n
-  >
+  <button mat-raised-button color="accent" (click)="confirmMerge()" i18n>
     Merge
   </button>
 </mat-dialog-actions>

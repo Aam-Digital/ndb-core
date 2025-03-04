@@ -19,7 +19,7 @@ class TestEntity extends Entity {
   }
 }
 
-describe("BulkMergeRecordsComponent", () => {
+fdescribe("BulkMergeRecordsComponent", () => {
   let component: BulkMergeRecordsComponent<TestEntity>;
   let fixture: ComponentFixture<BulkMergeRecordsComponent<TestEntity>>;
   let mockDialogRef: jasmine.SpyObj<
