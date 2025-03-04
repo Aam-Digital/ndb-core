@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
-import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
-import { Entity, EntityConstructor } from "../model/entity";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
-import { BulkMergeRecordsComponent } from "app/core/entity-list/bulk-merge-records/bulk-merge-records.component";
+import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
-import { EntityDeleteService } from "./entity-delete.service";
+import { EntityDeleteService } from "app/core/entity/entity-actions/entity-delete.service";
 
 @Injectable({
   providedIn: "root",
 })
-export class EntityMergeService {
+export class BulkMergeService {
   constructor(
     private entityMapper: EntityMapperService,
     private matDialog: MatDialog,
