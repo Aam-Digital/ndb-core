@@ -66,7 +66,7 @@ export class EntityActionsMenuComponent implements OnChanges {
 
   private filterAvailableActions() {
     this.actions = this.entityActionsMenuService
-      .getActions()
+      .getActions(this.entity)
       .filter((action) => {
         if (!this.entity) {
           return false;

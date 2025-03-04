@@ -43,7 +43,15 @@ describe("ImportComponent", () => {
     component.entityType = "Child";
     component.rawData = [{ test: "data" }];
     component.columnMapping = [{ column: "test", propertyName: "name" }];
-    component.additionalImportActions = [{ type: "x", id: "y" }];
+    component.additionalImportActions = [
+      {
+        targetType: "x",
+        targetProperty: "xx",
+        targetId: "y",
+        sourceType: "Child",
+        mode: "direct",
+      },
+    ];
 
     component.stepper.next();
     await component.onImportCompleted();
