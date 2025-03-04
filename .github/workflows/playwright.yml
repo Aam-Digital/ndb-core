@@ -19,7 +19,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Start  Server
-        run: npm run start -- --host
+        run: npm run start
 
       - name: Debug - Check Running Services
         run: |
