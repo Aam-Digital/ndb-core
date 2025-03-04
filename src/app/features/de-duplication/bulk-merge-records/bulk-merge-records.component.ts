@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, EventEmitter, Inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -12,6 +12,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -24,6 +27,7 @@ import { ConfirmationDialogService } from "app/core/common-components/confirmati
     MatButtonModule,
     CommonModule,
     EntityFieldViewComponent,
+    EntityFieldEditComponent,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -32,7 +36,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  fieldsToMerge: { key: string; label: string; dataType: string }[] = [];
+  fieldsToMerge: FormFieldConfig[] = [];
   mergeForm: FormGroup;
   selectedValues: Record<string, string[]> = {};
 
@@ -45,6 +49,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     private dialogRef: MatDialogRef<BulkMergeRecordsComponent<E>>,
     private fb: FormBuilder,
     private confirmationDialog: ConfirmationDialogService,
+    private entityFormService: EntityFormService,
   ) {
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
@@ -61,39 +66,30 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     });
   }
 
-  /**
-   * Initialize the merge form with the fields to merge
-   * and the values of the first record.
-   * Hidden fields are initialized with the values of the first record. They are not shown in the form.
-   */
   private initializeMergeForm(): void {
     this.entityConstructor.schema.forEach((field, key) => {
       if (field.label) {
-        this.fieldsToMerge.push({
-          key,
-          label: field.label,
-          dataType: field.dataType,
-        });
+        const formField: FormFieldConfig =
+          this.entityFormService.extendFormFieldConfig(
+            { id: key },
+            this.entityConstructor,
+          );
+        this.fieldsToMerge.push(formField);
         this.mergeForm.addControl(key, this.fb.control(null));
       } else {
-        // Initialize hidden fields with values from the first record(to be megerd on existing entity _id)
         this.mergedEntity[key] = this.entitiesToMerge[0][key];
       }
     });
   }
 
-  trackByFn(index: number, field: { key: string }): string {
-    return field.key;
+  trackByFn(index: number, field: FormFieldConfig): string {
+    return field.id;
   }
 
-  /**
-   * Selects a value from one of the records for merging.
-   */
   selectMergeValue(fieldKey: string, entityIndex: 0 | 1): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const isStringType =
-      this.fieldsToMerge.find((f) => f.key === fieldKey)?.dataType === "string";
-
+      this.fieldsToMerge.find((f) => f.id === fieldKey)?.dataType === "string";
     if (isStringType) {
       this.selectedValues[fieldKey] ??= [];
       const index = this.selectedValues[fieldKey].indexOf(selectedValue);
@@ -109,9 +105,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     }
   }
 
-  /**
-   * Checks if a value is selected for merging.
-   */
   isSelected(fieldKey: string, entityIndex: 0 | 1): boolean {
     return this.selectedValues[fieldKey]?.includes(
       this.entitiesToMerge[entityIndex][fieldKey],

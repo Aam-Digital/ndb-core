@@ -14,12 +14,12 @@
         <div class="record-cell">
           <mat-radio-group>
             <mat-radio-button
-              [value]="entitiesToMerge[0][field.key]"
-              (click)="selectMergeValue(field.key, 0)"
-              [checked]="isSelected(field.key, 0)"
+              [value]="entitiesToMerge[0][field.id]"
+              (click)="selectMergeValue(field.id, 0)"
+              [checked]="isSelected(field.id, 0)"
             >
               <app-entity-field-view
-                [field]="field.key"
+                [field]="field"
                 [entity]="entitiesToMerge[0]"
               ></app-entity-field-view>
             </mat-radio-button>
@@ -29,12 +29,12 @@
         <div class="record-cell">
           <mat-radio-group>
             <mat-radio-button
-              [value]="entitiesToMerge[1][field.key]"
-              (click)="selectMergeValue(field.key, 1)"
-              [checked]="isSelected(field.key, 1)"
+              [value]="entitiesToMerge[1][field.id]"
+              (click)="selectMergeValue(field.id, 1)"
+              [checked]="isSelected(field.id, 1)"
             >
               <app-entity-field-view
-                [field]="field.key"
+                [field]="field"
                 [entity]="entitiesToMerge[1]"
               ></app-entity-field-view>
             </mat-radio-button>
@@ -43,16 +43,12 @@
 
         <!-- Merge Preview -->
         <div class="preview-cell">
-          <ng-container *ngIf="mergedEntity[field.key]; else noSelection">
-            <app-entity-field-view
-              [field]="field.key"
-              [entity]="mergedEntity"
-              showLabel="none"
-            ></app-entity-field-view>
-          </ng-container>
-          <ng-template #noSelection>
-            <span class="no-selection">No Selection</span>
-          </ng-template>
+          <app-entity-field-edit
+            [field]="field"
+            [entity]="mergedEntity"
+            [compactMode]="true"
+          >
+          </app-entity-field-edit>
         </div>
       </ng-container>
     </div>
