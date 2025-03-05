@@ -15,8 +15,8 @@
           <mat-radio-group>
             <mat-radio-button
               [value]="entitiesToMerge[0][field.id]"
-              (click)="selectMergeValue(field.id, 0)"
-              [checked]="isSelected(field.id, 0)"
+              (click)="handleFieldSelection(field.id, 0)"
+              [checked]="isFieldSelected(field.id, 0)"
             >
               <app-entity-field-view
                 [field]="field"
@@ -30,8 +30,8 @@
           <mat-radio-group>
             <mat-radio-button
               [value]="entitiesToMerge[1][field.id]"
-              (click)="selectMergeValue(field.id, 1)"
-              [checked]="isSelected(field.id, 1)"
+              (click)="handleFieldSelection(field.id, 1)"
+              [checked]="isFieldSelected(field.id, 1)"
             >
               <app-entity-field-view
                 [field]="field"
@@ -56,8 +56,13 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-raised-button (click)="cancelMerge()" i18n>Cancel</button>
-  <button mat-raised-button color="accent" (click)="confirmMerge()" i18n>
+  <button mat-raised-button (click)="closeMergeDialog()" i18n>Cancel</button>
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="confirmAndMergeRecords()"
+    i18n
+  >
     Merge
   </button>
 </mat-dialog-actions>

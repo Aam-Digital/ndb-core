@@ -89,16 +89,24 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     return field.id;
   }
 
-  selectMergeValue(fieldKey: string, entityIndex: 0 | 1): void {
+  handleFieldSelection(fieldKey: string, entityIndex: 0 | 1): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
-    const isStringType =
-      this.fieldsToMerge.find((f) => f.id === fieldKey)?.dataType === "string";
-    if (isStringType) {
+    const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
+
+    if (
+      fieldConfig?.dataType === "string" ||
+      fieldConfig?.dataType === "entity"
+    ) {
       this.selectedValues[fieldKey] ??= [];
-      const index = this.selectedValues[fieldKey].indexOf(selectedValue);
-      index === -1
-        ? this.selectedValues[fieldKey].push(selectedValue)
-        : this.selectedValues[fieldKey].splice(index, 1);
+      this.selectedValues[fieldKey] = this.toggleSelection(
+        this.selectedValues[fieldKey],
+        selectedValue,
+      );
+
+      if (fieldConfig?.dataType === "entity") {
+        this.selectedValues[fieldKey] = this.selectedValues[fieldKey].flat();
+      }
+
       this.mergeForm.formGroup
         .get(fieldKey)
         ?.patchValue(this.selectedValues[fieldKey] as any);
@@ -108,16 +116,20 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     }
   }
 
-  isSelected(fieldKey: string, entityIndex: 0 | 1): boolean {
+  private toggleSelection(arr: any[], value: string): any[] {
+    const index = arr.indexOf(value);
+    return index === -1 ? [...arr, value] : arr.filter((_, i) => i !== index);
+  }
+
+  isFieldSelected(fieldKey: string, entityIndex: 0 | 1): boolean {
     return this.selectedValues[fieldKey]?.includes(
       this.entitiesToMerge[entityIndex][fieldKey],
     );
   }
 
-  async confirmMerge(): Promise<boolean> {
+  async confirmAndMergeRecords(): Promise<boolean> {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return;
-
     Object.assign(this.mergedEntity, this.mergeForm.formGroup.value);
     if (
       !(await this.confirmationDialog.getConfirmation(
@@ -130,7 +142,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.dialogRef.close(this.mergedEntity);
   }
 
-  cancelMerge(): void {
+  closeMergeDialog(): void {
     this.dialogRef.close();
   }
 }
