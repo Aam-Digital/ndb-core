@@ -44,7 +44,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   fieldsToMerge: FormFieldConfig[] = [];
   mergeForm: EntityForm<E>;
   selectedValues: Record<string, string[]> = {};
-
+  hasFileOrPhoto: boolean = false;
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
@@ -75,6 +75,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       );
       const isFileField =
         field.dataType === "photo" || field.dataType === "file";
+
+      if (isFileField && this.entitiesToMerge[1][key] != null) {
+        this.hasFileOrPhoto = true;
+      }
 
       if (field.label && hasValue && !isFileField) {
         const formField: FormFieldConfig =
@@ -133,12 +137,20 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
   async confirmAndMergeRecords(): Promise<boolean> {
     this.mergeForm.formGroup.markAllAsTouched();
-    if (this.mergeForm.formGroup.invalid) return;
+    if (this.mergeForm.formGroup.invalid) return false;
+
     Object.assign(this.mergedEntity, this.mergeForm.formGroup.value);
+
+    let confirmationMessage = $localize`:Merge confirmation dialog: Merging of two records will permanently delete the data that is not merged. This action cannot be undone \n(Once the two records are merged, there will be only one record available in the system)`;
+
+    if (this.hasFileOrPhoto) {
+      confirmationMessage = $localize`:Merge confirmation dialog with files/photos: ${confirmationMessage} \n 'Record B contains files/photos. The merged record will be updated with the file/photos from the first record. Please take a moment to review the merged record.'`;
+    }
+
     if (
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Merge confirmation title: Are you sure you want to merge this?`,
-        $localize`:Merge confirmation dialog: Merging of two records will permanently delete the data that is not merged. This action cannot be undone \n(Once the two records are merged, there will be only one record available in the system)`,
+        confirmationMessage,
       ))
     ) {
       return false;
