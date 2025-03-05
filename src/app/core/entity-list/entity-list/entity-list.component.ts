@@ -354,7 +354,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   async mergeRecords() {
-    await this.bulkMergeService.merge(
+    await this.bulkMergeService.showMergeDialog(
       this.selectedRows,
       this.entityConstructor,
     );
