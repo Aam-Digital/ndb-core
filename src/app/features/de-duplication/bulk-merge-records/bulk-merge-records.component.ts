@@ -77,8 +77,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       const hasValue = this.entitiesToMerge.some(
         (entity) => entity[key] !== undefined && entity[key] !== null,
       );
+      const isFileField =
+        field.dataType === "photo" || field.dataType === "file";
 
-      if (field.label && hasValue) {
+      if (field.label && hasValue && !isFileField) {
         const formField: FormFieldConfig =
           this.entityFormService.extendFormFieldConfig(
             { id: key },
