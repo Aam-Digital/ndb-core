@@ -24,7 +24,7 @@ export class BulkMergeService {
    * @param entitiesToMerge The entities to merge.
    * @param entityType The type of the entities.
    */
-  async merge<E extends Entity>(
+  async showMergeDialog<E extends Entity>(
     entitiesToMerge: E[],
     entityType: EntityConstructor,
   ): Promise<void> {
