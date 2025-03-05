@@ -66,10 +66,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.fieldsToMerge,
       this.mergedEntity,
     );
-
-    this.mergeForm.formGroup.valueChanges.subscribe((values) => {
-      Object.assign(this.mergedEntity, values);
-    });
   }
 
   private initializeMergeForm(): void {
