@@ -107,6 +107,15 @@ export class Entity {
   private static _labelPlural: string;
 
   /**
+   * Returns a human-readable string representation of the entity *type*
+   * (not the individual record).
+   */
+  static toString(plural: boolean = false): string {
+    const result = plural ? this.labelPlural : this.label;
+    return result ?? this.ENTITY_TYPE;
+  }
+
+  /**
    * icon id used for this entity
    */
   static icon: IconName;

@@ -12,7 +12,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { CommonModule, NgForOf, NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
-import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
 import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
 import { UntilDestroy } from "@ngneat/until-destroy";
@@ -47,7 +46,6 @@ import { ViewActionsComponent } from "../../common-components/view-actions/view-
     NgForOf,
     ViewTitleComponent,
     DynamicComponentDirective,
-    DisableEntityOperationDirective,
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
     RouterLink,

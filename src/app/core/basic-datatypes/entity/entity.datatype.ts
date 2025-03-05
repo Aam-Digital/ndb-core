@@ -21,6 +21,8 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { Logging } from "app/core/logging/logging.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -98,6 +100,37 @@ export class EntityDatatype extends StringDatatype {
 
     await this.removeService.anonymize(referencedEntity);
     return value;
+  }
+
+  /**
+   * Find all entity schema fields from any entity type that reference the given entity type.
+   * @param searchedEntityType The entity type to search for references to.
+   * @param entityRegistry
+   * @returns A map of all other entity types with their fields that reference the given entity type.
+   */
+  static findFieldsReferencingEntityType(
+    searchedEntityType: string,
+    entityRegistry: EntityRegistry,
+  ): {
+    [entityType: string]: FormFieldConfig[];
+  } {
+    const references: { [entityType: string]: FormFieldConfig[] } = {};
+
+    for (const [refEntityTypeId, refEntityType] of entityRegistry.entries()) {
+      for (const [fieldName, field] of refEntityType.schema) {
+        if (
+          field.dataType === EntityDatatype.dataType &&
+          field.additional === searchedEntityType
+        ) {
+          if (!references[refEntityTypeId]) {
+            references[refEntityTypeId] = [];
+          }
+          references[refEntityTypeId].push({ ...field, id: fieldName });
+        }
+      }
+    }
+
+    return references;
   }
 }
 
