@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 
 @NgModule({})
-export class BulkMergeModule {
+export class DeDuplicationModule {
   constructor(components: ComponentRegistry) {
     components.addAll(dynamicComponents);
   }
