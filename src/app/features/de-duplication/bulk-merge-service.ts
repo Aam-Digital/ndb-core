@@ -19,7 +19,7 @@ export class BulkMergeService {
   ) {}
 
   /**
-   * Opens the merge popup and merges the selected entities.
+   * Opens the merge popup with the selected entities details.
    *
    * @param entitiesToMerge The entities to merge.
    * @param entityType The type of the entities.
@@ -28,13 +28,6 @@ export class BulkMergeService {
     entitiesToMerge: E[],
     entityType: EntityConstructor,
   ): Promise<void> {
-    if (entitiesToMerge.length !== 2) {
-      this.alert.addWarning(
-        $localize`You can only select 2 rows for merging right now.`,
-      );
-      return;
-    }
-
     const dialogRef = this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: "90vh",
       data: { entityConstructor: entityType, entitiesToMerge: entitiesToMerge },
@@ -42,11 +35,25 @@ export class BulkMergeService {
     const mergedEntity: E = await lastValueFrom(dialogRef.afterClosed());
 
     if (mergedEntity) {
-      await this.entityMapper.save(mergedEntity);
-
-      await this.entityMapper.remove(entitiesToMerge[1]);
-      this.unsavedChangesService.pending = false;
-      this.alert.addInfo($localize`Records merged successfully.`);
+      await this.executeMerge(mergedEntity, entitiesToMerge);
     }
+  }
+
+  /**
+   * Merges the selected entities into a single entity.
+   * deletes the other entities.
+   *
+   * @param mergedEntity The merged entity.
+   * @param entitiesToMerge
+   */
+  private async executeMerge<E extends Entity>(
+    mergedEntity: E,
+    entitiesToMerge: E[],
+  ): Promise<void> {
+    await this.entityMapper.save(mergedEntity);
+    await this.entityMapper.remove(entitiesToMerge[1]);
+
+    this.unsavedChangesService.pending = false;
+    this.alert.addInfo($localize`Records merged successfully.`);
   }
 }

@@ -317,7 +317,7 @@
       <button
         mat-raised-button
         (click)="mergeRecords()"
-        [disabled]="selectedRows.length === 0"
+        [disabled]="selectedRows.length !== 2"
         color="accent"
         i18n="bulk action button"
       >

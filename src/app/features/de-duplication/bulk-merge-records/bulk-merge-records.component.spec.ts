@@ -4,20 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FormBuilder } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
-import { Entity } from "app/core/entity/model/entity";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
-
-class TestEntity extends Entity {
-  static override schema = new Map<string, EntitySchemaField>([
-    ["name", { label: "Name", dataType: "string" }],
-    ["age", { label: "Age", dataType: "number" }],
-  ]);
-
-  constructor() {
-    super();
-  }
-}
+import { TestEntity } from "app/utils/test-utils/TestEntity";
 
 describe("BulkMergeRecordsComponent", () => {
   let component: BulkMergeRecordsComponent<TestEntity>;
@@ -27,9 +15,9 @@ describe("BulkMergeRecordsComponent", () => {
   >;
   let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
 
-  const testEntity1 = new TestEntity();
+  const mergeTestEntity1 = new TestEntity();
 
-  const testEntity2 = new TestEntity();
+  const mergeTestEntity2 = new TestEntity();
 
   beforeEach(async () => {
     mockDialogRef = jasmine.createSpyObj(["close"]);
@@ -50,7 +38,7 @@ describe("BulkMergeRecordsComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: {
             entityConstructor: TestEntity,
-            entitiesToMerge: [testEntity1, testEntity2],
+            entitiesToMerge: [mergeTestEntity1, mergeTestEntity2],
           },
         },
         { provide: EntityFormService, useValue: mockEntityFormService },

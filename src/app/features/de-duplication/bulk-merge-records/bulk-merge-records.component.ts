@@ -93,10 +93,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     });
   }
 
-  trackByFn(index: number, field: FormFieldConfig): string {
-    return field.id;
-  }
-
   handleFieldSelection(fieldKey: string, entityIndex: 0 | 1): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);

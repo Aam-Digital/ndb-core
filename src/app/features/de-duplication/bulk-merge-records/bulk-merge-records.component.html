@@ -6,7 +6,7 @@
       <div class="header" i18n>Record B</div>
       <div class="header" i18n>Merge Preview</div>
 
-      <ng-container *ngFor="let field of fieldsToMerge; trackBy: trackByFn">
+      @for (field of fieldsToMerge; track field.id) {
         <div class="label-cell">
           <strong>{{ field.label }}</strong>
         </div>
@@ -47,10 +47,9 @@
             [field]="field"
             [entity]="mergedEntity"
             [form]="mergeForm"
-          >
-          </app-entity-field-edit>
+          ></app-entity-field-edit>
         </div>
-      </ng-container>
+      }
     </div>
   </form>
 </mat-dialog-content>
