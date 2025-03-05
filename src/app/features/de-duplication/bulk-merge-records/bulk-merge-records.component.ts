@@ -18,6 +18,7 @@ import {
   EntityFormService,
 } from "app/core/common-components/entity-form/entity-form.service";
 import { ReactiveFormsModule } from "@angular/forms";
+import { MatError } from "@angular/material/form-field";
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -31,6 +32,7 @@ import { ReactiveFormsModule } from "@angular/forms";
     EntityFieldViewComponent,
     EntityFieldEditComponent,
     ReactiveFormsModule,
+    MatError,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -72,7 +74,11 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
   private initializeMergeForm(): void {
     this.entityConstructor.schema.forEach((field, key) => {
-      if (field.label) {
+      const hasValue = this.entitiesToMerge.some(
+        (entity) => entity[key] !== undefined && entity[key] !== null,
+      );
+
+      if (field.label && hasValue) {
         const formField: FormFieldConfig =
           this.entityFormService.extendFormFieldConfig(
             { id: key },
