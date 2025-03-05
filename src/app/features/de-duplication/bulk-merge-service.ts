@@ -5,7 +5,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
 import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
-import { EntityDeleteService } from "app/core/entity/entity-actions/entity-delete.service";
+import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 
 @Injectable({
   providedIn: "root",
@@ -15,7 +15,7 @@ export class BulkMergeService {
     private entityMapper: EntityMapperService,
     private matDialog: MatDialog,
     private alert: AlertService,
-    private entityDeleteService: EntityDeleteService,
+    private unsavedChangesService: UnsavedChangesService,
   ) {}
 
   /**
@@ -45,6 +45,7 @@ export class BulkMergeService {
       await this.entityMapper.save(mergedEntity);
 
       await this.entityMapper.remove(entitiesToMerge[1]);
+      this.unsavedChangesService.pending = false;
       this.alert.addInfo($localize`Records merged successfully.`);
     }
   }
