@@ -22,6 +22,8 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 
+type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
+
 @Component({
   selector: "app-bulk-merge-records",
   standalone: true,
@@ -45,10 +47,17 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  fieldsToMerge: (FormFieldConfig & { allowsMultiValueMerge: boolean })[] = [];
+  fieldsToMerge: MergeField[] = [];
   mergeForm: EntityForm<E>;
+
+  /**
+   * holds for each fieldId an array of selected values from existing entities,
+   * used to show radio buttons in the UI
+   */
   selectedValues: Record<string, string[]> = {};
-  hasFileOrPhoto: boolean = false;
+
+  /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
+  hasDiscardedFileOrPhoto: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -66,14 +75,14 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.initializeMergeForm();
+    this.initFieldsToMerge();
     this.mergeForm = await this.entityFormService.createEntityForm(
       this.fieldsToMerge,
       this.mergedEntity,
     );
   }
 
-  private initializeMergeForm(): void {
+  private initFieldsToMerge(): void {
     this.entityConstructor.schema.forEach((field, key) => {
       const hasValue = this.entitiesToMerge.some(
         (entity) => entity[key] !== undefined && entity[key] !== null,
@@ -82,7 +91,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         field.dataType === "photo" || field.dataType === "file";
 
       if (isFileField && this.entitiesToMerge[1][key] != null) {
-        this.hasFileOrPhoto = true;
+        this.hasDiscardedFileOrPhoto = true;
       }
 
       if (field.label && hasValue && !isFileField) {
@@ -102,24 +111,22 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   handleFieldSelection(fieldKey: string, entityIndex: number): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
-    const isCheckbox = fieldConfig.allowsMultiValueMerge;
 
-    this.selectedValues[fieldKey] = isCheckbox
+    this.selectedValues[fieldKey] = fieldConfig.allowsMultiValueMerge
       ? this.toggleSelection(this.selectedValues[fieldKey] ?? [], selectedValue)
       : [selectedValue];
 
-    this.updateMergeFormField(fieldKey, fieldConfig, isCheckbox);
+    this.updateMergeFormField(fieldKey, fieldConfig);
   }
 
   private updateMergeFormField(
     fieldKey: string,
-    fieldConfig: FormFieldConfig,
-    isCheckbox: boolean,
+    fieldConfig: MergeField,
   ): void {
     const control = this.mergeForm.formGroup.get(fieldKey);
     if (!control) return;
 
-    const value = isCheckbox
+    const value = fieldConfig.allowsMultiValueMerge
       ? this.getCheckboxValue(fieldKey, fieldConfig)
       : this.selectedValues[fieldKey][0];
 
@@ -155,7 +162,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return false;
 
-    if (this.hasFileOrPhoto) {
+    if (this.hasDiscardedFileOrPhoto) {
       const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(
         $localize`:Merge confirmation title:Warning! Some file attachments will be lost`,
         $localize`:Merge confirmation dialog with files/photos:"Record B" contains files or images. Merging currently does not support attachments yet. The merged record will only have the attachments from "record A". Files from "record B" will be lost!\nAre you sure you want to continue?`,
