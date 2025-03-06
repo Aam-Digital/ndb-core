@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
+  MatDialogClose,
   MatDialogContent,
   MatDialogRef,
 } from "@angular/material/dialog";
@@ -35,6 +36,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
     EntityFieldEditComponent,
     ReactiveFormsModule,
     MatError,
+    MatDialogClose,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -152,9 +154,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   async confirmAndMergeRecords(): Promise<boolean> {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return false;
-    this.mergedEntity = this.entitiesToMerge[0].copy();
-
-    Object.assign(this.mergedEntity, this.mergeForm.formGroup.value);
 
     if (this.hasFileOrPhoto) {
       const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(
@@ -175,10 +174,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     ) {
       return false;
     }
-    this.dialogRef.close(this.mergedEntity);
-  }
 
-  closeMergeDialog(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(
+      Object.assign(
+        this.entitiesToMerge[0].copy(),
+        this.mergeForm.formGroup.value,
+      ),
+    );
   }
 }
