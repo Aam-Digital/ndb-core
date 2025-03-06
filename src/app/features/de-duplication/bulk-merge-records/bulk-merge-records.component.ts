@@ -131,6 +131,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       ? arr.filter((v) => v !== value)
       : [...arr, value];
   }
+
   isCheckboxField(field?: FormFieldConfig): boolean {
     return (
       field?.dataType === "string" ||
