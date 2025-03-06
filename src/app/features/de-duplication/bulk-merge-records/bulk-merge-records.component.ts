@@ -45,6 +45,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   mergeForm: EntityForm<E>;
   selectedValues: Record<string, string[]> = {};
   hasFileOrPhoto: boolean = false;
+
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
@@ -57,7 +58,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   ) {
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
-    this.mergedEntity = new this.entityConstructor() as E;
+    this.mergedEntity = data.entitiesToMerge[0].copy();
   }
 
   async ngOnInit(): Promise<void> {
@@ -88,8 +89,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
             this.entityConstructor,
           );
         this.fieldsToMerge.push(formField);
-      } else {
-        this.mergedEntity[key] = this.entitiesToMerge[0][key];
       }
     });
   }
@@ -116,7 +115,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     } else {
       this.selectedValues[fieldKey] = [selectedValue];
     }
-
     this.mergeForm.formGroup
       .get(fieldKey)
       ?.patchValue(

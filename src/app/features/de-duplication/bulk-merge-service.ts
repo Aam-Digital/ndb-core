@@ -36,6 +36,9 @@ export class BulkMergeService {
 
     if (mergedEntity) {
       await this.executeMerge(mergedEntity, entitiesToMerge);
+
+      this.unsavedChangesService.pending = false;
+      this.alert.addInfo($localize`Records merged successfully.`);
     }
   }
 
@@ -46,14 +49,16 @@ export class BulkMergeService {
    * @param mergedEntity The merged entity.
    * @param entitiesToMerge
    */
-  private async executeMerge<E extends Entity>(
+  async executeMerge<E extends Entity>(
     mergedEntity: E,
     entitiesToMerge: E[],
   ): Promise<void> {
     await this.entityMapper.save(mergedEntity);
-    await this.entityMapper.remove(entitiesToMerge[1]);
 
-    this.unsavedChangesService.pending = false;
-    this.alert.addInfo($localize`Records merged successfully.`);
+    for (let e of entitiesToMerge) {
+      if (e.getId() === mergedEntity.getId()) continue;
+
+      await this.entityMapper.remove(e);
+    }
   }
 }
