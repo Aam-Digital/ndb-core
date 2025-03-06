@@ -11,59 +11,38 @@
           <strong>{{ field.label }}</strong>
         </div>
 
-        <div class="record-cell">
-          @if (isCheckboxField(field)) {
-            <mat-checkbox
-              [checked]="isFieldSelected(field.id, 0)"
-              (change)="handleFieldSelection(field.id, 0)"
-            >
-              <app-entity-field-view
-                [field]="field"
-                [entity]="entitiesToMerge[0]"
-              ></app-entity-field-view>
-            </mat-checkbox>
-          } @else {
-            <mat-radio-group>
-              <mat-radio-button
-                [value]="entitiesToMerge[0][field.id]"
-                (click)="handleFieldSelection(field.id, 0)"
-                [checked]="isFieldSelected(field.id, 0)"
+        @for (
+          entityToMerge of entitiesToMerge;
+          track entitiesToMerge;
+          let i = $index
+        ) {
+          <div class="record-cell">
+            @if (isCheckboxField(field)) {
+              <mat-checkbox
+                [checked]="isFieldSelected(field.id, i)"
+                (change)="handleFieldSelection(field.id, i)"
               >
                 <app-entity-field-view
                   [field]="field"
-                  [entity]="entitiesToMerge[0]"
+                  [entity]="entityToMerge"
                 ></app-entity-field-view>
-              </mat-radio-button>
-            </mat-radio-group>
-          }
-        </div>
-
-        <div class="record-cell">
-          @if (isCheckboxField(field)) {
-            <mat-checkbox
-              [checked]="isFieldSelected(field.id, 1)"
-              (change)="handleFieldSelection(field.id, 1)"
-            >
-              <app-entity-field-view
-                [field]="field"
-                [entity]="entitiesToMerge[1]"
-              ></app-entity-field-view>
-            </mat-checkbox>
-          } @else {
-            <mat-radio-group>
-              <mat-radio-button
-                [value]="entitiesToMerge[1][field.id]"
-                (click)="handleFieldSelection(field.id, 1)"
-                [checked]="isFieldSelected(field.id, 1)"
-              >
-                <app-entity-field-view
-                  [field]="field"
-                  [entity]="entitiesToMerge[1]"
-                ></app-entity-field-view>
-              </mat-radio-button>
-            </mat-radio-group>
-          }
-        </div>
+              </mat-checkbox>
+            } @else {
+              <mat-radio-group>
+                <mat-radio-button
+                  [value]="entityToMerge[field.id]"
+                  (click)="handleFieldSelection(field.id, i)"
+                  [checked]="isFieldSelected(field.id, i)"
+                >
+                  <app-entity-field-view
+                    [field]="field"
+                    [entity]="entityToMerge"
+                  ></app-entity-field-view>
+                </mat-radio-button>
+              </mat-radio-group>
+            }
+          </div>
+        }
 
         <!-- Merge Preview -->
         <div class="preview-cell">

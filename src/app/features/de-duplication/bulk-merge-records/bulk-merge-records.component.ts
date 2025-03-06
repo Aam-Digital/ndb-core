@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
-  MatDialogRef,
   MatDialogActions,
   MatDialogContent,
+  MatDialogRef,
 } from "@angular/material/dialog";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatRadioModule } from "@angular/material/radio";
@@ -94,7 +94,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     });
   }
 
-  handleFieldSelection(fieldKey: string, entityIndex: 0 | 1): void {
+  handleFieldSelection(fieldKey: string, entityIndex: number): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
     const isCheckbox = this.isCheckboxField(fieldConfig);
@@ -140,7 +140,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     );
   }
 
-  isFieldSelected(fieldKey: string, entityIndex: 0 | 1): boolean {
+  isFieldSelected(fieldKey: string, entityIndex: number): boolean {
     return this.selectedValues[fieldKey]?.includes(
       this.entitiesToMerge[entityIndex][fieldKey],
     );
