@@ -73,7 +73,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       const hasValue = this.entitiesToMerge.some(
         (entity) => entity[key] !== undefined && entity[key] !== null,
       );
-      // console.log(field, key);
+      console.log(field, key);
       const isFileField =
         field.dataType === "photo" || field.dataType === "file";
 
@@ -97,31 +97,39 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   handleFieldSelection(fieldKey: string, entityIndex: 0 | 1): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
-    const formControl = this.mergeForm.formGroup.get(fieldKey);
+    const isStringOrLongText = ["string", "long-text"].includes(
+      fieldConfig?.dataType,
+    );
 
-    if (["string", "long-text"].includes(fieldConfig.dataType)) {
-      this.selectedValues[fieldKey] = this.selectedValues[fieldKey]
-        ? `${this.selectedValues[fieldKey]}, ${selectedValue}`
-        : selectedValue;
-      formControl?.patchValue(this.selectedValues[fieldKey] as any);
-    } else if (fieldConfig.isArray) {
-      this.selectedValues[fieldKey] ??= [];
+    if (isStringOrLongText || fieldConfig?.isArray) {
+      this.selectedValues[fieldKey] = this.selectedValues[fieldKey] ?? [];
       this.selectedValues[fieldKey] = this.toggleSelection(
         this.selectedValues[fieldKey],
         selectedValue,
       );
 
-      formControl?.patchValue(this.selectedValues[fieldKey] as any);
+      if (fieldConfig?.isArray) {
+        this.selectedValues[fieldKey] = [].concat(
+          ...this.selectedValues[fieldKey],
+        );
+      }
     } else {
       this.selectedValues[fieldKey] = [selectedValue];
-
-      formControl?.patchValue(selectedValue);
     }
+
+    this.mergeForm.formGroup
+      .get(fieldKey)
+      ?.patchValue(
+        fieldConfig?.isArray || isStringOrLongText
+          ? this.selectedValues[fieldKey]
+          : selectedValue,
+      );
   }
 
   private toggleSelection(arr: any[], value: string): any[] {
-    const index = arr.indexOf(value);
-    return index === -1 ? [...arr, value] : arr.filter((_, i) => i !== index);
+    return arr.includes(value)
+      ? arr.filter((v) => v !== value)
+      : [...arr, value];
   }
 
   isFieldSelected(fieldKey: string, entityIndex: 0 | 1): boolean {
@@ -135,7 +143,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (this.mergeForm.formGroup.invalid) return false;
 
     Object.assign(this.mergedEntity, this.mergeForm.formGroup.value);
-    console.log(this.mergedEntity);
 
     let confirmationMessage = $localize`:Merge confirmation dialog: Merging of two records will permanently delete the data that is not merged. This action cannot be undone \n(Once the two records are merged, there will be only one record available in the system)`;
 
