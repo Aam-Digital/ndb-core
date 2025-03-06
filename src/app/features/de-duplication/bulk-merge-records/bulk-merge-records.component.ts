@@ -19,6 +19,7 @@ import {
 } from "app/core/common-components/entity-form/entity-form.service";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -29,6 +30,7 @@ import { MatError } from "@angular/material/form-field";
     MatRadioModule,
     MatButtonModule,
     CommonModule,
+    MatCheckboxModule,
     EntityFieldViewComponent,
     EntityFieldEditComponent,
     ReactiveFormsModule,
@@ -58,7 +60,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   ) {
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
-    this.mergedEntity = data.entitiesToMerge[0].copy();
+    this.mergedEntity = new this.entityConstructor() as E;
   }
 
   async ngOnInit(): Promise<void> {
@@ -74,7 +76,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       const hasValue = this.entitiesToMerge.some(
         (entity) => entity[key] !== undefined && entity[key] !== null,
       );
-      console.log(field, key);
       const isFileField =
         field.dataType === "photo" || field.dataType === "file";
 
@@ -96,38 +97,46 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   handleFieldSelection(fieldKey: string, entityIndex: 0 | 1): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
-    const isStringOrLongText = ["string", "long-text"].includes(
-      fieldConfig?.dataType,
-    );
+    const isCheckbox = this.isCheckboxField(fieldConfig);
 
-    if (isStringOrLongText || fieldConfig?.isArray) {
-      this.selectedValues[fieldKey] = this.selectedValues[fieldKey] ?? [];
-      this.selectedValues[fieldKey] = this.toggleSelection(
-        this.selectedValues[fieldKey],
-        selectedValue,
-      );
+    this.selectedValues[fieldKey] = isCheckbox
+      ? this.toggleSelection(this.selectedValues[fieldKey] ?? [], selectedValue)
+      : [selectedValue];
 
-      if (fieldConfig?.isArray) {
-        this.selectedValues[fieldKey] = [].concat(
-          ...this.selectedValues[fieldKey],
-        );
-      }
-    } else {
-      this.selectedValues[fieldKey] = [selectedValue];
-    }
-    this.mergeForm.formGroup
-      .get(fieldKey)
-      ?.patchValue(
-        fieldConfig?.isArray || isStringOrLongText
-          ? this.selectedValues[fieldKey]
-          : selectedValue,
-      );
+    this.updateMergeFormField(fieldKey, fieldConfig, isCheckbox);
+  }
+
+  private updateMergeFormField(
+    fieldKey: string,
+    fieldConfig: FormFieldConfig,
+    isCheckbox: boolean,
+  ): void {
+    const control = this.mergeForm.formGroup.get(fieldKey);
+    if (!control) return;
+
+    const value = isCheckbox
+      ? this.getCheckboxValue(fieldKey, fieldConfig)
+      : this.selectedValues[fieldKey][0];
+
+    control.patchValue(value);
+  }
+
+  private getCheckboxValue(fieldKey: string, config: FormFieldConfig): any {
+    const values = this.selectedValues[fieldKey] || [];
+    return config.isArray ? values.flat() : values.join(", ");
   }
 
   private toggleSelection(arr: any[], value: string): any[] {
     return arr.includes(value)
       ? arr.filter((v) => v !== value)
       : [...arr, value];
+  }
+  isCheckboxField(field?: FormFieldConfig): boolean {
+    return (
+      field?.dataType === "string" ||
+      field?.dataType === "long-text" ||
+      field?.isArray
+    );
   }
 
   isFieldSelected(fieldKey: string, entityIndex: 0 | 1): boolean {
@@ -139,6 +148,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   async confirmAndMergeRecords(): Promise<boolean> {
     this.mergeForm.formGroup.markAllAsTouched();
     if (this.mergeForm.formGroup.invalid) return false;
+    this.mergedEntity = this.entitiesToMerge[0].copy();
 
     Object.assign(this.mergedEntity, this.mergeForm.formGroup.value);
 
