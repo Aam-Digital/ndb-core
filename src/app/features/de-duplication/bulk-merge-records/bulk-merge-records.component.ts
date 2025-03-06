@@ -43,7 +43,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  fieldsToMerge: FormFieldConfig[] = [];
+  fieldsToMerge: (FormFieldConfig & { allowsMultiValueMerge: boolean })[] = [];
   mergeForm: EntityForm<E>;
   selectedValues: Record<string, string[]> = {};
   hasFileOrPhoto: boolean = false;
@@ -89,7 +89,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
             { id: key },
             this.entityConstructor,
           );
-        this.fieldsToMerge.push(formField);
+        this.fieldsToMerge.push({
+          ...formField,
+          allowsMultiValueMerge: this.allowsMultiValueMerge(formField),
+        });
       }
     });
   }
@@ -97,7 +100,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   handleFieldSelection(fieldKey: string, entityIndex: number): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
-    const isCheckbox = this.isCheckboxField(fieldConfig);
+    const isCheckbox = fieldConfig.allowsMultiValueMerge;
 
     this.selectedValues[fieldKey] = isCheckbox
       ? this.toggleSelection(this.selectedValues[fieldKey] ?? [], selectedValue)
@@ -132,7 +135,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       : [...arr, value];
   }
 
-  isCheckboxField(field?: FormFieldConfig): boolean {
+  allowsMultiValueMerge(field?: FormFieldConfig): boolean {
     return (
       field?.dataType === "string" ||
       field?.dataType === "long-text" ||

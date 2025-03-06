@@ -17,7 +17,7 @@
           let i = $index
         ) {
           <div class="record-cell">
-            @if (isCheckboxField(field)) {
+            @if (field.allowsMultiValueMerge) {
               <mat-checkbox
                 [checked]="isFieldSelected(field.id, i)"
                 (change)="handleFieldSelection(field.id, i)"
