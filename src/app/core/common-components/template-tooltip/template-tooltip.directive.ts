@@ -118,6 +118,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.hide();
+    this.overlayRef.dispose();
   }
 
   /**
