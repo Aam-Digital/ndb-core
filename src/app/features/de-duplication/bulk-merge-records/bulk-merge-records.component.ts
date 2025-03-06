@@ -153,15 +153,20 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
     Object.assign(this.mergedEntity, this.mergeForm.formGroup.value);
 
-    let confirmationMessage = $localize`:Merge confirmation dialog: Merging of two records will permanently delete the data that is not merged. This action cannot be undone \n(Once the two records are merged, there will be only one record available in the system)`;
-
     if (this.hasFileOrPhoto) {
-      confirmationMessage = $localize`:Merge confirmation dialog with files/photos: ${confirmationMessage} \n 'Record B contains files/photos. The merged record will be updated with the file/photos from the first record. Please take a moment to review the merged record.'`;
+      const fileIgnoreConfirmed = await this.confirmationDialog.getConfirmation(
+        $localize`:Merge confirmation title:Warning! Some file attachments will be lost`,
+        $localize`:Merge confirmation dialog with files/photos:"Record B" contains files or images. Merging currently does not support attachments yet. The merged record will only have the attachments from "record A". Files from "record B" will be lost!\nAre you sure you want to continue?`,
+      );
+      if (!fileIgnoreConfirmed) {
+        return false;
+      }
     }
 
+    let confirmationMessage = $localize`:Merge confirmation dialog:Merging of two records will discard the data that is not selected to be merged. This action cannot be undone. Once the two records are merged, there will be only one record left in the system.\nAre you sure you want to continue?`;
     if (
       !(await this.confirmationDialog.getConfirmation(
-        $localize`:Merge confirmation title: Are you sure you want to merge this?`,
+        $localize`:Merge confirmation title:Are you sure you want to merge this?`,
         confirmationMessage,
       ))
     ) {
