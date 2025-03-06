@@ -54,7 +54,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
    * holds for each fieldId an array of selected values from existing entities,
    * used to show radio buttons in the UI
    */
-  selectedValues: Record<string, string[]> = {};
+  selectedValues: Record<string, any[]> = {};
 
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
@@ -126,16 +126,18 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     const control = this.mergeForm.formGroup.get(fieldKey);
     if (!control) return;
 
-    const value = fieldConfig.allowsMultiValueMerge
-      ? this.getCheckboxValue(fieldKey, fieldConfig)
-      : this.selectedValues[fieldKey][0];
+    const selectedValues = this.selectedValues[fieldKey] ?? [];
+
+    let value = selectedValues[0]; // default to single value
+    if (fieldConfig.isArray) {
+      // field type supports multiple values anyway
+      value = selectedValues.flat();
+    } else if (fieldConfig.allowsMultiValueMerge) {
+      // create a merged single value as a convenience functionality for the merge UI
+      value = selectedValues.join(", ");
+    }
 
     control.patchValue(value);
-  }
-
-  private getCheckboxValue(fieldKey: string, config: FormFieldConfig): any {
-    const values = this.selectedValues[fieldKey] || [];
-    return config.isArray ? values.flat() : values.join(", ");
   }
 
   private toggleSelection(arr: any[], value: string): any[] {
