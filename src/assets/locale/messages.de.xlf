@@ -2984,7 +2984,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Wollen Sie siche die Option &quot;<x id="PH" equiv-text="value.label"/>&quot; löschen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5809649168268401149" datatype="html">
@@ -2992,7 +2992,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target> Die Option wird weiterhin in <x id="PH" equiv-text="existingUsages.join(         &quot;, &quot;       )"/> Einträgen genutzt. Wenn Sie die Option löschen, werden die Einträge nicht gelöscht, aber die Option besonders markiert.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
-          <context context-type="linenumber">76,78</context>
+          <context context-type="linenumber">77,79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3767101596108414700" datatype="html">
@@ -3000,24 +3000,12 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Option Löschen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
-          <context context-type="linenumber">81</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5431785405792219476" datatype="html">
         <source>Failed to create new option</source>
         <target>Neue Option konnte nicht erstellt werden</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
-          <context context-type="linenumber">135</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">94</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="6031162605459514264" datatype="html">
-        <source>Couldn&apos;t create this new option. Please check if the value already exists.</source>
-        <target>Bitte prüfen Sie, ob der Wert bereits existiert.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
           <context context-type="linenumber">136</context>
@@ -3027,12 +3015,24 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
           <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="6031162605459514264" datatype="html">
+        <source>Couldn&apos;t create this new option. Please check if the value already exists.</source>
+        <target>Bitte prüfen Sie, ob der Wert bereits existiert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
+          <context context-type="linenumber">137</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
+          <context context-type="linenumber">96</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="5432260252143962374" datatype="html">
         <source>Create new option</source>
         <target>Erstelle eine neue Option</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5006850401853518123" datatype="html">
@@ -3040,7 +3040,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Wollen sie die neue Option &quot;<x id="PH" equiv-text="option"/>&quot; erstellen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="linenumber">108</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3938396793871184620" datatype="html">
@@ -3313,7 +3313,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">datatype-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/entity/entity.datatype.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6711515265223487089" datatype="html">
@@ -3547,7 +3547,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Muss größer als <x id="PH" equiv-text="validationValue.min"/> sein</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">183</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5851191097234880874" datatype="html">
@@ -3555,7 +3555,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Darf nicht größer als <x id="PH" equiv-text="validationValue.max"/> sein</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">184</context>
+          <context context-type="linenumber">185</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8938912551189798711" datatype="html">
@@ -3563,7 +3563,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Format inkorrekt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">189</context>
+          <context context-type="linenumber">190</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">
@@ -3571,7 +3571,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Dieses Feld ist erforderlich</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">192</context>
+          <context context-type="linenumber">193</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8134695558272106554" datatype="html">
@@ -3579,7 +3579,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Bitte eine korrekte E-Mail eingeben</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">194</context>
+          <context context-type="linenumber">195</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9109500675543184751" datatype="html">
@@ -3587,7 +3587,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Bitte ein korrektes Datum eingeben</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">196</context>
+          <context context-type="linenumber">197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1191324740438751530" datatype="html">
@@ -3595,7 +3595,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Bitte eine gültige Zahl eintragen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">198</context>
+          <context context-type="linenumber">199</context>
         </context-group>
       </trans-unit>
       <trans-unit id="266664346458430650" datatype="html">
@@ -3603,7 +3603,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Ungültige Eingabe</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">209</context>
+          <context context-type="linenumber">210</context>
         </context-group>
       </trans-unit>
       <trans-unit id="848068633991631534" datatype="html">
@@ -5745,7 +5745,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Entity.toString fallback for anonymized record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/model/entity.ts</context>
-          <context context-type="linenumber">317,319</context>
+          <context context-type="linenumber">326,328</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6116431777503568524" datatype="html">
@@ -5804,7 +5804,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         </context-group>
       </trans-unit>
       <trans-unit id="2537586018484710780" datatype="html">
-        <source> Link all imported records to <x id="INTERPOLATION" equiv-text="{{ action.type | entityTypeLabel }}"/> </source>
+        <source> Link all imported records to <x id="INTERPOLATION" equiv-text="{{ action.targetType | entityTypeLabel }}"/> </source>
         <target> Verlinke alle importierten Einträge zu <x id="INTERPOLATION" equiv-text="{{ action.type | entityTypeLabel }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
@@ -5825,25 +5825,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target> Wählen Sie einen Zieltyp bevor zusätzliche Aktionen definiert werden können. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">37,39</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1140547785796775819" datatype="html">
-        <source>Linked record type </source>
-        <target>Verlinkter Datentyp </target>
-        <note priority="1" from="description">Label for linked entity type input</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">45,46</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5713019593199658334" datatype="html">
-        <source>Linked record</source>
-        <target>Verlinkter Eintrag</target>
-        <note priority="1" from="description">Label for linked entity input</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">38,40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7993462052811163222" datatype="html">
@@ -5851,7 +5833,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target> Aktion hinzufügen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">77,79</context>
+          <context context-type="linenumber">72,74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3683326409419427569" datatype="html">
@@ -6193,7 +6175,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Import Reset Confirmation title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.ts</context>
-          <context context-type="linenumber">82</context>
+          <context context-type="linenumber">86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5844699625713360175" datatype="html">
@@ -6202,7 +6184,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Import Reset Confirmation text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2277962201111023210" datatype="html">
@@ -6211,7 +6193,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">alert info after file load</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.zeroRange" datatype="html">
@@ -7721,7 +7703,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">datatype-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/location.datatype.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">13</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9053505007937484698" datatype="html">
@@ -8705,7 +8687,7 @@ Template-Dateien können in den meisten Office-Dokumentformaten (odt, docx, ods,
         <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8899174649685550045" datatype="html">
@@ -9721,6 +9703,47 @@ Wenn Sie im Abschnitt &quot;Felder konfigurieren&quot; dieselben Felder hinzufü
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">71,73</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9135593508528332150" datatype="html">
+        <source>Link all imported records to: </source>
+        <target>Alle importierten Daten verknüpfen mit: </target>
+        <note priority="1" from="description">Label for linked entity type input</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
+          <context context-type="linenumber">46,47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3438523043140289820" datatype="html">
+        <source>for record</source>
+        <target>für Datensatz</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4457142953029193050" datatype="html">
+        <source> No special import actions are available for importing <x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel: true }}"/> records. </source>
+        <target> Keine besonderen Aktionen für das Importieren von <x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel: true }}"/> Daten verfügbar. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
+          <context context-type="linenumber">78,81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4993042205844584733" datatype="html">
+        <source>Link imported <x id="PH" equiv-text="sourceType.toString(true)"/> to a <x id="PH_1" equiv-text="targetType.toString()"/></source>
+        <target>Importierte <x id="PH" equiv-text="sourceType.toString(true)"/> mit einer/m <x id="PH_1" equiv-text="targetType.toString()"/> verknüpfen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional.service.ts</context>
+          <context context-type="linenumber">318</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7678944712217496016" datatype="html">
+        <source>Import related <x id="PH" equiv-text="sourceType.toString(true)"/> for this <x id="PH_1" equiv-text="targetType.toString()"/></source>
+        <target>Verknüpfte <x id="PH" equiv-text="sourceType.toString(true)"/> für diese/n <x id="PH_1" equiv-text="targetType.toString()"/> importieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional.service.ts</context>
+          <context context-type="linenumber">320</context>
         </context-group>
       </trans-unit>
     </body>
