@@ -73,6 +73,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       const hasValue = this.entitiesToMerge.some(
         (entity) => entity[key] !== undefined && entity[key] !== null,
       );
+      // console.log(field, key);
       const isFileField =
         field.dataType === "photo" || field.dataType === "file";
 
@@ -96,27 +97,25 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   handleFieldSelection(fieldKey: string, entityIndex: 0 | 1): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
+    const formControl = this.mergeForm.formGroup.get(fieldKey);
 
-    if (
-      fieldConfig?.dataType === "string" ||
-      fieldConfig?.dataType === "entity"
-    ) {
+    if (["string", "long-text"].includes(fieldConfig.dataType)) {
+      this.selectedValues[fieldKey] = this.selectedValues[fieldKey]
+        ? `${this.selectedValues[fieldKey]}, ${selectedValue}`
+        : selectedValue;
+      formControl?.patchValue(this.selectedValues[fieldKey] as any);
+    } else if (fieldConfig.isArray) {
       this.selectedValues[fieldKey] ??= [];
       this.selectedValues[fieldKey] = this.toggleSelection(
         this.selectedValues[fieldKey],
         selectedValue,
       );
 
-      if (fieldConfig?.dataType === "entity") {
-        this.selectedValues[fieldKey] = this.selectedValues[fieldKey].flat();
-      }
-
-      this.mergeForm.formGroup
-        .get(fieldKey)
-        ?.patchValue(this.selectedValues[fieldKey] as any);
+      formControl?.patchValue(this.selectedValues[fieldKey] as any);
     } else {
       this.selectedValues[fieldKey] = [selectedValue];
-      this.mergeForm.formGroup.get(fieldKey)?.patchValue(selectedValue);
+
+      formControl?.patchValue(selectedValue);
     }
   }
 
@@ -136,6 +135,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (this.mergeForm.formGroup.invalid) return false;
 
     Object.assign(this.mergedEntity, this.mergeForm.formGroup.value);
+    console.log(this.mergedEntity);
 
     let confirmationMessage = $localize`:Merge confirmation dialog: Merging of two records will permanently delete the data that is not merged. This action cannot be undone \n(Once the two records are merged, there will be only one record available in the system)`;
 
