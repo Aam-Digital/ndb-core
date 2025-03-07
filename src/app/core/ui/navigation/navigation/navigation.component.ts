@@ -107,12 +107,9 @@ export class NavigationComponent {
       this.CONFIG_ID,
     );
 
-    const menuItems = config.items.map((item) => {
-      if ("entityType" in item) {
-        return this.generateMenuItemForEntityType(item as EntityMenuItem);
-      }
-      return item as MenuItem;
-    });
+    const menuItems = config.items.map((item) =>
+      this.generateMenuItemForEntityType(item),
+    );
 
     this.menuItems =
       await this.routePermissionService.filterPermittedRoutes(menuItems);
@@ -122,14 +119,26 @@ export class NavigationComponent {
   }
 
   /**
-   * parse ... by looking up the entityType from EntityRegistry and then using its config:
+   * parse special EntityMenuItem to regular item recursively
+   * by looking up the entityType from EntityRegistry and then using its config.
    */
-  private generateMenuItemForEntityType(item: EntityMenuItem): MenuItem {
-    const entityType = this.entities.get(item.entityType);
-    return {
-      label: entityType.labelPlural,
-      icon: entityType.icon,
-      link: entityType.route,
-    };
+  private generateMenuItemForEntityType(item: MenuItem): MenuItem {
+    if ("entityType" in item) {
+      const entityType = this.entities.get((item as EntityMenuItem).entityType);
+      return {
+        label: entityType.labelPlural,
+        icon: entityType.icon,
+        link: entityType.route,
+      };
+    } else if (item.subMenu) {
+      return {
+        ...item,
+        subMenu: item.subMenu.map((subItem) =>
+          this.generateMenuItemForEntityType(subItem),
+        ),
+      };
+    } else {
+      return item;
+    }
   }
 }
