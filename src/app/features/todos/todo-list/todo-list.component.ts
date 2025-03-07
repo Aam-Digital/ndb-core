@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Todo } from "../model/todo";
 import { PrebuiltFilterConfig } from "../../../core/entity-list/EntityListConfig";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
@@ -11,12 +11,7 @@ import {
 import { RouteTarget } from "../../../route-target";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Sort } from "@angular/material/sort";
-import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { MatDialog } from "@angular/material/dialog";
-import { DuplicateRecordService } from "../../../core/entity-list/duplicate-records/duplicate-records.service";
+import { RouterLink } from "@angular/router";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { Logging } from "../../../core/logging/logging.service";
@@ -43,11 +38,8 @@ import { ExportDataDirective } from "../../../core/export/export-data-directive/
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
-import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
 import { AbilityModule } from "@casl/angular";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
-import { EntityActionsMenuComponent } from "../../../core/entity-details/entity-actions-menu/entity-actions-menu.component";
-import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.service";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -81,7 +73,6 @@ import { EntityEditService } from "app/core/entity/entity-actions/entity-edit.se
     EntityCreateButtonComponent,
     AbilityModule,
     AsyncPipe,
-    EntityActionsMenuComponent,
     ViewActionsComponent,
   ],
 })
@@ -102,32 +93,8 @@ export class TodoListComponent
 
   override showInactive = true;
 
-  constructor(
-    screenWidthObserver: ScreenWidthObserver,
-    router: Router,
-    activatedRoute: ActivatedRoute,
-    entityMapperService: EntityMapperService,
-    entityActionsService: EntityActionsService,
-    entityEditService: EntityEditService,
-    entities: EntityRegistry,
-    dialog: MatDialog,
-    duplicateRecord: DuplicateRecordService,
-    private currentUser: CurrentUserSubject,
-    private formDialog: FormDialogService,
-  ) {
-    super(
-      screenWidthObserver,
-      router,
-      activatedRoute,
-      entityMapperService,
-      entities,
-      dialog,
-      duplicateRecord,
-      entityActionsService,
-      entityEditService,
-      null,
-    );
-  }
+  private readonly currentUser = inject(CurrentUserSubject);
+  private readonly formDialog = inject(FormDialogService);
 
   ngOnInit() {
     this.addPrebuiltFilters();
