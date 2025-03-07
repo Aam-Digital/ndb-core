@@ -1899,6 +1899,10 @@
           <context context-type="linenumber">126</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
           <context context-type="linenumber">27</context>
         </context-group>
@@ -5092,11 +5096,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">317,319</context>
+          <context context-type="linenumber">327,329</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">317,319</context>
+          <context context-type="linenumber">327,329</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.html</context>
@@ -8604,7 +8608,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">Filter-option for todos</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">175</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1161299114153631702" datatype="html">
@@ -8613,7 +8617,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">Filter-option for todos</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">180</context>
+          <context context-type="linenumber">147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8583493689961733713" datatype="html">
@@ -8622,7 +8626,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">Filter-option for todos</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">185</context>
+          <context context-type="linenumber">152</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3184700926171002527" datatype="html">
@@ -8630,7 +8634,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <target>Any</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">188</context>
+          <context context-type="linenumber">155</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5729690486395000500" datatype="html">
@@ -8638,7 +8642,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <target>Tasks due</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">190</context>
+          <context context-type="linenumber">157</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todos-dashboard/todos-dashboard.component.ts</context>
@@ -8651,7 +8655,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">Filter-option for todos</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">209</context>
+          <context context-type="linenumber">176</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5761144094879142527" datatype="html">
@@ -9751,6 +9755,103 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional.service.ts</context>
           <context context-type="linenumber">320</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7463715960858876246" datatype="html">
+        <source> Merge </source>
+        <target> Merge </target>
+        <note priority="1" from="description">bulk action button</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
+          <context context-type="linenumber">323,325</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
+          <context context-type="linenumber">323,325</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
+          <context context-type="linenumber">68,70</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="573566258842168651" datatype="html">
+        <source>Record A</source>
+        <target>Record A</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4897885629388573037" datatype="html">
+        <source>Record B</source>
+        <target>Record B</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="24319118991166802" datatype="html">
+        <source>Merge Preview</source>
+        <target>Merge Preview</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4139751468621760848" datatype="html">
+        <source> The data you selected to merge is invalid, please check the fields in the &quot;Merge Preview&quot; above. </source>
+        <target> The data you selected to merge is invalid, please check the fields in the &quot;Merge Preview&quot; above. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
+          <context context-type="linenumber">72,75</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6730427428487082521" datatype="html">
+        <source>Warning! Some file attachments will be lost</source>
+        <target>Warning! Some file attachments will be lost</target>
+        <note priority="1" from="description">Merge confirmation title</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.ts</context>
+          <context context-type="linenumber">169</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8831770220083109942" datatype="html">
+        <source>&quot;Record B&quot; contains files or images. Merging currently does not support attachments yet. The merged record will only have the attachments from &quot;record A&quot;. Files from &quot;record B&quot; will be lost!
+Are you sure you want to continue?</source>
+        <target>&quot;Record B&quot; contains files or images. Merging currently does not support attachments yet. The merged record will only have the attachments from &quot;record A&quot;. Files from &quot;record B&quot; will be lost!
+Are you sure you want to continue?</target>
+        <note priority="1" from="description">Merge confirmation dialog with files/photos</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.ts</context>
+          <context context-type="linenumber">170</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2861956775897766690" datatype="html">
+        <source>Merging of two records will discard the data that is not selected to be merged. This action cannot be undone. Once the two records are merged, there will be only one record left in the system.
+Are you sure you want to continue?</source>
+        <target>Merging of two records will discard the data that is not selected to be merged. This action cannot be undone. Once the two records are merged, there will be only one record left in the system.
+Are you sure you want to continue?</target>
+        <note priority="1" from="description">Merge confirmation dialog</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.ts</context>
+          <context context-type="linenumber">177</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4851954248025746714" datatype="html">
+        <source>Are you sure you want to merge this?</source>
+        <target>Are you sure you want to merge this?</target>
+        <note priority="1" from="description">Merge confirmation title</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.ts</context>
+          <context context-type="linenumber">180</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4484413856929103798" datatype="html">
+        <source>Records merged successfully.</source>
+        <target>Records merged successfully.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-service.ts</context>
+          <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
     </body>
