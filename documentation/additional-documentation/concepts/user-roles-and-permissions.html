@@ -1,0 +1,356 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>User Roles and Permissions</h1>
+<h2>User Roles</h2>
+<p>User roles are used to restrict what components a user can see and what data a user can access and edit.
+These roles are stored in the backend and are available in the frontend after a successful login.
+At the moment there are two places, depending on your system setup, where the roles can be defined.</p>
+<h3>CouchDB</h3>
+<p>When using CouchDB as authenticator, then the roles are directly stored on the <code>org.couchdb.user</code> document of a user.
+A new role can be added to a user by simply adding the name of the role to the user document.
+After the next login, the role will be available in the frontend.</p>
+<h3>Keycloak</h3>
+<p>When using Keycloak as an authenticator, the roles are assigned through so called Role-Mappings.
+To assign a new role to a user, this role first has to be created in the realm.
+To do this go to the Keycloak admin console, select the realm for which you want to create a role and go to the <em>Realm
+roles</em> menu item.
+Here a new role can be created and also a description can be provided for it.
+This description should explain non-technical users, what this role is there for.
+Default roles that are always available are <code>user_app</code>, <code>admin_app</code> and <code>account_manager</code>.
+After a role has been created, the role can be assigned to a user.
+This can either be done in the frontend using the <code>UserSecurityComponent</code> or via the Keycloak admin console under _
+Users_
+-&gt; <em>&lt;select user&gt;</em> -&gt; <em>Role mapping</em> -&gt; <em>Assign role</em>.</p>
+<h2>Permissions</h2>
+<p>Aam Digital allows to specify permissions to restrict access of certain user roles to the various entity types.
+Permissions are defined using the <a href="https://casl.js.org/v5/en/guide/define-rules#the-shape-of-raw-rule">CASL JSON syntax</a>
+.
+The permissions are stored in a <a href="../../classes/Config.html">config object</a> which is persisted together with other
+entities in the database.</p>
+<h3>Permission structure</h3>
+<p>As an example, we will define a permission object which allows users with the role <code>user_app</code> <em>not</em> to <em>create</em>, <em>read</em>
+, <em>update</em> and <em>delete</em> <code>HealthCheck</code> entities and <em>not</em> <em>create</em> and <em>delete</em> <code>School</code> and <code>Child</code> entities.
+Besides that, the role is allowed to do everything.
+A second role <code>admin_app</code> is allowed to do everything.
+Additionally, we add a <code>default</code> rule which allows each user (independent of role) to read the <code>Config</code> entities.
+Default rules are prepended to the rules of any user and allow to configure user-agnostic permissions.
+The default rules can be overwritten in the role-specific rules.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-JSON">{
+  &quot;_id&quot;: &quot;Config:Permissions&quot;,
+  &quot;data&quot;: {
+    &quot;default&quot;: [
+      {
+        &quot;subject&quot;: &quot;Config&quot;,
+        &quot;action&quot;: &quot;read&quot;
+      }
+    ],
+    &quot;user_app&quot;: [
+      {
+        &quot;subject&quot;: &quot;all&quot;,
+        &quot;action&quot;: &quot;manage&quot;
+      },
+      {
+        &quot;subject&quot;: &quot;HealthCheck&quot;,
+        &quot;action&quot;: &quot;manage&quot;,
+        &quot;inverted&quot;: true
+      },
+      {
+        &quot;subject&quot;: [
+          &quot;School&quot;,
+          &quot;Child&quot;
+        ],
+        &quot;action&quot;: [
+          &quot;create&quot;,
+          &quot;delete&quot;
+        ],
+        &quot;inverted&quot;: true
+      }
+    ],
+    &quot;admin_app&quot;: [
+      {
+        &quot;subject&quot;: &quot;all&quot;,
+        &quot;action&quot;: &quot;manage&quot;
+      }
+    ]
+  }
+}</code></pre></div><p>The <code>_id</code> property needs to be exactly as displayed here, as there is only one permission object allowed in a single
+database.
+In <code>data</code>, the permissions for each of the user role are defined.
+In this example we have permissions defined for two roles: <code>user_app</code> and <code>admin_app</code>.
+The permissions for a given role consist of an array of rules.</p>
+<p>In case of the <code>user_app</code>, we first define that the user is allowed to do everything.
+<code>subject</code> refers to the type of entity and <code>all</code> is a wildcard, that matches any entity.
+<code>action</code> refers to the operation that is allowed or permitted on the given <code>subject</code>.
+In this case <code>manage</code> is also a wildcard which means <em>any operation is allowed</em>.
+So the first rule states <em>any operation is allowed on any entity</em>.</p>
+<p>The second and third rule for <code>user_app</code> restrict this through the <code>&quot;inverted&quot;: true</code> keyword.
+While the first rule defined what this role is <strong>allowed</strong> to do, when <code>&quot;inverted&quot;: true</code> is specified, this rule
+defines what the role is <strong>not allowed</strong> to do.
+This allows us to easily take permissions away from a certain role.
+In this case we don&#39;t allow users with this role to perform <em>any</em> operation on the <code>HealhCheck</code> entity and no <em>create</em>
+and <em>update</em> on <code>Child</code> and <code>School</code> entities.
+Other possible actions are <code>read</code> and <code>update</code> following the <em>CRUD</em> concept.</p>
+<p>The <code>admin_app</code> role simpy allows user with this role to do everything, without restrictions.</p>
+<p>To learn more about how to define rules, have a look at
+the <a href="https://casl.js.org/v5/en/guide/define-rules#rules">CASL documentation</a>.</p>
+<p>It is also possible to access information of the user sending the request. E.g.:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">{
+  &quot;subject&quot;: &quot;org.couchdb.user&quot;,
+  &quot;action&quot;: &quot;update&quot;,
+  &quot;fields&quot;: [
+    &quot;password&quot;
+  ],
+  &quot;conditions&quot;: {
+    &quot;name&quot;: &quot;${user.name}&quot;,
+    &quot;projects&quot;: {
+      &quot;$in&quot;: &quot;${user.projects}&quot;
+    }
+  }
+}</code></pre></div><p>This allows users to update the <code>password</code> property of their <em>own</em> document in the <code>_users</code> database.
+Placeholders can currently access properties that the <em>replication-backend</em> explicitly adds to the auth user object. 
+Other available values are <code>${user.roles}</code> (array of roles of the user) and  <code>${user.projects}</code> (the &quot;projects&quot; attribute of the user&#39;s entity that is linked to the account through the &quot;exact_username&quot; in Keycloak).</p>
+<p>For more information on how to write rules have a look at the <a href="https://casl.js.org/v5/en/guide/intro">CASL documentation</a>.</p>
+<h3>Implementing components with permissions</h3>
+<p>This section is about code using permissions to read and edit <strong>entities</strong>.
+If you want to change the menu items which are shown in the navigation bar have a look at the <em>views</em> section in
+the <a href="./configuration.html">Configuration Guide</a>.</p>
+<p>The permission object is automatically fetched whenever a user logs in.
+The permissions disable certain buttons based on the users overall permissions.
+This is done in the app through
+the <a href="../../directives/DisableEntityOperationDirective.html">DisableEntityOperationDirective</a>, which connects certain
+buttons with their operation.</p>
+<p>As an example lets say we have a class variable called <code>note</code> which holds an object of the <code>Note</code> entity.
+We want to create a button which allows to <em>edit</em> this note.
+In the HTML template we could write the following in order to automatically connect it to the permission system:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-HTML">
+&lt;button
+  *appDisabledEntityOperation=&quot;{
+        entity: note,
+        operation: &#39;update&#39;
+    }&quot;
+&gt;
+  Edit Note
+&lt;/button&gt;</code></pre></div><p>This will automatically disable the button if the user is not allowed to <em>update</em> this specific note.</p>
+<p>To check permissions inside a <code>*.ts</code> file, you can inject the <code>EntityAbility</code>:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">import { Note } from &quot;./note&quot;;
+import { Injectable } from &quot;&#64;angular/core&quot;;
+import { EntityAbility } from &quot;./permission-types&quot;;
+
+&#64;Injectable()
+export class SomeService {
+  constructor(private ability: EntityAbility) {
+    if (this.ability.can(&quot;create&quot;, Note)) {
+      // I have permissions to create notes
+      const note = new Note();
+    } else {
+      // I don&#39;t have permissions to create notes
+      throw Error(&quot;Missing permissions&quot;);
+    }
+  }
+}</code></pre></div><p>In this example the <code>EntityAbility</code> service is used to check whether the currently logged in user is allowed to <em>create</em>
+new objects of the <code>Note</code> entity.
+In this case a constructor is provided to check for the permissions,
+in other cases it might make more sense to use an instance of an object like <code>this.ability.can(&#39;read&#39;, new Note())</code>.</p>
+<h3>Permissions in production</h3>
+<p>As permissions cannot directly be created and edited from within the app at the moment, you can use the following steps
+to define permissions for a deployed system:</p>
+<ol>
+<li>using CouchDB Fauxton GUI to edit database documents directly:
+Look for or create the document with <code>&quot;_id&quot;: &quot;Config:Permissions&quot;</code> and define the permissions as described above.</li>
+<li>After saving the new permissions document, update the replication backend about the updated permissions:
+Visit <code>https://&lt;your-system-domain&gt;/db/api/</code> to use the OpenAPI interface for this.</li>
+<li>There in <code>Servers</code> select <code>/db deployed</code>.</li>
+<li>Click on <code>Authorize</code> enter valid user credentials and click <code>Login</code>.</li>
+<li>Make a request to the <code>POST /rules/{db}/reload</code> endpoint, where <code>{db}</code> is the active database, e.g. <code>app</code>. If
+successful, the response will show the newly fetched rules.</li>
+<li>In case some users might have <strong>gained</strong> access to documents to which they did not have access before,
+also trigger the <code>POST /{db}/clear_local</code> endpoint, where <code>{db}</code> again is the active database.
+The <code>/{db}/clear_local</code> endpoint will ensure that each client re-checks whether new objects are available for
+synchronization.
+This should also be used in case an existing user has gotten a new, more powerful role.
+In case a user lost permissions for objects that were already synced, this users local DB will automatically be
+destroyed and the user has to synchronize all data again.</li>
+</ol>
+<p>The roles assigned to users are specified in the user documents in the <code>_users</code> database of CouchDB.</p>
+<h3>Permissions in development</h3>
+<p>When trying to test out things with the permissions,
+the <a href="../../Injectable/DemoPermissionGeneratorService.html">DemoPermissionGeneratorService</a> can be modified to change the
+permission object which is created in the demo data.
+These changes should not be committed however, as this demo data is also used in the publicly available demo.</p>
+<p>The demo data comes with two user: <code>demo</code> and <code>demo-admin</code>.
+The <code>demo</code> user has the role <code>user_app</code>, the <code>demo-admin</code> has the roles <code>user_app</code> and <code>admin_app</code>.
+The permissions of the latter overwrite the permissions of the former.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'user-roles-and-permissions.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

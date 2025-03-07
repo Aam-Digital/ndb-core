@@ -1,0 +1,267 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../../styles/style.css">
+        <link rel="stylesheet" href="../../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>How to review a pull request</h1>
+<p>Every regular team member is encouraged to review other pull requests (PRs).
+You don&#39;t have to be a senior programmer or an expert in that particular part of the code
+to help by reviewing PRs (and possibly learn something along the way).</p>
+<p>To establish best practices for our project and make reviews easier for you
+we are documenting guidelines for reviews here.</p>
+<h2>Goals: Why do we have reviews?</h2>
+<p>Why do we bother to spend time on code reviews / PR reviews?
+The main goals are:</p>
+<ol>
+<li>Prevent bugs from getting into the master branch - and thereby onto users&#39; devices.</li>
+<li>Improve code quality - especially ensuring that the code is easy to understand.</li>
+</ol>
+<p>Everybody has blind spots
+and sometimes we are also tempted to take short cuts (and forget to clean them up later).
+So it&#39;s essential to have a second set of eyes looking at code
+regardless of whether it was written by a long contributing, experienced developer
+or someone submitting their first PR.</p>
+<p>Reviews are not about criticizing someone.
+They are about jointly discussing how things can be improved
+or even just what parts have room for improvement.</p>
+<h2>Definition of Done: When to accept a PR?</h2>
+<p>As far as possible we try to automate the must-have criteria to accept and merge a PR
+with the help of GitHub and Travis CI tools.
+But one of these required steps is also that the PR must have an &quot;approving&quot; review of another developer.</p>
+<p>The following aspects are required for a PR to be merged.
+These are our expectations of quality that we have set ourselves:</p>
+<p>The PR&#39;s changes must be:</p>
+<ol>
+<li><strong>working for the user as expected</strong></li>
+<li><strong>tested by automated unit tests</strong></li>
+<li><strong>easy to understand in code</strong></li>
+</ol>
+<p>The following sections specify more details of these high-level aspects
+and give you concrete steps for how you can review them.</p>
+<h3>(1.) Is the app working?</h3>
+<p>The most essential thing about any change: It should work for users running the app.</p>
+<p>As a reviewer that means for you:</p>
+<ol>
+<li>Check out the branch of the PR on your machine.</li>
+<li>Run <code>npm install</code> to make sure you have all the right dependencies installed.</li>
+<li>Run the app locally.
+Put yourself in the shoes of a user and click around, testing the app: 1. Does the new feature / bugfix function as discussed and expected? 2. How are edge cases and errors handled?
+_ <em>This depends on the kind of change. If you can&#39;t think of any, just go on.</em> 3. Does the user get feedback about what is going on in a way that is understandable for people with no technical knowledge?
+(That is in case of success as well as failure.) 4. Do related features that might have been affected by the changes of this PR still work?
+_ <em>Again, this depends on the kind of PR. If you don&#39;t see anything else to test, that&#39;s absolutely okay.</em> 5. If the change affects UI elements: How do they look in a smaller browser window?</li>
+<li>Write a comment in the PR on GitHub about what any problems or ideas you encountered.</li>
+</ol>
+<h3>(2.) Is the code tested with unit tests?</h3>
+<p>The unit testing is checked automatically and concerns two aspects:</p>
+<ul>
+<li>Are all tests passing?<ul>
+<li><em>That is new tests for this PR as well as all other tests to ensure no previously working function was broken.</em></li>
+</ul>
+</li>
+<li>Are the changes of this PR covered by unit tests?<ul>
+<li><em>We aim for a &quot;test coverage&quot; of at least 80% and PRs should contain new unit tests for the changes they are making.</em></li>
+</ul>
+</li>
+</ul>
+<p>The CI system reports the status of these conditions automatically and displays them in the GitHub PR.</p>
+<p>You don&#39;t have to do any specific reviewing regarding this.
+If some tests fail, you may want to wait with your review until the author has fixed them so that you can review a final, working state of the code.
+Also, if you notice some important edge cases that are not tested by unit tests yet, do suggest these to be added.</p>
+<h3>(3.) Is the code understandable and well structured?</h3>
+<p>Reviewing a PR means reviewing code.
+If you spot a logical error or have a suggestion how to rewrite some code to improve performance that&#39;s awesome.
+But even more important is asking the right questions and pointing out all the parts that are hard (or impossible) to understand.</p>
+<p>Rather sooner than later even the author of the code will have forgotten the hidden logic of that super complex function.
+And she/he will thank your for requesting a simpler code structure or a better documentation during your review.</p>
+<p>You can review the PR&#39;s code changes easily on GitHub:</p>
+<ol>
+<li>In the GitHub PR switch to the &quot;Files changed&quot; tab.</li>
+<li>Go through the code changes and comment on specific lines:<ol>
+<li>If you don&#39;t understand what a block of code does.
+It should be possible to understand everything.
+Be ruthless and ask about everything that&#39;s unclear -
+code structure and/or documentation should be improved for everybody in this case.</li>
+<li>If you have a suggestion to improve the code.
+Whether you have an idea to structure things in a clearer way
+or to solve it differently - share your suggestions.</li>
+<li>You can also suggest code changes from within the GitHub UI that can be merged - without having the checkout and commit to the branch on you local machine. See <a href="https://haacked.com/archive/2019/06/03/suggested-changes/">Suggesting Changes on GitHub</a></li>
+</ol>
+</li>
+<li>&quot;Finish your review&quot; in GitHub.
+If there are issues or questions remaining, set the review status &quot;Comment&quot; or &quot;Request Changes&quot; instead of &quot;Approve&quot;.</li>
+</ol>
+<h2>Finish up</h2>
+<p><strong><em>That&#39;s it - thank you for improving the project with your feedback through your PR review!</em></strong></p>
+<p>If you commented with questions or suggestions, please try to follow up quickly when you receive replies.
+Otherwise, finishing and merging the PR gets delayed.</p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 3;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'review-a-pull-request.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../../js/libs/custom-elements.min.js"></script>
+       <script src="../../../js/libs/lit-html.js"></script>
+
+       <script src="../../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../../js/libs/es6-shim.min.js"></script>
+       <script src="../../../js/libs/EventDispatcher.js"></script>
+       <script src="../../../js/libs/promise.min.js"></script>
+
+       <script src="../../../js/compodoc.js"></script>
+
+       <script src="../../../js/tabs.js"></script>
+       <script src="../../../js/menu.js"></script>
+       <script src="../../../js/libs/clipboard.min.js"></script>
+       <script src="../../../js/libs/prism.js"></script>
+       <script src="../../../js/sourceCode.js"></script>
+          <script src="../../../js/search/search.js"></script>
+          <script src="../../../js/search/lunr.min.js"></script>
+          <script src="../../../js/search/search-lunr.js"></script>
+          <script src="../../../js/search/search_index.js"></script>
+       <script src="../../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
