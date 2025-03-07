@@ -64,6 +64,7 @@ import {
   DialogViewComponent,
   DialogViewData,
 } from "../../ui/dialog-view/dialog-view.component";
+import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -185,6 +186,7 @@ export class EntityListComponent<T extends Entity>
     private duplicateRecord: DuplicateRecordService,
     private entityActionsService: EntityActionsService,
     private entityEditService: EntityEditService,
+    private bulkMergeService: BulkMergeService,
     @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
   ) {
     this.screenWidthObserver
@@ -345,6 +347,14 @@ export class EntityListComponent<T extends Entity>
 
   async editRecords() {
     await this.entityEditService.edit(
+      this.selectedRows,
+      this.entityConstructor,
+    );
+    this.selectedRows = undefined;
+  }
+
+  async mergeRecords() {
+    await this.bulkMergeService.showMergeDialog(
       this.selectedRows,
       this.entityConstructor,
     );
