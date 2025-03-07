@@ -94,10 +94,6 @@
             "file": "how-to-guides/write-unit-tests.md"
           },
           {
-            "title": "Write E2E Tests",
-            "file": "how-to-guides/write-e2e-tests.md"
-          },
-          {
             "title": "Document Code",
             "file": "how-to-guides/write-documentation.md"
           },
