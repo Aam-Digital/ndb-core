@@ -33,4 +33,8 @@ export class ImportMatchExistingComponent {
   @Output() idFieldsChange = new EventEmitter<string[]>();
 
   @Input() entityType: string;
+
+  updateValue(newValue: string[] | string) {
+    this.idFieldsChange.emit(newValue as string[]);
+  }
 }

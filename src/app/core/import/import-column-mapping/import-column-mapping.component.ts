@@ -59,10 +59,15 @@ export class ImportColumnMappingComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.columnMapping) {
-      this.importColumnMappingService.automaticallySelectMappings(
-        this.columnMapping,
-        this.entityCtor.schema,
-      );
+      const autoMappings =
+        this.importColumnMappingService.automaticallySelectMappings(
+          JSON.parse(JSON.stringify(this.columnMapping)),
+          this.entityCtor.schema,
+        );
+      if (JSON.stringify(autoMappings) !== JSON.stringify(this.columnMapping)) {
+        this.columnMapping = autoMappings;
+        this.columnMappingChange.emit([...this.columnMapping]);
+      }
       this.updateUsedPropertyNames();
     }
   }

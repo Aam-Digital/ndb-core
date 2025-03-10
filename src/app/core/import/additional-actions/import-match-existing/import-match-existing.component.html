@@ -17,6 +17,7 @@
     <app-entity-field-select
       [multi]="true"
       [entityType]="entityType"
+      (valueChange)="updateValue($event)"
     ></app-entity-field-select>
     <mat-hint i18n
       >All selected fields have to be equal in an existing record and your

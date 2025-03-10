@@ -17,16 +17,21 @@ import { DatabaseField } from "../entity/database-field.decorator";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../demo-data/create-entity-of-type";
+import { DateWithAge } from "../basic-datatypes/date-with-age/dateWithAge";
 
 describe("ImportService", () => {
   let service: ImportService;
 
+  let entityMapper: EntityMapperService;
+
   beforeEach(async () => {
+    entityMapper = mockEntityMapper();
+
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
         ImportService,
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: EntityMapperService, useValue: entityMapper },
       ],
     });
     service = TestBed.inject(ImportService);
@@ -38,7 +43,6 @@ describe("ImportService", () => {
       entityType: "Entity",
       columnMapping: undefined,
     };
-    const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "saveAll");
     spyOn(entityMapper, "save");
 
@@ -74,7 +78,7 @@ describe("ImportService", () => {
     );
 
     const child = TestEntity.create("Child Name");
-    await TestBed.inject(EntityMapperService).save(child);
+    await entityMapper.save(child);
 
     const rawData: any[] = [
       { rawName: "John", rawCounter: "111" },
@@ -107,11 +111,10 @@ describe("ImportService", () => {
       { column: "rawText", propertyName: "text" },
     ];
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      "ImportTestTarget",
+    const parsedEntities = await service.transformRawDataToEntities(rawData, {
+      entityType: "ImportTestTarget",
       columnMapping,
-    );
+    });
 
     let expectedEntities: any[] = [
       { name: "John", counter: 111 },
@@ -142,7 +145,6 @@ describe("ImportService", () => {
     const children = ["1", "2", "3"].map((id) =>
       createEntityOfType("Child", id),
     );
-    const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([...children, importMeta]);
 
     await service.undoImport(importMeta);
@@ -164,7 +166,6 @@ describe("ImportService", () => {
       TestEntity.ENTITY_TYPE + ":2",
     ];
     const children = ["1", "2", "3"].map((id) => new TestEntity(id));
-    const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([...children, importMeta]);
 
     await entityMapper.remove(children[1]);
@@ -172,5 +173,91 @@ describe("ImportService", () => {
     await service.undoImport(importMeta);
 
     await expectEntitiesToBeInDatabase([children[2]], false, true);
+  });
+
+  it("should use existing records to be updated, if idFields are given", async () => {
+    const existingRecords: Entity[] = [
+      TestEntity.create({
+        name: "A",
+        dateOfBirth: new DateWithAge("2000-01-01"),
+        other: "old value",
+        category: { id: "X", label: "X" },
+        _rev: "A1",
+      }),
+      TestEntity.create({
+        name: "B",
+        _rev: "B1",
+      }),
+      TestEntity.create({
+        name: "C",
+        dateOfBirth: new DateWithAge("2000-03-03"),
+        _rev: "C1",
+      }),
+      TestEntity.create({ name: "X", _rev: "X1" }),
+    ];
+    await entityMapper.saveAll(existingRecords);
+
+    const rawData: any[] = [
+      {
+        d: "match existing",
+        rawName: "A",
+        DoB: "2000-01-01",
+        other: "new value",
+      },
+      {
+        d: "match part, mismatch part",
+        rawName: "A2",
+        DoB: "2000-01-01",
+      },
+      { d: "match part", rawName: "B", DoB: "2022-12-31" },
+      { d: "match part", rawName: "C" },
+      { d: "not matching", rawName: "XXX" },
+    ];
+    const importSettings: ImportSettings = {
+      entityType: TestEntity.ENTITY_TYPE,
+      columnMapping: [
+        { column: "rawName", propertyName: "name" },
+        { column: "DoB", propertyName: "dateOfBirth" },
+        { column: "other", propertyName: "other" },
+      ],
+      idFields: ["name", "dateOfBirth"],
+    };
+
+    const parsedEntities = await service.transformRawDataToEntities(
+      rawData,
+      importSettings,
+    );
+
+    let expectedEntities: any[] = [
+      {
+        _rev: existingRecords[0]["_rev"], // matched by name + dateOfBirth
+        _id: existingRecords[0]["_id"],
+        name: "A",
+        dateOfBirth: parsedEntities[0]["dateOfBirth"],
+        other: "new value", // updated
+        category: { id: "X", label: "X" }, // not touched from existing entity
+      },
+      {
+        // not matched
+        name: "A2",
+        dateOfBirth: parsedEntities[1]["dateOfBirth"],
+      },
+      {
+        _rev: existingRecords[1]["_rev"], // matched by name, entity missing dateOfBirth
+        _id: existingRecords[1]["_id"],
+        name: "B",
+        dateOfBirth: parsedEntities[2]["dateOfBirth"],
+      },
+      {
+        _rev: existingRecords[2]["_rev"], // matched by name, imported row missing dateOfBirth
+        _id: existingRecords[2]["_id"],
+        name: "C",
+      },
+      { name: "XXX" }, // not matched
+    ];
+
+    expect(parsedEntities).toEqual(
+      expectedEntities.map((x) => jasmine.objectContaining(x)),
+    );
   });
 });

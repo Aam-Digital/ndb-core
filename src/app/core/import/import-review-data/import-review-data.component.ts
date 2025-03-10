@@ -20,6 +20,13 @@ import { HelpButtonComponent } from "../../common-components/help-button/help-bu
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { MatProgressBar } from "@angular/material/progress-bar";
+import {
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
+} from "@angular/material/table";
 
 @Component({
   selector: "app-import-review-data",
@@ -31,9 +38,16 @@ import { MatProgressBar } from "@angular/material/progress-bar";
     HelpButtonComponent,
     EntitiesTableComponent,
     MatProgressBar,
+    MatColumnDef,
+    MatCell,
+    MatCellDef,
+    MatHeaderCell,
+    MatHeaderCellDef,
   ],
 })
 export class ImportReviewDataComponent implements OnChanges {
+  readonly IMPORT_STATUS_COLUMN = "_importStatus";
+
   @Input() rawData: any[];
 
   @Input() importSettings: Partial<ImportSettings>;
@@ -61,16 +75,23 @@ export class ImportReviewDataComponent implements OnChanges {
   }
 
   private async parseRawData() {
+    if (!this.importSettings.entityType || !this.importSettings.columnMapping) {
+      // incomplete settings, cannot proceed
+      return;
+    }
+
     this.isLoading = true;
     this.mappedEntities = await this.importService.transformRawDataToEntities(
       this.rawData,
-      this.importSettings.entityType,
-      this.importSettings.columnMapping,
+      this.importSettings as ImportSettings,
     );
 
-    this.displayColumns = this.importSettings.columnMapping
-      .filter(({ propertyName }) => !!propertyName)
-      .map(({ propertyName }) => propertyName);
+    this.displayColumns = [
+      this.IMPORT_STATUS_COLUMN,
+      ...this.importSettings.columnMapping
+        .filter(({ propertyName }) => !!propertyName)
+        .map(({ propertyName }) => propertyName),
+    ];
 
     this.isLoading = false;
   }

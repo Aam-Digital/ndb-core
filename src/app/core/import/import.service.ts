@@ -65,27 +65,29 @@ export class ImportService {
   /**
    * Use the given mapping to transform raw data into Entity instances that can be displayed or saved.
    * @param rawData
-   * @param entityType
-   * @param columnMapping
+   * @param importSettings
    */
   async transformRawDataToEntities(
     rawData: any[],
-    entityType: string,
-    columnMapping: ColumnMapping[],
+    importSettings: ImportSettings,
   ): Promise<Entity[]> {
-    if (!rawData || !entityType || !columnMapping) {
+    if (
+      !rawData ||
+      !importSettings.entityType ||
+      !importSettings.columnMapping
+    ) {
       return [];
     }
 
-    const entityConstructor = this.entityTypes.get(entityType);
+    const entityConstructor = this.entityTypes.get(importSettings.entityType);
 
     const mappedEntities: Entity[] = [];
     for (const row of rawData) {
-      const entity = new entityConstructor();
-      let hasMappedProperty = false;
+      let entity = new entityConstructor();
 
+      let hasMappedProperty = false; // to avoid empty records being created
       for (const col in row) {
-        const mapping: ColumnMapping = columnMapping.find(
+        const mapping: ColumnMapping = importSettings.columnMapping.find(
           (c) => c.column === col,
         );
         if (!mapping) {
@@ -97,26 +99,78 @@ export class ImportService {
           continue;
         }
 
-        // ignoring falsy values except 0 (=> null, undefined, empty string)
-        if (!!parsed || parsed === 0) {
-          // enforcing array values to be correctly assigned
-          entity[mapping.propertyName] =
-            entityConstructor.schema.get(mapping.propertyName)?.isArray &&
-            !Array.isArray(parsed)
-              ? [parsed]
-              : parsed;
-          hasMappedProperty = true;
-        }
+        entity[mapping.propertyName] = parsed;
+        hasMappedProperty = true;
       }
+
       if (hasMappedProperty) {
+        entity = await this.applyToExistingEntityIfApplicable(
+          entity,
+          importSettings,
+        );
         mappedEntities.push(entity);
       }
     }
 
+    delete this.existingEntitiesCache;
     return mappedEntities;
   }
 
-  private parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
+  /**
+   * If a matching existing entity is found, return that with the imported data applied to it.
+   * @param importEntity The newly generated entity from the import data
+   * @param importSettings
+   * @private
+   */
+  private async applyToExistingEntityIfApplicable(
+    importEntity: Entity,
+    importSettings: ImportSettings,
+  ): Promise<Entity> {
+    if (!importSettings.idFields || importSettings.idFields.length === 0)
+      return importEntity;
+
+    if (!this.existingEntitiesCache) {
+      this.existingEntitiesCache = await this.entityMapper.loadType(
+        importSettings.entityType,
+      );
+    }
+
+    const rawImportEntity =
+      this.schemaService.transformEntityToDatabaseFormat(importEntity);
+
+    const existingEntity = this.existingEntitiesCache.find((e) =>
+      importSettings.idFields.every((idField) => {
+        const schemaField = e.getSchema().get(idField);
+        const rawExistingValue = this.schemaService.valueToDatabaseFormat(
+          e[idField],
+          schemaField,
+        );
+
+        return (
+          // compare the "database formats" (to match complex values like dates)
+          rawExistingValue === rawImportEntity[idField] ||
+          // allow partial match if a column is not part of the import:
+          !importEntity.hasOwnProperty(idField) ||
+          !e.hasOwnProperty(idField)
+        );
+      }),
+    );
+
+    if (existingEntity) {
+      for (const key of importSettings.columnMapping.map(
+        (m) => m.propertyName,
+      )) {
+        // apply only properties from the import
+        existingEntity[key] = importEntity[key];
+      }
+    }
+
+    return existingEntity ?? importEntity;
+  }
+
+  private existingEntitiesCache: Entity[];
+
+  private async parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
     if (val === undefined || val === null) {
       return undefined;
     }
@@ -126,8 +180,19 @@ export class ImportService {
       return undefined;
     }
 
-    return this.schemaService
+    let value = await this.schemaService
       .getDatatypeOrDefault(schema.dataType)
       .importMapFunction(val, schema, mapping.additional);
+
+    // ignore empty or invalid values for import
+    if (!value && value !== 0 && value !== false) {
+      // falsy values except 0 (=> null, undefined, empty string, NaN, ...)
+      return undefined;
+    }
+
+    // enforcing array values to be correctly assigned
+    value = schema.isArray && !Array.isArray(value) ? [value] : value;
+
+    return value;
   }
 }

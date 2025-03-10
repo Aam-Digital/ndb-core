@@ -11,6 +11,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { ImportService } from "../import.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { ImportSettings } from "../import-metadata";
 
 describe("ImportReviewDataComponent", () => {
   let component: ImportReviewDataComponent;
@@ -36,7 +37,9 @@ describe("ImportReviewDataComponent", () => {
     fixture = TestBed.createComponent(ImportReviewDataComponent);
     component = fixture.componentInstance;
 
-    component.importSettings = { entityType: TestEntity.ENTITY_TYPE };
+    component.importSettings = {
+      entityType: TestEntity.ENTITY_TYPE,
+    } as ImportSettings;
 
     fixture.detectChanges();
   });
@@ -53,7 +56,10 @@ describe("ImportReviewDataComponent", () => {
     tick();
 
     expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.displayColumns).toEqual(["name"]);
+    expect(component.displayColumns).toEqual([
+      component.IMPORT_STATUS_COLUMN,
+      "name",
+    ]);
   }));
 
   it("should open Summary Confirmation when clicking to start import", fakeAsync(() => {
