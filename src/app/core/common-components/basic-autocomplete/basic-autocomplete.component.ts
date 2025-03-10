@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ContentChild,
   ElementRef,
@@ -14,7 +15,6 @@ import {
   TrackByFunction,
   ViewChild,
   WritableSignal,
-  AfterViewInit,
 } from "@angular/core";
 import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -386,6 +386,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this.value = option.asValue;
       this.isInSearchMode.set(false);
     }
+    this.valueChange.emit(this.value);
   }
 
   private toSelectableOption(opt: O): SelectableOption<O, V> {
