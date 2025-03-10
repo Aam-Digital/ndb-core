@@ -36,7 +36,7 @@ describe("ImportReviewDataComponent", () => {
     fixture = TestBed.createComponent(ImportReviewDataComponent);
     component = fixture.componentInstance;
 
-    component.entityType = TestEntity.ENTITY_TYPE;
+    component.importSettings = { entityType: TestEntity.ENTITY_TYPE };
 
     fixture.detectChanges();
   });
@@ -44,7 +44,7 @@ describe("ImportReviewDataComponent", () => {
   it("should parse data whenever it changes", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
     mockImportService.transformRawDataToEntities.and.resolveTo(testEntities);
-    component.columnMapping = [
+    component.importSettings.columnMapping = [
       { column: "x", propertyName: "name" },
       { column: "y", propertyName: undefined }, // unmapped property => not displayed
     ];

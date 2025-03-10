@@ -12,18 +12,20 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
+import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
 import { AdditionalImportAction } from "./additional-import-action";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgForOf, NgIf } from "@angular/common";
-import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
+import { EntityBlockComponent } from "../../../basic-datatypes/entity/entity-block/entity-block.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
+import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ImportAdditionalService } from "./import-additional.service";
-import { EntitySelectComponent } from "../../common-components/entity-select/entity-select.component";
+import { EntitySelectComponent } from "../../../common-components/entity-select/entity-select.component";
+import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
+import { MatExpansionModule } from "@angular/material/expansion";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -46,6 +48,8 @@ import { EntitySelectComponent } from "../../common-components/entity-select/ent
     MatButtonModule,
     NgIf,
     EntitySelectComponent,
+    HelpButtonComponent,
+    MatExpansionModule,
   ],
   providers: [EntityTypeLabelPipe],
 })

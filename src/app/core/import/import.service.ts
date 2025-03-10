@@ -5,7 +5,7 @@ import { ImportMetadata, ImportSettings } from "./import-metadata";
 import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { ImportAdditionalService } from "./additional-actions/import-additional.service";
+import { ImportAdditionalService } from "./additional-actions/import-additional/import-additional.service";
 
 /**
  * Supporting import of data from spreadsheets.

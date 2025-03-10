@@ -1,20 +1,20 @@
 import { TestBed } from "@angular/core/testing";
 
 import { ImportAdditionalService } from "./import-additional.service";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
-import { Entity } from "../../entity/model/entity";
-import { createEntityOfType } from "../../demo-data/create-entity-of-type";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { ImportMetadata, ImportSettings } from "../import-metadata";
-import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import { Entity } from "../../../entity/model/entity";
+import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
+import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
+import { ImportMetadata, ImportSettings } from "../../import-metadata";
+import { ChildSchoolRelation } from "../../../../child-dev-project/children/model/childSchoolRelation";
 import {
   expectEntitiesToBeInDatabase,
   expectEntitiesToMatch,
-} from "../../../utils/expect-entity-data.spec";
-import { CoreTestingModule } from "../../../utils/core-testing.module";
-import { DatabaseEntity } from "../../entity/database-entity.decorator";
-import { DatabaseField } from "../../entity/database-field.decorator";
+} from "../../../../utils/expect-entity-data.spec";
+import { CoreTestingModule } from "../../../../utils/core-testing.module";
+import { DatabaseEntity } from "../../../entity/database-entity.decorator";
+import { DatabaseField } from "../../../entity/database-field.decorator";
 
 describe("ImportAdditionalService", () => {
   let service: ImportAdditionalService;
