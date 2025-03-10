@@ -2,7 +2,7 @@ import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { ColumnMapping } from "./column-mapping";
-import { AdditionalImportAction } from "./additional-actions/additional-import-action";
+import { AdditionalImportAction } from "./additional-actions/import-additional/additional-import-action";
 
 /**
  * Details of a previously executed import of data saved to the database to keep a history.
@@ -32,5 +32,10 @@ export class ImportMetadata extends Entity {
 export interface ImportSettings {
   entityType: string;
   columnMapping: ColumnMapping[];
+
+  /** configured actions to run in addition to the import to link data */
   additionalActions?: AdditionalImportAction[];
+
+  /** Fields used to match data to an existing record */
+  idFields?: string[];
 }

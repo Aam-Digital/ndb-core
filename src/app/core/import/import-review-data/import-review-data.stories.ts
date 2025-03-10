@@ -1,4 +1,4 @@
-import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
+import { applicationConfig, Meta, StoryObj } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportReviewDataComponent } from "./import-review-data.component";
 import {
@@ -20,8 +20,10 @@ export default {
 export const Preview: StoryObj<ImportReviewDataComponent> = {
   args: {
     rawData: IMPORT_SAMPLE_RAW_DATA,
-    entityType: "Child",
-    columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+    importSettings: {
+      entityType: "Child",
+      columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+    },
   },
 };
 

@@ -15,7 +15,7 @@ export class ImportColumnMappingService {
   automaticallySelectMappings(
     columnMapping: ColumnMapping[],
     entitySchema: EntitySchema,
-  ) {
+  ): ColumnMapping[] {
     const allPropertyNames = Array.from(entitySchema.keys());
 
     for (const colMap of columnMapping) {
@@ -39,5 +39,7 @@ export class ImportColumnMappingService {
         }
       }
     }
+
+    return columnMapping;
   }
 }

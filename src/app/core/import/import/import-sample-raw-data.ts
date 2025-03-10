@@ -1,5 +1,5 @@
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { AdditionalImportAction } from "../additional-actions/additional-import-action";
+import { AdditionalImportAction } from "../additional-actions/import-additional/additional-import-action";
 import { Entity } from "../../entity/model/entity";
 import { ColumnMapping } from "../column-mapping";
 import { genders } from "../../../child-dev-project/children/model/genders";
@@ -45,7 +45,7 @@ export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
 ];
 
 export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [
-  {
+  /*{
     type: "School",
     id: IMPORT_SAMPLE_LINKABLE_DATA.find((e) => e.getType() === "School").getId(
       true,
@@ -56,7 +56,7 @@ export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [
     id: IMPORT_SAMPLE_LINKABLE_DATA.find(
       (e) => e.getType() === "RecurringActivity",
     ).getId(),
-  },
+  },*/
 ];
 
 export const IMPORT_SAMPLE_PREVIOUS_IMPORTS: ImportMetadata[] = [
