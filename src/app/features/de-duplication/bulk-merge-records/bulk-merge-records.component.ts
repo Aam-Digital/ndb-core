@@ -18,7 +18,7 @@ import {
   EntityForm,
   EntityFormService,
 } from "app/core/common-components/entity-form/entity-form.service";
-import { ReactiveFormsModule } from "@angular/forms";
+import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 
@@ -137,48 +137,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (!control) return;
 
     const selectedValues = this.selectedValues[fieldKey] ?? [];
-    control.valueChanges.subscribe((newValue) => {
-      const currentSelectedValues = this.selectedValues[fieldKey] || [];
-      let computedValue: any;
-
-      if (fieldConfig.allowsMultiValueMerge) {
-        computedValue = fieldConfig.isArray
-          ? currentSelectedValues.flat()
-          : currentSelectedValues.join(", ");
-      } else {
-        computedValue = currentSelectedValues[0];
-      }
-
-      if (JSON.stringify(newValue) !== JSON.stringify(computedValue)) {
-        const newSelectedValues = [];
-        for (const entity of this.entitiesToMerge) {
-          const entityValue = entity[fieldKey];
-          if (fieldConfig.isArray) {
-            if (Array.isArray(entityValue) && Array.isArray(newValue)) {
-              const hasCommonElement = entityValue.some((v) =>
-                newValue.includes(v),
-              );
-              if (hasCommonElement) {
-                newSelectedValues.push(entityValue);
-              }
-            }
-          } else {
-            const entityStr = entityValue?.toString() || "";
-            const newValueArr = fieldConfig.allowsMultiValueMerge
-              ? newValue.split(",").map((s) => s.trim())
-              : [newValue];
-            const entityArr = entityStr.split(",").map((s) => s.trim());
-            const hasCommonElement = entityArr.some((v) =>
-              newValueArr.includes(v),
-            );
-            if (hasCommonElement) {
-              newSelectedValues.push(entityValue);
-            }
-          }
-        }
-        this.selectedValues[fieldKey] = newSelectedValues;
-      }
-    });
+    this.meregePreviewFieldChanges(control, fieldKey, fieldConfig);
 
     let value = selectedValues[0]; // default to single value
     if (fieldConfig.isArray) {
@@ -192,6 +151,68 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     control.patchValue(value);
   }
 
+  private meregePreviewFieldChanges(
+    control: AbstractControl,
+    fieldKey: string,
+    fieldConfig: MergeField,
+  ): void {
+    control.valueChanges.subscribe((newValue) => {
+      const currentSelectedValues = this.selectedValues[fieldKey] || [];
+      let computedValue: any;
+
+      if (fieldConfig.allowsMultiValueMerge) {
+        computedValue = fieldConfig.isArray
+          ? currentSelectedValues.flat()
+          : currentSelectedValues.join(", ");
+      } else {
+        computedValue = currentSelectedValues[0];
+      }
+
+      if (JSON.stringify(newValue) !== JSON.stringify(computedValue)) {
+        this.selectedValues[fieldKey] = this.getUpdatedSelectedValues(
+          fieldKey,
+          newValue,
+          fieldConfig,
+        );
+      }
+    });
+  }
+
+  private getUpdatedSelectedValues(
+    fieldKey: string,
+    newValue: any,
+    fieldConfig: MergeField,
+  ): any[] {
+    const newSelectedValues = [];
+
+    for (const entity of this.entitiesToMerge) {
+      const entityValue = entity[fieldKey];
+
+      if (fieldConfig.isArray) {
+        if (Array.isArray(entityValue) && Array.isArray(newValue)) {
+          if (entityValue.some((v) => newValue.includes(v))) {
+            newSelectedValues.push(entityValue);
+          }
+        }
+      } else {
+        const entityStr = entityValue?.toString() || "";
+        const newValueArr = fieldConfig.allowsMultiValueMerge
+          ? newValue.split(",").map((s) => s.trim())
+          : [newValue];
+
+        if (
+          entityStr
+            .split(",")
+            .map((s) => s.trim())
+            .some((v) => newValueArr.includes(v))
+        ) {
+          newSelectedValues.push(entityValue);
+        }
+      }
+    }
+
+    return newSelectedValues;
+  }
   private toggleSelection(arr: any[], value: string): any[] {
     return arr.includes(value)
       ? arr.filter((v) => v !== value)
