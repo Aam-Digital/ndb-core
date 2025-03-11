@@ -17,6 +17,12 @@ export const IMPORT_SAMPLE_RAW_DATA: any[] = [
     gender: "M",
     remarks: "foo bar",
   },
+  {
+    name: "Jane Doe",
+    birthDate: "2001-01-31",
+    gender: "F",
+    remarks: "abcde",
+  },
 ];
 
 export const IMPORT_SAMPLE_COLUMN_MAPPING: ColumnMapping[] = Object.keys(

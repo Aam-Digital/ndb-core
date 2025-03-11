@@ -1,8 +1,9 @@
-
-.status-update {
-  color: red;
-}
+@use "variables/colors";
 
 .status-create {
   color: green;
+}
+
+.highlight {
+  background-color: colors.$warn;
 }

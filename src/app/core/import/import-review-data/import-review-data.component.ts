@@ -29,6 +29,8 @@ import {
   MatHeaderCellDef,
 } from "@angular/material/table";
 import { AdditionalImportAction } from "../additional-actions/import-additional/additional-import-action";
+import { MatTooltip } from "@angular/material/tooltip";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 
 @Component({
   selector: "app-import-review-data",
@@ -45,6 +47,8 @@ import { AdditionalImportAction } from "../additional-actions/import-additional/
     MatCellDef,
     MatHeaderCell,
     MatHeaderCellDef,
+    MatTooltip,
+    EntityBlockComponent,
   ],
 })
 export class ImportReviewDataComponent implements OnChanges {
@@ -85,15 +89,16 @@ export class ImportReviewDataComponent implements OnChanges {
     }
 
     this.isLoading = true;
-    this.mappedEntities = await this.importService.transformRawDataToEntities(
-      this.rawData,
-      {
+    this.mappedEntities = (
+      await this.importService.transformRawDataToEntities(this.rawData, {
         entityType: this.entityType,
         columnMapping: this.columnMapping,
         additionalActions: this.additionalActions,
         idFields: this.idFields,
-      },
-    );
+      })
+    )
+      // sort _rev (existing records being updated) first, then new records
+      .sort((a, b) => (a._rev === b._rev ? 0 : !!a._rev ? -1 : 1));
 
     this.displayColumns = [
       this.IMPORT_STATUS_COLUMN,
