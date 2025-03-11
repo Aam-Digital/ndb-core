@@ -129,6 +129,13 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     const control = this.mergeForm.formGroup.get(fieldKey);
     if (!control) return;
 
+    control.valueChanges.subscribe((newValue) => {
+      console.log("newValue", newValue);
+      if (newValue !== this.selectedValues[fieldKey]?.[0]) {
+        console.log("resetting selection", this.selectedValues[fieldKey]?.[0]);
+        this.selectedValues[fieldKey] = [];
+      }
+    });
     const selectedValues = this.selectedValues[fieldKey] ?? [];
 
     let value = selectedValues[0]; // default to single value
@@ -140,7 +147,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       value = selectedValues.join(", ");
     }
 
-    control.patchValue(value);
+    control.patchValue(value, { emitEvent: false });
   }
 
   private toggleSelection(arr: any[], value: string): any[] {
