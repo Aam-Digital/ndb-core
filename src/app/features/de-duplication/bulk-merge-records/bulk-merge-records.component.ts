@@ -129,14 +129,23 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     const control = this.mergeForm.formGroup.get(fieldKey);
     if (!control) return;
 
+    const selectedValues = this.selectedValues[fieldKey] ?? [];
     control.valueChanges.subscribe((newValue) => {
-      console.log("newValue", newValue);
-      if (newValue !== this.selectedValues[fieldKey]?.[0]) {
-        console.log("resetting selection", this.selectedValues[fieldKey]?.[0]);
-        this.selectedValues[fieldKey] = [];
+      const currentSelectedValues = this.selectedValues[fieldKey] || [];
+      let computedValue: any;
+
+      if (fieldConfig.allowsMultiValueMerge) {
+        computedValue = fieldConfig.isArray
+          ? currentSelectedValues.flat()
+          : currentSelectedValues.join(", ");
+      } else {
+        computedValue = currentSelectedValues[0];
+      }
+
+      if (JSON.stringify(newValue) !== JSON.stringify(computedValue)) {
+        this.selectedValues[fieldKey] = []; // Clear selected checkbox/radio buttons if manually edited
       }
     });
-    const selectedValues = this.selectedValues[fieldKey] ?? [];
 
     let value = selectedValues[0]; // default to single value
     if (fieldConfig.isArray) {
@@ -147,7 +156,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       value = selectedValues.join(", ");
     }
 
-    control.patchValue(value, { emitEvent: false });
+    control.patchValue(value);
   }
 
   private toggleSelection(arr: any[], value: string): any[] {
