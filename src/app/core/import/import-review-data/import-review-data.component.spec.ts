@@ -11,7 +11,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { ImportService } from "../import.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { ImportSettings } from "../import-metadata";
 
 describe("ImportReviewDataComponent", () => {
   let component: ImportReviewDataComponent;
@@ -37,9 +36,7 @@ describe("ImportReviewDataComponent", () => {
     fixture = TestBed.createComponent(ImportReviewDataComponent);
     component = fixture.componentInstance;
 
-    component.importSettings = {
-      entityType: TestEntity.ENTITY_TYPE,
-    } as ImportSettings;
+    component.entityType = TestEntity.ENTITY_TYPE;
 
     fixture.detectChanges();
   });
@@ -47,7 +44,7 @@ describe("ImportReviewDataComponent", () => {
   it("should parse data whenever it changes", fakeAsync(() => {
     const testEntities = [new TestEntity("1")];
     mockImportService.transformRawDataToEntities.and.resolveTo(testEntities);
-    component.importSettings.columnMapping = [
+    component.columnMapping = [
       { column: "x", propertyName: "name" },
       { column: "y", propertyName: undefined }, // unmapped property => not displayed
     ];
