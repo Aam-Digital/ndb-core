@@ -184,35 +184,64 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     fieldConfig: MergeField,
   ): any[] {
     const newSelectedValues = [];
+    const parts = this.extractMergeFieldValues(newValue, fieldConfig);
 
-    for (const entity of this.entitiesToMerge) {
-      const entityValue = entity[fieldKey];
+    for (const part of parts) {
+      let foundInEntity = false;
 
-      if (fieldConfig.isArray) {
-        if (Array.isArray(entityValue) && Array.isArray(newValue)) {
-          if (entityValue.some((v) => newValue.includes(v))) {
+      for (const entity of this.entitiesToMerge) {
+        const entityValue = entity[fieldKey];
+        if (this.valueContainsPart(entityValue, part, fieldConfig)) {
+          if (
+            !newSelectedValues.some(
+              (v) => JSON.stringify(v) === JSON.stringify(entityValue),
+            )
+          ) {
             newSelectedValues.push(entityValue);
           }
+          foundInEntity = true;
+          break;
         }
-      } else {
-        const entityStr = entityValue?.toString() || "";
-        const newValueArr = fieldConfig.allowsMultiValueMerge
-          ? newValue.split(",").map((s) => s.trim())
-          : [newValue];
+      }
 
-        if (
-          entityStr
-            .split(",")
-            .map((s) => s.trim())
-            .some((v) => newValueArr.includes(v))
-        ) {
-          newSelectedValues.push(entityValue);
-        }
+      if (!foundInEntity) {
+        newSelectedValues.push(part);
       }
     }
 
     return newSelectedValues;
   }
+
+  private extractMergeFieldValues(value: any, fieldConfig: MergeField): any[] {
+    if (fieldConfig.allowsMultiValueMerge) {
+      return fieldConfig.isArray
+        ? Array.isArray(value)
+          ? value
+          : []
+        : typeof value === "string"
+          ? value.split(",").map((p) => p.trim())
+          : [];
+    }
+    return [value];
+  }
+
+  private valueContainsPart(
+    entityValue: any,
+    part: string,
+    fieldConfig: MergeField,
+  ): boolean {
+    if (fieldConfig.allowsMultiValueMerge) {
+      return fieldConfig.isArray
+        ? Array.isArray(entityValue) && entityValue.includes(part)
+        : typeof entityValue === "string" &&
+            entityValue
+              .split(",")
+              .map((p) => p.trim())
+              .includes(part);
+    }
+    return entityValue === part;
+  }
+
   private toggleSelection(arr: any[], value: string): any[] {
     return arr.includes(value)
       ? arr.filter((v) => v !== value)
