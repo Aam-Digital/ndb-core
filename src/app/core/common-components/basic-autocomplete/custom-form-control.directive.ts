@@ -86,8 +86,11 @@ export abstract class CustomFormControlDirective<T>
   }
 
   set value(value: T) {
+    if (value === this._value) return;
+
     this._value = value;
     this.onChange(value);
+    this.valueChange.emit(value);
     this.stateChanges.next();
   }
 
