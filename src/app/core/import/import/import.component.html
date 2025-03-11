@@ -154,7 +154,10 @@
 
       <app-import-review-data
         [rawData]="rawData"
-        [importSettings]="importSettings"
+        [entityType]="importSettings.entityType"
+        [columnMapping]="importSettings.columnMapping"
+        [additionalActions]="importSettings.additionalActions"
+        [idFields]="importSettings.idFields"
         (importComplete)="onImportCompleted()"
       ></app-import-review-data>
     </ng-template>

@@ -6,6 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
+import { ColumnMapping } from "../column-mapping";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ImportService } from "../import.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -14,7 +15,7 @@ import {
   ImportDialogData,
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
-import { ImportMetadata, ImportSettings } from "../import-metadata";
+import { ImportMetadata } from "../import-metadata";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
@@ -27,6 +28,7 @@ import {
   MatHeaderCell,
   MatHeaderCellDef,
 } from "@angular/material/table";
+import { AdditionalImportAction } from "../additional-actions/import-additional/additional-import-action";
 
 @Component({
   selector: "app-import-review-data",
@@ -50,7 +52,11 @@ export class ImportReviewDataComponent implements OnChanges {
 
   @Input() rawData: any[];
 
-  @Input() importSettings: Partial<ImportSettings>;
+  @Input() entityType: string;
+  @Input() columnMapping: ColumnMapping[];
+  @Input() additionalActions: AdditionalImportAction[];
+  @Input() idFields: string[];
+
   entityConstructor: EntityConstructor;
 
   @Output() importComplete = new EventEmitter<ImportMetadata>();
@@ -66,16 +72,14 @@ export class ImportReviewDataComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    this.entityConstructor = this.entityRegistry.get(
-      this.importSettings.entityType,
-    );
+    this.entityConstructor = this.entityRegistry.get(this.entityType);
 
     // Every change requires a complete re-calculation
     this.parseRawData();
   }
 
   private async parseRawData() {
-    if (!this.importSettings.entityType || !this.importSettings.columnMapping) {
+    if (!this.entityType || !this.columnMapping) {
       // incomplete settings, cannot proceed
       return;
     }
@@ -83,12 +87,17 @@ export class ImportReviewDataComponent implements OnChanges {
     this.isLoading = true;
     this.mappedEntities = await this.importService.transformRawDataToEntities(
       this.rawData,
-      this.importSettings as ImportSettings,
+      {
+        entityType: this.entityType,
+        columnMapping: this.columnMapping,
+        additionalActions: this.additionalActions,
+        idFields: this.idFields,
+      },
     );
 
     this.displayColumns = [
       this.IMPORT_STATUS_COLUMN,
-      ...this.importSettings.columnMapping
+      ...this.columnMapping
         .filter(({ propertyName }) => !!propertyName)
         .map(({ propertyName }) => propertyName),
     ];
@@ -102,7 +111,12 @@ export class ImportReviewDataComponent implements OnChanges {
         .open(ImportConfirmSummaryComponent, {
           data: {
             entitiesToImport: this.mappedEntities,
-            importSettings: this.importSettings,
+            importSettings: {
+              entityType: this.entityType,
+              columnMapping: this.columnMapping,
+              additionalActions: this.additionalActions,
+              idFields: this.idFields,
+            },
           } as ImportDialogData,
         })
         .afterClosed(),

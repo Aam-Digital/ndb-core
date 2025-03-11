@@ -20,10 +20,8 @@ export default {
 export const Preview: StoryObj<ImportReviewDataComponent> = {
   args: {
     rawData: IMPORT_SAMPLE_RAW_DATA,
-    importSettings: {
-      entityType: "Child",
-      columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
-    },
+    entityType: "Child",
+    columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
   },
 };
 
