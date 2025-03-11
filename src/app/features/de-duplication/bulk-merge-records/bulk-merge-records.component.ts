@@ -115,10 +115,17 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
 
-    this.selectedValues[fieldKey] = fieldConfig.allowsMultiValueMerge
-      ? this.toggleSelection(this.selectedValues[fieldKey] ?? [], selectedValue)
-      : [selectedValue];
+    // Toggle selection for multi-value fields
+    if (fieldConfig.allowsMultiValueMerge) {
+      this.selectedValues[fieldKey] = this.toggleSelection(
+        this.selectedValues[fieldKey] ?? [],
+        selectedValue,
+      );
+    } else {
+      this.selectedValues[fieldKey] = [selectedValue];
+    }
 
+    // Ensure preview and UI stay in sync
     this.updateMergeFormField(fieldKey, fieldConfig);
   }
 
@@ -130,20 +137,13 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (!control) return;
 
     const selectedValues = this.selectedValues[fieldKey] ?? [];
+
     control.valueChanges.subscribe((newValue) => {
-      const currentSelectedValues = this.selectedValues[fieldKey] || [];
-      let computedValue: any;
-
-      if (fieldConfig.allowsMultiValueMerge) {
-        computedValue = fieldConfig.isArray
-          ? currentSelectedValues.flat()
-          : currentSelectedValues.join(", ");
+      if (Array.isArray(newValue)) {
+        this.selectedValues[fieldKey] = [...newValue];
+        console.log(this.selectedValues[fieldKey], "test");
       } else {
-        computedValue = currentSelectedValues[0];
-      }
-
-      if (JSON.stringify(newValue) !== JSON.stringify(computedValue)) {
-        this.selectedValues[fieldKey] = []; // Clear selected checkbox/radio buttons if manually edited
+        this.selectedValues[fieldKey] = [newValue];
       }
     });
 
@@ -156,7 +156,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       value = selectedValues.join(", ");
     }
 
-    control.patchValue(value);
+    control.patchValue(value, { emitEvent: false });
   }
 
   private toggleSelection(arr: any[], value: string): any[] {
