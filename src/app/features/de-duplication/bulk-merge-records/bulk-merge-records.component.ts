@@ -85,7 +85,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   private initFieldsToMerge(): void {
     this.entityConstructor.schema.forEach((field, key) => {
       const hasValue = this.entitiesToMerge.some(
-        (entity) => entity[key] !== undefined && entity[key] !== null,
+        (entity) =>
+          entity[key] !== undefined &&
+          entity[key] !== null &&
+          !(Array.isArray(entity[key]) && entity[key].length === 0),
       );
       const isFileField =
         field.dataType === "photo" || field.dataType === "file";
