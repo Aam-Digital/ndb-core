@@ -386,7 +386,6 @@ export class BasicAutocompleteComponent<O, V = O>
       this.value = option.asValue;
       this.isInSearchMode.set(false);
     }
-    this.valueChange.emit(this.value);
   }
 
   private toSelectableOption(opt: O): SelectableOption<O, V> {
