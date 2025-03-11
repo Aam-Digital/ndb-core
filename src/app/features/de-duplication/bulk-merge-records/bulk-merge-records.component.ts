@@ -137,13 +137,46 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (!control) return;
 
     const selectedValues = this.selectedValues[fieldKey] ?? [];
-
     control.valueChanges.subscribe((newValue) => {
-      if (Array.isArray(newValue)) {
-        this.selectedValues[fieldKey] = [...newValue];
-        console.log(this.selectedValues[fieldKey], "test");
+      const currentSelectedValues = this.selectedValues[fieldKey] || [];
+      let computedValue: any;
+
+      if (fieldConfig.allowsMultiValueMerge) {
+        computedValue = fieldConfig.isArray
+          ? currentSelectedValues.flat()
+          : currentSelectedValues.join(", ");
       } else {
-        this.selectedValues[fieldKey] = [newValue];
+        computedValue = currentSelectedValues[0];
+      }
+
+      if (JSON.stringify(newValue) !== JSON.stringify(computedValue)) {
+        const newSelectedValues = [];
+        for (const entity of this.entitiesToMerge) {
+          const entityValue = entity[fieldKey];
+          if (fieldConfig.isArray) {
+            if (Array.isArray(entityValue) && Array.isArray(newValue)) {
+              const hasCommonElement = entityValue.some((v) =>
+                newValue.includes(v),
+              );
+              if (hasCommonElement) {
+                newSelectedValues.push(entityValue);
+              }
+            }
+          } else {
+            const entityStr = entityValue?.toString() || "";
+            const newValueArr = fieldConfig.allowsMultiValueMerge
+              ? newValue.split(",").map((s) => s.trim())
+              : [newValue];
+            const entityArr = entityStr.split(",").map((s) => s.trim());
+            const hasCommonElement = entityArr.some((v) =>
+              newValueArr.includes(v),
+            );
+            if (hasCommonElement) {
+              newSelectedValues.push(entityValue);
+            }
+          }
+        }
+        this.selectedValues[fieldKey] = newSelectedValues;
       }
     });
 
@@ -156,7 +189,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       value = selectedValues.join(", ");
     }
 
-    control.patchValue(value, { emitEvent: false });
+    control.patchValue(value);
   }
 
   private toggleSelection(arr: any[], value: string): any[] {
@@ -174,8 +207,11 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
 
   isFieldSelected(fieldKey: string, entityIndex: number): boolean {
-    return this.selectedValues[fieldKey]?.includes(
-      this.entitiesToMerge[entityIndex][fieldKey],
+    const entityValue = this.entitiesToMerge[entityIndex][fieldKey];
+    const selected = this.selectedValues[fieldKey] || [];
+    return selected.some(
+      (selectedValue) =>
+        JSON.stringify(selectedValue) === JSON.stringify(entityValue),
     );
   }
 
