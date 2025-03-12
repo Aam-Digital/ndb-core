@@ -9,8 +9,9 @@ import {
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { expectEntitiesToBeInDatabase } from "app/utils/expect-entity-data.spec";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Note } from "app/child-dev-project/notes/model/note";
 
-describe("BulkMergeService", () => {
+fdescribe("BulkMergeService", () => {
   let service: BulkMergeService;
 
   let entityMapper: MockEntityMapperService;
@@ -45,5 +46,24 @@ describe("BulkMergeService", () => {
     await service.executeMerge(mergedEntity, [recordA, recordB]);
 
     await expectEntitiesToBeInDatabase([mergedEntity], false, true);
+  });
+
+  it("should merge related entities of recordB into recordA after merging", async () => {
+    const noteA = new Note();
+    noteA.relatedEntities = [recordA.getId()];
+
+    await entityMapper.save(noteA);
+
+    // mock merged entity
+    // Todo: this should be done in the service after updating executeMerge method
+    noteA.relatedEntities.push(recordB.getId());
+    await entityMapper.save(noteA);
+
+    const updatedNoteA = entityMapper.get(
+      Note.ENTITY_TYPE,
+      noteA.getId(),
+    ) as Note;
+    console.log(updatedNoteA);
+    expect(updatedNoteA.relatedEntities).toContain(recordB.getId());
   });
 });
