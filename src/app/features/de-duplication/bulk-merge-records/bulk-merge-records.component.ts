@@ -167,7 +167,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     });
   }
 
-  private getUpdatedSelectedValues(
+  getUpdatedSelectedValues(
     fieldKey: string,
     newValue: any,
     fieldConfig: MergeField,
@@ -201,20 +201,19 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     return newSelectedValues;
   }
 
-  private extractMergeFieldValues(value: any, fieldConfig: MergeField): any[] {
-    if (fieldConfig.allowsMultiValueMerge) {
-      return fieldConfig.isArray
+  extractMergeFieldValues(value: any, fieldConfig: MergeField): any[] {
+    return fieldConfig.allowsMultiValueMerge
+      ? fieldConfig.isArray
         ? Array.isArray(value)
           ? value
           : []
         : typeof value === "string"
           ? value.split(",").map((p) => p.trim())
-          : [];
-    }
-    return [value];
+          : []
+      : [value];
   }
 
-  private valueContainsPart(
+  valueContainsPart(
     entityValue: any,
     part: string,
     fieldConfig: MergeField,
