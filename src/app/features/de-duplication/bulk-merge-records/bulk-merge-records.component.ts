@@ -114,17 +114,11 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   handleFieldSelection(fieldKey: string, entityIndex: number): void {
     const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
     const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
-
+    if (!fieldConfig) return;
     // Toggle selection for multi-value fields
-    if (fieldConfig.allowsMultiValueMerge) {
-      this.selectedValues[fieldKey] = this.toggleSelection(
-        this.selectedValues[fieldKey] ?? [],
-        selectedValue,
-      );
-    } else {
-      this.selectedValues[fieldKey] = [selectedValue];
-    }
-
+    this.selectedValues[fieldKey] = fieldConfig.allowsMultiValueMerge
+      ? this.toggleSelection(this.selectedValues[fieldKey] ?? [], selectedValue)
+      : [selectedValue];
     // Ensure preview and UI stay in sync
     this.updateMergeFormField(fieldKey, fieldConfig);
   }
@@ -137,7 +131,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     if (!control) return;
 
     const selectedValues = this.selectedValues[fieldKey] ?? [];
-    this.meregePreviewFieldChanges(control, fieldKey, fieldConfig);
+    this.mergePreviewFieldChanges(control, fieldKey, fieldConfig);
 
     let value = selectedValues[0]; // default to single value
     if (fieldConfig.isArray) {
@@ -151,22 +145,17 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     control.patchValue(value);
   }
 
-  private meregePreviewFieldChanges(
+  private mergePreviewFieldChanges(
     control: AbstractControl,
     fieldKey: string,
     fieldConfig: MergeField,
   ): void {
     control.valueChanges.subscribe((newValue) => {
-      const currentSelectedValues = this.selectedValues[fieldKey] || [];
-      let computedValue: any;
-
-      if (fieldConfig.allowsMultiValueMerge) {
-        computedValue = fieldConfig.isArray
-          ? currentSelectedValues.flat()
-          : currentSelectedValues.join(", ");
-      } else {
-        computedValue = currentSelectedValues[0];
-      }
+      const computedValue = fieldConfig.allowsMultiValueMerge
+        ? fieldConfig.isArray
+          ? (this.selectedValues[fieldKey] || []).flat()
+          : (this.selectedValues[fieldKey] || []).join(", ")
+        : this.selectedValues[fieldKey]?.[0];
 
       if (JSON.stringify(newValue) !== JSON.stringify(computedValue)) {
         this.selectedValues[fieldKey] = this.getUpdatedSelectedValues(
@@ -258,8 +247,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
   isFieldSelected(fieldKey: string, entityIndex: number): boolean {
     const entityValue = this.entitiesToMerge[entityIndex][fieldKey];
-    const selected = this.selectedValues[fieldKey] || [];
-    return selected.some(
+    return (this.selectedValues[fieldKey] || []).some(
       (selectedValue) =>
         JSON.stringify(selectedValue) === JSON.stringify(entityValue),
     );
