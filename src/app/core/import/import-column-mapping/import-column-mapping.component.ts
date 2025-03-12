@@ -16,7 +16,7 @@ import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
-import { EditImportColumnMappingComponent } from "../edit-import-column-mapping/edit-import-column-mapping.component";
+import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/edit-import-column-mapping.component";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties

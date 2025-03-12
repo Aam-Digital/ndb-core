@@ -1,20 +1,20 @@
 import { TestBed } from "@angular/core/testing";
 
 import { ImportAdditionalService } from "./import-additional.service";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../../entity/entity-mapper/mock-entity-mapper-service";
-import { Entity } from "../../../entity/model/entity";
-import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
-import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
-import { ImportMetadata, ImportSettings } from "../../import-metadata";
-import { ChildSchoolRelation } from "../../../../child-dev-project/children/model/childSchoolRelation";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { Entity } from "../../entity/model/entity";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
+import { ImportMetadata, ImportSettings } from "../import-metadata";
+import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import {
   expectEntitiesToBeInDatabase,
   expectEntitiesToMatch,
-} from "../../../../utils/expect-entity-data.spec";
-import { CoreTestingModule } from "../../../../utils/core-testing.module";
-import { DatabaseEntity } from "../../../entity/database-entity.decorator";
-import { DatabaseField } from "../../../entity/database-field.decorator";
+} from "../../../utils/expect-entity-data.spec";
+import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { DatabaseField } from "../../entity/database-field.decorator";
 
 describe("ImportAdditionalService", () => {
   let service: ImportAdditionalService;
@@ -164,7 +164,7 @@ describe("ImportAdditionalService", () => {
         },
       ],
     };
-    importMeta.ids = ["Child:1", "Child:2"];
+    importMeta.createdEntities = ["Child:1", "Child:2"];
     testActivity.participants = ["Child:3", "Child:2", "Child:1"];
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([testActivity]);
@@ -227,7 +227,7 @@ describe("ImportAdditionalService", () => {
         },
       ],
     };
-    importMeta.ids = ["Child:1", "Child:2"];
+    importMeta.createdEntities = ["Child:1", "Child:2"];
     const relations = [
       { childId: "Child:1", schoolId: "School:4" },
       { childId: "Child:2", schoolId: "School:4" },

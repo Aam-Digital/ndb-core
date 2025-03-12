@@ -20,7 +20,7 @@ import { ImportColumnMappingComponent } from "../import-column-mapping/import-co
 import { ImportReviewDataComponent } from "../import-review-data/import-review-data.component";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { RouteTarget } from "../../../route-target";
-import { ImportMatchExistingComponent } from "../additional-actions/import-match-existing/import-match-existing.component";
+import { ImportMatchExistingComponent } from "../update-existing/import-match-existing/import-match-existing.component";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.

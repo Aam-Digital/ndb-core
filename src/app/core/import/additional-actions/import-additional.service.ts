@@ -1,19 +1,19 @@
 import { inject, Injectable } from "@angular/core";
-import { Entity } from "../../../entity/model/entity";
-import { ImportMetadata, ImportSettings } from "../../import-metadata";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { Entity } from "../../entity/model/entity";
+import { ImportMetadata, ImportSettings } from "../import-metadata";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 import {
   AdditionalImportAction,
   AdditionalIndirectLinkAction,
   AdditonalDirectLinkAction,
 } from "./additional-import-action";
-import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
-import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
-import { ConfigService } from "../../../config/config.service";
-import { Note } from "../../../../child-dev-project/notes/model/note";
-import { EventNote } from "../../../../child-dev-project/attendance/model/event-note";
-import { Todo } from "../../../../features/todos/model/todo";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { ConfigService } from "../../config/config.service";
+import { Note } from "../../../child-dev-project/notes/model/note";
+import { EventNote } from "../../../child-dev-project/attendance/model/event-note";
+import { Todo } from "../../../features/todos/model/todo";
 
 /**
  * Service to handle additional import actions
@@ -193,13 +193,13 @@ export class ImportAdditionalService {
       switch (additionalImport.mode) {
         case "direct":
           action = this.undoLinkDirectly(
-            importMeta.ids,
+            importMeta.createdEntities,
             additionalImport as AdditonalDirectLinkAction,
           );
           break;
         case "indirect":
           action = this.undoLinkIndirectly(
-            importMeta.ids,
+            importMeta.createdEntities,
             additionalImport as AdditionalIndirectLinkAction,
           );
           break;

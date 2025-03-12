@@ -88,7 +88,7 @@ describe("ImportComponent", () => {
           columnMapping: appliedMapping,
           additionalActions: [],
         },
-        ids: [],
+        createdEntities: [],
       }),
     );
 

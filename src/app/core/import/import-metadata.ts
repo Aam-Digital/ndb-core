@@ -2,7 +2,7 @@ import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { ColumnMapping } from "./column-mapping";
-import { AdditionalImportAction } from "./additional-actions/import-additional/additional-import-action";
+import { AdditionalImportAction } from "./additional-actions/additional-import-action";
 
 /**
  * Details of a previously executed import of data saved to the database to keep a history.
@@ -23,7 +23,39 @@ export class ImportMetadata extends Entity {
 
   @DatabaseField() config: ImportSettings;
 
+  /**
+   * @deprecated renamed to `createdEntities`
+   */
   @DatabaseField() ids: string[];
+
+  /**
+   * IDs of the entities that were created during the import.
+   */
+  @DatabaseField() get createdEntities(): string[] {
+    return this._createdEntities ?? this.ids;
+  }
+
+  set createdEntities(ids: string[]) {
+    this._createdEntities = ids;
+  }
+
+  private _createdEntities: string[];
+
+  /**
+   * IDs of the entities that were updated during the import (already existed before the import)
+   * and the previous values of those fields that have been overwritten.
+   */
+  @DatabaseField() updatedEntities: {
+    id: string;
+    importDataChanges: ImportDataChange;
+  }[];
+}
+
+/**
+ * Changes documented for a possible undo of an import.
+ */
+export interface ImportDataChange {
+  [field: string]: { previousValue: any; importedValue: any };
 }
 
 /**

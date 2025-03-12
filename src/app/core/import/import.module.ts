@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { ComponentRegistry, ComponentTuple } from "../../dynamic-components";
 import { DiscreteImportConfigComponent } from "../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
 import { EntityActionsMenuService } from "../entity-details/entity-actions-menu/entity-actions-menu.service";
-import { ImportAdditionalService } from "./additional-actions/import-additional/import-additional.service";
+import { ImportAdditionalService } from "./additional-actions/import-additional.service";
 import { EntityAction } from "../entity-details/entity-actions-menu/entity-action.interface";
 import { Entity } from "../entity/model/entity";
 import { Router } from "@angular/router";

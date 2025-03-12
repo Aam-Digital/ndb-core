@@ -28,7 +28,7 @@ import {
   MatHeaderCell,
   MatHeaderCellDef,
 } from "@angular/material/table";
-import { AdditionalImportAction } from "../additional-actions/import-additional/additional-import-action";
+import { AdditionalImportAction } from "../additional-actions/additional-import-action";
 import { MatTooltip } from "@angular/material/tooltip";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 

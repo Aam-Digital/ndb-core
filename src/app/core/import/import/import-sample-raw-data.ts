@@ -1,5 +1,5 @@
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { AdditionalImportAction } from "../additional-actions/import-additional/additional-import-action";
+import { AdditionalImportAction } from "../additional-actions/additional-import-action";
 import { Entity } from "../../entity/model/entity";
 import { ColumnMapping } from "../column-mapping";
 import { genders } from "../../../child-dev-project/children/model/genders";
@@ -68,7 +68,7 @@ export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [
 export const IMPORT_SAMPLE_PREVIOUS_IMPORTS: ImportMetadata[] = [
   ImportMetadata.create({
     created: { by: TEST_USER, at: new Date("2022-12-27") },
-    ids: ["1", "2", "3"],
+    createdEntities: ["1", "2", "3"],
     config: {
       entityType: "Child",
       columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
@@ -76,7 +76,7 @@ export const IMPORT_SAMPLE_PREVIOUS_IMPORTS: ImportMetadata[] = [
   }),
   ImportMetadata.create({
     created: { by: TEST_USER, at: new Date("2023-01-04") },
-    ids: ["1", "3"],
+    createdEntities: ["1", "3"],
     config: { entityType: "School", columnMapping: [] },
   }),
 ];
