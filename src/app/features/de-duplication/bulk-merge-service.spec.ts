@@ -9,7 +9,6 @@ import {
 import { TestEntity } from "app/utils/test-utils/TestEntity";
 import { expectEntitiesToBeInDatabase } from "app/utils/expect-entity-data.spec";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { Note } from "app/child-dev-project/notes/model/note";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
