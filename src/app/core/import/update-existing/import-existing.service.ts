@@ -19,6 +19,115 @@ export class ImportExistingService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly schemaService = inject(EntitySchemaService);
 
+  private existingEntitiesCache: Entity[];
+
+  /**
+   * If a matching existing entity is found, return that with the imported data applied to it.
+   * @param importEntities The newly generated entity from the import data
+   * @param importSettings
+   */
+  async applyExistingEntitiesIfApplicable(
+    importEntities: Entity[],
+    importSettings: ImportSettings,
+  ): Promise<Entity[]> {
+    const updatedEntities = [];
+    for (const entity of importEntities) {
+      const updatedEntity = await this.applyToExistingEntityIfApplicable(
+        entity,
+        importSettings,
+      );
+      updatedEntities.push(updatedEntity);
+    }
+
+    delete this.existingEntitiesCache;
+    return updatedEntities;
+  }
+
+  private async applyToExistingEntityIfApplicable(
+    importEntity: Entity,
+    importSettings: ImportSettings,
+  ) {
+    if (!importSettings.idFields || importSettings.idFields.length === 0)
+      return importEntity;
+
+    if (!this.existingEntitiesCache) {
+      this.existingEntitiesCache = await this.entityMapper.loadType(
+        importSettings.entityType,
+      );
+    }
+
+    const existingEntity = this.findExistingEntity(
+      importSettings,
+      importEntity,
+    );
+
+    if (existingEntity) {
+      const importUndo: ImportDataChange = {};
+
+      for (const key of importSettings.columnMapping.map(
+        (m) => m.propertyName,
+      )) {
+        importUndo[key] = this.generateUndoInfoForField(
+          existingEntity,
+          key,
+          importEntity,
+        );
+
+        // apply only properties from the import
+        existingEntity[key] = importEntity[key];
+      }
+
+      existingEntity["_importUndo"] = importUndo;
+    }
+
+    return existingEntity ?? importEntity;
+  }
+
+  private findExistingEntity(
+    importSettings: ImportSettings,
+    importEntity: Entity,
+  ) {
+    const rawImportEntity =
+      this.schemaService.transformEntityToDatabaseFormat(importEntity);
+
+    return this.existingEntitiesCache.find((e) =>
+      importSettings.idFields.every((idField) => {
+        const schemaField = e.getSchema().get(idField);
+        const rawExistingValue = this.schemaService.valueToDatabaseFormat(
+          e[idField],
+          schemaField,
+        );
+
+        return (
+          // compare the "database formats" (to match complex values like dates)
+          rawExistingValue === rawImportEntity[idField] ||
+          // allow partial match if a column is not part of the import:
+          !importEntity.hasOwnProperty(idField) ||
+          !e.hasOwnProperty(idField)
+        );
+      }),
+    );
+  }
+
+  private generateUndoInfoForField(
+    existingEntity: Entity,
+    key: string,
+    importEntity: Entity,
+  ) {
+    const schemaField = existingEntity.getSchema().get(key);
+
+    return {
+      previousValue: this.schemaService.valueToDatabaseFormat(
+        existingEntity[key],
+        schemaField,
+      ),
+      importedValue: this.schemaService.valueToDatabaseFormat(
+        importEntity[key],
+        schemaField,
+      ),
+    };
+  }
+
   getImportHistoryForUpdatedEntities(
     savedEntities: Entity[],
     settings: ImportSettings,
@@ -56,90 +165,4 @@ export class ImportExistingService {
 
     await Promise.all(reverts);
   }
-
-  /**
-   * If a matching existing entity is found, return that with the imported data applied to it.
-   * @param importEntities The newly generated entity from the import data
-   * @param importSettings
-   */
-  async applyExistingEntitiesIfApplicable(
-    importEntities: Entity[],
-    importSettings: ImportSettings,
-  ): Promise<Entity[]> {
-    const updatedEntities = [];
-    for (const entity of importEntities) {
-      const updatedEntity = await this.applyToExistingEntityIfApplicable(
-        entity,
-        importSettings,
-      );
-      updatedEntities.push(updatedEntity);
-    }
-
-    delete this.existingEntitiesCache;
-    return updatedEntities;
-  }
-
-  private async applyToExistingEntityIfApplicable(
-    importEntity: Entity,
-    importSettings: ImportSettings,
-  ) {
-    if (!importSettings.idFields || importSettings.idFields.length === 0)
-      return importEntity;
-
-    if (!this.existingEntitiesCache) {
-      this.existingEntitiesCache = await this.entityMapper.loadType(
-        importSettings.entityType,
-      );
-    }
-
-    const rawImportEntity =
-      this.schemaService.transformEntityToDatabaseFormat(importEntity);
-
-    const existingEntity = this.existingEntitiesCache.find((e) =>
-      importSettings.idFields.every((idField) => {
-        const schemaField = e.getSchema().get(idField);
-        const rawExistingValue = this.schemaService.valueToDatabaseFormat(
-          e[idField],
-          schemaField,
-        );
-
-        return (
-          // compare the "database formats" (to match complex values like dates)
-          rawExistingValue === rawImportEntity[idField] ||
-          // allow partial match if a column is not part of the import:
-          !importEntity.hasOwnProperty(idField) ||
-          !e.hasOwnProperty(idField)
-        );
-      }),
-    );
-
-    if (existingEntity) {
-      const importUndo: ImportDataChange = {};
-
-      for (const key of importSettings.columnMapping.map(
-        (m) => m.propertyName,
-      )) {
-        const schemaField = existingEntity.getSchema().get(key);
-        importUndo[key] = {
-          previousValue: this.schemaService.valueToDatabaseFormat(
-            existingEntity[key],
-            schemaField,
-          ),
-          importedValue: this.schemaService.valueToDatabaseFormat(
-            importEntity[key],
-            schemaField,
-          ),
-        };
-
-        // apply only properties from the import
-        existingEntity[key] = importEntity[key];
-      }
-
-      existingEntity["_importUndo"] = importUndo;
-    }
-
-    return existingEntity ?? importEntity;
-  }
-
-  private existingEntitiesCache: Entity[];
 }
