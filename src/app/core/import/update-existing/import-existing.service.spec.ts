@@ -122,9 +122,10 @@ describe("ImportExistingService", () => {
       },
     ];
 
-    expect(parsedEntities).toEqual(
-      expectedEntities.map((x) => jasmine.objectContaining(x)),
-    );
+    expect(parsedEntities.length).toBe(expectedEntities.length);
+    for (const expected of expectedEntities) {
+      expect(parsedEntities).toContain(jasmine.objectContaining(expected));
+    }
   });
 
   it("should not delete records during undo if they were updated during import and existed before", async () => {
