@@ -101,7 +101,7 @@ describe("ImportExistingService", () => {
         category: { id: "X", label: "X" }, // not touched from existing entity
       },
       {
-        // not matched
+        _id: jasmine.any(String), // not matched
         name: "A2",
         dateOfBirth: parsedEntities[1]["dateOfBirth"],
       },
@@ -116,7 +116,10 @@ describe("ImportExistingService", () => {
         _id: existingRecords[2]["_id"],
         name: "C",
       },
-      { name: "XXX" }, // not matched
+      {
+        _id: jasmine.any(String), // not matched
+        name: "XXX",
+      },
     ];
 
     expect(parsedEntities).toEqual(
