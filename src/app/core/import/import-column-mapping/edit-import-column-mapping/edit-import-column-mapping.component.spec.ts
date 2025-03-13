@@ -1,12 +1,15 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditImportColumnMappingComponent } from "./edit-import-column-mapping.component";
-import { MockedTestingModule } from "app/utils/mocked-testing.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
-import { ColumnMapping } from "../column-mapping";
-import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { componentRegistry, ComponentRegistry } from "app/dynamic-components";
-import { DiscreteImportConfigComponent } from "app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
+import { ColumnMapping } from "../../column-mapping";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import {
+  componentRegistry,
+  ComponentRegistry,
+} from "../../../../dynamic-components";
+import { DiscreteImportConfigComponent } from "../../../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
 
 describe("EditImportColumnMappingComponent", () => {
   let component: EditImportColumnMappingComponent;

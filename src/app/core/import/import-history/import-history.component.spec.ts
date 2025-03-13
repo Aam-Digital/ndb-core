@@ -22,12 +22,12 @@ describe("ImportHistoryComponent", () => {
 
   const testImport1: ImportMetadata = ImportMetadata.create({
     config: null,
-    ids: ["1"],
+    createdEntities: ["1"],
     created: { at: new Date("2023-05-01"), by: null },
   });
   const testImport2: ImportMetadata = ImportMetadata.create({
     config: null,
-    ids: ["2"],
+    createdEntities: ["2"],
     created: { at: new Date("2023-05-30"), by: null },
   });
 

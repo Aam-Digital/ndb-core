@@ -193,13 +193,13 @@ export class ImportAdditionalService {
       switch (additionalImport.mode) {
         case "direct":
           action = this.undoLinkDirectly(
-            importMeta.ids,
+            importMeta.createdEntities,
             additionalImport as AdditonalDirectLinkAction,
           );
           break;
         case "indirect":
           action = this.undoLinkIndirectly(
-            importMeta.ids,
+            importMeta.createdEntities,
             additionalImport as AdditionalIndirectLinkAction,
           );
           break;

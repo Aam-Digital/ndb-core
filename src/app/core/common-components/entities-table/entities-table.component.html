@@ -82,6 +82,9 @@
       </td>
     </ng-container>
 
+    <!-- custom columns via content projection -->
+    <ng-content></ng-content>
+
     <tr mat-header-row *matHeaderRowDef="_columnsToDisplay"></tr>
     <tr
       mat-row

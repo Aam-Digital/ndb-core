@@ -21,12 +21,16 @@ import { createEntityOfType } from "../demo-data/create-entity-of-type";
 describe("ImportService", () => {
   let service: ImportService;
 
+  let entityMapper: EntityMapperService;
+
   beforeEach(async () => {
+    entityMapper = mockEntityMapper();
+
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
         ImportService,
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: EntityMapperService, useValue: entityMapper },
       ],
     });
     service = TestBed.inject(ImportService);
@@ -38,7 +42,6 @@ describe("ImportService", () => {
       entityType: "Entity",
       columnMapping: undefined,
     };
-    const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "saveAll");
     spyOn(entityMapper, "save");
 
@@ -48,9 +51,9 @@ describe("ImportService", () => {
 
     expect(entityMapper.save).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        ids: testEntities.map((e) => e.getId()),
+        createdEntities: testEntities.map((e) => e.getId()),
         config: testImportSettings,
-      }),
+      } as Partial<ImportMetadata>),
     );
   });
 
@@ -74,7 +77,7 @@ describe("ImportService", () => {
     );
 
     const child = TestEntity.create("Child Name");
-    await TestBed.inject(EntityMapperService).save(child);
+    await entityMapper.save(child);
 
     const rawData: any[] = [
       { rawName: "John", rawCounter: "111" },
@@ -107,11 +110,10 @@ describe("ImportService", () => {
       { column: "rawText", propertyName: "text" },
     ];
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      "ImportTestTarget",
+    const parsedEntities = await service.transformRawDataToEntities(rawData, {
+      entityType: "ImportTestTarget",
       columnMapping,
-    );
+    });
 
     let expectedEntities: any[] = [
       { name: "John", counter: 111 },
@@ -138,11 +140,10 @@ describe("ImportService", () => {
       entityType: "Child",
       columnMapping: undefined,
     };
-    importMeta.ids = ["Child:1", "Child:2"];
+    importMeta.createdEntities = ["Child:1", "Child:2"];
     const children = ["1", "2", "3"].map((id) =>
       createEntityOfType("Child", id),
     );
-    const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([...children, importMeta]);
 
     await service.undoImport(importMeta);
@@ -159,12 +160,11 @@ describe("ImportService", () => {
       entityType: TestEntity.ENTITY_TYPE,
       columnMapping: undefined,
     };
-    importMeta.ids = [
+    importMeta.createdEntities = [
       TestEntity.ENTITY_TYPE + ":1",
       TestEntity.ENTITY_TYPE + ":2",
     ];
     const children = ["1", "2", "3"].map((id) => new TestEntity(id));
-    const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([...children, importMeta]);
 
     await entityMapper.remove(children[1]);

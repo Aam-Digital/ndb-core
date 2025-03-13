@@ -16,7 +16,7 @@ import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { ImportColumnMappingService } from "./import-column-mapping.service";
-import { EditImportColumnMappingComponent } from "../edit-import-column-mapping/edit-import-column-mapping.component";
+import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/edit-import-column-mapping.component";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -59,10 +59,15 @@ export class ImportColumnMappingComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.columnMapping) {
-      this.importColumnMappingService.automaticallySelectMappings(
-        this.columnMapping,
-        this.entityCtor.schema,
-      );
+      const autoMappings =
+        this.importColumnMappingService.automaticallySelectMappings(
+          JSON.parse(JSON.stringify(this.columnMapping)),
+          this.entityCtor.schema,
+        );
+      if (JSON.stringify(autoMappings) !== JSON.stringify(this.columnMapping)) {
+        this.columnMapping = autoMappings;
+        this.columnMappingChange.emit([...this.columnMapping]);
+      }
       this.updateUsedPropertyNames();
     }
   }
