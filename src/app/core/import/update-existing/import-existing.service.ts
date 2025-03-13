@@ -64,9 +64,10 @@ export class ImportExistingService {
     if (existingEntity) {
       const importUndo: ImportDataChange = {};
 
-      for (const key of importSettings.columnMapping.map(
-        (m) => m.propertyName,
-      )) {
+      const importedFields = importSettings.columnMapping
+        .filter((m) => !!m.propertyName)
+        .map((m) => m.propertyName);
+      for (const key of importedFields) {
         importUndo[key] = this.generateUndoInfoForField(
           existingEntity,
           key,
