@@ -21,6 +21,7 @@ import {
 import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { th } from "@faker-js/faker";
 
 type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
 
@@ -94,6 +95,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         (entity) =>
           entity[key] !== undefined &&
           entity[key] !== null &&
+          entity[key] !== false &&
           !(Array.isArray(entity[key]) && entity[key].length === 0),
       );
       const isFileField =
