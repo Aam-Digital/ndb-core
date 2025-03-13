@@ -11,8 +11,10 @@
       </mat-panel-title>
 
       <mat-panel-description i18n>
-        {{ item.createdEntities.length }}
-        "{{ item.config.entityType | entityTypeLabel }}" records
+        {{ item.createdEntities.length }} new,
+        {{ item.updatedEntities.length }} updated "{{
+          item.config.entityType | entityTypeLabel
+        }}" records
       </mat-panel-description>
     </mat-expansion-panel-header>
 
