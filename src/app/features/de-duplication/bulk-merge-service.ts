@@ -36,9 +36,6 @@ export class BulkMergeService extends CascadingEntityAction {
     entitiesToMerge: E[],
     entityType: EntityConstructor,
   ): Promise<void> {
-    for (let e of entitiesToMerge) {
-      this.getrelatedEntities(e);
-    }
     const dialogRef = this.matDialog.open(BulkMergeRecordsComponent, {
       maxHeight: "90vh",
       data: { entityConstructor: entityType, entitiesToMerge: entitiesToMerge },
@@ -51,17 +48,6 @@ export class BulkMergeService extends CascadingEntityAction {
       this.unsavedChangesService.pending = false;
       this.alert.addInfo($localize`Records merged successfully.`);
     }
-  }
-
-  async getrelatedEntities(entity: Entity): Promise<CascadingActionResult> {
-    console.log(entity, "test");
-    const cascadeResult = await this.cascadeActionToRelatedEntities(
-      entity,
-      (e) => this.getrelatedEntities(e),
-      (e, refField, entity) => this.getrelatedEntities(e), //need to add method which will update the reference entity id with merged id
-    );
-
-    return new CascadingActionResult([entity]).mergeResults(cascadeResult);
   }
 
   /**
@@ -77,10 +63,56 @@ export class BulkMergeService extends CascadingEntityAction {
   ): Promise<void> {
     await this.entityMapper.save(mergedEntity);
 
+    // Process all entities to be deleted
     for (let e of entitiesToMerge) {
       if (e.getId() === mergedEntity.getId()) continue;
 
+      await this.transferReferences(e, mergedEntity);
+
       await this.entityMapper.remove(e);
     }
+  }
+
+  /**
+   * Transfers references from the entity being deleted to the merged entity
+   */
+  private async transferReferences(
+    oldEntity: Entity,
+    newEntity: Entity,
+  ): Promise<void> {
+    await this.cascadeActionToRelatedEntities(
+      oldEntity,
+      // Todo - need to handle dependent entities separately eg. childrerlations etc
+      (e) => Promise.resolve(new CascadingActionResult([], [])),
+      (e, refField) =>
+        this.updateReferenceInEntity(e, refField, oldEntity, newEntity),
+    );
+  }
+
+  /**
+   * Updates references in a related entity from oldEntity to newEntity
+   */
+  private async updateReferenceInEntity(
+    relatedEntity: Entity,
+    refField: string,
+    oldEntity: Entity,
+    newEntity: Entity,
+  ): Promise<CascadingActionResult> {
+    const originalEntity = relatedEntity.copy();
+    const oldId = oldEntity.getId();
+
+    if (Array.isArray(relatedEntity[refField])) {
+      // Replace old ID with new ID in array references
+      relatedEntity[refField] = relatedEntity[refField].map((id) =>
+        id === oldId ? newEntity.getId() : id,
+      );
+    } else if (relatedEntity[refField] === oldId) {
+      // Update single reference
+      relatedEntity[refField] = newEntity.getId();
+    }
+
+    await this.entityMapper.save(relatedEntity);
+
+    return new CascadingActionResult([originalEntity]);
   }
 }
