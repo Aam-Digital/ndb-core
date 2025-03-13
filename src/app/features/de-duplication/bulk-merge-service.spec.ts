@@ -67,20 +67,22 @@ fdescribe("BulkMergeService", () => {
 
   it("should update IDs in related entities of recordB into recordA after merging", async () => {
     const relatedEntity = new EntityWithMergedRelations();
-    relatedEntity.singleRelated = recordA.getId();
-    relatedEntity.multiRelated = [recordA.getId(), "unrelated-id"];
+    relatedEntity.singleRelated = recordB.getId();
+    relatedEntity.multiRelated = [recordB.getId(), "unrelated-id"];
     await entityMapper.save(relatedEntity);
 
-    // mock merged entity
-    // Todo: this should be done in the service after updating executeMerge method
-    relatedEntity.singleRelated = recordB.getId();
-    relatedEntity.multiRelated.push(recordB.getId());
+    const mergedEntity = TestEntity.create({ ...recordA, name: "A1" });
+
+    await service.executeMerge(mergedEntity, [recordA, recordB]);
+
     const updatedRelatedEntity = entityMapper.get(
       EntityWithMergedRelations.ENTITY_TYPE,
       relatedEntity.getId(),
     ) as EntityWithMergedRelations;
-    expect(updatedRelatedEntity.singleRelated).toEqual(recordB.getId());
-    expect(updatedRelatedEntity.multiRelated).toContain(recordB.getId());
+
+    expect(updatedRelatedEntity.singleRelated).toEqual(recordA.getId());
+    expect(updatedRelatedEntity.multiRelated).toContain(recordA.getId());
+    expect(updatedRelatedEntity.multiRelated).not.toContain(recordB.getId());
   });
 
   it("should not include merged ID twice in multiRelated array", async () => {
@@ -88,22 +90,15 @@ fdescribe("BulkMergeService", () => {
     relatedEntity.multiRelated = [recordA.getId(), recordB.getId()];
     await entityMapper.save(relatedEntity);
 
-    // replace recordB with recordA but avoid duplicates
-    // Todo: this should be done in the service after updating executeMerge method
-    relatedEntity.multiRelated = Array.from(
-      new Set(
-        relatedEntity.multiRelated.map((id) =>
-          id === recordB.getId() ? recordA.getId() : id,
-        ),
-      ),
-    );
+    const mergedEntity = TestEntity.create({ ...recordA, name: "A1" });
+
+    await service.executeMerge(mergedEntity, [recordA, recordB]);
 
     const updatedRelatedEntity = entityMapper.get(
       EntityWithMergedRelations.ENTITY_TYPE,
       relatedEntity.getId(),
     ) as EntityWithMergedRelations;
 
-    console.log(updatedRelatedEntity.multiRelated);
     expect(updatedRelatedEntity.multiRelated).toEqual([recordA.getId()]);
   });
 });

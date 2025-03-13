@@ -82,11 +82,42 @@ export class BulkMergeService extends CascadingEntityAction {
   ): Promise<void> {
     await this.cascadeActionToRelatedEntities(
       oldEntity,
-      // Todo - need to handle dependent entities separately eg. childrerlations etc
-      (e) => Promise.resolve(new CascadingActionResult([], [])),
-      (e, refField) =>
-        this.updateReferenceInEntity(e, refField, oldEntity, newEntity),
+      async (relatedEntity) => {
+        await this.updateReferences(relatedEntity, oldEntity, newEntity);
+        return new CascadingActionResult([relatedEntity]);
+      },
+      (relatedEntity, refField) =>
+        this.updateReferenceInEntity(
+          relatedEntity,
+          refField,
+          oldEntity,
+          newEntity,
+        ),
     );
+  }
+
+  /**
+   * Updates all references in a related entity from oldEntity to newEntity
+   */
+  private async updateReferences(
+    relatedEntity: Entity,
+    oldEntity: Entity,
+    newEntity: Entity,
+  ): Promise<void> {
+    const oldId = oldEntity.getId();
+    const newId = newEntity.getId();
+
+    for (const key of Object.keys(relatedEntity)) {
+      if (Array.isArray(relatedEntity[key])) {
+        relatedEntity[key] = Array.from(
+          new Set(relatedEntity[key].map((id) => (id === oldId ? newId : id))),
+        );
+      } else if (relatedEntity[key] === oldId) {
+        relatedEntity[key] = newId;
+      }
+    }
+
+    await this.entityMapper.save(relatedEntity);
   }
 
   /**
@@ -102,12 +133,15 @@ export class BulkMergeService extends CascadingEntityAction {
     const oldId = oldEntity.getId();
 
     if (Array.isArray(relatedEntity[refField])) {
-      // Replace old ID with new ID in array references
+      console.log(relatedEntity[refField], "----test");
+
       relatedEntity[refField] = relatedEntity[refField].map((id) =>
         id === oldId ? newEntity.getId() : id,
       );
+      console.log(relatedEntity[refField], "test");
     } else if (relatedEntity[refField] === oldId) {
-      // Update single reference
+      console.log(relatedEntity[refField], "test22");
+
       relatedEntity[refField] = newEntity.getId();
     }
 
