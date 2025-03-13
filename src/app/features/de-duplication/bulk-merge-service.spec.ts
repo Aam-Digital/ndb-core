@@ -28,7 +28,7 @@ class EntityWithMergedRelations extends Entity {
   multiRelated;
 }
 
-fdescribe("BulkMergeService", () => {
+describe("BulkMergeService", () => {
   let service: BulkMergeService;
 
   let entityMapper: MockEntityMapperService;

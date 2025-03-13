@@ -67,16 +67,16 @@ export class BulkMergeService extends CascadingEntityAction {
     for (let e of entitiesToMerge) {
       if (e.getId() === mergedEntity.getId()) continue;
 
-      await this.transferReferences(e, mergedEntity);
+      await this.updateRelatedRefId(e, mergedEntity);
 
       await this.entityMapper.remove(e);
     }
   }
 
   /**
-   * Transfers references from the entity being deleted to the merged entity
+   * Update references from the entity being deleted to the merged entity
    */
-  private async transferReferences(
+  private async updateRelatedRefId(
     oldEntity: Entity,
     newEntity: Entity,
   ): Promise<void> {
@@ -133,8 +133,6 @@ export class BulkMergeService extends CascadingEntityAction {
     const oldId = oldEntity.getId();
 
     if (Array.isArray(relatedEntity[refField])) {
-      console.log(relatedEntity[refField], "----test");
-
       relatedEntity[refField] = Array.from(
         new Set(
           relatedEntity[refField].map((id) =>
@@ -142,10 +140,7 @@ export class BulkMergeService extends CascadingEntityAction {
           ),
         ),
       );
-      console.log(relatedEntity[refField], "test");
     } else if (relatedEntity[refField] === oldId) {
-      console.log(relatedEntity[refField], "test22");
-
       relatedEntity[refField] = newEntity.getId();
     }
 
