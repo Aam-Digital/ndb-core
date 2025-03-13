@@ -135,8 +135,12 @@ export class BulkMergeService extends CascadingEntityAction {
     if (Array.isArray(relatedEntity[refField])) {
       console.log(relatedEntity[refField], "----test");
 
-      relatedEntity[refField] = relatedEntity[refField].map((id) =>
+      relatedEntity[refField] = Array.from(
+        new Set(
+          relatedEntity[refField].map((id) =>
         id === oldId ? newEntity.getId() : id,
+          ),
+        ),
       );
       console.log(relatedEntity[refField], "test");
     } else if (relatedEntity[refField] === oldId) {
