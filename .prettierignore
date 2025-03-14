@@ -1,1 +1,2 @@
 package.json
+src/firebase-messaging-sw.js
