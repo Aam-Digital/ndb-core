@@ -40,9 +40,6 @@ export const environment = {
   /** Path for the reverse proxy that forwards to the database - configured in `default.conf` */
   DB_PROXY_PREFIX: "/db",
 
-  /** Name of the database that is used */
-  DB_NAME: "app",
-
   /** Path for the reverse proxy that forwards to backend services APIs - configured in `default.conf` */
   API_PROXY_PREFIX: "/api",
 
