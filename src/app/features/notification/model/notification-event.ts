@@ -29,16 +29,6 @@ export class NotificationEvent extends Entity {
   @DatabaseField() actionURL?: string;
 
   /*
-   * The user ID for whom the notification is intended
-   */
-  @DatabaseField() notificationFor: string;
-
-  /*
-   * The notification token to be used for the notification.
-   */
-  @DatabaseField() notificationToken: string;
-
-  /*
    * The type of notification.
    */
   @DatabaseField() notificationType: NotificationType;
@@ -54,5 +44,5 @@ export class NotificationEvent extends Entity {
   /*
    * The status of the notification.
    */
-  @DatabaseField() readStatus: boolean;
+  @DatabaseField() readStatus?: boolean;
 }

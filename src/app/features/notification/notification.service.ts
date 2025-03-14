@@ -25,7 +25,8 @@ export class NotificationService {
 
   private tokenSubscription: Subscription | undefined = undefined;
 
-  private readonly NOTIFICATION_API_URL = "/api/v1/notification";
+  private readonly NOTIFICATION_API_URL =
+    environment.API_PROXY_PREFIX + "/v1/notification";
 
   init() {
     if (environment.enableNotificationModule) {

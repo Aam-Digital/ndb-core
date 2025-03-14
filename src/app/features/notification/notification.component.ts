@@ -114,17 +114,12 @@ export class NotificationComponent implements OnInit {
    * Filters notifications based on the sender and read status.
    */
   private filterUserNotifications(notifications: NotificationEvent[]) {
-    this.allNotifications = notifications
-      .filter((notification) => notification.notificationFor === this.userId)
-      .sort(
-        (notificationA, notificationB) =>
-          notificationB.created.at.getTime() -
-          notificationA.created.at.getTime(),
-      );
+    this.allNotifications = notifications.sort(
+      (notificationA, notificationB) =>
+        notificationB.created.at.getTime() - notificationA.created.at.getTime(),
+    );
     this.unreadNotifications = notifications.filter(
-      (notification) =>
-        notification.notificationFor === this.userId &&
-        !notification.readStatus,
+      (notification) => !notification.readStatus,
     );
   }
 
@@ -212,7 +207,6 @@ export class NotificationComponent implements OnInit {
     const event = new NotificationEvent();
     event.title = "Test Notification";
     event.body = "This is a test notification.";
-    event.notificationFor = this.userId;
     event.notificationType = "entity_change";
     event.context = {
       entityType: "School",
