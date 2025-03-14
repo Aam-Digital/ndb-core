@@ -77,7 +77,7 @@ describe("TemplateExportApiService", () => {
 
     expect(result).toBe("TEST_ID");
     expect(mockPOST).toHaveBeenCalledWith(
-      service.BACKEND_URL + "template",
+      service.API_URL + "/template",
       jasmine.any(FormData),
     );
 
@@ -127,7 +127,7 @@ describe("TemplateExportApiService", () => {
       file: mockResponse.body,
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
-      service.BACKEND_URL + "render/" + templateEntity.getId(),
+      service.API_URL + "/render/" + templateEntity.getId(),
       {
         convertTo: "pdf",
         data: dataEntity,
@@ -158,7 +158,7 @@ describe("TemplateExportApiService", () => {
       file: mockResponse.body,
     });
     expect(mockApiResponse).toHaveBeenCalledWith(
-      service.BACKEND_URL + "render/" + templateEntity.getId(),
+      service.API_URL + "/render/" + templateEntity.getId(),
       {
         convertTo: "pdf",
         data: dataEntity,

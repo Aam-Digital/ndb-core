@@ -22,6 +22,7 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
 import { Config } from "../../config/config";
 import { ConfigService } from "../../config/config.service";
+import { Entity } from "../../entity/model/entity";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -30,7 +31,7 @@ describe("SessionManagerService", () => {
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator: { onLine: boolean };
   let dbUser: SessionInfo;
-  const userDBName = `${TEST_USER}-${environment.DB_NAME}`;
+  const userDBName = `${TEST_USER}-${Entity.DATABASE}`;
   let mockDatabaseResolver: jasmine.SpyObj<DatabaseResolverService>;
 
   beforeEach(waitForAsync(() => {

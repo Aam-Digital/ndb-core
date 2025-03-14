@@ -114,7 +114,7 @@ describe("SqlReportService", () => {
 
     // Then
     expect(mockHttpClient.post).toHaveBeenCalledOnceWith(
-      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${report.getId()}`,
+      `${SqlReportService.API_URL}/report-calculation/report/${report.getId()}`,
       {},
       {
         params: {
@@ -151,7 +151,7 @@ describe("SqlReportService", () => {
 
     // Then
     expect(mockHttpClient.post).toHaveBeenCalledOnceWith(
-      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${report.getId()}`,
+      `${SqlReportService.API_URL}/report-calculation/report/${report.getId()}`,
       {},
       {
         params: {
