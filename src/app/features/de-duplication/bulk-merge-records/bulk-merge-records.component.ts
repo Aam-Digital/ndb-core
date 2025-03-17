@@ -147,11 +147,15 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     return JSON.stringify(a) === JSON.stringify(b);
   }
 
-  private isEmpty(value: any): boolean {
+  public isEmpty(value: any): boolean {
     if (value === undefined || value === null) return true;
     if (typeof value === "string" && value.trim() === "") return true;
     if (Array.isArray(value) && value.length === 0) return true;
-    if (typeof value === "object" && Object.keys(value).length === 0)
+    if (
+      typeof value === "object" &&
+      !(value instanceof Date) &&
+      Object.keys(value).length === 0
+    )
       return true;
     return false;
   }
