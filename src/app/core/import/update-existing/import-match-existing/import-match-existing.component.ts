@@ -25,16 +25,16 @@ export class ImportMatchExistingComponent {
   /**
    * The existing value, currently selected "ID fields".
    */
-  @Input() idFields: string[];
+  @Input() matchExistingByFields: string[];
 
   /**
    * New values selected by the user for the "ID fields".
    */
-  @Output() idFieldsChange = new EventEmitter<string[]>();
+  @Output() matchExistingByFieldsChange = new EventEmitter<string[]>();
 
   @Input() entityType: string;
 
   updateValue(newValue: string[] | string) {
-    this.idFieldsChange.emit(newValue as string[]);
+    this.matchExistingByFieldsChange.emit(newValue as string[]);
   }
 }

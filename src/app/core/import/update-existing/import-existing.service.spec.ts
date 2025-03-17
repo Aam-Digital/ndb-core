@@ -38,7 +38,7 @@ describe("ImportExistingService", () => {
     service = TestBed.inject(ImportService);
   });
 
-  it("should use existing records to be updated, if idFields are given", async () => {
+  it("should use existing records to be updated, if matchExistingByFields are given", async () => {
     const existingRecords: Entity[] = [
       TestEntity.create({
         name: "A",
@@ -83,7 +83,7 @@ describe("ImportExistingService", () => {
         { column: "DoB", propertyName: "dateOfBirth" },
         { column: "other", propertyName: "other" },
       ],
-      idFields: ["name", "dateOfBirth"],
+      matchExistingByFields: ["name", "dateOfBirth"],
     };
 
     const parsedEntities = await service.transformRawDataToEntities(
@@ -161,7 +161,7 @@ describe("ImportExistingService", () => {
         },
         { column: "dateOfBirth", propertyName: "dateOfBirth" },
       ],
-      idFields: ["name"],
+      matchExistingByFields: ["name"],
     };
 
     const entitiesToImport = await service.transformRawDataToEntities(

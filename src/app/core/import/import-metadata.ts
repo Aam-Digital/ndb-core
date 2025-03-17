@@ -68,6 +68,6 @@ export interface ImportSettings {
   /** configured actions to run in addition to the import to link data */
   additionalActions?: AdditionalImportAction[];
 
-  /** Fields used to match data to an existing record */
-  idFields?: string[];
+  /** IDs of fields used to match imported data to an existing record */
+  matchExistingByFields?: string[];
 }

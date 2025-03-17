@@ -59,7 +59,7 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() entityType: string;
   @Input() columnMapping: ColumnMapping[];
   @Input() additionalActions: AdditionalImportAction[];
-  @Input() idFields: string[];
+  @Input() matchExistingByFields: string[];
 
   entityConstructor: EntityConstructor;
 
@@ -94,7 +94,7 @@ export class ImportReviewDataComponent implements OnChanges {
         entityType: this.entityType,
         columnMapping: this.columnMapping,
         additionalActions: this.additionalActions,
-        idFields: this.idFields,
+        matchExistingByFields: this.matchExistingByFields,
       })
     )
       // sort _rev (existing records being updated) first, then new records
@@ -120,7 +120,7 @@ export class ImportReviewDataComponent implements OnChanges {
               entityType: this.entityType,
               columnMapping: this.columnMapping,
               additionalActions: this.additionalActions,
-              idFields: this.idFields,
+              matchExistingByFields: this.matchExistingByFields,
             },
           } as ImportDialogData,
         })

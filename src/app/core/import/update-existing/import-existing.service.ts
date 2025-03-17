@@ -47,7 +47,10 @@ export class ImportExistingService {
     importEntity: Entity,
     importSettings: ImportSettings,
   ) {
-    if (!importSettings.idFields || importSettings.idFields.length === 0)
+    if (
+      !importSettings.matchExistingByFields ||
+      importSettings.matchExistingByFields.length === 0
+    )
       return importEntity;
 
     if (!this.existingEntitiesCache) {
@@ -92,7 +95,7 @@ export class ImportExistingService {
       this.schemaService.transformEntityToDatabaseFormat(importEntity);
 
     return this.existingEntitiesCache.find((e) =>
-      importSettings.idFields.every((idField) => {
+      importSettings.matchExistingByFields.every((idField) => {
         const schemaField = e.getSchema().get(idField);
         const rawExistingValue = this.schemaService.valueToDatabaseFormat(
           e[idField],
