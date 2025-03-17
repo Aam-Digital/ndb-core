@@ -93,6 +93,7 @@ import { SkillModule } from "./features/skill/skill.module";
 import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
 import { NotificationService } from "./features/notification/notification.service";
 import { AngularFireModule } from "@angular/fire/compat";
+import { FirebaseConfiguration } from "./features/notification/notification-config.interface";
 
 /**
  * Main entry point of the application.
@@ -144,14 +145,9 @@ import { AngularFireModule } from "@angular/fire/compat";
     MatSnackBarModule,
     MatDialogModule,
     ApplicationLoadingComponent,
-    AngularFireModule.initializeApp({
-      projectId: "aam-digital-b8a7b",
-      appId: "1:189059495005:web:151bb9f04d6bebb637c9b4",
-      storageBucket: "aam-digital-b8a7b.firebasestorage.app",
-      apiKey: "AIzaSyAVxpEeaCL8b4KQPwMqvWRW7lpcgDYZHdw",
-      authDomain: "aam-digital-b8a7b.firebaseapp.com",
-      messagingSenderId: "189059495005",
-    }),
+    AngularFireModule.initializeApp(
+      environment.notificationsConfig as FirebaseConfiguration,
+    ),
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),
