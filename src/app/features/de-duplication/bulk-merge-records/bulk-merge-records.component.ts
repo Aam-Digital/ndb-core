@@ -57,6 +57,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
    */
   existingFieldSelected: Record<string, boolean[]> = {};
 
+  isFieldDisabled: Record<string, boolean[]> = {};
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
 
@@ -121,13 +122,15 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
   private setInitialMergedValues(): void {
     for (const field of this.fieldsToMerge) {
+      const valueA = this.entitiesToMerge[0][field.id];
+      const valueB = this.entitiesToMerge[1][field.id];
+      this.isFieldDisabled[field.id] = this.entitiesToMerge.map((entity) =>
+        this.isEmpty(entity[field.id]),
+      );
       const control = this.mergeForm.formGroup.get(field.id);
       if (!control) continue;
 
-      const valueA = this.entitiesToMerge[0][field.id];
-      const valueB = this.entitiesToMerge[1][field.id];
-
-      let mergedValue;
+      let mergedValue = control.value;
 
       if (this.areValuesIdentical(valueA, valueB)) {
         mergedValue = valueA;
@@ -135,10 +138,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
         mergedValue = valueB;
       } else if (this.isEmpty(valueB) && !this.isEmpty(valueA)) {
         mergedValue = valueA;
-      } else {
-        mergedValue = control.value;
       }
-
       control.setValue(mergedValue);
     }
   }
