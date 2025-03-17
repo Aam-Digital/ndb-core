@@ -130,33 +130,46 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       const control = this.mergeForm.formGroup.get(field.id);
       if (!control) continue;
 
-      let mergedValue = control.value;
-
-      if (this.areValuesIdentical(valueA, valueB)) {
-        mergedValue = valueA;
-      } else if (this.isEmpty(valueA) && !this.isEmpty(valueB)) {
-        mergedValue = valueB;
-      } else if (this.isEmpty(valueB) && !this.isEmpty(valueA)) {
-        mergedValue = valueA;
-      }
+      const mergedValue = this.setSmartSelectedValue(
+        valueA,
+        valueB,
+        control.value,
+      );
       control.setValue(mergedValue);
     }
+  }
+
+  private setSmartSelectedValue(
+    valueA: any,
+    valueB: any,
+    currentValue: any,
+  ): any {
+    if (this.areValuesIdentical(valueA, valueB)) {
+      return valueA;
+    } else if (this.isEmpty(valueA) && !this.isEmpty(valueB)) {
+      return valueB;
+    } else if (this.isEmpty(valueB) && !this.isEmpty(valueA)) {
+      return valueA;
+    }
+    return currentValue;
   }
 
   private areValuesIdentical(a: any, b: any): boolean {
     return JSON.stringify(a) === JSON.stringify(b);
   }
 
-  public isEmpty(value: any): boolean {
-    if (value === undefined || value === null) return true;
-    if (typeof value === "string" && value.trim() === "") return true;
-    if (Array.isArray(value) && value.length === 0) return true;
+  private isEmpty(value: any): boolean {
     if (
-      typeof value === "object" &&
-      !(value instanceof Date) &&
-      Object.keys(value).length === 0
-    )
+      value === undefined ||
+      value === null ||
+      (typeof value === "string" && value.trim() === "") ||
+      (Array.isArray(value) && value.length === 0) ||
+      (typeof value === "object" &&
+        !(value instanceof Date) &&
+        Object.keys(value).length === 0)
+    ) {
       return true;
+    }
     return false;
   }
   private allowsMultiValueMerge(field?: FormFieldConfig): boolean {
