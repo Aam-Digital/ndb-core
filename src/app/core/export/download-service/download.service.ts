@@ -184,7 +184,11 @@ export class DownloadService {
     return newItem;
   }
 
-  private async loadRelatedEntitiesToString(value: string | string[]) {
+  private async loadRelatedEntitiesToString(
+    value: string | string[],
+  ): Promise<string[]> {
+    if (!value) return [];
+
     const relatedEntitiesToStrings: string[] = [];
 
     const relatedEntitiesIds: string[] = Array.isArray(value) ? value : [value];
