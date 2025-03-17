@@ -14,5 +14,5 @@ export const environment = {
   account_url: "https://keycloak.aam-digital.net",
   email: undefined,
   DB_PROXY_PREFIX: "/db",
-  DB_NAME: "app",
+  API_PROXY_PREFIX: "/api",
 };

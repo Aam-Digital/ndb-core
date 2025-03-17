@@ -44,7 +44,7 @@ describe("CouchdbFileService", () => {
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   let dismiss: jasmine.Spy;
   let updates: Subject<UpdatedEntity<Entity>>;
-  const attachmentUrlPrefix = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}-attachments`;
+  const attachmentUrlPrefix = `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}-attachments`;
   let mockNavigator;
 
   beforeEach(() => {
