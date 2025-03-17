@@ -73,10 +73,8 @@ export class NotificationSettingsComponent implements OnInit {
   private async loadNotificationConfig() {
     let notificationConfig: NotificationConfig;
     try {
-      notificationConfig = await this.entityMapper.load<NotificationConfig>(
-        NotificationConfig,
-        this.userId,
-      );
+      notificationConfig =
+        await this.notificationService.loadNotificationConfig();
     } catch (err) {
       if (err.status === 404) {
         notificationConfig = this.generateDefaultNotificationConfig();

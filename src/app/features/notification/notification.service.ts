@@ -7,6 +7,9 @@ import { firstValueFrom, mergeMap, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
 import { catchError } from "rxjs/operators";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { NotificationConfig } from "./model/notification-config";
+import { SessionSubject } from "../../core/session/auth/session-info";
 
 /**
  * Handles the interaction with Cloud Messaging.
@@ -22,17 +25,29 @@ export class NotificationService {
   private httpClient = inject(HttpClient);
   private authService = inject(KeycloakAuthService);
   private alertService = inject(AlertService);
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly sessionInfo = inject(SessionSubject);
 
   private tokenSubscription: Subscription | undefined = undefined;
 
   private readonly NOTIFICATION_API_URL =
     environment.API_PROXY_PREFIX + "/v1/notification";
 
-  init() {
-    if (environment.enableNotificationModule) {
+  async init() {
+    const notificationConfig = await this.loadNotificationConfig().catch(
+      () => null,
+    );
+
+    if (notificationConfig?.channels?.push) {
       this.listenForMessages();
     }
-    // this.messaging = firebase.messaging();
+  }
+
+  async loadNotificationConfig() {
+    return this.entityMapper.load<NotificationConfig>(
+      NotificationConfig,
+      this.sessionInfo.value?.id,
+    );
   }
 
   /**
