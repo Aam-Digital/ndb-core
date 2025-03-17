@@ -101,7 +101,6 @@ export class BulkMergeService extends CascadingEntityAction {
 
   /**
    * Updates references from the oldEntity to the newEntity in a related entity.
-   * If a specific field is provided, only that field is updated.
    */
   private async updateEntityReferences(
     relatedEntity: Entity,
