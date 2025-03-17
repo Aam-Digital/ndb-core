@@ -87,6 +87,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.existingFieldSelected[key] = [false, false];
       this.subscribeFieldChangesToUpdateSelectionMarkers(control, key);
     }
+    this.setInitialMergedValues();
   }
 
   private initFieldsToMerge(): void {
@@ -118,7 +119,42 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       }
     });
   }
+  private setInitialMergedValues(): void {
+    for (const field of this.fieldsToMerge) {
+      const control = this.mergeForm.formGroup.get(field.id);
+      if (!control) continue;
 
+      const valueA = this.entitiesToMerge[0][field.id];
+      const valueB = this.entitiesToMerge[1][field.id];
+
+      let mergedValue;
+
+      if (this.areValuesIdentical(valueA, valueB)) {
+        mergedValue = valueA;
+      } else if (this.isEmpty(valueA) && !this.isEmpty(valueB)) {
+        mergedValue = valueB;
+      } else if (this.isEmpty(valueB) && !this.isEmpty(valueA)) {
+        mergedValue = valueA;
+      } else {
+        mergedValue = control.value;
+      }
+
+      control.setValue(mergedValue);
+    }
+  }
+
+  private areValuesIdentical(a: any, b: any): boolean {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
+
+  private isEmpty(value: any): boolean {
+    if (value === undefined || value === null) return true;
+    if (typeof value === "string" && value.trim() === "") return true;
+    if (Array.isArray(value) && value.length === 0) return true;
+    if (typeof value === "object" && Object.keys(value).length === 0)
+      return true;
+    return false;
+  }
   private allowsMultiValueMerge(field?: FormFieldConfig): boolean {
     return (
       field?.dataType === "string" ||
