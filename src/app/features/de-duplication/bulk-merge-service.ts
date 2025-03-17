@@ -83,31 +83,39 @@ export class BulkMergeService extends CascadingEntityAction {
     await this.cascadeActionToRelatedEntities(
       oldEntity,
       async (relatedEntity) => {
-        await this.updateReferences(relatedEntity, oldEntity, newEntity);
-        return new CascadingActionResult([relatedEntity]);
-      },
-      (relatedEntity, refField) =>
-        this.updateReferenceInEntity(
+        return await this.updateEntityReferences(
           relatedEntity,
-          refField,
           oldEntity,
           newEntity,
+        );
+      },
+      (relatedEntity, refField) =>
+        this.updateEntityReferences(
+          relatedEntity,
+          oldEntity,
+          newEntity,
+          refField,
         ),
     );
   }
 
   /**
-   * Updates all references in a related entity from oldEntity to newEntity
+   * Updates references from the oldEntity to the newEntity in a related entity.
+   * If a specific field is provided, only that field is updated.
    */
-  private async updateReferences(
+  private async updateEntityReferences(
     relatedEntity: Entity,
     oldEntity: Entity,
     newEntity: Entity,
-  ): Promise<void> {
+    refField?: string,
+  ): Promise<CascadingActionResult> {
+    const originalEntity = relatedEntity.copy();
     const oldId = oldEntity.getId();
     const newId = newEntity.getId();
 
-    for (const key of Object.keys(relatedEntity)) {
+    const fieldsToUpdate = refField ? [refField] : Object.keys(relatedEntity);
+
+    for (const key of fieldsToUpdate) {
       if (Array.isArray(relatedEntity[key])) {
         relatedEntity[key] = Array.from(
           new Set(relatedEntity[key].map((id) => (id === oldId ? newId : id))),
@@ -118,34 +126,6 @@ export class BulkMergeService extends CascadingEntityAction {
     }
 
     await this.entityMapper.save(relatedEntity);
-  }
-
-  /**
-   * Updates references in a related entity from oldEntity to newEntity
-   */
-  private async updateReferenceInEntity(
-    relatedEntity: Entity,
-    refField: string,
-    oldEntity: Entity,
-    newEntity: Entity,
-  ): Promise<CascadingActionResult> {
-    const originalEntity = relatedEntity.copy();
-    const oldId = oldEntity.getId();
-
-    if (Array.isArray(relatedEntity[refField])) {
-      relatedEntity[refField] = Array.from(
-        new Set(
-          relatedEntity[refField].map((id) =>
-            id === oldId ? newEntity.getId() : id,
-          ),
-        ),
-      );
-    } else if (relatedEntity[refField] === oldId) {
-      relatedEntity[refField] = newEntity.getId();
-    }
-
-    await this.entityMapper.save(relatedEntity);
-
     return new CascadingActionResult([originalEntity]);
   }
 }
