@@ -10,6 +10,9 @@ import { catchError } from "rxjs/operators";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { NotificationConfig } from "./model/notification-config";
 import { SessionSubject } from "../../core/session/auth/session-info";
+import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
+import { NotificationEvent } from "./model/notification-event";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 /**
  * Handles the interaction with Cloud Messaging.
@@ -27,6 +30,7 @@ export class NotificationService {
   private alertService = inject(AlertService);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
+  private readonly databaseResolver = inject(DatabaseResolverService);
 
   private tokenSubscription: Subscription | undefined = undefined;
 
@@ -196,10 +200,19 @@ export class NotificationService {
   /**
    * Listens for incoming Firebase Cloud Messages (FCM) in real time.
    * Displays a browser notification when a message is received.
+   *
+   * This listener creates system notifications while the app is running
+   * (If app is not running, the firebase-messaging-sw is listening)
    */
   listenForMessages(): void {
     this.firebaseMessaging.messages.subscribe({
       next: (payload) => {
+        // trigger immediate sync
+        const db = this.databaseResolver.getDatabase(
+          NotificationEvent.DATABASE,
+        );
+        (db as SyncedPouchDatabase).sync();
+
         new Notification(payload.notification.title, {
           body: payload.notification.body,
           icon: payload.notification.image,

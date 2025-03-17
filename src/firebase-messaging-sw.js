@@ -1,3 +1,4 @@
+// Service worker to trigger system notifications if app is not running in foreground
 // see source: https://github.com/firebase/snippets-web/blob/56d70627e2dc275f01cd0e55699794bf40faca80/messaging/service-worker.js#L10-L33
 
 importScripts("https://www.gstatic.com/firebasejs/11.2.0/firebase-app-compat.js");
@@ -25,26 +26,26 @@ function parseResponse(response) {
 
 loadConfig()
   .then(function(firebaseConfig) {
-  // Initialize the Firebase app in the service worker by passing in
-  // your app's Firebase config object.
-  // https://firebase.google.com/docs/web/setup#config-object
-  firebase.initializeApp(firebaseConfig);
+    // Initialize the Firebase app in the service worker by passing in
+    // your app's Firebase config object.
+    // https://firebase.google.com/docs/web/setup#config-object
+    firebase.initializeApp(firebaseConfig);
 
-  // Retrieve an instance of Firebase Messaging so that it can handle background
-  // messages.
-  const messaging = firebase.messaging();
+    // Retrieve an instance of Firebase Messaging so that it can handle background
+    // messages.
+    const messaging = firebase.messaging();
 
-  messaging.onBackgroundMessage(function(payload) {
-    const { title, body, image } = payload.notification;
-    const notificationOptions = {
-      title: title,
-      body: body,
-      icon: image,
-      data: {
-        url: payload.data?.url
-      }
-    };
-    self.registration.showNotification(title, notificationOptions);
+    messaging.onBackgroundMessage(function(payload) {
+      const { title, body, image } = payload.notification;
+      const notificationOptions = {
+        title: title,
+        body: body,
+        icon: image,
+        data: {
+          url: payload.data?.url
+        }
+      };
+      self.registration.showNotification(title, notificationOptions);
+    });
+
   });
-
-});
