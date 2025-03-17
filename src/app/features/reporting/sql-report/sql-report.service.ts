@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import moment from "moment";
 import { map, switchMap, takeWhile } from "rxjs/operators";
 import { firstValueFrom, interval, lastValueFrom, Observable } from "rxjs";
+import { environment } from "../../../../environments/environment";
 
 /**
  * represents a TableRow of a SqlReportDataEntry
@@ -46,7 +47,7 @@ export interface ReportCalculation {
   providedIn: "root",
 })
 export class SqlReportService {
-  static QUERY_PROXY = "/query";
+  static API_URL = environment.API_PROXY_PREFIX + "/v1/reporting";
 
   constructor(private http: HttpClient) {}
 
@@ -73,7 +74,7 @@ export class SqlReportService {
       this.http
         .get<
           ReportCalculation[]
-        >(`${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${report.getId()}`)
+        >(`${SqlReportService.API_URL}/report-calculation/report/${report.getId()}`)
         .pipe(
           switchMap((reportDetails) => {
             let lastReports = this.getLastReports(reportDetails, from, to);
@@ -236,7 +237,7 @@ export class SqlReportService {
       .post<{
         id: string;
       }>(
-        `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${reportId}`,
+        `${SqlReportService.API_URL}/report-calculation/report/${reportId}`,
         {},
         {
           params: params,
@@ -253,7 +254,7 @@ export class SqlReportService {
 
   fetchReportCalculation(reportId: string): Observable<ReportCalculation> {
     return this.http.get<ReportCalculation>(
-      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${reportId}`,
+      `${SqlReportService.API_URL}/report-calculation/${reportId}`,
     );
   }
 
@@ -268,7 +269,7 @@ export class SqlReportService {
 
   private fetchReportCalculationData(reportId: string): Observable<ReportData> {
     return this.http.get<ReportData>(
-      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${reportId}/data`,
+      `${SqlReportService.API_URL}/report-calculation/${reportId}/data`,
     );
   }
 

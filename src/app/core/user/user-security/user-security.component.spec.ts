@@ -166,7 +166,7 @@ describe("UserSecurityComponent", () => {
     tick();
 
     expect(mockHttp.post).toHaveBeenCalledWith(
-      `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}/clear_local`,
+      `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}/clear_local`,
       undefined,
     );
     flush();

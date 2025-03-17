@@ -217,7 +217,7 @@ export class UserSecurityComponent implements OnInit {
   private triggerSyncReset() {
     this.http
       .post(
-        `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}/clear_local`,
+        `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}/clear_local`,
         undefined,
       )
       .subscribe({
