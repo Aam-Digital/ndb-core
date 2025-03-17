@@ -18,9 +18,10 @@ import {
   EntityForm,
   EntityFormService,
 } from "app/core/common-components/entity-form/entity-form.service";
-import { ReactiveFormsModule } from "@angular/forms";
+import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { th } from "@faker-js/faker";
 
 type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
 
@@ -51,10 +52,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   mergeForm: EntityForm<E>;
 
   /**
-   * holds for each fieldId an array of selected values from existing entities,
+   * holds for each fieldId an array whether each existing entity is "selected" (i.e. included in the merge),
    * used to show radio buttons in the UI
    */
-  selectedValues: Record<string, any[]> = {};
+  existingFieldSelected: Record<string, boolean[]> = {};
 
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
@@ -80,12 +81,22 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.fieldsToMerge,
       this.mergedEntity,
     );
+    for (let [key, control] of Object.entries(
+      this.mergeForm.formGroup.controls,
+    )) {
+      this.existingFieldSelected[key] = [false, false];
+      this.subscribeFieldChangesToUpdateSelectionMarkers(control, key);
+    }
   }
 
   private initFieldsToMerge(): void {
     this.entityConstructor.schema.forEach((field, key) => {
       const hasValue = this.entitiesToMerge.some(
-        (entity) => entity[key] !== undefined && entity[key] !== null,
+        (entity) =>
+          entity[key] !== undefined &&
+          entity[key] !== null &&
+          entity[key] !== false &&
+          !(Array.isArray(entity[key]) && entity[key].length === 0),
       );
       const isFileField =
         field.dataType === "photo" || field.dataType === "file";
@@ -108,45 +119,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     });
   }
 
-  handleFieldSelection(fieldKey: string, entityIndex: number): void {
-    const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
-    const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
-
-    this.selectedValues[fieldKey] = fieldConfig.allowsMultiValueMerge
-      ? this.toggleSelection(this.selectedValues[fieldKey] ?? [], selectedValue)
-      : [selectedValue];
-
-    this.updateMergeFormField(fieldKey, fieldConfig);
-  }
-
-  private updateMergeFormField(
-    fieldKey: string,
-    fieldConfig: MergeField,
-  ): void {
-    const control = this.mergeForm.formGroup.get(fieldKey);
-    if (!control) return;
-
-    const selectedValues = this.selectedValues[fieldKey] ?? [];
-
-    let value = selectedValues[0]; // default to single value
-    if (fieldConfig.isArray) {
-      // field type supports multiple values anyway
-      value = selectedValues.flat();
-    } else if (fieldConfig.allowsMultiValueMerge) {
-      // create a merged single value as a convenience functionality for the merge UI
-      value = selectedValues.join(", ");
-    }
-
-    control.patchValue(value);
-  }
-
-  private toggleSelection(arr: any[], value: string): any[] {
-    return arr.includes(value)
-      ? arr.filter((v) => v !== value)
-      : [...arr, value];
-  }
-
-  allowsMultiValueMerge(field?: FormFieldConfig): boolean {
+  private allowsMultiValueMerge(field?: FormFieldConfig): boolean {
     return (
       field?.dataType === "string" ||
       field?.dataType === "long-text" ||
@@ -154,10 +127,112 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     );
   }
 
-  isFieldSelected(fieldKey: string, entityIndex: number): boolean {
-    return this.selectedValues[fieldKey]?.includes(
-      this.entitiesToMerge[entityIndex][fieldKey],
+  private subscribeFieldChangesToUpdateSelectionMarkers(
+    control: AbstractControl,
+    fieldKey: string,
+  ): void {
+    const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
+
+    control.valueChanges.subscribe((newValue) => {
+      for (let i = 0; i < this.entitiesToMerge.length; i++) {
+        this.updateSelectedStatus(fieldConfig, newValue, i);
+      }
+    });
+  }
+
+  private updateSelectedStatus(
+    fieldConfig: MergeField,
+    newValue: any,
+    entityIndex: number,
+  ) {
+    let isChecked: boolean;
+    let existingEntityValue = this.entitiesToMerge[entityIndex][fieldConfig.id];
+
+    if (fieldConfig.isArray) {
+      // all existingEntityValues must be in newValue
+      isChecked = existingEntityValue.every((e) =>
+        (newValue ?? []).some((n) => JSON.stringify(n) === JSON.stringify(e)),
+      );
+    } else if (fieldConfig.allowsMultiValueMerge) {
+      // string merge: text should be included in newValue
+      isChecked = (newValue ?? ("" as string)).includes(existingEntityValue);
+    } else {
+      // single value fields
+      isChecked =
+        JSON.stringify(newValue) === JSON.stringify(existingEntityValue);
+    }
+
+    this.existingFieldSelected[fieldConfig.id][entityIndex] = isChecked;
+  }
+
+  /**
+   * Apply a value from one of the existing entities to the merge preview
+   * @param fieldKey
+   * @param entityIndex
+   * @returns
+   */
+  selectExistingValue(
+    fieldKey: string,
+    entityIndex: number,
+    checked?: boolean,
+  ): void {
+    const control = this.mergeForm.formGroup.get(fieldKey);
+    if (!control) return;
+    const fieldConfig: MergeField = this.fieldsToMerge.find(
+      (f) => f.id === fieldKey,
     );
+    if (!fieldConfig) return;
+
+    const existingValue = control.value;
+    const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
+
+    let newValue = selectedValue;
+    if (fieldConfig.isArray) {
+      newValue = this.getMergedArrayValue(
+        existingValue,
+        selectedValue,
+        checked,
+      );
+    } else if (fieldConfig.allowsMultiValueMerge) {
+      newValue = this.getMergedStringValue(
+        existingValue,
+        selectedValue,
+        checked,
+      );
+    }
+
+    control.patchValue(newValue);
+  }
+
+  private getMergedArrayValue(
+    value: any[],
+    selectedValue: any[],
+    checked: boolean,
+  ): any[] {
+    value = value ?? [];
+    if (checked) {
+      value = value.concat(selectedValue);
+    } else {
+      value = value.filter((v) => !selectedValue.includes(v));
+    }
+    return value;
+  }
+
+  private getMergedStringValue(
+    value: string,
+    selectedValue: string,
+    checked: boolean,
+  ): string {
+    if (checked) {
+      value = (value?.length > 0 ? value + ", " : "") + selectedValue;
+    } else {
+      value = value
+        .split(",")
+        .map((v) => v.trim())
+        .filter((v) => v !== selectedValue)
+        .join(", ");
+    }
+    return value;
   }
 
   async confirmAndMergeRecords(): Promise<boolean> {

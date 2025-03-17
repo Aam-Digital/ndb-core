@@ -13,14 +13,14 @@
 
         @for (
           entityToMerge of entitiesToMerge;
-          track entitiesToMerge;
+          track entityToMerge;
           let i = $index
         ) {
           <div class="record-cell">
             @if (field.allowsMultiValueMerge) {
               <mat-checkbox
-                [checked]="isFieldSelected(field.id, i)"
-                (change)="handleFieldSelection(field.id, i)"
+                [checked]="existingFieldSelected[field.id][i]"
+                (change)="selectExistingValue(field.id, i, $event.checked)"
               >
                 <app-entity-field-view
                   [field]="field"
@@ -31,8 +31,8 @@
               <mat-radio-group>
                 <mat-radio-button
                   [value]="entityToMerge[field.id]"
-                  (click)="handleFieldSelection(field.id, i)"
-                  [checked]="isFieldSelected(field.id, i)"
+                  (click)="selectExistingValue(field.id, i)"
+                  [checked]="existingFieldSelected[field.id][i]"
                 >
                   <app-entity-field-view
                     [field]="field"
