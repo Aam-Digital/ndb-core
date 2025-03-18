@@ -19,7 +19,7 @@
       class="notification-time"
       [matTooltip]="notification.created?.at | date: 'short'"
     >
-      {{ notification.created?.at | notificationTime: currentTime }}
+      {{ notification.created?.at | notificationTime | async }}
     </div>
   </div>
 
