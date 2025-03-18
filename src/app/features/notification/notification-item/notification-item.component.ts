@@ -10,6 +10,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationEvent } from "../model/notification-event";
 import { NotificationTimePipe } from "../notification-time.pipe";
 import { closeOnlySubmenu } from "../close-only-submenu";
+import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 
 @Component({
   selector: "app-notification-item",
@@ -26,6 +27,7 @@ import { closeOnlySubmenu } from "../close-only-submenu";
     MatTabsModule,
     CommonModule,
     NotificationTimePipe,
+    EntityBlockComponent,
   ],
   templateUrl: "./notification-item.component.html",
   styleUrl: "./notification-item.component.scss",

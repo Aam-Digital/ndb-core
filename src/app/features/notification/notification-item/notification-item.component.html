@@ -3,8 +3,17 @@
   [ngClass]="{ 'read-notification': notification.readStatus }"
 >
   <div class="notification-details" (click)="onNotificationClick(notification)">
-    <div i18n class="notification-title">{{ notification.title }}</div>
-    <div i18n class="notification-body">{{ notification.body }}</div>
+    <div class="notification-title">{{ notification.title }}</div>
+    <div class="notification-body">
+      @if (notification.body) {
+        {{ notification.body }}
+      } @else if (notification.context?.entityId) {
+        →
+        <app-entity-block
+          [entityId]="notification.context.entityId"
+        ></app-entity-block>
+      }
+    </div>
     <div
       i18n
       class="notification-time"
