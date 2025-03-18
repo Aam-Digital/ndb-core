@@ -21,6 +21,8 @@ import { CdkAccordionModule } from "@angular/cdk/accordion";
 import { NotificationService } from "../notification.service";
 import { MatAccordion } from "@angular/material/expansion";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
+import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -49,6 +51,7 @@ export class NotificationSettingsComponent implements OnInit {
   constructor(
     private entityMapper: EntityMapperService,
     private sessionInfo: SessionSubject,
+    private userEntity: CurrentUserSubject,
     private confirmationDialog: ConfirmationDialogService,
     private notificationService: NotificationService,
     private alertService: AlertService,
@@ -77,11 +80,7 @@ export class NotificationSettingsComponent implements OnInit {
         await this.notificationService.loadNotificationConfig();
     } catch (err) {
       if (err.status === 404) {
-        notificationConfig = this.generateDefaultNotificationConfig();
-        await this.saveNotificationConfig(notificationConfig);
-        this.alertService.addInfo(
-          $localize`Initial notification settings created and saved.`,
-        );
+        notificationConfig = await this.createNewNotificationConfig();
       } else {
         Logging.warn(err);
       }
@@ -90,35 +89,41 @@ export class NotificationSettingsComponent implements OnInit {
     return notificationConfig;
   }
 
-  private generateDefaultNotificationConfig(): NotificationConfig {
-    const config = new NotificationConfig(this.userId);
+  private async createNewNotificationConfig(): Promise<NotificationConfig> {
+    let config: NotificationConfig;
 
-    config.notificationRules = [
-      {
-        label: $localize`:Default notification rule label:a new Child being registered`,
-        notificationType: "entity_change",
-        entityType: "Child",
-        changeType: ["created"],
-        conditions: {},
-        enabled: true,
-      },
-      {
-        label: $localize`:Default notification rule label:Tasks assigned to me`,
-        notificationType: "entity_change",
-        entityType: "Todo",
-        changeType: ["created", "updated"],
-        conditions: { assignedTo: { $elemMatch: this.userId } },
-        enabled: true,
-      },
-      {
-        label: $localize`:Default notification rule label:Notes involving me`,
-        notificationType: "entity_change",
-        entityType: "Note",
-        changeType: ["created", "updated"],
-        conditions: { authors: { $elemMatch: this.userId } },
-        enabled: false,
-      },
-    ];
+    try {
+      // try to load template from database
+      let template = (
+        await this.entityMapper.load(
+          NotificationConfig,
+          NotificationConfig.TEMPLATE_ENTITY_ID,
+        )
+      ).copy(this.userId);
+
+      // replace user entity in template rules
+      template = JSON.parse(
+        JSON.stringify(template).replace(
+          PLACEHOLDERS.CURRENT_USER,
+          this.userEntity.value?.getId(),
+        ),
+      );
+
+      config = Object.assign(new NotificationConfig(this.userId), template);
+    } catch (err) {
+      Logging.debug("No NotificationConfig template found");
+
+      // use fixed default config as fallback
+      config = generateDefaultNotificationConfig(
+        this.userId,
+        this.userEntity.value?.getId(),
+      );
+    }
+
+    await this.saveNotificationConfig(config);
+    this.alertService.addInfo(
+      $localize`Initial notification settings created and saved.`,
+    );
 
     return config;
   }
@@ -193,4 +198,37 @@ export class NotificationSettingsComponent implements OnInit {
       Logging.error("Could not send test notification: " + reason.message);
     });
   }
+}
+
+function generateDefaultNotificationConfig(userId: string, userEntity: string) {
+  userEntity = String(userEntity); // ensure that even "undefined" is added as a string so that the structure of conditions remains
+
+  const config = new NotificationConfig(userId);
+  config.notificationRules = [
+    {
+      label: $localize`:Default notification rule label:a new Child being registered`,
+      notificationType: "entity_change",
+      entityType: "Child",
+      changeType: ["created"],
+      conditions: {},
+      enabled: true,
+    },
+    {
+      label: $localize`:Default notification rule label:Tasks assigned to me`,
+      notificationType: "entity_change",
+      entityType: "Todo",
+      changeType: ["created", "updated"],
+      conditions: { assignedTo: { $elemMatch: userEntity } },
+      enabled: !!userEntity,
+    },
+    {
+      label: $localize`:Default notification rule label:Notes involving me`,
+      notificationType: "entity_change",
+      entityType: "Note",
+      changeType: ["created", "updated"],
+      conditions: { authors: { $elemMatch: userEntity } },
+      enabled: false,
+    },
+  ];
+  return config;
 }

@@ -9,6 +9,12 @@ import { DataFilter } from "app/core/filter/filters/filters";
 @DatabaseEntity("NotificationConfig")
 export class NotificationConfig extends Entity {
   /**
+   * The entityId under which the database may contain a template file
+   * to use as default config for new users.
+   */
+  static readonly TEMPLATE_ENTITY_ID = "TEMPLATE";
+
+  /**
    * The default mode(s) through which all notifications are sent to the user.
    *
    * Can be overwritten for each notificationType to disable a channel for certain notifications.

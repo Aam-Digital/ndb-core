@@ -17,6 +17,7 @@ import { TEST_USER } from "../../../core/user/demo-user-generator.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import { NotificationService } from "../notification.service";
+import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 
 describe("NotificationSettingComponent", () => {
   let component: NotificationSettingsComponent;
@@ -40,6 +41,10 @@ describe("NotificationSettingComponent", () => {
         {
           provide: SessionSubject,
           useValue: new BehaviorSubject(testUser),
+        },
+        {
+          provide: CurrentUserSubject,
+          useValue: new BehaviorSubject(undefined),
         },
         { provide: HttpClient, useValue: mockHttp },
         { provide: KeycloakAuthService, useValue: mockAuthService },
