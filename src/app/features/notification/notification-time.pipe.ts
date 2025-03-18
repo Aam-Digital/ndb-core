@@ -7,6 +7,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 @Pipe({
   name: "notificationTime",
   standalone: true,
+  pure: false,
 })
 export class NotificationTimePipe implements PipeTransform {
   transform(value: any): string {
