@@ -53,7 +53,10 @@ describe("ImportReviewDataComponent", () => {
     tick();
 
     expect(component.mappedEntities).toEqual(testEntities);
-    expect(component.displayColumns).toEqual(["name"]);
+    expect(component.displayColumns).toEqual([
+      component.IMPORT_STATUS_COLUMN,
+      "name",
+    ]);
   }));
 
   it("should open Summary Confirmation when clicking to start import", fakeAsync(() => {
