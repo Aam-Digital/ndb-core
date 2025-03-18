@@ -1,17 +1,17 @@
 import { Component, EventEmitter, inject, Input, Output } from "@angular/core";
-import { ColumnMapping } from "../column-mapping";
-import { EntityConstructor } from "../../entity/model/entity";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
-import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { ColumnMapping } from "../../column-mapping";
+import { EntityConstructor } from "../../../entity/model/entity";
+import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
+import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { MatDialog } from "@angular/material/dialog";
-import { ComponentRegistry } from "../../../dynamic-components";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { ComponentRegistry } from "../../../../dynamic-components";
+import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { MatInputModule } from "@angular/material/input";
-import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
+import { EntityFieldSelectComponent } from "../../../entity/entity-field-select/entity-field-select.component";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
-import { MappingDialogData } from "../import-column-mapping/mapping-dialog-data";
+import { MappingDialogData } from "../mapping-dialog-data";
 
 /**
  * Component to edit a single imported column's mapping to an entity field

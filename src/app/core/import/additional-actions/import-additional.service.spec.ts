@@ -164,7 +164,7 @@ describe("ImportAdditionalService", () => {
         },
       ],
     };
-    importMeta.ids = ["Child:1", "Child:2"];
+    importMeta.createdEntities = ["Child:1", "Child:2"];
     testActivity.participants = ["Child:3", "Child:2", "Child:1"];
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([testActivity]);
@@ -227,7 +227,7 @@ describe("ImportAdditionalService", () => {
         },
       ],
     };
-    importMeta.ids = ["Child:1", "Child:2"];
+    importMeta.createdEntities = ["Child:1", "Child:2"];
     const relations = [
       { childId: "Child:1", schoolId: "School:4" },
       { childId: "Child:2", schoolId: "School:4" },
