@@ -96,6 +96,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       const hasValue = this.entitiesToMerge.some(
         (entity) =>
           entity[key] !== undefined &&
+          entity[key] !== "" &&
           entity[key] !== null &&
           entity[key] !== false &&
           !(Array.isArray(entity[key]) && entity[key].length === 0),
