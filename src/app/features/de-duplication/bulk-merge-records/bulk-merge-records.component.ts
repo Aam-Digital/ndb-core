@@ -93,14 +93,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
   private initFieldsToMerge(): void {
     this.entityConstructor.schema.forEach((field, key) => {
-      const hasValue = this.entitiesToMerge.some(
-        (entity) =>
-          entity[key] !== undefined &&
-          entity[key] !== "" &&
-          entity[key] !== null &&
-          entity[key] !== false &&
-          !(Array.isArray(entity[key]) && entity[key].length === 0),
+      const hasValue = this.entitiesToMerge.some((entity) =>
+        this.hasValue(entity[key]),
       );
+
       const isFileField =
         field.dataType === "photo" || field.dataType === "file";
 
@@ -125,8 +121,8 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     for (const field of this.fieldsToMerge) {
       const valueA = this.entitiesToMerge[0][field.id];
       const valueB = this.entitiesToMerge[1][field.id];
-      this.isFieldDisabled[field.id] = this.entitiesToMerge.map((entity) =>
-        this.isEmpty(entity[field.id]),
+      this.isFieldDisabled[field.id] = this.entitiesToMerge.map(
+        (entity) => !this.hasValue(entity[field.id]),
       );
       const control = this.mergeForm.formGroup.get(field.id);
       if (!control) continue;
@@ -153,9 +149,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   ): any {
     if (this.areValuesIdentical(valueA, valueB)) {
       return valueA;
-    } else if (this.isEmpty(valueA) && !this.isEmpty(valueB)) {
+    } else if (!this.hasValue(valueA) && this.hasValue(valueB)) {
       return valueB;
-    } else if (this.isEmpty(valueB) && !this.isEmpty(valueA)) {
+    } else if (!this.hasValue(valueB) && this.hasValue(valueA)) {
       return valueA;
     }
     return currentValue;
@@ -165,28 +161,24 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     return JSON.stringify(a) === JSON.stringify(b);
   }
 
-  /**
-   * Determines whether a given value is considered empty.
-   */
-  private isEmpty(value: any): boolean {
-    if (
-      value === undefined ||
-      value === null ||
-      (typeof value === "string" && value.trim() === "") ||
-      (Array.isArray(value) && value.length === 0) ||
-      (typeof value === "object" &&
-        !(value instanceof Date) &&
-        Object.keys(value).length === 0)
-    ) {
-      return true;
-    }
-    return false;
-  }
   private allowsMultiValueMerge(field?: FormFieldConfig): boolean {
     return (
       field?.dataType === "string" ||
       field?.dataType === "long-text" ||
       field?.isArray
+    );
+  }
+
+  /**
+   * helper method to check whether a value is empty or has a valid value.
+   */
+  hasValue(value: any): boolean {
+    return !(
+      value === undefined ||
+      value === null ||
+      value === "" ||
+      (Array.isArray(value) && value.length === 0) ||
+      value === false
     );
   }
 
