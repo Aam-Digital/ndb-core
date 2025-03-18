@@ -59,7 +59,7 @@ describe("NotificationRuleComponent", () => {
       entityType: "entityType1",
       changeType: ["created"],
       enabled: true,
-      conditions: [],
+      conditions: {},
       notificationType: "entity_change",
     });
   });
@@ -73,7 +73,7 @@ describe("NotificationRuleComponent", () => {
       entityType: "EventNote",
       changeType: ["created", "updated"],
       notificationType: "entity_change",
-      conditions: [],
+      conditions: {},
       enabled: true,
     });
 

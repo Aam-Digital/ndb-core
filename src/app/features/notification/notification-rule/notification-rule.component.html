@@ -67,38 +67,18 @@
           </mat-form-field>
         </div>
 
-        @for (
-          notificationCondition of form.get("conditions")?.["controls"] ?? [];
-          track notificationCondition;
-          let notificationConditionIndex = $index
-        ) {
-          <app-notification-condition
-            (removeNotificationCondition)="
-              removeCondition(notificationConditionIndex)
-            "
-            [form]="notificationCondition"
-            [notificationRule]="value"
-          />
-        }
-
-        <div class="flex-row gap-regular flex-wrap align-center">
+        <!-- Conditions -->
+        <div class="flex-row flex-wrap gap-small align-center">
+          <em i18n
+            >Conditions currently have to be edited using the JSON Editor. We
+            will implement a visual UI here soon.</em
+          >
           <button
             mat-stroked-button
-            class="new-rule-condition-button"
-            color="accent"
-            [disabled]="!value.entityType"
-            (click)="addNewNotificationCondition()"
-            matTooltip="Define another condition of notifications for your user account"
-            i18n-matTooltip
+            (click)="openConditionsInJsonEditorPopup()"
+            i18n
           >
-            <fa-icon
-              aria-label="add element"
-              icon="plus-circle"
-              class="standard-icon-with-text"
-            ></fa-icon>
-            <span i18n class="new-notification-rule"
-              >Add Notification Criteria</span
-            >
+            Open Conditions Editor
           </button>
         </div>
       </div>

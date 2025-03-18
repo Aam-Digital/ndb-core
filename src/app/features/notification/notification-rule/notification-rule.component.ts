@@ -14,7 +14,6 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
   AbstractControl,
-  FormArray,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -23,11 +22,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NotificationRule } from "../model/notification-config";
-import {
-  NotificationConditionComponent,
-  NotificationRuleCondition,
-} from "./notification-condition/notification-condition.component";
-import { DataFilter } from "../../../core/filter/filters/filters";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
 import { MatOption } from "@angular/material/core";
@@ -54,7 +48,6 @@ import {
     EntityTypeSelectComponent,
     HelpButtonComponent,
     ReactiveFormsModule,
-    NotificationConditionComponent,
     MatProgressSpinnerModule,
     MatOption,
     MatSelect,
@@ -92,18 +85,12 @@ export class NotificationRuleComponent implements OnChanges {
         this.value?.changeType ?? ["created", "updated"],
       ),
       enabled: new FormControl(this.value?.enabled || false),
-      conditions: new FormArray([]),
+      conditions: new FormControl(this.value?.conditions ?? {}),
       notificationType: new FormControl(
         this.value?.notificationType ?? "entity_change",
       ),
     });
     this.entityTypeControl = this.form.get("entityType");
-
-    // Parse conditions from object to array and setup the form
-    const parsedConditions = this.parseConditionsObjectToArray(
-      this.value?.conditions,
-    );
-    this.setupConditionsArray(parsedConditions);
 
     this.updateEntityTypeControlState();
     this.form.valueChanges.subscribe((value) => this.updateValue(value));
@@ -115,12 +102,11 @@ export class NotificationRuleComponent implements OnChanges {
   private updateEntityTypeControlState() {
     const conditionsControl = this.form.get("conditions");
 
-    if (!conditionsControl || !(conditionsControl instanceof FormArray)) {
+    if (!conditionsControl) {
       return;
     }
-    conditionsControl.valueChanges.subscribe(() => {
-      const conditionsLength = (conditionsControl as FormArray).length;
-      if (conditionsLength > 0) {
+    conditionsControl.valueChanges.subscribe((v) => {
+      if (JSON.stringify(v) !== "{}") {
         this.entityTypeControl.disable();
       } else {
         this.entityTypeControl.enable();
@@ -133,7 +119,6 @@ export class NotificationRuleComponent implements OnChanges {
     if (entityTypeControl?.disabled) {
       value.entityType = entityTypeControl.value;
     }
-    value.conditions = this.parseConditionsArrayToObject(value.conditions);
 
     if (JSON.stringify(value) === JSON.stringify(this.value)) {
       // skip if no actual change
@@ -144,127 +129,23 @@ export class NotificationRuleComponent implements OnChanges {
     this.valueChange.emit(value);
   }
 
-  addNewNotificationCondition() {
-    const newCondition = new FormGroup({
-      label: new FormControl(""),
-      entityTypeField: new FormControl(""),
-      operator: new FormControl(""),
-      condition: new FormControl(""),
-    });
-    (this.form.get("conditions") as FormArray).push(newCondition);
-  }
-
-  removeCondition(notificationConditionIndex: number) {
-    (this.form.get("conditions") as FormArray).removeAt(
-      notificationConditionIndex,
-    );
-    this.updateValue(this.form.value);
-  }
-
   /**
    * Open the conditions JSON editor popup.
    */
   openConditionsInJsonEditorPopup() {
-    const notificationConditions = this.form.get("conditions")?.value;
+    const conditionsForm = this.form.get("conditions");
+
     const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
       data: {
-        value: this.parseConditionsArrayToObject(notificationConditions) ?? {},
+        value: conditionsForm.value ?? {},
         closeButton: true,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.handleConditionsJsonEditorPopupClose(result);
-    });
-  }
+      if (!result) return;
 
-  /**
-   * Handle the result of the conditions JSON editor popup.
-   * @param result
-   * @private
-   */
-  private handleConditionsJsonEditorPopupClose(result: string[]) {
-    if (!result) {
-      return;
-    }
-
-    const parsedConditions = this.parseConditionsObjectToArray(result);
-    this.setupConditionsArray(parsedConditions);
-  }
-
-  /**
-   * Parse from config format to a format that can be used in the form
-   * e.g. from `{ fieldName: { '$eq': 'value' } }`
-   * to `[ { entityTypeField: 'fieldName', operator: '$eq', condition: 'value' } ]`
-   *
-   * @param conditions
-   * @private
-   */
-  private parseConditionsObjectToArray(
-    conditions: DataFilter<any> | undefined,
-  ): NotificationRuleCondition[] {
-    if (!conditions) {
-      return [];
-    }
-
-    return Object.entries(conditions)?.map(([entityField, condition]) => {
-      const operator = Object.keys(condition)[0];
-      return {
-        entityTypeField: entityField,
-        operator,
-        condition: condition[operator],
-      };
-    });
-  }
-
-  /**
-   * Transform form format back to the needed config entity format
-   * e.g. from `[ { entityTypeField: 'fieldName', operator: '$eq', condition: 'value' } ]`
-   * to { fieldName: { '$eq': 'value' } }`
-   *
-   * @param conditions
-   * @private
-   */
-  private parseConditionsArrayToObject(
-    conditions: NotificationRuleCondition[],
-  ): DataFilter<any> {
-    if (!conditions) {
-      return {};
-    }
-
-    return conditions.reduce((acc, condition) => {
-      if (
-        !condition.entityTypeField ||
-        !condition.operator ||
-        condition.operator === "" ||
-        !condition.condition ||
-        condition.condition === ""
-      ) {
-        // continue without adding incomplete condition
-        return acc;
-      }
-
-      acc[condition.entityTypeField] = {
-        [condition.operator]: condition.condition,
-      };
-      return acc;
-    }, {});
-  }
-
-  /**
-   * Setup the conditions array in the form.
-   * @param conditions
-   */
-  private setupConditionsArray(conditions: NotificationRuleCondition[] = []) {
-    const conditionsFormArray = this.form.get("conditions") as FormArray;
-    conditionsFormArray.clear();
-    conditions.forEach((condition) => {
-      const conditionGroup = new FormGroup({
-        entityTypeField: new FormControl(condition.entityTypeField),
-        operator: new FormControl(condition.operator),
-        condition: new FormControl(condition.condition),
-      });
-      conditionsFormArray.push(conditionGroup);
+      conditionsForm.setValue(result);
     });
   }
 }
