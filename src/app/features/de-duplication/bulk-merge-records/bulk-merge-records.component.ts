@@ -199,6 +199,11 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     newValue: any,
     entityIndex: number,
   ) {
+    if (this.isFieldDisabled[fieldConfig.id][entityIndex]) {
+      this.existingFieldSelected[fieldConfig.id][entityIndex] = false;
+      return;
+    }
+
     let isChecked: boolean;
     let existingEntityValue = this.entitiesToMerge[entityIndex][fieldConfig.id];
 
