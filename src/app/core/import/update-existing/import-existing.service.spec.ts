@@ -42,9 +42,9 @@ describe("ImportExistingService", () => {
     const existingRecords: Entity[] = [
       TestEntity.create({
         name: "A",
-        dateOfBirth: new DateWithAge("2000-01-01"),
         other: "old value",
-        category: { id: "X", label: "X" },
+        category: genders[1],
+        ref: "existing_link",
         _rev: "A1",
       }),
       TestEntity.create({
@@ -53,7 +53,7 @@ describe("ImportExistingService", () => {
       }),
       TestEntity.create({
         name: "C",
-        dateOfBirth: new DateWithAge("2000-03-03"),
+        category: genders[2],
         _rev: "C1",
       }),
       TestEntity.create({ name: "X", _rev: "X1" }),
@@ -64,15 +64,15 @@ describe("ImportExistingService", () => {
       {
         d: "match existing",
         rawName: "A",
-        DoB: "2000-01-01",
+        category: "M1",
         other: "new value",
       },
       {
         d: "match part, mismatch part",
         rawName: "A2",
-        DoB: "2000-01-01",
+        category: "M1",
       },
-      { d: "match part", rawName: "B", DoB: "2022-12-31" },
+      { d: "match part", rawName: "B", category: "O1" },
       { d: "match part", rawName: "C" },
       { d: "not matching", rawName: "XXX" },
     ];
@@ -80,10 +80,18 @@ describe("ImportExistingService", () => {
       entityType: TestEntity.ENTITY_TYPE,
       columnMapping: [
         { column: "rawName", propertyName: "name" },
-        { column: "DoB", propertyName: "dateOfBirth" },
+        {
+          column: "category",
+          propertyName: "category",
+          additional: {
+            M1: genders[1].id,
+            M2: genders[2].id,
+            O1: "O1",
+          },
+        },
         { column: "other", propertyName: "other" },
       ],
-      matchExistingByFields: ["name", "dateOfBirth"],
+      matchExistingByFields: ["name", "category"],
     };
 
     const parsedEntities = await service.transformRawDataToEntities(
@@ -96,20 +104,20 @@ describe("ImportExistingService", () => {
         _rev: existingRecords[0]["_rev"], // matched by name + dateOfBirth
         _id: existingRecords[0]["_id"],
         name: "A",
-        dateOfBirth: parsedEntities[0]["dateOfBirth"],
+        category: genders[1].id,
         other: "new value", // updated
-        category: { id: "X", label: "X" }, // not touched from existing entity
+        ref: "existing_link", // not touched from existing entity
       },
       {
         _id: jasmine.any(String), // not matched
         name: "A2",
-        dateOfBirth: parsedEntities[1]["dateOfBirth"],
+        category: genders[1].id,
       },
       {
         _rev: existingRecords[1]["_rev"], // matched by name, entity missing dateOfBirth
         _id: existingRecords[1]["_id"],
         name: "B",
-        dateOfBirth: parsedEntities[2]["dateOfBirth"],
+        category: "O1",
       },
       {
         _rev: existingRecords[2]["_rev"], // matched by name, imported row missing dateOfBirth
@@ -123,6 +131,11 @@ describe("ImportExistingService", () => {
     ];
 
     expect(parsedEntities.length).toBe(expectedEntities.length);
+    parsedEntities
+      .filter((e) => e["category"])
+      .forEach((e: Entity) => {
+        e["category"] = e["category"].id;
+      });
     for (const expected of expectedEntities) {
       expect(parsedEntities).toContain(jasmine.objectContaining(expected));
     }
