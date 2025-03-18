@@ -8,23 +8,13 @@ import { FirebaseConfiguration } from "./app/features/notification/notification-
  **/
 export async function initEnvironmentConfig() {
   const CONFIG_FILE = "assets/config.json";
-  const FIREBASE_CONFIG_FILE = "assets/firebase-config.json";
 
   let config: Object;
-  let notificationsConfig: FirebaseConfiguration;
   try {
     const configResponse = await fetch(CONFIG_FILE);
     config = await configResponse.json();
     if (typeof config !== "object") {
       throw new Error("config.json must be an object");
-    }
-
-    // load Push Notifications config for Firebase
-    // overwrite assets/firebase-config.json with your own Firebase config
-    const firebaseConfigResponse = await fetch(FIREBASE_CONFIG_FILE);
-    notificationsConfig = await firebaseConfigResponse.json();
-    if (typeof notificationsConfig !== "object") {
-      throw new Error("firebase-config.json must be an object");
     }
   } catch (err) {
     if (
@@ -48,5 +38,28 @@ export async function initEnvironmentConfig() {
     window.location.reload();
   }
 
-  Object.assign(environment, config, { notificationsConfig });
+  Object.assign(environment, config);
+
+  await initFirebaseConfigToEnvironment();
+}
+
+/**
+ * Load Push Notifications config for Firebase.
+ * Please add assets/firebase-config.json with your own Firebase config
+ */
+async function initFirebaseConfigToEnvironment() {
+  const FIREBASE_CONFIG_FILE = "assets/firebase-config.json";
+  let notificationsConfig: FirebaseConfiguration;
+
+  try {
+    const firebaseConfigResponse = await fetch(FIREBASE_CONFIG_FILE);
+    notificationsConfig = await firebaseConfigResponse.json();
+    if (typeof notificationsConfig !== "object") {
+      throw new Error("firebase-config.json must be an object");
+    }
+
+    environment.notificationsConfig = notificationsConfig;
+  } catch (err) {
+    Logging.debug("failed to load firebase-config.json", err);
+  }
 }
