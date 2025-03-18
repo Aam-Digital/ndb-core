@@ -6,6 +6,7 @@ import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ImportAdditionalService } from "./additional-actions/import-additional.service";
+import { ImportExistingService } from "./update-existing/import-existing.service";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -19,6 +20,7 @@ export class ImportService {
     private entityTypes: EntityRegistry,
     private schemaService: EntitySchemaService,
     private importAdditionalService: ImportAdditionalService,
+    private importExistingService: ImportExistingService,
   ) {}
 
   async executeImport(
@@ -39,25 +41,37 @@ export class ImportService {
   ) {
     const importMeta = new ImportMetadata();
     importMeta.config = settings;
-    importMeta.ids = savedEntities.map((entity) => entity.getId());
+
+    importMeta.updatedEntities =
+      this.importExistingService.getImportHistoryForUpdatedEntities(
+        savedEntities,
+        settings,
+      );
+
+    importMeta.createdEntities = savedEntities
+      .filter(
+        //skip those that have been updated instead of created
+        (e) => !importMeta.updatedEntities.some((u) => u.id === e.getId()),
+      )
+      .map((e) => e.getId());
+
     await this.entityMapper.save(importMeta);
     return importMeta;
   }
 
   undoImport(item: ImportMetadata) {
-    const removes = item.ids.map((id) =>
+    const removes = item.createdEntities.map((id) =>
       this.entityMapper
         .load(item.config.entityType, id)
         .then((e) => this.entityMapper.remove(e))
         .catch(() => undefined),
     );
 
-    const undoAdditional = this.importAdditionalService.undoImport(item);
-
     // Or should the ImportMetadata still be kept indicating that it has been undone?
     return Promise.all([
       ...removes,
-      undoAdditional,
+      this.importExistingService.undoImport(item),
+      this.importAdditionalService.undoImport(item),
       this.entityMapper.remove(item),
     ]);
   }
@@ -65,27 +79,29 @@ export class ImportService {
   /**
    * Use the given mapping to transform raw data into Entity instances that can be displayed or saved.
    * @param rawData
-   * @param entityType
-   * @param columnMapping
+   * @param importSettings
    */
   async transformRawDataToEntities(
     rawData: any[],
-    entityType: string,
-    columnMapping: ColumnMapping[],
+    importSettings: ImportSettings,
   ): Promise<Entity[]> {
-    if (!rawData || !entityType || !columnMapping) {
+    if (
+      !rawData ||
+      !importSettings.entityType ||
+      !importSettings.columnMapping
+    ) {
       return [];
     }
 
-    const entityConstructor = this.entityTypes.get(entityType);
+    const entityConstructor = this.entityTypes.get(importSettings.entityType);
 
     const mappedEntities: Entity[] = [];
     for (const row of rawData) {
-      const entity = new entityConstructor();
-      let hasMappedProperty = false;
+      let entity = new entityConstructor();
 
+      let hasMappedProperty = false; // to avoid empty records being created
       for (const col in row) {
-        const mapping: ColumnMapping = columnMapping.find(
+        const mapping: ColumnMapping = importSettings.columnMapping.find(
           (c) => c.column === col,
         );
         if (!mapping) {
@@ -97,26 +113,22 @@ export class ImportService {
           continue;
         }
 
-        // ignoring falsy values except 0 (=> null, undefined, empty string)
-        if (!!parsed || parsed === 0) {
-          // enforcing array values to be correctly assigned
-          entity[mapping.propertyName] =
-            entityConstructor.schema.get(mapping.propertyName)?.isArray &&
-            !Array.isArray(parsed)
-              ? [parsed]
-              : parsed;
-          hasMappedProperty = true;
-        }
+        entity[mapping.propertyName] = parsed;
+        hasMappedProperty = true;
       }
+
       if (hasMappedProperty) {
         mappedEntities.push(entity);
       }
     }
 
-    return mappedEntities;
+    return this.importExistingService.applyExistingEntitiesIfApplicable(
+      mappedEntities,
+      importSettings,
+    );
   }
 
-  private parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
+  private async parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
     if (val === undefined || val === null) {
       return undefined;
     }
@@ -126,8 +138,19 @@ export class ImportService {
       return undefined;
     }
 
-    return this.schemaService
+    let value = await this.schemaService
       .getDatatypeOrDefault(schema.dataType)
       .importMapFunction(val, schema, mapping.additional);
+
+    // ignore empty or invalid values for import
+    if (!value && value !== 0 && value !== false) {
+      // falsy values except 0 (=> null, undefined, empty string, NaN, ...)
+      return undefined;
+    }
+
+    // enforcing array values to be correctly assigned
+    value = schema.isArray && !Array.isArray(value) ? [value] : value;
+
+    return value;
   }
 }

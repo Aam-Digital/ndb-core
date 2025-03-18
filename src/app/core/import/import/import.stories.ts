@@ -11,6 +11,7 @@ import {
 import { importProvidersFrom } from "@angular/core";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { Entity } from "../../entity/model/entity";
+import { ImportSettings } from "../import-metadata";
 
 export default {
   title: "Features/Import/> Overall Module",
@@ -44,8 +45,10 @@ export const WithSampleData = {
 
   args: {
     rawData: IMPORT_SAMPLE_RAW_DATA,
-    entityType: "Child",
-    additionalImportActions: IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
-    columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+    importSettings: {
+      entityType: "Child",
+      additionalActions: IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
+      columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+    } as ImportSettings,
   },
 };

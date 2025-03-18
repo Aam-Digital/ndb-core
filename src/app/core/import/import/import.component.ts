@@ -4,8 +4,7 @@ import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
-import { AdditionalImportAction } from "../additional-actions/additional-import-action";
-import { ImportMetadata } from "../import-metadata";
+import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -15,13 +14,13 @@ import { ImportHistoryComponent } from "../import-history/import-history.compone
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
 import { ImportEntityTypeComponent } from "../import-entity-type/import-entity-type.component";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
-import { ImportAdditionalActionsComponent } from "../additional-actions/import-additional-actions.component";
+import { ImportAdditionalActionsComponent } from "../additional-actions/import-additional/import-additional-actions.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ImportColumnMappingComponent } from "../import-column-mapping/import-column-mapping.component";
 import { ImportReviewDataComponent } from "../import-review-data/import-review-data.component";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { RouteTarget } from "../../../route-target";
+import { ImportMatchExistingComponent } from "../update-existing/import-match-existing/import-match-existing.component";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -42,8 +41,8 @@ import { RouteTarget } from "../../../route-target";
     EntityTypeLabelPipe,
     ImportEntityTypeComponent,
     MatExpansionModule,
-    HelpButtonComponent,
     ImportAdditionalActionsComponent,
+    ImportMatchExistingComponent,
     MatButtonModule,
     ImportColumnMappingComponent,
     ImportReviewDataComponent,
@@ -51,9 +50,8 @@ import { RouteTarget } from "../../../route-target";
 })
 export class ImportComponent {
   rawData: any[];
-  entityType: string;
-  additionalImportActions: AdditionalImportAction[];
-  columnMapping: ColumnMapping[];
+
+  importSettings: Partial<ImportSettings> = {};
 
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;
@@ -70,11 +68,11 @@ export class ImportComponent {
   ) {
     this.route.queryParamMap.subscribe((params) => {
       if (params.has("entityType")) {
-        this.entityType = params.get("entityType");
+        this.importSettings.entityType = params.get("entityType");
       }
       if (params.has("additionalAction")) {
         const action = JSON.parse(params.get("additionalAction"));
-        this.additionalImportActions = [action];
+        this.importSettings.additionalActions = [action];
       }
     });
   }
@@ -100,7 +98,7 @@ export class ImportComponent {
   onDataLoaded(data: ParsedData) {
     this.rawData = data.data;
 
-    if (this.columnMapping) {
+    if (this.importSettings.columnMapping) {
       this.alertService.addInfo(
         $localize`:alert info after file load:Column Mappings have been reset`,
       );
@@ -111,17 +109,18 @@ export class ImportComponent {
   }
 
   onColumnMappingUpdate(newColumnMapping: ColumnMapping[]) {
-    this.columnMapping = newColumnMapping;
+    this.importSettings.columnMapping = newColumnMapping;
     this.mappedColumnsCount = newColumnMapping.filter(
       (m) => !!m.propertyName,
     ).length;
   }
 
   applyPreviousMapping(importMetadata: ImportMetadata) {
-    this.entityType = importMetadata.config.entityType;
-    this.additionalImportActions = importMetadata.config.additionalActions;
+    this.importSettings.entityType = importMetadata.config.entityType;
+    this.importSettings.additionalActions =
+      importMetadata.config.additionalActions;
 
-    const adjustedMappings = this.columnMapping.map(
+    const adjustedMappings = this.importSettings.columnMapping.map(
       ({ column }) =>
         importMetadata.config.columnMapping.find(
           (c) => column === c.column,
