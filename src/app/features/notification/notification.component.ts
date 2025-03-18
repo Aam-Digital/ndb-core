@@ -18,6 +18,10 @@ import { applyUpdate } from "../../core/entity/model/entity-update";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { NotificationConfig } from "./model/notification-config";
 
+/**
+ * Display Notification indicator for toolbar
+ * that opens into a list of notification events.
+ */
 @UntilDestroy()
 @Component({
   selector: "app-notification",
@@ -196,29 +200,5 @@ export class NotificationComponent implements OnInit {
     const actionURL = this.generateNotificationActionURL(notification);
     if (!actionURL) return;
     await this.router.navigate([actionURL]);
-  }
-
-  // TODO: remove test code before final merge
-  private testEventTypeToggle = false;
-
-  async createTestEvent() {
-    this.testEventTypeToggle = !this.testEventTypeToggle;
-
-    const event = new NotificationEvent();
-    event.title = "Test Notification";
-    event.body = "This is a test notification.";
-    event.notificationType = "entity_change";
-    event.context = {
-      entityType: "School",
-      entityId: "1",
-    };
-    if (this.testEventTypeToggle) {
-      event.actionURL = "/school";
-      event.context = undefined;
-      event.notificationType = "other" as any;
-      event.title = event.title + " (with explicit action)";
-    }
-
-    await this.entityMapper.save(event);
   }
 }
