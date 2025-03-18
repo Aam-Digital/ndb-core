@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnInit,
+  OnDestroy,
+} from "@angular/core";
 import { MatBadgeModule } from "@angular/material/badge";
 import { CommonModule } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -32,13 +39,28 @@ import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entit
   templateUrl: "./notification-item.component.html",
   styleUrl: "./notification-item.component.scss",
 })
-export class NotificationItemComponent {
+export class NotificationItemComponent implements OnInit, OnDestroy {
   @Input() notification: NotificationEvent;
 
   @Output() readStatusChange = new EventEmitter<boolean>();
   @Output() deleteClick = new EventEmitter<void>();
   @Output() notificationClick = new EventEmitter<NotificationEvent>();
   protected readonly closeOnlySubmenu = closeOnlySubmenu;
+
+  currentTime = new Date();
+  private timer: any;
+
+  ngOnInit() {
+    this.timer = setInterval(() => {
+      this.currentTime = new Date();
+    }, 60000);
+  }
+
+  ngOnDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
 
   updateReadStatus(newStatus: boolean) {
     this.readStatusChange.emit(newStatus);

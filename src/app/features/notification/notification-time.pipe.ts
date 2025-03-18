@@ -7,21 +7,21 @@ import { Pipe, PipeTransform } from "@angular/core";
 @Pipe({
   name: "notificationTime",
   standalone: true,
-  pure: false,
 })
 export class NotificationTimePipe implements PipeTransform {
-  transform(value: any): string {
+  transform(value: any, currentTime: Date): string {
     if (!value) return "";
 
-    const currentTime = new Date();
     const notificationTime = new Date(value);
+    const now = new Date(currentTime);
+
     if (
       !(notificationTime instanceof Date) ||
       isNaN(notificationTime.getTime())
     ) {
       return "";
     }
-    const timeDifference = currentTime.getTime() - notificationTime.getTime();
+    const timeDifference = now.getTime() - notificationTime.getTime();
 
     const seconds = Math.floor(timeDifference / 1000);
     const minutes = Math.floor(seconds / 60);
