@@ -140,6 +140,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     }
   }
 
+  /**
+   * Determines the best value to use when merging two entity field values.
+   * If both values are identical, it returns one of them.
+   * If one value is empty while the other is not, it returns the non-empty value.
+   * Otherwise, it retains the current form value.
+   */
   private setSmartSelectedValue(
     valueA: any,
     valueB: any,
@@ -159,6 +165,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     return JSON.stringify(a) === JSON.stringify(b);
   }
 
+  /**
+   * Determines whether a given value is considered empty.
+   */
   private isEmpty(value: any): boolean {
     if (
       value === undefined ||
