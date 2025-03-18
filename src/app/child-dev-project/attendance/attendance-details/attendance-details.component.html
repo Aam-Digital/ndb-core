@@ -15,137 +15,137 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-  <h1 mat-dialog-title>
-    <app-dialog-close mat-dialog-close></app-dialog-close>
-    {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
-    {{ entity.periodTo | date: "shortDate" }}
-  </h1>
-  <div mat-dialog-content>
-    <div
-      class="summary w-{{ entity.getWarningLevel() }}"
-      i18n="
-        Attendance|Attendance of a child (in percent) or the average of the event
-        (in percent)
-      "
-    >
-      Attendance:
-      {{
-        (forChild
-          ? entity?.getAttendancePercentage(forChild)
-          : entity?.getAttendancePercentageAverage()
-        ) | percent: "1.0-0"
-      }}
-    </div>
-  
-    <div class="flex-row flex-wrap gap-regular" *ngIf="forChild">
-      <mat-form-field>
-        <mat-label i18n="days present|How many days a child was present"
-          >Days Present</mat-label
-        >
-        <input
-          matInput
-          type="number"
-          [value]="entity.countEventsPresent(forChild)"
-          readonly
-          title="Number of days the child was present"
-          placeholder="Enter number of days present"
-        />
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-label i18n="days absent|How many days a child was absent"
-          >Days Absent</mat-label
-        >
-        <input
-          matInput
-          type="number"
-          [value]="entity.countEventsAbsent(forChild)"
-          readonly
-          title="Number of days the child was absent"
-          placeholder="Enter number of days absent"
-        />
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-label
-          i18n="
-            unknown status|How many days the presence or absence of a child is
-            unknown
-          "
-          >Unknown Status</mat-label
-        >
-        <input
-          matInput
-          type="number"
-          [value]="entity.countEventsWithUnknownStatus(forChild)"
-          readonly
-          title="Number of days with unknown status"
-          placeholder="Enter number of days with unknown status"
-        />
-      </mat-form-field>
-    </div>
-  
-    <div class="flex-row flex-wrap gap-regular" *ngIf="!forChild">
-      <mat-form-field>
-        <mat-label i18n="Total present|How many children were present"
-          >Total Present</mat-label
-        >
-        <input
-          matInput
-          type="number"
-          [value]="entity.countTotalPresent()"
-          readonly
-          title="Number of children present"
-          placeholder="Enter total number of children present"
-        />
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-label i18n="Total absent|How many children were absent"
-          >Total Absent</mat-label
-        >
-        <input
-          matInput
-          type="number"
-          [value]="entity.countTotalAbsent()"
-          readonly
-          title="Number of children absent"
-          placeholder="Enter total number of children absent"
-        />
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-label
-          i18n="
-            Total unknown|How many children have an unknown presence or absence
-            status
-          "
-          >Total Unknown</mat-label
-        >
-        <input
-          matInput
-          type="number"
-          [value]="entity.countEventsWithUnknownStatus()"
-          readonly
-          title="Number of children with unknown status"
-          placeholder="Enter total number of children with unknown status"
-        />
-      </mat-form-field>
-    </div>
-  
-    <app-entities-table
-      [entityType]="EventNote"
-      [records]="entity.events"
-      [customColumns]="eventsColumns"
-      clickMode="none"
-      (entityClick)="showEventDetails($event)"
-      [editable]="false"
-    >
-    </app-entities-table>
-  
-    <app-attendance-calendar
-      [records]="entity.events"
-      [highlightForChild]="forChild"
-      [activity]="entity.activity"
-    ></app-attendance-calendar>
+<h1 mat-dialog-title>
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+  {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
+  {{ entity.periodTo | date: "shortDate" }}
+</h1>
+<div mat-dialog-content>
+  <div
+    class="summary w-{{ entity.getWarningLevel() }}"
+    i18n="
+      Attendance|Attendance of a child (in percent) or the average of the event
+      (in percent)
+    "
+  >
+    Attendance:
+    {{
+      (forChild
+        ? entity?.getAttendancePercentage(forChild)
+        : entity?.getAttendancePercentageAverage()
+      ) | percent: "1.0-0"
+    }}
   </div>
+
+  <div class="flex-row flex-wrap gap-regular" *ngIf="forChild">
+    <mat-form-field>
+      <mat-label i18n="days present|How many days a child was present"
+        >Days Present</mat-label
+      >
+      <input
+        matInput
+        type="number"
+        [value]="entity.countEventsPresent(forChild)"
+        readonly
+        title="Number of days the child was present"
+        placeholder="Enter number of days present"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label i18n="days absent|How many days a child was absent"
+        >Days Absent</mat-label
+      >
+      <input
+        matInput
+        type="number"
+        [value]="entity.countEventsAbsent(forChild)"
+        readonly
+        title="Number of days the child was absent"
+        placeholder="Enter number of days absent"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label
+        i18n="
+          unknown status|How many days the presence or absence of a child is
+          unknown
+        "
+        >Unknown Status</mat-label
+      >
+      <input
+        matInput
+        type="number"
+        [value]="entity.countEventsWithUnknownStatus(forChild)"
+        readonly
+        title="Number of days with unknown status"
+        placeholder="Enter number of days with unknown status"
+      />
+    </mat-form-field>
+  </div>
+
+  <div class="flex-row flex-wrap gap-regular" *ngIf="!forChild">
+    <mat-form-field>
+      <mat-label i18n="Total present|How many children were present"
+        >Total Present</mat-label
+      >
+      <input
+        matInput
+        type="number"
+        [value]="entity.countTotalPresent()"
+        readonly
+        title="Number of children present"
+        placeholder="Enter total number of children present"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label i18n="Total absent|How many children were absent"
+        >Total Absent</mat-label
+      >
+      <input
+        matInput
+        type="number"
+        [value]="entity.countTotalAbsent()"
+        readonly
+        title="Number of children absent"
+        placeholder="Enter total number of children absent"
+      />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label
+        i18n="
+          Total unknown|How many children have an unknown presence or absence
+          status
+        "
+        >Total Unknown</mat-label
+      >
+      <input
+        matInput
+        type="number"
+        [value]="entity.countEventsWithUnknownStatus()"
+        readonly
+        title="Number of children with unknown status"
+        placeholder="Enter total number of children with unknown status"
+      />
+    </mat-form-field>
+  </div>
+
+  <app-entities-table
+    [entityType]="EventNote"
+    [records]="entity.events"
+    [customColumns]="eventsColumns"
+    clickMode="none"
+    (entityClick)="showEventDetails($event)"
+    [editable]="false"
+  >
+  </app-entities-table>
+
+  <app-attendance-calendar
+    [records]="entity.events"
+    [highlightForChild]="forChild"
+    [activity]="entity.activity"
+  ></app-attendance-calendar>
+</div>
