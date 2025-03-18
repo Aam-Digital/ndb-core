@@ -1,0 +1,27 @@
+<mat-expansion-panel [disabled]="!entityType">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <span i18n>Check/Update existing instead of creating new records</span>
+      <app-help-button
+        style="float: right"
+        text="You can configure the system to match your imported data with existing records in the system.
+        If a match is found based on the fields you select here, the system will offer update the existing record instead of creating a new one."
+        i18n-text="import - match existing - help text"
+      >
+      </app-help-button>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <mat-form-field class="full-width">
+    <mat-label i18n>Fields that identify a unique record</mat-label>
+    <app-entity-field-select
+      [multi]="true"
+      [entityType]="entityType"
+      (valueChange)="updateValue($event)"
+    ></app-entity-field-select>
+    <mat-hint i18n
+      >All selected fields have to be equal in an existing record and your
+      imported column to match.
+    </mat-hint>
+  </mat-form-field>
+</mat-expansion-panel>
