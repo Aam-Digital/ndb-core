@@ -6,7 +6,7 @@ import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { firstValueFrom, mergeMap, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
-import { catchError } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { NotificationConfig } from "./model/notification-config";
 import { SessionSubject } from "../../core/session/auth/session-info";
@@ -101,6 +101,37 @@ export class NotificationService {
         }
       },
     });
+  }
+
+  isDeviceRegistered(): Promise<boolean> {
+    return firstValueFrom(
+      this.firebaseMessaging.getToken.pipe(
+        mergeMap((token) => {
+          if (!token) {
+            return Promise.resolve(false);
+          }
+          const headers = {};
+          this.authService.addAuthHeader(headers);
+
+          return this.httpClient
+            .get(this.NOTIFICATION_API_URL + "/device/" + token, {
+              headers,
+            })
+            .pipe(
+              map((value) => {
+                return value !== null;
+              }),
+              catchError((err, caught) => {
+                if (err.status === 404) {
+                  return Promise.resolve(false);
+                } else {
+                  return caught;
+                }
+              }),
+            );
+        }),
+      ),
+    );
   }
 
   /**
