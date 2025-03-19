@@ -12,6 +12,9 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { Entity } from "app/core/entity/model/entity";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
+import { EventAttendance } from "app/child-dev-project/attendance/model/event-attendance";
+import { Note } from "app/child-dev-project/notes/model/note";
+import { createEntityOfType } from "app/core/demo-data/create-entity-of-type";
 
 @DatabaseEntity("EntityWithMergedRelations")
 class EntityWithMergedRelations extends Entity {
@@ -28,7 +31,7 @@ class EntityWithMergedRelations extends Entity {
   multiRelated;
 }
 
-describe("BulkMergeService", () => {
+fdescribe("BulkMergeService", () => {
   let service: BulkMergeService;
 
   let entityMapper: MockEntityMapperService;
@@ -100,5 +103,27 @@ describe("BulkMergeService", () => {
     ) as EntityWithMergedRelations;
 
     expect(updatedRelatedEntity.multiRelated).toEqual([recordA.getId()]);
+  });
+  it("should update childrenAttendance when merging Child entities", async () => {
+    const child1 = createEntityOfType("Child", "child1");
+    const child2 = createEntityOfType("Child", "child2");
+
+    const note1 = new Note("note1");
+    note1.addChild(child1);
+
+    const note2 = new Note("note2");
+    note2.addChild(child2);
+
+    await entityMapper.saveAll([note1, note2]);
+
+    const attendance = new EventAttendance();
+    (note2 as any).childrenAttendance.set(child2.getId(), attendance);
+
+    const mergedEntity = TestEntity.create({ ...child1, name: "A1" });
+    await service.executeMerge(mergedEntity, [child1, child2]);
+
+    const updatedNote = await entityMapper.load(Note, note2.getId());
+    const newAttendance = updatedNote.getAttendance(child1.getId());
+    expect(newAttendance).toBeDefined();
   });
 });
