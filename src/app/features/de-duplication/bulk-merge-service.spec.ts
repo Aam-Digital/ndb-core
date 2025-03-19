@@ -31,7 +31,7 @@ class EntityWithMergedRelations extends Entity {
   multiRelated;
 }
 
-fdescribe("BulkMergeService", () => {
+describe("BulkMergeService", () => {
   let service: BulkMergeService;
 
   let entityMapper: MockEntityMapperService;
@@ -104,6 +104,7 @@ fdescribe("BulkMergeService", () => {
 
     expect(updatedRelatedEntity.multiRelated).toEqual([recordA.getId()]);
   });
+
   it("should update childrenAttendance when merging Child entities", async () => {
     const child1 = createEntityOfType("Child", "child1");
     const child2 = createEntityOfType("Child", "child2");

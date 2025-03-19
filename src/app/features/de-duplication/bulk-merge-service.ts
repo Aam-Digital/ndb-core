@@ -120,24 +120,24 @@ export class BulkMergeService extends CascadingEntityAction {
     const oldId = oldEntity.getId();
     const newId = newEntity.getId();
 
-    // const fieldsToUpdate = refField ? [refField] : Object.keys(relatedEntity);
+    const fieldsToUpdate = refField ? [refField] : Object.keys(relatedEntity);
 
-    // for (const key of fieldsToUpdate) {
-    if (Array.isArray(relatedEntity[refField])) {
-      relatedEntity[refField] = Array.from(
-        new Set(
-          relatedEntity[refField].map((id) => (id === oldId ? newId : id)),
-        ),
-      );
-    } else if (relatedEntity[refField] === oldId) {
-      relatedEntity[refField] = newId;
+    for (const key of fieldsToUpdate) {
+      if (Array.isArray(relatedEntity[key])) {
+        relatedEntity[key] = Array.from(
+          new Set(relatedEntity[key].map((id) => (id === oldId ? newId : id))),
+        );
+      } else if (relatedEntity[key] === oldId) {
+        relatedEntity[key] = newId;
+      }
     }
-    // }
+
     if (relatedEntity instanceof Note && refField === "children") {
       const childrenAttendance = (relatedEntity as any)
         .childrenAttendance as EventAttendanceMap;
       if (childrenAttendance.has(oldId)) {
         childrenAttendance.set(newId, childrenAttendance.get(oldId));
+        childrenAttendance.delete(oldId);
       }
     }
 
