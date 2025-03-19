@@ -23,7 +23,39 @@ export class ImportMetadata extends Entity {
 
   @DatabaseField() config: ImportSettings;
 
+  /**
+   * @deprecated renamed to `createdEntities`
+   */
   @DatabaseField() ids: string[];
+
+  /**
+   * IDs of the entities that were created during the import.
+   */
+  @DatabaseField() get createdEntities(): string[] {
+    return this._createdEntities ?? this.ids;
+  }
+
+  set createdEntities(ids: string[]) {
+    this._createdEntities = ids;
+  }
+
+  private _createdEntities: string[];
+
+  /**
+   * IDs of the entities that were updated during the import (already existed before the import)
+   * and the previous values of those fields that have been overwritten.
+   */
+  @DatabaseField() updatedEntities: {
+    id: string;
+    importDataChanges: ImportDataChange;
+  }[];
+}
+
+/**
+ * Changes documented for a possible undo of an import.
+ */
+export interface ImportDataChange {
+  [field: string]: { previousValue: any; importedValue: any };
 }
 
 /**
@@ -32,5 +64,10 @@ export class ImportMetadata extends Entity {
 export interface ImportSettings {
   entityType: string;
   columnMapping: ColumnMapping[];
+
+  /** configured actions to run in addition to the import to link data */
   additionalActions?: AdditionalImportAction[];
+
+  /** IDs of fields used to match imported data to an existing record */
+  matchExistingByFields?: string[];
 }

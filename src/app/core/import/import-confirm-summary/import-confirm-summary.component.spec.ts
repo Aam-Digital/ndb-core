@@ -43,7 +43,7 @@ describe("ImportConfirmSummaryComponent", () => {
 
   it("should execute import via service, display toast message and close dialog upon success", fakeAsync(() => {
     const testImportResult: ImportMetadata = ImportMetadata.create({
-      ids: ["1", "2"],
+      createdEntities: ["1", "2"],
       config: null,
     });
     mockImportService.executeImport.and.resolveTo(testImportResult);

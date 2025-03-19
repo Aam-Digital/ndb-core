@@ -14,6 +14,7 @@ import { PouchDatabase } from "../database/pouchdb/pouch-database";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { DatabaseResolverService } from "../database/database-resolver.service";
 import { MemoryPouchDatabase } from "../database/pouchdb/memory-pouch-database";
+import { Entity } from "../entity/model/entity";
 
 describe("DemoDataInitializerService", () => {
   const normalUser: SessionInfo = {
@@ -40,8 +41,8 @@ describe("DemoDataInitializerService", () => {
 
   beforeEach(() => {
     environment.session_type = SessionType.mock;
-    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${environment.DB_NAME}`;
-    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${environment.DB_NAME}`;
+    demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${Entity.DATABASE}`;
+    adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${Entity.DATABASE}`;
     mockDemoDataService = jasmine.createSpyObj(["publishDemoData"]);
     mockDemoDataService.publishDemoData.and.resolveTo();
     mockDialog = jasmine.createSpyObj(["open"]);
