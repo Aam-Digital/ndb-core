@@ -166,7 +166,14 @@ describe("EntitySchemaService", () => {
     expect(result).toEqual([
       {
         entityType: ReferencingEntity,
-        referencingProperties: ["refChildren", "refChild", "multiTypeRef"],
+        referencingProperties: [
+          { id: "refChildren", ...ReferencingEntity.schema.get("refChildren") },
+          { id: "refChild", ...ReferencingEntity.schema.get("refChild") },
+          {
+            id: "multiTypeRef",
+            ...ReferencingEntity.schema.get("multiTypeRef"),
+          },
+        ],
       },
     ]);
   });

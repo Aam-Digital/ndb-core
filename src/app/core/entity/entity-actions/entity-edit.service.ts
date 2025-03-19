@@ -1,7 +1,5 @@
-import { Injectable } from "@angular/core";
-import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
+import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../model/entity";
-import { EntitySchemaService } from "../schema/entity-schema.service";
 import { CascadingEntityAction } from "./cascading-entity-action";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { lastValueFrom } from "rxjs";
@@ -20,15 +18,9 @@ import { asArray } from "app/utils/asArray";
   providedIn: "root",
 })
 export class EntityEditService extends CascadingEntityAction {
-  constructor(
-    protected override entityMapper: EntityMapperService,
-    protected override schemaService: EntitySchemaService,
-    private matDialog: MatDialog,
-    private entityActionsService: EntityActionsService,
-    private unsavedChanges: UnsavedChangesService,
-  ) {
-    super(entityMapper, schemaService);
-  }
+  private readonly matDialog = inject(MatDialog);
+  private readonly entityActionsService = inject(EntityActionsService);
+  private readonly unsavedChanges = inject(UnsavedChangesService);
 
   /**
    * Shows a confirmation dialog to the user

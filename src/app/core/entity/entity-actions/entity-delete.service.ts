@@ -1,7 +1,5 @@
-import { Injectable } from "@angular/core";
-import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
+import { inject, Injectable } from "@angular/core";
 import { Entity } from "../model/entity";
-import { EntitySchemaService } from "../schema/entity-schema.service";
 import {
   CascadingActionResult,
   CascadingEntityAction,
@@ -18,14 +16,8 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
   providedIn: "root",
 })
 export class EntityDeleteService extends CascadingEntityAction {
-  constructor(
-    protected override entityMapper: EntityMapperService,
-    protected override schemaService: EntitySchemaService,
-    private keycloakAuthService: KeycloakAuthService,
-    private confirmationDialog: ConfirmationDialogService,
-  ) {
-    super(entityMapper, schemaService);
-  }
+  private readonly keycloakAuthService = inject(KeycloakAuthService);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
 
   /**
    * The actual delete action without user interactions.

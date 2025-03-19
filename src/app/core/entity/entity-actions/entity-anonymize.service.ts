@@ -1,6 +1,4 @@
-import { Injectable } from "@angular/core";
-import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
-import { EntitySchemaService } from "../schema/entity-schema.service";
+import { inject, Injectable } from "@angular/core";
 import {
   CascadingActionResult,
   CascadingEntityAction,
@@ -19,13 +17,7 @@ import { asArray } from "app/utils/asArray";
   providedIn: "root",
 })
 export class EntityAnonymizeService extends CascadingEntityAction {
-  constructor(
-    protected override entityMapper: EntityMapperService,
-    protected override schemaService: EntitySchemaService,
-    private fileService: FileService,
-  ) {
-    super(entityMapper, schemaService);
-  }
+  private readonly fileService = inject(FileService);
 
   /**
    * The actual anonymize action without user interactions.

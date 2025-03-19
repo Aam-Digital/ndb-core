@@ -22,6 +22,7 @@ import { EntitySchemaField } from "./entity-schema-field";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { EntityRegistry } from "../database-entity.decorator";
 import { asArray } from "app/utils/asArray";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
 /**
  * Transform between entity instances and database objects
@@ -242,7 +243,7 @@ export class EntitySchemaService {
    */
   getEntityTypesReferencingType(type: string): {
     entityType: EntityConstructor;
-    referencingProperties: string[];
+    referencingProperties: FormFieldConfig[];
   }[] {
     const referencingTypes = [];
     for (const t of this.injector.get(EntityRegistry).values()) {
@@ -254,7 +255,7 @@ export class EntitySchemaService {
             referencingTypes.push(refType);
           }
 
-          refType.referencingProperties.push(key);
+          refType.referencingProperties.push({ ...field, id: key });
         }
       }
     }

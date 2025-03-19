@@ -14,6 +14,7 @@ import { ConfigService } from "../../config/config.service";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EventNote } from "../../../child-dev-project/attendance/model/event-note";
 import { Todo } from "../../../features/todos/model/todo";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 /**
  * Service to handle additional import actions
@@ -25,6 +26,7 @@ import { Todo } from "../../../features/todos/model/todo";
 export class ImportAdditionalService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
+  private readonly schemaService = inject(EntitySchemaService);
 
   private linkableEntities = new Map<string, AdditionalImportAction[]>();
 
@@ -50,22 +52,18 @@ export class ImportAdditionalService {
   }
 
   private generateLinkActionsFor(sourceType: string): AdditionalImportAction[] {
-    const refs: { [entityType: string]: FormFieldConfig[] } =
-      EntityDatatype.findFieldsReferencingEntityType(
-        sourceType,
-        this.entityRegistry,
-      );
+    const refs = this.schemaService.getEntityTypesReferencingType(sourceType);
 
     const directActions: AdditonalDirectLinkAction[] = [];
     const indirectActions: AdditionalIndirectLinkAction[] = [];
 
-    for (const [targetType, fields] of Object.entries(refs)) {
-      for (const field of fields) {
+    for (const ref of refs) {
+      for (const field of ref.referencingProperties) {
         if (field.entityReferenceRole === "composite") {
           // for "relationship" types that only serve as connections, do not add a "direct" link import but an "indirect" one
           indirectActions.push(
             ...this.findIndirectLinkActionsForField(
-              targetType,
+              ref.entityType.ENTITY_TYPE,
               field,
               sourceType,
             ),
@@ -76,7 +74,7 @@ export class ImportAdditionalService {
             directActions.push({
               sourceType,
               mode: "direct",
-              targetType,
+              targetType: ref.entityType.ENTITY_TYPE,
               targetProperty: field.id,
             });
           }
