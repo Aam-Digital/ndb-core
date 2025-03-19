@@ -58,11 +58,16 @@ export class AdminEntityService {
       this.getEntitySchemaFromConfig(newConfig, entityConstructor) ?? {};
     // Initialize config if not present
     entitySchemaConfig.attributes = entitySchemaConfig.attributes ?? {};
-console.log(configDetailsView,"tatatata");
-// return
+
     for (const [fieldId, field] of entityConstructor.schema.entries()) {
       entitySchemaConfig.attributes[fieldId] = field;
     }
+
+    // Add additional general settings if available
+    if (configEntitySettings) {
+      Object.assign(entitySchemaConfig, configEntitySettings);
+    }
+
     // Add additional view config if available
     if (configListView) {
       newConfig.data[EntityConfigService.getListViewId(entityConstructor)] =
@@ -83,7 +88,6 @@ console.log(configDetailsView,"tatatata");
   ): EntityConfig {
     const entityConfigKey =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityConstructor.ENTITY_TYPE;
-      console.log(config.data[entityConfigKey],"configg")
     return config.data[entityConfigKey];
   }
 }
