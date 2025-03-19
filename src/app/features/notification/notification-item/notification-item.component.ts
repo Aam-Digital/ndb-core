@@ -40,9 +40,6 @@ export class NotificationItemComponent {
   @Output() notificationClick = new EventEmitter<NotificationEvent>();
   protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
-  currentTime = new Date();
-  private timer: any;
-
   updateReadStatus(newStatus: boolean) {
     this.readStatusChange.emit(newStatus);
   }
