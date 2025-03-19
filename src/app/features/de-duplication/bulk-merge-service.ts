@@ -11,6 +11,9 @@ import {
   CascadingEntityAction,
 } from "app/core/entity/entity-actions/cascading-entity-action";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { Note } from "app/child-dev-project/notes/model/note";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { EventAttendanceMap } from "app/child-dev-project/attendance/model/event-attendance";
 
 @Injectable({
   providedIn: "root",
@@ -22,6 +25,7 @@ export class BulkMergeService extends CascadingEntityAction {
     private matDialog: MatDialog,
     private alert: AlertService,
     private unsavedChangesService: UnsavedChangesService,
+    private entityRegistry: EntityRegistry,
   ) {
     super(entityMapper, schemaService);
   }
@@ -80,13 +84,17 @@ export class BulkMergeService extends CascadingEntityAction {
     oldEntity: Entity,
     newEntity: Entity,
   ): Promise<void> {
+    // const affectedEntities = await this.entityRelationsService.loadAllLinkingToEntity(entity);
+    // for (const affected of affectedEntities) {
+
     await this.cascadeActionToRelatedEntities(
       oldEntity,
-      async (relatedEntity) => {
+      async (relatedEntity, refField) => {
         return await this.updateEntityReferences(
           relatedEntity,
           oldEntity,
           newEntity,
+          refField,
         );
       },
       (relatedEntity, refField) =>
@@ -106,21 +114,30 @@ export class BulkMergeService extends CascadingEntityAction {
     relatedEntity: Entity,
     oldEntity: Entity,
     newEntity: Entity,
-    refField?: string,
+    refField: string,
   ): Promise<CascadingActionResult> {
     const originalEntity = relatedEntity.copy();
     const oldId = oldEntity.getId();
     const newId = newEntity.getId();
 
-    const fieldsToUpdate = refField ? [refField] : Object.keys(relatedEntity);
+    // const fieldsToUpdate = refField ? [refField] : Object.keys(relatedEntity);
 
-    for (const key of fieldsToUpdate) {
-      if (Array.isArray(relatedEntity[key])) {
-        relatedEntity[key] = Array.from(
-          new Set(relatedEntity[key].map((id) => (id === oldId ? newId : id))),
-        );
-      } else if (relatedEntity[key] === oldId) {
-        relatedEntity[key] = newId;
+    // for (const key of fieldsToUpdate) {
+    if (Array.isArray(relatedEntity[refField])) {
+      relatedEntity[refField] = Array.from(
+        new Set(
+          relatedEntity[refField].map((id) => (id === oldId ? newId : id)),
+        ),
+      );
+    } else if (relatedEntity[refField] === oldId) {
+      relatedEntity[refField] = newId;
+    }
+    // }
+    if (relatedEntity instanceof Note && refField === "children") {
+      const childrenAttendance = (relatedEntity as any)
+        .childrenAttendance as EventAttendanceMap;
+      if (childrenAttendance.has(oldId)) {
+        childrenAttendance.set(newId, childrenAttendance.get(oldId));
       }
     }
 
