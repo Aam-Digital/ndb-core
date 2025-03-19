@@ -105,7 +105,7 @@ export class AdminEntityComponent implements OnInit {
     };
   }
 
-  private loadViewConfig(
+  public loadViewConfig(
     entityType: EntityConstructor,
     viewType: "details" | "list",
   ): DynamicComponentConfig {
