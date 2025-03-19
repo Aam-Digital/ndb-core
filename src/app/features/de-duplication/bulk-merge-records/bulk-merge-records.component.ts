@@ -153,6 +153,11 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       return valueB;
     } else if (!this.hasValue(valueB) && this.hasValue(valueA)) {
       return valueA;
+    } else if (Array.isArray(valueA) || Array.isArray(valueB)) {
+      return [
+        ...(Array.isArray(valueA) ? valueA : []),
+        ...(Array.isArray(valueB) ? valueB : []),
+      ];
     }
     return currentValue;
   }
