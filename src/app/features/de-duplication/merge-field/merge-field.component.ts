@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { Entity } from "app/core/entity/model/entity";
 import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
@@ -6,7 +6,6 @@ import { EntityFieldEditComponent } from "app/core/common-components/entity-fiel
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
 import { CommonModule } from "@angular/common";
-
 import { MergeField } from "../bulk-merge-records/bulk-merge-records.component";
 
 @Component({
@@ -20,47 +19,32 @@ import { MergeField } from "../bulk-merge-records/bulk-merge-records.component";
     EntityFieldEditComponent,
   ],
   templateUrl: "./merge-field.component.html",
-  styleUrls: ["../bulk-merge-records/bulk-merge-records.component.scss"],
+  styleUrls: ["./merge-field.component.scss"],
 })
-export class MergeFieldsComponent {
-  @Input() field: MergeField;
-  @Input() entities: Entity[];
-  @Input() existingSelected: boolean[];
-  @Input() isDisabled: boolean[];
-  @Input() mergedControl: AbstractControl; // Add form control reference
-  @Input() fieldEntities: any[]; // Add entities values
-  @Output() selectedValue = new EventEmitter<{
-    fieldId: string;
-    entityIndex: number;
-    checked?: boolean;
-  }>();
+export class MergeFieldsComponent implements OnInit {
+  @Input() field!: MergeField;
+  @Input() entities!: Entity[];
+  @Input() existingSelected!: boolean[];
+  @Input() isDisabled!: boolean[];
+  @Input() control!: AbstractControl;
+  @Output() valueChanged = new EventEmitter<any>();
 
   ngOnInit() {
     this.setInitialFieldState();
   }
-  handleCheckboxChange(entityIndex: number, checked: boolean): void {
-    this.selectedValue.emit({
-      fieldId: this.field.id,
-      entityIndex,
-      checked,
-    });
-  }
-
-  handleRadioSelect(entityIndex: number): void {
-    this.selectedValue.emit({
-      fieldId: this.field.id,
-      entityIndex,
-    });
-  }
 
   private setInitialFieldState(): void {
-    const [valueA, valueB] = this.fieldEntities;
+    const [valueA, valueB] = this.entityValues;
     const initialValue = this.setSmartSelectedValue(
       valueA,
       valueB,
-      this.mergedControl.value,
+      this.control.value,
     );
-    this.mergedControl.setValue(initialValue);
+    this.control.setValue(initialValue);
+  }
+
+  private get entityValues(): any[] {
+    return this.entities.map((e) => e[this.field.id]);
   }
 
   /**
@@ -95,5 +79,62 @@ export class MergeFieldsComponent {
 
   private hasValue(value: any): boolean {
     return !!value || (Array.isArray(value) && value.length > 0);
+  }
+
+  // /**
+  //  * Apply a value from one of the existing entities to the merge preview
+  //  * @param fieldKey
+  //  * @param entityIndex
+  //  * @returns
+  //  */
+  selectExistingValue(entityIndex: number, checked?: boolean): void {
+    const selectedValue = this.entities[entityIndex][this.field.id];
+    let newValue = selectedValue;
+    if (this.field.isArray) {
+      newValue = this.getMergedArrayValue(
+        this.control.value,
+        selectedValue,
+        checked,
+      );
+    } else if (this.field.allowsMultiValueMerge) {
+      newValue = this.getMergedStringValue(
+        this.control.value,
+        selectedValue,
+        checked,
+      );
+    }
+
+    this.valueChanged.emit(newValue);
+  }
+
+  private getMergedArrayValue(
+    value: any[],
+    selectedValue: any[],
+    checked: boolean,
+  ): any[] {
+    value = value ?? [];
+    if (checked) {
+      value = value.concat(selectedValue);
+    } else {
+      value = value.filter((v) => !selectedValue.includes(v));
+    }
+    return value;
+  }
+
+  private getMergedStringValue(
+    value: string,
+    selectedValue: string,
+    checked: boolean,
+  ): string {
+    if (checked) {
+      value = (value?.length > 0 ? value + ", " : "") + selectedValue;
+    } else {
+      value = value
+        .split(",")
+        .map((v) => v.trim())
+        .filter((v) => v !== selectedValue)
+        .join(", ");
+    }
+    return value;
   }
 }

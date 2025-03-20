@@ -7,7 +7,6 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { MatRadioModule } from "@angular/material/radio";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
@@ -20,7 +19,6 @@ import {
 } from "app/core/common-components/entity-form/entity-form.service";
 import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
-import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MergeFieldsComponent } from "../merge-field/merge-field.component";
 
 export type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
@@ -59,7 +57,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   isFieldDisabled: Record<string, boolean[]> = {};
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
-  fieldValues: Record<string, any[]> = {};
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -88,7 +85,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.existingFieldSelected[key] = [false, false];
       this.subscribeFieldChangesToUpdateSelectionMarkers(control, key);
     }
-    this.setInitialMergedValues();
+    this.setFieldDisabledProperty();
   }
 
   private initFieldsToMerge(): void {
@@ -117,13 +114,10 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       }
     });
   }
-  private setInitialMergedValues(): void {
+  private setFieldDisabledProperty(): void {
     for (const field of this.fieldsToMerge) {
       this.isFieldDisabled[field.id] = this.entitiesToMerge.map(
         (entity) => !this.hasValue(entity[field.id]),
-      );
-      this.fieldValues[field.id] = this.entitiesToMerge.map(
-        (entity) => entity[field.id],
       );
     }
   }
@@ -194,72 +188,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
   /**
    * Apply a value from one of the existing entities to the merge preview
-   * @param fieldKey
-   * @param entityIndex
-   * @returns
    */
-  selectExistingValue(
-    fieldKey: string,
-    entityIndex: number,
-    checked?: boolean,
-  ): void {
-    const control = this.mergeForm.formGroup.get(fieldKey);
-    if (!control) return;
-    const fieldConfig: MergeField = this.fieldsToMerge.find(
-      (f) => f.id === fieldKey,
-    );
-    if (!fieldConfig) return;
-
-    const existingValue = control.value;
-    const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
-
-    let newValue = selectedValue;
-    if (fieldConfig.isArray) {
-      newValue = this.getMergedArrayValue(
-        existingValue,
-        selectedValue,
-        checked,
-      );
-    } else if (fieldConfig.allowsMultiValueMerge) {
-      newValue = this.getMergedStringValue(
-        existingValue,
-        selectedValue,
-        checked,
-      );
+  updateMergePreviewValue(fieldId: string, newValue: any): void {
+    const control = this.mergeForm.formGroup.get(fieldId);
+    if (control) {
+      control.patchValue(newValue);
     }
-
-    control.patchValue(newValue);
-  }
-
-  private getMergedArrayValue(
-    value: any[],
-    selectedValue: any[],
-    checked: boolean,
-  ): any[] {
-    value = value ?? [];
-    if (checked) {
-      value = value.concat(selectedValue);
-    } else {
-      value = value.filter((v) => !selectedValue.includes(v));
-    }
-    return value;
-  }
-
-  private getMergedStringValue(
-    value: string,
-    selectedValue: string,
-    checked: boolean,
-  ): string {
-    if (checked) {
-      value = (value?.length > 0 ? value + ", " : "") + selectedValue;
-    } else {
-      value = value
-        .split(",")
-        .map((v) => v.trim())
-        .filter((v) => v !== selectedValue)
-        .join(", ");
-    }
-    return value;
   }
 
   async confirmAndMergeRecords(): Promise<boolean> {
