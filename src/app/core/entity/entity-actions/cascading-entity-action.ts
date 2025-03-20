@@ -3,7 +3,6 @@ import { asArray } from "app/utils/asArray";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { EntityRelationsService } from "../entity-mapper/entity-relations.service";
-import { Injectable } from "@angular/core";
 
 export class CascadingActionResult {
   /**
@@ -49,7 +48,6 @@ export class CascadingActionResult {
  * extend this class to implement services that perform actions on an entity
  * that require recursive actions to related entities as well.
  */
-@Injectable()
 export abstract class CascadingEntityAction {
   protected constructor(
     protected entityMapper: EntityMapperService,

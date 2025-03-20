@@ -1,5 +1,7 @@
-import { inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
+import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
+import { EntitySchemaService } from "../schema/entity-schema.service";
 import {
   CascadingActionResult,
   CascadingEntityAction,
@@ -7,6 +9,7 @@ import {
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntityRelationsService } from "../entity-mapper/entity-relations.service";
 
 /**
  * Safely delete an entity including handling references with related entities.
@@ -16,8 +19,15 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
   providedIn: "root",
 })
 export class EntityDeleteService extends CascadingEntityAction {
-  private readonly keycloakAuthService = inject(KeycloakAuthService);
-  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  constructor(
+    protected override entityMapper: EntityMapperService,
+    protected override schemaService: EntitySchemaService,
+    protected override entityRelationsService: EntityRelationsService,
+    private keycloakAuthService: KeycloakAuthService,
+    private confirmationDialog: ConfirmationDialogService,
+  ) {
+    super(entityMapper, schemaService, entityRelationsService);
+  }
 
   /**
    * The actual delete action without user interactions.
