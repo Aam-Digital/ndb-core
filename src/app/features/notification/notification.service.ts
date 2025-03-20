@@ -3,7 +3,7 @@ import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
 import { AngularFireMessaging } from "@angular/fire/compat/messaging";
-import { firstValueFrom, mergeMap, Subscription } from "rxjs";
+import { firstValueFrom, mergeMap, of, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
 import { catchError, map } from "rxjs/operators";
@@ -51,6 +51,27 @@ export class NotificationService {
     return this.entityMapper.load<NotificationConfig>(
       NotificationConfig,
       this.sessionInfo.value?.id,
+    );
+  }
+
+  /**
+   * Check if API module is actually available / enabled.
+   */
+  async isNotificationServerEnabled(): Promise<boolean> {
+    return firstValueFrom(
+      this.httpClient
+        .get(environment.API_PROXY_PREFIX + "/actuator/features")
+        .pipe(
+          map((res) => {
+            return res?.["notification"]?.enabled ?? false;
+          }),
+          catchError((err) => {
+            // if aam-services backend is not running --> 502
+            // if aam-services Notification API disabled --> 404
+            Logging.debug("Notification API not available", err);
+            return of(false);
+          }),
+        ),
     );
   }
 

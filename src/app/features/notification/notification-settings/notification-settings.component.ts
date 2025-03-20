@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import {
   MatSlideToggle,
   MatSlideToggleChange,
@@ -23,6 +23,7 @@ import { MatAccordion } from "@angular/material/expansion";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -46,6 +47,7 @@ import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 })
 export class NotificationSettingsComponent implements OnInit {
   notificationConfig: NotificationConfig = null;
+  isFeatureEnabled: boolean;
   isPushNotificationEnabled = false;
 
   constructor(
@@ -55,6 +57,7 @@ export class NotificationSettingsComponent implements OnInit {
     private confirmationDialog: ConfirmationDialogService,
     private notificationService: NotificationService,
     private alertService: AlertService,
+    @Inject(NAVIGATOR_TOKEN) protected navigator: Navigator,
   ) {}
 
   /**
@@ -65,6 +68,9 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.isFeatureEnabled =
+      await this.notificationService.isNotificationServerEnabled();
+
     this.notificationConfig = await this.loadNotificationConfig();
 
     if (this.notificationService.hasNotificationPermissionGranted()) {
@@ -90,6 +96,11 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   private async createNewNotificationConfig(): Promise<NotificationConfig> {
+    if (!this.isFeatureEnabled) {
+      // do not create a new config if the API is not enabled
+      return;
+    }
+
     let config: NotificationConfig;
 
     try {
