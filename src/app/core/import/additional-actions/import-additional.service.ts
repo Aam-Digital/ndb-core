@@ -14,7 +14,7 @@ import { ConfigService } from "../../config/config.service";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EventNote } from "../../../child-dev-project/attendance/model/event-note";
 import { Todo } from "../../../features/todos/model/todo";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { EntityRelationsService } from "../../entity/entity-mapper/entity-relations.service";
 
 /**
  * Service to handle additional import actions
@@ -26,7 +26,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 export class ImportAdditionalService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
-  private readonly schemaService = inject(EntitySchemaService);
+  private readonly entityRelationsService = inject(EntityRelationsService);
 
   private linkableEntities = new Map<string, AdditionalImportAction[]>();
 
@@ -52,7 +52,8 @@ export class ImportAdditionalService {
   }
 
   private generateLinkActionsFor(sourceType: string): AdditionalImportAction[] {
-    const refs = this.schemaService.getEntityTypesReferencingType(sourceType);
+    const refs =
+      this.entityRelationsService.getEntityTypesReferencingType(sourceType);
 
     const directActions: AdditonalDirectLinkAction[] = [];
     const indirectActions: AdditionalIndirectLinkAction[] = [];

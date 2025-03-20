@@ -19,11 +19,9 @@ import { Entity } from "../model/entity";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
-import { Injector } from "@angular/core";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { EntitySchemaField } from "./entity-schema-field";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { DatabaseEntity, EntityRegistry } from "../database-entity.decorator";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 
@@ -121,61 +119,6 @@ describe("EntitySchemaService", () => {
     expect(() =>
       service.getDatatypeOrDefault("invalidDataType"),
     ).toThrowError();
-  });
-
-  it("should getEntityTypesReferencingType with all entity types having schema fields referencing the given type", () => {
-    @DatabaseEntity("ReferencingEntity")
-    class ReferencingEntity extends Entity {
-      @DatabaseField({
-        dataType: "entity",
-        isArray: true,
-        additional: "Child",
-      })
-      refChildren: string[];
-
-      @DatabaseField({
-        dataType: "entity",
-        additional: "Child",
-      })
-      refChild: string;
-
-      @DatabaseField({
-        dataType: "entity",
-        additional: "School",
-      })
-      refSchool: string;
-
-      @DatabaseField({
-        dataType: "entity",
-        isArray: true,
-        additional: ["Child", "School"],
-      })
-      multiTypeRef: string[];
-    }
-
-    const entities = new EntityRegistry();
-    entities.addAll([
-      [ReferencingEntity.ENTITY_TYPE, ReferencingEntity],
-      [Entity.ENTITY_TYPE, Entity],
-    ]);
-    const injector = TestBed.inject(Injector);
-    spyOn(injector, "get").and.returnValue(entities);
-
-    const result = service.getEntityTypesReferencingType("Child");
-
-    expect(result).toEqual([
-      {
-        entityType: ReferencingEntity,
-        referencingProperties: [
-          { id: "refChildren", ...ReferencingEntity.schema.get("refChildren") },
-          { id: "refChild", ...ReferencingEntity.schema.get("refChild") },
-          {
-            id: "multiTypeRef",
-            ...ReferencingEntity.schema.get("multiTypeRef"),
-          },
-        ],
-      },
-    ]);
   });
 });
 

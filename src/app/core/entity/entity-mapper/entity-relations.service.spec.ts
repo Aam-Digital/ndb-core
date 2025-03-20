@@ -7,7 +7,7 @@ import {
   mockEntityMapper,
   MockEntityMapperService,
 } from "./mock-entity-mapper-service";
-import { DatabaseEntity } from "../database-entity.decorator";
+import { DatabaseEntity, EntityRegistry } from "../database-entity.decorator";
 import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
@@ -45,6 +45,59 @@ describe("EntityRelationsService", () => {
       providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     });
     service = TestBed.inject(EntityRelationsService);
+  });
+
+  it("should getEntityTypesReferencingType with all entity types having schema fields referencing the given type", () => {
+    @DatabaseEntity("ReferencingEntity")
+    class ReferencingEntity extends Entity {
+      @DatabaseField({
+        dataType: "entity",
+        isArray: true,
+        additional: "Child",
+      })
+      refChildren: string[];
+
+      @DatabaseField({
+        dataType: "entity",
+        additional: "Child",
+      })
+      refChild: string;
+
+      @DatabaseField({
+        dataType: "entity",
+        additional: "School",
+      })
+      refSchool: string;
+
+      @DatabaseField({
+        dataType: "entity",
+        isArray: true,
+        additional: ["Child", "School"],
+      })
+      multiTypeRef: string[];
+    }
+
+    // mock entityRegistry result to only have the ones given here without other types registered across the codebase
+    const entityRegistry = TestBed.inject(EntityRegistry);
+    spyOn(entityRegistry, "values").and.returnValue(
+      [ReferencingEntity, Entity][Symbol.iterator](),
+    );
+
+    const result = service.getEntityTypesReferencingType("Child");
+
+    expect(result).toEqual([
+      {
+        entityType: ReferencingEntity,
+        referencingProperties: [
+          { id: "refChildren", ...ReferencingEntity.schema.get("refChildren") },
+          { id: "refChild", ...ReferencingEntity.schema.get("refChild") },
+          {
+            id: "multiTypeRef",
+            ...ReferencingEntity.schema.get("multiTypeRef"),
+          },
+        ],
+      },
+    ]);
   });
 
   it("should find all entities linking to entity", async () => {

@@ -1,9 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../model/entity";
-import { EntityMapperService } from "./entity-mapper.service";
-import { EntitySchemaService } from "../schema/entity-schema.service";
 import { asArray } from "../../../utils/asArray";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+import { EntityRegistry } from "../database-entity.decorator";
+import { EntityMapperService } from "./entity-mapper.service";
 
 /**
  * Service to work with related, interlinked entities.
@@ -13,7 +13,34 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 })
 export class EntityRelationsService {
   private readonly entityMapper = inject(EntityMapperService);
-  private readonly schemaService = inject(EntitySchemaService);
+  private readonly entityRegistry = inject(EntityRegistry);
+
+  /**
+   * Get all entity types whose schema includes fields referencing the given type.
+   *
+   * e.g. given Child -> [Note, ChildSchoolRelation, ...]
+   * @param type
+   */
+  getEntityTypesReferencingType(type: string): {
+    entityType: EntityConstructor;
+    referencingProperties: FormFieldConfig[];
+  }[] {
+    const referencingTypes = [];
+    for (const t of this.entityRegistry.values()) {
+      for (const [key, field] of t.schema.entries()) {
+        if (asArray(field.additional).includes(type)) {
+          let refType = referencingTypes.find((e) => e.entityType === t);
+          if (!refType) {
+            refType = { entityType: t, referencingProperties: [] };
+            referencingTypes.push(refType);
+          }
+
+          refType.referencingProperties.push({ ...field, id: key });
+        }
+      }
+    }
+    return referencingTypes;
+  }
 
   /**
    * Find all entities that reference the given entity.
@@ -25,8 +52,9 @@ export class EntityRelationsService {
   ): Promise<{ entity: Entity; fields: FormFieldConfig[] }[]> {
     const linkedEntities = [];
 
-    const entityTypesWithReferences =
-      this.schemaService.getEntityTypesReferencingType(entity.getType());
+    const entityTypesWithReferences = this.getEntityTypesReferencingType(
+      entity.getType(),
+    );
 
     for (const refType of entityTypesWithReferences) {
       const referencedEntities = await this.loadLinkedEntitiesOfType(
