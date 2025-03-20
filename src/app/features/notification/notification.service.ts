@@ -105,32 +105,31 @@ export class NotificationService {
 
   isDeviceRegistered(): Promise<boolean> {
     return firstValueFrom(
-      this.firebaseMessaging.getToken.pipe(
-        mergeMap((token) => {
-          if (!token) {
-            return Promise.resolve(false);
-          }
-          const headers = {};
-          this.authService.addAuthHeader(headers);
+      this.firebaseMessaging.getToken
+        .pipe(
+          mergeMap((token) => {
+            if (!token) {
+              return Promise.resolve(false);
+            }
+            const headers = {};
+            this.authService.addAuthHeader(headers);
 
-          return this.httpClient
-            .get(this.NOTIFICATION_API_URL + "/device/" + token, {
-              headers,
-            })
-            .pipe(
-              map((value) => {
-                return value !== null;
-              }),
-              catchError((err, caught) => {
-                if (err.status === 404) {
-                  return Promise.resolve(false);
-                } else {
-                  return caught;
-                }
-              }),
-            );
-        }),
-      ),
+            return this.httpClient
+              .get(this.NOTIFICATION_API_URL + "/device/" + token, {
+                headers,
+              })
+              .pipe(
+                map((value) => {
+                  return value !== null;
+                }),
+              );
+          }),
+        )
+        .pipe(
+          catchError((err, caught) => {
+            return Promise.resolve(false);
+          }),
+        ),
     );
   }
 
