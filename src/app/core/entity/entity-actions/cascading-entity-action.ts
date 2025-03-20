@@ -86,17 +86,24 @@ export abstract class CascadingEntityAction {
     const affectedEntities =
       await this.entityRelationsService.loadAllLinkingToEntity(entity);
     for (const affected of affectedEntities) {
-      const entity = affected.entity;
       for (const refField of affected.fields) {
         if (
           refField.entityReferenceRole === "composite" &&
-          asArray(entity[refField.id]).length === 1
+          asArray(affected.entity[refField.id]).length === 1
         ) {
           // is only composite
-          const result = await compositeAction(entity);
+          const result = await compositeAction(
+            affected.entity,
+            refField.id,
+            entity,
+          );
           cascadeActionResult.mergeResults(result);
         } else {
-          const result = await aggregateAction(entity, refField.id, entity);
+          const result = await aggregateAction(
+            affected.entity,
+            refField.id,
+            entity,
+          );
           cascadeActionResult.mergeResults(result);
         }
       }

@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { Entity } from "../model/entity";
+import { Entity, EntityConstructor } from "../model/entity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { asArray } from "../../../utils/asArray";
@@ -23,31 +23,61 @@ export class EntityRelationsService {
   async loadAllLinkingToEntity(
     entity: Entity,
   ): Promise<{ entity: Entity; fields: FormFieldConfig[] }[]> {
-    const affectedEntities = [];
+    const linkedEntities = [];
 
     const entityTypesWithReferences =
       this.schemaService.getEntityTypesReferencingType(entity.getType());
 
     for (const refType of entityTypesWithReferences) {
-      const entities = await this.entityMapper.loadType(refType.entityType);
-
-      for (const affectedEntity of entities) {
-        const affectedFields: FormFieldConfig[] = [];
-        for (const refField of refType.referencingProperties) {
-          if (asArray(affectedFields[refField.id]).includes(entity.getId())) {
-            affectedFields.push(refField);
-          }
-        }
-
-        if (affectedFields.length > 0) {
-          affectedEntities.push({
-            entity: affectedEntity,
-            fields: affectedFields,
-          });
-        }
-      }
+      const referencedEntities = await this.loadLinkedEntitiesOfType(
+        entity,
+        refType.entityType,
+        refType.referencingProperties,
+      );
+      linkedEntities.push(...referencedEntities);
     }
+
+    return linkedEntities;
+  }
+
+  /**
+   * Search through all entities of the given type and find those that reference the given entity.
+   * @param primaryEntity The entity to which the other entities include a reference
+   * @param refType The entity type of the entities to search for references to primaryEntity
+   * @param refProperties The fields of the refType entities that may contain a reference (based on the refType's schema)
+   * @private
+   */
+  private async loadLinkedEntitiesOfType(
+    primaryEntity: Entity,
+    refType: EntityConstructor,
+    refProperties: FormFieldConfig[],
+  ) {
+    const entities = await this.entityMapper.loadType(refType);
+
+    const affectedEntities = entities
+      .map((entity) => ({
+        entity,
+        fields: fieldsIncludingId(entity, primaryEntity.getId(), refProperties),
+      }))
+      .filter((affected) => affected.fields.length > 0);
 
     return affectedEntities;
   }
+}
+
+/**
+ * Return the fields of entity that contain the given refId.
+ * If there is no such referenced ID, the array will be empty.
+ * @param entity
+ * @param refId
+ * @param relevantFields The entity fields to check for the refId
+ */
+function fieldsIncludingId(
+  entity: Entity,
+  refId: string,
+  relevantFields: FormFieldConfig[],
+): FormFieldConfig[] {
+  return relevantFields.filter((field) =>
+    asArray(entity[field.id]).includes(refId),
+  );
 }
