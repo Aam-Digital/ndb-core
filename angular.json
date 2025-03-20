@@ -157,27 +157,6 @@
               "src/**/*.html"
             ]
           }
-        },
-        "cypress-open": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "watch": true,
-            "headless": false,
-            "devServerTarget": "ndb-core:serve"
-          }
-        },
-        "e2e": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "ndb-core:serve",
-            "watch": false,
-            "headless": true
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "ndb-core:serve:production"
-            }
-          }
         }
       }
     }
