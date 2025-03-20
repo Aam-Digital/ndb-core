@@ -57,6 +57,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
    */
   existingFieldSelected: Record<string, boolean[]> = {};
 
+  isFieldDisabled: Record<string, boolean[]> = {};
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
 
@@ -87,17 +88,15 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.existingFieldSelected[key] = [false, false];
       this.subscribeFieldChangesToUpdateSelectionMarkers(control, key);
     }
+    this.setInitialMergedValues();
   }
 
   private initFieldsToMerge(): void {
     this.entityConstructor.schema.forEach((field, key) => {
-      const hasValue = this.entitiesToMerge.some(
-        (entity) =>
-          entity[key] !== undefined &&
-          entity[key] !== null &&
-          entity[key] !== false &&
-          !(Array.isArray(entity[key]) && entity[key].length === 0),
+      const hasValue = this.entitiesToMerge.some((entity) =>
+        this.hasValue(entity[key]),
       );
+
       const isFileField =
         field.dataType === "photo" || field.dataType === "file";
 
@@ -118,12 +117,73 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       }
     });
   }
+  private setInitialMergedValues(): void {
+    for (const field of this.fieldsToMerge) {
+      const valueA = this.entitiesToMerge[0][field.id];
+      const valueB = this.entitiesToMerge[1][field.id];
+      this.isFieldDisabled[field.id] = this.entitiesToMerge.map(
+        (entity) => !this.hasValue(entity[field.id]),
+      );
+      const control = this.mergeForm.formGroup.get(field.id);
+      if (!control) continue;
+
+      const mergedValue = this.setSmartSelectedValue(
+        valueA,
+        valueB,
+        control.value,
+      );
+      control.setValue(mergedValue);
+    }
+  }
+
+  /**
+   * Determines the best value to use when merging two entity field values.
+   * If both values are identical, it returns one of them.
+   * If one value is empty while the other is not, it returns the non-empty value.
+   * Otherwise, it retains the current form value.
+   */
+  private setSmartSelectedValue(
+    valueA: any,
+    valueB: any,
+    currentValue: any,
+  ): any {
+    if (this.areValuesIdentical(valueA, valueB)) {
+      return valueA;
+    } else if (!this.hasValue(valueA) && this.hasValue(valueB)) {
+      return valueB;
+    } else if (!this.hasValue(valueB) && this.hasValue(valueA)) {
+      return valueA;
+    } else if (Array.isArray(valueA) || Array.isArray(valueB)) {
+      return [
+        ...(Array.isArray(valueA) ? valueA : []),
+        ...(Array.isArray(valueB) ? valueB : []),
+      ];
+    }
+    return currentValue;
+  }
+
+  private areValuesIdentical(a: any, b: any): boolean {
+    return JSON.stringify(a) === JSON.stringify(b);
+  }
 
   private allowsMultiValueMerge(field?: FormFieldConfig): boolean {
     return (
       field?.dataType === "string" ||
       field?.dataType === "long-text" ||
       field?.isArray
+    );
+  }
+
+  /**
+   * helper method to check whether a value is empty or has a valid value.
+   */
+  hasValue(value: any): boolean {
+    return !(
+      value === undefined ||
+      value === null ||
+      value === "" ||
+      (Array.isArray(value) && value.length === 0) ||
+      value === false
     );
   }
 
@@ -145,6 +205,11 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
     newValue: any,
     entityIndex: number,
   ) {
+    if (this.isFieldDisabled[fieldConfig.id][entityIndex]) {
+      this.existingFieldSelected[fieldConfig.id][entityIndex] = false;
+      return;
+    }
+
     let isChecked: boolean;
     let existingEntityValue = this.entitiesToMerge[entityIndex][fieldConfig.id];
 
