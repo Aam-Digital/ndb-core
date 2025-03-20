@@ -10,6 +10,8 @@ import { FileDatatype } from "../../../features/file/file.datatype";
 import { FileService } from "../../../features/file/file.service";
 import { Entity } from "../model/entity";
 import { asArray } from "app/utils/asArray";
+import { Logging } from "../../logging/logging.service";
+import { EntityRelationsService } from "../entity-mapper/entity-relations.service";
 
 /**
  * Anonymize an entity including handling references with related entities.
@@ -22,9 +24,10 @@ export class EntityAnonymizeService extends CascadingEntityAction {
   constructor(
     protected override entityMapper: EntityMapperService,
     protected override schemaService: EntitySchemaService,
+    protected override entityRelationsService: EntityRelationsService,
     private fileService: FileService,
   ) {
-    super(entityMapper, schemaService);
+    super(entityMapper, schemaService, entityRelationsService);
   }
 
   /**
@@ -36,6 +39,7 @@ export class EntityAnonymizeService extends CascadingEntityAction {
     if (!entity.getConstructor().hasPII) {
       // entity types that are generally without PII by default retain all fields
       // this should only be called through a cascade action anyway
+      Logging.debug("Anonymize for entity without PII skipped", entity);
       return new CascadingActionResult();
     }
 
