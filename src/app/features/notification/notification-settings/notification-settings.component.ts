@@ -73,10 +73,10 @@ export class NotificationSettingsComponent implements OnInit {
 
     this.notificationConfig = await this.loadNotificationConfig();
 
-    if (this.notificationService.hasNotificationPermissionGranted()) {
-      this.isPushNotificationEnabled =
-        this.notificationConfig.channels?.push || false;
-    }
+    this.isPushNotificationEnabled =
+      this.notificationService.hasNotificationPermissionGranted() &&
+      (await this.notificationService.isDeviceRegistered()) &&
+      this.notificationConfig.channels?.push;
   }
 
   private async loadNotificationConfig() {
