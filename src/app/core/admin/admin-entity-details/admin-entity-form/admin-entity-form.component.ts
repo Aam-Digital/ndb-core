@@ -209,6 +209,8 @@ export class AdminEntityFormComponent implements OnChanges {
     );
 
     const result = await lastValueFrom(dialogRef.afterClosed());
+    this.emitUpdatedConfig();
+
     return result;
   }
 
