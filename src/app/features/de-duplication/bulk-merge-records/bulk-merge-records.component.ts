@@ -21,9 +21,9 @@ import {
 import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { th } from "@faker-js/faker";
+import { MergeFieldsComponent } from "../merge-field/merge-field.component";
 
-type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
+export type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -31,15 +31,14 @@ type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
   imports: [
     MatDialogActions,
     MatDialogContent,
-    MatRadioModule,
     MatButtonModule,
     CommonModule,
-    MatCheckboxModule,
     EntityFieldViewComponent,
     EntityFieldEditComponent,
     ReactiveFormsModule,
     MatError,
     MatDialogClose,
+    MergeFieldsComponent,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -60,6 +59,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   isFieldDisabled: Record<string, boolean[]> = {};
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
+  fieldValues: Record<string, any[]> = {};
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -119,51 +119,13 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   }
   private setInitialMergedValues(): void {
     for (const field of this.fieldsToMerge) {
-      const valueA = this.entitiesToMerge[0][field.id];
-      const valueB = this.entitiesToMerge[1][field.id];
       this.isFieldDisabled[field.id] = this.entitiesToMerge.map(
         (entity) => !this.hasValue(entity[field.id]),
       );
-      const control = this.mergeForm.formGroup.get(field.id);
-      if (!control) continue;
-
-      const mergedValue = this.setSmartSelectedValue(
-        valueA,
-        valueB,
-        control.value,
+      this.fieldValues[field.id] = this.entitiesToMerge.map(
+        (entity) => entity[field.id],
       );
-      control.setValue(mergedValue);
     }
-  }
-
-  /**
-   * Determines the best value to use when merging two entity field values.
-   * If both values are identical, it returns one of them.
-   * If one value is empty while the other is not, it returns the non-empty value.
-   * Otherwise, it retains the current form value.
-   */
-  private setSmartSelectedValue(
-    valueA: any,
-    valueB: any,
-    currentValue: any,
-  ): any {
-    if (this.areValuesIdentical(valueA, valueB)) {
-      return valueA;
-    } else if (!this.hasValue(valueA) && this.hasValue(valueB)) {
-      return valueB;
-    } else if (!this.hasValue(valueB) && this.hasValue(valueA)) {
-      return valueA;
-    } else if (Array.isArray(valueA) || Array.isArray(valueB)) {
-      return [
-        ...(Array.isArray(valueA) ? valueA : []),
-        ...(Array.isArray(valueB) ? valueB : []),
-      ];
-    }
-    return currentValue;
-  }
-
-  private areValuesIdentical(a: any, b: any): boolean {
-    return JSON.stringify(a) === JSON.stringify(b);
   }
 
   private allowsMultiValueMerge(field?: FormFieldConfig): boolean {

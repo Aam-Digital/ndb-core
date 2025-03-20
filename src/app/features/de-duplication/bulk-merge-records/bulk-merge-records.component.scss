@@ -18,6 +18,13 @@
     padding: 0.5rem;
   }
 
+  app-merge-fields {
+    grid-column: 2 / 4;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
   .record-cell {
     display: flex;
     justify-content: flex-start;

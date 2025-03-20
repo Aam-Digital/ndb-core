@@ -1,0 +1,28 @@
+@for (entity of entities; track entity; let i = $index) {
+  @if (field.allowsMultiValueMerge) {
+    <mat-checkbox
+      [checked]="existingSelected[i]"
+      (change)="handleCheckboxChange(i, $event.checked)"
+      [disabled]="isDisabled[i]"
+    >
+      <app-entity-field-view
+        [field]="field"
+        [entity]="entity"
+      ></app-entity-field-view>
+    </mat-checkbox>
+  } @else {
+    <mat-radio-group>
+      <mat-radio-button
+        [value]="entity[field.id]"
+        (click)="handleRadioSelect(i)"
+        [checked]="existingSelected[i]"
+        [disabled]="isDisabled[i]"
+      >
+        <app-entity-field-view
+          [field]="field"
+          [entity]="entity"
+        ></app-entity-field-view>
+      </mat-radio-button>
+    </mat-radio-group>
+  }
+}
