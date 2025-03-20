@@ -21,6 +21,7 @@
               <mat-checkbox
                 [checked]="existingFieldSelected[field.id][i]"
                 (change)="selectExistingValue(field.id, i, $event.checked)"
+                [disabled]="isFieldDisabled[field.id][i]"
               >
                 <app-entity-field-view
                   [field]="field"
@@ -33,6 +34,7 @@
                   [value]="entityToMerge[field.id]"
                   (click)="selectExistingValue(field.id, i)"
                   [checked]="existingFieldSelected[field.id][i]"
+                  [disabled]="isFieldDisabled[field.id][i]"
                 >
                   <app-entity-field-view
                     [field]="field"
