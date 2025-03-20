@@ -19,7 +19,7 @@ import {
 } from "app/core/common-components/entity-form/entity-form.service";
 import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
-import { MergeFieldsComponent } from "../merge-field/merge-field.component";
+import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
 
 export type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
 

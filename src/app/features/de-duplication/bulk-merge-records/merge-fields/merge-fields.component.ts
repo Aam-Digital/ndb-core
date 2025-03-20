@@ -6,7 +6,7 @@ import { EntityFieldEditComponent } from "app/core/common-components/entity-fiel
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
 import { CommonModule } from "@angular/common";
-import { MergeField } from "../bulk-merge-records/bulk-merge-records.component";
+import { MergeField } from "../bulk-merge-records.component";
 
 @Component({
   selector: "app-merge-fields",
@@ -18,8 +18,8 @@ import { MergeField } from "../bulk-merge-records/bulk-merge-records.component";
     EntityFieldViewComponent,
     EntityFieldEditComponent,
   ],
-  templateUrl: "./merge-field.component.html",
-  styleUrls: ["./merge-field.component.scss"],
+  templateUrl: "./merge-fields.component.html",
+  styleUrls: ["./merge-fields.component.scss"],
 })
 export class MergeFieldsComponent implements OnInit {
   @Input() field!: MergeField;
@@ -34,17 +34,15 @@ export class MergeFieldsComponent implements OnInit {
   }
 
   private setInitialFieldState(): void {
-    const [valueA, valueB] = this.entityValues;
-    const initialValue = this.setSmartSelectedValue(
-      valueA,
-      valueB,
-      this.control.value,
-    );
-    this.control.setValue(initialValue);
-  }
-
-  private get entityValues(): any[] {
-    return this.entities.map((e) => e[this.field.id]);
+    if (this.entities) {
+      const [valueA, valueB] = this.entities?.map((e) => e[this.field.id]);
+      const initialValue = this.setSmartSelectedValue(
+        valueA,
+        valueB,
+        this.control.value,
+      );
+      this.control.setValue(initialValue);
+    }
   }
 
   /**
@@ -81,12 +79,11 @@ export class MergeFieldsComponent implements OnInit {
     return !!value || (Array.isArray(value) && value.length > 0);
   }
 
-  // /**
-  //  * Apply a value from one of the existing entities to the merge preview
-  //  * @param fieldKey
-  //  * @param entityIndex
-  //  * @returns
-  //  */
+  /*
+   * Selects the value of the entity at the given index.
+   * If the field is an array, the selected value is added to the existing value.
+   * If the field allows multi-value merge, the selected value is appended to the existing value.
+   */
   selectExistingValue(entityIndex: number, checked?: boolean): void {
     const selectedValue = this.entities[entityIndex][this.field.id];
     let newValue = selectedValue;

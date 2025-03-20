@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { MergeFieldsComponent } from "./merge-field.component";
+import { MergeFieldsComponent } from "./merge-fields.component";
 
 describe("MergeFieldsComponent", () => {
   let component: MergeFieldsComponent;
