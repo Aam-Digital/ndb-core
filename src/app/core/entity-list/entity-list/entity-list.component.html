@@ -276,15 +276,17 @@
       >
         Archive
       </button>
-      <button
-        mat-raised-button
-        (click)="anonymizeRecords()"
-        [disabled]="selectedRows.length === 0"
-        color="accent"
-        i18n="bulk action button"
-      >
-        Anonymize
-      </button>
+      @if (entityConstructor.hasPII) {
+        <button
+          mat-raised-button
+          (click)="anonymizeRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Anonymize
+        </button>
+      }
       <button
         mat-raised-button
         (click)="deleteRecords()"
