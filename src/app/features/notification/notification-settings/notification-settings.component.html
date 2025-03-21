@@ -91,13 +91,14 @@
     -->
     <div class="margin-top-large">
       <div>
-        <h3 i18n class="no-margin flex-row align-center">
-          <strong>Where you receive notifications</strong>
+        <h3 class="no-margin flex-row align-center">
+          <strong i18n>Where you receive notifications</strong>
           @if (isPushNotificationEnabled) {
             <div
               class="enabled-text"
               matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
               i18n-matTooltip
+              i18n
             >
               Enabled
             </div>
@@ -106,6 +107,7 @@
               class="disabled-text"
               matTooltip="Push notifications are disabled. Turn them on in settings to also receive alerts outside of the app."
               i18n-matTooltip
+              i18n
             >
               Disabled
             </div>
