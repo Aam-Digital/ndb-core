@@ -37,20 +37,25 @@ export class NotificationService {
   private readonly NOTIFICATION_API_URL =
     environment.API_PROXY_PREFIX + "/v1/notification";
 
-  async init() {
-    const notificationConfig = await this.loadNotificationConfig().catch(
-      () => null,
-    );
+  constructor() {
+    // init listening to push messages once the session (with userId) is ready
+    this.sessionInfo.subscribe((sessionInfo) => this.init(sessionInfo?.id));
+  }
+
+  async init(userId: string) {
+    const notificationConfig = !userId
+      ? null
+      : await this.loadNotificationConfig(userId).catch(() => null);
 
     if (notificationConfig?.channels?.push) {
       this.listenForMessages();
     }
   }
 
-  async loadNotificationConfig() {
+  async loadNotificationConfig(userId: string): Promise<NotificationConfig> {
     return this.entityMapper.load<NotificationConfig>(
       NotificationConfig,
-      this.sessionInfo.value?.id,
+      userId,
     );
   }
 
@@ -256,13 +261,20 @@ export class NotificationService {
    * (If app is not running, the firebase-messaging-sw is listening)
    */
   listenForMessages(): void {
+    Logging.debug("Starting to listen for Push Messages");
     this.firebaseMessaging.messages.subscribe({
       next: (payload) => {
+        Logging.debug("Received Push Message", payload);
+
         // trigger immediate sync
         const db = this.databaseResolver.getDatabase(
           NotificationEvent.DATABASE,
         );
-        (db as SyncedPouchDatabase).sync();
+        (db as SyncedPouchDatabase)
+          .sync()
+          .catch((err) =>
+            Logging.warn("Failed sync notifications db upon push message", err),
+          );
 
         new Notification(payload.notification.title, {
           body: payload.notification.body,

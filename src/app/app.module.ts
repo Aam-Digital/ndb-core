@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from "@angular/core";
+import { LOCALE_ID, NgModule } from "@angular/core";
 import {
   provideHttpClient,
   withInterceptorsFromDi,
@@ -180,14 +180,7 @@ import { FirebaseConfiguration } from "./features/notification/notification-conf
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     APP_INITIALIZER_DEMO_DATA,
     provideHttpClient(withInterceptorsFromDi()),
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (notificationService: NotificationService) => () => {
-        notificationService.init();
-      },
-      deps: [NotificationService],
-      multi: true,
-    },
+    NotificationService,
   ],
 })
 export class AppModule {

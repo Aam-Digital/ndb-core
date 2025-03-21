@@ -83,7 +83,7 @@ export class NotificationSettingsComponent implements OnInit {
     let notificationConfig: NotificationConfig;
     try {
       notificationConfig =
-        await this.notificationService.loadNotificationConfig();
+        await this.notificationService.loadNotificationConfig(this.userId);
     } catch (err) {
       if (err.status === 404) {
         notificationConfig = await this.createNewNotificationConfig();
