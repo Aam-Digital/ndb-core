@@ -96,7 +96,7 @@ export class BulkMergeService {
     relatedEntity: Entity,
     oldEntity: Entity,
     newEntity: Entity,
-    refField?: FormFieldConfig[],
+    refField: FormFieldConfig[],
   ): Promise<void> {
     const oldId = oldEntity.getId();
     const newId = newEntity.getId();
@@ -113,14 +113,26 @@ export class BulkMergeService {
     }
 
     if (relatedEntity instanceof Note && refFieldId === "children") {
-      const childrenAttendance = (relatedEntity as any)
-        .childrenAttendance as EventAttendanceMap;
-      if (childrenAttendance.has(oldId)) {
-        childrenAttendance.set(newId, childrenAttendance.get(oldId));
-        childrenAttendance.delete(oldId);
-      }
+      this.updateChildrenAttendance(relatedEntity, oldId, newId);
     }
 
     await this.entityMapper.save(relatedEntity);
+  }
+
+  /**
+   * Helper method to updates the attendance records of children in a Note entity by replacing
+   * references to the old entity ID with the new entity ID.
+   */
+  private updateChildrenAttendance(
+    relatedEntity: Note,
+    oldId: string,
+    newId: string,
+  ): void {
+    const childrenAttendance = (relatedEntity as any)
+      .childrenAttendance as EventAttendanceMap;
+    if (childrenAttendance.has(oldId)) {
+      childrenAttendance.set(newId, childrenAttendance.get(oldId));
+      childrenAttendance.delete(oldId);
+    }
   }
 }
