@@ -11,8 +11,11 @@ export class NotificationConfig extends Entity {
   /**
    * The entityId under which the database may contain a template file
    * to use as default config for new users.
+   *
+   * The template entity has type `Config<{ notificationRules: NotificationRule[] }>`
+   * i.e. it should contain a "data" property within which "notificationRules" can provide an array of default rules
    */
-  static readonly TEMPLATE_ENTITY_ID = "TEMPLATE";
+  static readonly TEMPLATE_ENTITY_ID = "Config:NotificationConfigTemplate";
 
   /**
    * The default mode(s) through which all notifications are sent to the user.

@@ -25,6 +25,7 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { MatProgressBar } from "@angular/material/progress-bar";
+import { Config } from "../../../core/config/config";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -106,22 +107,22 @@ export class NotificationSettingsComponent implements OnInit {
 
     try {
       // try to load template from database
-      let template = (
-        await this.entityMapper.load(
-          NotificationConfig,
-          NotificationConfig.TEMPLATE_ENTITY_ID,
-        )
-      ).copy(this.userId);
+      let templateRules = (
+        await this.entityMapper.load<
+          Config<{ notificationRules: NotificationRule[] }>
+        >(Config, NotificationConfig.TEMPLATE_ENTITY_ID)
+      )?.data?.["notificationRules"];
 
       // replace user entity in template rules
-      template = JSON.parse(
-        JSON.stringify(template).replace(
+      templateRules = JSON.parse(
+        JSON.stringify(templateRules).replace(
           PLACEHOLDERS.CURRENT_USER,
           this.userEntity.value?.getId(),
         ),
       );
 
-      config = Object.assign(new NotificationConfig(this.userId), template);
+      config = new NotificationConfig(this.userId);
+      config.notificationRules = templateRules;
     } catch (err) {
       Logging.debug("No NotificationConfig template found");
 
