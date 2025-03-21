@@ -62,8 +62,8 @@ export abstract class CascadingEntityAction {
    * to support an undo action.
    *
    * @param entity
-   * @param compositeAction
-   * @param aggregateAction
+   * @param compositeAction The method to be called on relationships with `entityReferenceRole` "composite"
+   * @param aggregateAction The method to be called on relationships with `entityReferenceRole` "aggregate" (this is also the default for any relationship)
    * @private
    */
   protected async cascadeActionToRelatedEntities(
