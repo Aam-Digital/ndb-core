@@ -14,6 +14,7 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 import { Note } from "app/child-dev-project/notes/model/note";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EventAttendanceMap } from "app/child-dev-project/attendance/model/event-attendance";
+import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 
 @Injectable({
   providedIn: "root",
@@ -22,12 +23,13 @@ export class BulkMergeService extends CascadingEntityAction {
   constructor(
     protected override entityMapper: EntityMapperService,
     protected override schemaService: EntitySchemaService,
+    private entityRelationshipService: EntityRelationsService,
     private matDialog: MatDialog,
     private alert: AlertService,
     private unsavedChangesService: UnsavedChangesService,
     private entityRegistry: EntityRegistry,
   ) {
-    super(entityMapper, schemaService);
+    super(entityMapper, schemaService, entityRelationshipService);
   }
 
   /**
@@ -84,7 +86,9 @@ export class BulkMergeService extends CascadingEntityAction {
     oldEntity: Entity,
     newEntity: Entity,
   ): Promise<void> {
-    // const affectedEntities = await this.entityRelationsService.loadAllLinkingToEntity(entity);
+    const affectedEntities =
+      await this.entityRelationsService.loadAllLinkingToEntity(oldEntity);
+    console.log(affectedEntities, "affectedEntities");
     // for (const affected of affectedEntities) {
 
     await this.cascadeActionToRelatedEntities(
