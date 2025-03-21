@@ -1,0 +1,68 @@
+@use "variables/colors";
+@use "variables/sizes";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+
+.panel-wrapper {
+  @include mat-elevation.elevation(2);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.receive-notifications-container {
+  @extend .panel-wrapper;
+  background-color: colors.$background;
+  margin-top: sizes.$regular;
+}
+
+
+.no-margin {
+  margin: 0;
+}
+
+.add-new-rule-button {
+  width: 50%;
+  border-radius: 20px;
+  padding: 22px;
+  background-color: aliceblue;
+}
+
+.coming-soon-label {
+  color: colors.$inactive;
+  margin-left: 10px;
+  font-style: italic;
+}
+
+
+.text-badge {
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 10px;
+  border-radius: 25px;
+  padding-inline: 15px;
+  border: 1px solid;
+}
+
+.disabled-text {
+  @extend .text-badge;
+  border-color: #fa222a;
+  background-color: #eba7a9;
+}
+
+.enabled-text {
+  @extend .text-badge;
+  border-color: green;
+  background-color: #beddba;
+}
+
+
+.indented-item {
+  margin-left: sizes.$large;
+}
+
+
+.feature-disabled-box {
+  background-color: colors.$disabled-transparent;
+  padding: sizes.$regular;
+  border-radius: sizes.$small;
+}

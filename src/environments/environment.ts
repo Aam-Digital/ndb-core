@@ -42,4 +42,7 @@ export const environment = {
 
   /** Path for the reverse proxy that forwards to backend services APIs - configured in `default.conf` */
   API_PROXY_PREFIX: "/api",
+
+  /** see FirebaseConfiguration and assets/firebase-config.json */
+  notificationsConfig: undefined,
 };
