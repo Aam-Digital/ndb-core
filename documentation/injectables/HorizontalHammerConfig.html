@@ -1,0 +1,576 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >HorizontalHammerConfig</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</code>
+        </p>
+
+
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classes/Config.html" target="_self" >HammerGestureConfig</a></code>
+            </p>
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#overrides" >overrides</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="overrides"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>overrides</b></span>
+                        <a href="#overrides"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  }</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="41" class="link-to-prism">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts:41</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  EventEmitter,
+  Injectable,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from &quot;@angular/core&quot;;
+import { animate, style, transition, trigger } from &quot;@angular/animations&quot;;
+import {
+  ATTENDANCE_STATUS_CONFIG_ID,
+  AttendanceStatusType,
+} from &quot;../../model/attendance-status&quot;;
+import { Note } from &quot;../../../notes/model/note&quot;;
+import { EventAttendance } from &quot;../../model/event-attendance&quot;;
+import { EntityMapperService } from &quot;../../../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Entity } from &quot;../../../../core/entity/model/entity&quot;;
+import { Logging } from &quot;../../../../core/logging/logging.service&quot;;
+import { sortByAttribute } from &quot;../../../../utils/utils&quot;;
+import { FormDialogService } from &quot;../../../../core/form-dialog/form-dialog.service&quot;;
+import { NgClass, NgForOf, NgIf } from &quot;@angular/common&quot;;
+import { MatProgressBarModule } from &quot;@angular/material/progress-bar&quot;;
+import { MatButtonModule } from &quot;@angular/material/button&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { RollCallTabComponent } from &quot;./roll-call-tab/roll-call-tab.component&quot;;
+import {
+  HAMMER_GESTURE_CONFIG,
+  HammerGestureConfig,
+  HammerModule,
+} from &quot;@angular/platform-browser&quot;;
+import Hammer from &quot;hammerjs&quot;;
+import { ConfigurableEnumService } from &quot;../../../../core/basic-datatypes/configurable-enum/configurable-enum.service&quot;;
+import { MatTooltipModule } from &quot;@angular/material/tooltip&quot;;
+import { ConfirmationDialogService } from &quot;../../../../core/common-components/confirmation-dialog/confirmation-dialog.service&quot;;
+import { EntityBlockComponent } from &quot;../../../../core/basic-datatypes/entity/entity-block/entity-block.component&quot;;
+
+// Only allow horizontal swiping
+@Injectable()
+class HorizontalHammerConfig extends HammerGestureConfig {
+  override overrides &#x3D; {
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  };
+}
+
+/**
+ * Displays the participants of the given event one by one to mark attendance status.
+ */
+@Component({
+  selector: &quot;app-roll-call&quot;,
+  templateUrl: &quot;./roll-call.component.html&quot;,
+  styleUrls: [&quot;./roll-call.component.scss&quot;],
+  animations: [
+    trigger(&quot;completeRollCall&quot;, [
+      transition(&quot;void &#x3D;&gt; *&quot;, [
+        style({ backgroundColor: &quot;transparent&quot; }),
+        animate(1000),
+      ]),
+    ]),
+  ],
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    EntityBlockComponent,
+    NgForOf,
+    NgClass,
+    RollCallTabComponent,
+    HammerModule,
+    MatTooltipModule,
+  ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HorizontalHammerConfig,
+    },
+  ],
+  standalone: true,
+})
+export class RollCallComponent implements OnChanges {
+  /**
+   * The event to be displayed and edited.
+   */
+  @Input() eventEntity: Note;
+
+  /**
+   * (optional) property name of the participant entities by which they are sorted
+   */
+  @Input() sortParticipantsBy?: string;
+
+  /**
+   * Emitted when the roll call is finished and results can be saved.
+   */
+  @Output() complete &#x3D; new EventEmitter&lt;Note&gt;();
+
+  /**
+   * Emitted when the user wants to dismiss &amp; leave the roll call view.
+   */
+  @Output() exit &#x3D; new EventEmitter();
+
+  /**
+   * The index, child and attendance that is currently being processed
+   */
+  currentIndex &#x3D; 0;
+  currentChild: Entity;
+  currentAttendance: EventAttendance;
+  /**
+   * whether any changes have been made to the model
+   */
+  isDirty: boolean &#x3D; false;
+
+  /** options available for selecting an attendance status */
+  availableStatus: AttendanceStatusType[];
+
+  children: Entity[] &#x3D; [];
+  inactiveParticipants: Entity[];
+
+  constructor(
+    private enumService: ConfigurableEnumService,
+    private entityMapper: EntityMapperService,
+    private formDialog: FormDialogService,
+    private confirmationDialog: ConfirmationDialogService,
+  ) {}
+
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes.eventEntity) {
+      this.loadAttendanceStatusTypes();
+      await this.loadParticipants();
+      this.setInitialIndex();
+    }
+    if (changes.sortParticipantsBy) {
+      this.sortParticipants();
+    }
+  }
+
+  /**
+   * Set the index of the first child that expects user input.
+   * This is the first entry of the list, if the user has never recorded attendance
+   * for this event. Else it is the first child without any attendance information
+   * (i.e. got skipped or the user left at this child)
+   * @private
+   */
+  private setInitialIndex() {
+    let index &#x3D; 0;
+    for (const entry of this.children) {
+      if (!this.eventEntity.getAttendance(entry.getId())?.status?.id) {
+        break;
+      }
+      index +&#x3D; 1;
+    }
+
+    // do not jump to end - if all participants are recorded, start with first instead
+    if (index &gt;&#x3D; this.children.length) {
+      index &#x3D; 0;
+    }
+
+    this.goToParticipantWithIndex(index);
+  }
+
+  private loadAttendanceStatusTypes() {
+    this.availableStatus &#x3D; this.enumService.getEnumValues&lt;AttendanceStatusType&gt;(
+      ATTENDANCE_STATUS_CONFIG_ID,
+    );
+  }
+
+  private async loadParticipants() {
+    this.children &#x3D; [];
+    this.inactiveParticipants &#x3D; [];
+    for (const childId of this.eventEntity.children) {
+      let child: Entity;
+      try {
+        child &#x3D; await this.entityMapper.load(
+          Entity.extractTypeFromId(childId),
+          childId,
+        );
+      } catch (e) {
+        Logging.debug(
+          &quot;Could not find child &quot; +
+            childId +
+            &quot; for event &quot; +
+            this.eventEntity.getId(),
+        );
+        this.eventEntity.removeChild(childId);
+        continue;
+      }
+
+      if (child.isActive) {
+        this.children.push(child);
+      } else {
+        this.inactiveParticipants.push(child);
+      }
+    }
+    this.sortParticipants();
+  }
+
+  private sortParticipants() {
+    if (!this.sortParticipantsBy) {
+      return;
+    }
+
+    this.children.sort(sortByAttribute&lt;any&gt;(this.sortParticipantsBy, &quot;asc&quot;));
+    // also sort the participants in the Note entity itself for display in details view later
+    this.eventEntity.children &#x3D; this.children.map((e) &#x3D;&gt; e.getId());
+  }
+
+  markAttendance(status: AttendanceStatusType) {
+    this.currentAttendance.status &#x3D; status;
+    this.isDirty &#x3D; true;
+
+    this.goToNext();
+  }
+
+  goToParticipantWithIndex(newIndex: number) {
+    this.currentIndex &#x3D; newIndex;
+
+    if (this.isFinished) {
+      this.complete.emit(this.eventEntity);
+    } else {
+      this.currentChild &#x3D; this.children[this.currentIndex];
+      this.currentAttendance &#x3D; this.eventEntity.getAttendance(
+        this.currentChild.getId(),
+      );
+    }
+  }
+
+  goToPrevious() {
+    if (this.currentIndex - 1 &gt;&#x3D; 0) {
+      this.goToParticipantWithIndex(this.currentIndex - 1);
+    }
+  }
+
+  goToNext() {
+    if (this.currentIndex + 1 &lt;&#x3D; this.children.length) {
+      this.goToParticipantWithIndex(this.currentIndex + 1);
+    }
+  }
+
+  goToFirst() {
+    this.goToParticipantWithIndex(0);
+  }
+
+  goToLast() {
+    // jump directly to completed state, i.e. beyond last participant index
+    this.goToParticipantWithIndex(this.children.length);
+  }
+
+  get isFirst(): boolean {
+    return this.currentIndex &#x3D;&#x3D;&#x3D; 0;
+  }
+
+  get isLast(): boolean {
+    return this.currentIndex &#x3D;&#x3D;&#x3D; this.children.length - 1;
+  }
+
+  get isFinished(): boolean {
+    return this.currentIndex &gt;&#x3D; this.children.length;
+  }
+
+  finish() {
+    this.exit.emit();
+  }
+
+  showDetails() {
+    this.formDialog.openView(this.eventEntity, &quot;NoteDetails&quot;);
+  }
+
+  async includeInactive() {
+    const confirmation &#x3D; await this.confirmationDialog.getConfirmation(
+      $localize&#x60;Also include archived participants?&#x60;,
+      $localize&#x60;This event has some participants who are &quot;archived&quot;. We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?&#x60;,
+    );
+    if (confirmation) {
+      this.children &#x3D; [...this.children, ...this.inactiveParticipants];
+      this.inactiveParticipants &#x3D; [];
+    }
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'HorizontalHammerConfig.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

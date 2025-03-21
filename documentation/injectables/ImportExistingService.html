@@ -1,0 +1,678 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ImportExistingService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/import/update-existing/import-existing.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Import data to update existing records
+(extending the basic <code>ImportService</code>)</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#applyExistingEntitiesIfApplicable" >applyExistingEntitiesIfApplicable</a>
+                            </li>
+                            <li>
+                                <a href="#getImportHistoryForUpdatedEntities" >getImportHistoryForUpdatedEntities</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#undoImport" >undoImport</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="applyExistingEntitiesIfApplicable"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>applyExistingEntitiesIfApplicable</b></span>
+                        <a href="#applyExistingEntitiesIfApplicable"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>applyExistingEntitiesIfApplicable(importEntities: <a href="../classes/Entity.html" target="_self">Entity[]</a>, importSettings: <a href="../interfaces/ImportSettings.html" target="_self">ImportSettings</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="29"
+                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:29</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>If a matching existing entity is found, return that with the imported data applied to it.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>importEntities</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The newly generated entity from the import data</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>importSettings</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ImportSettings.html" target="_self" >ImportSettings</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getImportHistoryForUpdatedEntities"></a>
+                    <span class="name">
+                        <span ><b>getImportHistoryForUpdatedEntities</b></span>
+                        <a href="#getImportHistoryForUpdatedEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getImportHistoryForUpdatedEntities(savedEntities: <a href="../classes/Entity.html" target="_self">Entity[]</a>, settings: <a href="../interfaces/ImportSettings.html" target="_self">ImportSettings</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="135"
+                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:135</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>savedEntities</td>
+                                            <td>
+                                                            <code><a href="../classes/Entity.html" target="_self" >Entity[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>settings</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ImportSettings.html" target="_self" >ImportSettings</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="undoImport"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>undoImport</b></span>
+                        <a href="#undoImport"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>undoImport(item: <a href="../classes/ImportMetadata.html" target="_self">ImportMetadata</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="144"
+                                    class="link-to-prism">src/app/core/import/update-existing/import-existing.service.ts:144</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>item</td>
+                                            <td>
+                                                            <code><a href="../classes/ImportMetadata.html" target="_self" >ImportMetadata</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { inject, Injectable } from &quot;@angular/core&quot;;
+import { Entity } from &quot;../../entity/model/entity&quot;;
+import {
+  ImportDataChange,
+  ImportMetadata,
+  ImportSettings,
+} from &quot;../import-metadata&quot;;
+import { EntityMapperService } from &quot;../../entity/entity-mapper/entity-mapper.service&quot;;
+import { EntitySchemaService } from &quot;../../entity/schema/entity-schema.service&quot;;
+
+/**
+ * Import data to update existing records
+ * (extending the basic &#x60;ImportService&#x60;)
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class ImportExistingService {
+  private readonly entityMapper &#x3D; inject(EntityMapperService);
+  private readonly schemaService &#x3D; inject(EntitySchemaService);
+
+  private existingEntitiesCache: Entity[];
+
+  /**
+   * If a matching existing entity is found, return that with the imported data applied to it.
+   * @param importEntities The newly generated entity from the import data
+   * @param importSettings
+   */
+  async applyExistingEntitiesIfApplicable(
+    importEntities: Entity[],
+    importSettings: ImportSettings,
+  ): Promise&lt;Entity[]&gt; {
+    const updatedEntities &#x3D; [];
+    for (const entity of importEntities) {
+      const updatedEntity &#x3D; await this.applyToExistingEntityIfApplicable(
+        entity,
+        importSettings,
+      );
+      updatedEntities.push(updatedEntity);
+    }
+
+    delete this.existingEntitiesCache;
+    return updatedEntities;
+  }
+
+  private async applyToExistingEntityIfApplicable(
+    importEntity: Entity,
+    importSettings: ImportSettings,
+  ) {
+    if (
+      !importSettings.matchExistingByFields ||
+      importSettings.matchExistingByFields.length &#x3D;&#x3D;&#x3D; 0
+    )
+      return importEntity;
+
+    if (!this.existingEntitiesCache) {
+      this.existingEntitiesCache &#x3D; await this.entityMapper.loadType(
+        importSettings.entityType,
+      );
+    }
+
+    const existingEntity &#x3D; this.findExistingEntity(
+      importSettings,
+      importEntity,
+    );
+
+    if (existingEntity) {
+      const importUndo: ImportDataChange &#x3D; {};
+
+      const importedFields &#x3D; importSettings.columnMapping
+        .filter((m) &#x3D;&gt; !!m.propertyName)
+        .map((m) &#x3D;&gt; m.propertyName);
+      for (const key of importedFields) {
+        importUndo[key] &#x3D; this.generateUndoInfoForField(
+          existingEntity,
+          key,
+          importEntity,
+        );
+
+        // apply only properties from the import
+        existingEntity[key] &#x3D; importEntity[key];
+      }
+
+      existingEntity[&quot;_importUndo&quot;] &#x3D; importUndo;
+    }
+
+    return existingEntity ?? importEntity;
+  }
+
+  private findExistingEntity(
+    importSettings: ImportSettings,
+    importEntity: Entity,
+  ) {
+    const rawImportEntity &#x3D;
+      this.schemaService.transformEntityToDatabaseFormat(importEntity);
+
+    return this.existingEntitiesCache.find((e) &#x3D;&gt;
+      importSettings.matchExistingByFields.every((idField) &#x3D;&gt; {
+        const schemaField &#x3D; e.getSchema().get(idField);
+        const rawExistingValue &#x3D; this.schemaService.valueToDatabaseFormat(
+          e[idField],
+          schemaField,
+        );
+
+        return (
+          // compare the &quot;database formats&quot; (to match complex values like dates)
+          rawExistingValue &#x3D;&#x3D;&#x3D; rawImportEntity[idField] ||
+          // allow partial match if a column is not part of the import:
+          !importEntity.hasOwnProperty(idField) ||
+          !e.hasOwnProperty(idField)
+        );
+      }),
+    );
+  }
+
+  private generateUndoInfoForField(
+    existingEntity: Entity,
+    key: string,
+    importEntity: Entity,
+  ) {
+    const schemaField &#x3D; existingEntity.getSchema().get(key);
+
+    return {
+      previousValue: this.schemaService.valueToDatabaseFormat(
+        existingEntity[key],
+        schemaField,
+      ),
+      importedValue: this.schemaService.valueToDatabaseFormat(
+        importEntity[key],
+        schemaField,
+      ),
+    };
+  }
+
+  getImportHistoryForUpdatedEntities(
+    savedEntities: Entity[],
+    settings: ImportSettings,
+  ) {
+    return savedEntities
+      .filter((e) &#x3D;&gt; e[&quot;_importUndo&quot;])
+      .map((e) &#x3D;&gt; ({ id: e.getId(), importDataChanges: e[&quot;_importUndo&quot;] }));
+  }
+
+  async undoImport(item: ImportMetadata) {
+    const reverts &#x3D; (item.updatedEntities ?? []).map(async (updated) &#x3D;&gt; {
+      const entity &#x3D; await this.entityMapper.load(
+        item.config.entityType,
+        updated.id,
+      );
+      for (const [field, changes] of Object.entries(
+        updated.importDataChanges,
+      )) {
+        const fieldSchema &#x3D; entity.getSchema().get(field);
+        if (
+          this.schemaService.valueToDatabaseFormat(
+            entity[field],
+            fieldSchema,
+          ) &#x3D;&#x3D;&#x3D; changes.importedValue
+        ) {
+          // only revert back if the value has not been changed manually in the meantime
+          entity[field] &#x3D; this.schemaService.valueToEntityFormat(
+            changes.previousValue,
+            fieldSchema,
+          );
+        }
+      }
+      await this.entityMapper.save(entity);
+    });
+
+    await Promise.all(reverts);
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ImportExistingService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

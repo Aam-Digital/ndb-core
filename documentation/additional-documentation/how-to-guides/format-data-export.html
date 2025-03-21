@@ -1,0 +1,280 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Exports</h1>
+<p>The list views like <code>/child</code>, <code>/school</code>, <code>/note</code> ,... have a button to export data.
+Clicking this button will create a downloadable <code>.csv</code> file.
+The format of this file can be adjusted through the configuration for the list view.</p>
+<h2>Config Format</h2>
+<p>The configuration of the export format is part of the configuration of the <a href="../../interfaces/EntityListConfig.html">EntityListComponent</a>.</p>
+<p>E.g.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-json">  &quot;view:child&quot;: {
+    &quot;component&quot;: &quot;ChildrenList&quot;,
+    &quot;config&quot;: {
+        &quot;exportConfig&quot;: [
+          { &quot;label&quot;: &quot;Child&quot;, &quot;query&quot;: &quot;.name&quot; },
+          {
+            &quot;query&quot;: &quot;:getRelated(ChildSchoolRelation, childId)&quot;,
+            &quot;subQueries&quot;: [
+              { &quot;label&quot;: &quot;School Name&quot;, &quot;query&quot;: &quot;.schoolId:toEntities(School).name&quot; },
+              { &quot;label&quot;: &quot;From&quot;, &quot;query&quot;: &quot;.start&quot; },
+              { &quot;label&quot;: &quot;To&quot;, &quot;query&quot;: &quot;.end&quot; }
+            ]
+
+          }
+        ],
+      &quot;title&quot;: &quot;Children List&quot;,
+      &quot;columns&quot;: [...],
+      &quot;columnGroups&quot;: {...},
+      &quot;filters&quot;: [...]
+    }
+  },</code></pre></div><h2>Configuring a Export</h2>
+<p>The structure of the exports is according to the <a href="../../interfaces/ExportColumnConfig.html">ExportColumnConfig</a>.</p>
+<p>The <code>label</code> property is optional and provides a title for this column.
+If nothing is provided the query (without dots) is used (e.g. for <code>&quot;query&quot;: &quot;.name&quot;</code> the label will be <code>name</code>).</p>
+<p>The <code>query</code> has to be a valid <a href="https://github.com/auditassistant/json-query#queries">JSON-Query</a>.
+The query will be run on each entity of the list page that is visited (e.g. on each child).
+For further information about the query-syntax read the <a href="reports.md">Reports Guide</a> which uses the same query language.</p>
+<p>The <code>subQueries</code> is optional and expects an array of <code>ExportColumnConfigs</code>.
+The queries of the <code>subQueries</code> will be run for each result of the parent query.
+In the example above, this would mean that for each <code>ChildSchoolRelation</code> the name of the school, the from- and the to-date will be exported.
+If <code>subQueries</code> is defined, each object of the parent query will lead to one row in the report.
+In the example above this would mean if there are <code>n</code> children and each of them has <code>m</code> child-school-relations then the final report will have <code>n*m</code> rows and the columns <code>Child</code>, <code>School Name</code>, <code>From</code>, <code>To</code> (<code>Child</code> from the first query and the others from the sub-queries).
+In case <code>subQueries</code> is defined, the result of the parent query will not be visible in the export.
+If the results of the parent query is wanted in the report, a simple sub-query can be added that returns all values of the parent query (<code>query: &quot;[*]&quot;</code>).</p>
+<h2>Example Output</h2>
+<p>Using the config from above with the following data:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-typescript">const child1 = {
+  _id: &quot;Child:1&quot;,
+  name: &quot;Peter&quot;,
+};
+const child2 = {
+  _id: &quot;Child:2&quot;,
+  name: &quot;Anna&quot;,
+};
+const relation1 = {
+  _id: &quot;ChildSchoolRelation:1&quot;,
+  schoolId: &quot;1&quot;,
+  childId: &quot;1&quot;,
+  start: &quot;01/01/2020&quot;,
+  end: &quot;01/01/2021&quot;,
+};
+const relation2 = {
+  _id: &quot;ChildSchoolRelation:2&quot;,
+  schoolId: &quot;1&quot;,
+  childId: &quot;1&quot;,
+  start: &quot;01/01/2021&quot;,
+};
+const relation3 = {
+  _id: &quot;ChildSchoolRelation:3&quot;,
+  schoolId: &quot;1&quot;,
+  childId: &quot;1&quot;,
+  start: &quot;01/01/2021&quot;,
+};
+const school = {
+  _id: &quot;School:1&quot;,
+  name: &quot;High School&quot;,
+};</code></pre></div><p>Would create a <code>.csv</code> file according to the following table:</p>
+<table class="table table-bordered compodoc-table">
+<thead>
+<tr>
+<th>Child</th>
+<th>School Name</th>
+<th>From</th>
+<th>To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Peter</td>
+<td>High School</td>
+<td>01/01/2020</td>
+<td>01/01/2021</td>
+</tr>
+<tr>
+<td>Peter</td>
+<td>High School</td>
+<td>01/01/2021</td>
+<td></td>
+</tr>
+<tr>
+<td>Anna</td>
+<td>High School</td>
+<td>01/01/2021</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'format-data-export.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

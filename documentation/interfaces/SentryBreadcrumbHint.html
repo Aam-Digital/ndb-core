@@ -1,0 +1,785 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  SentryBreadcrumbHint</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/logging/logging.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p><a href="https://docs.sentry.io/platforms/javascript/configuration/filtering/#hints-for-breadcrumbs">https://docs.sentry.io/platforms/javascript/configuration/filtering/#hints-for-breadcrumbs</a></p>
+
+            </p>
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#event" 
+>
+                                            event
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#input" 
+>
+                                            input
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#level" 
+>
+                                            level
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#request" 
+>
+                                            request
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#response" 
+>
+                                            response
+                                        </a>
+                                </li>
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#xhr" 
+>
+                                            xhr
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="event"></a>
+                                        <span class="name "><b>event</b>
+                                            <a href="#event">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>event:     <code>PointerEvent</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>PointerEvent</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>For breadcrumbs created from browser events, the Sentry SDK often supplies the event to the breadcrumb as a hint.
+This can be used to extract data from the target DOM element into a breadcrumb, for example.</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="input"></a>
+                                        <span class="name "><b>input</b>
+                                            <a href="#input">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>input:     <code>string[]</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>string[]</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="level"></a>
+                                        <span class="name "><b>level</b>
+                                            <a href="#level">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>level:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>e.g. console output level (warn / log / ...)</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="request"></a>
+                                        <span class="name "><b>request</b>
+                                            <a href="#request">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>request:         <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="response"></a>
+                                        <span class="name "><b>response</b>
+                                            <a href="#response">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>response:     <code>Response</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>Response</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="xhr"></a>
+                                        <span class="name "><b>xhr</b>
+                                            <a href="#xhr">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>xhr:     <code>XMLHttpRequest</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>XMLHttpRequest</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { LogLevel } from &quot;./log-level&quot;;
+import * as Sentry from &quot;@sentry/angular&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import { APP_INITIALIZER, ErrorHandler, Provider } from &quot;@angular/core&quot;;
+import { Router } from &quot;@angular/router&quot;;
+import { LoginState } from &quot;../session/session-states/login-state.enum&quot;;
+import { LoginStateSubject } from &quot;../session/session-type&quot;;
+import { SessionSubject } from &quot;../session/auth/session-info&quot;;
+
+/* eslint-disable no-console */
+
+/**
+ * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
+ * that allows developers to monitor and analyse problems.
+ *
+ * Logging to the remote monitoring server is set only for warnings and errors.
+ *
+ * To allow remote logging, call Sentry.init during bootstrap in your AppModule or somewhere early on during startup.
+ *
+ * Import the constant &#x60;Logging&#x60; to use this from anywhere (without Angular DI).
+ */
+export class LoggingService {
+  /**
+   * Initialize the remote logging module with the given options.
+   * If set up this will be used to send errors to a remote endpoint for analysis.
+   * @param options
+   */
+  initRemoteLogging(options: Sentry.BrowserOptions) {
+    if (!options.dsn) {
+      // abort if no target url is set
+      return;
+    }
+
+    const defaultOptions &#x3D; {
+      release: &quot;ndb-core@&quot; + environment.appVersion,
+      transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
+      beforeBreadcrumb: enhanceSentryBreadcrumb,
+    };
+    Sentry.init(Object.assign(defaultOptions, options));
+  }
+
+  /**
+   * Register any additional logging context integrations that need Angular services.
+   * @param loginState
+   * @param sessionInfo
+   */
+  initAngularLogging(
+    loginState: LoginStateSubject,
+    sessionInfo: SessionSubject,
+  ) {
+    return () &#x3D;&gt;
+      loginState.subscribe((newState) &#x3D;&gt; {
+        if (newState &#x3D;&#x3D;&#x3D; LoginState.LOGGED_IN) {
+          const username &#x3D; sessionInfo.value?.id;
+          Logging.setLoggingContextUser(username);
+        } else {
+          Logging.setLoggingContextUser(undefined);
+        }
+      });
+  }
+
+  /**
+   * Get the Angular providers to set up additional logging and tracing,
+   * that should be added to the providers array of the AppModule.
+   */
+  getAngularTracingProviders(): Provider[] {
+    return [
+      /* Sentry setup */
+      {
+        provide: ErrorHandler,
+        useValue: Sentry.createErrorHandler(),
+      },
+      {
+        provide: Sentry.TraceService,
+        deps: [Router],
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: () &#x3D;&gt; () &#x3D;&gt; {},
+        deps: [Sentry.TraceService],
+        multi: true,
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: Logging.initAngularLogging,
+        deps: [LoginStateSubject, SessionSubject],
+        multi: true,
+      },
+    ];
+  }
+
+  /**
+   * Update a piece of context information that will be attached to all log messages for easier debugging,
+   * especially in remote logging.
+   * @param key Identifier of the key-value pair
+   * @param value Value of the key-value pair
+   * @param asTag If this should be added as indexed tag rather than simple context (see https://docs.sentry.io/platforms/javascript/enriching-events/tags/)
+   */
+  addContext(key: string, value: any, asTag: boolean &#x3D; false) {
+    if (asTag) {
+      Sentry.setTag(key, value);
+    } else {
+      if (typeof value !&#x3D;&#x3D; &quot;object&quot;) {
+        value &#x3D; { value: value };
+      }
+      Sentry.getCurrentScope().setContext(key, value);
+    }
+  }
+
+  /**
+   * Update the username to be attached to all log messages for easier debugging,
+   * especially in remote logging.
+   * @param username
+   */
+  setLoggingContextUser(username: string) {
+    Sentry.setUser({ username: username });
+  }
+
+  /**
+   * Log the message with &quot;debug&quot; level - for very detailed, non-essential information.
+   * @param message
+   * @param context Additional context for debugging
+   */
+  public debug(message: any, ...context: any[]) {
+    this.log(message, LogLevel.DEBUG, ...context);
+  }
+
+  /**
+   * Log the message with &quot;info&quot; level - for relevant information that occurs during regular functioning of the app.
+   * @param message
+   */
+  public info(message: any) {
+    this.log(message, LogLevel.INFO);
+  }
+
+  /**
+   * Log the message with &quot;warning&quot; level - for unexpected events that the app can still handle gracefully.
+   * @param message
+   * @param context
+   */
+  public warn(message: any, ...context: any[]) {
+    this.log(message, LogLevel.WARN, ...context);
+  }
+
+  /**
+   * Log the message with &quot;error&quot; level - for unexpected critical events that cannot be handled and will affect functions.
+   * @param message
+   * @param context
+   */
+  public error(message: any, ...context: any[]) {
+    this.log(message, LogLevel.ERROR, ...context);
+  }
+
+  /**
+   * Generic logging of a message.
+   * @param message Message to be logged
+   * @param logLevel Optional log level - default is &quot;info&quot;
+   * @param context Additional context for debugging
+   */
+  public log(
+    message: any,
+    logLevel: LogLevel &#x3D; LogLevel.INFO,
+    ...context: any[]
+  ) {
+    this.logToConsole(message, logLevel, ...context);
+
+    if (logLevel !&#x3D;&#x3D; LogLevel.DEBUG &amp;&amp; logLevel !&#x3D;&#x3D; LogLevel.INFO) {
+      this.logToRemoteMonitoring(message, logLevel);
+    }
+  }
+
+  private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
+    switch (+logLevel) {
+      case LogLevel.DEBUG:
+        console.debug(message, ...context);
+        break;
+      case LogLevel.INFO:
+        console.info(message, ...context);
+        break;
+      case LogLevel.WARN:
+        console.warn(message, ...context);
+        break;
+      case LogLevel.ERROR:
+        console.error(message, ...context);
+        break;
+      default:
+        console.log(message, ...context);
+        break;
+    }
+  }
+
+  private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
+    if (logLevel &#x3D;&#x3D;&#x3D; LogLevel.ERROR) {
+      if (message instanceof Error) {
+        Sentry.captureException(message);
+      } else {
+        Sentry.captureException(
+          new Error(message?.message ?? message?.error ?? message),
+        );
+      }
+    } else {
+      Sentry.captureMessage(message, this.translateLogLevel(logLevel));
+    }
+  }
+
+  private translateLogLevel(logLevel: LogLevel): Sentry.SeverityLevel {
+    switch (+logLevel) {
+      case LogLevel.DEBUG:
+        return &quot;debug&quot;;
+      case LogLevel.INFO:
+        return &quot;info&quot;;
+      case LogLevel.WARN:
+        return &quot;warning&quot;;
+      case LogLevel.ERROR:
+        return &quot;error&quot;;
+      default:
+        return &quot;info&quot;;
+    }
+  }
+}
+
+/**
+ * Add more human-readable descriptions to Sentry breadcrumbs for debugging.
+ *
+ * see https://docs.sentry.io/platforms/javascript/enriching-events/breadcrumbs/
+ */
+function enhanceSentryBreadcrumb(
+  breadcrumb: Sentry.Breadcrumb,
+  hint: SentryBreadcrumbHint,
+) {
+  if (breadcrumb.category &#x3D;&#x3D;&#x3D; &quot;ui.click&quot;) {
+    const event &#x3D; hint.event;
+    const elementText &#x3D; event.target?.[&quot;innerText&quot;] ?? &quot;&quot;;
+    breadcrumb.message &#x3D; elementText + &quot; | &quot; + breadcrumb.message;
+  }
+  return breadcrumb;
+}
+
+/**
+ * https://docs.sentry.io/platforms/javascript/configuration/filtering/#hints-for-breadcrumbs
+ */
+interface SentryBreadcrumbHint {
+  /**
+   * For breadcrumbs created from browser events, the Sentry SDK often supplies the event to the breadcrumb as a hint.
+   * This can be used to extract data from the target DOM element into a breadcrumb, for example.
+   */
+  event?: PointerEvent;
+
+  input?: string[];
+
+  /**
+   * e.g. console output level (warn / log / ...)
+   */
+  level: string;
+
+  response?: Response;
+  request?: any;
+  xhr?: XMLHttpRequest;
+}
+
+export const Logging &#x3D; new LoggingService();
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'SentryBreadcrumbHint.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
