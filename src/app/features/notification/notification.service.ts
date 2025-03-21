@@ -106,7 +106,7 @@ export class NotificationService {
               err,
             );
             this.alertService.addInfo(
-              $localize`Could not register device in aam-digital backend. Push notifications will not work.`,
+              $localize`Could not register device in aam-digital backend. Push notifications will not work. Please try to disable and enable again.`,
             );
           });
       },
