@@ -50,8 +50,10 @@ export class NotificationConfig extends Entity {
 
 /**
  * Defines allowed notification channels.
+ *
+ * Note: "push" is handled via individual device registrations and not part of this config currently.
  */
-export type NotificationChannel = "push";
+export type NotificationChannel = "email";
 
 /**
  * Represents a specific notification type configuration.

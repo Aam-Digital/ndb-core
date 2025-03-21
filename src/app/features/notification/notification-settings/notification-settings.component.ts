@@ -77,8 +77,7 @@ export class NotificationSettingsComponent implements OnInit {
 
     this.isPushNotificationEnabled =
       this.notificationService.hasNotificationPermissionGranted() &&
-      (await this.notificationService.isDeviceRegistered()) &&
-      this.notificationConfig.channels?.push;
+      (await this.notificationService.isDeviceRegistered());
   }
 
   private async loadNotificationConfig() {
@@ -142,19 +141,15 @@ export class NotificationSettingsComponent implements OnInit {
   }
 
   async togglePushNotifications(event: MatSlideToggleChange) {
-    if (event.checked) {
+    let enabled = event.checked;
+    if (enabled) {
       this.notificationService.registerDevice();
     } else {
       this.notificationService.unregisterDevice();
     }
-    this.isPushNotificationEnabled = event?.checked;
+    this.isPushNotificationEnabled = enabled;
 
-    this.notificationConfig.channels = {
-      ...this.notificationConfig.channels,
-      push: this.isPushNotificationEnabled,
-    };
-
-    await this.saveNotificationConfig(this.notificationConfig);
+    // we do not add "push" channel to this.notificationConfig.channels
   }
 
   private async saveNotificationConfig(config: NotificationConfig) {
