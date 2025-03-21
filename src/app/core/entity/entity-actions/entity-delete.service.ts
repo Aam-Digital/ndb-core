@@ -9,6 +9,7 @@ import {
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntityRelationsService } from "../entity-mapper/entity-relations.service";
 
 /**
  * Safely delete an entity including handling references with related entities.
@@ -21,10 +22,11 @@ export class EntityDeleteService extends CascadingEntityAction {
   constructor(
     protected override entityMapper: EntityMapperService,
     protected override schemaService: EntitySchemaService,
+    protected override entityRelationsService: EntityRelationsService,
     private keycloakAuthService: KeycloakAuthService,
     private confirmationDialog: ConfirmationDialogService,
   ) {
-    super(entityMapper, schemaService);
+    super(entityMapper, schemaService, entityRelationsService);
   }
 
   /**
