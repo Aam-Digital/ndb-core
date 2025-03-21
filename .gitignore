@@ -1,6 +1,7 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 /src/assets/config.json
+/src/assets/firebase-config.json
 /src/assets/child-photos
 release.sh
 
@@ -201,3 +202,8 @@ fabric.properties
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json

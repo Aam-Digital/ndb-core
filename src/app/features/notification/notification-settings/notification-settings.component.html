@@ -1,0 +1,208 @@
+<div class="padding-regular">
+  <h1 i18n>Notifications Settings</h1>
+  <div i18n>
+    Notifications alert you to important system events, such as new
+    registrations via public forms or tasks assigned to you. They appear in the
+    toolbar and can be sent via email or push notifications.
+  </div>
+
+  @if (isFeatureEnabled === false) {
+    <div class="margin-top-large feature-disabled-box">
+      @if (!navigator.onLine) {
+        <h2 i18n>You are currently offline.</h2>
+        <p i18n>
+          Please reconnect to the internet to activate. We could not check if
+          this feature is enabled for your system.
+        </p>
+      } @else {
+        <h2 i18n>This feature is currently not enabled for your system.</h2>
+        <p i18n>Please contact your system administrator to enable it.</p>
+        <p i18n>
+          If Notification API has been enabled and you are still seeing this
+          message, there may be an issue with your internet connection or a
+          temporary technical issue on the server. If this persists, please also
+          contact your administrator.
+        </p>
+      }
+    </div>
+  } @else if (!isFeatureEnabled) {
+    <!-- feature check not completed yet -->
+    <div class="margin-top-large feature-disabled-box">
+      <mat-progress-bar
+        mode="indeterminate"
+        style="padding-bottom: 1em"
+      ></mat-progress-bar>
+      <p i18n>
+        Checking if this feature is enabled for your system. This may take a few
+        seconds.
+      </p>
+    </div>
+  }
+
+  @if (notificationConfig) {
+    <!--
+      Notification Rules
+    -->
+    <div class="margin-top-large">
+      <h3 class="no-margin" i18n>
+        <strong>What notifications you receive</strong>
+      </h3>
+      <div i18n class="margin-bottom-regular">
+        Define rules for events that you want to get notifications for. You can
+        add as many different rules as you want and disable some temporarily to
+        pause these notifications.
+      </div>
+
+      <mat-accordion>
+        @for (
+          notificationRule of notificationConfig?.notificationRules;
+          track notificationRule;
+          let index = $index
+        ) {
+          <app-notification-rule
+            [value]="notificationRule"
+            (valueChange)="updateNotificationRule(notificationRule, $event)"
+            (removeNotificationRule)="confirmRemoveNotificationRule(index)"
+          ></app-notification-rule>
+        }
+      </mat-accordion>
+
+      <div class="flex-row justify-content-center margin-top-regular">
+        <button
+          mat-stroked-button
+          class="add-new-rule-button"
+          color="accent"
+          (click)="addNewNotificationRule()"
+          matTooltip="Define another type of notifications for your user account"
+          i18n-matTooltip
+        >
+          <fa-icon
+            aria-label="add element"
+            icon="plus-circle"
+            class="standard-icon-with-text"
+          ></fa-icon>
+          <span i18n>Add new notification rule</span>
+        </button>
+      </div>
+    </div>
+
+    <!--
+      Notification Channels
+    -->
+    <div class="margin-top-large">
+      <div>
+        <h3 i18n class="no-margin flex-row align-center">
+          <strong>Where you receive notifications</strong>
+          @if (isPushNotificationEnabled) {
+            <div
+              class="enabled-text"
+              matTooltip="Push notifications are enabled. You’ll receive real-time updates for important activities."
+              i18n-matTooltip
+            >
+              Enabled
+            </div>
+          } @else {
+            <div
+              class="disabled-text"
+              matTooltip="Push notifications are disabled. Turn them on in settings to also receive alerts outside of the app."
+              i18n-matTooltip
+            >
+              Disabled
+            </div>
+          }
+        </h3>
+        <div i18n>
+          Notifications are always visible through the bell icon in the toolbar
+          at the top of the application. You can enable other ways to get
+          notifications sent to you below.
+        </div>
+      </div>
+
+      @if (!isBrowserSupported) {
+        <div class="margin-top-large feature-disabled-box">
+          <h2 i18n>
+            Push notifications are currently not supported by your Browser.
+          </h2>
+          <p i18n>
+            Please contact your system administrator for more information.
+          </p>
+          <p i18n>
+            If you using iOS, you need to add the app to your Homescreen. You
+            can use the "Install App" button in the menu to do this.
+          </p>
+        </div>
+      }
+
+      <div class="receive-notifications-container flex-column gap-large">
+        <div class="flex-column">
+          <div class="flex-row gap-small">
+            <fa-icon icon="window-maximize"></fa-icon>
+            <p i18n>Browser</p>
+          </div>
+
+          <div class="flex-row gap-regular">
+            <div class="flex-row gap-regular align-center">
+              <mat-slide-toggle
+                checked
+                disabled
+                class="indented-item"
+                matTooltip="Always enabled"
+              ></mat-slide-toggle>
+              <span i18n>Notification Center (in app)</span>
+              <app-help-button
+                text="Click the bell icon in the top toolbar to access notifications any time. You can find all messages, including read ones, there."
+                i18n-text
+              ></app-help-button>
+            </div>
+          </div>
+
+          <div class="flex-row gap-regular align-center">
+            <mat-slide-toggle
+              (change)="togglePushNotifications($event)"
+              [checked]="isPushNotificationEnabled"
+              class="indented-item"
+              [disabled]="!isBrowserSupported"
+            />
+            <span i18n>Push notifications</span>
+            <app-help-button
+              text="A notification on your system (e.g. a normal Android smartphone notification). You see these alerts even when your app is not opened at the moment."
+              i18n-text
+            ></app-help-button>
+
+            <button
+              mat-stroked-button
+              color="accent"
+              (click)="testNotification()"
+              [disabled]="!isPushNotificationEnabled"
+              matTooltip="Show a sample notification (only available if push notifications are enabled)"
+              i18n-matTooltip
+            >
+              <fa-icon
+                icon="paper-plane"
+                class="standard-icon-with-text"
+              ></fa-icon>
+              <span i18n>Test Notification</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex-row gap-small">
+            <fa-icon icon="envelope"></fa-icon>
+            <p i18n>Email</p>
+          </div>
+
+          <div class="flex-row gap-regular">
+            <mat-slide-toggle
+              disabled
+              class="indented-item"
+              matTooltip="Not available yet"
+            ></mat-slide-toggle>
+            <span i18n>Email</span>
+            <span class="coming-soon-label" i18n>Coming Soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

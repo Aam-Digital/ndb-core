@@ -14,4 +14,5 @@ export const environment = {
   email: undefined,
   DB_PROXY_PREFIX: "/db",
   API_PROXY_PREFIX: "/api",
+  notificationsConfig: undefined,
 };
