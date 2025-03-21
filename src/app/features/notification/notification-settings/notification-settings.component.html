@@ -25,6 +25,18 @@
         </p>
       }
     </div>
+  } @else if (!isFeatureEnabled) {
+    <!-- feature check not completed yet -->
+    <div class="margin-top-large feature-disabled-box">
+      <mat-progress-bar
+        mode="indeterminate"
+        style="padding-bottom: 1em"
+      ></mat-progress-bar>
+      <p i18n>
+        Checking if this feature is enabled for your system. This may take a few
+        seconds.
+      </p>
+    </div>
   }
 
   @if (notificationConfig) {

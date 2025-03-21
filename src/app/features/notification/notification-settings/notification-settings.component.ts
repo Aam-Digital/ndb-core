@@ -24,6 +24,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 /**
  * UI for current user to configure individual notification settings.
@@ -41,6 +42,7 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
     MatTooltip,
     CdkAccordionModule,
     MatAccordion,
+    MatProgressBar,
   ],
   templateUrl: "./notification-settings.component.html",
   styleUrl: "./notification-settings.component.scss",
