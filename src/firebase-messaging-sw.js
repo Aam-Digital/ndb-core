@@ -42,8 +42,7 @@ loadConfig()
         body: body,
         icon: "/favicon.ico",
         data: {
-          url: "/foobar",
-          status: "open",
+          url: window.location.protocol + "//" + window.location.hostname,
         }
       };
       const notification = self.registration.showNotification(title, notificationOptions);
