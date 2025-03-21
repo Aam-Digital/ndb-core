@@ -300,7 +300,7 @@ export class NotificationService {
    * @returns boolean
    */
   hasNotificationPermissionGranted(): boolean {
-    if (!("Notification" in window)) {
+    if (!this.isPushNotificationSupported()) {
       return false;
     }
 
@@ -312,5 +312,12 @@ export class NotificationService {
       default:
         return false;
     }
+  }
+
+  /**
+   * Check if Notification API is supported in this browser
+   */
+  isPushNotificationSupported() {
+    return "Notification" in window;
   }
 }

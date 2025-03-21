@@ -118,6 +118,21 @@
         </div>
       </div>
 
+      @if (!isBrowserSupported) {
+        <div class="margin-top-large feature-disabled-box">
+          <h2 i18n>
+            Push notifications are currently not supported by your Browser.
+          </h2>
+          <p i18n>
+            Please contact your system administrator for more information.
+          </p>
+          <p i18n>
+            If you using iOS, you need to add the app to your Homescreen. You
+            can use the "Install App" button in the menu to do this.
+          </p>
+        </div>
+      }
+
       <div class="receive-notifications-container flex-column gap-large">
         <div class="flex-column">
           <div class="flex-row gap-small">
@@ -146,6 +161,7 @@
               (change)="togglePushNotifications($event)"
               [checked]="isPushNotificationEnabled"
               class="indented-item"
+              [disabled]="!isBrowserSupported"
             />
             <span i18n>Push notifications</span>
             <app-help-button

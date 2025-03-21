@@ -51,6 +51,7 @@ import { Config } from "../../../core/config/config";
 export class NotificationSettingsComponent implements OnInit {
   notificationConfig: NotificationConfig = null;
   isFeatureEnabled: boolean;
+  isBrowserSupported: boolean;
   isPushNotificationEnabled = false;
 
   constructor(
@@ -73,6 +74,9 @@ export class NotificationSettingsComponent implements OnInit {
   async ngOnInit() {
     this.isFeatureEnabled =
       await this.notificationService.isNotificationServerEnabled();
+
+    this.isBrowserSupported =
+      this.notificationService.isPushNotificationSupported();
 
     this.notificationConfig = await this.loadNotificationConfig();
 
