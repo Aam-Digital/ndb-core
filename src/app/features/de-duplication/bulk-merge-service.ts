@@ -6,31 +6,22 @@ import { lastValueFrom } from "rxjs";
 import { BulkMergeRecordsComponent } from "app/features/de-duplication/bulk-merge-records/bulk-merge-records.component";
 import { AlertService } from "app/core/alerts/alert.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
-import {
-  CascadingActionResult,
-  CascadingEntityAction,
-} from "app/core/entity/entity-actions/cascading-entity-action";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { Note } from "app/child-dev-project/notes/model/note";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EventAttendanceMap } from "app/child-dev-project/attendance/model/event-attendance";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 @Injectable({
   providedIn: "root",
 })
-export class BulkMergeService extends CascadingEntityAction {
+export class BulkMergeService {
   constructor(
-    protected override entityMapper: EntityMapperService,
-    protected override schemaService: EntitySchemaService,
+    private entityMapper: EntityMapperService,
     private entityRelationshipService: EntityRelationsService,
     private matDialog: MatDialog,
     private alert: AlertService,
     private unsavedChangesService: UnsavedChangesService,
-    private entityRegistry: EntityRegistry,
-  ) {
-    super(entityMapper, schemaService, entityRelationshipService);
-  }
+  ) {}
 
   /**
    * Opens the merge popup with the selected entities details.
@@ -87,28 +78,15 @@ export class BulkMergeService extends CascadingEntityAction {
     newEntity: Entity,
   ): Promise<void> {
     const affectedEntities =
-      await this.entityRelationsService.loadAllLinkingToEntity(oldEntity);
-    console.log(affectedEntities, "affectedEntities");
-    // for (const affected of affectedEntities) {
-
-    await this.cascadeActionToRelatedEntities(
-      oldEntity,
-      async (relatedEntity, refField) => {
-        return await this.updateEntityReferences(
-          relatedEntity,
-          oldEntity,
-          newEntity,
-          refField,
-        );
-      },
-      (relatedEntity, refField) =>
-        this.updateEntityReferences(
-          relatedEntity,
-          oldEntity,
-          newEntity,
-          refField,
-        ),
-    );
+      await this.entityRelationshipService.loadAllLinkingToEntity(oldEntity);
+    for (const affected of affectedEntities) {
+      await this.updateEntityReferences(
+        affected.entity,
+        oldEntity,
+        newEntity,
+        affected.fields,
+      );
+    }
   }
 
   /**
@@ -118,25 +96,23 @@ export class BulkMergeService extends CascadingEntityAction {
     relatedEntity: Entity,
     oldEntity: Entity,
     newEntity: Entity,
-    refField: string,
-  ): Promise<CascadingActionResult> {
-    const originalEntity = relatedEntity.copy();
+    refField?: FormFieldConfig[],
+  ): Promise<void> {
     const oldId = oldEntity.getId();
     const newId = newEntity.getId();
+    const refFieldId = refField[0].id;
 
-    const fieldsToUpdate = refField ? [refField] : Object.keys(relatedEntity);
-
-    for (const key of fieldsToUpdate) {
-      if (Array.isArray(relatedEntity[key])) {
-        relatedEntity[key] = Array.from(
-          new Set(relatedEntity[key].map((id) => (id === oldId ? newId : id))),
-        );
-      } else if (relatedEntity[key] === oldId) {
-        relatedEntity[key] = newId;
-      }
+    if (Array.isArray(relatedEntity[refFieldId])) {
+      relatedEntity[refFieldId] = Array.from(
+        new Set(
+          relatedEntity[refFieldId].map((id) => (id === oldId ? newId : id)),
+        ),
+      );
+    } else if (relatedEntity[refFieldId] === oldId) {
+      relatedEntity[refFieldId] = newId;
     }
 
-    if (relatedEntity instanceof Note && refField === "children") {
+    if (relatedEntity instanceof Note && refFieldId === "children") {
       const childrenAttendance = (relatedEntity as any)
         .childrenAttendance as EventAttendanceMap;
       if (childrenAttendance.has(oldId)) {
@@ -146,6 +122,5 @@ export class BulkMergeService extends CascadingEntityAction {
     }
 
     await this.entityMapper.save(relatedEntity);
-    return new CascadingActionResult([originalEntity]);
   }
 }
