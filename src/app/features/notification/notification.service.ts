@@ -39,15 +39,11 @@ export class NotificationService {
 
   constructor() {
     // init listening to push messages once the session (with userId) is ready
-    this.sessionInfo.subscribe((sessionInfo) => this.init(sessionInfo?.id));
+    this.sessionInfo.subscribe((sessionInfo) => this.init());
   }
 
-  async init(userId: string) {
-    const notificationConfig = !userId
-      ? null
-      : await this.loadNotificationConfig(userId).catch(() => null);
-
-    if (notificationConfig?.channels?.push) {
+  async init() {
+    if (await this.isDeviceRegistered()) {
       this.listenForMessages();
     }
   }
