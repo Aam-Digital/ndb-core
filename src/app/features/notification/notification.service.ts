@@ -272,14 +272,22 @@ export class NotificationService {
             Logging.warn("Failed sync notifications db upon push message", err),
           );
 
-        new Notification(payload.notification.title, {
+        let notification = new Notification(payload.notification.title, {
           body: payload.notification.body,
           icon: "/favicon.ico",
           data: {
-            url: "/foobar",
-            status: "open",
+            url: window.location.protocol + "//" + window.location.hostname,
+            // "/foo-bar/123", // todo: deep link here
           },
         });
+
+        notification.onclick = (event) => {
+          let url = event.target["data"]?.["url"];
+          event.preventDefault();
+          if (url) {
+            window.open(url, "_blank");
+          }
+        };
       },
       error: (err) => {
         Logging.error("Error while listening for messages.", err);

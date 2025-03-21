@@ -46,7 +46,15 @@ loadConfig()
           status: "open",
         }
       };
-      self.registration.showNotification(title, notificationOptions);
+      const notification = self.registration.showNotification(title, notificationOptions);
+
+      notification.onclick = (event) => {
+        let url = event.target["data"]?.["url"];
+        event.preventDefault();
+        if (url) {
+          window.open(url, "_blank");
+        }
+      };
     });
 
   });
