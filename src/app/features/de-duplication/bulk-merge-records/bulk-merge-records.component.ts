@@ -7,10 +7,8 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { MatRadioModule } from "@angular/material/radio";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
-import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
@@ -20,10 +18,9 @@ import {
 } from "app/core/common-components/entity-form/entity-form.service";
 import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { th } from "@faker-js/faker";
+import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
 
-type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
+export type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -31,15 +28,13 @@ type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
   imports: [
     MatDialogActions,
     MatDialogContent,
-    MatRadioModule,
     MatButtonModule,
     CommonModule,
-    MatCheckboxModule,
-    EntityFieldViewComponent,
     EntityFieldEditComponent,
     ReactiveFormsModule,
     MatError,
     MatDialogClose,
+    MergeFieldsComponent,
   ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
@@ -88,7 +83,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.existingFieldSelected[key] = [false, false];
       this.subscribeFieldChangesToUpdateSelectionMarkers(control, key);
     }
-    this.setInitialMergedValues();
+    this.setFieldDisabledProperty();
   }
 
   private initFieldsToMerge(): void {
@@ -117,53 +112,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       }
     });
   }
-  private setInitialMergedValues(): void {
+  private setFieldDisabledProperty(): void {
     for (const field of this.fieldsToMerge) {
-      const valueA = this.entitiesToMerge[0][field.id];
-      const valueB = this.entitiesToMerge[1][field.id];
       this.isFieldDisabled[field.id] = this.entitiesToMerge.map(
         (entity) => !this.hasValue(entity[field.id]),
       );
-      const control = this.mergeForm.formGroup.get(field.id);
-      if (!control) continue;
-
-      const mergedValue = this.setSmartSelectedValue(
-        valueA,
-        valueB,
-        control.value,
-      );
-      control.setValue(mergedValue);
     }
-  }
-
-  /**
-   * Determines the best value to use when merging two entity field values.
-   * If both values are identical, it returns one of them.
-   * If one value is empty while the other is not, it returns the non-empty value.
-   * Otherwise, it retains the current form value.
-   */
-  private setSmartSelectedValue(
-    valueA: any,
-    valueB: any,
-    currentValue: any,
-  ): any {
-    if (this.areValuesIdentical(valueA, valueB)) {
-      return valueA;
-    } else if (!this.hasValue(valueA) && this.hasValue(valueB)) {
-      return valueB;
-    } else if (!this.hasValue(valueB) && this.hasValue(valueA)) {
-      return valueA;
-    } else if (Array.isArray(valueA) || Array.isArray(valueB)) {
-      return [
-        ...(Array.isArray(valueA) ? valueA : []),
-        ...(Array.isArray(valueB) ? valueB : []),
-      ];
-    }
-    return currentValue;
-  }
-
-  private areValuesIdentical(a: any, b: any): boolean {
-    return JSON.stringify(a) === JSON.stringify(b);
   }
 
   private allowsMultiValueMerge(field?: FormFieldConfig): boolean {
@@ -232,72 +186,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
   /**
    * Apply a value from one of the existing entities to the merge preview
-   * @param fieldKey
-   * @param entityIndex
-   * @returns
    */
-  selectExistingValue(
-    fieldKey: string,
-    entityIndex: number,
-    checked?: boolean,
-  ): void {
-    const control = this.mergeForm.formGroup.get(fieldKey);
-    if (!control) return;
-    const fieldConfig: MergeField = this.fieldsToMerge.find(
-      (f) => f.id === fieldKey,
-    );
-    if (!fieldConfig) return;
-
-    const existingValue = control.value;
-    const selectedValue = this.entitiesToMerge[entityIndex][fieldKey];
-
-    let newValue = selectedValue;
-    if (fieldConfig.isArray) {
-      newValue = this.getMergedArrayValue(
-        existingValue,
-        selectedValue,
-        checked,
-      );
-    } else if (fieldConfig.allowsMultiValueMerge) {
-      newValue = this.getMergedStringValue(
-        existingValue,
-        selectedValue,
-        checked,
-      );
+  updateMergePreviewValue(fieldId: string, newValue: any): void {
+    const control = this.mergeForm.formGroup.get(fieldId);
+    if (control) {
+      control.patchValue(newValue);
     }
-
-    control.patchValue(newValue);
-  }
-
-  private getMergedArrayValue(
-    value: any[],
-    selectedValue: any[],
-    checked: boolean,
-  ): any[] {
-    value = value ?? [];
-    if (checked) {
-      value = value.concat(selectedValue);
-    } else {
-      value = value.filter((v) => !selectedValue.includes(v));
-    }
-    return value;
-  }
-
-  private getMergedStringValue(
-    value: string,
-    selectedValue: string,
-    checked: boolean,
-  ): string {
-    if (checked) {
-      value = (value?.length > 0 ? value + ", " : "") + selectedValue;
-    } else {
-      value = value
-        .split(",")
-        .map((v) => v.trim())
-        .filter((v) => v !== selectedValue)
-        .join(", ");
-    }
-    return value;
   }
 
   async confirmAndMergeRecords(): Promise<boolean> {
