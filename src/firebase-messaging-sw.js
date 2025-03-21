@@ -36,13 +36,14 @@ loadConfig()
     const messaging = firebase.messaging();
 
     messaging.onBackgroundMessage(function(payload) {
+      console.log('[firebase-messaging-sw.js] Received background message ', payload);
       const { title, body, image } = payload.notification;
       const notificationOptions = {
-        title: title,
         body: body,
-        icon: image,
+        icon: "/favicon.ico",
         data: {
-          url: payload.data?.url
+          url: "/foobar",
+          status: "open",
         }
       };
       self.registration.showNotification(title, notificationOptions);

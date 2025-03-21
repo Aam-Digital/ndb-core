@@ -274,7 +274,11 @@ export class NotificationService {
 
         new Notification(payload.notification.title, {
           body: payload.notification.body,
-          icon: payload.notification.image,
+          icon: "/favicon.ico",
+          data: {
+            url: "/foobar",
+            status: "open",
+          },
         });
       },
       error: (err) => {
