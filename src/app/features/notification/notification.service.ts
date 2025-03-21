@@ -285,7 +285,7 @@ export class NotificationService {
           let url = event.target["data"]?.["url"];
           event.preventDefault();
           if (url) {
-            window.open(url, "_blank");
+            window.open(url, "_self");
           }
         };
       },
