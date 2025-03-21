@@ -292,6 +292,10 @@ export class NotificationService {
    * @returns boolean
    */
   hasNotificationPermissionGranted(): boolean {
+    if (!("Notification" in window)) {
+      return false;
+    }
+
     switch (Notification.permission) {
       case "granted":
         return true;
