@@ -1,8 +1,11 @@
 import {
+  AfterContentInit,
   Component,
+  ContentChildren,
   EventEmitter,
   Input,
   Output,
+  QueryList,
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -22,17 +25,19 @@ import {
   Sort,
   SortDirection,
 } from "@angular/material/sort";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import {
+  MatColumnDef,
+  MatTable,
+  MatTableDataSource,
+  MatTableModule,
+} from "@angular/material/table";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
-import {
-  EntityFormGroup,
-  EntityFormService,
-} from "../entity-form/entity-form.service";
+import { EntityFormService } from "../entity-form/entity-form.service";
 import { tableSort } from "./table-sort/table-sort";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
@@ -45,6 +50,7 @@ import { EntityCreateButtonComponent } from "../entity-create-button/entity-crea
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { TableRow } from "./table-row";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -69,7 +75,9 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity> {
+export class EntitiesTableComponent<T extends Entity>
+  implements AfterContentInit
+{
   @Input() set records(value: T[]) {
     if (!value) {
       return;
@@ -86,6 +94,16 @@ export class EntitiesTableComponent<T extends Entity> {
   /** data displayed in the template's table */
   recordsDataSource: MatTableDataSource<TableRow<T>>;
   isLoading: boolean = true;
+
+  @ViewChild(MatTable, { static: true }) table: MatTable<T>;
+  @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
+
+  ngAfterContentInit() {
+    // dynamically add columns from content-projection (https://stackoverflow.com/a/58017564/1473411)
+    this.projectedColumns.forEach((columnDef) =>
+      this.table.addColumnDef(columnDef),
+    );
+  }
 
   /**
    * Additional or overwritten field configurations for columns
@@ -277,7 +295,13 @@ export class EntitiesTableComponent<T extends Entity> {
    * Show one record's details in a modal dialog (if configured).
    * @param row The entity whose details should be displayed.
    */
-  onRowClick(row: TableRow<T>) {
+  onRowClick(row: TableRow<T>, event: MouseEvent) {
+    const targetElement = event.target as HTMLElement;
+
+    // Check if the clicked element has the 'clickable' class
+    if (targetElement && targetElement.closest(".clickable")) {
+      return;
+    }
     if (row.formGroup && !row.formGroup.disabled) {
       return;
     }
@@ -285,14 +309,13 @@ export class EntitiesTableComponent<T extends Entity> {
       this.selectRow(row, !this.selectedRecords?.includes(row.record));
       return;
     }
-
     this.showEntity(row.record);
     this.entityClick.emit(row.record);
   }
 
   onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
     if (!this._selectable) {
-      this.onRowClick(row);
+      this.onRowClick(row, event);
       return;
     }
 
@@ -336,7 +359,7 @@ export class EntitiesTableComponent<T extends Entity> {
     }
 
     if (isCheckboxClick) {
-      this.onRowClick(row);
+      this.onRowClick(row, event);
     }
   }
 
@@ -459,12 +482,4 @@ export class EntitiesTableComponent<T extends Entity> {
       filter["isActive"] = true;
     }
   }
-}
-
-/**
- * Wrapper to keep additional form data for each row of an entity, required for inline editing.
- */
-export interface TableRow<T extends Entity> {
-  record: T;
-  formGroup?: EntityFormGroup<T>;
 }

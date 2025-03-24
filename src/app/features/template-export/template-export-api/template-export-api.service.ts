@@ -12,6 +12,7 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { switchMap } from "rxjs/operators";
 import { TemplateExport } from "../template-export.entity";
 import { Logging } from "../../../core/logging/logging.service";
+import { environment } from "../../../../environments/environment";
 
 /**
  * Format of API response body upon uploading a new template file.
@@ -48,7 +49,7 @@ export interface TemplateExportResult {
   providedIn: "root",
 })
 export class TemplateExportApiService extends FileService {
-  readonly BACKEND_URL = "/query/api/v1/export/";
+  readonly API_URL = environment.API_PROXY_PREFIX + "/v1/export";
 
   constructor(
     entityMapper: EntityMapperService,
@@ -82,7 +83,7 @@ export class TemplateExportApiService extends FileService {
     const formData = new FormData();
     formData.append("template", file, file.name);
 
-    return this.httpClient.post(this.BACKEND_URL + "template", formData).pipe(
+    return this.httpClient.post(this.API_URL + "/template", formData).pipe(
       switchMap(async (res: TemplateUploadResponseDto) => {
         entity.templateId = res.templateId;
         await this.entityMapper.save(entity);
@@ -95,7 +96,7 @@ export class TemplateExportApiService extends FileService {
     entity: TemplateExport,
     property: string,
   ): string {
-    return this.BACKEND_URL + "template/" + entity.getId();
+    return this.API_URL + "/template/" + entity.getId();
   }
 
   loadFile(entity: Entity, property: string): Observable<SafeUrl> {
@@ -108,6 +109,7 @@ export class TemplateExportApiService extends FileService {
     Logging.debug("skipping file removal for Template Export API");
     return of(true);
   }
+
   removeAllFiles(entity: Entity): Observable<any> {
     Logging.debug("skipping file removal for Template Export API");
     return of(true);
@@ -129,7 +131,7 @@ export class TemplateExportApiService extends FileService {
   ): Observable<TemplateExportResult> {
     return this.httpClient
       .post(
-        this.BACKEND_URL + "render/" + templateEntityId,
+        this.API_URL + "/render/" + templateEntityId,
         {
           convertTo: "pdf",
           data: data,

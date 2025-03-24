@@ -6,14 +6,14 @@ import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generatin
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
-import { Logging } from "../logging/logging.service";
-import { Database } from "../database/database";
-import { PouchDatabase } from "../database/pouch-database";
+import { PouchDatabase } from "../database/pouchdb/pouch-database";
 import { environment } from "../../../environments/environment";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
 import PouchDB from "pouchdb-browser";
+import { DatabaseResolverService } from "../database/database-resolver.service";
+import { Entity } from "../entity/model/entity";
 
 /**
  * This service handles everything related to the demo-mode
@@ -25,7 +25,6 @@ import PouchDB from "pouchdb-browser";
 @Injectable()
 export class DemoDataInitializerService {
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
-  private pouchDatabase: PouchDatabase;
   private readonly normalUser: SessionInfo = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
     id: DemoUserGeneratorService.DEFAULT_USERNAME,
@@ -38,12 +37,13 @@ export class DemoDataInitializerService {
     roles: ["user_app", "admin_app"],
     entityId: `User:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };
+
   constructor(
     private demoDataService: DemoDataService,
     private localAuthService: LocalAuthService,
     private sessionManager: SessionManagerService,
     private dialog: MatDialog,
-    private database: Database,
+    private dbResolver: DatabaseResolverService,
     private loginState: LoginStateSubject,
     private sessionInfo: SessionSubject,
   ) {}
@@ -52,13 +52,6 @@ export class DemoDataInitializerService {
     const dialogRef = this.dialog.open(
       DemoDataGeneratingProgressDialogComponent,
     );
-    if (this.database instanceof PouchDatabase) {
-      this.pouchDatabase = this.database;
-    } else {
-      Logging.warn(
-        "Cannot create demo data with session: " + environment.session_type,
-      );
-    }
 
     this.localAuthService.saveUser(this.normalUser);
     this.localAuthService.saveUser(this.adminUser);
@@ -87,7 +80,7 @@ export class DemoDataInitializerService {
   }
 
   private async syncWithDemoUserDB() {
-    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${environment.DB_NAME}`;
+    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${Entity.DATABASE}`;
     let demoUserDB: PouchDB.Database;
     if (environment.session_type === SessionType.mock) {
       PouchDB.plugin(memory);
@@ -95,7 +88,9 @@ export class DemoDataInitializerService {
     } else {
       demoUserDB = new PouchDB(dbName);
     }
-    const currentUserDB = this.pouchDatabase.getPouchDB();
+    const currentUserDB = (
+      this.dbResolver.getDatabase() as PouchDatabase
+    ).getPouchDB();
     await currentUserDB.sync(demoUserDB, { batch_size: 500 });
     this.liveSyncHandle = currentUserDB.sync(demoUserDB, {
       live: true,

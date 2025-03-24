@@ -20,8 +20,26 @@ import { Observable } from "rxjs";
 /**
  * An implementation of this abstract class provides functions for direct database access.
  * This interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
+ *
+ * PLEASE NOTE:
+ * Direct access to the Database layer is rarely necessary, and you should probably use EntityMapperService instead.
+ * Database is not an Angular Service and has to be accessed through the DatabaseResolverService.
  */
 export abstract class Database {
+  constructor(protected dbName: string) {}
+
+  /**
+   * Initialize the database fully after its initial creation,
+   * e.g. once user details are available.
+   * @param dbName A special database name, if different from the default name passed in the constructor
+   */
+  abstract init(dbName?: string);
+
+  /**
+   * Whether the database is already initialized and ready for use.
+   */
+  abstract isInitialized(): boolean;
+
   /**
    * Load a single document by id from the database.
    * @param id The primary key of the document to be loaded
@@ -99,11 +117,28 @@ export abstract class Database {
   abstract isEmpty(): Promise<boolean>;
 
   /**
+   * Closes open connections and un-initializes the database
+   * (without deleting persisted data, see destroy() for that)
+   */
+  abstract reset(): Promise<any>;
+
+  /**
    * Closes all open connections to the database base and destroys it (clearing all data)
    */
   abstract destroy(): Promise<any>;
 
-  abstract changes(prefix: string): Observable<any>;
+  abstract changes(): Observable<DatabaseDocChange>;
+}
+
+/**
+ * Based upon PouchDb changes feed format.
+ */
+export interface DatabaseDocChange {
+  _id: string;
+  _rev: string;
+  _deleted?: boolean;
+
+  [key: string]: any;
 }
 
 /**

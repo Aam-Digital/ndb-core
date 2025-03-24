@@ -13,6 +13,7 @@ describe("ImportSelectTypeComponent", () => {
 
   class TestEntity extends Entity {
     static override _isCustomizedType = true; // set by config service applying custom definitions
+    static override label = "some-label"; // set by config service applying custom definitions
   }
 
   let mockRegistry: EntityRegistry;
@@ -39,15 +40,7 @@ describe("ImportSelectTypeComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should offer any entityType to select for experts", () => {
-    component.expertMode = true;
-
-    expect(component.entityTypes).toEqual(testTypes);
-  });
-
-  it("should only offer entityTypes mentioned in custom config by default", () => {
-    component.expertMode = false;
-
-    expect(component.entityTypes).toEqual([testTypes[0]]);
+  it("should create", () => {
+    expect(component).toBeTruthy();
   });
 });

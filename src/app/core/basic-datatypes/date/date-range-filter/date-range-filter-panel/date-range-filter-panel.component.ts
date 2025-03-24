@@ -14,10 +14,10 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { NgForOf } from "@angular/common";
 import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
-import moment from "moment";
 import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
-import { DateFilter } from "../../../../filter/filters/dateFilter";
+import { DateFilter } from "app/core/filter/filters/dateFilter";
+import { calculateDateRange } from "./date-range-utils";
 
 export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   {
@@ -112,26 +112,4 @@ export class DateRangeFilterPanelComponent {
       this.dialogRef.close();
     }
   }
-}
-
-export function calculateDateRange(
-  dateRangeOption: DateRangeFilterConfigOption,
-): DateRange<Date> {
-  const startOffsets = dateRangeOption.startOffsets ?? [
-    { amount: 0, unit: "days" },
-  ];
-  const endOffsets = dateRangeOption.endOffsets ?? [
-    { amount: 0, unit: "days" },
-  ];
-
-  const start = moment();
-  const end = moment();
-
-  startOffsets.forEach((offset) => start.add(offset.amount, offset.unit));
-  endOffsets.forEach((offset) => end.add(offset.amount, offset.unit));
-
-  start.startOf(startOffsets[0].unit);
-  end.endOf(endOffsets[0].unit);
-
-  return new DateRange(start.toDate(), end.toDate());
 }

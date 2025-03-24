@@ -1,10 +1,10 @@
-import { Entity } from "../../entity/model/entity";
-import { DateRangeFilterConfigOption } from "../../entity-list/EntityListConfig";
 import { DateRange } from "@angular/material/datepicker";
-import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import moment from "moment";
-import { DataFilter, Filter } from "./filters";
+import { calculateDateRange } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-utils";
 import { isValidDate } from "../../../utils/utils";
+import { Entity } from "../../entity/model/entity";
+import { DataFilter, Filter } from "./filters";
+import { DateRangeFilterConfigOption } from "../../entity-list/EntityListConfig";
 import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-filter/date-range-filter.component";
 
 /**
@@ -32,7 +32,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
       return calculateDateRange(selectedOption);
     }
     const dates = this.selectedOptionValues;
-    if (dates?.length == 2) {
+    if (dates?.length === 2) {
       return this.getDateRangeFromDateStrings(dates[0], dates[1]);
     }
     return new DateRange(undefined, undefined);
@@ -47,12 +47,9 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     if (range.end) {
       filterObject.$lte = moment(range.end).format("YYYY-MM-DD");
     }
-    if (filterObject.$gte || filterObject.$lte) {
-      return {
-        [this.name]: filterObject,
-      } as DataFilter<T>;
-    }
-    return {} as DataFilter<T>;
+    return filterObject.$gte || filterObject.$lte
+      ? ({ [this.name]: filterObject } as DataFilter<T>)
+      : ({} as DataFilter<T>);
   }
 
   getSelectedOption() {

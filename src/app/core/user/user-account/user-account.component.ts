@@ -28,6 +28,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { AsyncPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { SessionSubject } from "../../session/auth/session-info";
+import { NotificationSettingsComponent } from "../../../features/notification/notification-settings/notification-settings.component";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -45,6 +46,7 @@ import { SessionSubject } from "../../session/auth/session-info";
     AccountPageComponent,
     AsyncPipe,
     EntityBlockComponent,
+    NotificationSettingsComponent,
   ],
 })
 export class UserAccountComponent implements OnInit {

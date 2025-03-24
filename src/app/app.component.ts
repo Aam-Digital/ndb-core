@@ -17,7 +17,10 @@
 
 import { Component } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
-import { filter } from "rxjs/operators";
+import { filter, take } from "rxjs/operators";
+import { ConfigService } from "./core/config/config.service";
+import { LoginStateSubject } from "./core/session/session-type";
+import { LoginState } from "./core/session/session-states/login-state.enum";
 
 /**
  * Component as the main entry point for the app.
@@ -25,7 +28,11 @@ import { filter } from "rxjs/operators";
  */
 @Component({
   selector: "app-root",
-  template: `@if (configFullscreen) {
+  template: `@if (
+      !configReady && (loginState | async) === LoginState.LOGGED_IN
+    ) {
+      <app-application-loading></app-application-loading>
+    } @else if (configFullscreen) {
       <router-outlet></router-outlet>
     } @else {
       <app-ui></app-ui>
@@ -34,12 +41,33 @@ import { filter } from "rxjs/operators";
 })
 export class AppComponent {
   configFullscreen: boolean = false;
+  configReady: boolean = false;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private configService: ConfigService,
+    protected loginState: LoginStateSubject,
+  ) {
+    this.detectConfigReadyState();
+
     this.detectConfigMode();
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.detectConfigMode());
+  }
+
+  /**
+   * Check if we are currently still waiting for config to be initialized or downloaded
+   * and keep the app on the loading screen until that is done.
+   * @private
+   */
+  private detectConfigReadyState() {
+    this.configService.configUpdates
+      .pipe(
+        filter((c) => c !== undefined),
+        take(1),
+      )
+      .subscribe(() => (this.configReady = true));
   }
 
   /**
@@ -50,4 +78,6 @@ export class AppComponent {
     const currentUrl = this.router.url;
     this.configFullscreen = currentUrl.startsWith("/admin/entity/");
   }
+
+  protected readonly LoginState = LoginState;
 }

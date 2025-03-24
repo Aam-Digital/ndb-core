@@ -3,10 +3,10 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { HistoricalDataService } from "./historical-data.service";
 import { EntityMapperService } from "../../entity-mapper/entity-mapper.service";
 import { Entity } from "../../model/entity";
-import { Database } from "../../../database/database";
 import moment from "moment";
 import { DatabaseTestingModule } from "../../../../utils/database-testing.module";
 import { createEntityOfType } from "../../../demo-data/create-entity-of-type";
+import { DatabaseResolverService } from "../../../database/database-resolver.service";
 
 describe("HistoricalDataService", () => {
   let service: HistoricalDataService;
@@ -18,7 +18,7 @@ describe("HistoricalDataService", () => {
     service = TestBed.inject(HistoricalDataService);
   }));
 
-  afterEach(() => TestBed.inject(Database).destroy());
+  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

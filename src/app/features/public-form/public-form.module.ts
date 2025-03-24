@@ -7,6 +7,7 @@ import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 import { AdminOverviewService } from "../../core/admin/admin-overview/admin-overview.service";
 import { PublicFormConfig } from "./public-form-config";
 import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
+import { publicFormRoutes } from "./public-form-routing";
 
 /**
  * Configure publicly accessible forms for users without login to record some data into the system.
@@ -17,6 +18,7 @@ import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 })
 export class PublicFormModule {
   static databaseEntities = [PublicFormConfig];
+  static routes = publicFormRoutes;
 
   constructor(
     components: ComponentRegistry,
@@ -39,6 +41,20 @@ const dynamicComponents: [string, AsyncComponent][] = [
       import(
         "app/features/public-form/edit-public-form-columns/edit-public-form-columns.component"
       ).then((c) => c.EditPublicFormColumnsComponent),
+  ],
+  [
+    "EditPrefilledValuesComponent",
+    () =>
+      import(
+        "app/features/public-form/edit-prefilled-values/edit-prefilled-values.component"
+      ).then((c) => c.EditPrefilledValuesComponent),
+  ],
+  [
+    "EditPublicformRoute",
+    () =>
+      import(
+        "app/features/public-form/edit-publicform-route/edit-publicform-route.component"
+      ).then((c) => c.EditPublicformRouteComponent),
   ],
 ];
 
@@ -69,18 +85,17 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["route", "title"],
+                    fields: ["route", "title", "description"],
                   },
                   {
                     fields: [
                       {
                         id: "permissions_remark",
                         editComponent: "EditDescriptionOnly",
-                        label: $localize`:PublicFormConfig admin form:If you want external people filling this form without logging in, the _Permission System_ also has to allow **"public"** users to create new records of this type.<br> 
+                        label: $localize`:PublicFormConfig admin form:If you want external people filling this form without logging in, the _Permission System_ also has to allow **"public"** users to create new records of this type.<br>
                         If you are seeing problems submitting the form, please contact your **technical support team**.`,
                       },
                       "entity",
-                      "description",
                       "logo",
                     ],
                   },
@@ -97,12 +112,22 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: [
-                      {
-                        id: "columns",
-                        editComponent: "EditPublicFormColumns",
-                      },
-                    ],
+                    fields: ["columns"],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          title: $localize`:PublicFormConfig admin form panel:Configure Pre-filled Values`,
+          components: [
+            {
+              component: "Form",
+              config: {
+                fieldGroups: [
+                  {
+                    fields: ["prefilledFields"],
                   },
                 ],
               },

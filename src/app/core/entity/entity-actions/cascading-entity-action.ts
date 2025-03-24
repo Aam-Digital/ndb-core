@@ -1,7 +1,8 @@
 import { Entity } from "../model/entity";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
+import { EntityRelationsService } from "../entity-mapper/entity-relations.service";
 
 export class CascadingActionResult {
   /**
@@ -51,6 +52,7 @@ export abstract class CascadingEntityAction {
   protected constructor(
     protected entityMapper: EntityMapperService,
     protected schemaService: EntitySchemaService,
+    protected entityRelationsService: EntityRelationsService,
   ) {}
 
   /**
@@ -79,30 +81,28 @@ export abstract class CascadingEntityAction {
   ): Promise<CascadingActionResult> {
     const cascadeActionResult = new CascadingActionResult();
 
-    const entityTypesWithReferences =
-      this.schemaService.getEntityTypesReferencingType(entity.getType());
-
-    for (const refType of entityTypesWithReferences) {
-      const entities = await this.entityMapper.loadType(refType.entityType);
-
-      for (const refField of refType.referencingProperties) {
-        const affectedEntities = entities.filter((e) =>
-          asArray(e[refField]).includes(entity.getId()),
-        );
-
-        for (const e of affectedEntities) {
-          if (
-            refType.entityType.schema.get(refField).entityReferenceRole ===
-              "composite" &&
-            asArray(e[refField]).length === 1
-          ) {
-            // is only composite
-            const result = await compositeAction(e);
-            cascadeActionResult.mergeResults(result);
-          } else {
-            const result = await aggregateAction(e, refField, entity);
-            cascadeActionResult.mergeResults(result);
-          }
+    const affectedEntities =
+      await this.entityRelationsService.loadAllLinkingToEntity(entity);
+    for (const affected of affectedEntities) {
+      for (const refField of affected.fields) {
+        if (
+          refField.entityReferenceRole === "composite" &&
+          asArray(affected.entity[refField.id]).length === 1
+        ) {
+          // is only composite
+          const result = await compositeAction(
+            affected.entity,
+            refField.id,
+            entity,
+          );
+          cascadeActionResult.mergeResults(result);
+        } else {
+          const result = await aggregateAction(
+            affected.entity,
+            refField.id,
+            entity,
+          );
+          cascadeActionResult.mergeResults(result);
         }
       }
     }

@@ -40,6 +40,9 @@ export class EditPublicFormColumnsComponent
       this.formConfig = {
         fieldGroups: publicFormConfig.columns,
       };
+      this.formControl.valueChanges.subscribe(
+        (v) => (this.formConfig = { fieldGroups: v }),
+      );
     }
 
     this.originalEntitySchemaFields = JSON.parse(

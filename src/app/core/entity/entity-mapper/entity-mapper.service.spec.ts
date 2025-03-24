@@ -18,12 +18,13 @@
 import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "../model/entity";
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { PouchDatabase } from "../../database/pouch-database";
+import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { Database } from "../../database/database";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -40,17 +41,28 @@ describe("EntityMapperService", () => {
   };
 
   beforeEach(waitForAsync(() => {
-    testDatabase = PouchDatabase.create();
-
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
-        { provide: Database, useValue: testDatabase },
+        {
+          provide: DatabaseResolverService,
+          useValue: new DatabaseResolverService({
+            createDatabase: (dbName: string) => {
+              const db = new MemoryPouchDatabase(dbName);
+              db.init();
+              return db;
+            },
+          } as any),
+        },
         CurrentUserSubject,
         EntityMapperService,
       ],
     });
     entityMapper = TestBed.inject(EntityMapperService);
+
+    testDatabase = TestBed.inject(
+      DatabaseResolverService,
+    ).getDatabase() as MemoryPouchDatabase;
 
     return Promise.all([
       testDatabase.put(existingEntity),

@@ -5,22 +5,24 @@ import {
   SessionType,
   SyncStateSubject,
 } from "../session-type";
-import { TestBed, waitForAsync } from "@angular/core/testing";
-import { PouchDatabase } from "../../database/pouch-database";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
+import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
-import { Database } from "../../database/database";
 import { Router } from "@angular/router";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../user/demo-user-generator.service";
-import { Config } from "../../config/config";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
+import { Config } from "../../config/config";
+import { ConfigService } from "../../config/config.service";
+import { Entity } from "../../entity/model/entity";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -29,16 +31,18 @@ describe("SessionManagerService", () => {
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator: { onLine: boolean };
   let dbUser: SessionInfo;
-  const userDBName = `${TEST_USER}-${environment.DB_NAME}`;
-  const deprecatedDBName = environment.DB_NAME;
-  let initInMemorySpy: jasmine.Spy;
-  let initIndexedSpy: jasmine.Spy;
+  const userDBName = `${TEST_USER}-${Entity.DATABASE}`;
+  let mockDatabaseResolver: jasmine.SpyObj<DatabaseResolverService>;
 
   beforeEach(waitForAsync(() => {
     dbUser = { name: TEST_USER, id: "99", roles: ["user_app"] };
     mockKeycloak = jasmine.createSpyObj(["login", "logout", "addAuthHeader"]);
     mockKeycloak.login.and.resolveTo(dbUser);
     mockNavigator = { onLine: true };
+    mockDatabaseResolver = jasmine.createSpyObj([
+      "initDatabasesForSession",
+      "resetDatabases",
+    ]);
 
     TestBed.configureTestingModule({
       providers: [
@@ -49,9 +53,9 @@ describe("SessionManagerService", () => {
         CurrentUserSubject,
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(),
+          useValue: mockEntityMapper([new Config()]),
         },
-        { provide: Database, useClass: PouchDatabase },
+        { provide: DatabaseResolverService, useValue: mockDatabaseResolver },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
         {
@@ -67,15 +71,6 @@ describe("SessionManagerService", () => {
     loginStateSubject = TestBed.inject(LoginStateSubject);
     sessionInfo = TestBed.inject(SessionSubject);
 
-    const db = TestBed.inject(Database) as PouchDatabase;
-    initInMemorySpy = spyOn(db, "initInMemoryDB").and.callThrough();
-    initIndexedSpy = spyOn(db, "initIndexedDB").and.callThrough();
-    spyOn(TestBed.inject(SyncService), "startSync").and.callFake(() =>
-      TestBed.inject(EntityMapperService).save(
-        new Config(Config.CONFIG_KEY, {}),
-      ),
-    );
-
     TestBed.inject(LocalAuthService).saveUser(dbUser);
     environment.session_type = SessionType.mock;
     spyOn(service, "remoteLoginAvailable").and.returnValue(true);
@@ -83,9 +78,9 @@ describe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    const tmpDB = new PouchDatabase();
-    await tmpDB.initInMemoryDB(userDBName).destroy();
-    await tmpDB.initInMemoryDB(deprecatedDBName).destroy();
+    const tmpDB = new MemoryPouchDatabase(userDBName);
+    tmpDB.init();
+    await tmpDB.destroy();
   });
 
   it("should update the session info once authenticated", async () => {
@@ -101,15 +96,15 @@ describe("SessionManagerService", () => {
 
     expect(saveUserSpy).toHaveBeenCalledWith(updatedUser);
     expect(sessionInfo.value).toEqual(updatedUser);
-    expect(TestBed.inject(SyncService).startSync).toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
   });
 
-  it("should initialize current user as the entity to which a login is connected", async () => {
+  it("should initialize current user as the entity to which a login is connected", fakeAsync(() => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const loggedInUser = new TestEntity(TEST_USER);
     const otherUser = new TestEntity("other_user");
-    await entityMapper.saveAll([loggedInUser, otherUser]);
+    entityMapper.saveAll([loggedInUser, otherUser]);
+    tick();
     const currentUser = TestBed.inject(CurrentUserSubject);
 
     // first login with existing user entity
@@ -119,11 +114,18 @@ describe("SessionManagerService", () => {
       roles: [],
       entityId: loggedInUser.getId(),
     });
-    await service.remoteLogin();
+    service.remoteLogin();
+    tick();
+
+    // we somehow need this in the Test as the replay doesn't trigger
+    TestBed.inject(ConfigService).entityUpdated.next(new Config());
+    tick();
+
     expect(currentUser.value).toEqual(loggedInUser);
 
     // logout -> user should reset
-    await service.logout();
+    service.logout();
+    tick();
     expect(currentUser.value).toBeUndefined();
 
     const adminUser = new TestEntity("admin-user");
@@ -134,14 +136,16 @@ describe("SessionManagerService", () => {
       roles: ["admin"],
       entityId: adminUser.getId(),
     });
-    await service.remoteLogin();
+    service.remoteLogin();
+    tick();
 
     // user entity available -> user should be set
-    await entityMapper.save(adminUser);
+    entityMapper.save(adminUser);
+    tick();
     expect(currentUser.value).toEqual(adminUser);
-  });
+  }));
 
-  it("should not initialize the user entity if no entityId is set", async () => {
+  it("should not initialize the user entity if no entityId is set", fakeAsync(() => {
     const loadSpy = spyOn(TestBed.inject(EntityMapperService), "load");
 
     mockKeycloak.login.and.resolveTo({
@@ -149,14 +153,20 @@ describe("SessionManagerService", () => {
       id: "101",
       roles: [],
     });
-    await service.remoteLogin();
+
+    service.remoteLogin();
+    tick();
+
+    // we somehow need this in the Test as the replay doesn't trigger
+    TestBed.inject(ConfigService).entityUpdated.next(new Config());
+    tick();
 
     expect(loadSpy).not.toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
     expect(TestBed.inject(CurrentUserSubject).value).toBeNull();
-  });
+  }));
 
-  it("should allow other entities to log in", async () => {
+  it("should allow other entities to log in", fakeAsync(() => {
     const loggedInChild = new TestEntity("123");
     const childSession: SessionInfo = {
       name: loggedInChild.getId(),
@@ -166,17 +176,24 @@ describe("SessionManagerService", () => {
     };
     mockKeycloak.login.and.resolveTo(childSession);
     const otherChild = new TestEntity("456");
-    await TestBed.inject(EntityMapperService).saveAll([
+    TestBed.inject(EntityMapperService).saveAll([
       loggedInChild,
       otherChild,
+      new Config(),
     ]);
+    tick();
 
-    await service.remoteLogin();
+    service.remoteLogin();
+    tick();
+
+    // we somehow need this in the Test as the replay doesn't trigger
+    TestBed.inject(ConfigService).entityUpdated.next(new Config());
+    tick();
 
     expect(sessionInfo.value).toBe(childSession);
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
     expect(TestBed.inject(CurrentUserSubject).value).toEqual(loggedInChild);
-  });
+  }));
 
   it("should automatically login, if the session is still valid", async () => {
     await service.remoteLogin();
@@ -199,7 +216,7 @@ describe("SessionManagerService", () => {
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
     expect(sessionInfo.value).toEqual(dbUser);
 
-    service.logout();
+    await service.logout();
 
     expect(mockKeycloak.logout).not.toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_OUT);
@@ -226,87 +243,19 @@ describe("SessionManagerService", () => {
     expect(mockKeycloak.logout).toHaveBeenCalled();
   });
 
-  it("should create a pouchdb with the username of the logged in user", async () => {
-    await service.remoteLogin();
-
-    expect(initInMemorySpy).toHaveBeenCalledWith(
-      TEST_USER + "-" + environment.DB_NAME,
-    );
-  });
-
-  it("should create the database according to the session type in the environment", async () => {
-    async function testDatabaseCreation(
-      sessionType: SessionType,
-      expectedDB: "inMemory" | "indexed",
-    ) {
-      initInMemorySpy.calls.reset();
-      initIndexedSpy.calls.reset();
-      environment.session_type = sessionType;
-      await service.remoteLogin();
-      if (expectedDB === "inMemory") {
-        expect(initInMemorySpy).toHaveBeenCalled();
-        expect(initIndexedSpy).not.toHaveBeenCalled();
-      } else {
-        expect(initInMemorySpy).not.toHaveBeenCalled();
-        expect(initIndexedSpy).toHaveBeenCalled();
-      }
-    }
-
-    await testDatabaseCreation(SessionType.mock, "inMemory");
-    await testDatabaseCreation(SessionType.local, "indexed");
-    await testDatabaseCreation(SessionType.synced, "indexed");
-  });
-
   it("should use current user db if database has content", async () => {
-    await defineExistingDatabases(true, false);
+    await defineExistingDatabases();
 
     await service.remoteLogin();
 
-    expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
+    expect(
+      mockDatabaseResolver.initDatabasesForSession,
+    ).toHaveBeenCalledOnceWith(dbUser);
   });
 
-  it("should use and reserve a deprecated db if it exists and current db has no content", async () => {
-    await defineExistingDatabases(false, true);
-
-    await service.remoteLogin();
-
-    expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
-    const dbReservation = window.localStorage.getItem(
-      service.DEPRECATED_DB_KEY,
-    );
-    expect(dbReservation).toBe(TEST_USER);
-  });
-
-  it("should open a new database if deprecated db is already in use", async () => {
-    await defineExistingDatabases(false, true, "other-user");
-
-    await service.remoteLogin();
-
-    expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
-  });
-
-  it("should use the deprecated database if it is reserved by the current user", async () => {
-    await defineExistingDatabases(false, true, TEST_USER);
-
-    await service.remoteLogin();
-
-    expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
-  });
-
-  async function defineExistingDatabases(
-    initUserDB: boolean,
-    initDeprecatedDB: boolean,
-    reserved?: string,
-  ) {
-    if (reserved) {
-      window.localStorage.setItem(service.DEPRECATED_DB_KEY, reserved);
-    }
-    const tmpDB = new PouchDatabase();
-    if (initUserDB) {
-      await tmpDB.initInMemoryDB(userDBName).put({ _id: "someDoc" });
-    }
-    if (initDeprecatedDB) {
-      await tmpDB.initInMemoryDB(deprecatedDBName).put({ _id: "someDoc" });
-    }
+  async function defineExistingDatabases() {
+    const tmpDB = new PouchDatabase(userDBName);
+    tmpDB.init();
+    await tmpDB.put({ _id: "someDoc" });
   }
 });

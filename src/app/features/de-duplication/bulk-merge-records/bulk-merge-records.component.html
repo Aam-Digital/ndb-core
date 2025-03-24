@@ -1,0 +1,79 @@
+<mat-dialog-content>
+  <form *ngIf="mergeForm">
+    <div class="merge-grid">
+      <div></div>
+      <div class="header" i18n>Record A</div>
+      <div class="header" i18n>Record B</div>
+      <div class="header" i18n>Merge Preview</div>
+
+      @for (field of fieldsToMerge; track field.id) {
+        <div class="label-cell">
+          <strong>{{ field.label }}</strong>
+        </div>
+
+        @for (
+          entityToMerge of entitiesToMerge;
+          track entityToMerge;
+          let i = $index
+        ) {
+          <div class="record-cell">
+            @if (field.allowsMultiValueMerge) {
+              <mat-checkbox
+                [checked]="existingFieldSelected[field.id][i]"
+                (change)="selectExistingValue(field.id, i, $event.checked)"
+                [disabled]="isFieldDisabled[field.id][i]"
+              >
+                <app-entity-field-view
+                  [field]="field"
+                  [entity]="entityToMerge"
+                ></app-entity-field-view>
+              </mat-checkbox>
+            } @else {
+              <mat-radio-group>
+                <mat-radio-button
+                  [value]="entityToMerge[field.id]"
+                  (click)="selectExistingValue(field.id, i)"
+                  [checked]="existingFieldSelected[field.id][i]"
+                  [disabled]="isFieldDisabled[field.id][i]"
+                >
+                  <app-entity-field-view
+                    [field]="field"
+                    [entity]="entityToMerge"
+                  ></app-entity-field-view>
+                </mat-radio-button>
+              </mat-radio-group>
+            }
+          </div>
+        }
+
+        <!-- Merge Preview -->
+        <div class="preview-cell">
+          <app-entity-field-edit
+            [field]="field"
+            [entity]="mergedEntity"
+            [form]="mergeForm"
+          ></app-entity-field-edit>
+        </div>
+      }
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button matDialogClose i18n>Cancel</button>
+  <button
+    mat-raised-button
+    color="accent"
+    [disabled]="mergeForm?.formGroup.invalid"
+    (click)="confirmAndMergeRecords()"
+    i18n
+  >
+    Merge
+  </button>
+  @if (mergeForm?.formGroup.invalid) {
+    <mat-error i18n>
+      The data you selected to merge is invalid, please check the fields in the
+      "Merge Preview" above.
+    </mat-error>
+  }
+</mat-dialog-actions>

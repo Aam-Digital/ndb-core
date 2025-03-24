@@ -53,6 +53,7 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
         regex: [this.entitySchemaField.validators.pattern],
         validEmail: [this.entitySchemaField.validators.validEmail],
         uniqueId: [this.entitySchemaField.validators.uniqueId],
+        readonlyAfterSet: [this.entitySchemaField.validators.readonlyAfterSet],
       });
     } else {
       this.validatorForm = this.fb.group({
@@ -62,6 +63,7 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
         regex: [""],
         validEmail: [false],
         uniqueId: [""],
+        readonlyAfterSet: [false],
       });
     }
 

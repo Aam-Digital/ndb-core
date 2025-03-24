@@ -6,6 +6,7 @@ import { TimeInterval } from "../recurring-interval/time-interval";
 import { TodoCompletion } from "./todo-completion";
 import { WarningLevel } from "../../../child-dev-project/warning-level";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * Base Entity Type for the Todo Feature.
@@ -17,6 +18,7 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 export class Todo extends Entity {
   static override label = $localize`:label for entity:Task`;
   static override labelPlural = $localize`:label (plural) for entity:Tasks`;
+  static override icon: IconName = "tasks";
   static override toStringAttributes = ["subject"];
   static override hasPII = true;
 

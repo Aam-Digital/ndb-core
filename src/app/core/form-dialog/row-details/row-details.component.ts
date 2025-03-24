@@ -16,7 +16,7 @@ import { DialogButtonsComponent } from "../dialog-buttons/dialog-buttons.compone
 import { EntityArchivedInfoComponent } from "../../entity-details/entity-archived-info/entity-archived-info.component";
 import { FieldGroup } from "../../entity-details/form/field-group";
 import { EntityFieldViewComponent } from "../../common-components/entity-field-view/entity-field-view.component";
-import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
+import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 
 /**
  * Data interface that must be given when opening the dialog

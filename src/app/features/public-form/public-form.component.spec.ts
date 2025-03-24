@@ -8,9 +8,8 @@ import {
 
 import { PublicFormComponent } from "./public-form.component";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
-import { PouchDatabase } from "../../core/database/pouch-database";
 import { PublicFormConfig } from "./public-form-config";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
@@ -18,6 +17,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -25,10 +25,12 @@ describe("PublicFormComponent", () => {
   let initRemoteDBSpy: jasmine.Spy;
   let testFormConfig: PublicFormConfig;
 
+  const FORM_ID = "form-id";
+
   beforeEach(waitForAsync(() => {
-    testFormConfig = new PublicFormConfig("form-id");
+    testFormConfig = new PublicFormConfig(FORM_ID);
     testFormConfig.title = "test form";
-    testFormConfig.entity = "TestEntity";
+    testFormConfig.entity = TestEntity.ENTITY_TYPE;
     testFormConfig.columns = [
       {
         fields: [
@@ -47,7 +49,7 @@ describe("PublicFormComponent", () => {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-              paramMap: new Map([["id", testFormConfig.getId(true)]]),
+              paramMap: new Map([["id", FORM_ID]]),
             },
           },
         },
@@ -56,7 +58,10 @@ describe("PublicFormComponent", () => {
   }));
 
   beforeEach(() => {
-    initRemoteDBSpy = spyOn(TestBed.inject(PouchDatabase), "initRemoteDB");
+    initRemoteDBSpy = spyOn(
+      TestBed.inject(DatabaseResolverService),
+      "initDatabasesForAnonymous",
+    );
 
     fixture = TestBed.createComponent(PublicFormComponent<TestEntity>);
     component = fixture.componentInstance;
@@ -67,7 +72,7 @@ describe("PublicFormComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should initialize remote DB on startup", () => {
+  it("should initialize for remote DB on startup", () => {
     expect(initRemoteDBSpy).toHaveBeenCalled();
   });
 
@@ -83,11 +88,12 @@ describe("PublicFormComponent", () => {
     expect(component.formConfig.title).toBe("Some test title");
   }));
 
-  it("should show a snackbar and reset form when the form has been submitted", fakeAsync(() => {
+  it("should navigate to the success page after form submission and show a link to submit another form", fakeAsync(() => {
     initComponent();
     tick();
     const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
     const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     saveSpy.and.resolveTo();
     component.form.formGroup.get("name").setValue("some name");
 
@@ -95,7 +101,9 @@ describe("PublicFormComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(component.form, component.entity);
     tick();
-    expect(openSnackbarSpy).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith([
+      "/public-form/submission-success",
+    ]);
   }));
 
   it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
@@ -195,8 +203,62 @@ describe("PublicFormComponent", () => {
     expect(component.error).toBe("not_found");
   }));
 
-  function initComponent() {
-    TestBed.inject(EntityMapperService).save(testFormConfig);
+  it("should add a hidden field when a field in prefilledFields is not part of visible fields", fakeAsync(() => {
+    const config = new PublicFormConfig();
+    config.columns = [{ fields: [] }];
+    config.prefilledFields = [
+      {
+        id: "other",
+        defaultValue: { mode: "static", value: "default value" },
+        hideFromForm: true,
+      },
+    ];
+
+    initComponent(config);
+    tick();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+    expect(lastColumn?.fields).toContain(
+      jasmine.objectContaining({
+        id: "other",
+        defaultValue: { mode: "static", value: "default value" },
+        hideFromForm: true,
+      }),
+    );
+  }));
+
+  it("should update defaultValue for a field in prefilledFields that is already visible", fakeAsync(() => {
+    const config = new PublicFormConfig();
+    config.columns = [
+      {
+        fields: [
+          {
+            id: "other",
+            defaultValue: { mode: "static", value: "base default" },
+          },
+        ],
+      },
+    ];
+    config.prefilledFields = [
+      {
+        id: "other",
+        defaultValue: { mode: "static", value: "prefilled default" },
+        hideFromForm: true,
+      },
+    ];
+
+    initComponent(config);
+    tick();
+
+    expect(component.form.formGroup.get("other")).toHaveValue(
+      "prefilled default",
+    );
+  }));
+
+  function initComponent(config: PublicFormConfig = testFormConfig): void {
+    config.route = config.route ?? FORM_ID;
+    config.entity = config.entity ?? TestEntity.ENTITY_TYPE;
+    TestBed.inject(EntityMapperService).save(config);
     const configService = TestBed.inject(ConfigService);
     configService.entityUpdated.next(configService["currentConfig"]);
   }

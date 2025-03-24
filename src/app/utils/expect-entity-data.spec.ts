@@ -6,8 +6,8 @@ import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.
 /**
  * Run unit test expect to check that all given entities are indeed in the database.
  * @param expectedEntities array of expected Entity instances to be checked in the database
- * @param onlyExpected (Optional) if set to true, ensure that the expected entities are the only entities of that type in the database
  * @param ignoreId do not compare _id of entities, match only based on properties
+ * @param onlyExpected (Optional) if set to true, ensure that the expected entities are the only entities of that type in the database
  */
 export async function expectEntitiesToBeInDatabase(
   expectedEntities: Entity[],
@@ -45,7 +45,6 @@ export function expectEntitiesToMatch(
   // write arrays to console for easier debugging of complex mismatching objects
   console.log("expected objects", cleanExpected);
   console.log("actual objects", cleanActual);
-  console.log("Differences:");
   printDifferences("entities", cleanExpected, cleanActual);
 
   for (let i = 0; i < cleanExpected.length; i++) {

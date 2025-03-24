@@ -12,6 +12,7 @@ import {
 } from "@angular/forms";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../entity/model/entity";
+import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
@@ -62,7 +63,10 @@ describe("DynamicValidatorsService", () => {
       min: 9,
       pattern: "[a-z]*",
     };
-    const validators = service.buildValidators(config).validators;
+    const validators = service.buildValidators(
+      config,
+      new TestEntity(),
+    ).validators;
     expect(validators).toHaveSize(2);
     testValidator(validators[0], 10, 8);
     testValidator(validators[1], "ab", "1");
@@ -76,7 +80,10 @@ describe("DynamicValidatorsService", () => {
       validEmail: true,
       pattern: "foo",
     };
-    const validators = service.buildValidators(config).validators;
+    const validators = service.buildValidators(
+      config,
+      new TestEntity(),
+    ).validators;
     [
       [10, 8],
       [8, 11],
@@ -89,12 +96,15 @@ describe("DynamicValidatorsService", () => {
   });
 
   it("can generate a validator with custom message for patterns", () => {
-    const validators = service.buildValidators({
-      pattern: {
-        message: "M",
-        pattern: "[a-z]",
+    const validators = service.buildValidators(
+      {
+        pattern: {
+          message: "M",
+          pattern: "[a-z]",
+        },
       },
-    }).validators;
+      new TestEntity(),
+    ).validators;
     expect(validators).toHaveSize(1);
     const invalidForm = new UntypedFormControl("09");
     const validationErrors = validators[0](invalidForm);
@@ -111,7 +121,10 @@ describe("DynamicValidatorsService", () => {
     };
     mockedEntityMapper.loadType.and.resolveTo([new Entity("existing id")]);
 
-    const validators = service.buildValidators(config).asyncValidators;
+    const validators = service.buildValidators(
+      config,
+      new TestEntity(),
+    ).asyncValidators;
     await testValidator(validators[0], "Entity:new id", "Entity:existing id");
   });
 });

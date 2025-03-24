@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { PublicFormConfig } from "./public-form-config";
@@ -17,12 +16,16 @@ import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "../../core/entity-details/form/field-group";
 import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
-import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import {
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "app/core/common-components/entity-form/FormConfig";
 import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MarkdownPageModule } from "../markdown-page/markdown-page.module";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 @UntilDestroy()
 @Component({
@@ -47,7 +50,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   error: "not_found" | "no_permissions";
 
   constructor(
-    private database: PouchDatabase,
+    private databaseResolver: DatabaseResolverService,
     private route: ActivatedRoute,
     private entities: EntityRegistry,
     private entityMapper: EntityMapperService,
@@ -55,12 +58,12 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     private configService: ConfigService,
     private snackbar: MatSnackBar,
     private ability: EntityAbility,
+    private router: Router,
   ) {}
 
   ngOnInit() {
-    if (!this.database["pouchDB"]) {
-      this.database.initRemoteDB();
-    }
+    this.databaseResolver.initDatabasesForAnonymous();
+
     // wait for config to be initialized
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
@@ -70,7 +73,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   async submit() {
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.snackbar.open($localize`Successfully submitted form`);
+      this.router.navigate(["/public-form/submission-success"]);
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
         this.snackbar.open(
@@ -80,8 +83,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       }
       throw e;
     }
-
-    await this.initForm();
   }
 
   async reset() {
@@ -110,7 +111,46 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
     this.formConfig = migratePublicFormConfig(this.formConfig);
     this.fieldGroups = this.formConfig.columns;
+    this.handlePrefilledFields();
+
     await this.initForm();
+  }
+
+  private handlePrefilledFields() {
+    if (!this.formConfig.prefilledFields?.length) {
+      return;
+    }
+
+    this.formConfig.prefilledFields.forEach((item) => {
+      if (!item.id) {
+        return;
+      }
+
+      const newPrefilledField: FormFieldConfig = {
+        id: item.id,
+        defaultValue: item.defaultValue ?? null,
+        hideFromForm: item.hideFromForm ?? true,
+      };
+
+      const findField = (field) =>
+        field === item.id ||
+        (typeof field === "object" && field.id === item.id);
+      const fieldGroup = this.fieldGroups.find((group) =>
+        group.fields.some(findField),
+      );
+
+      if (fieldGroup) {
+        const fieldIndex = fieldGroup.fields.findIndex(findField);
+        const existingField: FormFieldConfig = toFormFieldConfig(
+          fieldGroup.fields[fieldIndex],
+        );
+        existingField.defaultValue = item.defaultValue;
+        fieldGroup.fields[fieldIndex] = existingField;
+      } else {
+        const lastColumn = this.formConfig.columns.at(-1);
+        lastColumn?.fields.push(newPrefilledField);
+      }
+    });
   }
 
   private async initForm() {

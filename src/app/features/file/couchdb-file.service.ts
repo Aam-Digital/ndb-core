@@ -17,11 +17,12 @@ import { Logging } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SyncStateSubject } from "../../core/session/session-type";
-import { SyncService } from "../../core/database/sync.service";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { SyncedPouchDatabase } from "app/core/database/pouchdb/synced-pouch-database";
 
 /**
  * Stores the files in the CouchDB.
@@ -30,14 +31,14 @@ import { NotAvailableOfflineError } from "../../core/session/not-available-offli
  */
 @Injectable()
 export class CouchdbFileService extends FileService {
-  private attachmentsUrl = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}-attachments`;
+  private attachmentsUrl = `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
   private cache: { [key: string]: Observable<string> } = {};
 
   constructor(
     private sanitizer: DomSanitizer,
-    private syncService: SyncService,
+    private databaseResolver: DatabaseResolverService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
     syncState: SyncStateSubject,
@@ -85,7 +86,12 @@ export class CouchdbFileService extends FileService {
    * @private
    */
   private ensureDocIsSynced(): Observable<SyncState> {
-    return from(this.syncService.sync()).pipe(map(() => this.syncState.value));
+    const mainDb = this.databaseResolver.getDatabase();
+    let sync: () => Promise<any> = (mainDb as SyncedPouchDatabase).sync
+      ? () => (mainDb as SyncedPouchDatabase).sync()
+      : () => Promise.resolve();
+
+    return from(sync()).pipe(map(() => this.syncState.value));
   }
 
   private getAttachmentsDocument(

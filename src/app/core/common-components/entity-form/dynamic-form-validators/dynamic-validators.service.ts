@@ -11,6 +11,9 @@ import {
 import { Logging } from "../../../logging/logging.service";
 import { uniqueIdValidator } from "../unique-id-validator/unique-id-validator";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { buildReadonlyValidator } from "./readonly-after-set.validator";
+import { Entity } from "../../../entity/model/entity";
+import { AsyncPromiseValidatorFn } from "./validator-types";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -57,6 +60,7 @@ export class DynamicValidatorsService {
   private getValidator(
     key: DynamicValidator,
     value: any,
+    entity: Entity,
   ):
     | { async?: false; fn: ValidatorFn }
     | {
@@ -81,6 +85,8 @@ export class DynamicValidatorsService {
         return value ? this.buildUniqueIdValidator(value) : null;
       case "required":
         return value ? { fn: Validators.required } : null;
+      case "readonlyAfterSet":
+        return value ? buildReadonlyValidator(entity) : null;
       default:
         Logging.warn(
           `Trying to generate validator ${key} but it does not exist`,
@@ -97,12 +103,16 @@ export class DynamicValidatorsService {
    * on the state of a Form Field.
    * If there is no Validator by a given name, issues a warning.
    * @param config The raw configuration object
+   * @param entity The entity that the form is editing
    * @example
    * >>> buildValidators({ required: true, max: 5 })
    * [ Validators.required, Validators.max(5) ]
    * @see ValidatorFn
    */
-  public buildValidators(config: FormValidatorConfig): FormControlOptions {
+  public buildValidators(
+    config: FormValidatorConfig,
+    entity: Entity,
+  ): FormControlOptions {
     const formControlOptions = {
       validators: [],
       asyncValidators: [],
@@ -112,6 +122,7 @@ export class DynamicValidatorsService {
       const validatorFn = this.getValidator(
         key as DynamicValidator,
         config[key],
+        entity,
       );
 
       if (validatorFn?.async) {
@@ -188,6 +199,8 @@ export class DynamicValidatorsService {
         return $localize`Please enter a valid number`;
       case "uniqueId":
         return validationValue;
+      case "readonlyAfterSet":
+        return validationValue;
       default:
         Logging.error(
           `No description defined for validator "${validator}": ${JSON.stringify(
@@ -213,7 +226,3 @@ export class DynamicValidatorsService {
     };
   }
 }
-
-export type AsyncPromiseValidatorFn = (
-  control: FormControl,
-) => Promise<ValidationErrors | null>;

@@ -13,13 +13,15 @@
       class="full-width"
       (click)="reportFeatureRequest()"
       [disabled]="requested"
-      i18n="
-        Feature Button|Indicates that the user needs this feature and can send a
-        feature-request
-      "
     >
       <fa-icon *ngIf="requested" aria-label="requested" icon="check"></fa-icon>
-      I need this feature
+      <span
+        i18n="
+          Feature Button|Indicates that the user needs this feature and can send
+          a feature-request
+        "
+        >I need this feature</span
+      >
     </button>
 
     <a

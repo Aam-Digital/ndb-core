@@ -49,7 +49,7 @@
   </mat-step>
 
   <!-- STEP 2: SELECT IMPORT TYPE -->
-  <mat-step [completed]="!!entityType" #step2>
+  <mat-step [completed]="!!importSettings.entityType" #step2>
     <ng-template matStepLabel>
       <div i18n="Import Step - import types">Select Import Type(s)</div>
 
@@ -58,7 +58,7 @@
         class="step-label-extra"
         i18n="Import Step - type - sub-label"
       >
-        as {{ entityType | entityTypeLabel }}
+        as {{ importSettings.entityType | entityTypeLabel }}
       </div>
     </ng-template>
 
@@ -78,30 +78,18 @@
       </div>
 
       <app-import-entity-type
-        [(entityType)]="entityType"
+        [(entityType)]="importSettings.entityType"
       ></app-import-entity-type>
 
-      <mat-expansion-panel [expanded]="additionalImportActions?.length > 0">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <span i18n>Advanced Import Actions [optional]</span>
-            <app-help-button
-              style="float: right"
-              text="In addition to creating new records directly for the imported data you can also define additional actions
-                    (e.g. to make all imported records members of an existing activity or group).
-                    This is an advanced functionality you do not have to use.
-                    If uncertain, please refer to the user guides, videos or support contact."
-              i18n-text="import - additional actions - help text"
-            >
-            </app-help-button>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
+      <app-import-additional-actions
+        [entityType]="importSettings.entityType"
+        [(importActions)]="importSettings.additionalActions"
+      ></app-import-additional-actions>
 
-        <app-import-additional-actions
-          [entityType]="entityType"
-          [(importActions)]="additionalImportActions"
-        ></app-import-additional-actions>
-      </mat-expansion-panel>
+      <app-import-match-existing
+        [entityType]="importSettings.entityType"
+        [(matchExistingByFields)]="importSettings.matchExistingByFields"
+      ></app-import-match-existing>
     </ng-template>
   </mat-step>
 
@@ -135,8 +123,8 @@
       </div>
 
       <app-import-column-mapping
-        [entityType]="entityType"
-        [columnMapping]="columnMapping"
+        [entityType]="importSettings.entityType"
+        [columnMapping]="importSettings.columnMapping"
         (columnMappingChange)="onColumnMappingUpdate($event)"
         [rawData]="rawData"
       ></app-import-column-mapping>
@@ -166,9 +154,10 @@
 
       <app-import-review-data
         [rawData]="rawData"
-        [entityType]="entityType"
-        [columnMapping]="columnMapping"
-        [additionalActions]="additionalImportActions"
+        [entityType]="importSettings.entityType"
+        [columnMapping]="importSettings.columnMapping"
+        [additionalActions]="importSettings.additionalActions"
+        [matchExistingByFields]="importSettings.matchExistingByFields"
         (importComplete)="onImportCompleted()"
       ></app-import-review-data>
     </ng-template>

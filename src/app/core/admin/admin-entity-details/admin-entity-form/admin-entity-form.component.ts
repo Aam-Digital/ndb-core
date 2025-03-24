@@ -66,6 +66,12 @@ export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   @Input() set config(value: FormConfig) {
+    if (value === this._config) {
+      // may be caused by two-way binding re-inputting the recently emitted change
+      // skip in this case
+      return;
+    }
+
     // assign default value and make a deep copy to avoid side effects
     if (!value) {
       value = { fieldGroups: [] };
@@ -202,6 +208,8 @@ export class AdminEntityFormComponent implements OnChanges {
     );
 
     const result = await lastValueFrom(dialogRef.afterClosed());
+    this.emitUpdatedConfig();
+
     return result;
   }
 

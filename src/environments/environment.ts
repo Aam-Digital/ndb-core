@@ -34,12 +34,15 @@ export const environment = {
 
   demo_mode: true,
   session_type: SessionType.mock,
-  account_url: "https://accounts.aam-digital.net",
+  account_url: "https://aam.localhost/accounts-backend",
   email: undefined,
 
-  /** Path for the reverse proxy that forwards to the database - configured in `proxy.conf.json` and `default.conf` */
+  /** Path for the reverse proxy that forwards to the database - configured in `default.conf` */
   DB_PROXY_PREFIX: "/db",
 
-  /** Name of the database that is used */
-  DB_NAME: "app",
+  /** Path for the reverse proxy that forwards to backend services APIs - configured in `default.conf` */
+  API_PROXY_PREFIX: "/api",
+
+  /** see FirebaseConfiguration and assets/firebase-config.json */
+  notificationsConfig: undefined,
 };
