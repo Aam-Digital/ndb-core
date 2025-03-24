@@ -1,10 +1,13 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
   OnChanges,
   Output,
+  QueryList,
   SimpleChanges,
+  ViewChildren,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
@@ -15,7 +18,9 @@ import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { AdminEntityFieldComponent } from "../admin-entity-field/admin-entity-field.component";
 import {
+  CdkDrag,
   CdkDragDrop,
+  CdkDropList,
   DragDropModule,
   moveItemInArray,
   transferArrayItem,
@@ -60,10 +65,13 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
     NgIf,
+    CdkDropList,
+    CdkDrag,
   ],
 })
-export class AdminEntityFormComponent implements OnChanges {
+export class AdminEntityFormComponent implements OnChanges, AfterViewInit {
   @Input() entityType: EntityConstructor;
+  @ViewChildren(CdkDropList) dropLists: QueryList<CdkDropList>;
 
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
@@ -128,6 +136,22 @@ export class AdminEntityFormComponent implements OnChanges {
     if (Object.hasOwn(changes, "config")) {
       await this.initForm();
     }
+  }
+
+  ngAfterViewInit() {
+    this.connectDropLists();
+    this.dropLists.changes.subscribe(() => this.connectDropLists());
+  }
+
+  private connectDropLists() {
+    const lists = this.dropLists.toArray();
+    const connectedLists = lists.filter((list) =>
+      list.element.nativeElement.classList.contains("connected-drop-list"),
+    );
+
+    connectedLists.forEach((list) => {
+      list.connectedTo = connectedLists.filter((l) => l !== list);
+    });
   }
 
   private async initForm() {
@@ -248,6 +272,10 @@ export class AdminEntityFormComponent implements OnChanges {
     }
 
     this.emitUpdatedConfig();
+  }
+
+  dropfieldGroups<E>(event: CdkDragDrop<E[], any>, fieldGroupsArray: E[]) {
+    moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
   }
 
   /**
