@@ -362,14 +362,18 @@ export class Entity {
    * Shallow copy of the entity.
    * The resulting entity will be of the same type as this
    * (taking into account subclassing)
+   *
+   * @param newId if true, a new entityId will be generated; if a string, that value is used as new entityId
    */
-  public copy(generateNewId: boolean = false): this {
+  public copy(newId: string | boolean = false): this {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);
 
-    if (generateNewId) {
+    if (newId) {
+      other.entityId = typeof newId === "string" ? newId : uuid();
       delete other._rev;
-      other.entityId = uuid();
+      delete other.created;
+      delete other.updated;
     }
 
     return other;

@@ -1,5 +1,6 @@
 import { environment } from "./environments/environment";
 import { Logging } from "./app/core/logging/logging.service";
+import { FirebaseConfiguration } from "./app/features/notification/notification-config.interface";
 
 /**
  * Overwrite environment settings with the settings from the `config.json` if present.
@@ -38,4 +39,27 @@ export async function initEnvironmentConfig() {
   }
 
   Object.assign(environment, config);
+
+  await initFirebaseConfigToEnvironment();
+}
+
+/**
+ * Load Push Notifications config for Firebase.
+ * Please add assets/firebase-config.json with your own Firebase config
+ */
+async function initFirebaseConfigToEnvironment() {
+  const FIREBASE_CONFIG_FILE = "assets/firebase-config.json";
+  let notificationsConfig: FirebaseConfiguration;
+
+  try {
+    const firebaseConfigResponse = await fetch(FIREBASE_CONFIG_FILE);
+    notificationsConfig = await firebaseConfigResponse.json();
+    if (typeof notificationsConfig !== "object") {
+      throw new Error("firebase-config.json must be an object");
+    }
+
+    environment.notificationsConfig = notificationsConfig;
+  } catch (err) {
+    Logging.debug("failed to load firebase-config.json", err);
+  }
 }

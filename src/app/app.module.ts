@@ -25,6 +25,7 @@ import {
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
+
 import { SessionModule } from "./core/session/session.module";
 import { LatestChangesModule } from "./core/ui/latest-changes/latest-changes.module";
 
@@ -90,6 +91,9 @@ import { TemplateExportModule } from "./features/template-export/template-export
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { SkillModule } from "./features/skill/skill.module";
 import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
+import { NotificationService } from "./features/notification/notification.service";
+import { AngularFireModule } from "@angular/fire/compat";
+import { FirebaseConfiguration } from "./features/notification/notification-config.interface";
 
 /**
  * Main entry point of the application.
@@ -141,6 +145,9 @@ import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty
     MatSnackBarModule,
     MatDialogModule,
     ApplicationLoadingComponent,
+    AngularFireModule.initializeApp(
+      environment.notificationsConfig as FirebaseConfiguration,
+    ),
   ],
   providers: [
     ...Logging.getAngularTracingProviders(),
@@ -173,6 +180,7 @@ import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
     APP_INITIALIZER_DEMO_DATA,
     provideHttpClient(withInterceptorsFromDi()),
+    NotificationService,
   ],
 })
 export class AppModule {

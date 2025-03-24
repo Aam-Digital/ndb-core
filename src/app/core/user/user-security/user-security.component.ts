@@ -215,6 +215,8 @@ export class UserSecurityComponent implements OnInit {
   }
 
   private triggerSyncReset() {
+    // TODO: does this need to be triggered for other CouchDBs as well?
+
     this.http
       .post(
         `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}/clear_local`,

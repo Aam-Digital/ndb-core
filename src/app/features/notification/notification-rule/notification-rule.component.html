@@ -1,0 +1,134 @@
+<form [formGroup]="form">
+  <mat-expansion-panel class="padding-regular">
+    <mat-expansion-panel-header style="height: fit-content">
+      <div
+        class="flex-row align-baseline gap-regular margin-right-large full-width"
+      >
+        <mat-form-field class="full-width-field flex-grow">
+          <mat-label
+            i18n
+            matTooltip="Give this notification rule a description to make it easier managing different notification types."
+            i18n-matTooltip
+          >
+            Notify me about
+          </mat-label>
+          <input
+            matInput
+            formControlName="label"
+            (keydown)="$event.stopPropagation()"
+          />
+        </mat-form-field>
+
+        <mat-slide-toggle
+          formControlName="enabled"
+          class="notification-toggle"
+          matTooltip='You can enable or disable rules to "pause" these notifications. You can also completely delete a rule below.'
+          i18n-matTooltip
+        ></mat-slide-toggle>
+      </div>
+    </mat-expansion-panel-header>
+
+    <div class="flex-column gap-regular">
+      <div>
+        <div class="flex-row align-center">
+          <strong i18n>Define Notification Criteria</strong>
+          <app-help-button
+            text="You can choose a notification based on the selected entity. For example, if you select 'task', you can create a notification for when a task is assigned to a user."
+            i18n-text
+          ></app-help-button>
+        </div>
+
+        <div class="flex-row">
+          <mat-form-field
+            class="full-width-field"
+            matTooltip="You cannot change the entity type once you have added conditions. Please first remove all conditions below."
+            i18n-matTooltip
+            [matTooltipDisabled]="!entityTypeControl.disabled"
+            matTooltipPositionAtOrigin
+            [matTooltipShowDelay]="500"
+          >
+            <mat-label i18n>Notify about changes for</mat-label>
+            <app-entity-type-select
+              formControlName="entityType"
+            ></app-entity-type-select>
+          </mat-form-field>
+          <app-help-button
+            text="Select the record type for which you want to get notified when data changes. For instance, choosing 'task' will enable notifications for newly created tasks in the system."
+            i18n-text
+          ></app-help-button>
+
+          <mat-form-field>
+            <mat-label i18n>Type of change</mat-label>
+
+            <mat-select formControlName="changeType" multiple>
+              <mat-option value="created" i18n>created</mat-option>
+              <mat-option value="updated" i18n>updated</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Conditions -->
+        <div class="flex-row flex-wrap gap-small align-center">
+          <em i18n
+            >Conditions currently have to be edited using the JSON Editor. We
+            will implement a visual UI here soon.</em
+          >
+          <button
+            mat-stroked-button
+            (click)="openConditionsInJsonEditorPopup()"
+            i18n
+          >
+            Open Conditions Editor
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-row gap-regular flex-wrap align-center">
+        <button
+          mat-stroked-button
+          color="warn"
+          (click)="removeNotificationRule.emit()"
+        >
+          <fa-icon icon="trash" class="standard-icon-with-text"></fa-icon>
+          <span i18n>Delete</span>
+        </button>
+
+        <button
+          mat-icon-button
+          matTooltip="Update Notification Condition via JSON editor"
+          i18n-matTooltip
+          (click)="openConditionsInJsonEditorPopup()"
+          [disabled]="!value.entityType"
+        >
+          <fa-icon icon="tools"></fa-icon>
+        </button>
+
+        <!-- TODO: re-enable selection of "per-rule notification channels or remove completely (currently hidden to simplify UX)
+        <mat-form-field class="flex-grow">
+          <mat-label
+            i18n
+            matTooltip="Define a notification method to receive notifications."
+            matTooltipPosition="above"
+            i18n-matTooltip
+            >Notification method(s)
+            <fa-icon icon="question-circle"></fa-icon>
+          </mat-label>
+
+          <mat-select
+            formControlName="channels"
+            multiple
+            placeholder="Choose notification channels"
+            i18n-placeholder="Notification Method Select placeholder"
+          >
+            @for (notificationMethod of notificationMethods; track $index) {
+              <mat-option [value]="notificationMethod.key">
+                {{ notificationMethod.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        -->
+      </div>
+    </div>
+  </mat-expansion-panel>
+</form>
