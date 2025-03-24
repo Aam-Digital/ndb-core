@@ -396,68 +396,6 @@
           <context context-type="linenumber">30,38</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2497404297115785767" datatype="html">
-        <source>days present</source>
-        <target>Tage anwesend</target>
-        <note priority="1" from="description">How many days a child was present</note>
-        <note priority="1" from="meaning">days present</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">46</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5517671597268327274" datatype="html">
-        <source>days absent</source>
-        <target>Tage abwesend</target>
-        <note priority="1" from="description">How many days a child was absent</note>
-        <note priority="1" from="meaning">days absent</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">57</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7723630947724387583" datatype="html">
-        <source>unknown status</source>
-        <target>Status unklar</target>
-        <note priority="1" from="description">How many days the presence or absence of a child is
-          unknown</note>
-        <note priority="1" from="meaning">days absent</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">71</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4789279733333067112" datatype="html">
-        <source>Total present</source>
-        <target>Summe anwesend</target>
-        <note priority="1" from="description">How many children were present</note>
-        <note priority="1" from="meaning">Total present</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">84</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5455238556719888052" datatype="html">
-        <source>Total absent</source>
-        <target>Summe abwesend</target>
-        <note priority="1" from="description">How many children were absent</note>
-        <note priority="1" from="meaning">Total absent</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">95</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="22966286471554890" datatype="html">
-        <source>Total unknown</source>
-        <target>Summe unklar</target>
-        <note priority="1" from="description">How many children have an unknown presence or absence
-          status</note>
-        <note priority="1" from="meaning">Total unknown</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
-          <context context-type="linenumber">109</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="3304972143698843178" datatype="html">
         <source>Event</source>
         <target>Event</target>
@@ -1897,7 +1835,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">63</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
@@ -2069,8 +2007,8 @@
           <context context-type="linenumber">16</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="59296737012024335" datatype="html">
@@ -2520,6 +2458,10 @@
           <context context-type="linenumber">14,16</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component.html</context>
+          <context context-type="linenumber">17,19</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/form/form.component.html</context>
           <context context-type="linenumber">10,12</context>
         </context-group>
@@ -2892,7 +2834,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">136,138</context>
+          <context context-type="linenumber">120,122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="436909138378324478" datatype="html">
@@ -3317,7 +3259,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">datatype-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/entity/entity.datatype.ts</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6711515265223487089" datatype="html">
@@ -3519,7 +3461,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="meaning">slider</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entities-table/entities-table.component.html</context>
-          <context context-type="linenumber">114,116</context>
+          <context context-type="linenumber">117,119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6863594440224190141" datatype="html">
@@ -5088,16 +5030,20 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target>Abbrechen</target>
         <note priority="1" from="description">Cancel button for forms</note>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/json-editor/json-editor-dialog/json-editor-dialog.component.html</context>
+          <context context-type="linenumber">20,22</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/form/form.component.html</context>
           <context context-type="linenumber">19,21</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">327,329</context>
+          <context context-type="linenumber">329,331</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">327,329</context>
+          <context context-type="linenumber">329,331</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.html</context>
@@ -5105,7 +5051,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">166,168</context>
+          <context context-type="linenumber">150,152</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
@@ -5389,11 +5335,11 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">285,287</context>
+          <context context-type="linenumber">286,288</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">285,287</context>
+          <context context-type="linenumber">286,288</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6660925946511264619" datatype="html">
@@ -5402,11 +5348,11 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">294,296</context>
+          <context context-type="linenumber">296,298</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">294,296</context>
+          <context context-type="linenumber">296,298</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3278358550418950949" datatype="html">
@@ -5415,11 +5361,11 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">303,305</context>
+          <context context-type="linenumber">305,307</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">303,305</context>
+          <context context-type="linenumber">305,307</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7532581571486706488" datatype="html">
@@ -5473,6 +5419,10 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
           <context context-type="linenumber">54</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6730892457505921539" datatype="html">
@@ -5722,7 +5672,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">delete account in keycloak related error title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-delete.service.ts</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8449716750838727041" datatype="html">
@@ -5731,7 +5681,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">delete account in keycloak related error dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-delete.service.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5611353616187282769" datatype="html">
@@ -5740,7 +5690,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Entity action confirmation message verb</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-edit.service.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8222817247365376056" datatype="html">
@@ -5811,8 +5761,8 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <source> Link all imported records to <x id="INTERPOLATION" equiv-text="{{ action.targetType | entityTypeLabel }}"/> </source>
         <target> Verlinke alle importierten Einträge zu <x id="INTERPOLATION" equiv-text="{{ action.type | entityTypeLabel }}"/> </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">13,15</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">33,35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6918624301819409780" datatype="html">
@@ -5820,24 +5770,24 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target> keine zusätzlichen Aktionen ausgewählt </target>
         <note priority="1" from="description">import additional actions</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">29,31</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">49,51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8473821892708857122" datatype="html">
         <source> Select an Import Target Type before defining additional actions. </source>
         <target> Wählen Sie einen Zieltyp bevor zusätzliche Aktionen definiert werden können. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">38,40</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">58,60</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7993462052811163222" datatype="html">
         <source> Add Action </source>
         <target> Aktion hinzufügen </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">72,74</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">92,94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3683326409419427569" datatype="html">
@@ -5868,7 +5818,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target> Werte-Zuweisung konfigurieren </target>
         <note priority="1" from="description">import - column mapping - configure additional transformation button</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/edit-import-column-mapping/edit-import-column-mapping.component.html</context>
+          <context context-type="sourcefile">src/app/core/import/import-column-mapping/edit-import-column-mapping/edit-import-column-mapping.component.html</context>
           <context context-type="linenumber">20,22</context>
         </context-group>
       </trans-unit>
@@ -5978,20 +5928,12 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5466619070073176207" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ item.ids.length }}"/> &quot;<x id="INTERPOLATION_1" equiv-text="{{ item.config.entityType | entityTypeLabel }}"/>&quot; records </source>
-        <target> <x id="INTERPOLATION" equiv-text="{{ item.ids.length }}"/> &quot;<x id="INTERPOLATION_1" equiv-text="{{ item.config.entityType | entityTypeLabel }}"/>&quot; Einträge </target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
-          <context context-type="linenumber">13,16</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="6375746665146474586" datatype="html">
         <source> imported by <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block         [entityId]=&quot;item.user&quot;         entityType=&quot;User&quot;         [linkDisabled]=&quot;true&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at {{"/> at <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </source>
         <target> importiert von <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block         [entityId]=&quot;item.user&quot;         entityType=&quot;User&quot;         [linkDisabled]=&quot;true&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at {{"/> am <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
-          <context context-type="linenumber">19,27</context>
+          <context context-type="linenumber">21,29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1410883264359200332" datatype="html">
@@ -6000,7 +5942,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Tooltip help text for button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2495971068574321561" datatype="html">
@@ -6008,7 +5950,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target> Einstellungen wiederverwenden </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
-          <context context-type="linenumber">41,43</context>
+          <context context-type="linenumber">43,45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="782355926217685536" datatype="html">
@@ -6016,7 +5958,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <target> Rückgängig machen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
-          <context context-type="linenumber">46,48</context>
+          <context context-type="linenumber">48,50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6876275807739561640" datatype="html">
@@ -6027,7 +5969,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Placeholder text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
-          <context context-type="linenumber">57,59</context>
+          <context context-type="linenumber">59,61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8201521085739699408" datatype="html">
@@ -6113,7 +6055,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         </context-group>
       </trans-unit>
       <trans-unit id="1009049791566744139" datatype="html">
-        <source> as <x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/> </source>
+        <source> as <x id="INTERPOLATION" equiv-text="{{ importSettings.entityType | entityTypeLabel }}"/> </source>
         <target> als <x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/> </target>
         <note priority="1" from="description">Import Step - type - sub-label</note>
         <context-group purpose="location">
@@ -6131,19 +6073,19 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">128,130</context>
+          <context context-type="linenumber">112,114</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">158,160</context>
+          <context context-type="linenumber">142,144</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2318206129072588787" datatype="html">
         <source>Advanced Import Actions [optional]</source>
         <target>Erweiterte Import Aktionen [optional]</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8655236304154513649" datatype="html">
@@ -6152,7 +6094,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Import Step - map columns</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7485506369297106816" datatype="html">
@@ -6161,7 +6103,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Import Step - map columns - sub-label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">121,123</context>
+          <context context-type="linenumber">105,107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5807588556271438398" datatype="html">
@@ -6170,7 +6112,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Import Step - review data</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">152,154</context>
+          <context context-type="linenumber">136,138</context>
         </context-group>
       </trans-unit>
       <trans-unit id="337608868269561556" datatype="html">
@@ -6179,7 +6121,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Import Reset Confirmation title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.ts</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5844699625713360175" datatype="html">
@@ -6188,7 +6130,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Import Reset Confirmation text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2277962201111023210" datatype="html">
@@ -6197,7 +6139,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">alert info after file load</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.ts</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.zeroRange" datatype="html">
@@ -6806,7 +6748,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Password reset disabled tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4363136589112981005" datatype="html">
@@ -6815,7 +6757,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">Password reset disabled tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8649524451172678551" datatype="html">
@@ -6881,6 +6823,14 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
           <context context-type="linenumber">96</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">194</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">203</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.html</context>
@@ -7000,6 +6950,10 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/coming-soon/coming-soon/coming-soon.component.html</context>
           <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">204</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2666994589784458982" datatype="html">
@@ -8960,11 +8914,11 @@ Lesen Sie die [Gesundheitsrichtlinien](https://example.com/guidelines), um detai
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">313,315</context>
+          <context context-type="linenumber">315,317</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">313,315</context>
+          <context context-type="linenumber">315,317</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.html</context>
@@ -9409,7 +9363,7 @@ Lesen Sie die [Gesundheitsrichtlinien](https://example.com/guidelines), um detai
         <note priority="1" from="description">Navigate to user profile page</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2949848596707725099" datatype="html">
@@ -9418,7 +9372,7 @@ Lesen Sie die [Gesundheitsrichtlinien](https://example.com/guidelines), um detai
         <note priority="1" from="description">Sign out of the app</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">106</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8874875360289253570" datatype="html">
@@ -9697,8 +9651,8 @@ Wenn Sie im Abschnitt &quot;Felder konfigurieren&quot; dieselben Felder hinzufü
         Falls Sie Fragen haben konsultieren Sie die Benutzungsanleitungen, Videos oder den Support.</target>
         <note priority="1" from="description">import - additional actions - help text</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
-          <context context-type="linenumber">93,97</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">10,14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="399391272249108022" datatype="html">
@@ -9714,24 +9668,24 @@ Wenn Sie im Abschnitt &quot;Felder konfigurieren&quot; dieselben Felder hinzufü
         <target>Alle importierten Daten verknüpfen mit: </target>
         <note priority="1" from="description">Label for linked entity type input</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">66,67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3438523043140289820" datatype="html">
         <source>for record</source>
         <target>für Datensatz</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">60</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4457142953029193050" datatype="html">
         <source> No special import actions are available for importing <x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel: true }}"/> records. </source>
         <target> Keine besonderen Aktionen für das Importieren von <x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel: true }}"/> Daten verfügbar. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">78,81</context>
+          <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional/import-additional-actions.component.html</context>
+          <context context-type="linenumber">98,101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4993042205844584733" datatype="html">
@@ -9739,7 +9693,7 @@ Wenn Sie im Abschnitt &quot;Felder konfigurieren&quot; dieselben Felder hinzufü
         <target>Importierte <x id="PH" equiv-text="sourceType.toString(true)"/> mit einer/m <x id="PH_1" equiv-text="targetType.toString()"/> verknüpfen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional.service.ts</context>
-          <context context-type="linenumber">318</context>
+          <context context-type="linenumber">317</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7678944712217496016" datatype="html">
@@ -9747,7 +9701,7 @@ Wenn Sie im Abschnitt &quot;Felder konfigurieren&quot; dieselben Felder hinzufü
         <target>Verknüpfte <x id="PH" equiv-text="sourceType.toString(true)"/> für diese/n <x id="PH_1" equiv-text="targetType.toString()"/> importieren</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional.service.ts</context>
-          <context context-type="linenumber">320</context>
+          <context context-type="linenumber">319</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7463715960858876246" datatype="html">
@@ -9756,15 +9710,15 @@ Wenn Sie im Abschnitt &quot;Felder konfigurieren&quot; dieselben Felder hinzufü
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">323,325</context>
+          <context context-type="linenumber">325,327</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">323,325</context>
+          <context context-type="linenumber">325,327</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
-          <context context-type="linenumber">68,70</context>
+          <context context-type="linenumber">70,72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="573566258842168651" datatype="html">
@@ -9796,7 +9750,7 @@ Wenn Sie im Abschnitt &quot;Felder konfigurieren&quot; dieselben Felder hinzufü
         <target> Die für die Zusammenführung ausgewählten Daten sind ungültig, bitte prüfen Sie die Felder in der &quot;Vorschau&quot; oben. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
-          <context context-type="linenumber">72,75</context>
+          <context context-type="linenumber">74,77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6730427428487082521" datatype="html">
@@ -9805,7 +9759,7 @@ Wenn Sie im Abschnitt &quot;Felder konfigurieren&quot; dieselben Felder hinzufü
         <note priority="1" from="description">Merge confirmation title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.ts</context>
-          <context context-type="linenumber">169</context>
+          <context context-type="linenumber">309</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8831770220083109942" datatype="html">
@@ -9816,7 +9770,7 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <note priority="1" from="description">Merge confirmation dialog with files/photos</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.ts</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">310</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2861956775897766690" datatype="html">
@@ -9827,7 +9781,7 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <note priority="1" from="description">Merge confirmation dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.ts</context>
-          <context context-type="linenumber">177</context>
+          <context context-type="linenumber">317</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4851954248025746714" datatype="html">
@@ -9836,7 +9790,7 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <note priority="1" from="description">Merge confirmation title</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.ts</context>
-          <context context-type="linenumber">180</context>
+          <context context-type="linenumber">320</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4484413856929103798" datatype="html">
@@ -9845,6 +9799,748 @@ Sind Sie sicher, dass Sie fortfahren möchten?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-service.ts</context>
           <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8432128597269269042" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ item.createdEntities.length }}"/> new, <x id="INTERPOLATION_1" equiv-text="{{ item.updatedEntities.length }}"/> updated &quot;<x id="INTERPOLATION_2" equiv-text="{{           item.config.entityType | entityTypeLabel         }}"/>&quot; records </source>
+        <target><x id="INTERPOLATION" equiv-text="{{ item.createdEntities.length }}"/> neue, <x id="INTERPOLATION_1" equiv-text="{{ item.updatedEntities.length }}"/> aktualisierte &quot;<x id="INTERPOLATION_2" equiv-text="{{ item.config.entityType | entityTypeLabel }}"/>&quot; Datensätze </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
+          <context context-type="linenumber">13,18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5662572551179920750" datatype="html">
+        <source> Import Status </source>
+        <target>Import-Status </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">31,33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8727233064229561894" datatype="html">
+        <source>We identified an existing record in the database that matches your imported data (based on the ID fields you selected in the previous step). The data of the record will be updated for the fields shown here in the preview.</source>
+        <target>Wir haben einen vorhandenen Datensatz in der Datenbank gefunden, der Ihren importierten Daten entspricht (basierend auf den ID-Feldern, die Sie im vorherigen Schritt ausgewählt haben). Die Daten des Datensatzes werden für die hier in der Vorschau angezeigten Felder aktualisiert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4871585862661997483" datatype="html">
+        <source> Updating </source>
+        <target> Aktualisiert </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">41,43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7414819980940434612" datatype="html">
+        <source>This previewed data will be added as a new record in the database.</source>
+        <target>Diese in der Vorschau angezeigten Daten werden als neuer Datensatz zur Datenbank hinzugefügt.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8667665916832796867" datatype="html">
+        <source>Creating</source>
+        <target>Neu</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4148006450341989648" datatype="html">
+        <source>Check/Update existing instead of creating new records</source>
+        <target>Vorhandene Datensätze prüfen/aktualisieren statt neue erstellen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/update-existing/import-match-existing/import-match-existing.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2904725676875151190" datatype="html">
+        <source>You can configure the system to match your imported data with existing records in the system.
+        If a match is found based on the fields you select here, the system will offer update the existing record instead of creating a new one.</source>
+        <target>Sie können das System so konfigurieren, dass Ihre importierten Daten mit vorhandenen Datensätzen im System abgeglichen werden.
+Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, bietet das System an, den vorhandenen Datensatz zu aktualisieren, anstatt einen neuen zu erstellen.</target>
+        <note priority="1" from="description">import - match existing - help text</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/update-existing/import-match-existing/import-match-existing.component.html</context>
+          <context context-type="linenumber">7,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="815955385622402762" datatype="html">
+        <source>Fields that identify a unique record</source>
+        <target>Felder, über die ein Datensatz eindeutig identifiziert wird</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/update-existing/import-match-existing/import-match-existing.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7682250920998673625" datatype="html">
+        <source>All selected fields have to be equal in an existing record and your imported column to match. </source>
+        <target>Alle ausgewählten Felder müssen in einem vorhandenen Datensatz und Ihrer importierten Spalte gleich sein, um einen bestehenden Eintrag zu aktualisieren. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/update-existing/import-match-existing/import-match-existing.component.html</context>
+          <context context-type="linenumber">23,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1767126880874807432" datatype="html">
+        <source>Days Present</source>
+        <target>Tage anwesend</target>
+        <note priority="1" from="description">How many days a child was present</note>
+        <note priority="1" from="meaning">days present</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3621046392410084840" datatype="html">
+        <source>Days Absent</source>
+        <target>Tage abwesend</target>
+        <note priority="1" from="description">How many days a child was absent</note>
+        <note priority="1" from="meaning">days absent</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1584610209586668131" datatype="html">
+        <source>Unknown Status</source>
+        <target>Unbekannter Status</target>
+        <note priority="1" from="description">How many days the presence or absence of a child is
+          unknown</note>
+        <note priority="1" from="meaning">unknown status</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5036234530940026403" datatype="html">
+        <source>Total Present</source>
+        <target>Gesamt anwesend</target>
+        <note priority="1" from="description">How many children were present</note>
+        <note priority="1" from="meaning">Total present</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="974263491487478801" datatype="html">
+        <source>Total Absent</source>
+        <target>Gesamt abwesend</target>
+        <note priority="1" from="description">How many children were absent</note>
+        <note priority="1" from="meaning">Total absent</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6383437280238802323" datatype="html">
+        <source>Total Unknown</source>
+        <target>Gesamt unbekannt</target>
+        <note priority="1" from="description">How many children have an unknown presence or absence
+          status</note>
+        <note priority="1" from="meaning">Total unknown</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/attendance/attendance-details/attendance-details.component.html</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1622181844113244655" datatype="html">
+        <source>Notification Settings</source>
+        <target>Benachrichtigungseinstellungen</target>
+        <note priority="1" from="description">User Profile - tab title</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7708270344948043036" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ notification.created?.at | notificationTime | async }}"/> </source>
+        <target> <x id="INTERPOLATION" equiv-text="{{ notification.created?.at | notificationTime | async }}"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-item/notification-item.component.html</context>
+          <context context-type="linenumber">21,23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="187187500641108332" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="notification.readStatus ? 'Read notification' : 'Unread notification'     }}"/></source>
+        <target><x id="INTERPOLATION" equiv-text="notification.readStatus ? 'Gelesen' : 'Ungelesen' }}"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-item/notification-item.component.html</context>
+          <context context-type="linenumber">29,32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1616968388083998795" datatype="html">
+        <source>Mark as read</source>
+        <target>Als gelesen markieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-item/notification-item.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4778071335193190633" datatype="html">
+        <source>Mark as unread</source>
+        <target>Als ungelesen markieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-item/notification-item.component.html</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1640056960239392380" datatype="html">
+        <source>Delete notification</source>
+        <target>Benachrichtigung löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-item/notification-item.component.html</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6171835321652677852" datatype="html">
+        <source>Give this notification rule a description to make it easier managing different notification types.</source>
+        <target>Geben Sie dieser Benachrichtigungsregel eine Beschreibung, um die Verwaltung verschiedener Benachrichtigungstypen zu vereinfachen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="595057067927295883" datatype="html">
+        <source> Notify me about </source>
+        <target> Benachrichtigen Sie mich über </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">12,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="573116660239272157" datatype="html">
+        <source>You can enable or disable rules to &quot;pause&quot; these notifications. You can also completely delete a rule below.</source>
+        <target>Sie können Regeln aktivieren oder deaktivieren, um diese Benachrichtigungen zu pausieren. Sie können unten auch eine Regel vollständig löschen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3872245108919755258" datatype="html">
+        <source>Define Notification Criteria</source>
+        <target>Benachrichtigungskriterien definieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1371234794543444523" datatype="html">
+        <source>You can choose a notification based on the selected entity. For example, if you select &apos;task&apos;, you can create a notification for when a task is assigned to a user.</source>
+        <target>Sie können eine Benachrichtigung basierend auf der ausgewählten Entität auswählen. Wenn Sie beispielsweise „Aufgabe“ auswählen, können Sie eine Benachrichtigung erstellen, wenn einem Benutzer eine Aufgabe zugewiesen wird.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3920788737562325196" datatype="html">
+        <source>You cannot change the entity type once you have added conditions. Please first remove all conditions below.</source>
+        <target>Sie können den Entitätstyp nicht mehr ändern, nachdem Sie Bedingungen hinzugefügt haben. Entfernen Sie zunächst alle unten aufgeführten Bedingungen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5614192293528803739" datatype="html">
+        <source>Notify about changes for</source>
+        <target>Benachrichtigen über Änderungen für</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8497210801121387454" datatype="html">
+        <source>Select the record type for which you want to get notified when data changes. For instance, choosing &apos;task&apos; will enable notifications for newly created tasks in the system.</source>
+        <target>Wählen Sie den Datensatztyp aus, für den Sie bei Änderungen benachrichtigt werden möchten. Wenn Sie beispielsweise „Aufgabe“ auswählen, werden Benachrichtigungen für neu erstellte Aufgaben im System aktiviert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2887223134201132589" datatype="html">
+        <source>Type of change</source>
+        <target>Art der Änderung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5460881514602921001" datatype="html">
+        <source>created</source>
+        <target>neu erstellt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2847261689301738134" datatype="html">
+        <source>updated</source>
+        <target>aktualisiert</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1561207217222709383" datatype="html">
+        <source>Conditions currently have to be edited using the JSON Editor. We will implement a visual UI here soon.</source>
+        <target>Bedingungen müssen aktuell im JSON-Editor bearbeitet werden. Wir werden hier in Zukunft eine visuelle Benutzeroberfläche implementieren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">73,74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3730816294738124737" datatype="html">
+        <source> Open Conditions Editor </source>
+        <target> Bedingungs-Editor öffnen </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">80,82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="388773612994986939" datatype="html">
+        <source>Update Notification Condition via JSON editor</source>
+        <target>Aktualisieren Sie die Benachrichtigungsbedingung über den JSON-Editor</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-rule/notification-rule.component.html</context>
+          <context context-type="linenumber">98</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2335219158796507825" datatype="html">
+        <source>Notifications Settings</source>
+        <target>Benachrichtigungseinstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5340498219129349698" datatype="html">
+        <source> Notifications alert you to important system events, such as new registrations via public forms or tasks assigned to you. They appear in the toolbar and can be sent via email or push notifications. </source>
+        <target>Benachrichtigungen informieren Sie über wichtige Systemereignisse, wie z. B. Neuanmeldungen über öffentliche Formulare oder Ihnen zugewiesene Aufgaben. Sie erscheinen in der Symbolleiste und können per E-Mail oder Push-Benachrichtigung versendet werden. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">3,7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4841295803902609109" datatype="html">
+        <source>You are currently offline.</source>
+        <target>Sie sind derzeit offline.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="839454416155110142" datatype="html">
+        <source> Please reconnect to the internet to activate. We could not check if this feature is enabled for your system. </source>
+        <target> Bitte stellen Sie eine Internetverbindung her. Wir konnten nicht überprüfen, ob diese Funktion für Ihr System aktiviert ist. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">13,16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5657007278337384532" datatype="html">
+        <source>This feature is currently not enabled for your system.</source>
+        <target>Diese Funktion ist derzeit für Ihr System nicht aktiviert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7484952008819482551" datatype="html">
+        <source>Please contact your system administrator to enable it.</source>
+        <target>Bitte wenden Sie sich zur Aktivierung an Ihren Systemadministrator.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4952995794247665884" datatype="html">
+        <source> If Notification API has been enabled and you are still seeing this message, there may be an issue with your internet connection or a temporary technical issue on the server. If this persists, please also contact your administrator. </source>
+        <target>Wenn die Benachrichtigungs-API aktiviert ist und diese Meldung weiterhin angezeigt wird, liegt möglicherweise ein Problem mit Ihrer Internetverbindung oder ein vorübergehendes technisches Problem auf dem Server vor. Sollte dies weiterhin bestehen, wenden Sie sich bitte an Ihren Administrator. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">20,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5413618350676964903" datatype="html">
+        <source> Checking if this feature is enabled for your system. This may take a few seconds. </source>
+        <target>Es wird überprüft, ob diese Funktion für Ihr System aktiviert ist. Dies kann einige Sekunden dauern. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">35,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3192389074334932058" datatype="html">
+        <source><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="rong&gt;"/>What notifications you receive<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/></source>
+        <target><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="rong&gt;"/>Welche Benachrichtigungen Sie erhalten<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">48,50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4143359484380110691" datatype="html">
+        <source> Define rules for events that you want to get notifications for. You can add as many different rules as you want and disable some temporarily to pause these notifications. </source>
+        <target>Definieren Sie Regeln für Ereignisse, für die Sie Benachrichtigungen erhalten möchten. Sie können beliebig viele Regeln hinzufügen und einige vorübergehend deaktivieren, um diese Benachrichtigungen zu pausieren. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">50,54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4518659109156428915" datatype="html">
+        <source>Define another type of notifications for your user account</source>
+        <target>Definieren Sie einen anderen Benachrichtigungstyp für Ihr Benutzerkonto</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7779859057193480599" datatype="html">
+        <source>Add new notification rule</source>
+        <target>Neue Benachrichtigungsregel hinzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1400147328363601102" datatype="html">
+        <source>Push notifications are enabled. You’ll receive real-time updates for important activities.</source>
+        <target>Push-Benachrichtigungen sind aktiviert. Sie erhalten Echtzeit-Updates zu wichtigen Aktivitäten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">99</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2455631196031742891" datatype="html">
+        <source>Push notifications are disabled. Turn them on in settings to also receive alerts outside of the app.</source>
+        <target>Push-Benachrichtigungen sind deaktiviert. Aktivieren Sie sie in den Einstellungen, um auch außerhalb der App Benachrichtigungen zu erhalten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7193930492633515632" datatype="html">
+        <source> Notifications are always visible through the bell icon in the toolbar at the top of the application. You can enable other ways to get notifications sent to you below. </source>
+        <target>Benachrichtigungen sind immer über das Glockensymbol in der Symbolleiste oben in der Anwendung sichtbar. Sie können unten weitere Möglichkeiten zum Erhalt von Benachrichtigungen aktivieren. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">116,120</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="200424054360142817" datatype="html">
+        <source> Push notifications are currently not supported by your Browser. </source>
+        <target>Push-Benachrichtigungen werden derzeit von Ihrem Browser nicht unterstützt. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">125,127</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="188782366693384177" datatype="html">
+        <source> Please contact your system administrator for more information. </source>
+        <target>Für weitere Informationen wenden Sie sich bitte an Ihren Systemadministrator. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">128,130</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6243335407677922860" datatype="html">
+        <source> If you using iOS, you need to add the app to your Homescreen. You can use the &quot;Install App&quot; button in the menu to do this. </source>
+        <target>Wenn Sie iOS verwenden, müssen Sie die App zu Ihrem Homescreen hinzufügen. Nutzen Sie dazu den Button &quot;App installieren&quot; im Menü. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">131,134</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5855712980171403039" datatype="html">
+        <source>Browser</source>
+        <target>Browser</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">142</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8170386907280460572" datatype="html">
+        <source>Notification Center (in app)</source>
+        <target>Benachrichtigungscenter (in der App)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">153</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3117110618567022749" datatype="html">
+        <source>Click the bell icon in the top toolbar to access notifications any time. You can find all messages, including read ones, there.</source>
+        <target>Klicken Sie auf das Glockensymbol in der oberen Symbolleiste, um jederzeit auf Benachrichtigungen zuzugreifen. Dort finden Sie alle Nachrichten, auch bereits gelesene.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">155</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8152207330358684262" datatype="html">
+        <source>Push notifications</source>
+        <target>Push-Benachrichtigungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">168</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5254839394853572699" datatype="html">
+        <source>A notification on your system (e.g. a normal Android smartphone notification). You see these alerts even when your app is not opened at the moment.</source>
+        <target>Eine Benachrichtigung auf Ihrem System (z. B. eine normale Android-Smartphone-Benachrichtigung). Sie sehen diese Benachrichtigungen auch, wenn Ihre App gerade nicht geöffnet ist.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">170</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="220423849517898736" datatype="html">
+        <source>Show a sample notification (only available if push notifications are enabled)</source>
+        <target>Beispielbenachrichtigung anzeigen (nur verfügbar, wenn Push-Benachrichtigungen aktiviert sind)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">179</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6923125800271447938" datatype="html">
+        <source>Test Notification</source>
+        <target>Testbenachrichtigung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">186</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6999023508738940307" datatype="html">
+        <source>Initial notification settings created and saved.</source>
+        <target>Erste Benachrichtigungseinstellungen erstellt und gespeichert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
+          <context context-type="linenumber">142</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2697874063201718403" datatype="html">
+        <source>Delete notification rule</source>
+        <target>Benachrichtigungsregel löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
+          <context context-type="linenumber">195</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3173500569851728935" datatype="html">
+        <source>Are you sure you want to remove this notification rule?</source>
+        <target>Möchten Sie diese Benachrichtigungsregel wirklich entfernen?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
+          <context context-type="linenumber">196</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9181790066849638690" datatype="html">
+        <source>a new Child being registered</source>
+        <target>neues Kind registriert</target>
+        <note priority="1" from="description">Default notification rule label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
+          <context context-type="linenumber">222</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2949628569044050352" datatype="html">
+        <source>Tasks assigned to me</source>
+        <target>Mir zugewiesene Aufgabe</target>
+        <note priority="1" from="description">Default notification rule label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
+          <context context-type="linenumber">230</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5449135813027171237" datatype="html">
+        <source>Notes involving me</source>
+        <target>Notiz, die mich betrifft</target>
+        <note priority="1" from="description">Default notification rule label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
+          <context context-type="linenumber">238</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3768499663881435063" datatype="html">
+        <source>Just Now</source>
+        <target>Jetzt</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-time.pipe.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3464679916090066488" datatype="html">
+        <source><x id="PH" equiv-text="minutes"/>m</source>
+        <target><x id="PH" equiv-text="Minuten"/>min</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-time.pipe.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1937318758717606227" datatype="html">
+        <source><x id="PH" equiv-text="hours"/>h ago</source>
+        <target>vor <x id="PH" equiv-text="hours"/> Stunden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-time.pipe.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4498682414491138092" datatype="html">
+        <source>Yesterday</source>
+        <target>Gestern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-time.pipe.ts</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1398510920250838994" datatype="html">
+        <source><x id="PH" equiv-text="days"/>d ago</source>
+        <target>vor <x id="PH" equiv-text="days"/> Tagen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-time.pipe.ts</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-time.pipe.ts</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5851560788527570644" datatype="html">
+        <source>Notifications</source>
+        <target>Benachrichtigungen</target>
+        <note priority="1" from="description">notifications toolbar icon tooltip</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1616102757855967475" datatype="html">
+        <source>All</source>
+        <target>Alle</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5339845689623432357" datatype="html">
+        <source>Unread</source>
+        <target>Ungelesen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7113697339360672469" datatype="html">
+        <source> Activate Notifications </source>
+        <target>Benachrichtigungen aktivieren </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">55,57</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5568118438145129447" datatype="html">
+        <source>You have no notifications</source>
+        <target>Sie haben keine Benachrichtigungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2333314224059826550" datatype="html">
+        <source>Mark all as read</source>
+        <target>Alle als gelesen markieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">96</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="459846565670024354" datatype="html">
+        <source>Notification settings</source>
+        <target>Benachrichtigungseinstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4072979024240324393" datatype="html">
+        <source>Please enable notification permissions to receive important updates.</source>
+        <target>Bitte aktivieren Sie die Benachrichtigungsberechtigungen, um wichtige Updates zu erhalten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.service.ts</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3899189674379942631" datatype="html">
+        <source>Device registered for push notifications.</source>
+        <target>Für Push-Benachrichtigungen registriertes Gerät.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.service.ts</context>
+          <context context-type="linenumber">99</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="587497779526105984" datatype="html">
+        <source>Could not register device in aam-digital backend. Push notifications will not work. Please try to disable and enable again.</source>
+        <target>Das Gerät konnte nicht im aam-digital-Backend registriert werden. Push-Benachrichtigungen funktionieren nicht. Bitte versuchen Sie, die Funktion zu deaktivieren und erneut zu aktivieren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.service.ts</context>
+          <context context-type="linenumber">109</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4624037277827474507" datatype="html">
+        <source>User has rejected the authorisation request.</source>
+        <target>Der Benutzer hat die Autorisierungsanfrage abgelehnt.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.service.ts</context>
+          <context context-type="linenumber">120</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4213290337960002106" datatype="html">
+        <source>Could not unregister device from firebase.</source>
+        <target>Die Registrierung des Geräts konnte nicht abgeschlossen werden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.service.ts</context>
+          <context context-type="linenumber">174</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2407583477134455772" datatype="html">
+        <source>Device un-registered for push notifications.</source>
+        <target>Gerät für Push-Benachrichtigungen abgemeldet.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.service.ts</context>
+          <context context-type="linenumber">185</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7774161699736482155" datatype="html">
+        <source>Error trying to send test notification. If this error persists, please try to disable and enable &quot;push notifications&quot; again.</source>
+        <target>Beim Senden der Testbenachrichtigung ist ein Fehler aufgetreten. Sollte der Fehler weiterhin bestehen, deaktivieren und aktivieren Sie die Push-Benachrichtigungen erneut.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.service.ts</context>
+          <context context-type="linenumber">244</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2003051119485827390" datatype="html">
+        <source>Where you receive notifications</source>
+        <target>Wo Benachrichtigungen empfangen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">95</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6151416851572883297" datatype="html">
+        <source> Enabled </source>
+        <target> Aktiviert </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">102,104</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6197665339164385071" datatype="html">
+        <source> Disabled </source>
+        <target> Deaktiviert </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.html</context>
+          <context context-type="linenumber">111,113</context>
         </context-group>
       </trans-unit>
     </body>
