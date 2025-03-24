@@ -55,7 +55,7 @@ export class JsonEditorComponent
     if ("json" in updatedContent) {
       this.handleJSONChange(updatedContent.json as object);
     }
-    if ("text" in updatedContent && updatedContent.text) {
+    if ("text" in updatedContent) {
       this.handleTextChange(updatedContent.text);
     }
   }
