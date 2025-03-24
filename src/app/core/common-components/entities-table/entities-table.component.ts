@@ -1,8 +1,11 @@
 import {
+  AfterContentInit,
   Component,
+  ContentChildren,
   EventEmitter,
   Input,
   Output,
+  QueryList,
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -22,7 +25,12 @@ import {
   Sort,
   SortDirection,
 } from "@angular/material/sort";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import {
+  MatColumnDef,
+  MatTable,
+  MatTableDataSource,
+  MatTableModule,
+} from "@angular/material/table";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -68,7 +76,9 @@ import { TableRow } from "./table-row";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity> {
+export class EntitiesTableComponent<T extends Entity>
+  implements AfterContentInit
+{
   @Input() set records(value: T[]) {
     if (!value) {
       return;
@@ -85,6 +95,16 @@ export class EntitiesTableComponent<T extends Entity> {
   /** data displayed in the template's table */
   recordsDataSource: MatTableDataSource<TableRow<T>>;
   isLoading: boolean = true;
+
+  @ViewChild(MatTable, { static: true }) table: MatTable<T>;
+  @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
+
+  ngAfterContentInit() {
+    // dynamically add columns from content-projection (https://stackoverflow.com/a/58017564/1473411)
+    this.projectedColumns.forEach((columnDef) =>
+      this.table.addColumnDef(columnDef),
+    );
+  }
 
   /**
    * Additional or overwritten field configurations for columns

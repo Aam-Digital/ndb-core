@@ -1,0 +1,23 @@
+@use "../../../../styles/variables/breakpoints";
+@use "variables/sizes";
+
+.full-width {
+  width: 100%;
+}
+
+.full-width-field {
+  @extend .full-width;
+  display: inline-block;
+
+  ::ng-deep mat-form-field {
+    @extend .full-width;
+  }
+}
+
+
+.new-rule-condition-button {
+  background-color: transparent;
+  padding: sizes.$regular sizes.$large;
+  cursor: pointer;
+  border-radius: sizes.$large;
+}
