@@ -113,10 +113,10 @@ describe("BulkMergeService", () => {
     const note2 = new Note("note2");
     note2.addChild(child2);
 
-    await entityMapper.saveAll([note1, note2]);
-
     const attendance = new EventAttendance();
     (note2 as any).childrenAttendance.set(child2.getId(), attendance);
+
+    await entityMapper.saveAll([note1, note2]);
 
     const mergedEntity = TestEntity.create({ ...child1, name: "A1" });
     await service.executeMerge(mergedEntity, [child1, child2]);
