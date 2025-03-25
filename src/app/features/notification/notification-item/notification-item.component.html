@@ -24,15 +24,21 @@
   </div>
 
   <!-- Blue indicator for unread/read notifications -->
-  <span
-    [ngClass]="notification.readStatus ? 'read-indicator' : 'unread-indicator'"
-    matTooltip="{{
-      notification.readStatus ? 'Read notification' : 'Unread notification'
-    }}"
-    i18n-matTooltip
-    [matMenuTriggerFor]="actionsMenu"
-    #actionsMenuTrigger="matMenuTrigger"
-  ></span>
+  <span [matMenuTriggerFor]="actionsMenu" #actionsMenuTrigger="matMenuTrigger">
+    @if (notification.readStatus) {
+      <span
+        class="read-indicator"
+        matTooltip="Read notification"
+        i18n-matTooltip
+      ></span>
+    } @else {
+      <span
+        class="unread-indicator"
+        matTooltip="Unread notification"
+        i18n-matTooltip
+      ></span>
+    }
+  </span>
 
   <mat-menu #actionsMenu="matMenu">
     <div (click)="closeOnlySubmenu(actionsMenuTrigger, $event)">
