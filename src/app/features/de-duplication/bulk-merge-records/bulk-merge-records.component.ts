@@ -77,13 +77,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.fieldsToMerge,
       this.mergedEntity,
     );
-    for (let [key, control] of Object.entries(
-      this.mergeForm.formGroup.controls,
-    )) {
+    for (let [key] of Object.entries(this.mergeForm.formGroup.controls)) {
       this.existingFieldSelected[key] = [false, false];
-      this.subscribeFieldChangesToUpdateSelectionMarkers(control, key);
     }
-    this.setFieldDisabledProperty();
   }
 
   private initFieldsToMerge(): void {
@@ -112,13 +108,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       }
     });
   }
-  private setFieldDisabledProperty(): void {
-    for (const field of this.fieldsToMerge) {
-      this.isFieldDisabled[field.id] = this.entitiesToMerge.map(
-        (entity) => !this.hasValue(entity[field.id]),
-      );
-    }
-  }
 
   private allowsMultiValueMerge(field?: FormFieldConfig): boolean {
     return (
@@ -139,59 +128,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       (Array.isArray(value) && value.length === 0) ||
       value === false
     );
-  }
-
-  private subscribeFieldChangesToUpdateSelectionMarkers(
-    control: AbstractControl,
-    fieldKey: string,
-  ): void {
-    const fieldConfig = this.fieldsToMerge.find((f) => f.id === fieldKey);
-
-    control.valueChanges.subscribe((newValue) => {
-      for (let i = 0; i < this.entitiesToMerge.length; i++) {
-        this.updateSelectedStatus(fieldConfig, newValue, i);
-      }
-    });
-  }
-
-  private updateSelectedStatus(
-    fieldConfig: MergeField,
-    newValue: any,
-    entityIndex: number,
-  ) {
-    if (this.isFieldDisabled[fieldConfig.id][entityIndex]) {
-      this.existingFieldSelected[fieldConfig.id][entityIndex] = false;
-      return;
-    }
-
-    let isChecked: boolean;
-    let existingEntityValue = this.entitiesToMerge[entityIndex][fieldConfig.id];
-
-    if (fieldConfig.isArray) {
-      // all existingEntityValues must be in newValue
-      isChecked = existingEntityValue.every((e) =>
-        (newValue ?? []).some((n) => JSON.stringify(n) === JSON.stringify(e)),
-      );
-    } else if (fieldConfig.allowsMultiValueMerge) {
-      // string merge: text should be included in newValue
-      isChecked = (newValue ?? ("" as string)).includes(existingEntityValue);
-    } else {
-      // single value fields
-      isChecked =
-        JSON.stringify(newValue) === JSON.stringify(existingEntityValue);
-    }
-
-    this.existingFieldSelected[fieldConfig.id][entityIndex] = isChecked;
-  }
-
-  /**
-   * Apply a value from one of the existing entities to the merge preview
-   */
-  updateMergePreviewValue(fieldId: string, newValue: any): void {
-    const control = this.mergeForm.formGroup.get(fieldId);
-    if (control) {
-      control.patchValue(newValue);
-    }
   }
 
   async confirmAndMergeRecords(): Promise<boolean> {

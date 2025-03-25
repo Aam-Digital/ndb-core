@@ -24,13 +24,23 @@ import { MergeField } from "../bulk-merge-records.component";
 export class MergeFieldsComponent implements OnInit {
   @Input() field!: MergeField;
   @Input() entities!: Entity[];
-  @Input() existingSelected!: boolean[];
-  @Input() isDisabled!: boolean[];
   @Input() control!: AbstractControl;
   @Output() valueChanged = new EventEmitter<any>();
+  existingSelected: boolean[] = [];
+  isDisabled: boolean[] = [];
 
   ngOnInit() {
     this.setInitialFieldState();
+    this.setFieldDisabledProperty();
+    this.updateSelectedStatus(this.control.value);
+
+    this.control.valueChanges.subscribe((newValue) => {
+      this.updateSelectedStatus(newValue);
+      const control = this.control.get(this.field.id);
+      if (control) {
+        control.patchValue(newValue);
+      }
+    });
   }
 
   private setInitialFieldState(): void {
@@ -71,6 +81,30 @@ export class MergeFieldsComponent implements OnInit {
     return currentValue;
   }
 
+  private setFieldDisabledProperty(): void {
+    this.isDisabled = this.entities.map(
+      (entity) => !this.hasValue(entity[this.field.id]),
+    );
+  }
+
+  private updateSelectedStatus(currentValue: any): void {
+    this.existingSelected = this.entities.map((entity) =>
+      this.isValueSelected(currentValue, entity[this.field.id]),
+    );
+  }
+
+  private isValueSelected(currentValue: any, entityValue: any): boolean {
+    if (this.field.isArray) {
+      return entityValue?.every((e: any) =>
+        currentValue?.some((c: any) => JSON.stringify(c) === JSON.stringify(e)),
+      );
+    } else if (this.field.allowsMultiValueMerge) {
+      return (currentValue ?? "").includes(entityValue);
+    } else {
+      return JSON.stringify(currentValue) === JSON.stringify(entityValue);
+    }
+  }
+
   private areValuesIdentical(a: any, b: any): boolean {
     return JSON.stringify(a) === JSON.stringify(b);
   }
@@ -101,7 +135,7 @@ export class MergeFieldsComponent implements OnInit {
       );
     }
 
-    this.valueChanged.emit(newValue);
+    this.control.setValue(newValue);
   }
 
   private getMergedArrayValue(

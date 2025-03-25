@@ -14,10 +14,7 @@
         <app-merge-fields
           [field]="field"
           [entities]="entitiesToMerge"
-          [existingSelected]="existingFieldSelected[field.id]"
-          [isDisabled]="isFieldDisabled[field.id]"
           [control]="mergeForm.formGroup.get(field.id)"
-          (valueChanged)="updateMergePreviewValue(field.id, $event)"
         >
         </app-merge-fields>
 
