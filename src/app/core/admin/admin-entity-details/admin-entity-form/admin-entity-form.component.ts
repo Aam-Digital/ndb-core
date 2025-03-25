@@ -149,7 +149,10 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   getConnectedGroups(): string[] {
-    return this.config.fieldGroups.map((_, index) => `group-${index}`);
+    return [
+      ...this.config.fieldGroups.map((_, index) => `group-${index}`),
+      "newGroupDropArea",
+    ];
   }
 
   /**
