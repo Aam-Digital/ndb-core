@@ -44,12 +44,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   fieldsToMerge: FormFieldConfig[] = [];
   mergeForm: EntityForm<E>;
 
-  /**
-   * holds for each fieldId an array whether each existing entity is "selected" (i.e. included in the merge),
-   * used to show radio buttons in the UI
-   */
-  existingFieldSelected: Record<string, boolean[]> = {};
-
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
 
