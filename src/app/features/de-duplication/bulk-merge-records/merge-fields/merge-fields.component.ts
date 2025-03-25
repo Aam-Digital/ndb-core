@@ -34,7 +34,6 @@ export class MergeFieldsComponent implements OnInit {
     this.initializeFieldState();
     this.control?.valueChanges.subscribe((newValue) => {
       this.updateSelectedStatus(newValue);
-      this.control?.patchValue(newValue, { emitEvent: false });
     });
   }
 
