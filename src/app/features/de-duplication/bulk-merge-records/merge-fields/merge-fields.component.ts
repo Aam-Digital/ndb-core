@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { Entity } from "app/core/entity/model/entity";
 import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
@@ -25,7 +25,6 @@ export class MergeFieldsComponent implements OnInit {
   @Input() field!: FormFieldConfig;
   @Input() entities!: Entity[];
   @Input() control!: AbstractControl;
-  @Output() valueChanged = new EventEmitter<any>();
 
   existingSelected: boolean[] = [];
   isDisabled: boolean[] = [];
@@ -35,10 +34,7 @@ export class MergeFieldsComponent implements OnInit {
     this.initializeFieldState();
     this.control?.valueChanges.subscribe((newValue) => {
       this.updateSelectedStatus(newValue);
-      const control = this.control.get(this.field.id);
-      if (control) {
-        control.patchValue(newValue);
-      }
+      this.control?.patchValue(newValue, { emitEvent: false });
     });
   }
 
