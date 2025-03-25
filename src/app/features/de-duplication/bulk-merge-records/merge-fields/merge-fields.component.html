@@ -1,5 +1,5 @@
 @for (entity of entities; track entity; let i = $index) {
-  @if (field.allowsMultiValueMerge) {
+  @if (allowsMultiValue) {
     <mat-checkbox
       [checked]="existingSelected[i]"
       (change)="selectExistingValue(i, $event.checked)"

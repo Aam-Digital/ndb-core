@@ -6,7 +6,7 @@ import { EntityFieldEditComponent } from "app/core/common-components/entity-fiel
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
 import { CommonModule } from "@angular/common";
-import { MergeField } from "../bulk-merge-records.component";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-merge-fields",
@@ -22,17 +22,17 @@ import { MergeField } from "../bulk-merge-records.component";
   styleUrls: ["./merge-fields.component.scss"],
 })
 export class MergeFieldsComponent implements OnInit {
-  @Input() field!: MergeField;
+  @Input() field!: FormFieldConfig;
   @Input() entities!: Entity[];
   @Input() control!: AbstractControl;
   @Output() valueChanged = new EventEmitter<any>();
+
   existingSelected: boolean[] = [];
   isDisabled: boolean[] = [];
+  allowsMultiValue: boolean = false;
 
   ngOnInit() {
-    this.setInitialFieldState();
-    this.setFieldDisabledProperty();
-    this.updateSelectedStatus(this.control.value);
+    this.initializeFieldState();
 
     this.control.valueChanges.subscribe((newValue) => {
       this.updateSelectedStatus(newValue);
@@ -43,16 +43,18 @@ export class MergeFieldsComponent implements OnInit {
     });
   }
 
-  private setInitialFieldState(): void {
-    if (this.entities) {
-      const [valueA, valueB] = this.entities?.map((e) => e[this.field.id]);
-      const initialValue = this.setSmartSelectedValue(
-        valueA,
-        valueB,
-        this.control.value,
-      );
-      this.control.setValue(initialValue);
-    }
+  private initializeFieldState(): void {
+    if (!this.entities?.length) return;
+
+    const [valueA, valueB] = this.entities.map((e) => e[this.field.id]);
+    this.control.setValue(
+      this.setSmartSelectedValue(valueA, valueB, this.control.value),
+    );
+    this.allowsMultiValue = this.allowsMultiValueMerge();
+    this.isDisabled = this.entities.map(
+      (entity) => !this.hasValue(entity[this.field.id]),
+    );
+    this.updateSelectedStatus(this.control.value);
   }
 
   /**
@@ -81,15 +83,11 @@ export class MergeFieldsComponent implements OnInit {
     return currentValue;
   }
 
-  private setFieldDisabledProperty(): void {
-    this.isDisabled = this.entities.map(
-      (entity) => !this.hasValue(entity[this.field.id]),
-    );
-  }
-
   private updateSelectedStatus(currentValue: any): void {
-    this.existingSelected = this.entities.map((entity) =>
-      this.isValueSelected(currentValue, entity[this.field.id]),
+    this.existingSelected = this.entities.map((entity, i) =>
+      this.isDisabled[i]
+        ? false
+        : this.isValueSelected(currentValue, entity[this.field.id]),
     );
   }
 
@@ -98,7 +96,7 @@ export class MergeFieldsComponent implements OnInit {
       return entityValue?.every((e: any) =>
         currentValue?.some((c: any) => JSON.stringify(c) === JSON.stringify(e)),
       );
-    } else if (this.field.allowsMultiValueMerge) {
+    } else if (this.allowsMultiValue) {
       return (currentValue ?? "").includes(entityValue);
     } else {
       return JSON.stringify(currentValue) === JSON.stringify(entityValue);
@@ -111,6 +109,14 @@ export class MergeFieldsComponent implements OnInit {
 
   private hasValue(value: any): boolean {
     return !!value || (Array.isArray(value) && value.length > 0);
+  }
+
+  private allowsMultiValueMerge(): boolean {
+    return (
+      this.field?.dataType === "string" ||
+      this.field?.dataType === "long-text" ||
+      this.field?.isArray
+    );
   }
 
   /*
@@ -127,7 +133,7 @@ export class MergeFieldsComponent implements OnInit {
         selectedValue,
         checked,
       );
-    } else if (this.field.allowsMultiValueMerge) {
+    } else if (this.allowsMultiValue) {
       newValue = this.getMergedStringValue(
         this.control.value,
         selectedValue,

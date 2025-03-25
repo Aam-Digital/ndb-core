@@ -16,11 +16,9 @@ import {
   EntityForm,
   EntityFormService,
 } from "app/core/common-components/entity-form/entity-form.service";
-import { AbstractControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MatError } from "@angular/material/form-field";
 import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
-
-export type MergeField = FormFieldConfig & { allowsMultiValueMerge: boolean };
 
 @Component({
   selector: "app-bulk-merge-records",
@@ -43,7 +41,7 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
-  fieldsToMerge: MergeField[] = [];
+  fieldsToMerge: FormFieldConfig[] = [];
   mergeForm: EntityForm<E>;
 
   /**
@@ -52,7 +50,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
    */
   existingFieldSelected: Record<string, boolean[]> = {};
 
-  isFieldDisabled: Record<string, boolean[]> = {};
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
 
@@ -77,9 +74,6 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       this.fieldsToMerge,
       this.mergedEntity,
     );
-    for (let [key] of Object.entries(this.mergeForm.formGroup.controls)) {
-      this.existingFieldSelected[key] = [false, false];
-    }
   }
 
   private initFieldsToMerge(): void {
@@ -103,18 +97,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
           );
         this.fieldsToMerge.push({
           ...formField,
-          allowsMultiValueMerge: this.allowsMultiValueMerge(formField),
         });
       }
     });
-  }
-
-  private allowsMultiValueMerge(field?: FormFieldConfig): boolean {
-    return (
-      field?.dataType === "string" ||
-      field?.dataType === "long-text" ||
-      field?.isArray
-    );
   }
 
   /**
