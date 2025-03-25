@@ -28,6 +28,7 @@
         [cdkDropListData]="group.fields"
         (cdkDropListDropped)="drop($event)"
         [cdkDropListConnectedTo]="getConnectedGroups()"
+        [cdkDropListDisabled]="isDisabled"
         class="fields-group-list drop-list"
       >
         <!-- FIELD [start] -->
@@ -101,7 +102,7 @@
       (cdkDropListDropped)="drop($event)"
       [cdkDropListData]="availableFields"
       [cdkDropListConnectedTo]="getConnectedGroups()"
-      class="drop-list connected-drop-list"
+      class="drop-list"
     >
       <div class="drop-area-hint">
         <em i18n="title for drag and drop section">hidden fields</em><br />

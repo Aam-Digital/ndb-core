@@ -15,9 +15,7 @@ import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { AdminEntityFieldComponent } from "../admin-entity-field/admin-entity-field.component";
 import {
-  CdkDrag,
   CdkDragDrop,
-  CdkDropList,
   DragDropModule,
   moveItemInArray,
   transferArrayItem,
@@ -62,12 +60,11 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
     NgIf,
-    CdkDropList,
-    CdkDrag,
   ],
 })
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
+
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
       // may be caused by two-way binding re-inputting the recently emitted change
@@ -344,7 +341,6 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
-    console.log("dropNewGroup", event);
     const newCol = { fields: [] };
     this.config.fieldGroups.push(newCol);
     event.container.data = newCol.fields;
