@@ -1,8 +1,4 @@
-<div
-  cdkDropListGroup
-  class="overall-container flex-row"
-  [class.disabled]="isDisabled"
->
+<div class="overall-container flex-row" [class.disabled]="isDisabled">
   <!-- FORM PREVIEW -->
   <div
     cdkDropList
@@ -28,10 +24,11 @@
 
       <div
         cdkDropList
+        [id]="'group-' + i"
         [cdkDropListData]="group.fields"
         (cdkDropListDropped)="drop($event)"
-        [cdkDropListDisabled]="isDisabled"
-        class="fields-group-list drop-list connected-drop-list"
+        [cdkDropListConnectedTo]="getConnectedGroups()"
+        class="fields-group-list drop-list"
       >
         <!-- FIELD [start] -->
         <div
@@ -102,6 +99,7 @@
       cdkDropList
       (cdkDropListDropped)="drop($event)"
       [cdkDropListData]="availableFields"
+      [cdkDropListConnectedTo]="getConnectedGroups()"
       class="drop-list connected-drop-list"
     >
       <div class="drop-area-hint">

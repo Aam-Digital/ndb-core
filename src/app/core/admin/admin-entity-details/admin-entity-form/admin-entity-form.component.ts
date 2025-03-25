@@ -1,13 +1,10 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Input,
   OnChanges,
   Output,
-  QueryList,
   SimpleChanges,
-  ViewChildren,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
@@ -69,10 +66,8 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
     CdkDrag,
   ],
 })
-export class AdminEntityFormComponent implements OnChanges, AfterViewInit {
+export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
-  @ViewChildren(CdkDropList) dropLists: QueryList<CdkDropList>;
-
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
       // may be caused by two-way binding re-inputting the recently emitted change
@@ -138,22 +133,6 @@ export class AdminEntityFormComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
-    this.connectDropLists();
-    this.dropLists.changes.subscribe(() => this.connectDropLists());
-  }
-
-  private connectDropLists() {
-    const lists = this.dropLists.toArray();
-    const connectedLists = lists.filter((list) =>
-      list.element.nativeElement.classList.contains("connected-drop-list"),
-    );
-
-    connectedLists.forEach((list) => {
-      list.connectedTo = connectedLists.filter((l) => l !== list);
-    });
-  }
-
   private async initForm() {
     this.initAvailableFields();
 
@@ -167,6 +146,10 @@ export class AdminEntityFormComponent implements OnChanges, AfterViewInit {
 
   private getUsedFields(config: FormConfig): ColumnConfig[] {
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
+  }
+
+  getConnectedGroups(): string[] {
+    return this.config.fieldGroups.map((_, index) => `group-${index}`);
   }
 
   /**
@@ -358,6 +341,7 @@ export class AdminEntityFormComponent implements OnChanges, AfterViewInit {
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
+    console.log("dropNewGroup", event);
     const newCol = { fields: [] };
     this.config.fieldGroups.push(newCol);
     event.container.data = newCol.fields;
