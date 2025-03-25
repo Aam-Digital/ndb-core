@@ -15,15 +15,14 @@
   }
 
   app-merge-fields {
-    grid-column: 1 / 4;
+    grid-column: 2 / 4;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
 
-  .record-cell {
-    display: flex;
-    justify-content: flex-start;
+  .label-cell {
+    padding: 0.5rem;
   }
 
   .preview-cell {

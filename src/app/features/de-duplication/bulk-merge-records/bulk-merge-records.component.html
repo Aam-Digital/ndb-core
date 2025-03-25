@@ -7,6 +7,10 @@
       <div class="header" i18n>Merge Preview</div>
 
       @for (field of fieldsToMerge; track field.id) {
+        <div class="label-cell">
+          <strong>{{ field.label }}</strong>
+        </div>
+
         <app-merge-fields
           [field]="field"
           [entities]="entitiesToMerge"
