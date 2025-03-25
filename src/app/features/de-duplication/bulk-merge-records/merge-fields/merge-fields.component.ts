@@ -33,8 +33,7 @@ export class MergeFieldsComponent implements OnInit {
 
   ngOnInit() {
     this.initializeFieldState();
-
-    this.control.valueChanges.subscribe((newValue) => {
+    this.control?.valueChanges.subscribe((newValue) => {
       this.updateSelectedStatus(newValue);
       const control = this.control.get(this.field.id);
       if (control) {
