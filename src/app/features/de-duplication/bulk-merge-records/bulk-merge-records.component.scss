@@ -14,14 +14,9 @@
     text-align: center;
   }
 
-  .label-cell {
-    padding: 0.5rem;
-  }
-
   app-merge-fields {
-    grid-column: 2 / 4;
+    grid-column: 1 / 4;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
 
