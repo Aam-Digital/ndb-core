@@ -145,6 +145,13 @@ export class AdminEntityFormComponent implements OnChanges {
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
   }
 
+  getConnectedGroups(): string[] {
+    return [
+      ...this.config.fieldGroups.map((_, index) => `group-${index}`),
+      "newGroupDropArea",
+    ];
+  }
+
   /**
    * Load any fields from schema that are not already in the form, so that the user can drag them into the form.
    * @param config
@@ -248,6 +255,10 @@ export class AdminEntityFormComponent implements OnChanges {
     }
 
     this.emitUpdatedConfig();
+  }
+
+  dropfieldGroups<E>(event: CdkDragDrop<E[], any>, fieldGroupsArray: E[]) {
+    moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
   }
 
   /**
