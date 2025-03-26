@@ -11,7 +11,6 @@ import { OkButton } from "../../common-components/confirmation-dialog/confirmati
 import { CascadingActionResult } from "./cascading-entity-action";
 import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
-import { AlertService } from "app/core/alerts/alert.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -30,7 +29,6 @@ export class EntityActionsService {
     private entityAnonymize: EntityAnonymizeService,
     entityActionsMenuService: EntityActionsMenuService,
     private duplicateRecordService: DuplicateRecordService,
-    private alertService: AlertService,
   ) {
     entityActionsMenuService.registerActions([
       {
@@ -60,7 +58,7 @@ export class EntityActionsService {
       },
       {
         action: "duplicate",
-        execute: (e) => this.duplicate(e),
+        execute: (e) => this.duplicateRecordService.duplicateRecord(e),
         permission: "create",
         icon: "copy",
         label: $localize`:entity context menu:Duplicate`,
@@ -247,19 +245,6 @@ export class EntityActionsService {
         $localize`:Entity action confirmation message verb:anonymized`,
       ),
       result.originalEntitiesBeforeChange,
-    );
-    return true;
-  }
-
-  /**
-   * Duplicates the given entity.
-   * @param entityParam
-   */
-  async duplicate<E extends Entity>(entityParam: E | E[]) {
-    const entities = Array.isArray(entityParam) ? entityParam : [entityParam];
-    await this.duplicateRecordService.duplicateRecord(entities);
-    this.alertService.addInfo(
-      $localize`:Duplicate confirmation dialog:Record duplicated succesfully`,
     );
     return true;
   }

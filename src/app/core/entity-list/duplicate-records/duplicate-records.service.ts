@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
+import { AlertService } from "app/core/alerts/alert.service";
 
 @Injectable({
   providedIn: "root",
@@ -10,11 +11,17 @@ export class DuplicateRecordService {
   constructor(
     private entitymapperservice: EntityMapperService,
     private entityService: EntitySchemaService,
+    private alertService: AlertService,
   ) {}
 
-  async duplicateRecord(sourceData: Entity[]) {
-    const duplicateData = this.clone(sourceData);
-    return await this.entitymapperservice.saveAll(duplicateData);
+  async duplicateRecord(sourceData: Entity | Entity[]) {
+    const entities = Array.isArray(sourceData) ? sourceData : [sourceData];
+    const duplicateData = this.clone(entities);
+
+    await this.entitymapperservice.saveAll(duplicateData);
+
+    this.alertService.addInfo(this.generateSuccessMessage(entities));
+    return true;
   }
 
   clone(sourceData: Entity[]): any {
@@ -41,5 +48,17 @@ export class DuplicateRecordService {
       duplicateData.push(entity);
     });
     return duplicateData;
+  }
+
+  generateSuccessMessage(sourceData: Entity[]): string {
+    if (sourceData.length > 1) {
+      return $localize`:Entity action confirmation message:${sourceData.length} ${
+        sourceData[0].getConstructor().labelPlural
+      } duplicated Successfully`;
+    } else {
+      return $localize`:Entity action confirmation message:${
+        sourceData[0].getConstructor().label
+      } "${sourceData.toString()}"  duplicated Successfully`;
+    }
   }
 }
