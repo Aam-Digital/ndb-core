@@ -14,7 +14,7 @@ export class DuplicateRecordService {
     private alertService: AlertService,
   ) {}
 
-  async duplicateRecord(sourceData: Entity | Entity[]) {
+  async duplicateRecord(sourceData: Entity | Entity[]): Promise<boolean> {
     const entities = Array.isArray(sourceData) ? sourceData : [sourceData];
     const duplicateData = this.clone(entities);
 
