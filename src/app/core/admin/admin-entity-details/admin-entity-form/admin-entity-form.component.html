@@ -1,26 +1,33 @@
-<div
-  cdkDropListGroup
-  class="overall-container flex-row"
-  [class.disabled]="isDisabled"
->
+<div class="overall-container flex-row" [class.disabled]="isDisabled">
   <!-- FORM PREVIEW -->
-  <div class="flex-grow admin-grid-layout padding-right-regular">
+  <div
+    cdkDropList
+    (cdkDropListDropped)="dropfieldGroups($event, config.fieldGroups)"
+    cdkDropListOrientation="mixed"
+    class="flex-grow admin-grid-layout padding-right-regular drop-list"
+  >
     <!-- FIELD GROUPS -->
     <div
       *ngFor="let group of config.fieldGroups; let i = index"
       class="entity-form-cell admin-form-column section-container"
+      cdkDrag
     >
-      <!-- GROUP HEADER -->
-      <app-admin-section-header
-        [title]="group.header"
-        (titleChange)="group.header = $event; emitUpdatedConfig()"
-        (remove)="removeGroup(i)"
-      ></app-admin-section-header>
+      <div class="flex-row align-center">
+        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+        <!-- GROUP HEADER -->
+        <app-admin-section-header
+          [title]="group.header"
+          (titleChange)="group.header = $event; emitUpdatedConfig()"
+          (remove)="removeGroup(i)"
+        ></app-admin-section-header>
+      </div>
 
       <div
         cdkDropList
+        [id]="'group-' + i"
         [cdkDropListData]="group.fields"
         (cdkDropListDropped)="drop($event)"
+        [cdkDropListConnectedTo]="getConnectedGroups()"
         [cdkDropListDisabled]="isDisabled"
         class="fields-group-list drop-list"
       >
@@ -71,6 +78,7 @@
     <!-- DROP AREA: NEW FIELD GROUP -->
     <div class="entity-form-cell admin-form-column">
       <div
+        id="newGroupDropArea"
         cdkDropList
         (cdkDropListDropped)="dropNewGroup($event)"
         class="fields-group-list drop-list drop-area-hint"
@@ -93,6 +101,7 @@
       cdkDropList
       (cdkDropListDropped)="drop($event)"
       [cdkDropListData]="availableFields"
+      [cdkDropListConnectedTo]="getConnectedGroups()"
       class="drop-list"
     >
       <div class="drop-area-hint">
