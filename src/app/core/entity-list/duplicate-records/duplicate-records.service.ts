@@ -58,7 +58,7 @@ export class DuplicateRecordService {
     } else {
       return $localize`:Entity action confirmation message:${
         sourceData[0].getConstructor().label
-      } "${sourceData.toString()}"  duplicated Successfully`;
+      } "${sourceData.toString()}" duplicated Successfully`;
     }
   }
 }
