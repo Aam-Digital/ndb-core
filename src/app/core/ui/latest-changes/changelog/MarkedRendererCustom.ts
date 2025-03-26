@@ -16,12 +16,4 @@ export class MarkedRendererCustom extends MarkedRenderer {
       return super.heading(input);
     }
   }
-
-  public override list(input: Tokens.List): string {
-    if (input.ordered) {
-      return `<ol class="app-list mat-body-1">${input.raw}</ol>`;
-    } else {
-      return `<ul class="app-list mat-body-1">${input.raw}</ul>`;
-    }
-  }
 }
