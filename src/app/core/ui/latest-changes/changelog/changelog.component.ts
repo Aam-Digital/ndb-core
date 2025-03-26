@@ -80,7 +80,7 @@ export class ChangelogComponent implements OnInit {
         .subscribe((changelog) => (this.changelogs = changelog));
     }
 
-    // this.customizeMarkdownRenderer();
+    this.customizeMarkdownRenderer();
   }
 
   get noChangelogAvailable(): string {
