@@ -9,7 +9,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 @Component({
   templateUrl: "./progress-dialog.component.html",
   imports: [MatProgressBarModule, MatDialogModule],
-  standalone: true,
 })
 export class ProgressDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: { message: string }) {}

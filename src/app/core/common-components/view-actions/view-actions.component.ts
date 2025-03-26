@@ -16,7 +16,6 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
   selector: "app-view-actions",
   templateUrl: "./view-actions.component.html",
   imports: [NgTemplateOutlet],
-  standalone: true,
 })
 export class ViewActionsComponent implements AfterViewInit {
   @ViewChild("template") template: TemplateRef<any>;

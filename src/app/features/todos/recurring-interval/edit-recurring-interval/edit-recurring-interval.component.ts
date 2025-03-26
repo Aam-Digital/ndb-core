@@ -9,7 +9,7 @@ import { MatInputModule } from "@angular/material/input";
 import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSelectModule } from "@angular/material/select";
-import { NgForOf, NgIf } from "@angular/common";
+import { NgForOf } from "@angular/common";
 import { ErrorHintComponent } from "../../../../core/common-components/error-hint/error-hint.component";
 
 /**
@@ -22,13 +22,11 @@ import { ErrorHintComponent } from "../../../../core/common-components/error-hin
   selector: "app-edit-recurring-interval",
   templateUrl: "./edit-recurring-interval.component.html",
   styleUrls: ["./edit-recurring-interval.component.scss"],
-  standalone: true,
   imports: [
     MatInputModule,
     ReactiveFormsModule,
     FontAwesomeModule,
     MatSelectModule,
-    NgIf,
     NgForOf,
     ErrorHintComponent,
   ],

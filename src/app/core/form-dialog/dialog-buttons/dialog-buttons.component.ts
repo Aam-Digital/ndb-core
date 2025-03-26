@@ -27,7 +27,6 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
 
 @Component({
   selector: "app-dialog-buttons",
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,

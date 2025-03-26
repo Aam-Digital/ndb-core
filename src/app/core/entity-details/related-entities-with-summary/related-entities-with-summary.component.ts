@@ -14,7 +14,6 @@ import { EntitiesTableComponent } from "../../common-components/entities-table/e
   selector: "app-related-entities-with-summary",
   templateUrl: "./related-entities-with-summary.component.html",
   imports: [EntitiesTableComponent, NgIf],
-  standalone: true,
 })
 export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   extends RelatedEntitiesComponent<E>

@@ -48,7 +48,6 @@ import { NotificationSettingsComponent } from "../../../features/notification/no
     EntityBlockComponent,
     NotificationSettingsComponent,
   ],
-  standalone: true,
 })
 export class UserAccountComponent implements OnInit {
   passwordChangeDisabled = false;

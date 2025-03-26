@@ -58,7 +58,6 @@ import { TableRow } from "./table-row";
 @UntilDestroy()
 @Component({
   selector: "app-entities-table",
-  standalone: true,
   imports: [
     CommonModule,
     EntityFieldEditComponent,

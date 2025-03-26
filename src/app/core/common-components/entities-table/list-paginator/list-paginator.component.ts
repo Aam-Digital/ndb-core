@@ -18,7 +18,6 @@ import { MatTableDataSource } from "@angular/material/table";
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
   imports: [MatPaginatorModule],
-  standalone: true,
 })
 export class ListPaginatorComponent<E> implements OnChanges, OnInit {
   readonly LOCAL_STORAGE_KEY = "PAGINATION-";

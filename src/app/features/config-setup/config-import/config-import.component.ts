@@ -27,7 +27,6 @@ import { RouteTarget } from "../../../route-target";
     ClipboardModule,
     InputFileComponent,
   ],
-  standalone: true,
 })
 export class ConfigImportComponent {
   loadedConfigFile: any;

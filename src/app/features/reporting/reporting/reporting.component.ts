@@ -36,7 +36,6 @@ import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
     JsonPipe,
     SqlV2TableComponent,
   ],
-  standalone: true,
 })
 export class ReportingComponent {
   reports: ReportEntity[];

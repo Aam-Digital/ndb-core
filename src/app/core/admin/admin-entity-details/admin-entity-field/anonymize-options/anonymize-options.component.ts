@@ -10,7 +10,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
  */
 @Component({
   selector: "app-anonymize-options",
-  standalone: true,
   imports: [CommonModule, MatOptionModule, MatSelectModule, MatTooltipModule],
   templateUrl: "./anonymize-options.component.html",
   styleUrl: "./anonymize-options.component.scss",
