@@ -19,7 +19,7 @@
   color: white;
 }
 
-.app-list {
+ul {
   /* this is a constant because this padding only removes the default from @angular/material */
-  padding-left: 16px;
+  padding-left: 2em;
 }

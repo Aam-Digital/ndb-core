@@ -115,6 +115,5 @@ export class ChangelogComponent implements OnInit {
   private customizeMarkdownRenderer() {
     const customRenderer = new MarkedRendererCustom();
     this.markdownService.renderer.heading = customRenderer.heading;
-    this.markdownService.renderer.list = customRenderer.list;
   }
 }
