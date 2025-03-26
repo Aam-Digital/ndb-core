@@ -54,11 +54,11 @@ export class DuplicateRecordService {
     if (sourceData.length > 1) {
       return $localize`:Entity action confirmation message:${sourceData.length} ${
         sourceData[0].getConstructor().labelPlural
-      } duplicated Successfully`;
+      } duplicated successfully`;
     } else {
       return $localize`:Entity action confirmation message:${
         sourceData[0].getConstructor().label
-      } "${sourceData.toString()}" duplicated Successfully`;
+      } "${sourceData.toString()}" duplicated successfully`;
     }
   }
 }
