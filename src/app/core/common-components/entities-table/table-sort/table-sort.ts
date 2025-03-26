@@ -23,7 +23,17 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   data.sort((objA, objB) => {
     const valueA = getComparableValue(objA.record, active);
     const valueB = getComparableValue(objB.record, active);
-    return compareValues(valueA, valueB);
+    const primaryComparison = compareValues(valueA, valueB);
+
+    // If the primary values are equal, sort by the creation date
+    if (primaryComparison === 0) {
+      const dateA = new Date(objA.record.created?.at || 0).getTime();
+      const dateB = new Date(objB.record.created?.at || 0).getTime();
+
+      return dateA - dateB;
+    }
+
+    return primaryComparison;
   });
   if (direction === "desc") {
     data.reverse();
