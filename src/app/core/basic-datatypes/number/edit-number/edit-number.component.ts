@@ -17,7 +17,6 @@ import { ErrorHintComponent } from "../../../common-components/error-hint/error-
     MatInputModule,
     ErrorHintComponent,
   ],
-  standalone: true,
 })
 export class EditNumberComponent
   extends EditComponent<number>

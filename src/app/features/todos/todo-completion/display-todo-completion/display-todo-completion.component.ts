@@ -12,7 +12,6 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
   selector: "app-display-todo-completion",
   templateUrl: "./display-todo-completion.component.html",
   styleUrls: ["./display-todo-completion.component.scss"],
-  standalone: true,
   imports: [NgIf, FontAwesomeModule, DatePipe],
 })
 export class DisplayTodoCompletionComponent

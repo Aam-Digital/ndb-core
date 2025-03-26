@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "../variables/colors";
 
 /** Color-utility classes **/
@@ -62,15 +63,15 @@
 
 /* alias for w-100 */
 .w-OK {
-  background-color: adjust-color(colors.w-level(100), $alpha: -0.75) !important;
+  background-color: color.adjust(colors.w-level(100), $alpha: -0.75) !important;
 }
 
 /* alias for w-50 */
 .w-WARNING {
-  background-color: adjust-color(colors.w-level(50), $alpha: -0.5) !important;
+  background-color: color.adjust(colors.w-level(50), $alpha: -0.5) !important;
 }
 
 /* alias for w-0 */
 .w-URGENT {
-  background-color: adjust-color(colors.w-level(0), $alpha: -0.5) !important;
+  background-color: color.adjust(colors.w-level(0), $alpha: -0.5) !important;
 }

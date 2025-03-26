@@ -18,7 +18,6 @@
 import { NgModule } from "@angular/core";
 import { UpdateManagerService } from "./update-manager.service";
 import { MarkdownModule } from "ngx-markdown";
-import { ChangelogComponent } from "./changelog/changelog.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DatePipe, NgForOf, NgIf } from "@angular/common";
@@ -34,7 +33,7 @@ import { MatButtonModule } from "@angular/material/button";
  * text (after markdown characters) with a ".".
  */
 @NgModule({
-  declarations: [ChangelogComponent],
+  declarations: [],
   imports: [
     MarkdownModule,
     MatDialogModule,

@@ -22,7 +22,6 @@ import { MatButtonModule } from "@angular/material/button";
     MatButtonModule,
     NgForOf,
   ],
-  standalone: true,
 })
 export class ConfirmationDialogComponent {
   /**

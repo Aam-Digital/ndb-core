@@ -12,7 +12,6 @@ import { RouteTarget } from "../../../route-target";
   templateUrl: "./attendance-manager.component.html",
   styleUrls: ["./attendance-manager.component.scss"],
   imports: [MatCardModule, MatButtonModule, RouterLink, ViewTitleComponent],
-  standalone: true,
 })
 export class AttendanceManagerComponent {
   constructor(public comingSoonDialog: ComingSoonDialogService) {}

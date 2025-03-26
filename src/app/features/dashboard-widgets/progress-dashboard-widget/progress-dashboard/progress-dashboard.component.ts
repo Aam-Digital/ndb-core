@@ -21,7 +21,6 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
   selector: "app-progress-dashboard",
   templateUrl: "./progress-dashboard.component.html",
   styleUrls: ["./progress-dashboard.component.scss"],
-  standalone: true,
   imports: [
     PercentPipe,
     MatTableModule,

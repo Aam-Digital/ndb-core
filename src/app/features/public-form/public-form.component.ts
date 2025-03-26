@@ -40,7 +40,6 @@ import { DatabaseResolverService } from "../../core/database/database-resolver.s
     FontAwesomeModule,
     MarkdownPageModule,
   ],
-  standalone: true,
 })
 export class PublicFormComponent<E extends Entity> implements OnInit {
   private entityType: EntityConstructor<E>;

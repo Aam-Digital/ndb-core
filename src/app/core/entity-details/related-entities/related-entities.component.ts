@@ -31,7 +31,6 @@ import {
 @Component({
   selector: "app-related-entities",
   templateUrl: "./related-entities.component.html",
-  standalone: true,
   imports: [EntitiesTableComponent],
 })
 export class RelatedEntitiesComponent<E extends Entity> implements OnInit {

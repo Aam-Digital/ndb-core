@@ -38,8 +38,8 @@ import { ExportDataDirective } from "../../../core/export/export-data-directive/
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
-import { AbilityModule } from "@casl/angular";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
+import { AblePurePipe } from "@casl/angular";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -47,9 +47,8 @@ import { ViewActionsComponent } from "../../../core/common-components/view-actio
   selector: "app-todo-list",
   templateUrl:
     "../../../core/entity-list/entity-list/entity-list.component.html",
-  standalone: true,
-
   imports: [
+    AblePurePipe,
     NgIf,
     NgStyle,
     MatButtonModule,
@@ -71,7 +70,6 @@ import { ViewActionsComponent } from "../../../core/common-components/view-actio
     RouterLink,
     MatTooltipModule,
     EntityCreateButtonComponent,
-    AbilityModule,
     AsyncPipe,
     ViewActionsComponent,
   ],

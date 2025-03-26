@@ -30,7 +30,6 @@ import { MatTableModule } from "@angular/material/table";
     </table>
   </app-dashboard-list-widget>`,
   imports: [DashboardListWidgetComponent, MatTableModule],
-  standalone: true,
 })
 export class DashboardWidgetTestComponent {
   entries: any[];

@@ -16,6 +16,5 @@ import { ErrorHintComponent } from "../../../common-components/error-hint/error-
     MatInputModule,
     ErrorHintComponent,
   ],
-  standalone: true,
 })
 export class EditLongTextComponent extends EditComponent<string> {}

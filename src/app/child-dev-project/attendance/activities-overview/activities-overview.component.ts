@@ -14,7 +14,6 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
   templateUrl:
     "../../../core/entity-details/related-entities/related-entities.component.html",
   imports: [EntitiesTableComponent],
-  standalone: true,
 })
 export class ActivitiesOverviewComponent
   extends RelatedEntitiesComponent<RecurringActivity>

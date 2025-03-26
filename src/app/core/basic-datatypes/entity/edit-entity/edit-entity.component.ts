@@ -12,7 +12,6 @@ import { EntitySelectComponent } from "../../../common-components/entity-select/
   selector: "app-edit-entity",
   templateUrl: "./edit-entity.component.html",
   imports: [EntitySelectComponent],
-  standalone: true,
 })
 export class EditEntityComponent<T extends string[] | string = string[]>
   extends EditComponent<T>

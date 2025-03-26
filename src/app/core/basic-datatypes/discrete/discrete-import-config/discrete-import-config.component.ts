@@ -23,7 +23,6 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   selector: "app-discrete-import-config",
   templateUrl: "./discrete-import-config.component.html",
   styleUrls: ["./discrete-import-config.component.scss"],
-  standalone: true,
   imports: [
     MatDialogModule,
     NgForOf,

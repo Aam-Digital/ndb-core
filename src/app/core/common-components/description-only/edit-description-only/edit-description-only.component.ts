@@ -9,7 +9,6 @@ import { MarkdownPageModule } from "app/features/markdown-page/markdown-page.mod
   selector: "app-edit-description-only",
   template: ` <markdown>{{ formFieldConfig?.label }}</markdown> `,
   styleUrls: ["./edit-description-only.component.scss"],
-  standalone: true,
   imports: [MarkdownPageModule],
 })
 export class EditDescriptionOnlyComponent {

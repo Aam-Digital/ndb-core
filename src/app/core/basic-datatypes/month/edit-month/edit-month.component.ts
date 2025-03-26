@@ -36,7 +36,6 @@ export const MY_FORMATS = {
 
 @Component({
   selector: "app-edit-month",
-  standalone: true,
   imports: [
     CommonModule,
     MatFormFieldModule,
