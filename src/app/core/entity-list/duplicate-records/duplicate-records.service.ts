@@ -3,6 +3,8 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
 import { AlertService } from "app/core/alerts/alert.service";
+import { getUrlWithoutParams } from "app/utils/utils";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
@@ -12,15 +14,25 @@ export class DuplicateRecordService {
     private entitymapperservice: EntityMapperService,
     private entityService: EntitySchemaService,
     private alertService: AlertService,
+    private router: Router,
   ) {}
 
-  async duplicateRecord(sourceData: Entity | Entity[]): Promise<boolean> {
+  async duplicateRecord(
+    sourceData: Entity | Entity[],
+    navigate: boolean = false,
+  ): Promise<boolean> {
     const entities = Array.isArray(sourceData) ? sourceData : [sourceData];
     const duplicateData = this.clone(entities);
 
     await this.entitymapperservice.saveAll(duplicateData);
-
     this.alertService.addInfo(this.generateSuccessMessage(entities));
+
+    if (navigate) {
+      const currentUrl = getUrlWithoutParams(this.router);
+      const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
+      this.router.navigate([parentUrl, duplicateData[0].getId(true)]);
+    }
+
     return true;
   }
 

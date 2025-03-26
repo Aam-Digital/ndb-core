@@ -58,7 +58,8 @@ export class EntityActionsService {
       },
       {
         action: "duplicate",
-        execute: (e) => this.duplicateRecordService.duplicateRecord(e),
+        execute: (e, nav) =>
+          this.duplicateRecordService.duplicateRecord(e, nav),
         permission: "create",
         icon: "copy",
         label: $localize`:entity context menu:Duplicate`,
