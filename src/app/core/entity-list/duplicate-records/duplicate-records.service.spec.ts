@@ -10,6 +10,7 @@ import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
 import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("DuplicateRecordsService", () => {
   let service: DuplicateRecordService;
@@ -27,6 +28,7 @@ describe("DuplicateRecordsService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [NoopAnimationsModule],
       providers: [
         DuplicateRecordService,
         { provide: EntityMapperService, useValue: mockEntityMapper() },
