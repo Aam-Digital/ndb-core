@@ -47,9 +47,14 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
 ): number | string | Symbol {
   let value = obj[key];
 
-  // Special handling for Age column which is calculated based on dateOfBirth
-  if (key === "age") {
-    return obj["dateOfBirth"]?.age;
+  // Special handling for Age columns
+  if (value === undefined && key === "age") {
+    // default assuming dateOfBirth field
+    key = "age_dateOfBirth" as any;
+  }
+  if (value === undefined && String(key).startsWith("age_")) {
+    const fieldKey = String(key).replace("age_", "");
+    return obj[fieldKey]?.age;
   }
 
   if (Ordering.hasOrdinalValue(value)) {
