@@ -8,7 +8,7 @@ import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Subscription } from "rxjs";
 import { UnsavedChangesService } from "../form/unsaved-changes.service";
-
+import { Logging } from "../../logging/logging.service"; 
 /**
  * This component can be used to display an entity in more detail.
  * As an abstract base component, this provides functionality to load an entity
@@ -60,18 +60,29 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
 
   protected async loadEntity() {
     this.isLoading = true;
-    if (this.id === "new") {
-      if (this.ability.cannot("create", this.entityConstructor)) {
-        this.router.navigate([""]);
-        return;
+    try {
+      if (this.id === 'new') {
+        if (this.ability.cannot('create', this.entityConstructor)) {
+          this.router.navigate(['']);
+          return;
+        }
+        this.entity = new this.entityConstructor();
+      } else {
+        this.entity = await this.entityMapperService.load(
+          this.entityConstructor,
+          this.id,
+        );
+  
+        if (!this.entity) {
+          this.router.navigate(['/entity-not-found']); 
+          return;
+        }
       }
-      this.entity = new this.entityConstructor();
-    } else {
-      this.entity = await this.entityMapperService.load(
-        this.entityConstructor,
-        this.id,
-      );
+    } catch (error) {
+      Logging.error('Error loading entity', error);
+      this.router.navigate(['/entity-not-found']); 
+    } finally {
+      this.isLoading = false;
     }
-    this.isLoading = false;
   }
 }

@@ -95,6 +95,7 @@ import { NotificationService } from "./features/notification/notification.servic
 import { AngularFireModule } from "@angular/fire/compat";
 import { FirebaseConfiguration } from "./features/notification/notification-config.interface";
 
+
 /**
  * Main entry point of the application.
  * Imports required modules and does basic setup.
