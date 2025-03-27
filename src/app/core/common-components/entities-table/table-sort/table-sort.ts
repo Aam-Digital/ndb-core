@@ -74,5 +74,7 @@ function compareValues(a, b) {
     return -1;
   } else if (a < b || a === null || a === undefined) {
     return 1;
+  } else if (typeof a === "number" && typeof b === "number") {
+    return a - b;
   }
 }
