@@ -71,8 +71,8 @@ function compareValues(a, b) {
   } else if (typeof a === "string" && typeof b === "string") {
     return a.localeCompare(b, undefined, { numeric: true });
   } else if (a > b || b === null || b === undefined) {
-    return 1;
-  } else if (a < b || a === null || a === undefined) {
     return -1;
+  } else if (a < b || a === null || a === undefined) {
+    return 1;
   }
 }
