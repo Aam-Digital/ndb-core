@@ -1,5 +1,4 @@
 import { Download, expect, test } from "@playwright/test";
-import path from "path";
 import { startApp } from "../utils/core-e2e-utils"; // Import the path module for file path operations
 import { setFixedDate } from "../utils/fixed-date";
 
