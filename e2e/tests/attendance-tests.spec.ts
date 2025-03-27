@@ -1,14 +1,16 @@
-import { expect, test } from "@playwright/test";
+import { Download, expect, test } from "@playwright/test";
 import path from "path";
 import { startApp } from "../utils/core-e2e-utils"; // Import the path module for file path operations
 import { setFixedDate } from "../utils/fixed-date";
 
 test.describe("Attendance Module", () => {
+  const FIXED_DATE = "2025-01-23";
+
   test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running test case - ${testInfo.title}`);
 
     // Set fixed date before navigating to the app
-    await setFixedDate(page, "1/23/2025");
+    await setFixedDate(page, FIXED_DATE);
 
     await startApp(page);
     await page.goto("/attendance/add-day");
@@ -129,7 +131,7 @@ test.describe("Attendance Module", () => {
     await page.getByRole("option", { name: "Attendance Report" }).click();
     await page.getByLabel("Open calendar").click();
 
-    const today = new Date();
+    const today = new Date(FIXED_DATE);
     const startDate = new Date(today.getFullYear(), today.getMonth(), 2);
     const endDate = new Date(today.getFullYear(), today.getMonth(), 22);
 
@@ -174,19 +176,12 @@ test.describe("Attendance Module", () => {
       page.getByRole("columnheader", { name: "Late" }),
     ).toBeVisible();
 
-    const [download] = await Promise.all([
-      page.waitForEvent("download"),
-      page.getByRole("button", { name: "download csv Download" }).click(),
-    ]);
-    const downloadPath = path.resolve(__dirname, "downloads");
-    const filePath = path.join(
-      downloadPath,
-      await download.suggestedFilename(),
-    );
-    await download.saveAs(filePath);
+    // see https://playwright.dev/docs/downloads
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByRole("button", { name: "download csv Download" }).click();
+    const download: Download = await downloadPromise;
 
-    // Verify the file type and name
-    expect(filePath).toMatch(/\.csv$/); // Ensure the file is a .csv
+    expect(download.suggestedFilename()).toMatch("report.csv");
   });
 
   test("Verify attendance percentage color coding", async ({ page }) => {
