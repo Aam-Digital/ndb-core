@@ -21,7 +21,7 @@ import { Router } from "@angular/router";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
-fdescribe("EntitiesTableComponent", () => {
+describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
   let fixture: ComponentFixture<EntitiesTableComponent<Entity>>;
 
