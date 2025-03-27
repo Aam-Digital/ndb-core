@@ -2,6 +2,7 @@ import { getReadableValue } from "../value-accessor/value-accessor";
 import { Entity } from "../../../entity/model/entity";
 import { Ordering } from "../../../basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { TableRow } from "../table-row";
+import { calculateAge } from "app/utils/utils";
 
 /**
  * Custom sort implementation for a MatTableDataSource<TableRow<T>>
@@ -25,7 +26,7 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
     const valueB = getComparableValue(objB.record, active);
     const primaryComparison = compareValues(valueA, valueB);
 
-    // If the primary values are equal, sort by the creation date
+    // If the primary values are equal, sort by the created at
     if (primaryComparison === 0) {
       const dateA = new Date(objA.record.created?.at || 0).getTime();
       const dateB = new Date(objB.record.created?.at || 0).getTime();
@@ -46,6 +47,13 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   key: PROPERTY,
 ): number | string | Symbol {
   let value = obj[key];
+
+  // Special handling for age column if dateOfBirth is present
+  if (key === "age" && obj["dateOfBirth"]) {
+    console.log("Calculating age for", calculateAge(obj["dateOfBirth"]));
+    return calculateAge(obj["dateOfBirth"]);
+  }
+
   if (Ordering.hasOrdinalValue(value)) {
     return value._ordinal;
   }
