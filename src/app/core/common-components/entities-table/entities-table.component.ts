@@ -128,7 +128,7 @@ export class EntitiesTableComponent<T extends Entity>
       ),
       ...this._customColumns,
     ];
-    // this._columns.forEach((c) => this.disableSortingHeaderForAdvancedFields(c));
+    this._columns.forEach((c) => this.disableSortingHeaderForAdvancedFields(c));
 
     if (!this.columnsToDisplay) {
       this.columnsToDisplay = this._customColumns
@@ -451,12 +451,16 @@ export class EntitiesTableComponent<T extends Entity>
    * @param c
    * @private
    */
-  // private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
-  //   // if no dataType is defined, these are dynamic, display-only components
-  //   if (c.isArray || c.dataType === EntityDatatype.dataType || !c.dataType) {
-  //     c.noSorting = true;
-  //   }
-  // }
+  private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
+    // if no dataType is defined, these are dynamic, display-only components
+    if (c.viewComponent === "DisplayAge") {
+      return;
+    }
+
+    if (c.isArray || c.dataType === EntityDatatype.dataType || !c.dataType) {
+      c.noSorting = true;
+    }
+  }
 
   /**
    * FILTER ARCHIVED RECORDS
