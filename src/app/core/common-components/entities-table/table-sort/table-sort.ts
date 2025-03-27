@@ -2,7 +2,6 @@ import { getReadableValue } from "../value-accessor/value-accessor";
 import { Entity } from "../../../entity/model/entity";
 import { Ordering } from "../../../basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { TableRow } from "../table-row";
-import { calculateAge } from "app/utils/utils";
 
 /**
  * Custom sort implementation for a MatTableDataSource<TableRow<T>>
