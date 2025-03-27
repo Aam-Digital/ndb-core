@@ -1,0 +1,5 @@
+@use "variables/colors";
+
+.error-code {
+  color: colors.$text-secondary;
+}

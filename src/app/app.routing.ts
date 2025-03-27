@@ -23,7 +23,7 @@ import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
 import { AdminModule } from "./core/admin/admin.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
-
+import { EntityNotFoundComponent } from './core/entity-not-found/entity-not-found.component';
 /**
  * All routes configured for the main app routing.
  */
@@ -56,7 +56,7 @@ export const allRoutes: Routes = [
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
-
+  { path: 'entity-not-found', component: EntityNotFoundComponent },
   {
     path: "**",
     pathMatch: "full",
