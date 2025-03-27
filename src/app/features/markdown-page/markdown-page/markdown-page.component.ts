@@ -15,9 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { MarkdownPageModule } from "../markdown-page.module";
 import { RouteTarget } from "../../../route-target";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { Markdown } from "../markdown";
 
 /**
  * Display markdown formatted page that is dynamically loaded based on the file defined in config.
@@ -28,7 +30,26 @@ import { RouteTarget } from "../../../route-target";
   templateUrl: "./markdown-page.component.html",
   imports: [MarkdownPageModule],
 })
-export class MarkdownPageComponent {
+export class MarkdownPageComponent implements OnInit {
   /** filepath to be loaded as markdown */
-  @Input() markdownFile: string;
+  @Input() markdownFile?: string;
+  /** markdown entity content to be displayed */
+  @Input() markdownEntityId?: string;
+
+  markdownContent: string = "";
+
+  private entityMapper = inject(EntityMapperService);
+
+  async ngOnInit(): Promise<void> {
+    if (this.markdownEntityId) {
+      const markdownEntity = await this.entityMapper.load(
+        Markdown,
+        this.markdownEntityId,
+      );
+
+      if (markdownEntity) {
+        this.markdownContent = markdownEntity.content;
+      }
+    }
+  }
 }
