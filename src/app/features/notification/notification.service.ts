@@ -2,7 +2,6 @@ import { inject, Injectable } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
-import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { firstValueFrom, mergeMap, of, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
@@ -13,6 +12,7 @@ import { SessionSubject } from "../../core/session/auth/session-info";
 import { SyncedPouchDatabase } from "../../core/database/pouchdb/synced-pouch-database";
 import { NotificationEvent } from "./model/notification-event";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { AngularFireMessaging } from '@angular/fire/compat/messaging';
 
 /**
  * Handles the interaction with Cloud Messaging.
@@ -24,7 +24,7 @@ import { DatabaseResolverService } from "../../core/database/database-resolver.s
   providedIn: "root",
 })
 export class NotificationService {
-  private firebaseMessaging = inject(AngularFireMessaging);
+  private firebaseMessaging: AngularFireMessaging = inject(AngularFireMessaging);
   private httpClient = inject(HttpClient);
   private authService = inject(KeycloakAuthService);
   private alertService = inject(AlertService);
