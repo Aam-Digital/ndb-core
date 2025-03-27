@@ -6,7 +6,7 @@ import { Page } from "@playwright/test";
  */
 export async function startApp(page: Page) {
   // Navigate to the application after the date is set
-  await page.goto("/");
+  await page.goto("/help");
 
   // wait for initial demo data and indexing is done:
   // The sync popup should first appear and then disappear after a while when tasks are completed

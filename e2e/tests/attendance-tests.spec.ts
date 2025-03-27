@@ -11,11 +11,11 @@ test.describe("Attendance Module", () => {
     await setFixedDate(page, "1/23/2025");
 
     await startApp(page);
+    await page.goto("/attendance/add-day");
   });
 
   // Verify the date field displays the current date
   test("Verify current date field displays correctly", async ({ page }) => {
-    await page.getByRole("cell", { name: "Record Attendance" }).click();
     const fixedDate = new Date("1/23/2025");
     const formattedDateRegex = new RegExp(
       `${fixedDate.getMonth() + 1}/${fixedDate.getDate()}/${fixedDate.getFullYear()}|` +
@@ -26,7 +26,6 @@ test.describe("Attendance Module", () => {
   });
 
   test("Allow backdated editing for the date field", async ({ page }) => {
-    await page.getByRole("cell", { name: "Record Attendance" }).click();
     const backdatedDate = "12/15/2024";
     const dateField = page.getByLabel("Date");
     await dateField.fill(backdatedDate);
@@ -34,7 +33,6 @@ test.describe("Attendance Module", () => {
   });
 
   test("Verify list of classes is displayed", async ({ page }) => {
-    await page.getByRole("cell", { name: "Record Attendance" }).click();
     await page.waitForSelector("mat-card-header");
     const classList = page.locator("mat-card-header");
     const count = await classList.count();
@@ -42,7 +40,6 @@ test.describe("Attendance Module", () => {
   });
 
   test("Mark attendance for participants dynamically", async ({ page }) => {
-    await page.getByRole("cell", { name: "Record Attendance" }).click();
     const firstClass = page.locator("mat-card-header").first();
     await firstClass.evaluate((el: HTMLElement) => el?.click()); // Force the DOM click
 
@@ -122,7 +119,8 @@ test.describe("Attendance Module", () => {
   });
 
   test("Verify attendance report generation", async ({ page }) => {
-    await page.locator("mat-list-item").filter({ hasText: "Reports" }).click();
+    await page.goto("/report");
+
     await page
       .locator("div")
       .filter({ hasText: "Select Report" })
@@ -228,7 +226,9 @@ test.describe("Attendance Module", () => {
     }
   });
 
-  test("Dashboard View", async ({ page }) => {
+  test("Attendance Dashboard View", async ({ page }) => {
+    await page.goto("/");
+
     // Wait for the element containing "Absences this week" text to appear
     await page.waitForSelector("text=Absences this week");
 
@@ -314,5 +314,79 @@ test.describe("Attendance Module", () => {
       const noEntriesMessage = await page.locator('text="no current entries"');
       await expect(noEntriesMessage).toBeVisible();
     }
+  });
+
+  test("Navigate to Attendance page and verify sections", async ({ page }) => {
+    // Navigate to the Attendance page
+    await page
+      .locator("mat-list-item")
+      .filter({ hasText: "Attendance" })
+      .click();
+    await expect(page).toHaveURL(/.*attendance/);
+
+    // Verify "Record Attendance" section
+    const recordAttendanceSection = page.getByText("Record Attendance", {
+      exact: true,
+    });
+    await expect(recordAttendanceSection).toBeVisible();
+
+    // Verify "Recurring Activities" section
+    const recurringActivitiesSection = page.getByText("Recurring Activities", {
+      exact: true,
+    });
+    await expect(recurringActivitiesSection).toBeVisible();
+
+    // Verify "Monthly Attendance" section
+    const monthlyAttendanceSection = page.getByText("Monthly Attendance");
+    await expect(monthlyAttendanceSection).toBeVisible();
+  });
+
+  test("Manage Activities button navigation", async ({ page }) => {
+    await page
+      .locator("mat-list-item")
+      .filter({ hasText: "Attendance" })
+      .click();
+    const manageActivitiesButton = page.getByRole("button", {
+      name: "Manage Activities",
+    });
+    await expect(manageActivitiesButton).toBeVisible();
+    await manageActivitiesButton.click();
+
+    // Check navigation to "Manage Activities" page
+    await expect(page).toHaveURL("/attendance/recurring-activity");
+    await expect(
+      page.getByRole("heading", { name: "Recurring Activities" }),
+    ).toBeVisible();
+    await page.goBack();
+  });
+
+  test("Recurring Activities page elements", async ({ page }) => {
+    // Navigate to Recurring Activities page
+    await page
+      .locator("mat-list-item")
+      .filter({ hasText: "Attendance" })
+      .click();
+    await page.getByRole("button", { name: "Manage Activities" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Recurring Activities" }),
+    ).toBeVisible();
+
+    // Verify "Add New" button is visible
+    const addNewButton = page.getByRole("button", {
+      name: "add elementAdd New",
+    });
+    await expect(addNewButton).toBeVisible();
+
+    // Verify table columns are visible
+    await expect(page.locator("text=Title")).toBeVisible();
+    await expect(page.locator("text=Type")).toBeVisible();
+    await expect(page.locator("text=Assigned user(s)")).toBeVisible();
+
+    // Verify pagination controls are visible
+    await expect(page.locator("text=Items per page")).toBeVisible();
+
+    // Verify "Include archived records" toggle
+    const archivedRecordsToggle = page.locator("text=Include archived records");
+    await expect(archivedRecordsToggle).toBeVisible();
   });
 });

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { startApp } from "../utils/core-e2e-utils";
 import { setFixedDate } from "../utils/fixed-date";
 
-test.describe("Dashboard Page Tests", () => {
+test.describe("Dashboard Module", () => {
   test.beforeEach(async ({ page }, testInfo) => {
     console.log(`Running test case - ${testInfo.title}`);
 
@@ -10,6 +10,8 @@ test.describe("Dashboard Page Tests", () => {
     await setFixedDate(page, "1/1/2025");
 
     await startApp(page);
+
+    await page.goto("/");
   });
 
   test("Verify Quick Actions widget", async ({ page }) => {
@@ -22,6 +24,11 @@ test.describe("Dashboard Page Tests", () => {
       name: "Record Attendance",
     });
     await expect(recordAttendanceButton).toBeVisible();
+
+    await recordAttendanceButton.click();
+
+    // Check navigation to "Record Attendance" page
+    await expect(page).toHaveURL("/attendance/add-day");
   });
 
   test("Verify children count is displayed", async ({ page }) => {
@@ -40,32 +47,7 @@ test.describe("Dashboard Page Tests", () => {
     expect(taskCount).toBeGreaterThan(0);
   });
 
-  test("Navigate to Attendance page and verify sections", async ({ page }) => {
-    // Navigate to the Attendance page
-    await page
-      .locator("mat-list-item")
-      .filter({ hasText: "Attendance" })
-      .click();
-    await expect(page).toHaveURL(/.*attendance/);
-
-    // Verify "Record Attendance" section
-    const recordAttendanceSection = page.getByText("Record Attendance", {
-      exact: true,
-    });
-    await expect(recordAttendanceSection).toBeVisible();
-
-    // Verify "Recurring Activities" section
-    const recurringActivitiesSection = page.getByText("Recurring Activities", {
-      exact: true,
-    });
-    await expect(recurringActivitiesSection).toBeVisible();
-
-    // Verify "Monthly Attendance" section
-    const monthlyAttendanceSection = page.getByText("Monthly Attendance");
-    await expect(monthlyAttendanceSection).toBeVisible();
-  });
-
-  test("Record Attendance button navigation", async ({ page }) => {
+  test("Attendance navigation menu entry", async ({ page }) => {
     await page
       .locator("mat-list-item")
       .filter({ hasText: "Attendance" })
@@ -79,55 +61,5 @@ test.describe("Dashboard Page Tests", () => {
     await expect(
       page.getByRole("heading", { name: "Record Attendance" }),
     ).toBeVisible();
-    await page.goBack();
-  });
-
-  test("Manage Activities button navigation", async ({ page }) => {
-    await page
-      .locator("mat-list-item")
-      .filter({ hasText: "Attendance" })
-      .click();
-    const manageActivitiesButton = page.getByRole("button", {
-      name: "Manage Activities",
-    });
-    await expect(manageActivitiesButton).toBeVisible();
-    await manageActivitiesButton.click();
-
-    // Check navigation to "Manage Activities" page
-    await expect(page).toHaveURL("/attendance/recurring-activity");
-    await expect(
-      page.getByRole("heading", { name: "Recurring Activities" }),
-    ).toBeVisible();
-    await page.goBack();
-  });
-
-  test("Recurring Activities page elements", async ({ page }) => {
-    // Navigate to Recurring Activities page
-    await page
-      .locator("mat-list-item")
-      .filter({ hasText: "Attendance" })
-      .click();
-    await page.getByRole("button", { name: "Manage Activities" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Recurring Activities" }),
-    ).toBeVisible();
-
-    // Verify "Add New" button is visible
-    const addNewButton = page.getByRole("button", {
-      name: "add elementAdd New",
-    });
-    await expect(addNewButton).toBeVisible();
-
-    // Verify table columns are visible
-    await expect(page.locator("text=Title")).toBeVisible();
-    await expect(page.locator("text=Type")).toBeVisible();
-    await expect(page.locator("text=Assigned user(s)")).toBeVisible();
-
-    // Verify pagination controls are visible
-    await expect(page.locator("text=Items per page")).toBeVisible();
-
-    // Verify "Include archived records" toggle
-    const archivedRecordsToggle = page.locator("text=Include archived records");
-    await expect(archivedRecordsToggle).toBeVisible();
   });
 });
