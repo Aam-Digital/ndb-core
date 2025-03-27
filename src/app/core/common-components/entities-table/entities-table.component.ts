@@ -452,11 +452,12 @@ export class EntitiesTableComponent<T extends Entity>
    * @private
    */
   private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
-    // if no dataType is defined, these are dynamic, display-only components
     if (c.viewComponent === "DisplayAge") {
+      // we have implemented support for age specifically
       return;
     }
 
+    // if no dataType is defined, these are dynamic, display-only components
     if (c.isArray || c.dataType === EntityDatatype.dataType || !c.dataType) {
       c.noSorting = true;
     }
