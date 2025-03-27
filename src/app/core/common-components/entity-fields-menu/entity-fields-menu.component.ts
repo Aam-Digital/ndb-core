@@ -22,7 +22,6 @@ import { EntityFormService } from "../entity-form/entity-form.service";
 
 @Component({
   selector: "app-entity-fields-menu",
-  standalone: true,
   imports: [
     CommonModule,
     FaIconComponent,

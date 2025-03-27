@@ -43,7 +43,6 @@ import { FormsModule } from "@angular/forms";
     NgClass,
     EntityFieldEditComponent,
   ],
-  standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>
   implements OnChanges

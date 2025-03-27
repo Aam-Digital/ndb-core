@@ -27,7 +27,6 @@ import { RouteTarget } from "../../../route-target";
   selector: "app-markdown-page",
   templateUrl: "./markdown-page.component.html",
   imports: [MarkdownPageModule],
-  standalone: true,
 })
 export class MarkdownPageComponent {
   /** filepath to be loaded as markdown */

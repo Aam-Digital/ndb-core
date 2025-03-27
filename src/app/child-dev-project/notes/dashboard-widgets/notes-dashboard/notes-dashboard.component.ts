@@ -29,7 +29,6 @@ interface NotesDashboardConfig {
   selector: "app-no-recent-notes-dashboard",
   templateUrl: "./notes-dashboard.component.html",
   styleUrls: ["./notes-dashboard.component.scss"],
-  standalone: true,
   imports: [
     NgIf,
     MatTableModule,

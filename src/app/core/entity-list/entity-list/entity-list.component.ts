@@ -53,7 +53,6 @@ import { applyUpdate } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
-import { AbilityModule } from "@casl/angular";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import {
   EntitySpecialLoaderService,
@@ -64,6 +63,7 @@ import {
   DialogViewComponent,
   DialogViewData,
 } from "../../ui/dialog-view/dialog-view.component";
+import { AblePurePipe } from "@casl/angular";
 import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service";
 
 /**
@@ -103,12 +103,11 @@ import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service
     RouterLink,
     MatTooltipModule,
     EntityCreateButtonComponent,
-    AbilityModule,
     AsyncPipe,
+    AblePurePipe,
     ViewActionsComponent,
     // WARNING: all imports here also need to be set for components extending EntityList, like ChildrenListComponent
   ],
-  standalone: true,
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>

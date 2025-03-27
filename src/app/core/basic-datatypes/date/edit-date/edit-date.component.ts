@@ -24,6 +24,5 @@ import { NgIf } from "@angular/common";
     MatTooltipModule,
     NgIf,
   ],
-  standalone: true,
 })
 export class EditDateComponent extends EditComponent<Date> {}

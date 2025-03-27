@@ -30,7 +30,6 @@ import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/ad
 
 @Component({
   selector: "app-admin-entity",
-  standalone: true,
   imports: [
     CommonModule,
     EntityTypeLabelPipe,

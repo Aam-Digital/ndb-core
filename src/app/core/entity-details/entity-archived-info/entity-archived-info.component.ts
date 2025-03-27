@@ -11,7 +11,6 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
  */
 @Component({
   selector: "app-entity-archived-info",
-  standalone: true,
   imports: [CommonModule, MatCardModule, MatButtonModule, FontAwesomeModule],
   templateUrl: "./entity-archived-info.component.html",
   styleUrls: ["./entity-archived-info.component.scss"],

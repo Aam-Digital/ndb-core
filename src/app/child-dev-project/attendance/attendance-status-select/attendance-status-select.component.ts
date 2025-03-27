@@ -20,7 +20,6 @@ import { ConfigurableEnumDirective } from "../../../core/basic-datatypes/configu
     FormsModule,
     ConfigurableEnumDirective,
   ],
-  standalone: true,
 })
 export class AttendanceStatusSelectComponent {
   @Input() value: AttendanceStatusType = NullAttendanceStatusType;

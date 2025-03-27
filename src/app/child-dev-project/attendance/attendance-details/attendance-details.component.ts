@@ -30,7 +30,6 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
     EntitiesTableComponent,
     AttendanceCalendarComponent,
   ],
-  standalone: true,
 })
 export class AttendanceDetailsComponent {
   @Input() entity: ActivityAttendance;

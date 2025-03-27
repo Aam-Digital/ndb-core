@@ -42,7 +42,6 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
     FontAwesomeModule,
     MatButtonModule,
   ],
-  standalone: true,
 })
 export class ConfigureEnumPopupComponent {
   newOptionInput: string;

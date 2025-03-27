@@ -29,5 +29,6 @@ import { Component } from "@angular/core";
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </mat-dialog-content>
   `,
+  standalone: false,
 })
 export class DemoDataGeneratingProgressDialogComponent {}

@@ -48,7 +48,6 @@ export interface LinkExternalProfileDialogData {
 
 @Component({
   selector: "app-link-external-profile-dialog",
-  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogActions,

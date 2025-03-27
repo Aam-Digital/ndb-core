@@ -13,7 +13,6 @@ import { NgStyle } from "@angular/common";
   selector: "app-display-calculated-value",
   templateUrl: "./display-calculated-value.component.html",
   styleUrls: ["./display-calculated-value.component.scss"],
-  standalone: true,
   imports: [DisplayPercentageComponent, NgStyle],
 })
 export class DisplayCalculatedValueComponent extends ViewDirective<

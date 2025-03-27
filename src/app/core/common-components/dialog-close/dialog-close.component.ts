@@ -7,7 +7,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   templateUrl: "./dialog-close.component.html",
   styleUrls: ["./dialog-close.component.scss"],
   imports: [FontAwesomeModule, MatButtonModule],
-  standalone: true,
 })
 export class DialogCloseComponent implements AfterViewChecked {
   @ViewChild("button") button: MatButton;

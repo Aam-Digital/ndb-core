@@ -34,7 +34,6 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
  */
 @Component({
   selector: "app-admin-entity-types",
-  standalone: true,
   imports: [
     MatHeaderRow,
     MatHeaderRowDef,

@@ -21,7 +21,6 @@ import { ErrorHintComponent } from "app/core/common-components/error-hint/error-
     ErrorHintComponent,
     MatError,
   ],
-  standalone: true,
 })
 export class EditEntityTypeComponent
   extends EditComponent<string | string[]>

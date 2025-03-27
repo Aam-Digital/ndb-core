@@ -18,7 +18,6 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
     MatSelectModule,
     EnumDropdownComponent,
   ],
-  standalone: true,
 })
 export class EditConfigurableEnumComponent
   extends EditComponent<ConfigurableEnumValue>

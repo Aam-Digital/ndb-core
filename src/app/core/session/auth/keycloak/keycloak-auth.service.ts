@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../../../../environments/environment";
 import { SessionInfo } from "../session-info";
-import { KeycloakEventType, KeycloakService } from "keycloak-angular";
+import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
 import { Entity } from "../../../entity/model/entity";
 import { ParsedJWT, parseJwt } from "../../session-utils";
@@ -76,7 +76,7 @@ export class KeycloakAuthService {
 
     // auto-refresh expiring tokens, as suggested by https://github.com/mauriciovigolo/keycloak-angular?tab=readme-ov-file#keycloak-js-events
     this.keycloak.keycloakEvents$.subscribe((event) => {
-      if (event.type == KeycloakEventType.OnTokenExpired) {
+      if (event.type == KeycloakEventTypeLegacy.OnTokenExpired) {
         this.login().catch((err) =>
           Logging.debug("automatic token refresh failed", err),
         );

@@ -11,7 +11,6 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 
 @Component({
   selector: "app-entity-field-select",
-  standalone: true,
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   templateUrl:
     "../../common-components/basic-autocomplete/basic-autocomplete.component.html",

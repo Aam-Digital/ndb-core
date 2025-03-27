@@ -31,7 +31,6 @@ import { GeoResult } from "../geo.service";
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],
   imports: [FontAwesomeModule, NgIf, MatButtonModule],
-  standalone: true,
 })
 export class MapComponent implements AfterViewInit {
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];

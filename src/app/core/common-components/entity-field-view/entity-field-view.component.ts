@@ -18,7 +18,6 @@ import { EntityFormService } from "../entity-form/entity-form.service";
   templateUrl: "./entity-field-view.component.html",
   styleUrls: ["./entity-field-view.component.scss"],
   imports: [NgIf, DynamicComponentDirective],
-  standalone: true,
 })
 export class EntityFieldViewComponent<E extends Entity = Entity>
   implements OnChanges

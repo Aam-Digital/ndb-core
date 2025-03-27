@@ -26,7 +26,6 @@ import { NgTemplateOutlet } from "@angular/common";
     <ng-container *ngTemplateOutlet="template"></ng-container>
   </div>`,
   imports: [MatTooltipModule, NgTemplateOutlet],
-  standalone: true,
 })
 export class DisabledWrapperComponent implements AfterViewInit {
   /**

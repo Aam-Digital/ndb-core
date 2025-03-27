@@ -26,7 +26,6 @@ import { AdminOverviewService } from "./admin-overview.service";
   templateUrl: "./admin-overview.component.html",
   styleUrls: ["./admin-overview.component.scss"],
   imports: [MatButtonModule, RouterLink, NgForOf, DatePipe, MatListModule],
-  standalone: true,
 })
 export class AdminOverviewComponent implements OnInit {
   /** all alerts */

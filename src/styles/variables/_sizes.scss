@@ -13,10 +13,10 @@ $standard-sizes: (
   large: 2em,
 );
 
-$x-small: map-get($standard-sizes, x-small);
-$small: map-get($standard-sizes, small);
-$regular: map-get($standard-sizes, regular);
-$large: map-get($standard-sizes, large);
+$x-small: map.get($standard-sizes, x-small);
+$small: map.get($standard-sizes, small);
+$regular: map.get($standard-sizes, regular);
+$large: map.get($standard-sizes, large);
 
 $margin-main-view-right: 28px;
 $margin-main-view-left: 28px;

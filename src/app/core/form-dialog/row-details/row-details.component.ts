@@ -52,7 +52,6 @@ export interface DetailsComponentData {
   viewProviders: [
     { provide: ViewComponentContext, useValue: new ViewComponentContext(true) },
   ],
-  standalone: true,
 })
 export class RowDetailsComponent implements OnInit {
   form: EntityForm<Entity>;

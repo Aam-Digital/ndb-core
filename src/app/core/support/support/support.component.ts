@@ -26,7 +26,6 @@ import { PouchDatabase } from "../../database/pouchdb/pouch-database";
   templateUrl: "./support.component.html",
   styleUrls: ["./support.component.scss"],
   imports: [MatExpansionModule, MatButtonModule, MatTooltipModule],
-  standalone: true,
 })
 export class SupportComponent implements OnInit {
   sessionInfo: SessionInfo;

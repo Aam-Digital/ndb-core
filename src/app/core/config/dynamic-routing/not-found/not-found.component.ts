@@ -9,7 +9,6 @@ import { RouterLink } from "@angular/router";
   templateUrl: "./not-found.component.html",
   styleUrls: ["./not-found.component.scss"],
   imports: [MatButtonModule, RouterLink],
-  standalone: true,
 })
 export class NotFoundComponent implements OnInit {
   constructor(@Inject(LOCATION_TOKEN) private location: Location) {}

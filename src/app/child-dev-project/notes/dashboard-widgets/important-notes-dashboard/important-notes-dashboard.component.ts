@@ -14,7 +14,6 @@ import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/das
   templateUrl: "./important-notes-dashboard.component.html",
   styleUrls: ["./important-notes-dashboard.component.scss"],
   imports: [DashboardListWidgetComponent, MatTableModule, DatePipe, NgStyle],
-  standalone: true,
 })
 export class ImportantNotesDashboardComponent extends DashboardWidget {
   static override getRequiredEntities() {

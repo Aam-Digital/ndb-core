@@ -26,7 +26,6 @@ import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/e
   selector: "app-import-column-mapping",
   templateUrl: "./import-column-mapping.component.html",
   styleUrls: ["./import-column-mapping.component.scss"],
-  standalone: true,
   imports: [
     EditImportColumnMappingComponent,
     HelpButtonComponent,

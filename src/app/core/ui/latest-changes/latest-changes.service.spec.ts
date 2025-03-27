@@ -150,6 +150,7 @@ describe("LatestChangesService", () => {
 ### Bugs
 * relevant fix
 * .hidden fix
+* **core:** hidden core item
 ### .Hidden
 `,
     };

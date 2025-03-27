@@ -24,7 +24,6 @@ import { NgIf } from "@angular/common";
     FontAwesomeModule,
     NgIf,
   ],
-  standalone: true,
 })
 export class InputFileComponent<T = any> {
   /** returns parsed data as an object on completing load after user selects a file */

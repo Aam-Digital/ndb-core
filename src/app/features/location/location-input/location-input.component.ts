@@ -22,7 +22,6 @@ import { filter, map } from "rxjs/operators";
 
 @Component({
   selector: "app-location-input",
-  standalone: true,
   imports: [
     FormsModule,
     MatInput,

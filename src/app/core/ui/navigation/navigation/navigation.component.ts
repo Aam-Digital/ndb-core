@@ -28,7 +28,6 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
     CommonModule,
     MenuItemComponent,
   ],
-  standalone: true,
 })
 export class NavigationComponent {
   private entities = inject(EntityRegistry);

@@ -15,10 +15,10 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
 import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
 import { UntilDestroy } from "@ngneat/until-destroy";
-import { AbilityModule } from "@casl/angular";
 import { RouteTarget } from "../../../route-target";
 import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
+import { AblePurePipe } from "@casl/angular";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -32,8 +32,8 @@ import { ViewActionsComponent } from "../../common-components/view-actions/view-
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
   styleUrls: ["./entity-details.component.scss"],
-  standalone: true,
   imports: [
+    AblePurePipe,
     MatButtonModule,
     MatMenuModule,
     FontAwesomeModule,
@@ -49,7 +49,6 @@ import { ViewActionsComponent } from "../../common-components/view-actions/view-
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
     RouterLink,
-    AbilityModule,
     CommonModule,
     ViewActionsComponent,
   ],

@@ -12,7 +12,6 @@ import { firstValueFrom } from "rxjs";
 
 @Component({
   selector: "app-address-gps-location",
-  standalone: true,
   imports: [
     MatTooltip,
     FaIconComponent,

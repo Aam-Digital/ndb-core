@@ -26,7 +26,6 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
     DisplayImgComponent,
     EntityFieldViewComponent,
   ],
-  standalone: true,
 })
 export class EntityBlockComponent implements OnInit {
   @Input() entity: Entity;

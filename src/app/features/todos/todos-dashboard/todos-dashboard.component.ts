@@ -16,7 +16,6 @@ import { DashboardWidget } from "../../../core/dashboard/dashboard-widget/dashbo
   selector: "app-todos-dashboard",
   templateUrl: "./todos-dashboard.component.html",
   styleUrls: ["./todos-dashboard.component.scss"],
-  standalone: true,
   imports: [
     DashboardListWidgetComponent,
     NgStyle,

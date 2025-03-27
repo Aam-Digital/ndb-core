@@ -34,7 +34,6 @@ import { SessionSubject } from "../../session/auth/session-info";
   ></ng-template>`,
   styleUrls: ["./dashboard.component.scss"],
   imports: [NgFor, DynamicComponentDirective],
-  standalone: true,
 })
 export class DashboardComponent implements DashboardConfig {
   @Input() set widgets(widgets: DynamicComponentConfig[]) {

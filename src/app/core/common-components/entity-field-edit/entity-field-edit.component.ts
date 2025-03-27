@@ -26,7 +26,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   selector: "app-entity-field-edit",
   templateUrl: "./entity-field-edit.component.html",
   styleUrls: ["./entity-field-edit.component.scss"],
-  standalone: true,
   imports: [
     DynamicComponentDirective,
     HelpButtonComponent,

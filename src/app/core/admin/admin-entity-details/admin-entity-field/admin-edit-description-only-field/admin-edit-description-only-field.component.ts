@@ -7,7 +7,6 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../../common-components/dialog-close/dialog-close.component";
 import { MatInputModule } from "@angular/material/input";
-import { ErrorHintComponent } from "../../../../common-components/error-hint/error-hint.component";
 import {
   FormBuilder,
   FormGroup,
@@ -22,13 +21,11 @@ import { FormFieldConfig } from "../../../../common-components/entity-form/FormC
 
 @Component({
   selector: "app-admin-edit-description-only-field",
-  standalone: true,
   imports: [
     MatDialogModule,
     MatButtonModule,
     DialogCloseComponent,
     MatInputModule,
-    ErrorHintComponent,
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,

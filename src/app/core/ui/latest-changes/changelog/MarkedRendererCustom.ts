@@ -1,30 +1,19 @@
 import { MarkedRenderer } from "ngx-markdown";
+import { Tokens } from "marked";
 
 export class MarkedRendererCustom extends MarkedRenderer {
-  public override heading(
-    text: string,
-    level: 1 | 2 | 3 | 4 | 5 | 6,
-    raw: string,
-  ): string {
-    if (level === 3) {
-      switch (text.toLowerCase()) {
+  public override heading(input: Tokens.Heading): string {
+    if (input.depth === 3) {
+      switch (input.text.toLowerCase()) {
         case "bug fixes":
-          return `<span class="badge-label background-changelog-bugfix">${text}</span>`;
+          return `<span class="badge-label background-changelog-bugfix">${input.text}</span>`;
         case "features":
-          return `<span class="badge-label background-changelog-feature">${text}</span>`;
+          return `<span class="badge-label background-changelog-feature">${input.text}</span>`;
         default:
-          return `<span class="badge-label background-changelog-unknown">${text}</span>`;
+          return `<span class="badge-label background-changelog-unknown">${input.text}</span>`;
       }
     } else {
-      return super.heading(text, level, raw);
-    }
-  }
-
-  public override list(body: string, ordered: boolean, start: number): string {
-    if (ordered) {
-      return `<ol class="app-list mat-body-1">${body}</ol>`;
-    } else {
-      return `<ul class="app-list mat-body-1">${body}</ul>`;
+      return super.heading(input);
     }
   }
 }

@@ -9,7 +9,6 @@ import { Logging } from "../../../core/logging/logging.service";
 @DynamicComponent("DisplayParticipantsCount")
 @Component({
   selector: "app-display-participants-count",
-  standalone: true,
   imports: [CommonModule],
   templateUrl: "./display-participants-count.component.html",
 })

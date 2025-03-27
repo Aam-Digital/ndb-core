@@ -25,7 +25,6 @@ import { of } from "rxjs";
 
 @Component({
   selector: "app-edit-external-profile-link",
-  standalone: true,
   imports: [
     MatButton,
     FaIconComponent,

@@ -70,7 +70,6 @@ import { NotificationComponent } from "../../../features/notification/notificati
     SetupWizardButtonComponent,
     NotificationComponent,
   ],
-  standalone: true,
 })
 export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */

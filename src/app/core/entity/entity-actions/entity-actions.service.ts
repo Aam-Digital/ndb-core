@@ -10,6 +10,7 @@ import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { CascadingActionResult } from "./cascading-entity-action";
 import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
+import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -27,6 +28,7 @@ export class EntityActionsService {
     private entityDelete: EntityDeleteService,
     private entityAnonymize: EntityAnonymizeService,
     entityActionsMenuService: EntityActionsMenuService,
+    private duplicateRecordService: DuplicateRecordService,
   ) {
     entityActionsMenuService.registerActions([
       {
@@ -53,6 +55,15 @@ export class EntityActionsService {
         icon: "trash",
         label: $localize`:entity context menu:Delete`,
         tooltip: $localize`:entity context menu tooltip:Remove the record completely from the database.`,
+      },
+      {
+        action: "duplicate",
+        execute: (e, nav) =>
+          this.duplicateRecordService.duplicateRecord(e, nav),
+        permission: "create",
+        icon: "copy",
+        label: $localize`:entity context menu:Duplicate`,
+        tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
       },
     ]);
   }

@@ -36,7 +36,6 @@ import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/
   selector: "app-import-review-data",
   templateUrl: "./import-review-data.component.html",
   styleUrls: ["./import-review-data.component.scss"],
-  standalone: true,
   imports: [
     MatButtonModule,
     HelpButtonComponent,

@@ -32,7 +32,6 @@ import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.d
 
 @Component({
   selector: "app-admin-entity-general-settings",
-  standalone: true,
   templateUrl: "./admin-entity-general-settings.component.html",
   styleUrls: [
     "./admin-entity-general-settings.component.scss",

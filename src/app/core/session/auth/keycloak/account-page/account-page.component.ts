@@ -19,7 +19,6 @@ import { MatInputModule } from "@angular/material/input";
     ReactiveFormsModule,
     MatInputModule,
   ],
-  standalone: true,
 })
 export class AccountPageComponent implements OnInit {
   @Input() disabled: boolean;

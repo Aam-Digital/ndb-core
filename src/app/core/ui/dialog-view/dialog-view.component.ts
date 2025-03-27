@@ -24,7 +24,6 @@ import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.int
  * (also see RoutedViewComponent)
  */
 @Component({
-  standalone: true,
   imports: [
     CommonModule,
     DialogCloseComponent,

@@ -10,7 +10,6 @@ import { MatButtonModule } from "@angular/material/button";
   templateUrl: "./show-file.component.html",
   styleUrls: ["./show-file.component.scss"],
   imports: [MatDialogModule, MatButtonModule],
-  standalone: true,
 })
 export class ShowFileComponent {
   constructor(@Inject(MAT_DIALOG_DATA) private link: string) {}

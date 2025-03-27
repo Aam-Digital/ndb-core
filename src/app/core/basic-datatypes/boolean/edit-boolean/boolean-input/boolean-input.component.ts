@@ -19,7 +19,6 @@ import { ErrorStateMatcher } from "@angular/material/core";
 
 @Component({
   selector: "app-boolean-input",
-  standalone: true,
   imports: [MatCheckboxModule, FormsModule],
   providers: [
     { provide: MatFormFieldControl, useExisting: BooleanInputComponent },

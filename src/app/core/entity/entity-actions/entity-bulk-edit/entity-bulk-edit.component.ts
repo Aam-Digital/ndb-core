@@ -7,7 +7,6 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
 import { MatInputModule } from "@angular/material/input";
-import { ErrorHintComponent } from "app/core/common-components/error-hint/error-hint.component";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import {
   FormControl,
@@ -30,13 +29,11 @@ import {
 
 @Component({
   selector: "app-entity-bulk-edit",
-  standalone: true,
   imports: [
     MatDialogModule,
     MatButtonModule,
     DialogCloseComponent,
     MatInputModule,
-    ErrorHintComponent,
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,

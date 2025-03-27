@@ -10,7 +10,6 @@ import { asArray } from "app/utils/asArray";
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
   imports: [EntityBlockComponent],
-  standalone: true,
 })
 export class DisplayEntityComponent
   extends ViewDirective<string[] | string, string>

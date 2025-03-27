@@ -5,7 +5,6 @@ import { RelatedEntitiesComponent } from "../../entity-details/related-entities/
 
 @Component({
   selector: "app-admin-entity-public-forms-component",
-  standalone: true,
   templateUrl: "./admin-entity-public-forms-component.html",
   styleUrls: [
     "./admin-entity-public-forms-component.scss",

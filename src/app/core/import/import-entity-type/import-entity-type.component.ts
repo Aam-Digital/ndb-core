@@ -13,7 +13,6 @@ import { EntityTypeSelectComponent } from "../../entity/entity-type-select/entit
   selector: "app-import-entity-type",
   templateUrl: "./import-entity-type.component.html",
   styleUrls: ["./import-entity-type.component.scss"],
-  standalone: true,
   imports: [
     MatInputModule,
     MatSelectModule,

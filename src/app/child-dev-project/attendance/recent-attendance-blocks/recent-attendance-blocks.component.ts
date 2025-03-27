@@ -29,7 +29,6 @@ import { AttendanceBlockComponent } from "../attendance-block/attendance-block.c
     ></app-attendance-block>
   `,
   imports: [NgForOf, SlicePipe, AttendanceBlockComponent],
-  standalone: true,
 })
 export class RecentAttendanceBlocksComponent implements OnInit {
   attendanceList: ActivityAttendance[] = [];

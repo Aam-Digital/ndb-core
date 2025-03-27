@@ -20,7 +20,6 @@ import { UnsavedChangesService } from "../../../entity-details/form/unsaved-chan
  */
 @Component({
   selector: "app-entity-inline-edit-actions",
-  standalone: true,
   imports: [
     CommonModule,
     Angulartics2OnModule,

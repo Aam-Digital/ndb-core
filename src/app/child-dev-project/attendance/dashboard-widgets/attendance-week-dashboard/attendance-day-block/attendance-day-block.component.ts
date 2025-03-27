@@ -7,7 +7,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   templateUrl: "./attendance-day-block.component.html",
   styleUrls: ["./attendance-day-block.component.scss"],
   imports: [MatTooltipModule],
-  standalone: true,
 })
 export class AttendanceDayBlockComponent {
   @Input() attendance?: EventAttendance;

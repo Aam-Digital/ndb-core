@@ -37,6 +37,7 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
     } @else {
       <app-ui></app-ui>
     }`,
+  standalone: false,
 })
 export class AppComponent {
   configFullscreen: boolean = false;

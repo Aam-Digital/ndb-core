@@ -3,7 +3,8 @@
 The reporting module allows organizations to automatically create reports of aggregated data for a given timespan.
 This can be used to track indicators and export anonymous data.
 
-There are currently two systems available to generate reports, both using the same config documents (`ReportConfig:*`): 
+There are currently two systems available to generate reports, both using the same config documents (`ReportConfig:*`):
+
 - SQL-based queries executed server-side using the SQS server
 - (legacy) client-side generator using the aggregation & query syntax below
 
@@ -26,6 +27,7 @@ The reports can be defined as `ReportConfig:*` entities.
 There are different modes for `ReportConfig`:
 
 ### sql
+
 Requirements: SQS
 
 Some useful SQL query snippets for Aam Digital contexts are collected here: [Aam Digital SQL Snippets](https://docs.google.com/document/d/14JqS6xgZzC1xHUogDho5n1kyNLzX1Eoyv6MeZtRejuM/edit?usp=sharing)
@@ -43,8 +45,8 @@ Some useful SQL query snippets for Aam Digital contexts are collected here: [Aam
 }
 ```
 
-
 #### SQL Report With Arguments
+
 Additional arguments for the query (like a from and to date parameter) can be used in the SQL query directly using "?". The "neededArgs" array defines what arguments are filled for the "?" placeholders in the given order.
 
 ```json
@@ -54,10 +56,7 @@ Additional arguments for the query (like a from and to date parameter) can be us
   "title": "Test Report",
   "mode": "sql",
   "aggregationDefinition": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE created_at BETWEEN ? AND ?",
-  "neededArgs": [
-    "from",
-    "to"
-  ]
+  "neededArgs": ["from", "to"]
 }
 ```
 
