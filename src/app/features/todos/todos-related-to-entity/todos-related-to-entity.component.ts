@@ -20,7 +20,6 @@ import { FilterService } from "../../../core/filter/filter.service";
   selector: "app-todos-related-to-entity",
   templateUrl: "./todos-related-to-entity.component.html",
   styleUrls: ["./todos-related-to-entity.component.scss"],
-  standalone: true,
   imports: [EntitiesTableComponent, MatSlideToggleModule, FormsModule],
 })
 export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo> {

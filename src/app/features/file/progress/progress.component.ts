@@ -8,7 +8,6 @@ import { AsyncPipe } from "@angular/common";
   selector: "app-progress",
   templateUrl: "./progress.component.html",
   imports: [MatProgressBarModule, AsyncPipe],
-  standalone: true,
 })
 export class ProgressComponent {
   constructor(

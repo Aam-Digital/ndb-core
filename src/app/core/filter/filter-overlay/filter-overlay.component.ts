@@ -23,7 +23,6 @@ export interface FilterOverlayData<T extends Entity> {
   templateUrl: "./filter-overlay.component.html",
   styles: [":host { display: block }"],
   imports: [MatDialogModule, FilterComponent, MatButtonModule],
-  standalone: true,
 })
 export class FilterOverlayComponent<T extends Entity> {
   constructor(@Inject(MAT_DIALOG_DATA) public data: FilterOverlayData<T>) {}

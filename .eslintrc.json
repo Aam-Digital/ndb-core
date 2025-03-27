@@ -16,6 +16,9 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "@angular-eslint/prefer-standalone": [
+          "warn"
+        ],
         "@angular-eslint/component-selector": [
           "error",
           {

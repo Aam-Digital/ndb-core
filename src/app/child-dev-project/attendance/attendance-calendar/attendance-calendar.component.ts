@@ -53,7 +53,6 @@ import { Angulartics2Module } from "angulartics2";
     MatButtonModule,
     Angulartics2Module,
   ],
-  standalone: true,
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {

@@ -25,7 +25,6 @@ import { MatSelectModule } from "@angular/material/select";
     NgForOf,
     MatSelectModule,
   ],
-  standalone: true,
 })
 export class GroupedChildAttendanceComponent implements OnInit {
   @Input() entity: Entity;

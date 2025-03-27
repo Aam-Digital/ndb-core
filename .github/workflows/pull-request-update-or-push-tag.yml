@@ -43,12 +43,12 @@ jobs:
           - linux/arm64
         os:
           - ubuntu-latest
-          - [ self-hosted, Linux, ARM64 ]
+          - [self-hosted, Linux, ARM64]
         exclude:
           - platform: linux/arm64
             os: ubuntu-latest
           - platform: linux/amd64
-            os: [ self-hosted, Linux, ARM64 ]
+            os: [self-hosted, Linux, ARM64]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
@@ -146,12 +146,12 @@ jobs:
           - linux/arm64
         os:
           - ubuntu-latest
-          - [ self-hosted, Linux, ARM64 ]
+          - [self-hosted, Linux, ARM64]
         exclude:
           - platform: linux/arm64
             os: ubuntu-latest
           - platform: linux/amd64
-            os: [ self-hosted, Linux, ARM64 ]
+            os: [self-hosted, Linux, ARM64]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files

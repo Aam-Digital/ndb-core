@@ -148,6 +148,11 @@ export class LatestChangesService {
         // remove lines starting with "." after markdown characters
         /^(\*|\#)* *\.(.*)(\n|\r\n)/gm,
         "",
+      )
+      .replace(
+        // contains "**core:** as scope
+        /^(.*)\*\*core:\*\*(.*)(\n|\r\n)/gm,
+        "",
       );
 
     return {

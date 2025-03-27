@@ -46,7 +46,6 @@ export const EditFileComponent_IMPORTS = [
   templateUrl: "./edit-file.component.html",
   styleUrls: ["./edit-file.component.scss"],
   imports: EditFileComponent_IMPORTS,
-  standalone: true,
 })
 export class EditFileComponent extends EditComponent<string> implements OnInit {
   @ViewChild("fileUpload") fileUploadInput: ElementRef<HTMLInputElement>;

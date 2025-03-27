@@ -17,7 +17,6 @@ import { MatIconButton } from "@angular/material/button";
  */
 @Component({
   selector: "app-inherited-value-button",
-  standalone: true,
   imports: [
     EntityFieldLabelComponent,
     FaIconComponent,
