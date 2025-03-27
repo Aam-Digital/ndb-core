@@ -195,9 +195,13 @@ fabric.properties
 .vs/*
 .vscode/*
 
-# video and screenshot of the tests from Cypress
+# video and screenshot of the tests from e2e tests (Playwright, Cypress)
 ./e2e/screenshots
 ./e2e/videos
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # Firebase
 .firebase
