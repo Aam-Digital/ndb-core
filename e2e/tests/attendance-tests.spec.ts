@@ -15,32 +15,36 @@ test.describe("Attendance Module", () => {
     await page.goto("/attendance/add-day");
   });
 
-  // Verify the date field displays the current date
-  test("Verify current date field displays correctly", async ({ page }) => {
-    const fixedDate = new Date("1/23/2025");
+  test("Record attendance for one activity", async ({ page }) => {
+    /*
+      Verify the date field displays the current date
+    */
+    const fixedDate = new Date(FIXED_DATE);
     const formattedDateRegex = new RegExp(
       `${fixedDate.getMonth() + 1}/${fixedDate.getDate()}/${fixedDate.getFullYear()}|` +
         `${(fixedDate.getMonth() + 1).toString().padStart(2, "0")}/${fixedDate.getDate().toString().padStart(2, "0")}/${fixedDate.getFullYear()}`,
     );
     const dateField = page.getByLabel("Date");
     await expect(dateField).toHaveValue(formattedDateRegex);
-  });
 
-  test("Allow backdated editing for the date field", async ({ page }) => {
+    /*
+      Allow backdated editing for the date field
+    */
     const backdatedDate = "12/15/2024";
-    const dateField = page.getByLabel("Date");
     await dateField.fill(backdatedDate);
     await expect(dateField).toHaveValue(backdatedDate);
-  });
 
-  test("Verify list of classes is displayed", async ({ page }) => {
+    /*
+      Verify list of classes is displayed
+    */
     await page.waitForSelector("mat-card-header");
     const classList = page.locator("mat-card-header");
     const count = await classList.count();
     expect(count).toBeGreaterThan(0);
-  });
 
-  test("Mark attendance for participants dynamically", async ({ page }) => {
+    /*
+      Mark attendance for participants dynamically
+    */
     const firstClass = page.locator("mat-card-header").first();
     await firstClass.evaluate((el: HTMLElement) => el?.click()); // Force the DOM click
 
@@ -70,7 +74,9 @@ test.describe("Attendance Module", () => {
     await expect(ReviewDetailsBtn).toBeVisible();
     await ReviewDetailsBtn.click();
 
-    // Verify the status are editable and can be updated
+    /*
+      Review popup: Verify the status are editable and can be updated
+    */
     const EditStatusBtn = page
       .locator(
         "app-attendance-status-select > .mat-mdc-form-field > .mat-mdc-text-field-wrapper > .mat-mdc-form-field-flex",
@@ -94,13 +100,15 @@ test.describe("Attendance Module", () => {
 
     await page.getByRole("button", { name: "Save" }).click();
 
+    /*
+      Verify the class just recorded attendance should be highlighted in green and all others in orange
+    */
     const BackOverviewBtn = page.getByRole("button", {
       name: "Back to Overview",
     });
     await expect(BackOverviewBtn).toBeVisible(); // "Back to Overview" button is visible
     await BackOverviewBtn.click(); // "Back to Overview" button is clickable
 
-    // Verify the class just recorded attendance should be highlighted in green and all others in orange
     const classCard = page.locator("mat-card");
     const classCardCount = await classCard.count();
     for (let i = 0; i < classCardCount; i++) {
@@ -119,7 +127,7 @@ test.describe("Attendance Module", () => {
     }
   });
 
-  test("Verify attendance report generation", async ({ page }) => {
+  test("View and download attendance report", async ({ page }) => {
     await page.goto("/report");
 
     await page
@@ -183,8 +191,11 @@ test.describe("Attendance Module", () => {
     expect(download.suggestedFilename()).toMatch("report.csv");
   });
 
-  test("Verify attendance percentage color coding", async ({ page }) => {
-    await page.locator("mat-list-item").filter({ hasText: "Children" }).click();
+  test("View attendance percentage color in children list", async ({
+    page,
+  }) => {
+    await page.goto("/child");
+
     await page.getByRole("tab", { name: "School Info" }).click();
     const CoachingAttendance = page
       .getByRole("columnheader", { name: "Attendance (School)" })
@@ -310,7 +321,9 @@ test.describe("Attendance Module", () => {
     }
   });
 
-  test("Navigate to Attendance page and verify sections", async ({ page }) => {
+  test("Managing Attendance view and Recurring Activities list", async ({
+    page,
+  }) => {
     // Navigate to the Attendance page
     await page
       .locator("mat-list-item")
@@ -333,13 +346,10 @@ test.describe("Attendance Module", () => {
     // Verify "Monthly Attendance" section
     const monthlyAttendanceSection = page.getByText("Monthly Attendance");
     await expect(monthlyAttendanceSection).toBeVisible();
-  });
 
-  test("Manage Activities button navigation", async ({ page }) => {
-    await page
-      .locator("mat-list-item")
-      .filter({ hasText: "Attendance" })
-      .click();
+    /*
+      Navigate to "Manage Activities"
+    */
     const manageActivitiesButton = page.getByRole("button", {
       name: "Manage Activities",
     });
@@ -351,27 +361,18 @@ test.describe("Attendance Module", () => {
     await expect(
       page.getByRole("heading", { name: "Recurring Activities" }),
     ).toBeVisible();
-    await page.goBack();
-  });
 
-  test("Recurring Activities page elements", async ({ page }) => {
-    // Navigate to Recurring Activities page
-    await page
-      .locator("mat-list-item")
-      .filter({ hasText: "Attendance" })
-      .click();
-    await page.getByRole("button", { name: "Manage Activities" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Recurring Activities" }),
-    ).toBeVisible();
-
-    // Verify "Add New" button is visible
+    /*
+      "Add New" button is visible for Recurring Activity
+    */
     const addNewButton = page.getByRole("button", {
       name: "add elementAdd New",
     });
     await expect(addNewButton).toBeVisible();
 
-    // Verify table columns are visible
+    /*
+      Verify table columns for Recurring Activities
+    */
     await expect(page.locator("text=Title")).toBeVisible();
     await expect(page.locator("text=Type")).toBeVisible();
     await expect(page.locator("text=Assigned user(s)")).toBeVisible();

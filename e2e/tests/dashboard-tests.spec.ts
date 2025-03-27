@@ -14,8 +14,10 @@ test.describe("Dashboard Module", () => {
     await page.goto("/");
   });
 
-  test("Verify Quick Actions widget", async ({ page }) => {
-    // Check "Quick Actions" widget is visible
+  test("Dashboard widgets and actions", async ({ page }) => {
+    /*
+      Verify Quick Actions widget
+    */
     const quickActionsElement = page.locator("text=Quick actions");
     await expect(quickActionsElement).toBeVisible();
 
@@ -26,18 +28,19 @@ test.describe("Dashboard Module", () => {
     await expect(recordAttendanceButton).toBeVisible();
 
     await recordAttendanceButton.click();
-
     // Check navigation to "Record Attendance" page
     await expect(page).toHaveURL("/attendance/add-day");
-  });
+    await page.goBack();
 
-  test("Verify children count is displayed", async ({ page }) => {
+    /*
+      Verify children count is displayed
+    */
     const childrenCount = page.locator("app-entity-count-dashboard-widget");
     await expect(childrenCount).toContainText(/107/);
-  });
 
-  test("Verify Tasks Due widget and tasks", async ({ page }) => {
-    // Check "Tasks Due" widget is visible
+    /*
+      Verify Tasks Due widget and tasks
+    */
     const tasksDueElement = page.getByText("Tasks due");
     await expect(tasksDueElement).toBeVisible();
 

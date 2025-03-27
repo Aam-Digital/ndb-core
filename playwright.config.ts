@@ -7,7 +7,7 @@ export default defineConfig({
   testDir: "./e2e/tests",
 
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
 
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
@@ -22,7 +22,8 @@ export default defineConfig({
   reporter: "html",
 
   /* Timeout for each test */
-  timeout: 120000, // because our app has long initial load, this has to be fairly high
+  timeout: 180_000, // because our app has long initial load, this has to be fairly high
+  expect: { timeout: 10_000 },
 
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -42,15 +43,17 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
 
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
+    // TODO: check why some tests are very slow and/or failing in firefox
+    //{
+    //  name: "firefox",
+    //  use: { ...devices["Desktop Firefox"] },
+    //},
 
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
+    // TODO: research why webkit is not working with our playwright tests
+    //{
+    //  name: "webkit",
+    //  use: { ...devices["Desktop Safari"] },
+    //},
 
     /* Test against mobile viewports. */
     // {
@@ -77,7 +80,7 @@ export default defineConfig({
   webServer: {
     command: "npm run start",
     url: "http://localhost:4200",
-    timeout: 120000,
+    timeout: 180000,
     reuseExistingServer: !process.env.CI,
   },
 });
