@@ -15,7 +15,6 @@ export class DisplayEntityTypeComponent
   extends ViewDirective<string[] | string, string>
   implements OnInit
 {
-  readonly aggregationThreshold = 5;
   entityIds: string[] = [];
 
   async ngOnInit() {
