@@ -143,6 +143,13 @@ export const coreComponents: ComponentTuple[] = [
       ),
   ],
   [
+    "DisplayEntityType",
+    () =>
+      import("./entity/display-entity-type/display-entity-type.component").then(
+        (c) => c.DisplayEntityTypeComponent,
+      ),
+  ],
+  [
     "DisplayMonth",
     () =>
       import(

@@ -48,6 +48,7 @@ export class TemplateExport extends Entity {
     label: $localize`:TemplateExport:Applicable Entity Types`,
     labelShort: $localize`:TemplateExport:Entity Types`,
     editComponent: "EditEntityType",
+    viewComponent: "DisplayEntityType",
     isArray: true,
     validators: { required: true },
   })
