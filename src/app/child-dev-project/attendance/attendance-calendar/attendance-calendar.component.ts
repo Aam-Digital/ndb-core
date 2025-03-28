@@ -141,8 +141,9 @@ export class AttendanceCalendarComponent implements OnChanges {
 
     if (this.calendar) {
       // it is only possible to update the active date (i.e. which month is visible)
-      // after minDate is propagated with the next change cycle ...
-      setTimeout(() => (this.calendar.activeDate = this.minDate));
+      // The active date (i.e., the visible month) is updated after maxDate is propagated  
+      // to ensure the calendar initially displays the current month.  
+      setTimeout(() => (this.calendar.activeDate = this.maxDate));
     }
   }
 
