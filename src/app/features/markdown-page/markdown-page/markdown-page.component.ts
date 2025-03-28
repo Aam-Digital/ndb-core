@@ -19,7 +19,7 @@ import { Component, inject, Input, OnInit } from "@angular/core";
 import { MarkdownPageModule } from "../markdown-page.module";
 import { RouteTarget } from "../../../route-target";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { Markdown } from "../markdown";
+import { MarkdownContent } from "../markdown-content";
 
 /**
  * Display markdown formatted page that is dynamically loaded based on the file defined in config.
@@ -43,7 +43,7 @@ export class MarkdownPageComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     if (this.markdownEntityId) {
       const markdownEntity = await this.entityMapper.load(
-        Markdown,
+        MarkdownContent,
         this.markdownEntityId,
       );
 
