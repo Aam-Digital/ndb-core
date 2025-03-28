@@ -1,1 +1,5 @@
-<div markdown [src]="markdownFile"></div>
+@if (markdownEntityId) {
+  <div markdown [data]="markdownContent"></div>
+} @else {
+  <div markdown [src]="markdownFile"></div>
+}
