@@ -202,8 +202,8 @@ export class PouchDatabase extends Database {
   }
 
   /**
-   * Listen to changes to documents which have an _id with the given prefix
-   * @param prefix for which document changes are emitted
+   * Listen to changes to documents in the database.
+   * Use rxjs operators to filter for specific prefixes etc. if needed.
    * @returns observable which emits the filtered changes
    */
   changes(): Observable<any> {
@@ -252,8 +252,8 @@ export class PouchDatabase extends Database {
    */
   async reset() {
     this.pouchDB = undefined;
-    this.changesFeed?.complete();
-    this.changesFeed = undefined;
+    // keep this.changesFeed because some services are already subscribe to this reference and will find updates if we recreate a new subject
+
     this.databaseInitialized = new Subject();
   }
 
