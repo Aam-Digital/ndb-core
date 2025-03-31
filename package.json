@@ -32,7 +32,7 @@
     "@angular/core": "^19.1.1",
     "@angular/forms": "^19.1.1",
     "@angular/fire": "^19.0.0",
-    "firebase": "^10.14.1",
+    "firebase": "^11.5.0",
     "@angular/localize": "^19.1.1",
     "@angular/material": "^19.1.0",
     "@angular/material-moment-adapter": "^19.1.0",
@@ -78,7 +78,7 @@
     "zone.js": "^0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.1.1",
+    "@angular-devkit/build-angular": "^19.2.4",
     "@angular-eslint/builder": "^19.0.2",
     "@angular-eslint/eslint-plugin": "^19.0.2",
     "@angular-eslint/eslint-plugin-template": "^19.0.2",
