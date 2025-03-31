@@ -252,8 +252,7 @@ export class PouchDatabase extends Database {
    */
   async reset() {
     this.pouchDB = undefined;
-    // keep this.changesFeed because some services are already subscribe to this reference and will find updates if we recreate a new subject
-
+    // keep this.changesFeed because some services are already subscribed to this reference
     this.databaseInitialized = new Subject();
   }
 
