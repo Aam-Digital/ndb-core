@@ -2,9 +2,13 @@ import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
 import { Entity } from "app/core/entity/model/entity";
 
-//* MarkdownContent entity to store markdown content
+/**
+ * Some Markdown formatted text to be displayed in a view.
+ */
 @DatabaseEntity("MarkdownContent")
 export class MarkdownContent extends Entity {
-  // The content/details of the markdown entity
+  /**
+   * The content with markdown formatting.
+   */
   @DatabaseField() content: string;
 }
