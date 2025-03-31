@@ -90,15 +90,11 @@ export class NotesRelatedToEntityComponent
         }
       }
 
-      if (this.entity.getType() === "Child") {
-        newNote.addChild(this.entity.getId()); // Only add to children, not relatedEntities
-      } else {
-        for (const e of this.getIndirectlyRelatedEntityIds(this.entity)) {
-          if (!newNote.relatedEntities.includes(e)) {
-            newNote.relatedEntities.push(e);
-          }
+      for (const e of this.getIndirectlyRelatedEntityIds(this.entity)) {
+        if (!newNote.relatedEntities.includes(e)) {
+          newNote.relatedEntities.push(e);
         }
-      } 
+      }
 
       return newNote;
     };
@@ -121,8 +117,6 @@ export class NotesRelatedToEntityComponent
         // empty - skip
         continue;
       }
-    console.log("Adding related entity1",permittedRelatedTypes);
-
 
       if (schema.dataType !== EntityDatatype.dataType) {
         // not referencing other entities
@@ -131,11 +125,8 @@ export class NotesRelatedToEntityComponent
 
       for (const referencedId of asArray(entity[property])) {
         const referencedType = Entity.extractTypeFromId(referencedId);
-        console.log("Adding related entity",referencedType);
 
         if (permittedRelatedTypes.includes(referencedType)) {
-          console.log("newNote.relatedEntities", Entity.createPrefixedId(referencedType, referencedId),);
-
           // entity can have references of multiple entity types of which only some are allowed to be linked to Notes
           relatedIds.push(
             Entity.createPrefixedId(referencedType, referencedId),
