@@ -90,9 +90,14 @@ export class NotesRelatedToEntityComponent
         }
       }
 
-      for (const e of this.getIndirectlyRelatedEntityIds(this.entity)) {
-        if (!newNote.relatedEntities.includes(e)) {
-          newNote.relatedEntities.push(e);
+      if (this.entity.getType() !== "Child") {
+        for (const e of [
+          this.entity.getId(),
+          ...this.getIndirectlyRelatedEntityIds(this.entity),
+        ]) {
+          if (!newNote.relatedEntities.includes(e)) {
+            newNote.relatedEntities.push(e);
+          }
         }
       }
 
