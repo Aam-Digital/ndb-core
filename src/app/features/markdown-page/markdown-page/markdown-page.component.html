@@ -1,1 +1,9 @@
-<div markdown [src]="markdownFile"></div>
+@if (markdownEntityId) {
+  @if (markdownContent) {
+    <div markdown [data]="markdownContent"></div>
+  } @else {
+    <p><em i18n>Content not found.</em></p>
+  }
+} @else {
+  <div markdown [src]="markdownFile"></div>
+}
