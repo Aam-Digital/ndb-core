@@ -362,7 +362,7 @@ export const defaultJsonConfig = {
   "view:help": {
     component: "MarkdownPage",
     config: {
-      markdownFile: $localize`:Filename of markdown help page (make sure the filename you enter as a translation actually exists on the server!):assets/help/help.en.md`
+      markdownEntityId: "help"
     }
   },
   "view:attendance": {
@@ -1094,13 +1094,13 @@ export const defaultJsonConfig = {
       },
       remarks: {
         dataType: "string",
-        label: $localize`:Label for the remarks for a school:Remarks`,
+        label: $localize`:Label for the remarks for a school:Remarks`
       },
       website: {
         dataType: "url",
-        label: $localize`:Label for the website of a school:Website`,
-      },
-    },
+        label: $localize`:Label for the website of a school:Website`
+      }
+    }
   },
   "entity:HistoricalEntityData": {
     hasPII: true,
