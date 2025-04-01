@@ -1,4 +1,8 @@
-<ng-container *ngFor="let entityId of entityIds; let i = index">
-  <span>{{ (entityId | entityTypeLabel) || entityId }}</span>
-  <ng-container *ngIf="i !== entityIds.length - 1">,&nbsp;</ng-container>
-</ng-container>
+@for (entityId of entityIds; track entityId; let i = $index) {
+  <span class="display-entity-type">
+    {{ (entityId | entityTypeLabel) || entityId }}
+  </span>
+  @if (i !== entityIds.length - 1) {
+    <span>,&nbsp;</span>
+  }
+}
