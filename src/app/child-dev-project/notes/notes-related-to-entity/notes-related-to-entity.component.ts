@@ -90,14 +90,12 @@ export class NotesRelatedToEntityComponent
         }
       }
 
-      if (this.entity.getType() !== "Child") {
-        for (const e of [
-          this.entity.getId(),
-          ...this.getIndirectlyRelatedEntityIds(this.entity),
-        ]) {
-          if (!newNote.relatedEntities.includes(e)) {
-            newNote.relatedEntities.push(e);
-          }
+      for (const e of [
+        this.entity.getId(), // TODO: we should only add the current (this.entity) here if it has not been added to any other property already (e.g. by the  super.createNewRecordFactory method)
+        ...this.getIndirectlyRelatedEntityIds(this.entity),
+      ]) {
+        if (!newNote.relatedEntities.includes(e)) {
+          newNote.relatedEntities.push(e);
         }
       }
 
