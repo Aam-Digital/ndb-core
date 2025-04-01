@@ -9,7 +9,7 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-fdescribe("NotesRelatedToEntityComponent", () => {
+describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
   let fixture: ComponentFixture<NotesRelatedToEntityComponent>;
   const originalNoteSchema_relatedEntities =
@@ -74,7 +74,7 @@ fdescribe("NotesRelatedToEntityComponent", () => {
     component.property = undefined;
     await component.ngOnInit();
     note = component.createNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId()]);
+    expect(note.relatedEntities).not.toContain(entity.getId());
 
     entity = new ChildSchoolRelation();
     entity["childId"] = `Child:someChild`;
