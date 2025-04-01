@@ -91,16 +91,28 @@ export class NotesRelatedToEntityComponent
       }
 
       for (const e of [
-        this.entity.getId(), // TODO: we should only add the current (this.entity) here if it has not been added to any other property already (e.g. by the  super.createNewRecordFactory method)
+        this.entity.getId(),
         ...this.getIndirectlyRelatedEntityIds(this.entity),
       ]) {
-        if (!newNote.relatedEntities.includes(e)) {
+        if (!this.isAlreadyLinked(newNote, e)) {
           newNote.relatedEntities.push(e);
         }
       }
 
       return newNote;
     };
+  }
+
+  /**
+   * check if an entityId is already referenced in any array properties of the given note
+   */
+  private isAlreadyLinked(newNote: any, id: string): boolean {
+    for (const key in newNote) {
+      if (Array.isArray(newNote[key]) && newNote[key].includes(id)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

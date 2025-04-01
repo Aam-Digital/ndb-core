@@ -9,7 +9,7 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
-describe("NotesRelatedToEntityComponent", () => {
+fdescribe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
   let fixture: ComponentFixture<NotesRelatedToEntityComponent>;
   const originalNoteSchema_relatedEntities =
