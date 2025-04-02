@@ -1,0 +1,259 @@
+import { Inject, Injectable, LOCALE_ID } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import {
+  catchError,
+  concatMap,
+  concatWith,
+  map,
+  switchMap,
+} from "rxjs/operators";
+import { Observable, of } from "rxjs";
+import { UserAdminService } from "./user-admin.service";
+import { KeycloakUserDto } from "./keycloak-user-dto";
+import { Logging } from "../../logging/logging.service";
+import { Role, UserAccount } from "./user-account";
+
+/**
+ * Admin functionalities to manage users in Keycloak server.
+ *
+ * Requires Keycloak Server with:
+ * - Client Scope > Mappers: "client roles" (to add `"realm-management": { "roles": [] }`) to token
+ *    (and this Client Scope added to the "app" Client)
+ * - User > Role:
+ *     - "(realm-management) manage-users"
+ *     - "(realm-management) view-realm" (to access roles)
+ */
+@Injectable({ providedIn: "root" })
+export class KeycloakAdminService extends UserAdminService {
+  // These roles are created by Keycloak automatically and should not be added or removed from users.
+  private static readonly KEYCLOAK_DEFAULT_ROLES = [
+    "default-roles",
+    "offline_access",
+    "uma_authorization",
+  ];
+
+  private readonly keycloakUrl: string;
+
+  constructor(
+    private http: HttpClient,
+    @Inject(LOCALE_ID) private baseLocale: string,
+  ) {
+    super();
+    const realm = "dummy-realm";
+    this.keycloakUrl = `${UserAdminService.API}/admin/realms/${realm}`;
+  }
+
+  // TODO: tested and okay (account created, roles added, email sent)
+  createUser(
+    userEntityId: string,
+    email: string,
+    roles: Role[],
+  ): Observable<Object> {
+    return this.http
+      .post(
+        `${this.keycloakUrl}/users`,
+        new KeycloakUserDto(email, userEntityId),
+      )
+      .pipe(
+        concatMap(() => this.findUserBy({ username: email })),
+        concatMap((userAccount) => {
+          return this.assignRoles(userAccount.id, roles).pipe(
+            map(() => userAccount),
+          );
+        }),
+        concatMap((userAccount) => {
+          return this.sendEmail(userAccount.id, "VERIFY_EMAIL").pipe(
+            map(() => userAccount),
+          );
+        }),
+      );
+  }
+
+  // TODO: tested and okay
+  deleteUser(userEntityId: string) {
+    return this.getUser(userEntityId).pipe(
+      switchMap((userAccount) =>
+        this.http.delete(`${this.keycloakUrl}/users/${userAccount.id}`),
+      ),
+      switchMap(() => {
+        return of({ userDeleted: true });
+      }),
+      catchError((err) => {
+        Logging.warn("failed to delete user account", err);
+        return of({ userDeleted: false });
+      }),
+    );
+  }
+
+  // TODO tested and okay
+  updateUser(userAccountId: string, updatedUser: Partial<UserAccount>) {
+    return this.getUserByAccountId(userAccountId).pipe(
+      switchMap((userAccount) =>
+        this.updateKeycloakUser(
+          userAccount,
+          KeycloakUserDto.fromUserAccount(updatedUser),
+          updatedUser.roles,
+        ),
+      ),
+      catchError((err) => {
+        throw new Error(err?.message ?? "Failed to update user on server");
+      }),
+    );
+  }
+
+  private updateKeycloakUser(
+    currentUser: KeycloakUserDto,
+    updatedUser: Partial<KeycloakUserDto>,
+    newRoles?: Role[],
+  ) {
+    const actions: Observable<any>[] = [];
+
+    if (newRoles) {
+      // delete existing roles and assign new ones
+      actions.push(
+        this.getRolesOfUser(currentUser.id).pipe(
+          concatMap((currentRoles) =>
+            this.deleteRoles(currentUser.id, currentRoles),
+          ),
+          concatMap(() => this.assignRoles(currentUser.id, newRoles)),
+        ),
+      );
+    }
+
+    if (updatedUser.email) {
+      // send verification email if email changed
+      updatedUser.requiredActions = ["VERIFY_EMAIL"];
+      actions.push(this.sendEmail(currentUser.id, "VERIFY_EMAIL"));
+    }
+
+    // first update the user object, then run other actions
+    const newUser = { ...currentUser, ...updatedUser }; // make sure we don't lose unchanged properties
+    return this.http
+      .put(`${this.keycloakUrl}/users/${currentUser.id}`, newUser)
+      .pipe(concatWith(...actions));
+  }
+
+  // TODO tested and okay
+  getUser(userEntityId: string) {
+    return this.findUserBy({
+      q: `exact_username:${userEntityId}`,
+    }).pipe(
+      map(
+        (keycloakUser) =>
+          ({
+            id: keycloakUser.id,
+            email: keycloakUser.email,
+            emailVerified: keycloakUser.emailVerified,
+            enabled: keycloakUser.enabled,
+            userEntityId: keycloakUser.attributes?.exact_username,
+          }) as UserAccount,
+      ),
+      switchMap((account) =>
+        this.getRolesOfUser(account.id).pipe(
+          map((roles) => ({ ...account, roles })),
+        ),
+      ),
+    );
+  }
+
+  getUserByAccountId(userAccountId: string) {
+    return this.http.get<KeycloakUserDto>(
+      `${this.keycloakUrl}/users/${userAccountId}`,
+    );
+  }
+
+  /**
+   * Looks for a single user that matches the criteria in params.
+   * The user is only returned if only a single user is matching the criteria exactly.
+   * If none or more than one user are matching throws a `NotFoundException`
+   * @param params see {@link https://www.keycloak.org/docs-api/19.0.2/rest-api/index.html#_getusers}
+   */
+  private findUserBy(params: { [key in string]: string | boolean }) {
+    params.exact = true;
+    return this.findUsersBy(params).pipe(
+      map((res) => {
+        if (res.length !== 1) {
+          throw new Error(`Could not find user`);
+        } else {
+          return res[0];
+        }
+      }),
+    );
+  }
+
+  /**
+   * Allows to find users by the given criteria.
+   * The keys in the `params` object have to be valid Keycloak user properties.
+   * Users where all values are matching are returned.
+   * @param params
+   */
+  private findUsersBy(params: { [key in string]: string | boolean }) {
+    return this.http.get<KeycloakUserDto[]>(`${this.keycloakUrl}/users`, {
+      params,
+    });
+  }
+
+  /**
+   * Sends an email to the user with the given id, asking to perform the specified action.
+   * @param userAccountId
+   * @param action e.g. "UPDATE_PASSWORD", "VERIFY_EMAIL"
+   */
+  private sendEmail(userAccountId: string, action: string) {
+    return this.http.put(
+      `${this.keycloakUrl}/users/${userAccountId}/execute-actions-email`,
+      [action],
+      {
+        headers: {
+          "Accept-Language": this.baseLocale,
+        },
+      },
+    );
+  }
+
+  getAllRoles() {
+    return this.http
+      .get<Role[]>(`${this.keycloakUrl}/roles`)
+      .pipe(map((roles) => this.filterNonTechnicalRoles(roles)));
+  }
+
+  private filterNonTechnicalRoles(roles: Role[]) {
+    return roles.filter(
+      (role) =>
+        !KeycloakAdminService.KEYCLOAK_DEFAULT_ROLES.includes(role.name),
+    );
+  }
+
+  getRolesOfUser(userAccountId: string) {
+    return this.http
+      .get<
+        Role[]
+      >(`${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm`)
+      .pipe(map((roles) => this.filterNonTechnicalRoles(roles)));
+  }
+
+  /**
+   * Assigns a list of roles to a user.
+   * @param userAccountId
+   * @param roles should be objects equal to the ones provided by `getRoles()`
+   */
+  assignRoles(userAccountId: string, roles: any[]) {
+    const appRoles = this.filterNonTechnicalRoles(roles);
+    return this.http.post(
+      `${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm`,
+      appRoles,
+    );
+  }
+
+  /**
+   * Delete a list of roles from a user.
+   * @param userAccountId
+   * @param roles should be objects equal to the ones provided by `getRoles()`
+   */
+  deleteRoles(userAccountId: string, roles: any[]) {
+    const appRoles = this.filterNonTechnicalRoles(roles);
+    return this.http.delete(
+      `${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm`,
+      { body: appRoles },
+    );
+  }
+}

@@ -6,11 +6,14 @@ import {
 } from "@angular/core/testing";
 
 import { AccountPageComponent } from "./account-page.component";
-import { KeycloakAuthService, KeycloakUserDto } from "../keycloak-auth.service";
+import {
+  KeycloakAuthService,
+  KeycloakUserDto,
+} from "../../session/auth/keycloak/keycloak-auth.service";
 import { of, throwError } from "rxjs";
-import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { HttpErrorResponse } from "@angular/common/http";
-import { AlertService } from "../../../../alerts/alert.service";
+import { AlertService } from "../../alerts/alert.service";
 
 describe("AccountPageComponent", () => {
   let component: AccountPageComponent;
