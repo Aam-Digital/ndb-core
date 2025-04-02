@@ -30,7 +30,6 @@ import { Clipboard } from "@angular/cdk/clipboard";
     MatIconButton,
     MatTooltip,
   ],
-  standalone: true,
 })
 export class ShortcutDashboardComponent {
   /** displayed entries, each representing one line displayed as a shortcut */

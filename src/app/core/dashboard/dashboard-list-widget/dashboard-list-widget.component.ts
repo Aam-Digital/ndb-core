@@ -51,7 +51,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
     NgIf,
     MatPaginatorModule,
   ],
-  standalone: true,
 })
 export class DashboardListWidgetComponent<E>
   implements OnInit, OnChanges, AfterViewInit

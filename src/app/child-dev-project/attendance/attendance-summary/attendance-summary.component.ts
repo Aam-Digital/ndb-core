@@ -9,7 +9,6 @@ import { DynamicComponentDirective } from "../../../core/config/dynamic-componen
   templateUrl: "./attendance-summary.component.html",
   styleUrls: ["./attendance-summary.component.scss"],
   imports: [NgIf, DatePipe, NgForOf, DynamicComponentDirective],
-  standalone: true,
 })
 export class AttendanceSummaryComponent {
   @Input() attendance: ActivityAttendance;

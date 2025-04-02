@@ -61,7 +61,7 @@ COPY ./.eslintrc.json /opt/app/
 COPY ./.prettierignore /opt/app/
 COPY ./.prettierrc.json /opt/app/
 COPY ./angular.json /opt/app/
-COPY ./cypress.config.ts /opt/app/
+COPY ./playwright.config.ts /opt/app/
 COPY ./karma.conf.js /opt/app/
 COPY ./tsconfig.app.json /opt/app/
 COPY ./tsconfig.spec.json /opt/app/

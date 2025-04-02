@@ -10,7 +10,6 @@ import { NgIf } from "@angular/common";
   selector: "app-todo-completion",
   templateUrl: "./todo-completion.component.html",
   styleUrls: ["./todo-completion.component.scss"],
-  standalone: true,
   imports: [
     MatButtonModule,
     FontAwesomeModule,

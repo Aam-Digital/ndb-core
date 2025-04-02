@@ -25,7 +25,6 @@ import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admi
     "./admin-entity-details.component.scss",
     "../../admin-entity/admin-entity-styles.scss",
   ],
-  standalone: true,
   imports: [
     MatTabsModule,
     FaIconComponent,

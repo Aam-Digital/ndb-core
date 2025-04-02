@@ -17,7 +17,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   selector: "app-import-history",
   templateUrl: "./import-history.component.html",
   styleUrls: ["./import-history.component.scss"],
-  standalone: true,
   imports: [
     MatExpansionModule,
     DatePipe,

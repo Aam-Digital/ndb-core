@@ -44,7 +44,6 @@ export interface EditProgressDashboardComponentData {
     FontAwesomeModule,
     MatTooltipModule,
   ],
-  standalone: true,
 })
 export class EditProgressDashboardComponent implements OnInit {
   /**

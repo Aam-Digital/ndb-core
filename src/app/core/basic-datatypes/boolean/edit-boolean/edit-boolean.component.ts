@@ -17,7 +17,6 @@ import { ErrorHintComponent } from "../../../common-components/error-hint/error-
     BooleanInputComponent,
     ErrorHintComponent,
   ],
-  standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
 export class EditBooleanComponent extends EditComponent<boolean> {}

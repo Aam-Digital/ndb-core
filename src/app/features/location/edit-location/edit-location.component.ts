@@ -23,7 +23,6 @@ import { ErrorHintComponent } from "../../../core/common-components/error-hint/e
     ReactiveFormsModule,
     ErrorHintComponent,
   ],
-  standalone: true,
   styleUrls: ["./edit-location.component.scss"],
 })
 export class EditLocationComponent extends EditComponent<GeoLocation> {}

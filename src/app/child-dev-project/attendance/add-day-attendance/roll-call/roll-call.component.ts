@@ -78,7 +78,6 @@ class HorizontalHammerConfig extends HammerGestureConfig {
       useClass: HorizontalHammerConfig,
     },
   ],
-  standalone: true,
 })
 export class RollCallComponent implements OnChanges {
   /**
