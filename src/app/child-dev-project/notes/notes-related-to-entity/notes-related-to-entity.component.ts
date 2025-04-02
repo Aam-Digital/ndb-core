@@ -108,7 +108,7 @@ export class NotesRelatedToEntityComponent
    */
   private isAlreadyLinked(newNote: any, id: string): boolean {
     for (const key in newNote) {
-      if (Array.isArray(newNote[key]) && newNote[key].includes(id)) {
+      if (asArray(newNote[key]).includes(id)) {
         return true;
       }
     }
