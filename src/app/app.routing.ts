@@ -56,6 +56,7 @@ export const allRoutes: Routes = [
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
+
   {
     path: "**",
     pathMatch: "full",
