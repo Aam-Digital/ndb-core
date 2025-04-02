@@ -71,23 +71,9 @@ export class NotesRelatedToEntityComponent
   override createNewRecordFactory() {
     return () => {
       const newNote = super.createNewRecordFactory()();
-      //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
-      if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
-        for (const childId of asArray(
-          (this.entity as ChildSchoolRelation).childId,
-        )) {
-          if (childId) {
-            newNote.addChild(childId);
-          }
-        }
 
-        for (const schooldId of asArray(
-          (this.entity as ChildSchoolRelation).schoolId,
-        )) {
-          if (schooldId) {
-            newNote.addSchool(schooldId);
-          }
-        }
+      if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+        this.specialLinkingForChildSchoolRelation(newNote);
       }
 
       for (const e of [
@@ -101,6 +87,25 @@ export class NotesRelatedToEntityComponent
 
       return newNote;
     };
+  }
+
+  private specialLinkingForChildSchoolRelation(newNote: Note) {
+    //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
+    for (const childId of asArray(
+      (this.entity as ChildSchoolRelation).childId,
+    )) {
+      if (childId) {
+        newNote.addChild(childId);
+      }
+    }
+
+    for (const schooldId of asArray(
+      (this.entity as ChildSchoolRelation).schoolId,
+    )) {
+      if (schooldId) {
+        newNote.addSchool(schooldId);
+      }
+    }
   }
 
   /**
