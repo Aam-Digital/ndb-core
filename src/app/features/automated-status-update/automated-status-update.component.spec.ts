@@ -61,10 +61,14 @@ fdescribe("Mentorship Status Updates", () => {
   it("should ask to update mentee status when status of mentorship linking to it changes", () => {
     mentorship.status = "finished";
 
-    if (mentorship.status === "finished") {
+    const shouldAskToUpdateStatus =
+      mentorship.status === "finished" && mentorship.mentee === mentee.getId();
+
+    if (shouldAskToUpdateStatus) {
       mentee.status = "alumni";
     }
 
+    expect(shouldAskToUpdateStatus).toBeTrue();
     expect(mentee.status).toBe("alumni");
   });
 
