@@ -74,6 +74,7 @@ describe("NotesRelatedToEntityComponent", () => {
     component.property = undefined;
     await component.ngOnInit();
     note = component.createNewRecordFactory()();
+    expect(note.authors).toContain(entity.getId());
     expect(note.relatedEntities).not.toContain(entity.getId());
 
     entity = new ChildSchoolRelation();
