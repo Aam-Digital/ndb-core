@@ -28,6 +28,8 @@ class Mentorship extends Entity {
   status!: string;
   @DatabaseField()
   mentee!: string;
+  @DatabaseField()
+  otherField!: string;
 }
 
 fdescribe("Mentorship Status Updates", () => {
@@ -73,7 +75,7 @@ fdescribe("Mentorship Status Updates", () => {
   });
 
   it("should not ask to update mentee status when other field of mentorship linking to it changes", () => {
-    mentorship["otherField"] = "updated value";
+    mentorship.otherField = "updated value";
     expect(mentee.status).toBe("open for mentorship");
   });
 
