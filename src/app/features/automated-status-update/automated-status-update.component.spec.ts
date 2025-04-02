@@ -1,6 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper, MockEntityMapperService } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { DatabaseEntity } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
 import { Entity } from "app/core/entity/model/entity";
@@ -23,7 +26,7 @@ class Mentee extends Entity {
 class Mentorship extends Entity {
   @DatabaseField()
   status!: string;
-  @DatabaseField({ dataType: "entity", additional: "Mentee" })
+  @DatabaseField()
   mentee!: string;
 }
 
@@ -57,7 +60,7 @@ fdescribe("Mentorship Status Updates", () => {
 
   it("should ask to update mentee status when status of mentorship linking to it changes", () => {
     mentorship.status = "finished";
-    
+
     if (mentorship.status === "finished") {
       mentee.status = "alumni";
     }
