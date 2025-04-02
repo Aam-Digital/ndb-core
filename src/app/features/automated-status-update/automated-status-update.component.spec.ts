@@ -23,12 +23,6 @@ const menteeStatusDefaultConfig: DefaultValueConfig = {
   ],
 };
 
-@DatabaseEntity("Mentor")
-class Mentor extends Entity {
-  @DatabaseField()
-  name!: string;
-}
-
 @DatabaseEntity("Mentee")
 class Mentee extends Entity {
   @DatabaseField()
@@ -60,15 +54,11 @@ class Mentorship extends Entity {
 
 fdescribe("Mentorship Status Updates", () => {
   let entityMapper: MockEntityMapperService;
-  let mentor: Mentor;
   let mentee: Mentee;
   let mentorship: Mentorship;
 
   beforeEach(() => {
     entityMapper = mockEntityMapper();
-
-    mentor = new Mentor();
-    mentor.name = "Mentor A";
 
     mentee = new Mentee();
     mentee.name = "Mentee A";
@@ -78,14 +68,14 @@ fdescribe("Mentorship Status Updates", () => {
     mentorship.status = "active";
     mentorship.mentee = mentee.getId();
 
-    entityMapper.addAll([mentor, mentee, mentorship]);
+    entityMapper.addAll([mentee, mentorship]);
 
     TestBed.configureTestingModule({
       providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     });
   });
 
-  it("should update mentee status when mentorship status changes", () => {
+  it("should ask to update mentee status when status of mentorship linking to it changes", () => {
     mentorship.status = "finished";
 
     const shouldAskToUpdateStatus =
