@@ -40,6 +40,7 @@ import { EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRegistry } from "../../../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 import { filter } from "rxjs/operators";
+import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 
 @Component({
   selector: "app-default-value-options",
@@ -59,6 +60,7 @@ import { filter } from "rxjs/operators";
     MatSelect,
     MatOption,
     EntityFieldLabelComponent,
+    EntityTypeSelectComponent,
   ],
   templateUrl: "./default-value-options.component.html",
   styleUrl: "./default-value-options.component.scss",
@@ -173,6 +175,11 @@ export class DefaultValueOptionsComponent implements OnChanges {
           mode: this.mode,
           localAttribute: this.form.get("localAttribute").value,
           field: this.form.get("field").value,
+        };
+      case "AutomatedConfigRule":
+        newConfigValue = {
+          mode: this.mode,
+          automatedConfigRule: [],
         };
         break;
     }
