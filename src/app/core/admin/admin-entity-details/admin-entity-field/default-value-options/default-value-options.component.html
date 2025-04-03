@@ -73,10 +73,32 @@
         </mat-select>
       }
       @case ("AutomatedConfigRule") {
-        <div class="automated-config">
-          <app-entity-type-select
-            [showInternalTypes]="false"
-          ></app-entity-type-select>
+        <div class="flex-row gap-regular align-center">
+          <mat-select formControlName="relatedEntity">
+            <div
+              class="select-dropdown-header"
+              matTooltip="Select entity whicj you wanted to set automated rule mapping"
+              i18n-matTooltip
+              i18n
+            >
+              Select Related Entity:
+            </div>
+            @for (entity of relatedEntity; track entity) {
+              <mat-option [value]="entity">
+                <app-entity-field-label
+                  [field]="entity"
+                  [entityType]="entity"
+                ></app-entity-field-label>
+              </mat-option>
+            }
+          </mat-select>
+
+          <button
+            mat-raised-button
+            (click)="$event.stopPropagation(); openAutomatedMappingDialog()"
+          >
+            Configure Mapping
+          </button>
         </div>
       }
     }

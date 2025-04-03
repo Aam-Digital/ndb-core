@@ -32,7 +32,7 @@ import {
 } from "@angular/material/button-toggle";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MatIconButton } from "@angular/material/button";
+import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { asArray } from "app/utils/asArray";
 import { EntityFieldLabelComponent } from "../../../../common-components/entity-field-label/entity-field-label.component";
@@ -61,6 +61,7 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
     MatOption,
     EntityFieldLabelComponent,
     EntityTypeSelectComponent,
+    MatButtonModule,
   ],
   templateUrl: "./default-value-options.component.html",
   styleUrl: "./default-value-options.component.scss",
@@ -70,6 +71,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
   @Output() valueChange = new EventEmitter<DefaultValueConfig>();
 
   @Input() entityType: EntityConstructor;
+  selectedRelatedEntity: any;
 
   form: FormGroup;
   mode: DefaultValueMode;
@@ -83,6 +85,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     referencedEntityType: EntityConstructor;
     availableFields: string[];
   };
+  relatedEntity: string[];
 
   constructor(private entityRegistry: EntityRegistry) {
     this.initForm();
@@ -101,6 +104,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
         field: new FormControl(this.value?.field, {
           validators: [this.requiredForMode("inherited")],
         }),
+        relatedEntity: new FormControl(
+          this.value?.automatedConfigRule?.[0]?.relatedEntity,
+        ),
       },
       { updateOn: "blur" },
     );
@@ -108,6 +114,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form
       .get("mode")
       .valueChanges.subscribe((mode) => this.switchMode(mode));
+    this.form.get("relatedEntity").valueChanges.subscribe((selectedEntity) => {
+      this.selectedRelatedEntity = selectedEntity;
+    });
     this.form.get("value").valueChanges.subscribe((value) => {
       if (!this.mode && !!value) {
         // set default mode as "static" after user started typing a value
@@ -139,6 +148,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     }
     if (changes.entityType) {
       this.updateAvailableInheritanceAttributes();
+      this.updateAvilableRelatedEntity();
     }
   }
 
@@ -179,7 +189,13 @@ export class DefaultValueOptionsComponent implements OnChanges {
       case "AutomatedConfigRule":
         newConfigValue = {
           mode: this.mode,
-          automatedConfigRule: [],
+          automatedConfigRule: [
+            {
+              relatedEntity: this.form.get("relatedEntity").value,
+              relatedField: "",
+              automatedMapping: {},
+            },
+          ],
         };
         break;
     }
@@ -188,6 +204,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
       this.value = newConfigValue;
       this.valueChange.emit(newConfigValue);
     }
+  }
+  openAutomatedMappingDialog() {
+    console.log("Open automated mapping dialog");
   }
 
   private requiredForMode(
@@ -208,6 +227,14 @@ export class DefaultValueOptionsComponent implements OnChanges {
     )
       .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
       .map(([id]) => id);
+  }
+
+  private updateAvilableRelatedEntity() {
+    this.relatedEntity = Array.from(this.entityType.schema.entries())
+      .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
+      .map(([additional]) => additional);
+
+    this.relatedEntity = [...new Set(this.relatedEntity)];
   }
 
   private updateCurrentInheritanceFields(localAttribute: string) {
