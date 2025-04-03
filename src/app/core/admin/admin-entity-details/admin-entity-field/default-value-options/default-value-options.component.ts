@@ -40,7 +40,6 @@ import { EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRegistry } from "../../../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 import { filter } from "rxjs/operators";
-import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 
 @Component({
   selector: "app-default-value-options",
@@ -60,7 +59,6 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
     MatSelect,
     MatOption,
     EntityFieldLabelComponent,
-    EntityTypeSelectComponent,
     MatButtonModule,
   ],
   templateUrl: "./default-value-options.component.html",
@@ -205,8 +203,8 @@ export class DefaultValueOptionsComponent implements OnChanges {
       this.valueChange.emit(newConfigValue);
     }
   }
-  openAutomatedMappingDialog() {
-    console.log("Open automated mapping dialog");
+  openAutomatedMappingDialog(entity: any) {
+    console.log(entity, "Open automated mapping dialog");
   }
 
   private requiredForMode(
@@ -232,7 +230,8 @@ export class DefaultValueOptionsComponent implements OnChanges {
   private updateAvilableRelatedEntity() {
     this.relatedEntity = Array.from(this.entityType.schema.entries())
       .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
-      .map(([additional]) => additional);
+      .map(([_, schema]) => schema.additional)
+      .filter((value) => value !== undefined);
 
     this.relatedEntity = [...new Set(this.relatedEntity)];
   }
