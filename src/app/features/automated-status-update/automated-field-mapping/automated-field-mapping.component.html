@@ -1,1 +1,29 @@
-<p>automated-field-mapping works!</p>
+<h2>Select a field to configure</h2>
+
+<mat-form-field>
+  <mat-label>Select field</mat-label>
+  <mat-select (selectionChange)="onFieldSelected($event.value)">
+    @for (field of availableFields; track field.id) {
+      <mat-option [value]="field">
+        {{ field.label }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+@if (selectedField) {
+  <div class="flex-row align-center gap-regular">
+    <div class="field-label">{{ selectedField }}</div>
+
+    <mat-form-field appearance="fill" class="value-select">
+      <mat-label>Select Value</mat-label>
+      <mat-select [(value)]="selectedValue">
+        @for (option of enumOptions; track option.id) {
+          <mat-option [value]="option.id">
+            {{ option.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+}

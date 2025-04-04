@@ -94,10 +94,7 @@
 
         <button
           mat-raised-button
-          (click)="
-            $event.stopPropagation();
-            openAutomatedMappingDialog(relatedEntitySelect.value)
-          "
+          (click)="$event.stopPropagation(); openAutomatedMappingDialog()"
         >
           Configure Mapping
         </button>

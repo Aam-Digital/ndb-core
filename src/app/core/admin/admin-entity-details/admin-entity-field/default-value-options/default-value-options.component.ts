@@ -209,11 +209,10 @@ export class DefaultValueOptionsComponent implements OnChanges {
       this.valueChange.emit(newConfigValue);
     }
   }
-  async openAutomatedMappingDialog(entity: any) {
-    console.log(entity, "Open automated mapping dialog");
+  async openAutomatedMappingDialog() {
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
       maxHeight: "90vh",
-      data: { entity: entity },
+      data: { entity: this.entityType },
     });
     const action = await lastValueFrom(dialogRef.afterClosed());
   }
