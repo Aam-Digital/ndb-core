@@ -40,6 +40,9 @@ import { EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRegistry } from "../../../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 import { filter } from "rxjs/operators";
+import { MatDialog } from "@angular/material/dialog";
+import { AutomatedFieldMappingComponent } from "app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component";
+import { lastValueFrom } from "rxjs";
 
 @Component({
   selector: "app-default-value-options",
@@ -85,7 +88,10 @@ export class DefaultValueOptionsComponent implements OnChanges {
   };
   relatedEntity: string[];
 
-  constructor(private entityRegistry: EntityRegistry) {
+  constructor(
+    private entityRegistry: EntityRegistry,
+    private matDialog: MatDialog,
+  ) {
     this.initForm();
   }
 
@@ -203,8 +209,13 @@ export class DefaultValueOptionsComponent implements OnChanges {
       this.valueChange.emit(newConfigValue);
     }
   }
-  openAutomatedMappingDialog(entity: any) {
+  async openAutomatedMappingDialog(entity: any) {
     console.log(entity, "Open automated mapping dialog");
+    const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
+      maxHeight: "90vh",
+      data: { entity: entity },
+    });
+    const action = await lastValueFrom(dialogRef.afterClosed());
   }
 
   private requiredForMode(
