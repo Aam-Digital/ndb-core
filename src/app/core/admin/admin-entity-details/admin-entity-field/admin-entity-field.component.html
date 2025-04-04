@@ -156,6 +156,8 @@
         <div class="grid-layout-wide margin-top-regular">
           <div class="entity-form-cell">
             <app-default-value-options
+              [field]="fieldId"
+              [entitySchemaField]="entitySchemaField"
               [value]="entitySchemaField.defaultValue"
               (valueChange)="
                 schemaFieldsForm.get('defaultValue').setValue($event)

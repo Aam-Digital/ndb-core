@@ -1,7 +1,10 @@
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
-import { DefaultValueConfig } from "../entity/schema/default-value-config";
+import {
+  DefaultValueConfig,
+  DefaultValueMode,
+} from "../entity/schema/default-value-config";
 import { Entity } from "../entity/model/entity";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 
@@ -36,7 +39,7 @@ export abstract class DefaultValueStrategy {
  */
 export function getConfigsByMode(
   fieldConfigs: FormFieldConfig[],
-  mode: ("inherited" | "static" | "dynamic")[],
+  mode: DefaultValueMode[],
 ): Map<string, DefaultValueConfig> {
   let configs: Map<string, DefaultValueConfig> = new Map();
 
