@@ -95,7 +95,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     private entityRegistry: EntityRegistry,
     private matDialog: MatDialog,
   ) {
-    console.log(this.entitySchemaField)
+    console.log(this.entitySchemaField);
 
     this.initForm();
   }
@@ -176,7 +176,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("value").setValue(null);
     this.form.get("localAttribute").setValue(null);
     this.form.get("field").setValue(null);
-
   }
 
   private emitValue() {
@@ -196,17 +195,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
           localAttribute: this.form.get("localAttribute").value,
           field: this.form.get("field").value,
         };
-      case "AutomatedConfigRule":
-        newConfigValue = {
-          mode: this.mode,
-          automatedConfigRule: [
-            {
-              relatedEntity: this.form.get("relatedEntity").value,
-              relatedField: "",
-              automatedMapping: {},
-            },
-          ],
-        };
         break;
     }
 
@@ -225,7 +213,30 @@ export class DefaultValueOptionsComponent implements OnChanges {
         currentField: this.field,
       },
     });
-    const action = await lastValueFrom(dialogRef.afterClosed());
+
+    const result = await lastValueFrom(dialogRef.afterClosed());
+
+    if (result) {
+      const updatedConfig = {
+        mode: this.mode,
+        automatedConfigRule: [
+          {
+            relatedEntity: selectedEntity,
+            relatedField: result.relatedField,
+            automatedMapping: result.automatedMapping,
+          },
+        ],
+      };
+
+      this.value = {
+        ...updatedConfig,
+        mode: updatedConfig.mode as DefaultValueMode,
+      };
+      this.valueChange.emit({
+        ...updatedConfig,
+        mode: updatedConfig.mode as DefaultValueMode,
+      });
+    }
   }
 
   private requiredForMode(

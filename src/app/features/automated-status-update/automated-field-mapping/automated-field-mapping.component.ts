@@ -88,5 +88,9 @@ export class AutomatedFieldMappingComponent implements OnInit {
     this.enumOptions = enumEntity.values ?? [];
   }
 
-  save() {}
+  save() {
+    this.dialogRef.close({
+      automatedMapping: this.selectedMappings,
+    });
+  }
 }
