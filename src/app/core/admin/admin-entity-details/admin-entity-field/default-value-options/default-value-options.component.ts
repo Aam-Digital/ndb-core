@@ -43,6 +43,7 @@ import { filter } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
 import { AutomatedFieldMappingComponent } from "app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component";
 import { lastValueFrom } from "rxjs";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
 @Component({
   selector: "app-default-value-options",
@@ -70,6 +71,8 @@ import { lastValueFrom } from "rxjs";
 export class DefaultValueOptionsComponent implements OnChanges {
   @Input() value: DefaultValueConfig;
   @Output() valueChange = new EventEmitter<DefaultValueConfig>();
+  @Input() field?: string;
+  @Input() entitySchemaField: EntitySchemaField;
 
   @Input() entityType: EntityConstructor;
   selectedRelatedEntity: any;
@@ -92,6 +95,8 @@ export class DefaultValueOptionsComponent implements OnChanges {
     private entityRegistry: EntityRegistry,
     private matDialog: MatDialog,
   ) {
+    console.log(this.entitySchemaField)
+
     this.initForm();
   }
 
@@ -171,6 +176,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("value").setValue(null);
     this.form.get("localAttribute").setValue(null);
     this.form.get("field").setValue(null);
+
   }
 
   private emitValue() {
@@ -209,10 +215,15 @@ export class DefaultValueOptionsComponent implements OnChanges {
       this.valueChange.emit(newConfigValue);
     }
   }
-  async openAutomatedMappingDialog() {
+  async openAutomatedMappingDialog(selectedEntity: string) {
+    const refEntity = this.entityRegistry.get(selectedEntity);
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
       maxHeight: "90vh",
-      data: { entity: this.entityType },
+      data: {
+        currentEntity: this.entityType,
+        refEntity: refEntity,
+        currentField: this.field,
+      },
     });
     const action = await lastValueFrom(dialogRef.afterClosed());
   }

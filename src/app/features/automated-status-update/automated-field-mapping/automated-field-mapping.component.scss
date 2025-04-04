@@ -1,0 +1,17 @@
+.mapping-grid {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-top: 20px;
+
+  .option-label {
+    font-weight: 500;
+    padding: 8px 0;
+  }
+}
+.dropdown-select {
+  mat-form-field {
+    width: 100%;
+  }
+}
