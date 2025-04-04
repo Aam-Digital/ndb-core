@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import {
+  AutomatedConfigRule,
   DefaultValueConfig,
   DefaultValueMode,
 } from "../../../../entity/schema/default-value-config";
@@ -82,6 +83,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
   @ViewChild("inputElement") inputElement: ElementRef;
   @ViewChild("inheritedFieldSelect") inheritedFieldSelectElement: MatSelect;
 
+  currentAutomatedConfig: AutomatedConfigRule;
   availableInheritanceAttributes: string[];
   currentInheritanceFields: {
     localAttribute: string;
@@ -148,6 +150,8 @@ export class DefaultValueOptionsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
+      this.currentAutomatedConfig = this.value?.automatedConfigRule[0];
+
       this.updateForm(this.value);
     }
     if (changes.entityType) {
@@ -204,14 +208,13 @@ export class DefaultValueOptionsComponent implements OnChanges {
   }
   async openAutomatedMappingDialog(selectedEntity: string) {
     const refEntity = this.entityRegistry.get(selectedEntity);
-    const currentAutomatedConfig = this.value?.automatedConfigRule[0];
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
       maxHeight: "90vh",
       data: {
         currentEntity: this.entityType,
         refEntity: refEntity,
         currentField: this.field,
-        currentAutomatedMapping: currentAutomatedConfig,
+        currentAutomatedMapping: this.currentAutomatedConfig,
       },
     });
 
