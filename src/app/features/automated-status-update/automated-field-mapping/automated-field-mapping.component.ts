@@ -33,17 +33,19 @@ export class AutomatedFieldMappingComponent implements OnInit {
   availableFields: { id: string; label: string; additional: string }[] = [];
   selectedMappings: { [key: string]: string } = {};
   selectedField: string | null = null;
-  fieldOptions: string[] = [];
   fieldId: string | null = null;
-  selectedValue: string | null = null;
   currentFieldOptions: ConfigurableEnumValue[] = [];
   enumOptions: ConfigurableEnumValue[] = [];
+
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
       currentEntity: EntityConstructor;
       refEntity: EntityConstructor;
       currentField: string;
+      currentAutomatedMapping?: {
+        automatedMapping: { [key: string]: string };
+      };
     },
     private dialogRef: MatDialogRef<any>,
     private entityRegistry: EntityRegistry,
@@ -52,6 +54,11 @@ export class AutomatedFieldMappingComponent implements OnInit {
     this.entitiesToSetAutomateRule = data.refEntity;
     this.currentEntity = data.currentEntity;
     this.fieldId = data.currentField;
+    if (data.currentAutomatedMapping?.automatedMapping) {
+      this.selectedMappings = {
+        ...data.currentAutomatedMapping.automatedMapping,
+      };
+    }
   }
 
   ngOnInit(): void {
@@ -90,6 +97,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
 
   save() {
     this.dialogRef.close({
+      relatedField: this.selectedField,
       automatedMapping: this.selectedMappings,
     });
   }

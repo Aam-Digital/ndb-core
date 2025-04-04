@@ -75,7 +75,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
   @Input() entitySchemaField: EntitySchemaField;
 
   @Input() entityType: EntityConstructor;
-  selectedRelatedEntity: any;
 
   form: FormGroup;
   mode: DefaultValueMode;
@@ -95,8 +94,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
     private entityRegistry: EntityRegistry,
     private matDialog: MatDialog,
   ) {
-    console.log(this.entitySchemaField);
-
     this.initForm();
   }
 
@@ -123,9 +120,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form
       .get("mode")
       .valueChanges.subscribe((mode) => this.switchMode(mode));
-    this.form.get("relatedEntity").valueChanges.subscribe((selectedEntity) => {
-      this.selectedRelatedEntity = selectedEntity;
-    });
+
     this.form.get("value").valueChanges.subscribe((value) => {
       if (!this.mode && !!value) {
         // set default mode as "static" after user started typing a value
@@ -166,6 +161,10 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("value").setValue(newValue?.value);
     this.form.get("localAttribute").setValue(newValue?.localAttribute);
     this.form.get("field").setValue(newValue?.field);
+    if (newValue.automatedConfigRule?.length) {
+      const automatedRule = newValue.automatedConfigRule[0];
+      this.form.get("relatedEntity").setValue(automatedRule.relatedEntity);
+    }
 
     this.mode = newValue?.mode;
   }
@@ -205,12 +204,14 @@ export class DefaultValueOptionsComponent implements OnChanges {
   }
   async openAutomatedMappingDialog(selectedEntity: string) {
     const refEntity = this.entityRegistry.get(selectedEntity);
+    const currentAutomatedConfig = this.value?.automatedConfigRule[0];
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
       maxHeight: "90vh",
       data: {
         currentEntity: this.entityType,
         refEntity: refEntity,
         currentField: this.field,
+        currentAutomatedMapping: currentAutomatedConfig,
       },
     });
 
@@ -218,7 +219,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
 
     if (result) {
       const updatedConfig = {
-        mode: this.mode,
         automatedConfigRule: [
           {
             relatedEntity: selectedEntity,
@@ -230,11 +230,11 @@ export class DefaultValueOptionsComponent implements OnChanges {
 
       this.value = {
         ...updatedConfig,
-        mode: updatedConfig.mode as DefaultValueMode,
+        mode: this.mode,
       };
       this.valueChange.emit({
         ...updatedConfig,
-        mode: updatedConfig.mode as DefaultValueMode,
+        mode: this.mode,
       });
     }
   }
