@@ -12,6 +12,7 @@ import { UserAdminService } from "./user-admin.service";
 import { KeycloakUserDto } from "./keycloak-user-dto";
 import { Logging } from "../../logging/logging.service";
 import { Role, UserAccount } from "./user-account";
+import { environment } from "../../../../environments/environment";
 
 /**
  * Admin functionalities to manage users in Keycloak server.
@@ -39,8 +40,9 @@ export class KeycloakAdminService extends UserAdminService {
     @Inject(LOCALE_ID) private baseLocale: string,
   ) {
     super();
-    const realm = "dummy-realm";
-    this.keycloakUrl = `${UserAdminService.API}/admin/realms/${realm}`;
+    this.keycloakUrl = `${environment.userAdminApi}/admin/realms/${environment.realm}`;
+
+    // TODO: CORS issues, run in insecure browser for testing: `chromium --disable-web-security --user-data-dir=/tmp http://aam.localhost/user`
   }
 
   // TODO: tested and okay (account created, roles added, email sent)

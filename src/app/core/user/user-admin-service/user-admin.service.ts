@@ -1,5 +1,4 @@
 import { Observable } from "rxjs";
-import { environment } from "../../../../environments/environment";
 import { Role, UserAccount } from "./user-account";
 
 /**
@@ -10,8 +9,6 @@ export abstract class UserAdminService {
    * Users with this role can create and update other accounts.
    */
   static readonly ACCOUNT_MANAGER_ROLE = "account_manager";
-
-  static readonly API = environment.user_admin_api;
 
   /**
    * Get the user account details of the user linked to the given entity.
