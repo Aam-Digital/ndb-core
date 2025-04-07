@@ -45,6 +45,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { AutomatedFieldMappingComponent } from "app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component";
 import { lastValueFrom } from "rxjs";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 
 @Component({
   selector: "app-default-value-options",
@@ -90,11 +91,12 @@ export class DefaultValueOptionsComponent implements OnChanges {
     referencedEntityType: EntityConstructor;
     availableFields: string[];
   };
-  relatedEntity: string[];
+  relatedEntity: { label: string; entity: string }[];
 
   constructor(
     private entityRegistry: EntityRegistry,
     private matDialog: MatDialog,
+    private entityRelationsService: EntityRelationsService,
   ) {
     this.initForm();
   }
@@ -166,8 +168,8 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("localAttribute").setValue(newValue?.localAttribute);
     this.form.get("field").setValue(newValue?.field);
     if (newValue.automatedConfigRule?.length) {
-      const automatedRule = newValue.automatedConfigRule[0];
-      this.form.get("relatedEntity").setValue(automatedRule.relatedEntity);
+      const automatedRule = newValue?.automatedConfigRule[0];
+      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntity);
     }
 
     this.mode = newValue?.mode;
@@ -263,12 +265,16 @@ export class DefaultValueOptionsComponent implements OnChanges {
   }
 
   private updateAvilableRelatedEntity() {
-    this.relatedEntity = Array.from(this.entityType.schema.entries())
-      .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
-      .map(([_, schema]) => schema.additional)
-      .filter((value) => value !== undefined);
-
-    this.relatedEntity = [...new Set(this.relatedEntity)];
+    const relatedEntities =
+      this.entityRelationsService.getEntityTypesReferencingType(
+        this.entityType.ENTITY_TYPE,
+      );
+    this.relatedEntity = relatedEntities
+      .filter((refType) => !!refType.entityType.label)
+      .map((refType) => ({
+        label: refType.entityType.label,
+        entity: refType.entityType.ENTITY_TYPE,
+      }));
   }
 
   private updateCurrentInheritanceFields(localAttribute: string) {

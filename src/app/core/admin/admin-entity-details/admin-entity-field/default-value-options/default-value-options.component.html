@@ -83,10 +83,10 @@
             Select Related Entity:
           </div>
           @for (entity of relatedEntity; track entity) {
-            <mat-option [value]="entity">
+            <mat-option [value]="entity.entity">
               <app-entity-field-label
-                [field]="entity"
-                [entityType]="entity"
+                [field]="entity.label"
+                [entityType]="entity.entity"
               ></app-entity-field-label>
             </mat-option>
           }
