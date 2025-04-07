@@ -6,6 +6,7 @@ import {
   concatWith,
   map,
   switchMap,
+  tap,
 } from "rxjs/operators";
 import { Observable, of } from "rxjs";
 import { UserAdminService } from "./user-admin.service";
@@ -45,12 +46,11 @@ export class KeycloakAdminService extends UserAdminService {
     // TODO: CORS issues, run in insecure browser for testing: `chromium --disable-web-security --user-data-dir=/tmp http://aam.localhost/user`
   }
 
-  // TODO: tested and okay (account created, roles added, email sent)
-  createUser(
+  override createUser(
     userEntityId: string,
     email: string,
     roles: Role[],
-  ): Observable<Object> {
+  ): Observable<UserAccount> {
     return this.http
       .post(
         `${this.keycloakUrl}/users`,
@@ -60,7 +60,7 @@ export class KeycloakAdminService extends UserAdminService {
         concatMap(() => this.findUserBy({ username: email })),
         concatMap((userAccount) => {
           return this.assignRoles(userAccount.id, roles).pipe(
-            map(() => userAccount),
+            map((roles) => ({ ...userAccount, roles }) as UserAccount),
           );
         }),
         concatMap((userAccount) => {
@@ -68,11 +68,13 @@ export class KeycloakAdminService extends UserAdminService {
             map(() => userAccount),
           );
         }),
+        tap((x) => console.log("createUser returns", x)),
       );
   }
 
-  // TODO: tested and okay
-  deleteUser(userEntityId: string) {
+  override deleteUser(
+    userEntityId: string,
+  ): Observable<{ userDeleted: boolean }> {
     return this.getUser(userEntityId).pipe(
       switchMap((userAccount) =>
         this.http.delete(`${this.keycloakUrl}/users/${userAccount.id}`),
@@ -87,8 +89,10 @@ export class KeycloakAdminService extends UserAdminService {
     );
   }
 
-  // TODO tested and okay
-  updateUser(userAccountId: string, updatedUser: Partial<UserAccount>) {
+  override updateUser(
+    userAccountId: string,
+    updatedUser: Partial<UserAccount>,
+  ): Observable<{ userUpdated: boolean }> {
     return this.getUserByAccountId(userAccountId).pipe(
       switchMap((userAccount) =>
         this.updateKeycloakUser(
@@ -100,6 +104,7 @@ export class KeycloakAdminService extends UserAdminService {
       catchError((err) => {
         throw new Error(err?.message ?? "Failed to update user on server");
       }),
+      map(() => ({ userUpdated: true })),
     );
   }
 
@@ -135,8 +140,7 @@ export class KeycloakAdminService extends UserAdminService {
       .pipe(concatWith(...actions));
   }
 
-  // TODO tested and okay
-  getUser(userEntityId: string) {
+  override getUser(userEntityId: string): Observable<UserAccount> {
     return this.findUserBy({
       q: `exact_username:${userEntityId}`,
     }).pipe(
@@ -147,7 +151,7 @@ export class KeycloakAdminService extends UserAdminService {
             email: keycloakUser.email,
             emailVerified: keycloakUser.emailVerified,
             enabled: keycloakUser.enabled,
-            userEntityId: keycloakUser.attributes?.exact_username,
+            userEntityId: keycloakUser.attributes?.exact_username?.[0], // the ID is coming in as an array
           }) as UserAccount,
       ),
       switchMap((account) =>
@@ -155,6 +159,7 @@ export class KeycloakAdminService extends UserAdminService {
           map((roles) => ({ ...account, roles })),
         ),
       ),
+      tap((x) => console.log("getUser returns", x)),
     );
   }
 
@@ -212,7 +217,7 @@ export class KeycloakAdminService extends UserAdminService {
     );
   }
 
-  getAllRoles() {
+  getAllRoles(): Observable<Role[]> {
     return this.http
       .get<Role[]>(`${this.keycloakUrl}/roles`)
       .pipe(map((roles) => this.filterNonTechnicalRoles(roles)));

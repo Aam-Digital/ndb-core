@@ -1,4 +1,5 @@
 import { UserAccount } from "./user-account";
+import { v4 as uuid } from "uuid";
 
 /**
  * Extract of Keycloak user object as provided by the external Keycloak Service.
@@ -23,7 +24,7 @@ export class KeycloakUserDto {
 
   constructor(email?: string, userEntityId?: string) {
     if (email) {
-      this.username = email; // previously we have set the userEntityId here but this doesn't really make sense and newer Keycloak version don't allow some of the characters
+      this.username = uuid(); // we have set the userEntityId here but this doesn't really make sense and newer Keycloak version don't allow some of the characters
       this.email = email;
       this.emailVerified = false;
       this.requiredActions = ["VERIFY_EMAIL", "UPDATE_PASSWORD"];

@@ -26,7 +26,7 @@ export abstract class UserAdminService {
     userEntityId: string,
     email: string,
     roles: Role[],
-  ): Observable<Object>; // TODO: further specify return type
+  ): Observable<UserAccount>;
 
   /**
    * Update the user with the given id in the realm.
@@ -36,7 +36,7 @@ export abstract class UserAdminService {
   abstract updateUser(
     userAccountId: string,
     updatedUser: Partial<UserAccount>,
-  ): Observable<any>; // TODO: further specify return type
+  ): Observable<{ userUpdated: boolean }>;
 
   /**
    * Delete a user with the given id
