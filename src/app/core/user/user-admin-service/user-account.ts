@@ -26,5 +26,5 @@ export interface UserAccount {
 export interface Role {
   id: string;
   name: string;
-  description: string;
+  description?: string;
 }

@@ -51,24 +51,21 @@ export class KeycloakAdminService extends UserAdminService {
     email: string,
     roles: Role[],
   ): Observable<UserAccount> {
-    return this.http
-      .post(
-        `${this.keycloakUrl}/users`,
-        new KeycloakUserDto(email, userEntityId),
-      )
-      .pipe(
-        concatMap(() => this.findUserBy({ username: email })),
-        concatMap((userAccount) => {
-          return this.assignRoles(userAccount.id, roles).pipe(
-            map((roles) => ({ ...userAccount, roles }) as UserAccount),
-          );
-        }),
-        concatMap((userAccount) => {
-          return this.sendEmail(userAccount.id, "VERIFY_EMAIL").pipe(
-            map(() => userAccount),
-          );
-        }),
-      );
+    const newKeycloakUser = new KeycloakUserDto(email, userEntityId);
+
+    return this.http.post(`${this.keycloakUrl}/users`, newKeycloakUser).pipe(
+      concatMap(() => this.findUserBy({ username: newKeycloakUser.username })),
+      concatMap((userAccount) => {
+        return this.assignRoles(userAccount.id, roles).pipe(
+          map((roles) => ({ ...userAccount, roles }) as UserAccount),
+        );
+      }),
+      concatMap((userAccount) => {
+        return this.sendEmail(userAccount.id, "VERIFY_EMAIL").pipe(
+          map(() => userAccount),
+        );
+      }),
+    );
   }
 
   override deleteUser(
@@ -100,10 +97,11 @@ export class KeycloakAdminService extends UserAdminService {
           updatedUser.roles,
         ),
       ),
-      catchError((err) => {
-        throw new Error(err?.message ?? "Failed to update user on server");
-      }),
       map(() => ({ userUpdated: true })),
+      catchError((err) => {
+        Logging.warn("Failed to update user on server", err);
+        return of({ userUpdated: false });
+      }),
     );
   }
 
