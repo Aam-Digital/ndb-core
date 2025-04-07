@@ -24,6 +24,7 @@ import { environment } from "../../../../environments/environment";
  * - User > Role:
  *     - "(realm-management) manage-users"
  *     - "(realm-management) view-realm" (to access roles)
+ *     - ... these can be added as "Associated Roles" to the "account_manager" role so that they do not have to be assigned individually
  */
 @Injectable({ providedIn: "root" })
 export class KeycloakAdminService extends UserAdminService {
@@ -43,7 +44,8 @@ export class KeycloakAdminService extends UserAdminService {
     super();
     this.keycloakUrl = `${environment.userAdminApi}/admin/realms/${environment.realm}`;
 
-    // TODO: CORS issues, run in insecure browser for testing: `chromium --disable-web-security --user-data-dir=/tmp http://aam.localhost/user`
+    // TODO: Keycloak somehow cannot configure CORS (Access-Control-Allow-Origin) headers for the "realm-management" client
+    //   to test locally, run in insecure browser: e.g. `chromium --disable-web-security --user-data-dir=/tmp http://aam.localhost/user`
   }
 
   override createUser(

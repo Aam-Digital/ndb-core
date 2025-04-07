@@ -10,35 +10,19 @@
   Change Password
 </button>
 
-<form style="margin-top: 20px" onSubmit="return false">
-  <mat-form-field>
+<form style="margin-top: 20px; margin-bottom: 20px" onSubmit="return false">
+  <mat-form-field class="full-width">
     <input
-      [formControl]="email"
+      [value]="user?.email"
       type="email"
       i18n-placeholder="Email address input field"
       placeholder="Your email address"
       matInput
+      disabled
     />
-    <mat-error
-      *ngIf="email.errors?.email || email.errors?.required"
-      i18n="Error message if email format is invalid"
-    >
-      Please provide a valid email
-    </mat-error>
-    <mat-error *ngIf="email.errors?.other">{{ email.errors.other }}</mat-error>
+    <mat-hint i18n
+      >Changing your email is temporarily only possible for administrators.
+      Please contact your project coordinator or the support team.
+    </mat-hint>
   </mat-form-field>
-  <p>
-    <button
-      mat-stroked-button
-      angulartics2On="click"
-      angularticsCategory="User"
-      angularticsAction="email_update"
-      (click)="setEmail()"
-      i18n="Button which updates the user's email"
-      style="margin-top: 5px"
-      [disabled]="email.disabled"
-    >
-      Update email
-    </button>
-  </p>
 </form>
