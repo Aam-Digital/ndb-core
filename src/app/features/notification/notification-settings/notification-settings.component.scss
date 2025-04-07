@@ -2,7 +2,6 @@
 @use "variables/sizes";
 @use "@angular/material/core/style/elevation" as mat-elevation;
 
-
 .panel-wrapper {
   @include mat-elevation.elevation(2);
   border-radius: 10px;
@@ -14,7 +13,6 @@
   background-color: colors.$background;
   margin-top: sizes.$regular;
 }
-
 
 .no-margin {
   margin: 0;
@@ -32,7 +30,6 @@
   margin-left: 10px;
   font-style: italic;
 }
-
 
 .text-badge {
   font-size: 12px;
@@ -55,11 +52,9 @@
   background-color: #beddba;
 }
 
-
 .indented-item {
   margin-left: sizes.$large;
 }
-
 
 .feature-disabled-box {
   background-color: colors.$disabled-transparent;
