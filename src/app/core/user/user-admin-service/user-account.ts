@@ -6,6 +6,10 @@ export interface UserAccount {
 
   email?: string;
 
+  /**
+   * The entity id (in the business logic database) of the record that is linked as this user account's "profile".
+   * --> see `CurrentUserSubject`
+   */
   userEntityId?: string;
 
   enabled: boolean;

@@ -6,7 +6,6 @@ import {
   concatWith,
   map,
   switchMap,
-  tap,
 } from "rxjs/operators";
 import { Observable, of } from "rxjs";
 import { UserAdminService } from "./user-admin.service";
@@ -69,7 +68,6 @@ export class KeycloakAdminService extends UserAdminService {
             map(() => userAccount),
           );
         }),
-        tap((x) => console.log("createUser returns", x)),
       );
   }
 
@@ -160,7 +158,6 @@ export class KeycloakAdminService extends UserAdminService {
           map((roles) => ({ ...account, roles })),
         ),
       ),
-      tap((x) => console.log("getUser returns", x)),
     );
   }
 

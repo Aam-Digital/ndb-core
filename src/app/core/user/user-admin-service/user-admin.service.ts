@@ -29,7 +29,7 @@ export abstract class UserAdminService {
   ): Observable<UserAccount>;
 
   /**
-   * Update the user with the given id in the realm.
+   * Update the user with the given id
    * @param userAccountId The user account id of the authentication server (not the profile entity id)
    * @param updatedUser see {@link https://www.keycloak.org/docs-api/19.0.2/rest-api/index.html#_userrepresentation}
    */
