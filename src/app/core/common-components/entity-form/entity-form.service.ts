@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from "@angular/core";
+import { EventEmitter, Inject, Injectable } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -19,6 +19,7 @@ import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value.service";
+import { AutomatedConfigService } from "app/features/automated-status-update/automated-config-service";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -65,6 +66,8 @@ export class EntityFormService {
     private unsavedChanges: UnsavedChangesService,
     private defaultValueService: DefaultValueService,
     router: Router,
+   @Inject(AutomatedConfigService) private automatedConfigService: AutomatedConfigService
+
   ) {
     router.events
       .pipe(filter((e) => e instanceof ActivationStart))
@@ -267,6 +270,7 @@ export class EntityFormService {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
     this.checkFormValidity(form);
+    this.automatedConfigService.applyRulesToDependents(entity)
 
     const updatedEntity = entity.copy() as T;
     for (const [key, value] of Object.entries(form.getRawValue())) {
