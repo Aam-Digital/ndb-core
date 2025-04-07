@@ -19,8 +19,7 @@ import { environment } from "../../../../environments/environment";
  * Admin functionalities to manage users in Keycloak server.
  *
  * Requires Keycloak Server with:
- * - Client Scope > Mappers: "client roles" (to add `"realm-management": { "roles": [] }`) to token
- *    (and this Client Scope added to the "app" Client)
+ * - Client "app" > Client Scopes > "app-dedicated" > Mappers: "client roles" (to add `"realm-management": { "roles": [] }`) to token
  * - User > Role:
  *     - "(realm-management) manage-users"
  *     - "(realm-management) view-realm" (to access roles)
