@@ -89,44 +89,35 @@ export class AutomatedConfigService {
         }
       }
     }
-
+  
     for (const [changedField, changedValue] of Object.entries(entity)) {
       const dependents = this.findEntitiesDependingOnField(type, changedField);
-
+      
       for (const dependent of dependents) {
         const dependentType = dependent.targetEntityType.ENTITY_TYPE;
         const dependentIds = this.dependentIdsMap[dependentType];
-
+        
         if (!dependentIds) continue;
-
+        
         const targetField = dependent.targetFieldId;
         const mapping = dependent.rule.automatedMapping;
-
-        let newValue: string;
-
-        if (changedValue in mapping) {
-          newValue = mapping[changedValue];
-        } else if ("" in mapping) {
-          newValue = mapping[""];
-        } else {
-          continue;
+        
+        let newValue: string | undefined;
+        
+        for (const [key, value] of Object.entries(mapping)) {
+          if (value === changedValue.id) {
+            newValue = key;
+            break;
+          }
         }
 
         for (const entityId of Array.from(dependentIds)) {
           try {
-            const [_, id] = entityId.split(":");
-            const childEntity = await this.entityMapper.load(
-              dependent.targetEntityType,
-              id,
-            );
-
+            const [_, id] = entityId.split(':'); // Extract just the ID part
+            const childEntity = await this.entityMapper.load(dependent.targetEntityType, id);
             if (childEntity[targetField] !== newValue) {
               childEntity[targetField] = newValue;
-              console.log(childEntity, "childEntity");
-              //   await this.entityMapper.save(childEntity);
-              console.log(
-                `updated ${dependentType} ${id}: ${targetField}=${newValue}`,
-              );
+              console.log(`Updated ${dependentType} ${id}: ${targetField}=${newValue} (based on school ${changedField}=${changedValue})`);
             }
           } catch (error) {
             console.error(`Failed to update ${entityId}:`, error);
