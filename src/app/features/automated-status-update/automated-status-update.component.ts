@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, Inject } from "@angular/core";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -30,6 +30,7 @@ export interface AffectedEntity {
     MatDialogContent,
     ReactiveFormsModule,
     MatFormField,
+    FormsModule,
   ],
   templateUrl: "./automated-status-update.component.html",
   styleUrl: "./automated-status-update.component.scss",

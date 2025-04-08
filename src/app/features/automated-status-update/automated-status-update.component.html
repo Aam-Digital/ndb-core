@@ -10,10 +10,10 @@
       <td>{{ entity.name }}</td>
       <td>
         <mat-form-field appearance="fill">
-          <mat-select>
+          <mat-select [(ngModel)]="entity.newStatus">
             <mat-option
               *ngFor="let status of entity.allStatuses"
-              [value]="entity.newStatus"
+              [value]="status"
             >
               {{ status }}
             </mat-option>
