@@ -3,6 +3,11 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
+import { MatDialog } from "@angular/material/dialog";
+import {
+  AffectedEntity,
+  AutomatedUpdateDialogComponent,
+} from "./automated-status-update.component";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -14,6 +19,7 @@ export class AutomatedConfigService {
     private entityRegistry: EntityRegistry,
     private entityMapper: EntityMapperService,
     private entityRelationshipService: EntityRelationsService,
+    private dialog: MatDialog,
   ) {}
 
   dependentEntity: { [entityType: string]: Set<string> } = {};
@@ -111,6 +117,7 @@ export class AutomatedConfigService {
     entity: Entity,
     entityType: string,
   ): Promise<void> {
+    const affectedEntities: AffectedEntity[] = [];
     for (const [changedField, changedValue] of Object.entries(entity)) {
       const dependents = this.findEntitiesDependingOnField(
         entityType,
@@ -125,7 +132,7 @@ export class AutomatedConfigService {
 
         const targetField = dependent.targetFieldId;
         const mapping = dependent.rule.automatedMapping;
-
+        const allStatuses = Object.keys(mapping);
         let newValue: string | undefined;
 
         for (const [key, value] of Object.entries(mapping)) {
@@ -144,15 +151,42 @@ export class AutomatedConfigService {
 
           if (targetEntity[targetField] !== newValue) {
             targetEntity[targetField] = newValue;
-            console.log(targetEntity);
-            this.entityMapper.save(targetEntity);
-
-            console.log(
-              `Updated ${dependentType} ${id}: ${targetField}=${newValue} (based on ${entityType}.${changedField}=${changedValue?.id || changedValue})`,
-            );
+            affectedEntities.push({
+              id,
+              name: targetEntity["name"] ?? `${dependentType} ${id}`,
+              currentStatus: targetEntity[targetField],
+              newStatus: newValue ?? targetEntity[targetField],
+              allStatuses,
+              targetField,
+              targetEntityType: dependent.targetEntityType,
+            });
           }
         }
       }
     }
+    if (affectedEntities.length > 0) {
+      const userConfirmedUpdates =
+        await this.showConfirmationDialog(affectedEntities);
+
+      if (userConfirmedUpdates) {
+        for (const update of userConfirmedUpdates) {
+          // const entity = await this.entityMapper.load(update.targetEntityType, update.id);
+          // entity[update.targetField] = update.newStatus;
+          // await this.entityMapper.save(entity);
+          console.log(`Updated ${update.name} to status: ${update.newStatus}`);
+        }
+      }
+    }
+  }
+
+  private async showConfirmationDialog(
+    entitiesToUpdate: AffectedEntity[],
+  ): Promise<AffectedEntity[] | null> {
+    const dialogRef = this.dialog.open(AutomatedUpdateDialogComponent, {
+      width: "600px",
+      data: { entities: entitiesToUpdate },
+    });
+
+    return dialogRef.afterClosed().toPromise();
   }
 }

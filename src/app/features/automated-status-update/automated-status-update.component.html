@@ -1,1 +1,32 @@
-<p>automated-status-update works!</p>
+<h2 mat-dialog-title>Update Related Statuses</h2>
+<mat-dialog-content>
+  <p>
+    You have updated the status of this record. The status is linked to the
+    following records:
+  </p>
+
+  <table class="w-full">
+    <tr *ngFor="let entity of data.entities">
+      <td>{{ entity.name }}</td>
+      <td>
+        <mat-form-field appearance="fill">
+          <mat-select>
+            <mat-option
+              *ngFor="let status of entity.allStatuses"
+              [value]="entity.newStatus"
+            >
+              {{ status }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button color="primary" (click)="onConfirm()">
+    Update related fields
+  </button>
+</mat-dialog-actions>
