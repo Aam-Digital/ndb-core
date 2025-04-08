@@ -66,8 +66,8 @@ export class EntityFormService {
     private unsavedChanges: UnsavedChangesService,
     private defaultValueService: DefaultValueService,
     router: Router,
-   @Inject(AutomatedConfigService) private automatedConfigService: AutomatedConfigService
-
+    @Inject(AutomatedConfigService)
+    private automatedConfigService: AutomatedConfigService,
   ) {
     router.events
       .pipe(filter((e) => e instanceof ActivationStart))
@@ -270,7 +270,7 @@ export class EntityFormService {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
     this.checkFormValidity(form);
-    this.automatedConfigService.applyRulesToDependents(entity)
+    this.automatedConfigService.applyRulesToDependentEntities(entity);
 
     const updatedEntity = entity.copy() as T;
     for (const [key, value] of Object.entries(form.getRawValue())) {
