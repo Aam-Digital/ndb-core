@@ -1,32 +1,33 @@
-<h2 mat-dialog-title>Update Related Statuses</h2>
+<h2 mat-dialog-title i18n>Update Related Statuses</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
 <mat-dialog-content>
-  <p>
+  <p i18n>
     You have updated the status of this record. The status is linked to the
     following records:
   </p>
 
-  <table class="w-full">
-    <tr *ngFor="let entity of data.entities">
-      <td>{{ entity.name }}</td>
-      <td>
-        <mat-form-field appearance="fill">
-          <mat-select [(ngModel)]="entity.newStatus">
-            <mat-option
-              *ngFor="let status of entity.allStatuses"
-              [value]="status"
-            >
-              {{ status }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </td>
-    </tr>
+  <table class="full-width">
+    @for (entity of data.entities; track entity.id) {
+      <tr>
+        <td>
+          <app-entity-block [entityId]="entity.id"></app-entity-block>
+        </td>
+        <td>
+          <app-entity-field-edit
+            [field]="entity.selectedField"
+            [entity]="entity.affectedEntity"
+            [form]="entity.form"
+          ></app-entity-field-edit>
+        </td>
+      </tr>
+    }
   </table>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button color="primary" (click)="onConfirm()">
+  <button mat-button (click)="onConfirm()" i18n="Button label">
     Update related fields
   </button>
+  <button mat-button mat-dialog-close i18n="Button label">Do not update</button>
 </mat-dialog-actions>

@@ -1,53 +1,75 @@
-import { CommonModule } from "@angular/common";
-import { Component, Inject } from "@angular/core";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Component, Inject, OnInit } from "@angular/core";
+import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogContent,
+  MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { MatFormField, MatOption, MatSelect } from "@angular/material/select";
-import { EntityConstructor } from "app/core/entity/model/entity";
+import { EntityBlockComponent } from "app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
+import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
+import {
+  EntityForm,
+  EntityFormService,
+} from "app/core/common-components/entity-form/entity-form.service";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 
 export interface AffectedEntity {
   id: string;
   name: string;
-  currentStatus: string;
   newStatus: string;
-  allStatuses: string[];
   targetField: string;
   targetEntityType: EntityConstructor;
+  form?: EntityForm<Entity>;
+  selectedField?: FormFieldConfig;
+  affectedEntity?: Entity;
 }
 
 @Component({
   selector: "app-automated-status-update",
   imports: [
-    CommonModule,
-    MatDialogActions,
-    MatSelect,
-    MatOption,
-    MatDialogContent,
-    ReactiveFormsModule,
-    MatFormField,
-    FormsModule,
+    DialogCloseComponent,
+    EntityFieldEditComponent,
+    EntityBlockComponent,
+    MatButton,
+    MatDialogModule,
   ],
   templateUrl: "./automated-status-update.component.html",
   styleUrl: "./automated-status-update.component.scss",
 })
-export class AutomatedUpdateDialogComponent {
+export class AutomatedUpdateDialogComponent implements OnInit {
+  entityConstructor: EntityConstructor;
+  entityForm: EntityForm<Entity>;
   constructor(
-    public dialogRef: MatDialogRef<AutomatedUpdateDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { entities: AffectedEntity[] },
-  ) {
-    console.log(data);
+    private dialogRef: MatDialogRef<AutomatedUpdateDialogComponent>,
+    private entityFormService: EntityFormService,
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    await Promise.all(
+      this.data.entities.map(async (entity) => {
+        const fieldId = entity.targetField;
+        const entityConstructor = entity.targetEntityType;
+        entity.selectedField = this.entityFormService.extendFormFieldConfig(
+          fieldId,
+          entityConstructor,
+        );
+
+        entity.affectedEntity = new entityConstructor();
+        const entityForm = await this.entityFormService.createEntityForm(
+          [fieldId],
+          entity.affectedEntity,
+        );
+
+        entity.form = entityForm;
+        entity.form.formGroup.controls[fieldId].setValue(entity.newStatus);
+      }),
+    );
   }
 
   onConfirm(): void {
     this.dialogRef.close(this.data.entities);
-  }
-
-  onCancel(): void {
-    this.dialogRef.close(null);
   }
 }

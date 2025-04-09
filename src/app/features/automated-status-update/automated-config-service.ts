@@ -8,6 +8,8 @@ import {
   AffectedEntity,
   AutomatedUpdateDialogComponent,
 } from "./automated-status-update.component";
+import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { lastValueFrom } from "rxjs";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -20,10 +22,43 @@ export class AutomatedConfigService {
     private entityMapper: EntityMapperService,
     private entityRelationshipService: EntityRelationsService,
     private dialog: MatDialog,
-  ) {}
+    private configurableEnumService: ConfigurableEnumService,
+  ) {
+    this.buildDependencyMap();
+  }
 
   dependentEntity: { [entityType: string]: Set<string> } = {};
 
+  private dependencyMap = new Map<
+    string,
+    {
+      targetEntityType: EntityConstructor;
+      targetFieldId: string;
+      rule: any;
+    }[]
+  >();
+
+  private buildDependencyMap() {
+    for (const targetType of this.entityRegistry.values()) {
+      for (const [fieldKey, fieldConfig] of targetType.schema.entries()) {
+        const rules = fieldConfig.defaultValue?.automatedConfigRule;
+        if (fieldConfig.defaultValue?.mode === "AutomatedConfigRule" && rules) {
+          for (const rule of rules) {
+            const key = `${rule.relatedEntity}|${rule.relatedField}`;
+            const entry = {
+              targetEntityType: targetType,
+              targetFieldId: fieldKey,
+              rule,
+            };
+            this.dependencyMap.set(key, [
+              ...(this.dependencyMap.get(key) || []),
+              entry,
+            ]);
+          }
+        }
+      }
+    }
+  }
   /**
    * Applies rules for any dependent entity types when a given entity is updated.
    * Finds dependent fields and updates them according to the configured rule mappings.
@@ -77,40 +112,12 @@ export class AutomatedConfigService {
    * Finds all entity types and fields that are configured to depend on a specific entityType and field.
    * These are declared via the `AutomatedConfigRule` in the schema's defaultValue.
    */
+
   public findEntitiesDependingOnField(
     sourceEntityType: string,
     changedField: string,
-  ): {
-    targetEntityType: EntityConstructor;
-    targetFieldId: string;
-    rule: any;
-  }[] {
-    const dependents = [];
-
-    for (const targetType of this.entityRegistry.values()) {
-      for (const [fieldKey, fieldConfig] of targetType.schema.entries()) {
-        const defaultVal = fieldConfig.defaultValue;
-
-        if (
-          defaultVal?.mode === "AutomatedConfigRule" &&
-          Array.isArray(defaultVal.automatedConfigRule)
-        ) {
-          for (const rule of defaultVal.automatedConfigRule) {
-            if (
-              rule.relatedEntity === sourceEntityType &&
-              rule.relatedField === changedField
-            ) {
-              dependents.push({
-                targetEntityType: targetType,
-                targetFieldId: fieldKey,
-                rule,
-              });
-            }
-          }
-        }
-      }
-    }
-    return dependents;
+  ) {
+    return this.dependencyMap.get(`${sourceEntityType}|${changedField}`) || [];
   }
 
   private async applyFieldValueMappings(
@@ -149,16 +156,29 @@ export class AutomatedConfigService {
             id,
           );
 
+          const fieldConfig =
+            dependent.targetEntityType.schema.get(targetField);
+          let enumValueObj: any = newValue ?? targetEntity[targetField];
+
+          if (fieldConfig?.additional) {
+            const enumEntity = this.configurableEnumService.getEnum(
+              fieldConfig.additional,
+            );
+            enumValueObj = enumEntity?.values?.find(
+              (v) => v.id === enumValueObj,
+            );
+          }
+
           if (targetEntity[targetField] !== newValue) {
             targetEntity[targetField] = newValue;
             affectedEntities.push({
-              id,
+              id: entityId,
               name: targetEntity["name"] ?? `${dependentType} ${id}`,
-              currentStatus: targetEntity[targetField],
-              newStatus: newValue ?? targetEntity[targetField],
-              allStatuses,
+              newStatus: enumValueObj,
               targetField,
               targetEntityType: dependent.targetEntityType,
+              selectedField: { ...fieldConfig, id: targetField },
+              affectedEntity: targetEntity,
             });
           }
         }
@@ -170,9 +190,12 @@ export class AutomatedConfigService {
 
       if (userConfirmedUpdates) {
         for (const update of userConfirmedUpdates) {
-          // const entity = await this.entityMapper.load(update.targetEntityType, update.id);
-          // entity[update.targetField] = update.newStatus;
-          // await this.entityMapper.save(entity);
+          const entity = await this.entityMapper.load(
+            update.targetEntityType,
+            update.id,
+          );
+          entity[update.targetField] = update.newStatus;
+          await this.entityMapper.save(entity);
           console.log(`Updated ${update.name} to status: ${update.newStatus}`);
         }
       }
@@ -183,10 +206,10 @@ export class AutomatedConfigService {
     entitiesToUpdate: AffectedEntity[],
   ): Promise<AffectedEntity[] | null> {
     const dialogRef = this.dialog.open(AutomatedUpdateDialogComponent, {
-      width: "600px",
+      maxHeight: "90vh",
       data: { entities: entitiesToUpdate },
     });
 
-    return dialogRef.afterClosed().toPromise();
+    return await lastValueFrom(dialogRef.afterClosed());
   }
 }
