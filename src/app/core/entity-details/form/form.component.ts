@@ -67,12 +67,12 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   async saveClicked() {
     try {
+      await this.entityFormService.saveChanges(this.form, this.entity);
       // todo: currently if we are using this applyRulesToDependentEntities in our entityformservice, we are getting an error ReferenceError: cannot access before initialization
       // which is due to circular dependency for eg. we injected automatedConfigService in entityformservice and then in automatedconfigservice we are using automatedconfigdialog component whcih is using entityblockcomponent and entityblockcomponent is using entityformservice
       await this.automatedConfigService.applyRulesToDependentEntities(
         this.entity,
       );
-      await this.entityFormService.saveChanges(this.form, this.entity);
       if (this.creatingNew && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
