@@ -78,7 +78,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       // todo: currently if we are using this service in our entityformservice, we are getting an error ReferenceError: cannot access before initialization
       // which is due to circular dependency for eg. we injected automatedConfigService in entityformservice and then in automatedconfigservice we are using automatedconfigdialog component whcih is using entityblockcomponent and entityblockcomponent is using entityformservice
       this.automatedConfigService.applyRulesToDependentEntities(this.entity);
-      
     } catch (err) {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
