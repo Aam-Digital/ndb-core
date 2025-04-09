@@ -11,6 +11,10 @@ import {
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { lastValueFrom } from "rxjs";
 
+/**
+ * Service to automatically update related entities based on configured rules.
+ * It finds dependent entities and updates their fields based on changes in the source entity.
+ */
 @Injectable({ providedIn: "root" })
 export class AutomatedConfigService {
   private dependencyMap = new Map<
@@ -34,6 +38,10 @@ export class AutomatedConfigService {
     this.buildDependencyMap();
   }
 
+  /**
+   * Precomputes dependency relationships during service initialization
+   * This optimization reduces runtime lookup complexity from O(n) to O(1)
+   */
   private buildDependencyMap() {
     for (const targetType of this.entityRegistry.values()) {
       for (const [fieldKey, fieldConfig] of targetType.schema.entries()) {
@@ -60,6 +68,7 @@ export class AutomatedConfigService {
     const entityType = entity.getType();
     this.dependentEntity = {};
 
+    // Load all entities linked to the modified entity
     const linkedEntities =
       await this.entityRelationshipService.loadAllLinkingToEntity(entity);
     const dependentTypeMap = new Map<string, Set<string>>();
@@ -86,6 +95,10 @@ export class AutomatedConfigService {
     await this.applyFieldValueMappings(entity, entityType);
   }
 
+  /**
+   * Retrieves precomputed dependencies for a given entity field
+   * @returns Array of dependency configurations
+   */
   public findEntitiesDependingOnField(
     sourceEntityType: string,
     changedField: string,
@@ -93,6 +106,11 @@ export class AutomatedConfigService {
     return this.dependencyMap.get(`${sourceEntityType}|${changedField}`) || [];
   }
 
+  /**
+   * Applies configured field value mappings to dependent entities
+   * @param entity - Source entity that was modified
+   * @param entityType - Type of the source entity
+   */
   private async applyFieldValueMappings(
     entity: Entity,
     entityType: string,
@@ -109,6 +127,7 @@ export class AutomatedConfigService {
         const dependentType = dependent.targetEntityType.ENTITY_TYPE;
         const dependentIds = this.dependentEntity[dependentType];
 
+        // Skip if no entities of this type need updates
         if (!dependentIds?.size) continue;
 
         const targetField = dependent.targetFieldId;
@@ -124,6 +143,7 @@ export class AutomatedConfigService {
         });
         const loadedEntities = await Promise.all(entitiesToLoad);
 
+        // Process each loaded entity for automated updates
         for (const targetEntity of loadedEntities) {
           const fieldConfig =
             dependent.targetEntityType.schema.get(targetField);
@@ -137,7 +157,7 @@ export class AutomatedConfigService {
               (v) => v.id === enumValueObj,
             );
           }
-
+          // Only track entities that actually need updates
           if (targetEntity[targetField] !== newValue) {
             targetEntity[targetField] = newValue;
             affectedEntities.push({
@@ -179,7 +199,7 @@ export class AutomatedConfigService {
     entitiesToUpdate: AffectedEntity[],
   ): Promise<AffectedEntity[] | null> {
     const dialogRef = this.dialog.open(AutomatedUpdateDialogComponent, {
-      width: "600px",
+      maxHeight: "90vh",
       data: { entities: entitiesToUpdate },
     });
 
