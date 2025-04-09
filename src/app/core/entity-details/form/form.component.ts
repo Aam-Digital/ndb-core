@@ -15,6 +15,7 @@ import { EntityFormComponent } from "../../common-components/entity-form/entity-
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
+import { AutomatedConfigService } from "app/features/automated-status-update/automated-config-service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -45,6 +46,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     private location: Location,
     private entityFormService: EntityFormService,
     private alertService: AlertService,
+    private automatedConfigService: AutomatedConfigService,
     @Optional() private viewContext: ViewComponentContext,
   ) {}
 
@@ -72,6 +74,11 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
           this.entity.getId(true),
         ]);
       }
+
+      // todo: currently if we are using this service in our entityformservice, we are getting an error ReferenceError: cannot access before initialization
+      // which is due to circular dependency for eg. we injected automatedConfigService in entityformservice and then in automatedconfigservice we are using automatedconfigdialog component whcih is using entityblockcomponent and entityblockcomponent is using entityformservice
+      this.automatedConfigService.applyRulesToDependentEntities(this.entity);
+      
     } catch (err) {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
