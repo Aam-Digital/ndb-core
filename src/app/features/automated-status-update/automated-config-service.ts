@@ -40,7 +40,6 @@ export class AutomatedConfigService {
 
   /**
    * Precomputes dependency relationships during service initialization
-   * This optimization reduces runtime lookup complexity from O(n) to O(1)
    */
   private buildDependencyMap() {
     for (const targetType of this.entityRegistry.values()) {
