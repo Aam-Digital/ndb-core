@@ -6,7 +6,7 @@ import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-rel
 import { MatDialog } from "@angular/material/dialog";
 import {
   AffectedEntity,
-  AutomatedUpdateDialogComponent,
+  AutomatedStatusUpdateComponent,
 } from "./automated-status-update.component";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { lastValueFrom } from "rxjs";
@@ -16,7 +16,7 @@ import { lastValueFrom } from "rxjs";
  * It finds dependent entities and updates their fields based on changes in the source entity.
  */
 @Injectable({ providedIn: "root" })
-export class AutomatedConfigService {
+export class AutomatedStatusUpdateConfigService {
   private dependencyMap = new Map<
     string,
     {
@@ -197,7 +197,7 @@ export class AutomatedConfigService {
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
   ): Promise<AffectedEntity[] | null> {
-    const dialogRef = this.dialog.open(AutomatedUpdateDialogComponent, {
+    const dialogRef = this.dialog.open(AutomatedStatusUpdateComponent, {
       maxHeight: "90vh",
       data: { entities: entitiesToUpdate },
     });

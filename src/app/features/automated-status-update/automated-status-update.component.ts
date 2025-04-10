@@ -38,12 +38,12 @@ export interface AffectedEntity {
   templateUrl: "./automated-status-update.component.html",
   styleUrl: "./automated-status-update.component.scss",
 })
-export class AutomatedUpdateDialogComponent implements OnInit {
+export class AutomatedStatusUpdateComponent implements OnInit {
   entityConstructor: EntityConstructor;
   entityForm: EntityForm<Entity>;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { entities: AffectedEntity[] },
-    private dialogRef: MatDialogRef<AutomatedUpdateDialogComponent>,
+    private dialogRef: MatDialogRef<AutomatedStatusUpdateComponent>,
     private entityFormService: EntityFormService,
   ) {}
 
