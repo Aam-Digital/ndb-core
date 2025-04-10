@@ -52,7 +52,7 @@ class Mentorship extends Entity {
   otherField!: string;
 }
 
-fdescribe("Mentorship Status Updates", () => {
+describe("Mentorship Status Updates", () => {
   let entityMapper: MockEntityMapperService;
   let mentee: Mentee;
   let mentorship: Mentorship;
