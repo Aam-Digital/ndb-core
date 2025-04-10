@@ -9,6 +9,7 @@ import {
 } from "./automated-status-update.component";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { lastValueFrom } from "rxjs";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -26,7 +27,7 @@ export class AutomatedStatusUpdateConfigService {
     }[]
   >();
   affectedEntities: AffectedEntity[] = [];
-
+  mappedPropertyConfig: EntitySchemaField;
   dependentEntity: { [entityType: string]: Set<string> } = {};
 
   constructor(
@@ -129,6 +130,9 @@ export class AutomatedStatusUpdateConfigService {
     changedValue: any,
   ): Promise<void> {
     const relatedEntities = sourceEntity[affected.mappedProperty];
+    this.mappedPropertyConfig = sourceEntity
+      .getSchema()
+      .get(affected.mappedProperty);
     if (!relatedEntities) return;
 
     const newValue = this.getMappedValue(
@@ -204,6 +208,7 @@ export class AutomatedStatusUpdateConfigService {
         targetEntityType: affected.targetEntityType,
         selectedField: { ...fieldConfig, id: targetField },
         affectedEntity: targetEntity,
+        mappedProperty: this.mappedPropertyConfig.label,
       });
     }
   }

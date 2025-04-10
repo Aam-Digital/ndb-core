@@ -23,6 +23,7 @@ export interface AffectedEntity {
   form?: EntityForm<Entity>;
   selectedField?: FormFieldConfig;
   affectedEntity?: Entity;
+  mappedProperty: string;
 }
 
 @Component({
