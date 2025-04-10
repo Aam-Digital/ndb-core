@@ -2,8 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../default-datatype/edit-component";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityTypeSelectComponent } from "../entity-type-select/entity-type-select.component";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
+import { ErrorHintComponent } from "app/core/common-components/error-hint/error-hint.component";
 
 /**
  * Edit component for selecting an entity type from a dropdown.
@@ -17,8 +18,9 @@ import { ReactiveFormsModule } from "@angular/forms";
     MatFormField,
     MatLabel,
     ReactiveFormsModule,
+    ErrorHintComponent,
+    MatError,
   ],
-  standalone: true,
 })
 export class EditEntityTypeComponent
   extends EditComponent<string | string[]>

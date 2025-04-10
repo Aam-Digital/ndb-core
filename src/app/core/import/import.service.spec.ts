@@ -10,8 +10,6 @@ import {
   expectEntitiesToMatch,
 } from "../../utils/expect-entity-data.spec";
 import moment from "moment";
-import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
-import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { EntityRegistry } from "../entity/database-entity.decorator";
@@ -23,12 +21,16 @@ import { createEntityOfType } from "../demo-data/create-entity-of-type";
 describe("ImportService", () => {
   let service: ImportService;
 
+  let entityMapper: EntityMapperService;
+
   beforeEach(async () => {
+    entityMapper = mockEntityMapper();
+
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
         ImportService,
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: EntityMapperService, useValue: entityMapper },
       ],
     });
     service = TestBed.inject(ImportService);
@@ -40,7 +42,6 @@ describe("ImportService", () => {
       entityType: "Entity",
       columnMapping: undefined,
     };
-    const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "saveAll");
     spyOn(entityMapper, "save");
 
@@ -50,9 +51,9 @@ describe("ImportService", () => {
 
     expect(entityMapper.save).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        ids: testEntities.map((e) => e.getId()),
+        createdEntities: testEntities.map((e) => e.getId()),
         config: testImportSettings,
-      }),
+      } as Partial<ImportMetadata>),
     );
   });
 
@@ -69,13 +70,14 @@ describe("ImportService", () => {
       })
       entityRefs: string[];
     }
+
     spyOn(TestBed.inject(EntityRegistry), "get").and.callFake(
       (entityType: string) =>
         entityType === "ImportTestTarget" ? ImportTestTarget : TestEntity,
     );
 
     const child = TestEntity.create("Child Name");
-    await TestBed.inject(EntityMapperService).save(child);
+    await entityMapper.save(child);
 
     const rawData: any[] = [
       { rawName: "John", rawCounter: "111" },
@@ -108,11 +110,10 @@ describe("ImportService", () => {
       { column: "rawText", propertyName: "text" },
     ];
 
-    const parsedEntities = await service.transformRawDataToEntities(
-      rawData,
-      "ImportTestTarget",
+    const parsedEntities = await service.transformRawDataToEntities(rawData, {
+      entityType: "ImportTestTarget",
       columnMapping,
-    );
+    });
 
     let expectedEntities: any[] = [
       { name: "John", counter: 111 },
@@ -133,70 +134,21 @@ describe("ImportService", () => {
     );
   });
 
-  it("should link imported data to other entities", async () => {
-    const testEntities: Entity[] = [
-      createEntityOfType("Child", "1"),
-      createEntityOfType("Child", "2"),
-    ];
-    const activity = new RecurringActivity("3");
-    const entityMapper = TestBed.inject(EntityMapperService);
-    await entityMapper.save(activity);
-
-    const testImportSettings: ImportSettings = {
-      entityType: "Child",
-      columnMapping: undefined,
-      additionalActions: [
-        { type: "RecurringActivity", id: "RecurringActivity:3" },
-        { type: "School", id: "School:4" },
-      ],
-    };
-    await service.executeImport(testEntities, testImportSettings);
-
-    const createRelations = await entityMapper.loadType(ChildSchoolRelation);
-    const expectedRelations = [
-      { childId: "Child:1", schoolId: "School:4" },
-      { childId: "Child:2", schoolId: "School:4" },
-    ].map((e) => Object.assign(new ChildSchoolRelation(), e));
-    expectEntitiesToMatch(createRelations, expectedRelations, true);
-
-    expect(activity.participants).toEqual(["Child:1", "Child:2"]);
-  });
-
-  it("should allow to remove entities and links", async () => {
+  it("should allow to remove entities with undo", async () => {
     const importMeta = new ImportMetadata();
     importMeta.config = {
       entityType: "Child",
       columnMapping: undefined,
-      additionalActions: [
-        { type: "RecurringActivity", id: "3" },
-        { type: "School", id: "4" },
-      ],
     };
-    importMeta.ids = ["Child:1", "Child:2"];
-    const relations = [
-      { childId: "1", schoolId: "4" },
-      { childId: "2", schoolId: "4" },
-      { childId: "3", schoolId: "4" }, // Other child same school -> keep
-      { childId: "2", schoolId: "3" }, // Imported child different school -> remove
-    ].map((e) => Object.assign(new ChildSchoolRelation(), e));
-    const activity = new RecurringActivity("3");
-    activity.participants = ["3", "2", "1"];
+    importMeta.createdEntities = ["Child:1", "Child:2"];
     const children = ["1", "2", "3"].map((id) =>
       createEntityOfType("Child", id),
     );
-    const entityMapper = TestBed.inject(EntityMapperService);
-    await entityMapper.saveAll([
-      ...children,
-      ...relations,
-      activity,
-      importMeta,
-    ]);
+    await entityMapper.saveAll([...children, importMeta]);
 
     await service.undoImport(importMeta);
 
     await expectEntitiesToBeInDatabase([children[2]], false, true);
-    await expectEntitiesToBeInDatabase([relations[2]], false, true);
-    expect(activity.participants).toEqual(["3"]);
     await expectAsync(
       entityMapper.load(ImportMetadata, importMeta.getId()),
     ).toBeRejected();
@@ -208,12 +160,11 @@ describe("ImportService", () => {
       entityType: TestEntity.ENTITY_TYPE,
       columnMapping: undefined,
     };
-    importMeta.ids = [
+    importMeta.createdEntities = [
       TestEntity.ENTITY_TYPE + ":1",
       TestEntity.ENTITY_TYPE + ":2",
     ];
     const children = ["1", "2", "3"].map((id) => new TestEntity(id));
-    const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([...children, importMeta]);
 
     await entityMapper.remove(children[1]);

@@ -34,7 +34,6 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
  */
 @Component({
   selector: "app-admin-entity-types",
-  standalone: true,
   imports: [
     MatHeaderRow,
     MatHeaderRowDef,
@@ -56,7 +55,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 })
 export class AdminEntityTypesComponent implements OnInit {
   entityTypes: EntityConstructor[] = [];
-  columnsToDisplay: string[] = ["label", "icon"];
+  columnsToDisplay: string[] = ["label", "id", "icon"];
 
   constructor(
     private entities: EntityRegistry,

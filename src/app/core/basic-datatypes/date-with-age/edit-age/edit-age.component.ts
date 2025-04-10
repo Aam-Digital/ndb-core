@@ -28,7 +28,6 @@ import { DateWithAge } from "../dateWithAge";
     NgIf,
     MatTooltipModule,
   ],
-  standalone: true,
 })
 export class EditAgeComponent extends EditComponent<DateWithAge> {
   dateChanged(event: MatDatepickerInputEvent<any>) {

@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnChanges, OnInit } from "@angular/core";
 import {
   BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   BasicAutocompleteComponent,
@@ -11,7 +11,6 @@ import { MatFormFieldControl } from "@angular/material/form-field";
   selector: "app-entity-type-select",
   templateUrl:
     "../../common-components/basic-autocomplete/basic-autocomplete.component.html",
-  standalone: true,
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   providers: [
     { provide: MatFormFieldControl, useExisting: EntityTypeSelectComponent },
@@ -19,7 +18,7 @@ import { MatFormFieldControl } from "@angular/material/form-field";
 })
 export class EntityTypeSelectComponent
   extends BasicAutocompleteComponent<EntityConstructor, string>
-  implements OnInit
+  implements OnInit, OnChanges
 {
   @Input() override multi = false;
   @Input() override placeholder =
@@ -33,15 +32,26 @@ export class EntityTypeSelectComponent
 
   private entityRegistry = inject(EntityRegistry);
 
-  override optionToString = (option: EntityConstructor) => option.label;
+  override optionToString = (option: EntityConstructor) =>
+    option.label ?? option.ENTITY_TYPE;
   override valueMapper = (option: EntityConstructor) => option.ENTITY_TYPE;
 
   override ngOnInit() {
-    this.options = this.entityRegistry
-      .getEntityTypes(true)
-      .filter(({ value }) => this.showInternalTypes || !!value.label)
-      .map(({ value }) => value);
-
+    this.initOptions();
     super.ngOnInit();
+  }
+
+  private initOptions() {
+    this.options = this.entityRegistry
+      .getEntityTypes(!this.showInternalTypes)
+      .map(({ value }) => value);
+  }
+
+  override ngOnChanges(changes: { [key in keyof this]?: any }) {
+    if (changes.showInternalTypes) {
+      this.initOptions();
+    }
+
+    super.ngOnChanges(changes);
   }
 }

@@ -276,15 +276,17 @@
       >
         Archive
       </button>
-      <button
-        mat-raised-button
-        (click)="anonymizeRecords()"
-        [disabled]="selectedRows.length === 0"
-        color="accent"
-        i18n="bulk action button"
-      >
-        Anonymize
-      </button>
+      @if (entityConstructor.hasPII) {
+        <button
+          mat-raised-button
+          (click)="anonymizeRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Anonymize
+        </button>
+      }
       <button
         mat-raised-button
         (click)="deleteRecords()"
@@ -312,6 +314,16 @@
         i18n="bulk action button"
       >
         Link External Profile
+      </button>
+
+      <button
+        mat-raised-button
+        (click)="mergeRecords()"
+        [disabled]="selectedRows.length !== 2"
+        color="accent"
+        i18n="bulk action button"
+      >
+        Merge
       </button>
 
       <button mat-raised-button (click)="selectedRows = undefined" i18n>

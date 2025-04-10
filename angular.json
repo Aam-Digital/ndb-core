@@ -24,6 +24,7 @@
               "src/assets",
               "src/favicon.ico",
               "src/manifest.webmanifest",
+              "src/firebase-messaging-sw.js",
               {
                 "glob": "**/*",
                 "input": "node_modules/leaflet/dist/images/",
@@ -156,27 +157,6 @@
               "src/**/*.ts",
               "src/**/*.html"
             ]
-          }
-        },
-        "cypress-open": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "watch": true,
-            "headless": false,
-            "devServerTarget": "ndb-core:serve"
-          }
-        },
-        "e2e": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "ndb-core:serve",
-            "watch": false,
-            "headless": true
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "ndb-core:serve:production"
-            }
           }
         }
       }

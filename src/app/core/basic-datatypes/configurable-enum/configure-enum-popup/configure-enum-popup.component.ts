@@ -18,12 +18,13 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ConfigurableEnumValue } from "../configurable-enum.interface";
+
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { ConfigurableEnumValue } from "../configurable-enum.types";
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -41,7 +42,6 @@ import { OkButton } from "../../../common-components/confirmation-dialog/confirm
     FontAwesomeModule,
     MatButtonModule,
   ],
-  standalone: true,
 })
 export class ConfigureEnumPopupComponent {
   newOptionInput: string;

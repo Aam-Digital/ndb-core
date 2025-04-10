@@ -34,7 +34,7 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
 import { MatOption, MatSelect } from "@angular/material/select";
-import { asArray } from "../../../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 import { EntityFieldLabelComponent } from "../../../../common-components/entity-field-label/entity-field-label.component";
 import { EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRegistry } from "../../../../entity/database-entity.decorator";
@@ -43,7 +43,6 @@ import { filter } from "rxjs/operators";
 
 @Component({
   selector: "app-default-value-options",
-  standalone: true,
   imports: [
     MatFormField,
     MatLabel,

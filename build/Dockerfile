@@ -61,7 +61,7 @@ COPY ./.eslintrc.json /opt/app/
 COPY ./.prettierignore /opt/app/
 COPY ./.prettierrc.json /opt/app/
 COPY ./angular.json /opt/app/
-COPY ./cypress.config.ts /opt/app/
+COPY ./playwright.config.ts /opt/app/
 COPY ./karma.conf.js /opt/app/
 COPY ./tsconfig.app.json /opt/app/
 COPY ./tsconfig.spec.json /opt/app/
@@ -136,7 +136,7 @@ ENV CSP_REPORT_URI="https://o167951.ingest.sentry.io/api/1242399/security/"
 # overwrite the Content-Security-Policy rules (report-uri is added automatically)
 # default includes all required whitelists for production server
 # to disable any CSP blocking, set to "default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'"
-ENV CSP="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: blob: https://*.tile.openstreetmap.org/ https://matomo.aam-digital.org https://*.aam-digital.com https://*.aam-digital.net https://*.aam-digital.app https://api.github.com/repos/Aam-Digital/ https://sentry.io $CSP_REPORT_URI; style-src 'self' 'unsafe-inline'"
+ENV CSP="default-src 'self' 'unsafe-eval' 'unsafe-inline' data: blob: https://*.tile.openstreetmap.org/ https://matomo.aam-digital.org https://fcmregistrations.googleapis.com/v1/projects/* https://www.gstatic.com/firebasejs/* https://*.aam-digital.com https://*.aam-digital.net https://*.aam-digital.app https://api.github.com/repos/Aam-Digital/ https://sentry.io $CSP_REPORT_URI; style-src 'self' 'unsafe-inline'"
 # 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
 
 # variables are inserted into the nginx config

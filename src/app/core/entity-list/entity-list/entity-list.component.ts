@@ -53,7 +53,6 @@ import { applyUpdate } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
-import { AbilityModule } from "@casl/angular";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import {
   EntitySpecialLoaderService,
@@ -64,6 +63,8 @@ import {
   DialogViewComponent,
   DialogViewData,
 } from "../../ui/dialog-view/dialog-view.component";
+import { AblePurePipe } from "@casl/angular";
+import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -102,12 +103,11 @@ import {
     RouterLink,
     MatTooltipModule,
     EntityCreateButtonComponent,
-    AbilityModule,
     AsyncPipe,
+    AblePurePipe,
     ViewActionsComponent,
     // WARNING: all imports here also need to be set for components extending EntityList, like ChildrenListComponent
   ],
-  standalone: true,
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>
@@ -185,6 +185,7 @@ export class EntityListComponent<T extends Entity>
     private duplicateRecord: DuplicateRecordService,
     private entityActionsService: EntityActionsService,
     private entityEditService: EntityEditService,
+    private bulkMergeService: BulkMergeService,
     @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
   ) {
     this.screenWidthObserver
@@ -251,22 +252,38 @@ export class EntityListComponent<T extends Entity>
   private updateSubscription: Subscription;
 
   private listenToEntityUpdates() {
-    if (!this.updateSubscription && this.entityConstructor) {
-      this.updateSubscription = this.entityMapperService
-        .receiveUpdates(this.entityConstructor)
-        .pipe(untilDestroyed(this))
-        .subscribe((next) => {
-          this.allEntities = applyUpdate(this.allEntities, next);
-        });
+    if (this.updateSubscription || !this.entityConstructor) {
+      return;
     }
+
+    this.updateSubscription = this.entityMapperService
+      .receiveUpdates(this.entityConstructor)
+      .pipe(untilDestroyed(this))
+      .subscribe(async (updatedEntity) => {
+        // get specially enhanced entity if necessary
+        if (this.loaderMethod && this.entitySpecialLoader) {
+          updatedEntity = await this.entitySpecialLoader.extendUpdatedEntity(
+            this.loaderMethod,
+            updatedEntity,
+          );
+        }
+
+        this.allEntities = applyUpdate(this.allEntities, updatedEntity);
+      });
   }
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
     if (columnGroup && columnGroup.groups.length > 0) {
       this.groups = columnGroup.groups;
       this.defaultColumnGroup =
-        columnGroup.default || columnGroup.groups[0].name;
-      this.mobileColumnGroup = columnGroup.mobile || columnGroup.groups[0].name;
+        columnGroup.default && this.configuredTabExists(columnGroup.default)
+          ? columnGroup.default
+          : columnGroup.groups[0].name;
+
+      this.mobileColumnGroup =
+        columnGroup.mobile && this.configuredTabExists(columnGroup.mobile)
+          ? columnGroup.mobile
+          : columnGroup.groups[0].name;
     } else {
       this.groups = [
         {
@@ -277,6 +294,10 @@ export class EntityListComponent<T extends Entity>
       this.defaultColumnGroup = "default";
       this.mobileColumnGroup = "default";
     }
+  }
+
+  private configuredTabExists(groupName: string): boolean {
+    return this.groups.some((group) => group.name === groupName);
   }
 
   applyFilter(filterValue: string) {
@@ -325,6 +346,14 @@ export class EntityListComponent<T extends Entity>
 
   async editRecords() {
     await this.entityEditService.edit(
+      this.selectedRows,
+      this.entityConstructor,
+    );
+    this.selectedRows = undefined;
+  }
+
+  async mergeRecords() {
+    await this.bulkMergeService.showMergeDialog(
       this.selectedRows,
       this.entityConstructor,
     );

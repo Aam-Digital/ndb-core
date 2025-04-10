@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatIconButton } from "@angular/material/button";
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult } from "../geo.service";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../geo-location";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -15,9 +15,7 @@ import { AddressGpsLocationComponent } from "../address-gps-location/address-gps
  */
 @Component({
   selector: "app-address-edit",
-  standalone: true,
   imports: [
-    MatButton,
     AddressSearchComponent,
     MatFormField,
     MatLabel,

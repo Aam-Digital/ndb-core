@@ -29,7 +29,6 @@ import { FieldGroup } from "../../../core/entity-details/form/field-group";
   selector: "app-todo-details",
   templateUrl: "./todo-details.component.html",
   styleUrls: ["./todo-details.component.scss"],
-  standalone: true,
   imports: [
     NgIf,
     MatDialogModule,

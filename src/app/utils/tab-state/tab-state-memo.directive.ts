@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabGroup } from "@angular/material/tabs";
 import { Directive, OnInit, Optional } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { ViewComponentContext } from "../../core/ui/abstract-view/abstract-view.component";
+import { ViewComponentContext } from "../../core/ui/abstract-view/view-component-context";
 
 /**
  * Memorizes the current state of a `TabGroup` (i.e. which tab currently is selected)
@@ -19,6 +19,7 @@ import { ViewComponentContext } from "../../core/ui/abstract-view/abstract-view.
 @UntilDestroy()
 @Directive({
   selector: "[appTabStateMemo]",
+  standalone: false,
 })
 export class TabStateMemoDirective implements OnInit {
   private readonly tabIndexKey = "tabIndex";

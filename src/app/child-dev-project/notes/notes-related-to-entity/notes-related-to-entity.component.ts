@@ -7,7 +7,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { FilterService } from "../../../core/filter/filter.service";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
@@ -24,7 +24,6 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
   imports: [EntitiesTableComponent],
-  standalone: true,
 })
 export class NotesRelatedToEntityComponent
   extends RelatedEntitiesComponent<Note>
@@ -72,36 +71,53 @@ export class NotesRelatedToEntityComponent
   override createNewRecordFactory() {
     return () => {
       const newNote = super.createNewRecordFactory()();
-      //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
-      if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
-        for (const childId of asArray(
-          (this.entity as ChildSchoolRelation).childId,
-        )) {
-          if (childId) {
-            newNote.addChild(childId);
-          }
-        }
 
-        for (const schooldId of asArray(
-          (this.entity as ChildSchoolRelation).schoolId,
-        )) {
-          if (schooldId) {
-            newNote.addSchool(schooldId);
-          }
-        }
+      if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+        this.specialLinkingForChildSchoolRelation(newNote);
       }
 
       for (const e of [
         this.entity.getId(),
         ...this.getIndirectlyRelatedEntityIds(this.entity),
       ]) {
-        if (!newNote.relatedEntities.includes(e)) {
+        if (!this.isAlreadyLinked(newNote, e)) {
           newNote.relatedEntities.push(e);
         }
       }
 
       return newNote;
     };
+  }
+
+  private specialLinkingForChildSchoolRelation(newNote: Note) {
+    //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
+    for (const childId of asArray(
+      (this.entity as ChildSchoolRelation).childId,
+    )) {
+      if (childId) {
+        newNote.addChild(childId);
+      }
+    }
+
+    for (const schooldId of asArray(
+      (this.entity as ChildSchoolRelation).schoolId,
+    )) {
+      if (schooldId) {
+        newNote.addSchool(schooldId);
+      }
+    }
+  }
+
+  /**
+   * check if an entityId is already referenced in any array properties of the given note
+   */
+  private isAlreadyLinked(newNote: any, id: string): boolean {
+    for (const key in newNote) {
+      if (asArray(newNote[key]).includes(id)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

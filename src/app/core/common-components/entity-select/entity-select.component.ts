@@ -16,7 +16,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { ErrorHintComponent } from "../error-hint/error-hint.component";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
 import { Logging } from "../../logging/logging.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -45,7 +45,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
     MatSlideToggle,
     FormsModule,
   ],
-  standalone: true,
 })
 @UntilDestroy()
 export class EntitySelectComponent<

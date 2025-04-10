@@ -6,7 +6,7 @@ import {
   NgForm,
 } from "@angular/forms";
 import { MatFormFieldControl, MatSuffix } from "@angular/material/form-field";
-import { GeoLocation } from "../location.datatype";
+import { GeoLocation } from "../geo-location";
 import { MatInput } from "@angular/material/input";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -22,7 +22,6 @@ import { filter, map } from "rxjs/operators";
 
 @Component({
   selector: "app-location-input",
-  standalone: true,
   imports: [
     FormsModule,
     MatInput,

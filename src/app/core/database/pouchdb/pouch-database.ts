@@ -40,7 +40,10 @@ export class PouchDatabase extends Database {
    * @param dbName the name for the database under which the IndexedDB entries will be created
    * @param options PouchDB options which are directly passed to the constructor
    */
-  init(dbName?: string, options?: PouchDB.Configuration.DatabaseConfiguration) {
+  init(
+    dbName?: string,
+    options?: PouchDB.Configuration.DatabaseConfiguration | any,
+  ) {
     this.pouchDB = new PouchDB(dbName ?? this.dbName, options);
     this.databaseInitialized.complete();
   }
@@ -199,8 +202,8 @@ export class PouchDatabase extends Database {
   }
 
   /**
-   * Listen to changes to documents which have an _id with the given prefix
-   * @param prefix for which document changes are emitted
+   * Listen to changes to documents in the database.
+   * Use rxjs operators to filter for specific prefixes etc. if needed.
    * @returns observable which emits the filtered changes
    */
   changes(): Observable<any> {
@@ -249,8 +252,7 @@ export class PouchDatabase extends Database {
    */
   async reset() {
     this.pouchDB = undefined;
-    this.changesFeed?.complete();
-    this.changesFeed = undefined;
+    // keep this.changesFeed because some services are already subscribed to this reference
     this.databaseInitialized = new Subject();
   }
 

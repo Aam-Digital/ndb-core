@@ -1,8 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { ConfigurableEnumValue } from "../configurable-enum.interface";
+
 import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { ConfigurableEnumValue } from "../configurable-enum.types";
 
 /**
  * This component displays a {@link ConfigurableEnumValue} as text.
@@ -13,7 +14,6 @@ import { NgClass, NgForOf, NgIf } from "@angular/common";
   selector: "app-display-configurable-enum",
   templateUrl: "./display-configurable-enum.component.html",
   styleUrls: ["./display-configurable-enum.component.scss"],
-  standalone: true,
   imports: [NgForOf, NgIf, NgClass],
 })
 export class DisplayConfigurableEnumComponent

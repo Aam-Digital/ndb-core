@@ -1,5 +1,5 @@
-import { Component } from "@angular/core";
-import { MenuItem, NavigationMenuConfig } from "../menu-item";
+import { Component, inject } from "@angular/core";
+import { EntityMenuItem, MenuItem, NavigationMenuConfig } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";
@@ -10,6 +10,7 @@ import { Angulartics2Module } from "angulartics2";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { MenuItemComponent } from "../menu-item/menu-item.component";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 
 /**
  * Main app menu listing.
@@ -27,9 +28,10 @@ import { MenuItemComponent } from "../menu-item/menu-item.component";
     CommonModule,
     MenuItemComponent,
   ],
-  standalone: true,
 })
 export class NavigationComponent {
+  private entities = inject(EntityRegistry);
+
   /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
 
@@ -104,11 +106,38 @@ export class NavigationComponent {
       this.CONFIG_ID,
     );
 
-    this.menuItems = await this.routePermissionService.filterPermittedRoutes(
-      config.items,
+    const menuItems = config.items.map((item) =>
+      this.generateMenuItemForEntityType(item),
     );
+
+    this.menuItems =
+      await this.routePermissionService.filterPermittedRoutes(menuItems);
 
     // re-select active menu item after menu has been fully initialized
     this.activeLink = this.computeActiveLink(location.pathname);
+  }
+
+  /**
+   * parse special EntityMenuItem to regular item recursively
+   * by looking up the entityType from EntityRegistry and then using its config.
+   */
+  private generateMenuItemForEntityType(item: MenuItem): MenuItem {
+    if ("entityType" in item) {
+      const entityType = this.entities.get((item as EntityMenuItem).entityType);
+      return {
+        label: entityType.labelPlural,
+        icon: entityType.icon,
+        link: entityType.route,
+      };
+    } else if (item.subMenu) {
+      return {
+        ...item,
+        subMenu: item.subMenu.map((subItem) =>
+          this.generateMenuItemForEntityType(subItem),
+        ),
+      };
+    } else {
+      return item;
+    }
   }
 }

@@ -4,7 +4,7 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { MappingDialogData } from "../../../import/import-column-mapping/import-column-mapping.component";
+import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -22,7 +22,6 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 @DynamicComponent("EntityImportConfig")
 @Component({
   selector: "app-entity-import-config",
-  standalone: true,
   templateUrl: "./entity-import-config.component.html",
   styleUrls: ["./entity-import-config.component.scss"],
   imports: [

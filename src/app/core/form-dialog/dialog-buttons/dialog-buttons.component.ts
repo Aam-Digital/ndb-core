@@ -10,7 +10,6 @@ import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
-import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { Entity } from "../../entity/model/entity";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
 import {
@@ -24,17 +23,15 @@ import { Router, RouterLink } from "@angular/router";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
-import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
+import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 
 @Component({
   selector: "app-dialog-buttons",
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,
     Angulartics2Module,
     MatDialogModule,
-    DisableEntityOperationDirective,
     MatMenuModule,
     FontAwesomeModule,
     RouterLink,

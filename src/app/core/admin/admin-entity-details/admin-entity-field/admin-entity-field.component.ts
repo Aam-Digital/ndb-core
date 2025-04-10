@@ -15,7 +15,6 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatInputModule } from "@angular/material/input";
-import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import {
   FormBuilder,
   FormControl,
@@ -59,13 +58,11 @@ import { DefaultValueOptionsComponent } from "./default-value-options/default-va
     "./admin-entity-field.component.scss",
     "../../../common-components/entity-form/entity-form/entity-form.component.scss",
   ],
-  standalone: true,
   imports: [
     MatDialogModule,
     MatButtonModule,
     DialogCloseComponent,
     MatInputModule,
-    ErrorHintComponent,
     FormsModule,
     NgIf,
     MatTabsModule,
@@ -122,7 +119,7 @@ export class AdminEntityFieldComponent implements OnChanges {
 
   private initSettings() {
     this.fieldIdForm = this.fb.control(this.fieldId, {
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
       asyncValidators: [
         uniqueIdValidator(Array.from(this.entityType.schema.keys())),
       ],

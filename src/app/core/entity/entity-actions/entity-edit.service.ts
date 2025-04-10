@@ -11,7 +11,8 @@ import {
 } from "./entity-bulk-edit/entity-bulk-edit.component";
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
-import { asArray } from "../../../utils/utils";
+import { asArray } from "app/utils/asArray";
+import { EntityRelationsService } from "../entity-mapper/entity-relations.service";
 
 /**
  * Bulk edit fields of multiple entities at once.
@@ -23,11 +24,12 @@ export class EntityEditService extends CascadingEntityAction {
   constructor(
     protected override entityMapper: EntityMapperService,
     protected override schemaService: EntitySchemaService,
+    protected override entityRelationsService: EntityRelationsService,
     private matDialog: MatDialog,
     private entityActionsService: EntityActionsService,
     private unsavedChanges: UnsavedChangesService,
   ) {
-    super(entityMapper, schemaService);
+    super(entityMapper, schemaService, entityRelationsService);
   }
 
   /**

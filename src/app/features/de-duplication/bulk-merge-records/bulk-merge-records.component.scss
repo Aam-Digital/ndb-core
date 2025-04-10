@@ -1,0 +1,34 @@
+@use "variables/colors";
+
+.merge-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+
+  .header {
+    font-weight: bold;
+    background-color: colors.$primary;
+    color: white;
+    padding: 0.5rem;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+  }
+
+  app-merge-fields {
+    grid-column: 2 / 4;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .label-cell {
+    padding: 0.5rem;
+  }
+
+  .preview-cell {
+    mat-form-field,
+    ::ng-deep .mat-mdc-form-field {
+      width: 100%;
+    }
+  }
+}

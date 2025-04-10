@@ -107,6 +107,15 @@ export class Entity {
   private static _labelPlural: string;
 
   /**
+   * Returns a human-readable string representation of the entity *type*
+   * (not the individual record).
+   */
+  static toString(plural: boolean = false): string {
+    const result = plural ? this.labelPlural : this.label;
+    return result ?? this.ENTITY_TYPE;
+  }
+
+  /**
    * icon id used for this entity
    */
   static icon: IconName;
@@ -320,7 +329,16 @@ export class Entity {
     }
 
     return this.getConstructor()
-      .toStringAttributes.map((attr) => this[attr])
+      .toStringAttributes.map((attr) => {
+        let value = this[attr];
+        if (value?.label) {
+          value = value.label;
+        }
+        if (value instanceof Date) {
+          value = value.toLocaleDateString();
+        }
+        return value;
+      })
       .join(" ");
   }
 
@@ -344,14 +362,18 @@ export class Entity {
    * Shallow copy of the entity.
    * The resulting entity will be of the same type as this
    * (taking into account subclassing)
+   *
+   * @param newId if true, a new entityId will be generated; if a string, that value is used as new entityId
    */
-  public copy(generateNewId: boolean = false): this {
+  public copy(newId: string | boolean = false): this {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);
 
-    if (generateNewId) {
+    if (newId) {
+      other.entityId = typeof newId === "string" ? newId : uuid();
       delete other._rev;
-      other.entityId = uuid();
+      delete other.created;
+      delete other.updated;
     }
 
     return other;

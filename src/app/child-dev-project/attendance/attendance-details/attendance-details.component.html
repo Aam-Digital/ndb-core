@@ -39,36 +39,40 @@
 
   <div class="flex-row flex-wrap gap-regular" *ngIf="forChild">
     <mat-form-field>
+      <mat-label i18n="days present|How many days a child was present"
+        >Days Present</mat-label
+      >
       <input
         matInput
         type="number"
-        i18n-placeholder="days present|How many days a child was present"
-        placeholder="days present"
         [value]="entity.countEventsPresent(forChild)"
         readonly
       />
     </mat-form-field>
 
     <mat-form-field>
+      <mat-label i18n="days absent|How many days a child was absent"
+        >Days Absent</mat-label
+      >
       <input
         matInput
         type="number"
-        i18n-placeholder="days absent|How many days a child was absent"
-        placeholder="days absent"
         [value]="entity.countEventsAbsent(forChild)"
         readonly
       />
     </mat-form-field>
 
     <mat-form-field>
+      <mat-label
+        i18n="
+          unknown status|How many days the presence or absence of a child is
+          unknown
+        "
+        >Unknown Status</mat-label
+      >
       <input
         matInput
         type="number"
-        i18n-placeholder="
-          days absent|How many days the presence or absence of a child is
-          unknown
-        "
-        placeholder="unknown status"
         [value]="entity.countEventsWithUnknownStatus(forChild)"
         readonly
       />
@@ -77,36 +81,40 @@
 
   <div class="flex-row flex-wrap gap-regular" *ngIf="!forChild">
     <mat-form-field>
+      <mat-label i18n="Total present|How many children were present"
+        >Total Present</mat-label
+      >
       <input
         matInput
         type="number"
-        i18n-placeholder="Total present|How many children were present"
-        placeholder="Total present"
         [value]="entity.countTotalPresent()"
         readonly
       />
     </mat-form-field>
 
     <mat-form-field>
+      <mat-label i18n="Total absent|How many children were absent"
+        >Total Absent</mat-label
+      >
       <input
         matInput
         type="number"
-        i18n-placeholder="Total absent|How many children were absent"
-        placeholder="Total absent"
         [value]="entity.countTotalAbsent()"
         readonly
       />
     </mat-form-field>
 
     <mat-form-field>
-      <input
-        matInput
-        type="number"
-        i18n-placeholder="
+      <mat-label
+        i18n="
           Total unknown|How many children have an unknown presence or absence
           status
         "
-        placeholder="Total unknown"
+        >Total Unknown</mat-label
+      >
+      <input
+        matInput
+        type="number"
         [value]="entity.countEventsWithUnknownStatus()"
         readonly
       />

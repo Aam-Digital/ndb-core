@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
-import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
+import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 
 /**
  * Building block for views, providing a consistent layout to action buttons and menus
@@ -16,7 +16,6 @@ import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.compo
   selector: "app-view-actions",
   templateUrl: "./view-actions.component.html",
   imports: [NgTemplateOutlet],
-  standalone: true,
 })
 export class ViewActionsComponent implements AfterViewInit {
   @ViewChild("template") template: TemplateRef<any>;

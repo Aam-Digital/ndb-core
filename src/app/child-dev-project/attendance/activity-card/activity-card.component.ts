@@ -17,7 +17,6 @@ import { DatePipe, NgIf } from "@angular/common";
     DatePipe,
     NgIf,
   ],
-  standalone: true,
 })
 export class ActivityCardComponent {
   /**

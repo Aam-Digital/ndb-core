@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Database, DatabaseDocChange } from "./database";
 import { SessionInfo } from "../session/auth/session-info";
-import { environment } from "../../../environments/environment";
 import { DatabaseFactoryService } from "./database-factory.service";
 import { Entity } from "../entity/model/entity";
 import { Observable, Subject } from "rxjs";
+import { NotificationEvent } from "app/features/notification/model/notification-event";
+import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 
 /**
  * Manages access to individual databases,
@@ -28,16 +29,6 @@ export class DatabaseResolverService {
 
   constructor(private databaseFactory: DatabaseFactoryService) {
     this._changesFeed = new Subject();
-    this.initDatabaseStubs();
-  }
-
-  /**
-   * Generate Database objects so that change subscriptions and other operations
-   * can already be performed during bootstrap.
-   * @private
-   */
-  private initDatabaseStubs() {
-    this.registerDatabase(Entity.DATABASE);
   }
 
   private registerDatabase(dbName: string) {
@@ -47,6 +38,10 @@ export class DatabaseResolverService {
   }
 
   getDatabase(dbName: string = Entity.DATABASE): Database {
+    if (!this.databases.has(dbName)) {
+      this.registerDatabase(dbName);
+    }
+
     let db = this.databases.get(dbName);
     return db;
   }
@@ -63,14 +58,30 @@ export class DatabaseResolverService {
     }
   }
 
+  /**
+   * Connect the database(s) for the current user's "session",
+   * i.e. configuring the access for that account after login
+   * (especially for local and remote database modes)
+   */
   async initDatabasesForSession(session: SessionInfo) {
     this.initializeAppDatabaseForCurrentUser(session);
-    // ... in future initialize additional DBs here
+    this.initializeNotificationsDatabaseForCurrentUser(session);
   }
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
-    const userDBName = `${user.name}-${environment.DB_NAME}`;
+    const userDBName = `${user.name}-${Entity.DATABASE}`;
     this.getDatabase(Entity.DATABASE).init(userDBName);
+  }
+
+  private initializeNotificationsDatabaseForCurrentUser(user: SessionInfo) {
+    const db = this.getDatabase(NotificationEvent.DATABASE);
+    const serverDbName = `${NotificationEvent.DATABASE}_${user.id}`;
+    const browserDbName = serverDbName;
+    if (db instanceof SyncedPouchDatabase) {
+      db.init(browserDbName, serverDbName);
+    } else {
+      db.init(browserDbName);
+    }
   }
 
   initDatabasesForAnonymous() {

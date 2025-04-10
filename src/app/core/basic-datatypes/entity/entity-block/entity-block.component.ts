@@ -2,12 +2,10 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Router } from "@angular/router";
-import { NgClass, NgForOf, NgIf } from "@angular/common";
-import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
+import { NgClass } from "@angular/common";
 import { Logging } from "../../../logging/logging.service";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { TemplateTooltipDirective } from "../../../common-components/template-tooltip/template-tooltip.directive";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { DisplayImgComponent } from "../../../../features/file/display-img/display-img.component";
 import { EntityBlockConfig } from "./entity-block-config";
 import { EntityFieldViewComponent } from "../../../common-components/entity-field-view/entity-field-view.component";
@@ -23,16 +21,11 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   styleUrls: ["./entity-block.component.scss"],
   imports: [
     NgClass,
-    NgIf,
-    DynamicComponentDirective,
     FaDynamicIconComponent,
     TemplateTooltipDirective,
-    FaIconComponent,
-    NgForOf,
     DisplayImgComponent,
     EntityFieldViewComponent,
   ],
-  standalone: true,
 })
 export class EntityBlockComponent implements OnInit {
   @Input() entity: Entity;

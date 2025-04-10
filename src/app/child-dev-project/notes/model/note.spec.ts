@@ -7,7 +7,6 @@ import {
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
 import { InteractionType } from "./interaction-type.interface";
-import { ConfigurableEnumConfig } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 import {
   getWarningLevelColor,
   WarningLevel,
@@ -17,6 +16,7 @@ import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { ConfigurableEnumConfig } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {

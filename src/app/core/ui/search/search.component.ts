@@ -42,7 +42,6 @@ import { SearchService } from "./search.service";
     EntityBlockComponent,
     AsyncPipe,
   ],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchComponent {

@@ -54,7 +54,6 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
     MatTooltipModule,
     ErrorHintComponent,
   ],
-  standalone: true,
 })
 export class EditTextWithAutocompleteComponent
   extends EditComponent<string>

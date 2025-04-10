@@ -2,7 +2,7 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { KeycloakAuthService } from "./keycloak-auth.service";
 import { HttpClient } from "@angular/common/http";
-import { KeycloakEventType, KeycloakService } from "keycloak-angular";
+import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { of, Subject } from "rxjs";
 
 /**
@@ -125,7 +125,7 @@ describe("KeycloakAuthService", () => {
     mockKeycloak.getToken.calls.reset();
 
     mockKeycloak.keycloakEvents$.next({
-      type: KeycloakEventType.OnTokenExpired,
+      type: KeycloakEventTypeLegacy.OnTokenExpired,
     });
     tick();
     expect(mockKeycloak.updateToken).toHaveBeenCalled();
@@ -143,7 +143,7 @@ describe("KeycloakAuthService", () => {
 
     mockKeycloak.updateToken.and.resolveTo(false);
     mockKeycloak.keycloakEvents$.next({
-      type: KeycloakEventType.OnTokenExpired,
+      type: KeycloakEventTypeLegacy.OnTokenExpired,
     });
     tick();
     expect(mockKeycloak.updateToken).toHaveBeenCalled();

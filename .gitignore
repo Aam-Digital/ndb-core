@@ -1,6 +1,7 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 /src/assets/config.json
+/src/assets/firebase-config.json
 /src/assets/child-photos
 release.sh
 
@@ -194,6 +195,15 @@ fabric.properties
 .vs/*
 .vscode/*
 
-# video and screenshot of the tests from Cypress
+# video and screenshot of the tests from e2e tests (Playwright, Cypress)
 ./e2e/screenshots
 ./e2e/videos
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json

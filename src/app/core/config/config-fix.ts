@@ -23,14 +23,10 @@ export const defaultJsonConfig = {
         link: "/"
       },
       {
-        label: $localize`:Menu item:Children`,
-        icon: "child",
-        link: "/child"
+        entityType: "Child"
       },
       {
-        label: $localize`:Menu item:Schools`,
-        icon: "university",
-        link: "/school"
+        entityType: "School"
       },
       {
         label: $localize`:Menu item:Attendance`,
@@ -38,14 +34,10 @@ export const defaultJsonConfig = {
         link: "/attendance"
       },
       {
-        label: $localize`:Menu item:Notes`,
-        icon: "file-alt",
-        link: "/note"
+        entityType: "Note"
       },
       {
-        label: $localize`:Menu item:Tasks`,
-        icon: "tasks",
-        link: "/todo"
+        entityType: "Todo"
       },
       {
         label: $localize`:Menu item:Import`,
@@ -370,7 +362,7 @@ export const defaultJsonConfig = {
   "view:help": {
     component: "MarkdownPage",
     config: {
-      markdownFile: $localize`:Filename of markdown help page (make sure the filename you enter as a translation actually exists on the server!):assets/help/help.en.md`
+      markdownEntityId: "help"
     }
   },
   "view:attendance": {
@@ -391,7 +383,8 @@ export const defaultJsonConfig = {
           label: $localize`Children`
         },
         "privateSchool",
-        "language"
+        "language",
+        "website"
       ],
       filters: [{ id: "privateSchool" }]
     }
@@ -410,7 +403,7 @@ export const defaultJsonConfig = {
               config: {
                 fieldGroups: [
                   { fields: ["name", "privateSchool", "parentSchool"] },
-                  { fields: ["address", "phone"] },
+                  { fields: ["address", "phone", "website"] },
                   { fields: ["language", "timing"] },
                   { fields: ["remarks"] }
                 ]
@@ -1102,6 +1095,10 @@ export const defaultJsonConfig = {
       remarks: {
         dataType: "string",
         label: $localize`:Label for the remarks for a school:Remarks`
+      },
+      website: {
+        dataType: "url",
+        label: $localize`:Label for the website of a school:Website`
       }
     }
   },
