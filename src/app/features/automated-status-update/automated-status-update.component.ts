@@ -70,6 +70,13 @@ export class AutomatedUpdateDialogComponent implements OnInit {
   }
 
   onConfirm(): void {
+    for (const entity of this.data.entities) {
+      const fieldId = entity.targetField;
+      const formControl = entity.form?.formGroup.controls[fieldId];
+      if (formControl) {
+        entity.newStatus = formControl.value;
+      }
+    }
     this.dialogRef.close(this.data.entities);
   }
 }
