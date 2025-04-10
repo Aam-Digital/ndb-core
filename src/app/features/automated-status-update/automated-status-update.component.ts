@@ -17,7 +17,6 @@ import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 
 export interface AffectedEntity {
   id: string;
-  name: string;
   newStatus: string;
   targetField: string;
   targetEntityType: EntityConstructor;

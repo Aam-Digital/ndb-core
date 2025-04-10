@@ -91,7 +91,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     referencedEntityType: EntityConstructor;
     availableFields: string[];
   };
-  relatedEntity: { label: string; entity: string }[];
+  relatedEntity: { label: string; entity: string; mappedField: string }[];
 
   constructor(
     private entityRegistry: EntityRegistry,
@@ -209,6 +209,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
     }
   }
   async openAutomatedMappingDialog(selectedEntity: string) {
+    const relatedEntity = this.relatedEntity.find(
+      (r) => r.entity === selectedEntity,
+    );
     const refEntity = this.entityRegistry.get(selectedEntity);
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
       maxHeight: "90vh",
@@ -226,6 +229,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
       const updatedConfig = {
         automatedConfigRule: [
           {
+            mappedProperty: relatedEntity.mappedField,
             relatedEntity: selectedEntity,
             relatedField: result.relatedField,
             automatedMapping: result.automatedMapping,
@@ -274,6 +278,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
       .map((refType) => ({
         label: refType.entityType.label,
         entity: refType.entityType.ENTITY_TYPE,
+        mappedField: refType.referencingProperties[0].id,
       }));
   }
 

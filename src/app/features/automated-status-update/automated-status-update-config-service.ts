@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
   AffectedEntity,
@@ -22,16 +21,17 @@ export class AutomatedStatusUpdateConfigService {
     {
       targetEntityType: EntityConstructor;
       targetFieldId: string;
+      mappedProperty: string;
       rule: any;
     }[]
   >();
+  affectedEntities: AffectedEntity[] = [];
 
   dependentEntity: { [entityType: string]: Set<string> } = {};
 
   constructor(
     private entityRegistry: EntityRegistry,
     private entityMapper: EntityMapperService,
-    private entityRelationshipService: EntityRelationsService,
     private dialog: MatDialog,
     private configurableEnumService: ConfigurableEnumService,
   ) {
@@ -39,7 +39,8 @@ export class AutomatedStatusUpdateConfigService {
   }
 
   /**
-   * Precomputes dependency relationships during service initialization
+   * Builds a map of dependent field rules from entity schema config
+   * to be used during automatic updates.
    */
   private buildDependencyMap() {
     for (const targetType of this.entityRegistry.values()) {
@@ -51,6 +52,7 @@ export class AutomatedStatusUpdateConfigService {
             const entry = {
               targetEntityType: targetType,
               targetFieldId: fieldKey,
+              mappedProperty: rule.mappedProperty,
               rule,
             };
             this.dependencyMap.set(key, [
@@ -63,40 +65,10 @@ export class AutomatedStatusUpdateConfigService {
     }
   }
 
-  public async applyRulesToDependentEntities(entity: Entity): Promise<void> {
-    const entityType = entity.getType();
-    this.dependentEntity = {};
-
-    // Load all entities linked to the modified entity
-    const linkedEntities =
-      await this.entityRelationshipService.loadAllLinkingToEntity(entity);
-    const dependentTypeMap = new Map<string, Set<string>>();
-
-    linkedEntities.forEach((relatedEntity) => {
-      Object.entries(relatedEntity.entity).forEach(([key, value]) => {
-        if (typeof value === "string" && value.includes(":")) {
-          const [type, id] = value.split(":");
-          if (!dependentTypeMap.has(type)) {
-            dependentTypeMap.set(type, new Set());
-          }
-          dependentTypeMap.get(type).add(`${type}:${id}`);
-        }
-      });
-    });
-
-    dependentTypeMap.forEach((ids, type) => {
-      this.dependentEntity[type] = new Set([
-        ...(this.dependentEntity[type] || []),
-        ...ids,
-      ]);
-    });
-
-    await this.applyFieldValueMappings(entity, entityType);
-  }
-
   /**
-   * Retrieves precomputed dependencies for a given entity field
-   * @returns Array of dependency configurations
+   * Retrieves all automated rules for a given source entity field.
+   * @param sourceEntityType - The entity type of the source
+   * @param changedField - The changed field in the source entity
    */
   public findEntitiesDependingOnField(
     sourceEntityType: string,
@@ -106,94 +78,162 @@ export class AutomatedStatusUpdateConfigService {
   }
 
   /**
-   * Applies configured field value mappings to dependent entities
-   * @param entity - Source entity that was modified
-   * @param entityType - Type of the source entity
+   * Applies rules to dependent entities based on changes in the provided entity.
+   * Also prompts user confirmation and saves updates if any changes were made.
+   * @param entity - The source entity whose changes should trigger updates
    */
-  private async applyFieldValueMappings(
-    entity: Entity,
-    entityType: string,
-  ): Promise<void> {
-    const affectedEntities: AffectedEntity[] = [];
+  public async applyRulesToDependentEntities(entity: Entity): Promise<void> {
+    this.affectedEntities = []; // Clear previous entries
+    const entityType = entity.getType();
+    const changedFields = Object.entries(entity);
 
-    for (const [changedField, changedValue] of Object.entries(entity)) {
-      const dependents = this.findEntitiesDependingOnField(
+    await this.applyFieldMappings(entityType, changedFields, entity);
+
+    if (this.affectedEntities.length > 0) {
+      await this.confirmAndSaveAffectedEntities();
+    }
+  }
+
+  /**
+   * Iterates through all changed fields in the source entity
+   * and applies mapping rules to each relevant dependent entity.
+   * @param entityType - Type of the source entity
+   * @param changedFields - List of changed fields and their values
+   * @param entity - The full source entity
+   */
+  private async applyFieldMappings(
+    entityType: string,
+    changedFields: [string, any][],
+    entity: Entity,
+  ): Promise<void> {
+    for (const [changedField, changedValue] of changedFields) {
+      const affectedRecords = this.findEntitiesDependingOnField(
         entityType,
         changedField,
       );
-
-      for (const dependent of dependents) {
-        const dependentType = dependent.targetEntityType.ENTITY_TYPE;
-        const dependentIds = this.dependentEntity[dependentType];
-
-        // Skip if no entities of this type need updates
-        if (!dependentIds?.size) continue;
-
-        const targetField = dependent.targetFieldId;
-        const mapping = dependent.rule.automatedMapping;
-        const valueMap = new Map(
-          Object.entries(mapping).map(([k, v]) => [v, k]),
-        );
-        const newValue = valueMap.get(changedValue.id);
-
-        const entitiesToLoad = Array.from(dependentIds).map((id) => {
-          const [_, entityId] = id.split(":");
-          return this.entityMapper.load(dependent.targetEntityType, entityId);
-        });
-        const loadedEntities = await Promise.all(entitiesToLoad);
-
-        // Process each loaded entity for automated updates
-        for (const targetEntity of loadedEntities) {
-          const fieldConfig =
-            dependent.targetEntityType.schema.get(targetField);
-          let enumValueObj = newValue ?? targetEntity[targetField];
-
-          if (fieldConfig?.additional) {
-            const enumEntity = this.configurableEnumService.getEnum(
-              fieldConfig.additional,
-            );
-            enumValueObj = enumEntity?.values?.find(
-              (v) => v.id === enumValueObj,
-            );
-          }
-          // Only track entities that actually need updates
-          if (targetEntity[targetField] !== newValue) {
-            targetEntity[targetField] = newValue;
-            affectedEntities.push({
-              id: targetEntity.getId(),
-              name:
-                targetEntity["name"] ??
-                `${dependentType} ${targetEntity.getId()}`,
-              newStatus: enumValueObj,
-              targetField,
-              targetEntityType: dependent.targetEntityType,
-              selectedField: { ...fieldConfig, id: targetField },
-              affectedEntity: targetEntity,
-            });
-          }
-        }
-      }
-    }
-
-    if (affectedEntities.length > 0) {
-      const userConfirmedUpdates =
-        await this.showConfirmationDialog(affectedEntities);
-
-      if (userConfirmedUpdates) {
-        const saveOperations = userConfirmedUpdates.map(async (update) => {
-          const entity = await this.entityMapper.load(
-            update.targetEntityType,
-            update.id,
-          );
-          entity[update.targetField] = update.newStatus;
-          return this.entityMapper.save(entity);
-        });
-
-        await Promise.all(saveOperations);
+      for (const affected of affectedRecords) {
+        await this.applyMappingToAffectedRecord(entity, affected, changedValue);
       }
     }
   }
 
+  /**
+   * Applies the field mapping rule to each related entity based on one affected record.
+   * @param sourceEntity - The entity where the change occurred
+   * @param affected - Configuration for the affected entity and field
+   * @param changedValue - The new value of the changed field
+   */
+  private async applyMappingToAffectedRecord(
+    sourceEntity: Entity,
+    affected: any,
+    changedValue: any,
+  ): Promise<void> {
+    const relatedEntities = sourceEntity[affected.mappedProperty];
+    if (!relatedEntities) return;
+
+    const newValue = this.getMappedValue(
+      affected.rule.automatedMapping,
+      changedValue,
+    );
+    const loadedEntities = await this.loadRelatedEntities(
+      relatedEntities,
+      affected.targetEntityType,
+    );
+
+    for (const targetEntity of loadedEntities) {
+      await this.updateTargetEntityField(targetEntity, affected, newValue);
+    }
+  }
+
+  /**
+   * Extracts the value to be applied to target entities using the reverse of the mapping.
+   * @param mapping - Mapping config from rule
+   * @param changedValue - The new value of the source field
+   */
+  private getMappedValue(
+    mapping: Record<string, string>,
+    changedValue: any,
+  ): any {
+    const valueMap = new Map(Object.entries(mapping).map(([k, v]) => [v, k]));
+    return valueMap.get(changedValue.id);
+  }
+
+  /**
+   * Loads entities by ID using the entity mapper.
+   * @param ids - List of entity IDs to load
+   * @param type - The constructor/type of the entities
+   */
+  private async loadRelatedEntities(
+    ids: string[],
+    entityType: string,
+  ): Promise<Entity[]> {
+    const loadEntities = ids.map((id) =>
+      this.entityMapper.load(entityType, id),
+    );
+    return Promise.all(loadEntities);
+  }
+
+  /**
+   * Updates the target field in a dependent entity and tracks the change
+   * for later confirmation and saving.
+   * @param targetEntity - The entity to be updated
+   * @param affected - Config defining which field to update
+   * @param newValue - The new value to assign to the field
+   */
+  private async updateTargetEntityField(
+    targetEntity: Entity,
+    affected: any,
+    newValue: any,
+  ): Promise<void> {
+    const targetField = affected.targetFieldId;
+    const fieldConfig = affected.targetEntityType.schema.get(targetField);
+    let dropdownValues = newValue ?? targetEntity[targetField];
+    if (fieldConfig?.additional) {
+      const enumEntity = this.configurableEnumService.getEnum(
+        fieldConfig.additional,
+      );
+      dropdownValues = enumEntity?.values?.find((v) => v.id === dropdownValues);
+    }
+
+    if (targetEntity[targetField] !== newValue) {
+      targetEntity[targetField] = newValue;
+      this.affectedEntities.push({
+        id: targetEntity.getId(),
+        newStatus: dropdownValues,
+        targetField,
+        targetEntityType: affected.targetEntityType,
+        selectedField: { ...fieldConfig, id: targetField },
+        affectedEntity: targetEntity,
+      });
+    }
+  }
+
+  /**
+   * Opens a dialog to confirm entity updates with the user.
+   * Saves entities only if the user confirms the changes.
+   */
+  private async confirmAndSaveAffectedEntities(): Promise<void> {
+    const userConfirmed = await this.showConfirmationDialog(
+      this.affectedEntities,
+    );
+    if (!userConfirmed) return;
+
+    const updatedRelatedEntity = userConfirmed.map(async (update) => {
+      const entity = await this.entityMapper.load(
+        update.targetEntityType,
+        update.id,
+      );
+      entity[update.targetField] = update.newStatus;
+      return this.entityMapper.save(entity);
+    });
+
+    await Promise.all(updatedRelatedEntity);
+  }
+
+  /**
+   * Opens the confirmation dialog to let user to approve or update the changes.
+   * @param entitiesToUpdate - List of entities with pending updates
+   */
   private async showConfirmationDialog(
     entitiesToUpdate: AffectedEntity[],
   ): Promise<AffectedEntity[] | null> {

@@ -15,6 +15,7 @@ const menteeStatusDefaultConfig: DefaultValueConfig = {
     {
       relatedEntity: "Mentorship",
       relatedField: "status",
+      mappedProperty: "status",
       automatedMapping: {
         active: "in mentorship",
         finished: "alumni",
