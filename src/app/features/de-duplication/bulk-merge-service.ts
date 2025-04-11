@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
@@ -15,13 +15,11 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
   providedIn: "root",
 })
 export class BulkMergeService {
-  constructor(
-    private entityMapper: EntityMapperService,
-    private entityRelationshipService: EntityRelationsService,
-    private matDialog: MatDialog,
-    private alert: AlertService,
-    private unsavedChangesService: UnsavedChangesService,
-  ) {}
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly entityRelationshipService = inject(EntityRelationsService);
+  private readonly matDialog = inject(MatDialog);
+  private readonly alert = inject(AlertService);
+  private readonly unsavedChangesService = inject(UnsavedChangesService);
 
   /**
    * Opens the merge popup with the selected entities details.

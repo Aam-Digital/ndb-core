@@ -47,7 +47,7 @@ export interface ReportCalculation {
   providedIn: "root",
 })
 export class SqlReportService {
-  static API_URL = environment.API_PROXY_PREFIX + "/v1/reporting";
+  static readonly API_URL = environment.API_PROXY_PREFIX + "/v1/reporting";
 
   constructor(private http: HttpClient) {}
 

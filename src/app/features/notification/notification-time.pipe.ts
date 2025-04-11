@@ -2,8 +2,8 @@
  * Converts a timestamp into a human-readable time format,
  * such as "Just Now", "5m", "2h", "Yesterday", "3d", or "Jan 2024".
  */
-import { Pipe, PipeTransform, OnDestroy } from "@angular/core";
-import { Observable, timer, Subject } from "rxjs";
+import { OnDestroy, Pipe, PipeTransform } from "@angular/core";
+import { Observable, Subject, timer } from "rxjs";
 import { map, shareReplay, takeUntil } from "rxjs/operators";
 
 @Pipe({
@@ -11,8 +11,8 @@ import { map, shareReplay, takeUntil } from "rxjs/operators";
   standalone: true,
 })
 export class NotificationTimePipe implements PipeTransform, OnDestroy {
-  private destroy$ = new Subject<void>();
-  private timeUpdate$ = timer(0, 60000).pipe(
+  private readonly destroy$ = new Subject<void>();
+  private readonly timeUpdate$ = timer(0, 60000).pipe(
     map(() => new Date()),
     shareReplay(1),
     takeUntil(this.destroy$),
