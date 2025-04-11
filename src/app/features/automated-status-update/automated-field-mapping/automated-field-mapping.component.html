@@ -14,9 +14,12 @@
   <div class="dropdown-select">
     <mat-form-field appearance="fill">
       <mat-label i18n>Select related field</mat-label>
-      <mat-select (selectionChange)="onFieldSelected($event.value)">
+      <mat-select
+        [(value)]="selectedField"
+        (selectionChange)="onFieldSelected($event.value)"
+      >
         @for (field of availableFields; track field.id) {
-          <mat-option [value]="field">{{ field.label }}</mat-option>
+          <mat-option [value]="field.id">{{ field.label }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
