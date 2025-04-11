@@ -10,30 +10,8 @@ this works, have a look at the [Add another Language](add-another-language.md) g
 
 ## How to update XLF files
 
-Angular does not natively support updating old files. To do this,
-_xliffmerge_ is used. This process takes into account old translations and
-merges them with new translations so that the number of items to translate
-stays at a minimum. Various configuration-options can be found at
-[xliffmerge.json](../../../xliffmerge.json) with the most interesting being
-
-- **allowIdChange** - whether the tool is allowed to merge translation-units
-  with different ID's. This can be desired if two units have the same meaning and
-  text, but differ in - for example - the amount of leading whitespaces.
-
-- **autotranslate** - experimental feature, can automatically translate the english
-  file using Google Translate
-
-- **beautifyOutput** - makes the output more human-readable
-
-Updating language files has several implications:
-
-- When a message is obsolete (you deleted the message from the code) it gets removed
-- Multiple messages (messages with the same description and meaning) are merged
-  automatically
-- New messages will be added to the list automatically. These will have the state `new`
-
-> Hint: If you added new texts to translate and used xliffmerge, you can find those by
-> searching for the string "new"
+We are using the POEditor platform to manage translations through a UI.
+GitHub Actions send the XLF files to POEditor and pull the translations back into the project.
 
 ## Available Tools
 
@@ -69,19 +47,19 @@ You can also do this manually in the XLF Document. The process is as follows:
      <note priority="1" from="meaning">The class a child is attending</note>
    </trans-unit>
    ```
-   - Inside the `trans-unit` we see the two tags `id` and `datatype`. The `id` is a unique id
-     that belongs to this trans unit. It can also be a custom, more descriptive id. In most
-     cases, this is a generated id that you should pay no attention to when translating.
-   - The `datatype` is always `html`, disregarding regardless of whether this actually came
-     from an `html` file.
-   - The `source` is the text that should be translated. This may not be altered.
-   - The `target` is the translation. Any special elements, such as `<x ... />` must not be
-     changed. The content of them can be ignored. Additionally, a `state` can be associated
-     with a translation. There are two common states: `new` and `translated` indicating that
-     a new message has been added and has not been translated resp. that a message has already
-     been translated. Additional states can be found at the website of the standard.
-   - The `context-group` contains information where the text got extracted from. It can be
-     ignored and must not be changed.
-   - Further notes are attached to trans units in order to ease the translation process.
-     You should also not change them, but they will be helpful.
+  - Inside the `trans-unit` we see the two tags `id` and `datatype`. The `id` is a unique id
+    that belongs to this trans unit. It can also be a custom, more descriptive id. In most
+    cases, this is a generated id that you should pay no attention to when translating.
+  - The `datatype` is always `html`, disregarding regardless of whether this actually came
+    from an `html` file.
+  - The `source` is the text that should be translated. This may not be altered.
+  - The `target` is the translation. Any special elements, such as `<x ... />` must not be
+    changed. The content of them can be ignored. Additionally, a `state` can be associated
+    with a translation. There are two common states: `new` and `translated` indicating that
+    a new message has been added and has not been translated resp. that a message has already
+    been translated. Additional states can be found at the website of the standard.
+  - The `context-group` contains information where the text got extracted from. It can be
+    ignored and must not be changed.
+  - Further notes are attached to trans units in order to ease the translation process.
+    You should also not change them, but they will be helpful.
 2. Translate the `target` of all trans units.

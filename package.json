@@ -17,7 +17,6 @@
     "storybook": "ng run ndb-core:storybook",
     "build-storybook": "ng run ndb-core:build-storybook",
     "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/",
-    "extract-i18n-locally": "ng extract-i18n --output-path ./src/assets/locale/ && xliffmerge --profile xliffmerge.json",
     "check-circular-deps": "madge --circular --extensions ts ./"
   },
   "private": true,
@@ -120,7 +119,6 @@
     "karma-jasmine-html-reporter": "^2.1.0",
     "madge": "^8.0.0",
     "mockdate": "^3.0.5",
-    "ngx-i18nsupport": "^0.17.1",
     "prettier": "^3.4.2",
     "storybook": "^8.6.9",
     "ts-node": "^10.9.2",
