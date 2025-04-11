@@ -16,11 +16,11 @@ import { ImportExistingService } from "./update-existing/import-existing.service
 })
 export class ImportService {
   constructor(
-    private entityMapper: EntityMapperService,
-    private entityTypes: EntityRegistry,
-    private schemaService: EntitySchemaService,
-    private importAdditionalService: ImportAdditionalService,
-    private importExistingService: ImportExistingService,
+    private readonly entityMapper: EntityMapperService,
+    private readonly entityTypes: EntityRegistry,
+    private readonly schemaService: EntitySchemaService,
+    private readonly importAdditionalService: ImportAdditionalService,
+    private readonly importExistingService: ImportExistingService,
   ) {}
 
   async executeImport(

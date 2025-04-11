@@ -1,6 +1,5 @@
 import { TestBed } from "@angular/core/testing";
 
-import { ImportExistingService } from "./import-existing.service";
 import { ImportService } from "../import.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";

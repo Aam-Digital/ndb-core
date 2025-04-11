@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
@@ -19,10 +12,7 @@ import { EntityFieldLabelComponent } from "../../common-components/entity-field-
 import {
   CdkDrag,
   CdkDragDrop,
-  CdkDragEnter,
   CdkDropList,
-  CdkDropListGroup,
-  DragRef,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
