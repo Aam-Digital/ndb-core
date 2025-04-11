@@ -138,9 +138,9 @@
 
       <mat-button-toggle
         value="AutomatedConfigRule"
-        matTooltip="Automated rule configurator"
+        matTooltip="Auto-update with changes from another record"
         i18n-matTooltip
-        [disabled]="!(entitySchemaField.dataType === 'configurable-enum')"
+        [disabled]="!(formDataType === 'configurable-enum')"
       >
         <fa-icon icon="refresh"></fa-icon>
       </mat-button-toggle>
