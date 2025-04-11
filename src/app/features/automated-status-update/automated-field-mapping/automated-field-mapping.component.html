@@ -3,11 +3,9 @@
 
 <mat-dialog-content>
   <p i18n>
-    You are about to add an automation rule for this field.<br />
-    After setting up the rule, whenever there are changes in this field, the
-    related field will be automatically updated.<br />
-    This ensures consistency and reduces manual effort by keeping the data
-    synchronized across fields.<br />
+    You can create an automation rule for this field. Once set up, any changes
+    will automatically update the related field, ensuring data consistency and
+    reducing manual work.<br />
     Please select the field and configure the mapping carefully to avoid
     unintended updates.
   </p>
@@ -22,23 +20,25 @@
     </mat-form-field>
   </div>
 
-  <div class="mapping-grid">
-    @for (option of currentFieldOptions; track option.id) {
-      <div class="option-label">{{ option.label }}</div>
-      <div class="dropdown-select">
-        <mat-form-field appearance="fill">
-          <mat-label i18n>Select Value</mat-label>
-          <mat-select [(value)]="selectedMappings[option.id]">
-            @for (enumOption of enumOptions; track enumOption.id) {
-              <mat-option [value]="enumOption.id">{{
-                enumOption.label
-              }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-    }
-  </div>
+  @if (selectedField) {
+    <div class="mapping-grid">
+      @for (option of currentFieldOptions; track option.id) {
+        <div class="option-label">{{ option.label }}</div>
+        <div class="dropdown-select">
+          <mat-form-field appearance="fill">
+            <mat-label i18n>Select Value</mat-label>
+            <mat-select [(value)]="selectedMappings[option.id]">
+              @for (enumOption of enumOptions; track enumOption.id) {
+                <mat-option [value]="enumOption.id">{{
+                  enumOption.label
+                }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      }
+    </div>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>
