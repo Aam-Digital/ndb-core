@@ -17,16 +17,8 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
  */
 @Injectable({ providedIn: "root" })
 export class AutomatedStatusUpdateConfigService {
-  private dependencyMap = new Map<
-    string,
-    {
-      targetEntityType: EntityConstructor;
-      targetFieldId: string;
-      mappedProperty: string;
-      rule: any;
-    }[]
-  >();
   affectedEntities: AffectedEntity[] = [];
+  relatedEntities: Entity[] = [];
   mappedPropertyConfig: EntitySchemaField;
   dependentEntity: { [entityType: string]: Set<string> } = {};
 
@@ -65,6 +57,16 @@ export class AutomatedStatusUpdateConfigService {
       }
     }
   }
+
+  private dependencyMap = new Map<
+    string,
+    {
+      targetEntityType: EntityConstructor;
+      targetFieldId: string;
+      mappedProperty: string;
+      rule: any;
+    }[]
+  >();
 
   /**
    * Retrieves all automated rules for a given source entity field.
@@ -129,18 +131,18 @@ export class AutomatedStatusUpdateConfigService {
     affected: any,
     changedValue: any,
   ): Promise<void> {
-    const relatedEntities = sourceEntity[affected.mappedProperty];
+    const entity = sourceEntity[affected.mappedProperty];
     this.mappedPropertyConfig = sourceEntity
       .getSchema()
       .get(affected.mappedProperty);
-    if (!relatedEntities) return;
+    if (!entity) return;
 
     const newValue = this.getMappedValue(
       affected.rule.automatedMapping,
       changedValue,
     );
     const loadedEntities = await this.loadRelatedEntities(
-      relatedEntities,
+      entity,
       affected.targetEntityType,
     );
 
@@ -164,17 +166,18 @@ export class AutomatedStatusUpdateConfigService {
 
   /**
    * Loads entities by ID using the entity mapper.
-   * @param ids - List of entity IDs to load
+   * @param entityids - List of entity entityiDs to load
    * @param type - The constructor/type of the entities
    */
   private async loadRelatedEntities(
-    ids: string[],
+    entityids: string[],
     entityType: string,
   ): Promise<Entity[]> {
-    const loadEntities = ids.map((id) =>
+    const loadEntities = entityids.map((id) =>
       this.entityMapper.load(entityType, id),
     );
-    return Promise.all(loadEntities);
+    this.relatedEntities = await Promise.all(loadEntities);
+    return this.relatedEntities;
   }
 
   /**
@@ -224,10 +227,7 @@ export class AutomatedStatusUpdateConfigService {
     if (!userConfirmed) return;
 
     const updatedRelatedEntity = userConfirmed.map(async (update) => {
-      const entity = await this.entityMapper.load(
-        update.targetEntityType,
-        update.id,
-      );
+      const entity = this.relatedEntities.find((e) => e.getId() == update.id);
       entity[update.targetField] = update.newStatus;
       return this.entityMapper.save(entity);
     });
