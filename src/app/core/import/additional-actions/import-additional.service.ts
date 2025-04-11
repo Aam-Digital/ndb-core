@@ -164,16 +164,10 @@ export class ImportAdditionalService {
 
       switch (additionalImport.mode) {
         case "direct":
-          action = this.linkDirectly(
-            entities,
-            additionalImport as AdditonalDirectLinkAction,
-          );
+          action = this.linkDirectly(entities, additionalImport);
           break;
         case "indirect":
-          action = this.linkIndirectly(
-            entities,
-            additionalImport as AdditionalIndirectLinkAction,
-          );
+          action = this.linkIndirectly(entities, additionalImport);
           break;
       }
 
@@ -193,13 +187,13 @@ export class ImportAdditionalService {
         case "direct":
           action = this.undoLinkDirectly(
             importMeta.createdEntities,
-            additionalImport as AdditonalDirectLinkAction,
+            additionalImport,
           );
           break;
         case "indirect":
           action = this.undoLinkIndirectly(
             importMeta.createdEntities,
-            additionalImport as AdditionalIndirectLinkAction,
+            additionalImport,
           );
           break;
       }

@@ -53,9 +53,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
       entityConstructor: EntityConstructor;
       entitiesToMerge: E[];
     },
-    private dialogRef: MatDialogRef<BulkMergeRecordsComponent<E>>,
-    private confirmationDialog: ConfirmationDialogService,
-    private entityFormService: EntityFormService,
+    private readonly dialogRef: MatDialogRef<BulkMergeRecordsComponent<E>>,
+    private readonly confirmationDialog: ConfirmationDialogService,
+    private readonly entityFormService: EntityFormService,
   ) {
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
