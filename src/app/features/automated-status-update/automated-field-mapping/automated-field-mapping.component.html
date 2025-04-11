@@ -20,23 +20,25 @@
     </mat-form-field>
   </div>
 
-  <div class="mapping-grid">
-    @for (option of currentFieldOptions; track option.id) {
-      <div class="option-label">{{ option.label }}</div>
-      <div class="dropdown-select">
-        <mat-form-field appearance="fill">
-          <mat-label i18n>Select Value</mat-label>
-          <mat-select [(value)]="selectedMappings[option.id]">
-            @for (enumOption of enumOptions; track enumOption.id) {
-              <mat-option [value]="enumOption.id">{{
-                enumOption.label
-              }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-    }
-  </div>
+  @if (selectedField) {
+    <div class="mapping-grid">
+      @for (option of currentFieldOptions; track option.id) {
+        <div class="option-label">{{ option.label }}</div>
+        <div class="dropdown-select">
+          <mat-form-field appearance="fill">
+            <mat-label i18n>Select Value</mat-label>
+            <mat-select [(value)]="selectedMappings[option.id]">
+              @for (enumOption of enumOptions; track enumOption.id) {
+                <mat-option [value]="enumOption.id">{{
+                  enumOption.label
+                }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      }
+    </div>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>
