@@ -85,12 +85,13 @@ export class AutomatedStatusUpdateConfigService {
    * Also prompts user confirmation and saves updates if any changes were made.
    * @param entity - The source entity whose changes should trigger updates
    */
-  public async applyRulesToDependentEntities(entity: Entity): Promise<void> {
+  public async applyRulesToDependentEntities(
+    entity: Entity,
+    changedFields: any,
+  ): Promise<void> {
     this.affectedEntities = []; // Clear previous entries
-    const entityType = entity.getType();
-    const changedFields = Object.entries(entity);
-
-    await this.applyFieldMappings(entityType, changedFields, entity);
+    const changedEntries = Object.entries(changedFields);
+    await this.applyFieldMappings(changedEntries, entity);
 
     if (this.affectedEntities.length > 0) {
       await this.confirmAndSaveAffectedEntities();
@@ -100,22 +101,26 @@ export class AutomatedStatusUpdateConfigService {
   /**
    * Iterates through all changed fields in the source entity
    * and applies mapping rules to each relevant dependent entity.
-   * @param entityType - Type of the source entity
    * @param changedFields - List of changed fields and their values
    * @param entity - The full source entity
    */
   private async applyFieldMappings(
-    entityType: string,
     changedFields: [string, any][],
     entity: Entity,
   ): Promise<void> {
     for (const [changedField, changedValue] of changedFields) {
       const affectedRecords = this.findEntitiesDependingOnField(
-        entityType,
+        entity.getType(),
         changedField,
       );
       for (const affected of affectedRecords) {
-        await this.applyMappingToAffectedRecord(entity, affected, changedValue);
+        if (changedField == affected.rule.relatedField) {
+          await this.applyMappingToAffectedRecord(
+            entity,
+            affected,
+            changedValue,
+          );
+        }
       }
     }
   }
@@ -136,7 +141,6 @@ export class AutomatedStatusUpdateConfigService {
       .getSchema()
       .get(affected.mappedProperty);
     if (!entity) return;
-
     const newValue = this.getMappedValue(
       affected.rule.automatedMapping,
       changedValue,
