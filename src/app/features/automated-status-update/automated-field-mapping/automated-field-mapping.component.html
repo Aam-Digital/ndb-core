@@ -37,16 +37,13 @@
       @for (sourceOption of sourceOptions; track sourceOption.id) {
         <div class="option-label">{{ sourceOption.label }}</div>
         <div class="dropdown-select">
-          <mat-form-field appearance="fill">
-            <mat-label i18n>Select Value</mat-label>
-            <mat-select [(value)]="selectedMappings[sourceOption.id]">
-              @for (targetOption of targetOptions; track targetOption.id) {
-                <mat-option [value]="targetOption.id">{{
-                  targetOption.label
-                }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          @if (mappingForms[sourceOption.id]?.form) {
+            <app-entity-field-edit
+              [field]="targetFieldConfig"
+              [entity]="mappingForms[sourceOption.id].entity"
+              [form]="mappingForms[sourceOption.id].form"
+            ></app-entity-field-edit>
+          }
         </div>
       }
     </div>
