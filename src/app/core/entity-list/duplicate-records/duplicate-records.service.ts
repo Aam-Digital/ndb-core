@@ -11,10 +11,10 @@ import { Router } from "@angular/router";
 })
 export class DuplicateRecordService {
   constructor(
-    private entitymapperservice: EntityMapperService,
-    private entityService: EntitySchemaService,
-    private alertService: AlertService,
-    private router: Router,
+    private readonly entityMapperService: EntityMapperService,
+    private readonly entityService: EntitySchemaService,
+    private readonly alertService: AlertService,
+    private readonly router: Router,
   ) {}
 
   async duplicateRecord(
@@ -24,7 +24,7 @@ export class DuplicateRecordService {
     const entities = Array.isArray(sourceData) ? sourceData : [sourceData];
     const duplicateData = this.clone(entities);
 
-    await this.entitymapperservice.saveAll(duplicateData);
+    await this.entityMapperService.saveAll(duplicateData);
     this.alertService.addInfo(this.generateSuccessMessage(entities));
 
     if (navigate) {
