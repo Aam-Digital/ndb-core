@@ -10,6 +10,7 @@ import {
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { lastValueFrom } from "rxjs";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -27,6 +28,7 @@ export class AutomatedStatusUpdateConfigService {
     private entityMapper: EntityMapperService,
     private dialog: MatDialog,
     private configurableEnumService: ConfigurableEnumService,
+    private entitySchemaService: EntitySchemaService,
   ) {
     this.buildDependencyMap();
   }
@@ -156,7 +158,7 @@ export class AutomatedStatusUpdateConfigService {
   }
 
   /**
-   * Extracts the value to be applied to target entities using the reverse of the mapping.
+   * Extracts the value to be applied to target entities.
    * @param mapping - Mapping config from rule
    * @param changedValue - The new value of the source field
    */
@@ -164,8 +166,7 @@ export class AutomatedStatusUpdateConfigService {
     mapping: Record<string, string>,
     changedValue: any,
   ): any {
-    const valueMap = new Map(Object.entries(mapping).map(([k, v]) => [v, k]));
-    return valueMap.get(changedValue.id);
+    return mapping[changedValue.id];
   }
 
   /**
