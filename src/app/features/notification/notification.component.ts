@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { MatBadgeModule } from "@angular/material/badge";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -45,19 +45,17 @@ import { NotificationConfig } from "./model/notification-config";
 export class NotificationComponent implements OnInit {
   public allNotifications: NotificationEvent[] = [];
   public unreadNotifications: NotificationEvent[] = [];
-  private notificationsSubject = new Subject<NotificationEvent[]>();
+  private readonly notificationsSubject = new Subject<NotificationEvent[]>();
   public selectedTab = 0;
   protected readonly closeOnlySubmenu = closeOnlySubmenu;
 
   /** whether an initial notification config exists for the user */
   hasNotificationConfig = false;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private sessionInfo: SessionSubject,
-    private router: Router,
-    private entityRegistry: EntityRegistry,
-  ) {}
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly sessionInfo = inject(SessionSubject);
+  private readonly router = inject(Router);
+  private readonly entityRegistry = inject(EntityRegistry);
 
   ngOnInit() {
     this.notificationsSubject.subscribe((notifications) => {

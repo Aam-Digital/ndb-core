@@ -16,7 +16,7 @@
       <mat-label i18n>Select related field</mat-label>
       <mat-select
         [(value)]="selectedField"
-        (selectionChange)="onFieldSelected($event.value)"
+        (selectionChange)="loadSourceOptions($event.value)"
       >
         @for (field of availableFields; track field.id) {
           <mat-option [value]="field.id">{{ field.label }}</mat-option>
@@ -27,19 +27,23 @@
 
   @if (selectedField) {
     <div class="mapping-grid">
-      @for (option of currentFieldOptions; track option.id) {
-        <div class="option-label">{{ option.label }}</div>
+      <div class="header-row">
+        <h3 i18n>
+          <b>When related field changes to</b>
+        </h3>
+        <h3 i18n><b>then this field is updated to</b></h3>
+      </div>
+
+      @for (sourceOption of sourceOptions; track sourceOption.id) {
+        <div class="option-label">{{ sourceOption.label }}</div>
         <div class="dropdown-select">
-          <mat-form-field appearance="fill">
-            <mat-label i18n>Select Value</mat-label>
-            <mat-select [(value)]="selectedMappings[option.id]">
-              @for (enumOption of enumOptions; track enumOption.id) {
-                <mat-option [value]="enumOption.id">{{
-                  enumOption.label
-                }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          @if (mappingForms[sourceOption.id]?.form) {
+            <app-entity-field-edit
+              [field]="targetFieldConfig"
+              [entity]="mappingForms[sourceOption.id].entity"
+              [form]="mappingForms[sourceOption.id].form"
+            ></app-entity-field-edit>
+          }
         </div>
       }
     </div>

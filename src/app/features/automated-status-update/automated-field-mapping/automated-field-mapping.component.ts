@@ -11,8 +11,14 @@ import { MatOption, MatSelect } from "@angular/material/select";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
+import {
+  EntityForm,
+  EntityFormService,
+} from "app/core/common-components/entity-form/entity-form.service";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { EntityConstructor } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 
 @Component({
   selector: "app-automated-field-mapping",
@@ -23,6 +29,7 @@ import { EntityConstructor } from "app/core/entity/model/entity";
     MatOption,
     MatDialogModule,
     MatButtonModule,
+    EntityFieldEditComponent,
   ],
   templateUrl: "./automated-field-mapping.component.html",
   styleUrl: "./automated-field-mapping.component.scss",
@@ -32,8 +39,15 @@ export class AutomatedFieldMappingComponent implements OnInit {
   availableFields: { id: string; label: string; additional: string }[] = [];
   selectedMappings: { [key: string]: string } = {};
   selectedField: string | null = null;
-  currentFieldOptions: ConfigurableEnumValue[] = [];
-  enumOptions: ConfigurableEnumValue[] = [];
+  targetOptions: ConfigurableEnumValue[] = [];
+  sourceOptions: ConfigurableEnumValue[] = [];
+  targetFieldConfig: FormFieldConfig;
+  mappingForms: {
+    [sourceId: string]: {
+      entity: Entity;
+      form: EntityForm<Entity>;
+    };
+  } = {};
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -46,24 +60,25 @@ export class AutomatedFieldMappingComponent implements OnInit {
         relatedField?: string;
       };
     },
+    private entityFormService: EntityFormService,
     private dialogRef: MatDialogRef<any>,
     private entityRegistry: EntityRegistry,
     private configurableEnumService: ConfigurableEnumService,
   ) {
-    if (data.currentAutomatedMapping) {
-      this.selectedMappings = {
-        ...data.currentAutomatedMapping?.automatedMapping,
-      };
-      this.selectedField = data.currentAutomatedMapping?.relatedField ?? null;
+    if (data.currentAutomatedMapping?.automatedMapping) {
+      this.selectedField = data.currentAutomatedMapping.relatedField ?? null;
     }
   }
 
   ngOnInit(): void {
     this.availableFields = this.mapEnumFields(this.data.refEntity);
     this.currentEntityEnumFields = this.getEnumFields(this.data.currentEntity);
-
-    this.setCurrentFieldOptions();
+    this.setTargetOptions();
     this.initializeSelectedField();
+    this.targetFieldConfig = this.entityFormService.extendFormFieldConfig(
+      this.data.currentField,
+      this.data.currentEntity,
+    );
   }
 
   private initializeSelectedField() {
@@ -71,11 +86,11 @@ export class AutomatedFieldMappingComponent implements OnInit {
       this.selectedField &&
       this.availableFields.some((f) => f.id === this.selectedField)
     ) {
-      this.onFieldSelected(this.selectedField);
+      this.loadSourceOptions(this.selectedField);
     }
   }
 
-  private setCurrentFieldOptions() {
+  private setTargetOptions() {
     const match = this.currentEntityEnumFields.find(
       ([id]) => id === this.data.currentField,
     );
@@ -83,7 +98,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
       const enumEntity = this.configurableEnumService.getEnum(
         match[1].additional,
       );
-      this.currentFieldOptions = enumEntity?.values ?? [];
+      this.targetOptions = enumEntity?.values ?? [];
     }
   }
 
@@ -101,14 +116,35 @@ export class AutomatedFieldMappingComponent implements OnInit {
       additional: schema.additional,
     }));
   }
-  onFieldSelected(fieldId: string) {
+
+  async loadSourceOptions(fieldId: string) {
     const selectedField = this.availableFields.find((f) => f.id === fieldId);
     if (!selectedField) return;
     this.selectedField = fieldId;
     const enumEntity = this.configurableEnumService.getEnum(
       selectedField.additional,
     );
-    this.enumOptions = enumEntity?.values ?? [];
+    this.sourceOptions = enumEntity?.values ?? [];
+    this.mappingForms = {};
+    for (const sourceOption of this.sourceOptions) {
+      const entity = new this.data.currentEntity();
+      entity[this.data.currentField] =
+        this.selectedMappings[sourceOption.id] || null;
+
+      const form = await this.entityFormService.createEntityForm(
+        [this.data.currentField],
+        entity,
+      );
+
+      // Track form value changes
+      form.formGroup
+        .get(this.data.currentField)
+        .valueChanges.subscribe((value) => {
+          this.selectedMappings[sourceOption.id] = value;
+        });
+
+      this.mappingForms[sourceOption.id] = { entity, form };
+    }
   }
 
   save() {

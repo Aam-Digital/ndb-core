@@ -75,7 +75,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
   @Output() valueChange = new EventEmitter<DefaultValueConfig>();
   @Input() field?: string;
   @Input() entitySchemaField: EntitySchemaField;
-  @Input() formDataType: string;
   @Input() entityType: EntityConstructor;
 
   form: FormGroup;

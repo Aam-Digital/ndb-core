@@ -24,10 +24,10 @@ import { DatabaseResolverService } from "../../core/database/database-resolver.s
   providedIn: "root",
 })
 export class NotificationService {
-  private firebaseMessaging = inject(AngularFireMessaging);
-  private httpClient = inject(HttpClient);
-  private authService = inject(KeycloakAuthService);
-  private alertService = inject(AlertService);
+  private readonly firebaseMessaging = inject(AngularFireMessaging);
+  private readonly httpClient = inject(HttpClient);
+  private readonly authService = inject(KeycloakAuthService);
+  private readonly alertService = inject(AlertService);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly sessionInfo = inject(SessionSubject);
   private readonly databaseResolver = inject(DatabaseResolverService);
