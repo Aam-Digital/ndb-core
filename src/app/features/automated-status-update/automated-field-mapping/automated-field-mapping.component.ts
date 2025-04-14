@@ -66,6 +66,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
     private configurableEnumService: ConfigurableEnumService,
   ) {
     if (data.currentAutomatedMapping?.automatedMapping) {
+      this.selectedMappings = data.currentAutomatedMapping.automatedMapping;
       this.selectedField = data.currentAutomatedMapping.relatedField ?? null;
     }
   }
@@ -73,7 +74,6 @@ export class AutomatedFieldMappingComponent implements OnInit {
   ngOnInit(): void {
     this.availableFields = this.mapEnumFields(this.data.refEntity);
     this.currentEntityEnumFields = this.getEnumFields(this.data.currentEntity);
-    this.setTargetOptions();
     this.initializeSelectedField();
     this.targetFieldConfig = this.entityFormService.extendFormFieldConfig(
       this.data.currentField,
@@ -87,18 +87,6 @@ export class AutomatedFieldMappingComponent implements OnInit {
       this.availableFields.some((f) => f.id === this.selectedField)
     ) {
       this.loadSourceOptions(this.selectedField);
-    }
-  }
-
-  private setTargetOptions() {
-    const match = this.currentEntityEnumFields.find(
-      ([id]) => id === this.data.currentField,
-    );
-    if (match) {
-      const enumEntity = this.configurableEnumService.getEnum(
-        match[1].additional,
-      );
-      this.targetOptions = enumEntity?.values ?? [];
     }
   }
 
@@ -128,20 +116,11 @@ export class AutomatedFieldMappingComponent implements OnInit {
     this.mappingForms = {};
     for (const sourceOption of this.sourceOptions) {
       const entity = new this.data.currentEntity();
-      entity[this.data.currentField] =
-        this.selectedMappings[sourceOption.id] || null;
-
+      entity[this.data.currentField] = this.selectedMappings[sourceOption.id];
       const form = await this.entityFormService.createEntityForm(
         [this.data.currentField],
         entity,
       );
-
-      // Track form value changes
-      form.formGroup
-        .get(this.data.currentField)
-        .valueChanges.subscribe((value) => {
-          this.selectedMappings[sourceOption.id] = value;
-        });
 
       this.mappingForms[sourceOption.id] = { entity, form };
     }
