@@ -7,8 +7,8 @@ import {
   map,
   switchMap,
 } from "rxjs/operators";
-import { Observable, of } from "rxjs";
-import { UserAdminService } from "./user-admin.service";
+import { Observable, of, throwError } from "rxjs";
+import { UserAdminApiError, UserAdminService } from "./user-admin.service";
 import { KeycloakUserDto } from "./keycloak-user-dto";
 import { Logging } from "../../logging/logging.service";
 import { Role, UserAccount } from "./user-account";
@@ -69,6 +69,14 @@ export class KeycloakAdminService extends UserAdminService {
           map(() => userAccount),
         );
       }),
+      catchError((originalError) =>
+        throwError(() => {
+          if (originalError?.status === 409) {
+            return new UserAdminApiError(409);
+          }
+          return this.transformStandardError(originalError);
+        }),
+      ),
     );
   }
 
@@ -83,7 +91,8 @@ export class KeycloakAdminService extends UserAdminService {
         return of({ userDeleted: true });
       }),
       catchError((err) => {
-        Logging.warn("failed to delete user account", err);
+        const error = this.transformStandardError(err);
+        Logging.warn("failed to delete user account", error, err);
         return of({ userDeleted: false });
       }),
     );
@@ -103,7 +112,8 @@ export class KeycloakAdminService extends UserAdminService {
       ),
       map(() => ({ userUpdated: true })),
       catchError((err) => {
-        Logging.warn("Failed to update user on server", err);
+        const error = this.transformStandardError(err);
+        Logging.warn("Failed to update user on server", error, err);
         return of({ userUpdated: false });
       }),
     );
@@ -160,6 +170,18 @@ export class KeycloakAdminService extends UserAdminService {
           map((roles) => ({ ...account, roles })),
         ),
       ),
+      catchError((originalError) =>
+        throwError(() => {
+          if (
+            originalError instanceof UserAdminApiError &&
+            originalError.status === 404
+          ) {
+            // user not found is a valid use case and not throwing an error
+            return of(null);
+          }
+          return this.transformStandardError(originalError);
+        }),
+      ),
     );
   }
 
@@ -180,7 +202,7 @@ export class KeycloakAdminService extends UserAdminService {
     return this.findUsersBy(params).pipe(
       map((res) => {
         if (res.length !== 1) {
-          throw new Error(`Could not find user`);
+          throw new UserAdminApiError(404, `Could not find user`);
         } else {
           return res[0];
         }
@@ -262,5 +284,24 @@ export class KeycloakAdminService extends UserAdminService {
       `${this.keycloakUrl}/users/${userAccountId}/role-mappings/realm`,
       { body: appRoles },
     );
+  }
+
+  /**
+   * Map common API errors to well-defined UserAdminApiErrors
+   * @param originalError
+   * @private
+   */
+  private transformStandardError(originalError: any) {
+    if (
+      originalError?.name === "HttpErrorResponse" &&
+      originalError?.status === 0
+    ) {
+      return new UserAdminApiError(
+        500,
+        $localize`:User API error:Could not connect to the server. Please check your network connection, try again later or reach out to your technical support team.`,
+      );
+    }
+
+    return originalError;
   }
 }

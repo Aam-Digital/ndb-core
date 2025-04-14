@@ -6,6 +6,7 @@ import {
 import { KeycloakAdminService } from "./keycloak-admin.service";
 import { environment } from "../../../../environments/environment.spec";
 import { Role } from "./user-account";
+import { UserAdminApiError } from "./user-admin.service";
 
 describe("KeycloakAdminService", () => {
   let service: KeycloakAdminService;
@@ -97,6 +98,28 @@ describe("KeycloakAdminService", () => {
           req.method === "PUT",
       )
       .flush({});
+  }));
+
+  it("should throw well-defined error when created user's email already exists", fakeAsync(() => {
+    // when
+    service
+      .createUser("test-entity-id", "test@example.com", [])
+      // then
+      .subscribe(
+        () => fail("Expected error but completed unexpectedly"),
+        (err) => {
+          expect(err).toBeInstanceOf(UserAdminApiError);
+          expect(err.status).toEqual(409);
+          expect(err.message).toContain("email");
+        },
+      );
+
+    const reqPost = httpTestingController.expectOne(`${BASE_URL}/users`);
+    expect(reqPost.request.method).toEqual("POST");
+    reqPost.flush(
+      { errorMessage: "User exists with same email" },
+      { status: 409, statusText: "Conflict" },
+    );
   }));
 
   it("should update user and send email verification again", fakeAsync(() => {

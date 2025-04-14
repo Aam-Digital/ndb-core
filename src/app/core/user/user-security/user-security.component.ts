@@ -18,10 +18,15 @@ import { MatSelectModule } from "@angular/material/select";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
-import { catchError } from "rxjs/operators";
+import { switchMap } from "rxjs/operators";
 import { environment } from "../../../../environments/environment";
-import { UserAdminService } from "../user-admin-service/user-admin.service";
+import {
+  UserAdminApiError,
+  UserAdminService,
+} from "../user-admin-service/user-admin.service";
 import { Role, UserAccount } from "../user-admin-service/user-account";
+import { Logging } from "app/core/logging/logging.service";
+import { of } from "rxjs";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")
@@ -99,13 +104,15 @@ export class UserSecurityComponent implements OnInit {
       .getUser(this.entity.getId())
       .pipe(
         // fallback: retry without entity prefix for legacy users
-        catchError(() =>
-          this.userAdminService.getUser(this.entity.getId(true)),
+        switchMap((user) =>
+          user === null
+            ? this.userAdminService.getUser(this.entity.getId(true))
+            : of(user),
         ),
       )
       .subscribe({
         next: (res) => this.assignUser(res),
-        error: () => undefined,
+        error: (err) => this.setError(err),
       });
   }
 
@@ -170,7 +177,7 @@ export class UserSecurityComponent implements OnInit {
             this.user = user as UserAccount;
             this.disableForm();
           },
-          error: ({ error }) => this.form.setErrors({ failed: error.message }),
+          error: (err) => this.setError(err),
         });
     }
   }
@@ -229,5 +236,16 @@ export class UserSecurityComponent implements OnInit {
         // request fails if no permission backend is used - this is fine
         error: () => undefined,
       });
+  }
+
+  private setError(err: UserAdminApiError | any) {
+    let errorMessage = err?.error?.message ?? err?.message;
+    if (err instanceof UserAdminApiError) {
+      errorMessage = err.message;
+    } else {
+      Logging.warn("Unexpected error from UserAdminService", err);
+    }
+
+    this.form.setErrors({ failed: errorMessage });
   }
 }
