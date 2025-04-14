@@ -19,11 +19,11 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { EventAttendanceMapDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { throwError } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
@@ -31,13 +31,13 @@ describe("EntityDeleteService", () => {
 
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
-  let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
 
   beforeEach(() => {
     entityMapper = mockEntityMapper(allEntities.map((e) => e.copy()));
 
-    mockAuthService = jasmine.createSpyObj(["deleteUser"]);
-    mockAuthService.deleteUser.and.returnValue(
+    mockUserAdminService = jasmine.createSpyObj(["deleteUser"]);
+    mockUserAdminService.deleteUser.and.returnValue(
       throwError(() => {
         new Error();
       }),
@@ -57,7 +57,7 @@ describe("EntityDeleteService", () => {
       providers: [
         EntityDeleteService,
         { provide: EntityMapperService, useValue: entityMapper },
-        { provide: KeycloakAuthService, useValue: mockAuthService },
+        { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: MatSnackBar, useValue: snackBarSpy },
         {
           provide: DefaultDatatype,
@@ -114,7 +114,9 @@ describe("EntityDeleteService", () => {
 
   it("should delete several entities and show dialog if keycloak deletion fails", async () => {
     // given
-    mockAuthService.deleteUser.and.returnValue(throwError(() => new Error()));
+    mockUserAdminService.deleteUser.and.returnValue(
+      throwError(() => new Error()),
+    );
     let userEntity = createEntityOfType("User");
 
     // when

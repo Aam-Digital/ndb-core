@@ -40,7 +40,29 @@ export async function initEnvironmentConfig() {
 
   Object.assign(environment, config);
 
+  await initKeycloakConfigToEnvironment();
+
   await initFirebaseConfigToEnvironment();
+}
+
+/**
+ * Load Keycloak server URL from assets/keycloak.json into environment
+ */
+async function initKeycloakConfigToEnvironment() {
+  const KEYCLOAK_FILE = "assets/keycloak.json";
+
+  try {
+    const fileResponse = await fetch(KEYCLOAK_FILE);
+    const keycloakConfig = await fileResponse.json();
+    if (typeof keycloakConfig !== "object") {
+      throw new Error("Error loading keycloak.json: invalid json file format");
+    }
+
+    environment.userAdminApi = keycloakConfig["auth-server-url"];
+    environment.realm = keycloakConfig["realm"];
+  } catch (err) {
+    Logging.debug("failed to load keycloak URL for app environment", err);
+  }
 }
 
 /**
