@@ -40,6 +40,10 @@ export class KeycloakAdminService extends UserAdminService {
     @Inject(LOCALE_ID) private baseLocale: string,
   ) {
     super();
+
+    // trim any trailing slashes from the userAdminApi URL
+    environment.userAdminApi = environment.userAdminApi?.replace(/\/$/, "");
+
     this.keycloakUrl = `${environment.userAdminApi}/admin/realms/${environment.realm}`;
 
     // TODO: Keycloak somehow cannot configure CORS (Access-Control-Allow-Origin) headers for the "realm-management" client
