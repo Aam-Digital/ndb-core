@@ -15,6 +15,7 @@ export const AuthGuard: CanActivateFn = (
   if (inject(LoginStateSubject).value === LoginState.LOGGED_IN) {
     return true;
   } else {
+    // todo remove tpa_parameter from redirect_uri
     return inject(Router).createUrlTree(["/login"], {
       queryParams: {
         redirect_uri: state.url,
