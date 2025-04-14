@@ -199,19 +199,16 @@ export class AutomatedStatusUpdateConfigService {
   ): Promise<void> {
     const targetField = affected.targetFieldId;
     const fieldConfig = affected.targetEntityType.schema.get(targetField);
-    let dropdownValues = newValue ?? targetEntity[targetField];
-    if (fieldConfig?.additional) {
-      const enumEntity = this.configurableEnumService.getEnum(
-        fieldConfig.additional,
-      );
-      dropdownValues = enumEntity?.values?.find((v) => v.id === dropdownValues);
-    }
+    const newValues = this.entitySchemaService.valueToEntityFormat(
+      newValue,
+      fieldConfig,
+    );
 
     if (targetEntity[targetField] !== newValue) {
       targetEntity[targetField] = newValue;
       this.affectedEntities.push({
         id: targetEntity.getId(),
-        newStatus: dropdownValues,
+        newStatus: newValues,
         targetField,
         targetEntityType: affected.targetEntityType,
         selectedField: { ...fieldConfig, id: targetField },
