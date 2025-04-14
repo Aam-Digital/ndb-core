@@ -19,6 +19,8 @@ import {
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 @Component({
   selector: "app-automated-field-mapping",
@@ -39,9 +41,10 @@ export class AutomatedFieldMappingComponent implements OnInit {
   availableFields: { id: string; label: string; additional: string }[] = [];
   selectedMappings: { [key: string]: string } = {};
   selectedField: string | null = null;
-  targetOptions: ConfigurableEnumValue[] = [];
   sourceOptions: ConfigurableEnumValue[] = [];
   targetFieldConfig: FormFieldConfig;
+
+  fieldSchema: EntitySchemaField;
   mappingForms: {
     [sourceId: string]: {
       entity: Entity;
@@ -64,16 +67,17 @@ export class AutomatedFieldMappingComponent implements OnInit {
     private dialogRef: MatDialogRef<any>,
     private entityRegistry: EntityRegistry,
     private configurableEnumService: ConfigurableEnumService,
+    private schemaService: EntitySchemaService,
   ) {
-    if (data.currentAutomatedMapping?.automatedMapping) {
-      this.selectedField = data.currentAutomatedMapping.relatedField ?? null;
+    if (data.currentAutomatedMapping) {
+      this.selectedMappings = data.currentAutomatedMapping?.automatedMapping;
+      this.selectedField = data.currentAutomatedMapping?.relatedField;
     }
   }
 
   ngOnInit(): void {
     this.availableFields = this.mapEnumFields(this.data.refEntity);
     this.currentEntityEnumFields = this.getEnumFields(this.data.currentEntity);
-    this.setTargetOptions();
     this.initializeSelectedField();
     this.targetFieldConfig = this.entityFormService.extendFormFieldConfig(
       this.data.currentField,
@@ -87,18 +91,6 @@ export class AutomatedFieldMappingComponent implements OnInit {
       this.availableFields.some((f) => f.id === this.selectedField)
     ) {
       this.loadSourceOptions(this.selectedField);
-    }
-  }
-
-  private setTargetOptions() {
-    const match = this.currentEntityEnumFields.find(
-      ([id]) => id === this.data.currentField,
-    );
-    if (match) {
-      const enumEntity = this.configurableEnumService.getEnum(
-        match[1].additional,
-      );
-      this.targetOptions = enumEntity?.values ?? [];
     }
   }
 
@@ -126,31 +118,42 @@ export class AutomatedFieldMappingComponent implements OnInit {
     );
     this.sourceOptions = enumEntity?.values ?? [];
     this.mappingForms = {};
+
     for (const sourceOption of this.sourceOptions) {
       const entity = new this.data.currentEntity();
-      entity[this.data.currentField] =
-        this.selectedMappings[sourceOption.id] || null;
+      let selectedValue: any = this.selectedMappings[sourceOption.id];
+      this.fieldSchema = entity.getSchema().get(this.data.currentField);
+      selectedValue = this.schemaService.valueToEntityFormat(
+        selectedValue,
+        this.fieldSchema,
+      );
+      entity[this.data.currentField] = selectedValue;
 
       const form = await this.entityFormService.createEntityForm(
         [this.data.currentField],
         entity,
       );
-
       // Track form value changes
       form.formGroup
         .get(this.data.currentField)
         .valueChanges.subscribe((value) => {
           this.selectedMappings[sourceOption.id] = value;
         });
-
       this.mappingForms[sourceOption.id] = { entity, form };
     }
   }
 
   save() {
+    const formattedMappings: { [key: string]: any } = {};
+    Object.entries(this.selectedMappings).forEach(([key, value]) => {
+      formattedMappings[key] = this.schemaService.valueToDatabaseFormat(
+        value,
+        this.fieldSchema,
+      );
+    });
     this.dialogRef.close({
       relatedField: this.selectedField,
-      automatedMapping: this.selectedMappings,
+      automatedMapping: formattedMappings,
     });
   }
 }
