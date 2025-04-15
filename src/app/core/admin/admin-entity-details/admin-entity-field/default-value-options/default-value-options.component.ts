@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import {
+  AutomatedConfigRule,
   DefaultValueConfig,
   DefaultValueMode,
 } from "../../../../entity/schema/default-value-config";
@@ -32,7 +33,7 @@ import {
 } from "@angular/material/button-toggle";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MatIconButton } from "@angular/material/button";
+import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { asArray } from "app/utils/asArray";
 import { EntityFieldLabelComponent } from "../../../../common-components/entity-field-label/entity-field-label.component";
@@ -40,6 +41,11 @@ import { EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRegistry } from "../../../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 import { filter } from "rxjs/operators";
+import { MatDialog } from "@angular/material/dialog";
+import { AutomatedFieldMappingComponent } from "app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component";
+import { lastValueFrom } from "rxjs";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 
 @Component({
   selector: "app-default-value-options",
@@ -59,6 +65,7 @@ import { filter } from "rxjs/operators";
     MatSelect,
     MatOption,
     EntityFieldLabelComponent,
+    MatButtonModule,
   ],
   templateUrl: "./default-value-options.component.html",
   styleUrl: "./default-value-options.component.scss",
@@ -66,7 +73,8 @@ import { filter } from "rxjs/operators";
 export class DefaultValueOptionsComponent implements OnChanges {
   @Input() value: DefaultValueConfig;
   @Output() valueChange = new EventEmitter<DefaultValueConfig>();
-
+  @Input() field?: string;
+  @Input() entitySchemaField: EntitySchemaField;
   @Input() entityType: EntityConstructor;
 
   form: FormGroup;
@@ -75,14 +83,20 @@ export class DefaultValueOptionsComponent implements OnChanges {
   @ViewChild("inputElement") inputElement: ElementRef;
   @ViewChild("inheritedFieldSelect") inheritedFieldSelectElement: MatSelect;
 
+  currentAutomatedConfig: AutomatedConfigRule;
   availableInheritanceAttributes: string[];
   currentInheritanceFields: {
     localAttribute: string;
     referencedEntityType: EntityConstructor;
     availableFields: string[];
   };
+  relatedEntity: { label: string; entity: string }[];
 
-  constructor(private entityRegistry: EntityRegistry) {
+  constructor(
+    private entityRegistry: EntityRegistry,
+    private matDialog: MatDialog,
+    private entityRelationsService: EntityRelationsService,
+  ) {
     this.initForm();
   }
 
@@ -99,6 +113,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
         field: new FormControl(this.value?.field, {
           validators: [this.requiredForMode("inherited")],
         }),
+        relatedEntity: new FormControl(
+          this.value?.automatedConfigRule?.[0]?.relatedEntity,
+        ),
       },
       { updateOn: "blur" },
     );
@@ -106,6 +123,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form
       .get("mode")
       .valueChanges.subscribe((mode) => this.switchMode(mode));
+
     this.form.get("value").valueChanges.subscribe((value) => {
       if (!this.mode && !!value) {
         // set default mode as "static" after user started typing a value
@@ -133,10 +151,13 @@ export class DefaultValueOptionsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
+      this.currentAutomatedConfig = this.value?.automatedConfigRule[0];
+
       this.updateForm(this.value);
     }
     if (changes.entityType) {
       this.updateAvailableInheritanceAttributes();
+      this.updateAvilableRelatedEntity();
     }
   }
 
@@ -145,6 +166,10 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("value").setValue(newValue?.value);
     this.form.get("localAttribute").setValue(newValue?.localAttribute);
     this.form.get("field").setValue(newValue?.field);
+    if (newValue?.automatedConfigRule.length) {
+      const automatedRule = newValue?.automatedConfigRule[0];
+      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntity);
+    }
 
     this.mode = newValue?.mode;
   }
@@ -182,6 +207,41 @@ export class DefaultValueOptionsComponent implements OnChanges {
       this.valueChange.emit(newConfigValue);
     }
   }
+  async openAutomatedMappingDialog(selectedEntity: string) {
+    const refEntity = this.entityRegistry.get(selectedEntity);
+    const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
+      maxHeight: "90vh",
+      data: {
+        currentEntity: this.entityType,
+        refEntity: refEntity,
+        currentField: this.field,
+        currentAutomatedMapping: this.currentAutomatedConfig,
+      },
+    });
+
+    const result = await lastValueFrom(dialogRef.afterClosed());
+
+    if (result) {
+      const updatedConfig = {
+        automatedConfigRule: [
+          {
+            relatedEntity: selectedEntity,
+            relatedField: result.relatedField,
+            automatedMapping: result.automatedMapping,
+          },
+        ],
+      };
+
+      this.value = {
+        ...updatedConfig,
+        mode: this.mode,
+      };
+      this.valueChange.emit({
+        ...updatedConfig,
+        mode: this.mode,
+      });
+    }
+  }
 
   private requiredForMode(
     mode: DefaultValueMode | DefaultValueMode[],
@@ -201,6 +261,19 @@ export class DefaultValueOptionsComponent implements OnChanges {
     )
       .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
       .map(([id]) => id);
+  }
+
+  private updateAvilableRelatedEntity() {
+    const relatedEntities =
+      this.entityRelationsService.getEntityTypesReferencingType(
+        this.entityType.ENTITY_TYPE,
+      );
+    this.relatedEntity = relatedEntities
+      .filter((refType) => !!refType.entityType.label)
+      .map((refType) => ({
+        label: refType.entityType.label,
+        entity: refType.entityType.ENTITY_TYPE,
+      }));
   }
 
   private updateCurrentInheritanceFields(localAttribute: string) {

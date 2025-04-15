@@ -25,6 +25,21 @@ export interface DefaultValueConfig {
 
   /** field on the referenced Entity (identified by the id value in `localAttribute`), which is used as default value (for inherited only) */
   field?: string;
+
+  /**
+   * automation rules that trigger updates in related entities when this field changes.
+   */
+  automatedConfigRule?: AutomatedConfigRule[];
 }
 
-export type DefaultValueMode = "inherited" | "static" | "dynamic";
+export type DefaultValueMode =
+  | "inherited"
+  | "static"
+  | "dynamic"
+  | "AutomatedConfigRule";
+
+export interface AutomatedConfigRule {
+  relatedEntity: string;
+  relatedField: string;
+  automatedMapping: { [key: string]: string };
+}
