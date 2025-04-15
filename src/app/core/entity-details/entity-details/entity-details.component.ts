@@ -23,14 +23,61 @@ import { AblePurePipe } from "@casl/angular";
 /**
  * This component can be used to display an entity in more detail.
  * It groups subcomponents in panels.
-	@@ -62,6 +67,16 @@ export class EntityDetailsComponent
+ * Any component that is registered (has the `DynamicComponent` decorator) can be used as a subcomponent.
+ * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
+ */
+@RouteTarget("EntityDetails")
+@UntilDestroy()
+@Component({
+  selector: "app-entity-details",
+  templateUrl: "./entity-details.component.html",
+  styleUrls: ["./entity-details.component.scss"],
+  imports: [
+    AblePurePipe,
+    MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
+    Angulartics2OnModule,
+    MatTabsModule,
+    TabStateModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    NgIf,
+    NgForOf,
+    ViewTitleComponent,
+    DynamicComponentDirective,
+    EntityActionsMenuComponent,
+    EntityArchivedInfoComponent,
+    RouterLink,
+    CommonModule,
+    ViewActionsComponent,
+  ],
+})
+export class EntityDetailsComponent
+  extends AbstractEntityDetailsComponent
+  implements OnChanges
+{
+  /**
+   * The configuration for the panels on this details page.
    */
   @Input() panels: Panel[] = [];
 
   override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
-	@@ -81,6 +96,20 @@ export class EntityDetailsComponent
+    if (changes.id || changes.entity || changes.panels) {
+      this.initPanels();
+    }
+  }
+
+  private initPanels() {
+    this.panels = this.panels.map((p) => ({
+      title: p.title,
+      components: p.components.map((c) => ({
+        title: c.title,
+        component: c.component,
+        config: this.getPanelConfig(c),
+      })),
     }));
   }
 
