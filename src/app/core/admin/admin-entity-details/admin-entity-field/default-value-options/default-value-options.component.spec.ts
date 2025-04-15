@@ -6,8 +6,9 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 import { Entity, EntityConstructor } from "../../../../entity/model/entity";
+import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 
-describe("DefaultValueOptionsComponent", () => {
+fdescribe("DefaultValueOptionsComponent", () => {
   let component: DefaultValueOptionsComponent;
   let fixture: ComponentFixture<DefaultValueOptionsComponent>;
 
@@ -18,7 +19,10 @@ describe("DefaultValueOptionsComponent", () => {
         FontAwesomeTestingModule,
         NoopAnimationsModule,
       ],
-      providers: [EntityRegistry],
+      providers: [
+        EntityRegistry,
+        { provide: EntityRelationsService, useValue: {} },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DefaultValueOptionsComponent);
@@ -55,6 +59,7 @@ describe("DefaultValueOptionsComponent", () => {
       mode: "static",
       value: "New value",
       localAttribute: null,
+      relatedEntity: null,
       field: null,
     });
     expect(component.valueChange.emit).toHaveBeenCalledWith(
@@ -67,6 +72,7 @@ describe("DefaultValueOptionsComponent", () => {
       mode: "dynamic",
       value: "New value",
       localAttribute: null,
+      relatedEntity: null,
       field: null,
     });
     expect(component.valueChange.emit).toHaveBeenCalledWith(
@@ -79,6 +85,7 @@ describe("DefaultValueOptionsComponent", () => {
       mode: "inherited",
       value: null,
       localAttribute: "localAttribute",
+      relatedEntity: null,
       field: "field",
     });
     expect(component.valueChange.emit).toHaveBeenCalledWith(
@@ -95,6 +102,7 @@ describe("DefaultValueOptionsComponent", () => {
       mode: "static",
       value: null,
       localAttribute: null,
+      relatedEntity: null,
       field: null,
     });
     expect(component.valueChange.emit).not.toHaveBeenCalled();
@@ -103,6 +111,7 @@ describe("DefaultValueOptionsComponent", () => {
       mode: "inherited",
       value: null,
       localAttribute: "foo",
+      relatedEntity: null,
       field: null,
     });
     expect(component.valueChange.emit).not.toHaveBeenCalled();
@@ -114,6 +123,7 @@ describe("DefaultValueOptionsComponent", () => {
       value: "Test value",
       localAttribute: "x",
       field: "y",
+      relatedEntity: "test",
     });
     spyOn(component.valueChange, "emit");
 

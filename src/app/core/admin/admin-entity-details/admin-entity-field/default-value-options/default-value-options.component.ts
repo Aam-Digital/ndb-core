@@ -151,7 +151,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
-      this.currentAutomatedConfig = this.value?.automatedConfigRule[0];
+      if (this.value?.automatedConfigRule) {
+        this.currentAutomatedConfig = this.value?.automatedConfigRule[0];
+      }
 
       this.updateForm(this.value);
     }
@@ -166,7 +168,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("value").setValue(newValue?.value);
     this.form.get("localAttribute").setValue(newValue?.localAttribute);
     this.form.get("field").setValue(newValue?.field);
-    if (newValue?.automatedConfigRule.length) {
+    if (newValue?.automatedConfigRule) {
       const automatedRule = newValue?.automatedConfigRule[0];
       this.form.get("relatedEntity").setValue(automatedRule?.relatedEntity);
     }
