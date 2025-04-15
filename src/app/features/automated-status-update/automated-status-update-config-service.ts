@@ -175,13 +175,14 @@ export class AutomatedStatusUpdateConfigService {
    * @param type - The constructor/type of the entities
    */
   private async loadRelatedEntities(
-    entityids: string[],
+    entityids: string[] | string,
     entityType: string,
   ): Promise<Entity[]> {
-    const loadEntities = entityids.map((id) =>
-      this.entityMapper.load(entityType, id),
+    const relatedEntities = Array.isArray(entityids) ? entityids : [entityids];
+
+    this.relatedEntities = await Promise.all(
+      relatedEntities.map((id) => this.entityMapper.load(entityType, id)),
     );
-    this.relatedEntities = await Promise.all(loadEntities);
     return this.relatedEntities;
   }
 
