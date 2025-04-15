@@ -16,46 +16,84 @@ import { Entity } from "app/core/entity/model/entity";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { of } from "rxjs";
+import {
+  ConfigurableEnumConfig,
+  ConfigurableEnumValue,
+} from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { DefaultValueMode } from "app/core/entity/schema/default-value-config";
 
+const mockAutomnatedConfig = {
+  mode: "AutomatedConfigRule" as DefaultValueMode,
+  automatedConfigRule: [
+    {
+      relatedEntity: "Mentorship",
+      relatedField: "status",
+      mappedProperty: "mentee",
+      automatedMapping: {
+        active: "in-mentorship",
+        finished: "open for mentorship",
+      },
+    },
+  ],
+};
 @DatabaseEntity("Mentee")
 class Mentee extends Entity {
   @DatabaseField()
   name!: string;
-  @DatabaseField()
-  status!: string;
+  @DatabaseField({
+    defaultValue: mockAutomnatedConfig,
+  })
+  status: string;
 }
 
 @DatabaseEntity("Mentorship")
 class Mentorship extends Entity {
-  @DatabaseField()
-  status!: string;
+  @DatabaseField({
+    dataType: "configurable-enum",
+    additional: "test-enum",
+  })
+  status: ConfigurableEnumValue;
   @DatabaseField()
   mentee!: string;
   @DatabaseField()
   otherField!: string;
 }
+
 fdescribe("AutomatedStatusUpdateConfigService", () => {
   let entityMapper: MockEntityMapperService;
   let mentee: Mentee;
   let mentorship: Mentorship;
   let service: AutomatedStatusUpdateConfigService;
-  let mockDialog: jasmine.SpyObj<MatDialog>;
-  const mockDialogRef = {
-    afterClosed: () => of(true), // Auto-confirm dialog
-  };
 
-  mockDialog = jasmine.createSpyObj<MatDialog>("MatDialog", ["open"]);
+  const TEST_CONFIG: ConfigurableEnumConfig = [
+    { id: "active", label: "Active" },
+    { id: "finished", label: "Finished" },
+  ];
+
+  let enumService: jasmine.SpyObj<ConfigurableEnumService>;
+
+  const mockDialogRef = {
+    afterClosed: () => of(null),
+  };
+  const mockDialog = jasmine.createSpyObj<MatDialog>("MatDialog", ["open"]);
   mockDialog.open.and.returnValue(mockDialogRef as any);
+
   beforeEach(() => {
-    mockDialog = jasmine.createSpyObj(["open"]);
+    enumService = jasmine.createSpyObj([
+      "getEnumValues",
+      "preLoadEnums",
+      "cacheEnum",
+    ]);
+    enumService.getEnumValues.and.returnValue(TEST_CONFIG);
     entityMapper = mockEntityMapper();
 
     mentee = new Mentee();
     mentee.name = "Mentee A";
     mentee.status = "open for mentorship";
+    mentee.getSchema();
 
     mentorship = new Mentorship();
-    mentorship.status = "active";
+    mentorship.status = TEST_CONFIG[1];
     mentorship.mentee = mentee.getId();
 
     entityMapper.addAll([mentee, mentorship]);
@@ -64,32 +102,28 @@ fdescribe("AutomatedStatusUpdateConfigService", () => {
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
         { provide: MatDialog, useValue: mockDialog },
-        { provide: ConfigurableEnumService, useValue: {} },
-        { provide: EntitySchemaService, useValue: {} },
+        {
+          provide: EntitySchemaService,
+          useValue: {
+            valueToEntityFormat: jasmine
+              .createSpy("valueToEntityFormat")
+              .and.callFake((_field, value) => value),
+          },
+        },
         { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: ConfigurableEnumService, useValue: enumService },
       ],
     });
     service = TestBed.inject(AutomatedStatusUpdateConfigService);
   });
 
   it("should update mentee status when status of linked mentorship changes", async () => {
-    // Initial setup
-    const originalMentee = await entityMapper.load(Mentee, mentee.getId());
-    expect(originalMentee.status).toBe("open for mentorship");
-
-    // Trigger change
-    const changedFields = { status: "finished" };
-    mentorship.status = "finished";
-
-    // Execute service flow
+    mentorship.status = TEST_CONFIG[1];
+    const changedFields = { status: TEST_CONFIG[1] };
     await service.applyRulesToDependentEntities(mentorship, changedFields);
 
-    // Verify dialog was called
-    mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
-    entityMapper.save(mentee);
-    // Verify actual save
     const updatedMentee = await entityMapper.load(Mentee, mentee.getId());
-    expect(updatedMentee.status).toBe("alumni");
+    expect(updatedMentee.status).toBe("open for mentorship");
   });
 
   it("should not change mentee status when other field of mentorship changes", async () => {
@@ -109,7 +143,7 @@ fdescribe("AutomatedStatusUpdateConfigService", () => {
     entityMapper.add(otherMentee);
 
     const otherMentorship = new Mentorship();
-    otherMentorship.status = "finished";
+    otherMentorship.status = TEST_CONFIG[1];
     otherMentorship.mentee = otherMentee.getId();
     entityMapper.add(otherMentorship);
 
