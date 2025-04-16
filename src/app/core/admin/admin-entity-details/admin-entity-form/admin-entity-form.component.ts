@@ -64,6 +64,7 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 })
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
+  @Input() index: number;
 
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
@@ -148,7 +149,7 @@ export class AdminEntityFormComponent implements OnChanges {
   getConnectedGroups(): string[] {
     return [
       ...this.config.fieldGroups.map((_, index) => `group-${index}`),
-      "newGroupDropArea",
+      `newGroupDropArea-${this.index}`,
     ];
   }
 
