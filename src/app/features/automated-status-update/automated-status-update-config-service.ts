@@ -230,13 +230,28 @@ export class AutomatedStatusUpdateConfigService {
     );
     if (!userConfirmed) return;
 
-    const updatedRelatedEntity = userConfirmed.map(async (update) => {
-      const entity = this.relatedEntities.find((e) => e.getId() == update.id);
-      entity[update.targetField] = update.newStatus;
-      return this.entityMapper.save(entity);
+    // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
+    // we need a proper UI to show the same entity and field with multiple values
+    const updatesByEntityId = new Map<string, AffectedEntity[]>();
+    userConfirmed.forEach((update) => {
+      const existing = updatesByEntityId.get(update.id) || [];
+      existing.push(update);
+      updatesByEntityId.set(update.id, existing);
     });
+
+    const savePromises: Promise<any>[] = [];
+    updatesByEntityId.forEach((updates, entityId) => {
+      const entity = this.relatedEntities.find((e) => e.getId() === entityId);
+      if (entity) {
+        updates.forEach((update) => {
+          entity[update.targetField] = update.newStatus;
+        });
+        savePromises.push(this.entityMapper.save(entity));
+      }
+    });
+
     this.unsavedChangesService.pending = false;
-    await Promise.all(updatedRelatedEntity);
+    await Promise.all(savePromises);
   }
 
   /**

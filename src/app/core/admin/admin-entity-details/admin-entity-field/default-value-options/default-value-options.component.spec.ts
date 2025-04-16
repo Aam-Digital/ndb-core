@@ -8,7 +8,7 @@ import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.dataty
 import { Entity, EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 
-fdescribe("DefaultValueOptionsComponent", () => {
+describe("DefaultValueOptionsComponent", () => {
   let component: DefaultValueOptionsComponent;
   let fixture: ComponentFixture<DefaultValueOptionsComponent>;
 
