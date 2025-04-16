@@ -122,8 +122,9 @@ export class AutomatedFieldMappingComponent implements OnInit {
     for (const sourceOption of this.sourceOptions) {
       const entity = new this.data.currentEntity();
       let selectedValue: any = this.selectedMappings[sourceOption.id];
+      this.fieldSchema = entity.getSchema().get(this.data.currentField);
+
       if (selectedValue) {
-        this.fieldSchema = entity.getSchema().get(this.data.currentField);
         selectedValue = this.schemaService.valueToEntityFormat(
           selectedValue,
           this.fieldSchema,
