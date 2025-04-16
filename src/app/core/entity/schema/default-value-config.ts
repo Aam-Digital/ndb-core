@@ -41,5 +41,6 @@ export type DefaultValueMode =
 export interface AutomatedConfigRule {
   relatedEntity: string;
   relatedField: string;
+  mappedProperty: string;
   automatedMapping: { [key: string]: string };
 }

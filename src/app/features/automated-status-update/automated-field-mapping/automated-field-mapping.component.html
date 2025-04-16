@@ -50,6 +50,11 @@
   }
 </mat-dialog-content>
 
+@if (isInvalid) {
+  <mat-error i18n>
+    The data is invalid, please check the fields in the "Configure mapping"
+  </mat-error>
+}
 <mat-dialog-actions>
   <button mat-button (click)="save()" i18n="Button label">Save</button>
   <button mat-button mat-dialog-close i18n="Button label">Cancel</button>

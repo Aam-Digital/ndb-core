@@ -43,7 +43,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
   selectedField: string | null = null;
   sourceOptions: ConfigurableEnumValue[] = [];
   targetFieldConfig: FormFieldConfig;
-
+  isInvalid: boolean = false;
   fieldSchema: EntitySchemaField;
   mappingForms: {
     [sourceId: string]: {
@@ -122,8 +122,9 @@ export class AutomatedFieldMappingComponent implements OnInit {
     for (const sourceOption of this.sourceOptions) {
       const entity = new this.data.currentEntity();
       let selectedValue: any = this.selectedMappings[sourceOption.id];
+      this.fieldSchema = entity.getSchema().get(this.data.currentField);
+
       if (selectedValue) {
-        this.fieldSchema = entity.getSchema().get(this.data.currentField);
         selectedValue = this.schemaService.valueToEntityFormat(
           selectedValue,
           this.fieldSchema,
@@ -146,6 +147,11 @@ export class AutomatedFieldMappingComponent implements OnInit {
   }
 
   save() {
+    this.isInvalid = Object.values(this.mappingForms).some((mappingForm) => {
+      mappingForm.form.formGroup.markAllAsTouched();
+      return mappingForm.form.formGroup.invalid;
+    });
+    if (this.isInvalid) return;
     const formattedMappings: { [key: string]: any } = {};
     Object.entries(this.selectedMappings).forEach(([key, value]) => {
       formattedMappings[key] = this.schemaService.valueToDatabaseFormat(

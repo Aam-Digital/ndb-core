@@ -15,6 +15,7 @@ import { EntityFormComponent } from "../../common-components/entity-form/entity-
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
+import { AutomatedStatusUpdateConfigService } from "app/features/automated-status-update/automated-status-update-config-service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -37,7 +38,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() creatingNew = false;
 
   @Input() fieldGroups: FieldGroup[];
-
+  initialFormValue: any;
   form: EntityForm<E> | undefined;
 
   constructor(
@@ -45,6 +46,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     private location: Location,
     private entityFormService: EntityFormService,
     private alertService: AlertService,
+    private automatedStatusUpdateConfigService: AutomatedStatusUpdateConfigService,
     @Optional() private viewContext: ViewComponentContext,
   ) {}
 
@@ -56,6 +58,8 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       )
       .then((value) => {
         this.form = value;
+        // Set the initial form value to the current value of the form
+        this.initialFormValue = this.form.formGroup.getRawValue();
 
         if (!this.creatingNew) {
           this.form.formGroup.disable();
@@ -64,8 +68,17 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   }
 
   async saveClicked() {
+    const changedFields = this.getChangedFields(this.initialFormValue);
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
+      this.initialFormValue = this.form.formGroup.getRawValue();
+
+      // todo: currently if we are using this applyRulesToDependentEntities in our entityformservice, we are getting an error ReferenceError: cannot access before initialization
+      // which is due to circular dependency for eg. we injected automatedStatusUpdateConfigService in entityformservice and then in automatedStatusUpdateConfigService we are using automatedconfigdialog component whcih is using entityblockcomponent and entityblockcomponent is using entityformservice
+      await this.automatedStatusUpdateConfigService.applyRulesToDependentEntities(
+        this.entity,
+        changedFields,
+      );
       if (this.creatingNew && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
@@ -77,6 +90,27 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
         this.alertService.addDanger(err.message);
       }
     }
+  }
+
+  /**
+   * Compares the initial and current form values and returns an object with the changed fields.
+   * @param initial The initial form value.
+   * @param currentFormValue The current form value.
+   * @returns An object containing the changed fields.
+   */
+  getChangedFields(initial: any) {
+    const currentFormValue = this.form.formGroup.getRawValue();
+
+    const changes: any = {};
+    for (const key of Object.keys(currentFormValue)) {
+      const initialVal = initial[key];
+      const currentVal = currentFormValue[key];
+
+      if (JSON.stringify(initialVal) !== JSON.stringify(currentVal)) {
+        changes[key] = currentVal;
+      }
+    }
+    return changes;
   }
 
   cancelClicked() {
