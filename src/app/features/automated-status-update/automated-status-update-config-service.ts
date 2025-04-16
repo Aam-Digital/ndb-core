@@ -11,6 +11,7 @@ import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-e
 import { lastValueFrom } from "rxjs";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -27,7 +28,7 @@ export class AutomatedStatusUpdateConfigService {
     private entityRegistry: EntityRegistry,
     private entityMapper: EntityMapperService,
     private dialog: MatDialog,
-    private configurableEnumService: ConfigurableEnumService,
+    private unsavedChangesService: UnsavedChangesService,
     private entitySchemaService: EntitySchemaService,
   ) {
     this.buildDependencyMap();
@@ -234,7 +235,7 @@ export class AutomatedStatusUpdateConfigService {
       entity[update.targetField] = update.newStatus;
       return this.entityMapper.save(entity);
     });
-
+    this.unsavedChangesService.pending = false;
     await Promise.all(updatedRelatedEntity);
   }
 
