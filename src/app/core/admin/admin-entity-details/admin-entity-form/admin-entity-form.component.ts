@@ -64,7 +64,7 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 })
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
-  @Input() index: number;
+  @Input() sectionIndex: number;
 
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
@@ -146,10 +146,15 @@ export class AdminEntityFormComponent implements OnChanges {
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
   }
 
+  /**
+   * Retrieves a list of connected group identifiers for the current section.
+   */
   getConnectedGroups(): string[] {
     return [
-      ...this.config.fieldGroups.map((_, index) => `group-${index}`),
-      `newGroupDropArea-${this.index}`,
+      ...this.config.fieldGroups.map(
+        (_, i) => `group-${this.sectionIndex}-${i}`,
+      ),
+      `newGroupDropArea-${this.sectionIndex}`,
     ];
   }
 

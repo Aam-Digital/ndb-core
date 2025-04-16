@@ -24,7 +24,7 @@
 
       <div
         cdkDropList
-        [id]="'group-' + i"
+        [id]="'group-' + sectionIndex + '-' + i"
         [cdkDropListData]="group.fields"
         (cdkDropListDropped)="drop($event)"
         [cdkDropListConnectedTo]="getConnectedGroups()"
@@ -78,7 +78,7 @@
     <!-- DROP AREA: NEW FIELD GROUP -->
     <div class="entity-form-cell admin-form-column">
       <div
-        [id]="'newGroupDropArea-' + index"
+        [id]="'newGroupDropArea-' + sectionIndex"
         cdkDropList
         [cdkDropListConnectedTo]="getConnectedGroups()"
         (cdkDropListDropped)="dropNewGroup($event)"

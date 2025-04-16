@@ -16,12 +16,12 @@
   <ng-template [appAdminTabTemplate]="config?.panels" let-item>
     <div class="flex-column gap-large padding-top-large">
       <div
-        *ngFor="let componentConfig of item.components; let j = index"
+        *ngFor="let componentConfig of item.components; let i = index"
         class="section-wrapper"
       >
         <app-admin-section-header
           [(title)]="componentConfig.title"
-          (remove)="item.components.splice(j, 1)"
+          (remove)="item.components.splice(i, 1)"
         ></app-admin-section-header>
 
         <app-admin-entity-form
@@ -29,7 +29,7 @@
           [config]="componentConfig.config"
           (configChange)="componentConfig.config = $event"
           [entityType]="entityConstructor"
-          [index]="j"
+          [sectionIndex]="i"
         >
         </app-admin-entity-form>
 
