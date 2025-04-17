@@ -79,14 +79,31 @@ export class EntitiesTableComponent<T extends Entity>
   implements AfterContentInit
 {
   @Input() set records(value: T[]) {
-    if (!value) {
-      return;
-    }
+    if (!value) return;
     this._records = value;
-
     this.updateFilteredData();
     this.isLoading = false;
   }
+
+  @Input() set sortBy(value: Sort) {
+    if (!value) return;
+    this._sortBy = value;
+    this.sortIsInferred = false;
+  }
+
+  @Output() sortChange = new EventEmitter<Sort>();
+
+  @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
+    this.recordsDataSource.sort = sort;
+    if (sort) {
+      sort.sortChange.subscribe((event: Sort) => {
+        this.sortChange.emit(event);
+      });
+    }
+  }
+
+  _sortBy: Sort;
+  private sortIsInferred: boolean = true;
 
   private lastSelectedIndex: number = null;
   private lastSelection: boolean = null;
@@ -179,24 +196,6 @@ export class EntitiesTableComponent<T extends Entity>
   }
 
   _entityType: EntityConstructor<T>;
-
-  /** how to sort data by default during initialization */
-  @Input() set sortBy(value: Sort) {
-    if (!value) {
-      return;
-    }
-
-    this._sortBy = value;
-    this.sortIsInferred = false;
-  }
-
-  _sortBy: Sort;
-
-  @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
-    this.recordsDataSource.sort = sort;
-  }
-
-  private sortIsInferred: boolean = true;
 
   /**
    * Adds a filter for the displayed data.

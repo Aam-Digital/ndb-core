@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { ChildrenService } from "../children.service";
@@ -14,6 +14,8 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { FilterService } from "../../../core/filter/filter.service";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Sort, MatSort } from "@angular/material/sort";
 
 // TODO: once schema-generated indices are available (#262), remove this component and use its generic super class directly
 @DynamicComponent("ChildSchoolOverview")
@@ -41,10 +43,15 @@ export class ChildSchoolOverviewComponent
   implements OnInit
 {
   mode: "child" | "school" = "child";
+  override sortBy?: Sort;
   override entityCtr = ChildSchoolRelation;
+
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private childrenService: ChildrenService,
+    private router: Router,
+    private route: ActivatedRoute,
     entityMapper: EntityMapperService,
     entityRegistry: EntityRegistry,
     screenWidthObserver: ScreenWidthObserver,
@@ -71,7 +78,33 @@ export class ChildSchoolOverviewComponent
     this.mode = this.entity.getType().toLowerCase() as any;
     this.showInactive = this.mode === "child";
     this.switchRelatedEntityColumnForMode();
+  
+    const sortBy = this.route.snapshot.queryParams["sortBy"];
+    const sortDir = this.route.snapshot.queryParams["sortDir"];
+  
+    if (sortBy && sortDir) {
+      this.sortBy = {
+        active: sortBy,
+        direction: sortDir as "asc" | "desc",
+      };
+    }
+  
     await super.ngOnInit();
+  }
+
+  onSortChange(event: any) {
+    if ('active' in event && 'direction' in event) {
+      const sort = event as Sort;
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {
+          ...this.route.snapshot.queryParams,
+          sortBy: sort.active,
+          sortDir: sort.direction,
+        },
+        queryParamsHandling: "merge",
+      });
+    }
   }
 
   override getData() {

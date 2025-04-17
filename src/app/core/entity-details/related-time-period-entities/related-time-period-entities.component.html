@@ -13,5 +13,7 @@
   [getBackgroundColor]="showInactive ? backgroundColorFn : undefined"
   [clickMode]="clickMode"
   [(showInactive)]="showInactive"
+  [sortBy]="sortBy"
+  (sortChange)="sortChange.emit($event)"
 >
 </app-entities-table>
