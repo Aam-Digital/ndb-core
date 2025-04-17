@@ -64,6 +64,8 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 })
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
+  // tracking the tab index and section index for the connected drop areas for drag&drop
+  @Input() tabIndex: number;
   @Input() sectionIndex: number;
 
   @Input() set config(value: FormConfig) {
@@ -147,14 +149,17 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   /**
-   * Retrieves a list of connected group identifiers for the current section.
+   * Returns a list of group IDs that are connected to the drag&drop area.
+   * This is used to determine which groups are connected to the drag&drop area.
    */
   getConnectedGroups(): string[] {
     return [
+      // Include tab index in group IDs
       ...this.config.fieldGroups.map(
-        (_, i) => `group-${this.sectionIndex}-${i}`,
+        (_, groupIndex) =>
+          `tab${this.tabIndex}-section${this.sectionIndex}-group${groupIndex}`,
       ),
-      `newGroupDropArea-${this.sectionIndex}`,
+      `newGroupDropArea-tab${this.tabIndex}-section${this.sectionIndex}`,
     ];
   }
 

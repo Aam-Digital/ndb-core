@@ -13,7 +13,11 @@
 </app-view-title>
 
 <app-admin-tabs [tabs]="config?.panels" [newTabFactory]="newPanelFactory">
-  <ng-template [appAdminTabTemplate]="config?.panels" let-item>
+  <ng-template
+    [appAdminTabTemplate]="config?.panels"
+    let-item
+    let-tabIndex="index"
+  >
     <div class="flex-column gap-large padding-top-large">
       <div
         *ngFor="let componentConfig of item.components; let i = index"
@@ -29,6 +33,7 @@
           [config]="componentConfig.config"
           (configChange)="componentConfig.config = $event"
           [entityType]="entityConstructor"
+          [tabIndex]="tabIndex"
           [sectionIndex]="i"
         >
         </app-admin-entity-form>
