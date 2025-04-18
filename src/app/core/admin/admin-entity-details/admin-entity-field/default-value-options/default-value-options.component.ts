@@ -36,10 +36,16 @@ import { MatIconButton } from "@angular/material/button";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { asArray } from "app/utils/asArray";
 import { EntityFieldLabelComponent } from "../../../../common-components/entity-field-label/entity-field-label.component";
-import { EntityConstructor } from "../../../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRegistry } from "../../../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 import { filter } from "rxjs/operators";
+import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
+import {
+  EntityForm,
+  EntityFormService,
+} from "app/core/common-components/entity-form/entity-form.service";
+import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-default-value-options",
@@ -59,6 +65,7 @@ import { filter } from "rxjs/operators";
     MatSelect,
     MatOption,
     EntityFieldLabelComponent,
+    EntityFieldEditComponent,
   ],
   templateUrl: "./default-value-options.component.html",
   styleUrl: "./default-value-options.component.scss",
@@ -68,10 +75,11 @@ export class DefaultValueOptionsComponent implements OnChanges {
   @Output() valueChange = new EventEmitter<DefaultValueConfig>();
 
   @Input() entityType: EntityConstructor;
-
+  @Input() fieldId: ColumnConfig;
   form: FormGroup;
   mode: DefaultValueMode;
-
+  defaultvalueform: EntityForm<Entity>;
+  entity: Entity;
   @ViewChild("inputElement") inputElement: ElementRef;
   @ViewChild("inheritedFieldSelect") inheritedFieldSelectElement: MatSelect;
 
@@ -82,7 +90,10 @@ export class DefaultValueOptionsComponent implements OnChanges {
     availableFields: string[];
   };
 
-  constructor(private entityRegistry: EntityRegistry) {
+  constructor(
+    private entityRegistry: EntityRegistry,
+    private entityFormService: EntityFormService,
+  ) {
     this.initForm();
   }
 
@@ -131,12 +142,17 @@ export class DefaultValueOptionsComponent implements OnChanges {
       .subscribe(() => this.emitValue());
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.value) {
       this.updateForm(this.value);
     }
     if (changes.entityType) {
       this.updateAvailableInheritanceAttributes();
+      this.entity = new this.entityType() as Entity;
+      this.defaultvalueform = await this.entityFormService.createEntityForm(
+        Array.isArray(this.fieldId) ? this.fieldId : [this.fieldId],
+        this.entity,
+      );
     }
   }
 
