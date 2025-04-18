@@ -4,13 +4,12 @@
   <div class="flex-row gap-regular align-center">
     @switch (mode) {
       @default {
-        <input
-          #inputElement
-          matInput
-          formControlName="value"
-          placeholder="no default value"
-          i18n-placeholder
-        />
+        <input style="display: none" matInput />
+        <app-entity-field-edit
+          [field]="fieldId"
+          [entity]="entity"
+          [form]="defaultvalueform"
+        ></app-entity-field-edit>
       }
       @case ("dynamic") {
         <mat-select formControlName="value">
