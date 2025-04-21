@@ -46,6 +46,7 @@ import {
   EntityFormService,
 } from "app/core/common-components/entity-form/entity-form.service";
 import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 @Component({
   selector: "app-default-value-options",
@@ -93,6 +94,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
   constructor(
     private entityRegistry: EntityRegistry,
     private entityFormService: EntityFormService,
+    private entitySchemaService: EntitySchemaService,
   ) {
     this.initForm();
   }
@@ -153,6 +155,18 @@ export class DefaultValueOptionsComponent implements OnChanges {
         Array.isArray(this.fieldId) ? this.fieldId : [this.fieldId],
         this.entity,
       );
+      this.defaultvalueform.formGroup.valueChanges.subscribe((v) => {
+        if (this.defaultvalueform.formGroup.valid) {
+          const field = this.defaultvalueform.formGroup.get(
+            this.fieldId.toString(),
+          );
+          const value = this.entitySchemaService.valueToDatabaseFormat(
+            field.value,
+            this.entityType.schema.get(this.fieldId.toString()),
+          );
+          this.form.get("value").setValue(value);
+        }
+      });
     }
   }
 
