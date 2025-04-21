@@ -38,6 +38,7 @@
               [value]="fieldGroup.get('defaultValue').value"
               (valueChange)="fieldGroup.get('defaultValue').setValue($event)"
               [entityType]="entityConstructor"
+              [fieldId]="fieldGroup.get('field').value"
             ></app-default-value-options>
           </div>
         </div>
