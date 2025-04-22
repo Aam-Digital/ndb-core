@@ -304,10 +304,13 @@ export class BasicAutocompleteComponent<O, V = O>
       (o) => !this.hideOption(o.initial),
     );
     if (inputText) {
-      this.autocompleteFilterFunction = (option) =>
-        this.optionToString(option)
-          .toLowerCase()
-          .includes(inputText.toLowerCase());
+      this.autocompleteFilterFunction = (option) => {
+        const optionString = this.optionToString(option);
+        return (
+          optionString &&
+          optionString.toLowerCase().includes(inputText.toLowerCase())
+        );
+      };
       this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
 
       filteredOptions = filteredOptions.filter((o) =>
@@ -316,7 +319,10 @@ export class BasicAutocompleteComponent<O, V = O>
 
       // do not allow users to create a new entry "identical" to an existing one:
       this.showAddOption = !this._options.some(
-        (o) => o.asString.toLowerCase() === inputText.toLowerCase(),
+        (o) =>
+          o &&
+          o.asString &&
+          o.asString.toLowerCase() === inputText.toLowerCase(),
       );
     }
     return filteredOptions;
