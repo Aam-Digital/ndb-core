@@ -1,7 +1,7 @@
-mat-label {
-  display: inline-block;
-  max-width: 100%;
-  white-space: nowrap;
+::ng-deep .mdc-floating-label {
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
 }
