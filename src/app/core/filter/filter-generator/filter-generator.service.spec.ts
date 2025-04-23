@@ -21,6 +21,8 @@ import { EntityFilter } from "../filters/entityFilter";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { CurrentUserSubject } from "app/core/session/current-user-subject";
+import { PLACEHOLDERS } from "../../entity/schema/entity-schema-field";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -250,6 +252,64 @@ describe("FilterGeneratorService", () => {
   it("should create a date range filter", async () => {
     let generatedFilter = await service.generate([{ id: "date" }], Note, []);
     expect(generatedFilter[0]).toBeInstanceOf(DateFilter);
+  });
+
+  it("should set current USER, if PLACEHOLDER.CURRENT_USER is selected", async () => {
+    let user = new Entity();
+    TestBed.inject(CurrentUserSubject).next(user);
+    const today = moment().format("YYYY-MM-DD");
+    const placeholderUserFilter = {
+      id: "userID",
+      type: "prebuilt",
+      label: "Current User",
+      default: PLACEHOLDERS.CURRENT_USER,
+      options: [
+        {
+          key: "now",
+          label: "Now",
+          filter: { date: today },
+        },
+        {
+          key: "before",
+          label: "Before now",
+          filter: { date: { $lt: today } },
+        },
+      ],
+    } as PrebuiltFilterConfig<Note>;
+    const filterData = (
+      await service.generate([placeholderUserFilter], Note, [])
+    )[0] as SelectableFilter<Note>;
+    expect(filterData.selectedOptionValues).toEqual([user.getId()]);
+  });
+
+  it("should set current Date, if PLACEHOLDER.NOW is selected", async () => {
+    const mockDate = new Date();
+    jasmine.clock().mockDate(mockDate);
+    const today = moment().format("YYYY-MM-DD");
+    const placeholderUserFilter = {
+      id: "someID",
+      type: "prebuilt",
+      label: "Date",
+      default: PLACEHOLDERS.NOW,
+      options: [
+        {
+          key: "now",
+          label: "Now",
+          filter: { date: today },
+        },
+        {
+          key: "before",
+          label: "Before now",
+          filter: { date: { $lt: today } },
+        },
+      ],
+    } as PrebuiltFilterConfig<Note>;
+    const filterData = (
+      await service.generate([placeholderUserFilter], Note, [])
+    )[0] as SelectableFilter<Note>;
+    const mockString = mockDate.toString();
+    expect(filterData.selectedOptionValues[0]).toEqual(mockString);
+    jasmine.clock().uninstall();
   });
 
   function filter<T extends Entity>(

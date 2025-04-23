@@ -22,6 +22,8 @@ import { DateFilter } from "../filters/dateFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
+import { PLACEHOLDERS } from "app/core/entity/schema/entity-schema-field";
+import { CurrentUserSubject } from "app/core/session/current-user-subject";
 
 @Injectable({
   providedIn: "root",
@@ -33,6 +35,7 @@ export class FilterGeneratorService {
     private entityMapperService: EntityMapperService,
     private filterService: FilterService,
     private schemaService: EntitySchemaService,
+    private currentUser: CurrentUserSubject,
   ) {}
 
   /**
@@ -99,7 +102,18 @@ export class FilterGeneratorService {
       }
 
       if (filterConfig.hasOwnProperty("default")) {
-        filter.selectedOptionValues = [filterConfig.default];
+        if (filterConfig.default === PLACEHOLDERS.NOW) {
+          let now = new Date();
+          const dateString = now.toString();
+          filter.selectedOptionValues = [dateString];
+        } else if (filterConfig.default === PLACEHOLDERS.CURRENT_USER) {
+          let userId = this.currentUser.value?.getId();
+          if (userId) {
+            filter.selectedOptionValues = [userId];
+          }
+        } else {
+          filter.selectedOptionValues = [filterConfig.default];
+        }
       }
 
       if (filter instanceof SelectableFilter) {
