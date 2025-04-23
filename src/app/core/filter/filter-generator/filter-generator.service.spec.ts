@@ -1,5 +1,4 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
-
 import { FilterGeneratorService } from "./filter-generator.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
@@ -20,14 +19,14 @@ import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import {
+  EntitySchemaField,
+  PLACEHOLDERS,
+} from "../../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
-import { PLACEHOLDERS } from "../../entity/schema/entity-schema-field";
 
 describe("FilterGeneratorService", () => {
-  let service: FilterGeneratorService;
-  let filterService: FilterService;
-
+  let service: FilterGeneratorService, filterService: FilterService;
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
@@ -81,12 +80,9 @@ describe("FilterGeneratorService", () => {
 
     expect(filterOptions.label).toEqual(schema.label);
     expect(filterOptions.name).toEqual("category");
-    let comparableOptions = filterOptions.options.map((option) => {
-      return { key: option.key, label: option.label };
-    });
-    expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes),
-    );
+    expect(
+      filterOptions.options.map(({ key, label }) => ({ key, label })),
+    ).toEqual(jasmine.arrayWithExactContents(interactionTypes));
 
     // enum name in additional field
     const schemaAdditional = {
@@ -100,13 +96,9 @@ describe("FilterGeneratorService", () => {
       await service.generate([{ id: "otherEnum" }], Note, [])
     )[0] as ConfigurableEnumFilter<Note>;
 
-    comparableOptions = filterOptions.options.map((option) => {
-      return { key: option.key, label: option.label };
-    });
-    expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes),
-    );
-
+    expect(
+      filterOptions.options.map(({ key, label }) => ({ key, label })),
+    ).toEqual(jasmine.arrayWithExactContents(interactionTypes));
     // enum as array
     const schemaArray: FormFieldConfig = {
       id: "otherEnum",
@@ -119,13 +111,10 @@ describe("FilterGeneratorService", () => {
     filterOptions = (
       await service.generate([{ id: "otherEnum" }], Note, [])
     )[0] as ConfigurableEnumFilter<Note>;
-    comparableOptions = filterOptions.options.map((option) => {
-      return { key: option.key, label: option.label };
-    });
-    expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes),
-    );
 
+    expect(
+      filterOptions.options.map(({ key, label }) => ({ key, label })),
+    ).toEqual(jasmine.arrayWithExactContents(interactionTypes));
     const note = new Note();
     note["otherEnum"] = [
       defaultInteractionTypes[1],
@@ -140,19 +129,15 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create an entity filter", async () => {
-    const school1 = new TestEntity();
+    const [school1, school2] = [new TestEntity(), new TestEntity()];
     school1.name = "First School";
-    const school2 = new TestEntity();
     school2.name = "Second School";
     await TestBed.inject(EntityMapperService).saveAll([school1, school2]);
     const csr1 = new ChildSchoolRelation();
     csr1.schoolId = school1.getId();
     const csr2 = new ChildSchoolRelation();
     csr2.schoolId = school2.getId();
-    const csr3 = new ChildSchoolRelation();
-    csr3.schoolId = school2.getId();
-    const csr4 = new ChildSchoolRelation();
-    csr4.schoolId = school1.getId();
+    const [csr3, csr4] = [csr2, csr1];
     const schema = ChildSchoolRelation.schema.get("schoolId");
     const originalSchemaAdditional = schema.additional;
     schema.additional = TestEntity.ENTITY_TYPE;
@@ -181,8 +166,7 @@ describe("FilterGeneratorService", () => {
     child1["other"] = "muslim";
     const child2 = new TestEntity();
     child2["other"] = "christian";
-    const child3 = new TestEntity();
-    child3["other"] = "muslim";
+    const child3 = child1;
     const schema = TestEntity.schema.get("other");
 
     const filter = (
@@ -237,15 +221,19 @@ describe("FilterGeneratorService", () => {
     expect(filterOptions.selectedOptionValues).toEqual([
       prebuiltFilter.default,
     ]);
-
-    const todayNote = new Note();
+    const [todayNote, yesterdayNote] = [new Note(), new Note()];
+    //const todayNote = new Note();
     todayNote.date = new Date();
-    const yesterdayNote = new Note();
+    //const yesterdayNote = new Note();
     const notes = [todayNote, yesterdayNote];
     yesterdayNote.date = moment().subtract(1, "day").toDate();
-    const todayFilter = filterOptions.options.find((f) => f.key === "today");
+    const [todayFilter, beforeFilter] = [
+      filterOptions.options.find((f) => f.key === "today"),
+      filterOptions.options.find((f) => f.key === "before"),
+    ];
+    //const todayFilter = filterOptions.options.find((f) => f.key === "today");
     expect(filter(notes, todayFilter)).toEqual([todayNote]);
-    const beforeFilter = filterOptions.options.find((f) => f.key === "before");
+    //const beforeFilter = filterOptions.options.find((f) => f.key === "before");
     expect(filter(notes, beforeFilter)).toEqual([yesterdayNote]);
   });
 
@@ -254,61 +242,30 @@ describe("FilterGeneratorService", () => {
     expect(generatedFilter[0]).toBeInstanceOf(DateFilter);
   });
 
-  it("should set current USER, if PLACEHOLDER.CURRENT_USER is selected", async () => {
+  it("should set current User and Date if PLACEHOLDER is selected", async () => {
     let user = new Entity();
     TestBed.inject(CurrentUserSubject).next(user);
-    const today = moment().format("YYYY-MM-DD");
     const placeholderUserFilter = {
       id: "userID",
       type: "prebuilt",
       label: "Current User",
       default: PLACEHOLDERS.CURRENT_USER,
-      options: [
-        {
-          key: "now",
-          label: "Now",
-          filter: { date: today },
-        },
-        {
-          key: "before",
-          label: "Before now",
-          filter: { date: { $lt: today } },
-        },
-      ],
+      options: [{}, {}],
     } as PrebuiltFilterConfig<Note>;
     const filterData = (
       await service.generate([placeholderUserFilter], Note, [])
     )[0] as SelectableFilter<Note>;
     expect(filterData.selectedOptionValues).toEqual([user.getId()]);
-  });
 
-  it("should set current Date, if PLACEHOLDER.NOW is selected", async () => {
+    let placeholderNowFilter = placeholderUserFilter;
+    placeholderNowFilter.default = PLACEHOLDERS.NOW;
     const mockDate = new Date();
     jasmine.clock().mockDate(mockDate);
-    const today = moment().format("YYYY-MM-DD");
-    const placeholderUserFilter = {
-      id: "someID",
-      type: "prebuilt",
-      label: "Date",
-      default: PLACEHOLDERS.NOW,
-      options: [
-        {
-          key: "now",
-          label: "Now",
-          filter: { date: today },
-        },
-        {
-          key: "before",
-          label: "Before now",
-          filter: { date: { $lt: today } },
-        },
-      ],
-    } as PrebuiltFilterConfig<Note>;
-    const filterData = (
-      await service.generate([placeholderUserFilter], Note, [])
+    const filterNow = (
+      await service.generate([placeholderNowFilter], Note, [])
     )[0] as SelectableFilter<Note>;
     const mockString = mockDate.toString();
-    expect(filterData.selectedOptionValues[0]).toEqual(mockString);
+    expect(filterNow.selectedOptionValues).toEqual([mockString]);
     jasmine.clock().uninstall();
   });
 
