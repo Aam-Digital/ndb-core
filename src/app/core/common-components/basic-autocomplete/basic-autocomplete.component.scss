@@ -12,3 +12,7 @@ em {
 .autocomplete-footer {
   margin: sizes.$small sizes.$regular;
 }
+
+::ng-deep .mat-mdc-autocomplete-panel {
+  max-height: calc(100vh - 350px) !important;
+}
