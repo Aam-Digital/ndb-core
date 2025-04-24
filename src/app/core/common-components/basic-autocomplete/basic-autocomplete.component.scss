@@ -14,5 +14,6 @@ em {
 }
 
 ::ng-deep .mat-mdc-autocomplete-panel {
-  max-height: calc(100vh - 350px) !important;
+  // The default max-height of the autocomplete panel is 256px. This has been overridden for reference - https://github.com/angular/components/blob/main/src/material/autocomplete/autocomplete.scss#L13
+  max-height: 456px !important;
 }
