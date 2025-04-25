@@ -64,9 +64,10 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 })
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
-  // tracking the tab index and section index for the connected drop areas for drag&drop
-  @Input() tabIndex: number;
-  @Input() sectionIndex: number;
+
+  // Unique identifier for the drag-and-drop area.
+  // This is  a combination of tabindex and section index.
+  @Input() uniqueAreaId: number;
 
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
@@ -156,10 +157,9 @@ export class AdminEntityFormComponent implements OnChanges {
     return [
       // Include tab index in group IDs
       ...this.config.fieldGroups.map(
-        (_, groupIndex) =>
-          `tab${this.tabIndex}-section${this.sectionIndex}-group${groupIndex}`,
+        (_, groupIndex) => `${this.uniqueAreaId}-group${groupIndex}`,
       ),
-      `newGroupDropArea-tab${this.tabIndex}-section${this.sectionIndex}`,
+      `newGroupDropArea-${this.uniqueAreaId}`,
     ];
   }
 

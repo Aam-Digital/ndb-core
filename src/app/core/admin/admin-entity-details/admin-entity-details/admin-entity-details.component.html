@@ -33,8 +33,7 @@
           [config]="componentConfig.config"
           (configChange)="componentConfig.config = $event"
           [entityType]="entityConstructor"
-          [tabIndex]="tabIndex"
-          [sectionIndex]="i"
+          [uniqueAreaId]="tabIndex + i"
         >
         </app-admin-entity-form>
 
