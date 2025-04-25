@@ -65,9 +65,11 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
-  // Unique identifier for the drag-and-drop area.
-  // This is  a combination of tabindex and section index.
-  @Input() uniqueAreaId: number;
+  /**
+   * Unique identifier for the drag-and-drop area to ensure correct drag&drop behavior.
+   * (e.g. a combination of tabindex and section index)
+   */
+  @Input() uniqueAreaId: string;
 
   @Input() set config(value: FormConfig) {
     if (value === this._config) {

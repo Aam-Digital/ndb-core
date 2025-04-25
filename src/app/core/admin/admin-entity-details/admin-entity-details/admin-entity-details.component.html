@@ -33,7 +33,7 @@
           [config]="componentConfig.config"
           (configChange)="componentConfig.config = $event"
           [entityType]="entityConstructor"
-          [uniqueAreaId]="tabIndex + i"
+          uniqueAreaId="{{ tabIndex }}-{{ i }}"
         >
         </app-admin-entity-form>
 
