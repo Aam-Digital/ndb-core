@@ -155,7 +155,6 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   getConnectedGroups(): string[] {
     return [
-      // Include tab index in group IDs
       ...this.config.fieldGroups.map(
         (_, groupIndex) => `${this.uniqueAreaId}-group${groupIndex}`,
       ),
