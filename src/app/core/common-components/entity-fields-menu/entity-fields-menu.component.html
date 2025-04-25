@@ -3,7 +3,8 @@
     formControlName="selectedFieldsControl"
     [multi]="true"
     [options]="_availableFields"
-    [optionToString]="getFieldLabel"
+    [optionToString]="objectToLabel"
+    [valueMapper]="objectToValue"
   ></app-basic-autocomplete>
   <fa-icon
     [icon]="icon"

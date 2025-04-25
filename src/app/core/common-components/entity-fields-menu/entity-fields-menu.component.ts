@@ -47,18 +47,22 @@ export class EntityFieldsMenuComponent implements OnChanges {
 
   @Input() set availableFields(value: ColumnConfig[]) {
     this._availableFields = value
-      .map((field) =>
-        this.entityFormService && this.entityType
+      .map((field) => {
+        const formFieldConfig = this.entityFormService && this.entityType
           ? this.entityFormService.extendFormFieldConfig(field, this.entityType)
-          : toFormFieldConfig(field),
-      )
+          : toFormFieldConfig(field);
+        return {
+          key: formFieldConfig.id,
+          label: formFieldConfig.label,
+        } as SimpleDropdownValue;
+      })
       .filter((field) => field.label)
       // filter duplicates:
       .filter(
-        (item, pos, arr) => arr.findIndex((x) => x.id === item.id) === pos,
+        (item, pos, arr) => arr.findIndex((x) => x.key === item.key) === pos,
       );
   }
-  _availableFields: FormFieldConfig[];
+  _availableFields: SimpleDropdownValue[];
 
   @Output() activeFieldsChange = new EventEmitter<string[]>();
 
@@ -69,22 +73,31 @@ export class EntityFieldsMenuComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.activeFields || changes._availableFields) {
       const selectedConfigs = this.activeFields
-        .map((id) => this._availableFields.find((f) => f.id === id))
+        .map((id) => this._availableFields.find((f) => f.key === id))
         .filter((f) => !!f);
-      this.selectedFieldsControl.setValue(selectedConfigs, {
+      this.selectedFieldsControl.setValue(selectedConfigs as any as FormFieldConfig[], {
         emitEvent: false,
       });
-    }
-  }
+      console.log(this.selectedFieldsControl,"selectedFieldsControl");
+      this.selectedFieldsControl.valueChanges.subscribe((selectedConfigs) => {
 
-  ngOnInit() {
-    this.selectedFieldsControl.valueChanges.subscribe((selectedConfigs) => {
-      const selectedIds = selectedConfigs?.map((c) => c.id) ?? [];
-      this.activeFieldsChange.emit(selectedIds);
-    });
+        const selectedIds = selectedConfigs?.map((c) => c.id) ?? [];
+        console.log(selectedIds,"selectedIds");
+        this.activeFieldsChange.emit(selectedIds);
+      });
+    }
+
   }
+  objectToLabel = (v: SimpleDropdownValue) => v?.label;
+  objectToValue = (v: SimpleDropdownValue) => v?.key;
 
   getFieldLabel(field: FormFieldConfig): string {
     return field.label || field.id;
   }
+
+
+}
+interface SimpleDropdownValue {
+  key: string;
+  label: string;
 }
