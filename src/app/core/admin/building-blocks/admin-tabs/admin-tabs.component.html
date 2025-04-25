@@ -33,7 +33,10 @@
 
     <ng-template matTabContent>
       <ng-template
-        *ngTemplateOutlet="tabTemplate; context: { $implicit: tab }"
+        *ngTemplateOutlet="
+          tabTemplate;
+          context: { $implicit: tab, index: tabIndex }
+        "
       ></ng-template>
     </ng-template>
   </mat-tab>
