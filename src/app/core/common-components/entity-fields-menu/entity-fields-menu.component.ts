@@ -2,8 +2,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   Optional,
   Output,
+  SimpleChanges,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -19,6 +21,9 @@ import {
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
+import { FormControl } from "@angular/forms";
+import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
   selector: "app-entity-fields-menu",
@@ -29,14 +34,16 @@ import { EntityFormService } from "../entity-form/entity-form.service";
     MatButtonModule,
     MatTooltipModule,
     EntityFieldLabelComponent,
+    BasicAutocompleteComponent,
+    MatFormFieldModule,
   ],
   templateUrl: "./entity-fields-menu.component.html",
   styleUrl: "./entity-fields-menu.component.scss",
 })
-export class EntityFieldsMenuComponent {
-  @Input() icon: IconProp = "eye";
-
+export class EntityFieldsMenuComponent implements OnChanges {
+  @Input() icon: IconProp = "search";
   @Input() entityType: EntityConstructor;
+  @Input() activeFields: string[] = [];
 
   @Input() set availableFields(value: ColumnConfig[]) {
     this._availableFields = value
@@ -53,17 +60,31 @@ export class EntityFieldsMenuComponent {
   }
   _availableFields: FormFieldConfig[];
 
-  @Input() activeFields: string[];
   @Output() activeFieldsChange = new EventEmitter<string[]>();
+
+  selectedFieldsControl = new FormControl<FormFieldConfig[]>([]);
 
   constructor(@Optional() private entityFormService: EntityFormService) {}
 
-  toggleFieldSelection(field: FormFieldConfig) {
-    if (this.activeFields.includes(field.id)) {
-      this.activeFields = this.activeFields.filter((f) => f !== field.id);
-    } else {
-      this.activeFields = [...this.activeFields, field.id];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.activeFields || changes._availableFields) {
+      const selectedConfigs = this.activeFields
+        .map((id) => this._availableFields.find((f) => f.id === id))
+        .filter((f) => !!f);
+      this.selectedFieldsControl.setValue(selectedConfigs, {
+        emitEvent: false,
+      });
     }
-    this.activeFieldsChange.emit(this.activeFields);
+  }
+
+  ngOnInit() {
+    this.selectedFieldsControl.valueChanges.subscribe((selectedConfigs) => {
+      const selectedIds = selectedConfigs?.map((c) => c.id) ?? [];
+      this.activeFieldsChange.emit(selectedIds);
+    });
+  }
+
+  getFieldLabel(field: FormFieldConfig): string {
+    return field.label || field.id;
   }
 }
