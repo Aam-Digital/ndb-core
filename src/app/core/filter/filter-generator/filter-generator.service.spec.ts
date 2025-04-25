@@ -26,7 +26,9 @@ import {
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
 
 describe("FilterGeneratorService", () => {
-  let service: FilterGeneratorService, filterService: FilterService;
+  let service: FilterGeneratorService;
+  let filterService: FilterService;
+  
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
