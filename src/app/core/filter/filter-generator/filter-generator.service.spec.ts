@@ -28,7 +28,7 @@ import { CurrentUserSubject } from "app/core/session/current-user-subject";
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
   let filterService: FilterService;
-  
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
@@ -82,9 +82,12 @@ describe("FilterGeneratorService", () => {
 
     expect(filterOptions.label).toEqual(schema.label);
     expect(filterOptions.name).toEqual("category");
-    expect(
-      filterOptions.options.map(({ key, label }) => ({ key, label })),
-    ).toEqual(jasmine.arrayWithExactContents(interactionTypes));
+    let comparableOptions = filterOptions.options.map((option) => {
+      return { key: option.key, label: option.label };
+    });
+    expect(comparableOptions).toEqual(
+      jasmine.arrayWithExactContents(interactionTypes),
+    );
 
     // enum name in additional field
     const schemaAdditional = {
@@ -98,9 +101,13 @@ describe("FilterGeneratorService", () => {
       await service.generate([{ id: "otherEnum" }], Note, [])
     )[0] as ConfigurableEnumFilter<Note>;
 
-    expect(
-      filterOptions.options.map(({ key, label }) => ({ key, label })),
-    ).toEqual(jasmine.arrayWithExactContents(interactionTypes));
+    comparableOptions = filterOptions.options.map((option) => {
+      return { key: option.key, label: option.label };
+    });
+    expect(comparableOptions).toEqual(
+      jasmine.arrayWithExactContents(interactionTypes),
+    );
+
     // enum as array
     const schemaArray: FormFieldConfig = {
       id: "otherEnum",
@@ -113,10 +120,13 @@ describe("FilterGeneratorService", () => {
     filterOptions = (
       await service.generate([{ id: "otherEnum" }], Note, [])
     )[0] as ConfigurableEnumFilter<Note>;
+    comparableOptions = filterOptions.options.map((option) => {
+      return { key: option.key, label: option.label };
+    });
+    expect(comparableOptions).toEqual(
+      jasmine.arrayWithExactContents(interactionTypes),
+    );
 
-    expect(
-      filterOptions.options.map(({ key, label }) => ({ key, label })),
-    ).toEqual(jasmine.arrayWithExactContents(interactionTypes));
     const note = new Note();
     note["otherEnum"] = [
       defaultInteractionTypes[1],
@@ -131,15 +141,19 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create an entity filter", async () => {
-    const [school1, school2] = [new TestEntity(), new TestEntity()];
+    const school1 = new TestEntity();
     school1.name = "First School";
+    const school2 = new TestEntity();
     school2.name = "Second School";
     await TestBed.inject(EntityMapperService).saveAll([school1, school2]);
     const csr1 = new ChildSchoolRelation();
     csr1.schoolId = school1.getId();
     const csr2 = new ChildSchoolRelation();
     csr2.schoolId = school2.getId();
-    const [csr3, csr4] = [csr2, csr1];
+    const csr3 = new ChildSchoolRelation();
+    csr3.schoolId = school2.getId();
+    const csr4 = new ChildSchoolRelation();
+    csr4.schoolId = school1.getId();
     const schema = ChildSchoolRelation.schema.get("schoolId");
     const originalSchemaAdditional = schema.additional;
     schema.additional = TestEntity.ENTITY_TYPE;
@@ -168,7 +182,8 @@ describe("FilterGeneratorService", () => {
     child1["other"] = "muslim";
     const child2 = new TestEntity();
     child2["other"] = "christian";
-    const child3 = child1;
+    const child3 = new TestEntity();
+    child3["other"] = "muslim";
     const schema = TestEntity.schema.get("other");
 
     const filter = (
@@ -223,19 +238,15 @@ describe("FilterGeneratorService", () => {
     expect(filterOptions.selectedOptionValues).toEqual([
       prebuiltFilter.default,
     ]);
-    const [todayNote, yesterdayNote] = [new Note(), new Note()];
-    //const todayNote = new Note();
+
+    const todayNote = new Note();
     todayNote.date = new Date();
-    //const yesterdayNote = new Note();
+    const yesterdayNote = new Note();
     const notes = [todayNote, yesterdayNote];
     yesterdayNote.date = moment().subtract(1, "day").toDate();
-    const [todayFilter, beforeFilter] = [
-      filterOptions.options.find((f) => f.key === "today"),
-      filterOptions.options.find((f) => f.key === "before"),
-    ];
-    //const todayFilter = filterOptions.options.find((f) => f.key === "today");
+    const todayFilter = filterOptions.options.find((f) => f.key === "today");
     expect(filter(notes, todayFilter)).toEqual([todayNote]);
-    //const beforeFilter = filterOptions.options.find((f) => f.key === "before");
+    const beforeFilter = filterOptions.options.find((f) => f.key === "before");
     expect(filter(notes, beforeFilter)).toEqual([yesterdayNote]);
   });
 
