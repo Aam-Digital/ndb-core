@@ -53,6 +53,7 @@ import {
   CdkVirtualForOf,
   CdkVirtualScrollViewport,
 } from "@angular/cdk/scrolling";
+import { set } from "mockdate";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -255,8 +256,9 @@ export class BasicAutocompleteComponent<O, V = O>
         .bottom;
 
     const availableSpaceBelow = screenHeight - inputBottom;
-    this.maxVisibleItems = Math.min(availableSpaceBelow / 48);
-    console.log(this.maxVisibleItems, "this.maxVisibleItems");
+    setTimeout(() => {
+      this.maxVisibleItems = Math.min(availableSpaceBelow / 48);
+    }, 10);
     this.virtualScrollViewport.checkViewportSize();
   }
 
