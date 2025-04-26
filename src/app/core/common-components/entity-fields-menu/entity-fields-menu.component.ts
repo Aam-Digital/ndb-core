@@ -57,16 +57,18 @@ export class EntityFieldsMenuComponent implements OnInit {
   }
   _availableFields: SimpleDropdownValue[] = [];
 
-  @Output() activeFieldsChange = new EventEmitter<any[]>();
-  selectedFieldsControl = new FormControl<any[]>([]);
+  @Output() activeFieldsChange = new EventEmitter<string[]>();
+  selectedFieldsControl = new FormControl<string[]>([]);
 
   constructor(@Optional() private entityFormService: EntityFormService) {}
   ngOnInit() {
     this.selectedFieldsControl.setValue(this.activeFields);
     this.selectedFieldsControl.valueChanges.subscribe((value) => {
-      const newValues = value.filter((v) => !this.activeFields.includes(v));
-      if (newValues.length > 0) {
-        this.activeFields = [...this.activeFields, ...newValues];
+      const addedValues = value.filter((v) => !this.activeFields.includes(v));
+      const removedValues = this.activeFields.filter((v) => !value.includes(v));
+
+      if (addedValues.length > 0 || removedValues.length > 0) {
+        this.activeFields = value;
         console.log("this.activeFields", this.activeFields);
         this.activeFieldsChange.emit(this.activeFields);
       }
