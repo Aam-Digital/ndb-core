@@ -82,7 +82,9 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           outputs: type=local,dest=./tmp/coverage/${{ env.PLATFORM_PAIR }}
           target: test-coverage
-          cache-from: type=gha
+          cache-from: type=gha,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+          cache-to: type=gha,mode=max,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+        
 
       - name: Run tests with timezone
         if: ${{ matrix.platform == 'linux/amd64' }}
@@ -203,8 +205,8 @@ jobs:
           file: ./build/Dockerfile
           target: dist-build
           outputs: type=local,dest=./tmp/build/${{ env.PLATFORM_PAIR }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+          cache-to: type=gha,mode=min,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
           build-args: |
             APP_VERSION=${{ env.TAG }}
         env:
@@ -228,8 +230,8 @@ jobs:
           target: app
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+          cache-to: type=gha,mode=min,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
           build-args: |
             DIST_TYPE=local
             LOCAL_DIST_PATH=./tmp/build/${{ env.PLATFORM_PAIR }}/dist

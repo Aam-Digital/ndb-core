@@ -136,14 +136,9 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-
-              <app-basic-autocomplete
+              <app-entity-type-select
                 formControlName="additional"
-                [options]="typeAdditionalOptions"
-                [optionToString]="objectToLabel"
-                [valueMapper]="objectToValue"
-                [createOption]="createNewAdditionalOptionAsync"
-              ></app-basic-autocomplete>
+              ></app-entity-type-select>
             </mat-form-field>
           </div>
         </div>
