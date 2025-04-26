@@ -21,7 +21,7 @@ import {
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { FormControl } from "@angular/forms";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 
@@ -36,6 +36,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     EntityFieldLabelComponent,
     BasicAutocompleteComponent,
     MatFormFieldModule,
+    ReactiveFormsModule,
   ],
   templateUrl: "./entity-fields-menu.component.html",
   styleUrl: "./entity-fields-menu.component.scss",
@@ -48,9 +49,13 @@ export class EntityFieldsMenuComponent implements OnChanges {
   @Input() set availableFields(value: ColumnConfig[]) {
     this._availableFields = value
       .map((field) => {
-        const formFieldConfig = this.entityFormService && this.entityType
-          ? this.entityFormService.extendFormFieldConfig(field, this.entityType)
-          : toFormFieldConfig(field);
+        const formFieldConfig =
+          this.entityFormService && this.entityType
+            ? this.entityFormService.extendFormFieldConfig(
+                field,
+                this.entityType,
+              )
+            : toFormFieldConfig(field);
         return {
           key: formFieldConfig.id,
           label: formFieldConfig.label,
@@ -71,31 +76,22 @@ export class EntityFieldsMenuComponent implements OnChanges {
   constructor(@Optional() private entityFormService: EntityFormService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.activeFields || changes._availableFields) {
-      const selectedConfigs = this.activeFields
-        .map((id) => this._availableFields.find((f) => f.key === id))
-        .filter((f) => !!f);
-      this.selectedFieldsControl.setValue(selectedConfigs as any as FormFieldConfig[], {
-        emitEvent: false,
-      });
-      console.log(this.selectedFieldsControl,"selectedFieldsControl");
-      this.selectedFieldsControl.valueChanges.subscribe((selectedConfigs) => {
-
-        const selectedIds = selectedConfigs?.map((c) => c.id) ?? [];
-        console.log(selectedIds,"selectedIds");
-        this.activeFieldsChange.emit(selectedIds);
-      });
-    }
-
+    //     if (changes.activeFields || changes._availableFields) {
+    //       const selectedConfigs = this.activeFields
+    //         .map((id) => this._availableFields.find((f) => f.key === id))
+    //         .filter((f) => !!f);
+    //       this.selectedFieldsControl.setValue(selectedConfigs as any as FormFieldConfig[], {
+    //         emitEvent: false,
+    //       });
+    //       console.log(this.selectedFieldsControl,"selectedFieldsControl");
+    //       this.selectedFieldsControl.valueChanges.subscribe((selectedConfigs) => {
+    // console.log(selectedConfigs,"selectedConfigs");
+    //         this.activeFieldsChange.emit(selectedConfigs);
+    //       });
+    //     }
   }
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.key;
-
-  getFieldLabel(field: FormFieldConfig): string {
-    return field.label || field.id;
-  }
-
-
 }
 interface SimpleDropdownValue {
   key: string;

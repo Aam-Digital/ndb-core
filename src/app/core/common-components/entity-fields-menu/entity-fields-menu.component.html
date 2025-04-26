@@ -1,6 +1,6 @@
 <mat-form-field>
   <app-basic-autocomplete
-    formControlName="selectedFieldsControl"
+    [formControl]="selectedFieldsControl"
     [multi]="true"
     [options]="_availableFields"
     [optionToString]="objectToLabel"
