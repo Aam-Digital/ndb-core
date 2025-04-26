@@ -55,7 +55,7 @@ export class EntityFieldsMenuComponent implements OnInit {
         (item, pos, arr) => arr.findIndex((x) => x.key === item.key) === pos,
       );
   }
-  _availableFields: SimpleDropdownValue[];
+  _availableFields: SimpleDropdownValue[] = [];
 
   @Output() activeFieldsChange = new EventEmitter<any[]>();
   selectedFieldsControl = new FormControl<any[]>([]);
