@@ -17,6 +17,9 @@
       <mat-select
         [(value)]="selectedField"
         (selectionChange)="loadSourceOptions($event.value)"
+        matTooltip="Choose the field in the related entity that will trigger updates to this field."
+        i18n-matTooltip
+        i18n
       >
         @for (field of availableFields; track field.id) {
           <mat-option [value]="field.id">{{ field.label }}</mat-option>
@@ -27,7 +30,12 @@
   <div class="dropdown-select">
     <mat-form-field appearance="fill">
       <mat-label i18n>Related reference field</mat-label>
-      <mat-select [(value)]="selectedRelatedReferenceField">
+      <mat-select
+        [(value)]="selectedRelatedReferenceField"
+        matTooltip="Select the field in the related entity that links it to this entity. For example, if a child's field is updated based on a school's value, this is the field in the school entity that references the child."
+        i18n-matTooltip
+        i18n
+      >
         @for (field of relatedReferenceFields; track field) {
           <mat-option [value]="field">{{ field }}</mat-option>
         }

@@ -8,6 +8,7 @@ import {
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatOption, MatSelect } from "@angular/material/select";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
@@ -31,6 +32,7 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
     MatOption,
     MatDialogModule,
     MatButtonModule,
+    MatTooltipModule,
     EntityFieldEditComponent,
   ],
   templateUrl: "./automated-field-mapping.component.html",
