@@ -34,8 +34,12 @@ export const environment = {
 
   demo_mode: true,
   session_type: SessionType.mock,
-  account_url: "https://aam.localhost/accounts-backend",
   email: undefined,
+
+  /** Keycloak API for user management */
+  userAdminApi: undefined, // loaded from `assets/keycloak.json` during bootstrap
+  /** Keycloak realm for user management */
+  realm: undefined, // loaded from `assets/keycloak.json` during bootstrap
 
   /** Path for the reverse proxy that forwards to the database - configured in `default.conf` */
   DB_PROXY_PREFIX: "/db",
