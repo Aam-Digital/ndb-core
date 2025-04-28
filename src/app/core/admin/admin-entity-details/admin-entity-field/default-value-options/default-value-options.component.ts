@@ -52,9 +52,7 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
   selector: "app-default-value-options",
   imports: [
     MatFormField,
-    MatLabel,
     MatError,
-    MatInput,
     ReactiveFormsModule,
     FormsModule,
     MatButtonToggleGroup,

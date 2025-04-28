@@ -21,3 +21,14 @@ app-entity-field-edit {
     width: 100%;
   }
 }
+
+.field-label,
+.error-message {
+  font-size: 12px;
+}
+
+.field-label {
+  position: absolute;
+  top: 0;
+  left: 16px;
+}
