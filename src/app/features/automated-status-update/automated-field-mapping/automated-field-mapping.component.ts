@@ -37,7 +37,6 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
   styleUrl: "./automated-field-mapping.component.scss",
 })
 export class AutomatedFieldMappingComponent implements OnInit {
-  currentEntityEnumFields: [string, any][];
   availableFields: { id: string; label: string; additional: string }[] = [];
   selectedMappings: { [key: string]: string } = {};
   selectedField: string | null = null;
@@ -45,6 +44,9 @@ export class AutomatedFieldMappingComponent implements OnInit {
   targetFieldConfig: FormFieldConfig;
   isInvalid: boolean = false;
   fieldSchema: EntitySchemaField;
+  relatedReferenceFields: any[];
+  selectedRelatedReferenceField: string;
+
   mappingForms: {
     [sourceId: string]: {
       entity: Entity;
@@ -62,6 +64,8 @@ export class AutomatedFieldMappingComponent implements OnInit {
         automatedMapping: { [key: string]: string };
         relatedTriggerField?: string;
       };
+      relatedReferenceFields: string[];
+      currentRelatedReferenceField?: string;
     },
     private entityFormService: EntityFormService,
     private dialogRef: MatDialogRef<any>,
@@ -72,12 +76,15 @@ export class AutomatedFieldMappingComponent implements OnInit {
     if (data.currentAutomatedMapping) {
       this.selectedMappings = data.currentAutomatedMapping?.automatedMapping;
       this.selectedField = data.currentAutomatedMapping?.relatedTriggerField;
+      this.relatedReferenceFields = data.relatedReferenceFields;
+      this.selectedRelatedReferenceField =
+        data.currentRelatedReferenceField || this.relatedReferenceFields[0];
     }
   }
 
   ngOnInit(): void {
+    console.log(this.relatedReferenceFields, "this.relatedReferenceFields");
     this.availableFields = this.mapEnumFields(this.data.refEntity);
-    this.currentEntityEnumFields = this.getEnumFields(this.data.currentEntity);
     this.initializeSelectedField();
     this.targetFieldConfig = this.entityFormService.extendFormFieldConfig(
       this.data.currentField,
@@ -161,6 +168,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
     });
     this.dialogRef.close({
       relatedTriggerField: this.selectedField,
+      relatedReferenceField: this.selectedRelatedReferenceField,
       automatedMapping: formattedMappings,
     });
   }

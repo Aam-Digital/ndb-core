@@ -24,6 +24,16 @@
       </mat-select>
     </mat-form-field>
   </div>
+  <div class="dropdown-select">
+    <mat-form-field appearance="fill">
+      <mat-label i18n>Related reference field</mat-label>
+      <mat-select [(value)]="selectedRelatedReferenceField">
+        @for (field of relatedReferenceFields; track field) {
+          <mat-option [value]="field">{{ field }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
 
   @if (selectedField) {
     <div class="mapping-grid">

@@ -93,7 +93,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
   relatedEntity: {
     label: string;
     entity: string;
-    relatedReferenceField: string;
+    relatedReferenceField: string[];
   }[];
 
   constructor(
@@ -219,12 +219,14 @@ export class DefaultValueOptionsComponent implements OnChanges {
     );
     const refEntity = this.entityRegistry.get(selectedEntity);
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
-      maxHeight: "90vh",
       data: {
         currentEntity: this.entityType,
         refEntity: refEntity,
         currentField: this.field,
         currentAutomatedMapping: this.currentAutomatedConfig,
+        relatedReferenceFields: relatedEntity.relatedReferenceField,
+        currentRelatedReferenceField:
+          this.currentAutomatedConfig?.relatedReferenceField,
       },
     });
 
@@ -234,22 +236,15 @@ export class DefaultValueOptionsComponent implements OnChanges {
       const updatedConfig = {
         automatedConfigRule: [
           {
-            relatedReferenceField: relatedEntity.relatedReferenceField,
+            relatedReferenceField: result.relatedReferenceField,
             relatedEntityId: selectedEntity,
-            relatedTriggerField: result.relatedField,
+            relatedTriggerField: result.relatedTriggerField,
             automatedMapping: result.automatedMapping,
           },
         ],
       };
-
-      this.value = {
-        ...updatedConfig,
-        mode: this.mode,
-      };
-      this.valueChange.emit({
-        ...updatedConfig,
-        mode: this.mode,
-      });
+      this.value = { ...updatedConfig, mode: this.mode };
+      this.valueChange.emit({ ...updatedConfig, mode: this.mode });
     }
   }
 
@@ -283,7 +278,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
       .map((refType) => ({
         label: refType.entityType.label,
         entity: refType.entityType.ENTITY_TYPE,
-        relatedReferenceField: refType.referencingProperties[0].id,
+        relatedReferenceField: refType.referencingProperties.map((p) => p.id),
       }));
   }
 
