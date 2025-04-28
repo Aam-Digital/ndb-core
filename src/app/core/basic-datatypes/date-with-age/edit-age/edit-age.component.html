@@ -5,7 +5,9 @@
       !(entity.anonymized && formFieldConfig.anonymize === 'retain-anonymized')
     "
   >
-    <mat-label>{{ label }}</mat-label>
+    <mat-label>
+      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
+    </mat-label>
     <input
       matInput
       [formControlName]="formControlName"

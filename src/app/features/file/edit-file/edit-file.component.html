@@ -10,7 +10,9 @@
   [ngClass]="{ clickable: formControl.value }"
   (click)="navigator.onLine ? formClicked() : null"
 >
-  <mat-label>{{ label }}</mat-label>
+  <mat-label>
+    <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
+  </mat-label>
   <input
     matInput
     readonly
