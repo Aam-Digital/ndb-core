@@ -60,7 +60,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
       currentField: string;
       currentAutomatedMapping?: {
         automatedMapping: { [key: string]: string };
-        relatedField?: string;
+        relatedTriggerField?: string;
       };
     },
     private entityFormService: EntityFormService,
@@ -71,7 +71,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
   ) {
     if (data.currentAutomatedMapping) {
       this.selectedMappings = data.currentAutomatedMapping?.automatedMapping;
-      this.selectedField = data.currentAutomatedMapping?.relatedField;
+      this.selectedField = data.currentAutomatedMapping?.relatedTriggerField;
     }
   }
 
@@ -160,7 +160,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
       );
     });
     this.dialogRef.close({
-      relatedField: this.selectedField,
+      relatedTriggerField: this.selectedField,
       automatedMapping: formattedMappings,
     });
   }

@@ -90,7 +90,11 @@ export class DefaultValueOptionsComponent implements OnChanges {
     referencedEntityType: EntityConstructor;
     availableFields: string[];
   };
-  relatedEntity: { label: string; entity: string; mappedField: string }[];
+  relatedEntity: {
+    label: string;
+    entity: string;
+    relatedReferenceField: string;
+  }[];
 
   constructor(
     private entityRegistry: EntityRegistry,
@@ -114,7 +118,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
           validators: [this.requiredForMode("inherited")],
         }),
         relatedEntity: new FormControl(
-          this.value?.automatedConfigRule?.[0]?.relatedEntity,
+          this.value?.automatedConfigRule?.[0]?.relatedTriggerField,
         ),
       },
       { updateOn: "blur" },
@@ -170,7 +174,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("field").setValue(newValue?.field);
     if (newValue?.automatedConfigRule) {
       const automatedRule = newValue?.automatedConfigRule[0];
-      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntity);
+      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntityId);
     }
 
     this.mode = newValue?.mode;
@@ -230,9 +234,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
       const updatedConfig = {
         automatedConfigRule: [
           {
-            mappedProperty: relatedEntity.mappedField,
-            relatedEntity: selectedEntity,
-            relatedField: result.relatedField,
+            relatedReferenceField: relatedEntity.relatedReferenceField,
+            relatedEntityId: selectedEntity,
+            relatedTriggerField: result.relatedField,
             automatedMapping: result.automatedMapping,
           },
         ],
@@ -279,7 +283,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
       .map((refType) => ({
         label: refType.entityType.label,
         entity: refType.entityType.ENTITY_TYPE,
-        mappedField: refType.referencingProperties[0].id,
+        relatedReferenceField: refType.referencingProperties[0].id,
       }));
   }
 

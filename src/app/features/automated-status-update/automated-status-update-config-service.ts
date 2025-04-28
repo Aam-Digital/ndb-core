@@ -44,11 +44,11 @@ export class AutomatedStatusUpdateConfigService {
         const rules = fieldConfig.defaultValue?.automatedConfigRule;
         if (fieldConfig.defaultValue?.mode === "AutomatedConfigRule" && rules) {
           for (const rule of rules) {
-            const key = `${rule.relatedEntity}|${rule.relatedField}`;
+            const key = `${rule.relatedEntityId}|${rule.relatedTriggerField}`;
             const entry = {
               targetEntityType: targetType,
               targetFieldId: fieldKey,
-              mappedProperty: rule.mappedProperty,
+              relatedReferenceField: rule.relatedReferenceField,
               rule,
             };
             this.dependencyMap.set(key, [
@@ -66,7 +66,7 @@ export class AutomatedStatusUpdateConfigService {
     {
       targetEntityType: EntityConstructor;
       targetFieldId: string;
-      mappedProperty: string;
+      relatedReferenceField: string;
       rule: any;
     }[]
   >();
@@ -117,7 +117,7 @@ export class AutomatedStatusUpdateConfigService {
         changedField,
       );
       for (const affected of affectedRecords) {
-        if (changedField == affected.rule.relatedField) {
+        if (changedField == affected.rule.relatedTriggerField) {
           await this.applyMappingToAffectedRecord(
             entity,
             affected,
@@ -139,10 +139,10 @@ export class AutomatedStatusUpdateConfigService {
     affected: any,
     changedValue: any,
   ): Promise<void> {
-    const entity = sourceEntity[affected.mappedProperty];
+    const entity = sourceEntity[affected.relatedReferenceField];
     this.mappedPropertyConfig = sourceEntity
       .getSchema()
-      .get(affected.mappedProperty);
+      .get(affected.relatedReferenceField);
     if (!entity) return;
     const newValue = this.getMappedValue(
       affected.rule.automatedMapping,
@@ -215,7 +215,7 @@ export class AutomatedStatusUpdateConfigService {
         targetEntityType: affected.targetEntityType,
         selectedField: { ...fieldConfig, id: targetField },
         affectedEntity: targetEntity,
-        mappedProperty: this.mappedPropertyConfig.label,
+        relatedReferenceField: this.mappedPropertyConfig.label,
       });
     }
   }

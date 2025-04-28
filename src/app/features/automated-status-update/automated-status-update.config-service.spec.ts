@@ -26,9 +26,9 @@ const mockAutomnatedConfig = {
   mode: "AutomatedConfigRule" as DefaultValueMode,
   automatedConfigRule: [
     {
-      relatedEntity: "Mentorship",
-      relatedField: "status",
-      mappedProperty: "mentee",
+      relatedEntityId: "Mentorship",
+      relatedTriggerField: "status",
+      relatedReferenceField: "mentee",
       automatedMapping: {
         active: "in-mentorship",
         finished: "open for mentorship",
