@@ -38,7 +38,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() creatingNew = false;
 
   @Input() fieldGroups: FieldGroup[];
-  initialFormValue: any;
   form: EntityForm<E> | undefined;
 
   constructor(
@@ -58,9 +57,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       )
       .then((value) => {
         this.form = value;
-        // Set the initial form value to the current value of the form
-        this.initialFormValue = this.form.formGroup.getRawValue();
-
         if (!this.creatingNew) {
           this.form.formGroup.disable();
         }
@@ -68,13 +64,11 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   }
 
   async saveClicked() {
-    const changedFields = this.getChangedFields(this.initialFormValue);
+    const changedFields = this.getChangedFields();
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.initialFormValue = this.form.formGroup.getRawValue();
+      this.form.formGroup.markAsPristine();
 
-      // todo: currently if we are using this applyRulesToDependentEntities in our entityformservice, we are getting an error ReferenceError: cannot access before initialization
-      // which is due to circular dependency for eg. we injected automatedStatusUpdateConfigService in entityformservice and then in automatedStatusUpdateConfigService we are using automatedconfigdialog component whcih is using entityblockcomponent and entityblockcomponent is using entityformservice
       await this.automatedStatusUpdateConfigService.applyRulesToDependentEntities(
         this.entity,
         changedFields,
@@ -93,23 +87,18 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   }
 
   /**
-   * Compares the initial and current form values and returns an object with the changed fields.
-   * @param initial The initial form value.
-   * @param currentFormValue The current form value.
+   * Collects values from dirty form controls.
    * @returns An object containing the changed fields.
    */
-  getChangedFields(initial: any) {
-    const currentFormValue = this.form.formGroup.getRawValue();
-
+  getChangedFields() {
     const changes: any = {};
-    for (const key of Object.keys(currentFormValue)) {
-      const initialVal = initial[key];
-      const currentVal = currentFormValue[key];
-
-      if (JSON.stringify(initialVal) !== JSON.stringify(currentVal)) {
-        changes[key] = currentVal;
+    const formGroup = this.form.formGroup;
+    Object.keys(formGroup.controls).forEach((key) => {
+      const control = formGroup.get(key);
+      if (control.dirty) {
+        changes[key] = control.value;
       }
-    }
+    });
     return changes;
   }
 
