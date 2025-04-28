@@ -65,6 +65,12 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
+  /**
+   * Unique identifier for the drag-and-drop area to ensure correct drag&drop behavior.
+   * (e.g. a combination of tabindex and section index)
+   */
+  @Input() uniqueAreaId: string;
+
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
       // may be caused by two-way binding re-inputting the recently emitted change
@@ -145,10 +151,16 @@ export class AdminEntityFormComponent implements OnChanges {
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
   }
 
+  /**
+   * Returns a list of group IDs that are connected to the drag&drop area.
+   * This is used to determine which groups are connected to the drag&drop area.
+   */
   getConnectedGroups(): string[] {
     return [
-      ...this.config.fieldGroups.map((_, index) => `group-${index}`),
-      "newGroupDropArea",
+      ...this.config.fieldGroups.map(
+        (_, groupIndex) => `${this.uniqueAreaId}-group${groupIndex}`,
+      ),
+      `newGroupDropArea-${this.uniqueAreaId}`,
     ];
   }
 
