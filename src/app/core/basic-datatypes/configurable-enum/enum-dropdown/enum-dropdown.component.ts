@@ -15,6 +15,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -31,6 +32,7 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
     FontAwesomeModule,
     ErrorHintComponent,
     MatButtonModule,
+    MatTooltipModule,
   ],
 })
 export class EnumDropdownComponent implements OnChanges {

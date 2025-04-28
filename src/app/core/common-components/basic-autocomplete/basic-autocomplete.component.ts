@@ -136,6 +136,8 @@ export class BasicAutocompleteComponent<O, V = O>
   /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
   showAddOption = false;
 
+  maxVisibleItems: number = 3; //by default 3 items
+
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
 
@@ -247,6 +249,23 @@ export class BasicAutocompleteComponent<O, V = O>
         this.showAutocomplete();
       }
     });
+
+    this.calculateVisibleItemsForHeight();
+  }
+
+  private calculateVisibleItemsForHeight() {
+    const screenHeight = window.innerHeight;
+    const inputBottom =
+      this.inputElement._elementRef.nativeElement.getBoundingClientRect()
+        .bottom;
+
+    const availableSpaceBelow = screenHeight - inputBottom;
+
+    // workaround for ExpressionChangedAfterItHasBeenCheckedError problems
+    setTimeout(() => {
+      this.maxVisibleItems = Math.min(availableSpaceBelow / 48);
+      this.virtualScrollViewport.checkViewportSize();
+    }, 0);
   }
 
   drop(event: CdkDragDrop<any[]>) {
