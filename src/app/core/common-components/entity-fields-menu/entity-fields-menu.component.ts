@@ -54,13 +54,8 @@ export class EntityFieldsMenuComponent implements OnInit {
   ngOnInit() {
     this.selectedFieldsControl.setValue(this.activeFields);
     this.selectedFieldsControl.valueChanges.subscribe((value) => {
-      const addedValues = value.filter((v) => !this.activeFields.includes(v));
-      const removedValues = this.activeFields.filter((v) => !value.includes(v));
-
-      if (addedValues.length > 0 || removedValues.length > 0) {
-        this.activeFields = value;
-        this.activeFieldsChange.emit(this.activeFields);
-      }
+      this.activeFields = value;
+      this.activeFieldsChange.emit(this.activeFields);
     });
   }
 }
