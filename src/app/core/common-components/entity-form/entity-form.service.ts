@@ -267,6 +267,7 @@ export class EntityFormService {
     const form: EntityFormGroup<T> = entityForm.formGroup;
 
     this.checkFormValidity(form);
+
     const updatedEntity = entity.copy() as T;
     for (const [key, value] of Object.entries(form.getRawValue())) {
       if (value !== null) {
