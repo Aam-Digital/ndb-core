@@ -28,8 +28,7 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
   override optionToString = (option: FormFieldConfig) => option.label;
   override valueMapper = (option: FormFieldConfig) => option.id;
 
-  @Input()
-  override multi?: boolean;
+  @Input() override multi?: boolean;
 
   @Input() override hideOption: (option: FormFieldConfig) => boolean;
 
