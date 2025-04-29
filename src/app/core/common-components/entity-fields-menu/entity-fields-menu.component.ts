@@ -31,30 +31,22 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
 })
 export class EntityFieldsMenuComponent implements OnInit {
   @Input() entityType: EntityConstructor;
-  @Input() activeFields: string[] = [];
   @Input() set availableFields(value: ColumnConfig[]) {
     this._availableFields = value
-      .map((field) => {
-        const formFieldConfig =
-          this.entityFormService && this.entityType
-            ? this.entityFormService.extendFormFieldConfig(
-                field,
-                this.entityType,
-              )
-            : toFormFieldConfig(field);
-        return {
-          id: formFieldConfig.id,
-          label: formFieldConfig.label,
-        } as FormFieldConfig;
-      })
+      .map((field) =>
+        this.entityFormService && this.entityType
+          ? this.entityFormService.extendFormFieldConfig(field, this.entityType)
+          : toFormFieldConfig(field),
+      )
       .filter((field) => field.label)
       // filter duplicates:
       .filter(
         (item, pos, arr) => arr.findIndex((x) => x.id === item.id) === pos,
       );
   }
-  _availableFields: FormFieldConfig[] = [];
+  _availableFields: FormFieldConfig[];
 
+  @Input() activeFields: string[];
   @Output() activeFieldsChange = new EventEmitter<string[]>();
   selectedFieldsControl = new FormControl<string[]>([]);
 
@@ -67,15 +59,8 @@ export class EntityFieldsMenuComponent implements OnInit {
 
       if (addedValues.length > 0 || removedValues.length > 0) {
         this.activeFields = value;
-        console.log("this.activeFields", this.activeFields);
         this.activeFieldsChange.emit(this.activeFields);
       }
     });
   }
-  objectToLabel = (v: SimpleDropdownValue) => v?.label;
-  objectToValue = (v: SimpleDropdownValue) => v?.key;
-}
-interface SimpleDropdownValue {
-  key: string;
-  label: string;
 }
