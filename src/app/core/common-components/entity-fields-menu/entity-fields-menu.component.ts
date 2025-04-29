@@ -44,7 +44,7 @@ export class EntityFieldsMenuComponent implements OnInit {
         (item, pos, arr) => arr.findIndex((x) => x.id === item.id) === pos,
       );
   }
-  _availableFields: FormFieldConfig[];
+_availableFields: FormFieldConfig[] = [];
 
   @Input() activeFields: string[];
   @Output() activeFieldsChange = new EventEmitter<string[]>();
