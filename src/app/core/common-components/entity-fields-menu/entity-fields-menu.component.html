@@ -1,9 +1,8 @@
 <mat-form-field>
-  <app-basic-autocomplete
+  <app-entity-field-select
+    [entityType]="entityType"
     [formControl]="selectedFieldsControl"
-    [multi]="true"
     [options]="_availableFields"
-    [optionToString]="objectToLabel"
-    [valueMapper]="objectToValue"
-  ></app-basic-autocomplete>
+    [multi]="true"
+  />
 </mat-form-field>

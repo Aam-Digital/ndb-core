@@ -7,26 +7,24 @@ import {
   Output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityConstructor } from "../../entity/model/entity";
-import { ColumnConfig, toFormFieldConfig } from "../entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 
 @Component({
   selector: "app-entity-fields-menu",
   imports: [
     CommonModule,
-    MatMenuModule,
-    MatButtonModule,
-    MatTooltipModule,
-    BasicAutocompleteComponent,
     MatFormFieldModule,
     ReactiveFormsModule,
+    EntityFieldSelectComponent,
   ],
   templateUrl: "./entity-fields-menu.component.html",
   styleUrl: "./entity-fields-menu.component.scss",
@@ -45,17 +43,17 @@ export class EntityFieldsMenuComponent implements OnInit {
               )
             : toFormFieldConfig(field);
         return {
-          key: formFieldConfig.id,
+          id: formFieldConfig.id,
           label: formFieldConfig.label,
-        } as SimpleDropdownValue;
+        } as FormFieldConfig;
       })
       .filter((field) => field.label)
       // filter duplicates:
       .filter(
-        (item, pos, arr) => arr.findIndex((x) => x.key === item.key) === pos,
+        (item, pos, arr) => arr.findIndex((x) => x.id === item.id) === pos,
       );
   }
-  _availableFields: SimpleDropdownValue[] = [];
+  _availableFields: FormFieldConfig[] = [];
 
   @Output() activeFieldsChange = new EventEmitter<string[]>();
   selectedFieldsControl = new FormControl<string[]>([]);
