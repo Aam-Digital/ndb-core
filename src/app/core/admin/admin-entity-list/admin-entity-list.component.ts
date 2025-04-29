@@ -94,8 +94,8 @@ export class AdminEntityListComponent implements OnChanges {
   }
 
   updateFilters(filters: string[]) {
-    this.filters = filters;
-    this.config.filters = filters.map(
+    this.filters = [...filters];
+    this.config.filters = this.filters.map(
       (f) =>
         this.config.filters.find(
           (existingFilter) => existingFilter.id === f,
@@ -107,8 +107,8 @@ export class AdminEntityListComponent implements OnChanges {
     return { name: "", columns: [] };
   }
 
-  removeItem<E>(array: E[], item: E) {
-    array.splice(array.indexOf(item), 1);
+  removeItem<E>(array: E[], item: E): E[] {
+    return array.filter((currentItem) => currentItem !== item);
   }
 
   drop<E>(event: CdkDragDrop<E[], any>, columnsArray: E[]) {
