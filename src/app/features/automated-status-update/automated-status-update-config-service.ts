@@ -7,11 +7,11 @@ import {
   AffectedEntity,
   AutomatedStatusUpdateComponent,
 } from "./automated-status-update.component";
-import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { lastValueFrom } from "rxjs";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
+import { ConfigService } from "app/core/config/config.service";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -30,8 +30,12 @@ export class AutomatedStatusUpdateConfigService {
     private dialog: MatDialog,
     private unsavedChangesService: UnsavedChangesService,
     private entitySchemaService: EntitySchemaService,
+    private configService: ConfigService,
   ) {
-    this.buildDependencyMap();
+    this.configService.configUpdates.subscribe(() =>
+      // wait until EntityConfigService has updated the entityRegistry
+      setTimeout(() => this.buildDependencyMap()),
+    );
   }
 
   /**
@@ -39,6 +43,7 @@ export class AutomatedStatusUpdateConfigService {
    * to be used during automatic updates.
    */
   private buildDependencyMap() {
+    this.dependencyMap.clear();
     for (const targetType of this.entityRegistry.values()) {
       for (const [fieldKey, fieldConfig] of targetType.schema.entries()) {
         const rules = fieldConfig.defaultValue?.automatedConfigRule;

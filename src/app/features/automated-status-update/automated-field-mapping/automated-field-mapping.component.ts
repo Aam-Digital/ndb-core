@@ -78,14 +78,13 @@ export class AutomatedFieldMappingComponent implements OnInit {
     if (data.currentAutomatedMapping) {
       this.selectedMappings = data.currentAutomatedMapping?.automatedMapping;
       this.selectedField = data.currentAutomatedMapping?.relatedTriggerField;
-      this.relatedReferenceFields = data.relatedReferenceFields;
-      this.selectedRelatedReferenceField =
-        data.currentRelatedReferenceField || this.relatedReferenceFields[0];
     }
+    this.relatedReferenceFields = data?.relatedReferenceFields;
+    this.selectedRelatedReferenceField =
+      data?.currentRelatedReferenceField || this.relatedReferenceFields[0];
   }
 
   ngOnInit(): void {
-    console.log(this.relatedReferenceFields, "this.relatedReferenceFields");
     this.availableFields = this.mapEnumFields(this.data.refEntity);
     this.initializeSelectedField();
     this.targetFieldConfig = this.entityFormService.extendFormFieldConfig(
