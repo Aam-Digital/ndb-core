@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import { NgIf } from "@angular/common";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @DynamicComponent("EditUrl")
 @Component({
@@ -18,6 +19,7 @@ import { NgIf } from "@angular/common";
     MatInputModule,
     ErrorHintComponent,
     NgIf,
+    MatTooltipModule,
   ],
   standalone: true,
 })
