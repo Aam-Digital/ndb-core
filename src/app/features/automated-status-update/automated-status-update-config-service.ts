@@ -19,9 +19,18 @@ import { ConfigService } from "app/core/config/config.service";
  */
 @Injectable({ providedIn: "root" })
 export class AutomatedStatusUpdateConfigService {
+  /**
+   * List of entities impacted by automated status updates.
+   * For example, if a field in the "Schools" entity is linked to a field in the "Child" entity,
+   * and the field in "Schools" (trigger field) is updated, the "Child" entity will be affected.
+   * The IDs of the affected "Child" entities will be stored in this list.
+   */
   relatedEntities: Entity[] = [];
-  mappedPropertyConfig: EntitySchemaField;
-  dependentEntity: { [entityType: string]: Set<string> } = {};
+
+  /**
+   * The relatedReferenceField configuration, which is used to show the label of related reference field in dialog.
+   */
+  relatedReferenceFieldConfig: EntitySchemaField;
 
   private dependencyMap = new Map<
     string,
@@ -138,7 +147,7 @@ export class AutomatedStatusUpdateConfigService {
   private async applyFieldMappings(
     changedFields: [string, any][],
     entity: Entity,
-    affectedEntities: AffectedEntity[], // Pass as parameter
+    affectedEntities: AffectedEntity[],
   ): Promise<void> {
     for (const [changedField, changedValue] of changedFields) {
       const affectedRecords = this.findEntitiesDependingOnField(
@@ -172,7 +181,7 @@ export class AutomatedStatusUpdateConfigService {
     affectedEntities: AffectedEntity[],
   ): Promise<void> {
     const entity = sourceEntity[affected.relatedReferenceField];
-    this.mappedPropertyConfig = sourceEntity
+    this.relatedReferenceFieldConfig = sourceEntity
       .getSchema()
       .get(affected.relatedReferenceField);
     if (!entity) return;
@@ -210,7 +219,7 @@ export class AutomatedStatusUpdateConfigService {
   /**
    * Loads entities by ID using the entity mapper.
    * @param entityids - List of entity entityiDs to load
-   * @param type - The constructor/type of the entities
+   * @param entityType - The constructor/type of the entities
    */
   private async loadRelatedEntities(
     entityids: string[] | string,
@@ -254,7 +263,7 @@ export class AutomatedStatusUpdateConfigService {
         targetEntityType: affected.targetEntityType,
         selectedField: { ...fieldConfig, id: targetFieldId },
         affectedEntity: targetEntity,
-        relatedReferenceField: this.mappedPropertyConfig.label,
+        relatedReferenceField: this.relatedReferenceFieldConfig.label,
       });
     }
   }
