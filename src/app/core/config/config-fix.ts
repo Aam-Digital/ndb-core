@@ -1009,7 +1009,7 @@ export const defaultJsonConfig = {
         defaultValue: {
           mode: "AutomatedConfigRule",
           automatedConfigRule: [{
-            relatedEntityId: "School",
+            relatedEntityType: "School",
             relatedReferenceField: "linkedStudent1",
             relatedTriggerField: "schoolStatus",
             automatedMapping: { "WARNING": "school warning", "OK": "school solved" }

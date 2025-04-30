@@ -174,7 +174,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("field").setValue(newValue?.field);
     if (newValue?.automatedConfigRule) {
       const automatedRule = newValue?.automatedConfigRule[0];
-      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntityId);
+      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntityType);
     }
 
     this.mode = newValue?.mode;
@@ -237,7 +237,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
         automatedConfigRule: [
           {
             relatedReferenceField: result.relatedReferenceField,
-            relatedEntityId: selectedEntity,
+            relatedEntityType: selectedEntity,
             relatedTriggerField: result.relatedTriggerField,
             automatedMapping: result.automatedMapping,
           },

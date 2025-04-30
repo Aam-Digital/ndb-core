@@ -43,9 +43,9 @@ export type DefaultValueMode =
  */
 export interface AutomatedConfigRule {
   /**
-   * ID of the related entity that triggers updates of this value
+   * entitytype of the related entity that triggers the update
    */
-  relatedEntityId: string;
+  relatedEntityType: string;
 
   /**
    * field ID of the relatedEntity that holds the reference to this field's entity.
