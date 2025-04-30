@@ -33,7 +33,9 @@
         <fa-icon
           icon="times"
           class="remove-icon"
-          (click)="removeItem(filters, filter.id); updateFilters(filters)"
+          (click)="
+            filters = removeItem(filters, filter.id); updateFilters(filters)
+          "
         ></fa-icon>
       </div>
     }
@@ -43,8 +45,8 @@
     <span i18n>Add Filter:</span>
     <app-entity-fields-menu
       [entityType]="entityConstructor"
-      [activeFields]="filters"
-      (activeFieldsChange)="updateFilters($event)"
+      [(activeFields)]="filters"
+      (activeFieldsChange)="updateFilters(filters)"
       [availableFields]="allFields"
       icon="square-plus"
     ></app-entity-fields-menu>
@@ -79,7 +81,7 @@
               <fa-icon
                 icon="times"
                 class="remove-icon"
-                (click)="removeItem(item.columns, col)"
+                (click)="item.columns = removeItem(item.columns, col)"
               ></fa-icon>
             </div>
           }

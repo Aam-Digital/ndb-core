@@ -1,5 +1,7 @@
 <mat-form-field>
-  <mat-label>{{ label }}</mat-label>
+  <mat-label>
+    <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
+  </mat-label>
   <input
     matInput
     [formControl]="formControl"
