@@ -15,15 +15,33 @@ import {
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 
+/**
+ * Represents an entity that will be affected by a status update.
+ * This interface is used to define the structure of the data
+ * that will be passed to the
+ * AutomatedStatusUpdateComponent for processing.
+ */
 export interface AffectedEntity {
+  /** entityId of the affected entity */
   id: string;
+
+  /** New status value to be applied to the target field */
   newStatus: string;
-  targetField: string;
+
+  /** Field Id that will receive the status update */
+  targetFieldId: string;
+
+  /** Entity type constructor for the target entity */
   targetEntityType: EntityConstructor;
+
+  /** Actual entity which is being modified through automatedconfig rule */
+  affectedEntity?: Entity;
+
+  /** Reference field name that triggered the status update */
+  relatedReferenceField: string;
+
   form?: EntityForm<Entity>;
   selectedField?: FormFieldConfig;
-  affectedEntity?: Entity;
-  relatedReferenceField: string;
 }
 
 @Component({
@@ -41,6 +59,7 @@ export interface AffectedEntity {
 export class AutomatedStatusUpdateComponent implements OnInit {
   entityConstructor: EntityConstructor;
   entityForm: EntityForm<Entity>;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { entities: AffectedEntity[] },
     private dialogRef: MatDialogRef<AutomatedStatusUpdateComponent>,
@@ -48,30 +67,29 @@ export class AutomatedStatusUpdateComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    await Promise.all(
-      this.data.entities.map(async (entity) => {
-        const fieldId = entity.targetField;
-        const entityConstructor = entity.targetEntityType;
-        entity.selectedField = this.entityFormService.extendFormFieldConfig(
-          fieldId,
-          entityConstructor,
-        );
+    for (const entity of this.data.entities) {
+      const fieldId = entity.targetFieldId;
+      const entityConstructor = entity.targetEntityType;
 
-        entity.affectedEntity = new entityConstructor();
-        const entityForm = await this.entityFormService.createEntityForm(
-          [fieldId],
-          entity.affectedEntity,
-        );
+      entity.selectedField = this.entityFormService.extendFormFieldConfig(
+        fieldId,
+        entityConstructor,
+      );
 
-        entity.form = entityForm;
-        entity.form.formGroup.controls[fieldId].setValue(entity.newStatus);
-      }),
-    );
+      entity.affectedEntity = new entityConstructor();
+      const entityForm = await this.entityFormService.createEntityForm(
+        [fieldId],
+        entity.affectedEntity,
+      );
+
+      entity.form = entityForm;
+      entity.form.formGroup.controls[fieldId].setValue(entity.newStatus);
+    }
   }
 
   onConfirm(): void {
     for (const entity of this.data.entities) {
-      const fieldId = entity.targetField;
+      const fieldId = entity.targetFieldId;
       const formControl = entity.form?.formGroup.controls[fieldId];
       if (formControl) {
         entity.newStatus = formControl.value;

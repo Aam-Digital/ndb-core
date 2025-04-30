@@ -67,7 +67,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     const changedFields = this.getChangedFields();
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.form.formGroup.markAsPristine();
 
       await this.automatedStatusUpdateConfigService.applyRulesToDependentEntities(
         this.entity,

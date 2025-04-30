@@ -238,21 +238,21 @@ export class AutomatedStatusUpdateConfigService {
     newValue: any,
     affectedEntities: AffectedEntity[],
   ): Promise<void> {
-    const targetField = affected.targetFieldId;
-    const fieldConfig = affected.targetEntityType.schema.get(targetField);
+    const targetFieldId = affected.targetFieldId;
+    const fieldConfig = affected.targetEntityType.schema.get(targetFieldId);
     const newValues = this.entitySchemaService.valueToEntityFormat(
       newValue,
       fieldConfig,
     );
 
-    if (targetEntity[targetField] !== newValue) {
-      targetEntity[targetField] = newValue;
+    if (targetEntity[targetFieldId] !== newValue) {
+      targetEntity[targetFieldId] = newValue;
       affectedEntities.push({
         id: targetEntity.getId(),
         newStatus: newValues,
-        targetField,
+        targetFieldId,
         targetEntityType: affected.targetEntityType,
-        selectedField: { ...fieldConfig, id: targetField },
+        selectedField: { ...fieldConfig, id: targetFieldId },
         affectedEntity: targetEntity,
         relatedReferenceField: this.mappedPropertyConfig.label,
       });
@@ -283,7 +283,7 @@ export class AutomatedStatusUpdateConfigService {
       const entity = this.relatedEntities.find((e) => e.getId() === entityId);
       if (entity) {
         updates.forEach((update) => {
-          entity[update.targetField] = update.newStatus;
+          entity[update.targetFieldId] = update.newStatus;
         });
         savePromises.push(this.entityMapper.save(entity));
       }

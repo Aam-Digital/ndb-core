@@ -13,6 +13,7 @@ import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
 import {
   EntityForm,
   EntityFormService,
@@ -34,6 +35,7 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
     MatButtonModule,
     MatTooltipModule,
     EntityFieldEditComponent,
+    EntityFieldLabelComponent,
   ],
   templateUrl: "./automated-field-mapping.component.html",
   styleUrl: "./automated-field-mapping.component.scss",
@@ -58,7 +60,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    private data: {
+    public data: {
       currentEntity: EntityConstructor;
       refEntity: EntityConstructor;
       currentField: string;

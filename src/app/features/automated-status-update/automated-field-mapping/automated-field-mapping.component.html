@@ -37,7 +37,12 @@
         i18n
       >
         @for (field of relatedReferenceFields; track field) {
-          <mat-option [value]="field">{{ field }}</mat-option>
+          <mat-option [value]="field">
+            <app-entity-field-label
+              [field]="field"
+              [entityType]="data.refEntity"
+            ></app-entity-field-label>
+          </mat-option>
         }
       </mat-select>
     </mat-form-field>
