@@ -9,6 +9,9 @@ import { Entity, EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 
 describe("DefaultValueOptionsComponent", () => {
+  const entityRelationsServiceMock = {
+    getEntityTypesReferencingType: jasmine.createSpy().and.returnValue([]),
+  };
   let component: DefaultValueOptionsComponent;
   let fixture: ComponentFixture<DefaultValueOptionsComponent>;
 
@@ -21,7 +24,10 @@ describe("DefaultValueOptionsComponent", () => {
       ],
       providers: [
         EntityRegistry,
-        { provide: EntityRelationsService, useValue: {} },
+        {
+          provide: EntityRelationsService,
+          useValue: entityRelationsServiceMock,
+        },
       ],
     }).compileComponents();
 

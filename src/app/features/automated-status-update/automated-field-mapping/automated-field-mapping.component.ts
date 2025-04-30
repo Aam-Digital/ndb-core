@@ -83,7 +83,8 @@ export class AutomatedFieldMappingComponent implements OnInit {
     }
     this.relatedReferenceFields = data?.relatedReferenceFields;
     this.selectedRelatedReferenceField =
-      data?.currentRelatedReferenceField || this.relatedReferenceFields[0];
+      data?.currentRelatedReferenceField ||
+      (this.relatedReferenceFields ? this.relatedReferenceFields[0] : null);
   }
 
   ngOnInit(): void {
