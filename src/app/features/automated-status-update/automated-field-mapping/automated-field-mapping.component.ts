@@ -46,7 +46,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
   targetFieldConfig: FormFieldConfig;
   isInvalid: boolean = false;
   fieldSchema: EntitySchemaField;
-  relatedReferenceFields: any[];
+  relatedReferenceFields: string[];
   selectedRelatedReferenceField: string;
 
   mappingForms: {

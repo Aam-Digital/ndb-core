@@ -19,10 +19,19 @@ import { ConfigService } from "app/core/config/config.service";
  */
 @Injectable({ providedIn: "root" })
 export class AutomatedStatusUpdateConfigService {
-  affectedEntities: AffectedEntity[] = [];
   relatedEntities: Entity[] = [];
   mappedPropertyConfig: EntitySchemaField;
   dependentEntity: { [entityType: string]: Set<string> } = {};
+
+  private dependencyMap = new Map<
+    string,
+    {
+      targetEntityType: EntityConstructor;
+      targetFieldId: string;
+      relatedReferenceField: string;
+      rule: any;
+    }[]
+  >();
 
   constructor(
     private entityRegistry: EntityRegistry,
@@ -46,35 +55,49 @@ export class AutomatedStatusUpdateConfigService {
     this.dependencyMap.clear();
     for (const targetType of this.entityRegistry.values()) {
       for (const [fieldKey, fieldConfig] of targetType.schema.entries()) {
-        const rules = fieldConfig.defaultValue?.automatedConfigRule;
-        if (fieldConfig.defaultValue?.mode === "AutomatedConfigRule" && rules) {
-          for (const rule of rules) {
-            const key = `${rule.relatedEntityId}|${rule.relatedTriggerField}`;
-            const entry = {
-              targetEntityType: targetType,
-              targetFieldId: fieldKey,
-              relatedReferenceField: rule.relatedReferenceField,
-              rule,
-            };
-            this.dependencyMap.set(key, [
-              ...(this.dependencyMap.get(key) || []),
-              entry,
-            ]);
-          }
-        }
+        this.processFieldConfig(targetType, fieldKey, fieldConfig);
       }
     }
   }
 
-  private dependencyMap = new Map<
-    string,
-    {
-      targetEntityType: EntityConstructor;
-      targetFieldId: string;
-      relatedReferenceField: string;
-      rule: any;
-    }[]
-  >();
+  /**
+   * Processes a single field configuration to extract automated rules
+   */
+  private processFieldConfig(
+    targetType: EntityConstructor,
+    fieldKey: string,
+    fieldConfig: EntitySchemaField,
+  ) {
+    const rules = fieldConfig.defaultValue?.automatedConfigRule;
+    if (fieldConfig.defaultValue?.mode === "AutomatedConfigRule" && rules) {
+      for (const rule of rules) {
+        this.processAutomatedRule(targetType, fieldKey, rule);
+      }
+    }
+  }
+
+  /**
+   * Processes a single automation rule and adds it to the dependency map
+   * @param targetEntityType - Type of entity that contains the rule
+   * @param targetFieldId - Field ID where the rule is defined
+   * @param rule - Automation rule configuration
+   */
+  private processAutomatedRule(
+    targetEntityType: EntityConstructor,
+    targetFieldId: string,
+    rule: any,
+  ) {
+    const key = `${rule.relatedEntityId}|${rule.relatedTriggerField}`;
+    const entry = {
+      targetEntityType: targetEntityType,
+      targetFieldId: targetFieldId,
+      relatedReferenceField: rule.relatedReferenceField,
+      rule: rule,
+    };
+
+    const existingEntries = this.dependencyMap.get(key) || [];
+    this.dependencyMap.set(key, [...existingEntries, entry]);
+  }
 
   /**
    * Retrieves all automated rules for a given source entity field.
@@ -97,24 +120,25 @@ export class AutomatedStatusUpdateConfigService {
     entity: Entity,
     changedFields: any,
   ): Promise<void> {
-    this.affectedEntities = []; // Clear previous entries
+    const affectedEntities: AffectedEntity[] = [];
     const changedEntries = Object.entries(changedFields);
-    await this.applyFieldMappings(changedEntries, entity);
+    await this.applyFieldMappings(changedEntries, entity, affectedEntities);
 
-    if (this.affectedEntities.length > 0) {
-      await this.confirmAndSaveAffectedEntities();
+    if (affectedEntities.length > 0) {
+      await this.confirmAndSaveAffectedEntities(affectedEntities);
     }
   }
 
   /**
-   * Iterates through all changed fields in the source entity
-   * and applies mapping rules to each relevant dependent entity.
-   * @param changedFields - List of changed fields and their values
-   * @param entity - The full source entity
+   * Iterates through changed fields and applies mappings to relevant dependent entities
+   * @param changedFields - List of changed fields with their values
+   * @param entity - The source entity containing changes
+   * @param affectedEntities - Array to collect affected entity changes
    */
   private async applyFieldMappings(
     changedFields: [string, any][],
     entity: Entity,
+    affectedEntities: AffectedEntity[], // Pass as parameter
   ): Promise<void> {
     for (const [changedField, changedValue] of changedFields) {
       const affectedRecords = this.findEntitiesDependingOnField(
@@ -127,6 +151,7 @@ export class AutomatedStatusUpdateConfigService {
             entity,
             affected,
             changedValue,
+            affectedEntities,
           );
         }
       }
@@ -134,15 +159,17 @@ export class AutomatedStatusUpdateConfigService {
   }
 
   /**
-   * Applies the field mapping rule to each related entity based on one affected record.
-   * @param sourceEntity - The entity where the change occurred
-   * @param affected - Configuration for the affected entity and field
-   * @param changedValue - The new value of the changed field
+   * Applies field mapping rule to a single affected record
+   * @param sourceEntity - Entity where change occurred
+   * @param affected - Configuration for the affected entity/field
+   * @param changedValue - New value from source field
+   * @param affectedEntities - Array to collect resulting changes
    */
   private async applyMappingToAffectedRecord(
     sourceEntity: Entity,
     affected: any,
     changedValue: any,
+    affectedEntities: AffectedEntity[],
   ): Promise<void> {
     const entity = sourceEntity[affected.relatedReferenceField];
     this.mappedPropertyConfig = sourceEntity
@@ -159,7 +186,12 @@ export class AutomatedStatusUpdateConfigService {
     );
 
     for (const targetEntity of loadedEntities) {
-      await this.updateTargetEntityField(targetEntity, affected, newValue);
+      await this.updateTargetEntityField(
+        targetEntity,
+        affected,
+        newValue,
+        affectedEntities,
+      );
     }
   }
 
@@ -198,11 +230,13 @@ export class AutomatedStatusUpdateConfigService {
    * @param targetEntity - The entity to be updated
    * @param affected - Config defining which field to update
    * @param newValue - The new value to assign to the field
+   * @param affectedEntities - Array to record changes
    */
   private async updateTargetEntityField(
     targetEntity: Entity,
     affected: any,
     newValue: any,
+    affectedEntities: AffectedEntity[],
   ): Promise<void> {
     const targetField = affected.targetFieldId;
     const fieldConfig = affected.targetEntityType.schema.get(targetField);
@@ -213,7 +247,7 @@ export class AutomatedStatusUpdateConfigService {
 
     if (targetEntity[targetField] !== newValue) {
       targetEntity[targetField] = newValue;
-      this.affectedEntities.push({
+      affectedEntities.push({
         id: targetEntity.getId(),
         newStatus: newValues,
         targetField,
@@ -229,10 +263,10 @@ export class AutomatedStatusUpdateConfigService {
    * Opens a dialog to confirm entity updates with the user.
    * Saves entities only if the user confirms the changes.
    */
-  private async confirmAndSaveAffectedEntities(): Promise<void> {
-    const userConfirmed = await this.showConfirmationDialog(
-      this.affectedEntities,
-    );
+  private async confirmAndSaveAffectedEntities(
+    affectedEntities: AffectedEntity[],
+  ): Promise<void> {
+    const userConfirmed = await this.showConfirmationDialog(affectedEntities);
     if (!userConfirmed) return;
 
     // Todo: Currently if there are multiple rule set for same entity and field, we are showing in UI as multiple entries,
