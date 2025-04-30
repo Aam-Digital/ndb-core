@@ -12,7 +12,6 @@ export async function startApp(page: Page) {
   // The sync popup should first appear and then disappear after a while when tasks are completed
   const backgroundTasksDetailsElement = "#backgroundProcessingTasksDetails";
   await page.waitForSelector(backgroundTasksDetailsElement);
-  //console.log("app is preparing (background tasks & indices running)");
 
   await page
     .locator("#backgroundProcessingTasksDetails path")
@@ -21,5 +20,4 @@ export async function startApp(page: Page) {
 
   // [option] all indexing done, drawer disappeared:
   //await page.waitForSelector(backgroundTasksDetailsElement, { state: "detached" });
-  //console.log("app ready (background tasks completed)");
 }

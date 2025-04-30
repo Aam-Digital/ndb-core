@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
@@ -19,10 +12,7 @@ import { EntityFieldLabelComponent } from "../../common-components/entity-field-
 import {
   CdkDrag,
   CdkDragDrop,
-  CdkDragEnter,
   CdkDropList,
-  CdkDropListGroup,
-  DragRef,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -104,8 +94,8 @@ export class AdminEntityListComponent implements OnChanges {
   }
 
   updateFilters(filters: string[]) {
-    this.filters = filters;
-    this.config.filters = filters.map(
+    this.filters = [...filters];
+    this.config.filters = this.filters.map(
       (f) =>
         this.config.filters.find(
           (existingFilter) => existingFilter.id === f,
@@ -117,8 +107,8 @@ export class AdminEntityListComponent implements OnChanges {
     return { name: "", columns: [] };
   }
 
-  removeItem<E>(array: E[], item: E) {
-    array.splice(array.indexOf(item), 1);
+  removeItem<E>(array: E[], item: E): E[] {
+    return array.filter((currentItem) => currentItem !== item);
   }
 
   drop<E>(event: CdkDragDrop<E[], any>, columnsArray: E[]) {

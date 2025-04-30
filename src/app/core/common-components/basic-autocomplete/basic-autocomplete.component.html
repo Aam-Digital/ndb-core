@@ -41,7 +41,7 @@
   >
     <cdk-virtual-scroll-viewport
       [style.height]="(autocompleteOptions?.length ?? 0) * 48 + 'px'"
-      [style.max-height]="3 * 48 + 'px'"
+      [style.max-height]="maxVisibleItems * 48 + 'px'"
       itemSize="48"
       minBufferPx="200"
     >

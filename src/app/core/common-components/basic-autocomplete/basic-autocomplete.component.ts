@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ContentChild,
   ElementRef,
@@ -14,7 +15,6 @@ import {
   TrackByFunction,
   ViewChild,
   WritableSignal,
-  AfterViewInit,
 } from "@angular/core";
 import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -136,6 +136,8 @@ export class BasicAutocompleteComponent<O, V = O>
   /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
   showAddOption = false;
 
+  maxVisibleItems: number = 3; //by default 3 items
+
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
 
@@ -247,6 +249,23 @@ export class BasicAutocompleteComponent<O, V = O>
         this.showAutocomplete();
       }
     });
+
+    this.calculateVisibleItemsForHeight();
+  }
+
+  private calculateVisibleItemsForHeight() {
+    const screenHeight = window.innerHeight;
+    const inputBottom =
+      this.inputElement._elementRef.nativeElement.getBoundingClientRect()
+        .bottom;
+
+    const availableSpaceBelow = screenHeight - inputBottom;
+
+    // workaround for ExpressionChangedAfterItHasBeenCheckedError problems
+    setTimeout(() => {
+      this.maxVisibleItems = Math.min(availableSpaceBelow / 48);
+      this.virtualScrollViewport.checkViewportSize();
+    }, 0);
   }
 
   drop(event: CdkDragDrop<any[]>) {
@@ -306,8 +325,8 @@ export class BasicAutocompleteComponent<O, V = O>
     if (inputText) {
       this.autocompleteFilterFunction = (option) =>
         this.optionToString(option)
-          .toLowerCase()
-          .includes(inputText.toLowerCase());
+          ?.toLowerCase()
+          ?.includes(inputText.toLowerCase());
       this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
 
       filteredOptions = filteredOptions.filter((o) =>
@@ -316,7 +335,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
       // do not allow users to create a new entry "identical" to an existing one:
       this.showAddOption = !this._options.some(
-        (o) => o.asString.toLowerCase() === inputText.toLowerCase(),
+        (o) => o?.asString?.toLowerCase() === inputText?.toLowerCase(),
       );
     }
     return filteredOptions;

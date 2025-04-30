@@ -1,13 +1,12 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { environment } from "../../../../../environments/environment";
 import { SessionInfo } from "../session-info";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
 import { Entity } from "../../../entity/model/entity";
 import { ParsedJWT, parseJwt } from "../../session-utils";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
+import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-dto";
 import { switchMap } from "rxjs/operators";
 import { ActivatedRoute, Params } from "@angular/router";
 import { Acr } from "keycloak-js";
@@ -17,10 +16,6 @@ import { Acr } from "keycloak-js";
  */
 @Injectable()
 export class KeycloakAuthService {
-  /**
-   * Users with this role can create and update other accounts.
-   */
-  static readonly ACCOUNT_MANAGER_ROLE = "account_manager";
   static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
   private keycloakInitialised = false;
   accessToken: string;
@@ -120,6 +115,8 @@ export class KeycloakAuthService {
     const sessionInfo: SessionInfo = {
       name: parsedToken.username ?? parsedToken.sub,
       id: parsedToken.sub,
+
+      // TODO: access from resource_access.app.roles and also resource_access.realm-management.roles === manage-users ?
       roles: parsedToken["_couchdb.roles"],
       email: parsedToken.email,
     };
@@ -181,48 +178,6 @@ export class KeycloakAuthService {
     return user as KeycloakUserDto;
   }
 
-  setEmail(email: string): Observable<any> {
-    return this.httpClient.put(`${environment.account_url}/account/set-email`, {
-      email,
-    });
-  }
-
-  createUser(user: Partial<KeycloakUserDto>): Observable<any> {
-    return this.httpClient.post(`${environment.account_url}/account`, user);
-  }
-
-  deleteUser(username: string): Observable<any> {
-    return this.getUser(username).pipe(
-      switchMap((value) =>
-        this.httpClient.delete(
-          `${environment.account_url}/account/${value.id}`,
-        ),
-      ),
-    );
-  }
-
-  updateUser(userId: string, user: Partial<KeycloakUserDto>): Observable<any> {
-    return this.httpClient.put(
-      `${environment.account_url}/account/${userId}`,
-      user,
-    );
-  }
-
-  getUser(username: string): Observable<KeycloakUserDto> {
-    return this.httpClient.get<KeycloakUserDto>(
-      `${environment.account_url}/account/${username}`,
-    );
-  }
-
-  /**
-   * Get a list of all roles generally available in the user management system.
-   */
-  getRoles(): Observable<Role[]> {
-    return this.httpClient.get<Role[]>(
-      `${environment.account_url}/account/roles`,
-    );
-  }
-
   /**
    * Log timestamp of last successful authentication
    */
@@ -232,28 +187,4 @@ export class KeycloakAuthService {
       new Date().toISOString(),
     );
   }
-}
-
-/**
- * Extract of Keycloak role object.
- * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_rolerepresentation}
- */
-export interface Role {
-  id: string;
-  name: string;
-  description: string;
-}
-
-/**
- * Extract of Keycloak user object as provided by the external Keycloak Service.
- * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_userrepresentation}
- *
- * These fields overlap with our internal `SessionInfo` interface that is seen as abstracted from Keycloak.
- */
-export interface KeycloakUserDto {
-  id: string;
-  username: string;
-  email: string;
-  roles: Role[];
-  enabled: boolean;
 }
