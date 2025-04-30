@@ -90,7 +90,11 @@ export class DefaultValueOptionsComponent implements OnChanges {
     referencedEntityType: EntityConstructor;
     availableFields: string[];
   };
-  relatedEntity: { label: string; entity: string }[];
+  relatedEntity: {
+    label: string;
+    entity: string;
+    relatedReferenceField: string[];
+  }[];
 
   constructor(
     private entityRegistry: EntityRegistry,
@@ -114,7 +118,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
           validators: [this.requiredForMode("inherited")],
         }),
         relatedEntity: new FormControl(
-          this.value?.automatedConfigRule?.[0]?.relatedEntity,
+          this.value?.automatedConfigRule?.[0]?.relatedTriggerField,
         ),
       },
       { updateOn: "blur" },
@@ -151,7 +155,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
-      this.currentAutomatedConfig = this.value?.automatedConfigRule[0];
+      if (this.value?.automatedConfigRule) {
+        this.currentAutomatedConfig = this.value?.automatedConfigRule[0];
+      }
 
       this.updateForm(this.value);
     }
@@ -166,9 +172,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("value").setValue(newValue?.value);
     this.form.get("localAttribute").setValue(newValue?.localAttribute);
     this.form.get("field").setValue(newValue?.field);
-    if (newValue?.automatedConfigRule.length) {
+    if (newValue?.automatedConfigRule) {
       const automatedRule = newValue?.automatedConfigRule[0];
-      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntity);
+      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntityType);
     }
 
     this.mode = newValue?.mode;
@@ -208,14 +214,19 @@ export class DefaultValueOptionsComponent implements OnChanges {
     }
   }
   async openAutomatedMappingDialog(selectedEntity: string) {
+    const relatedEntity = this.relatedEntity.find(
+      (r) => r.entity === selectedEntity,
+    );
     const refEntity = this.entityRegistry.get(selectedEntity);
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
-      maxHeight: "90vh",
       data: {
         currentEntity: this.entityType,
         refEntity: refEntity,
         currentField: this.field,
         currentAutomatedMapping: this.currentAutomatedConfig,
+        relatedReferenceFields: relatedEntity.relatedReferenceField,
+        currentRelatedReferenceField:
+          this.currentAutomatedConfig?.relatedReferenceField,
       },
     });
 
@@ -225,21 +236,15 @@ export class DefaultValueOptionsComponent implements OnChanges {
       const updatedConfig = {
         automatedConfigRule: [
           {
-            relatedEntity: selectedEntity,
-            relatedField: result.relatedField,
+            relatedReferenceField: result.relatedReferenceField,
+            relatedEntityType: selectedEntity,
+            relatedTriggerField: result.relatedTriggerField,
             automatedMapping: result.automatedMapping,
           },
         ],
       };
-
-      this.value = {
-        ...updatedConfig,
-        mode: this.mode,
-      };
-      this.valueChange.emit({
-        ...updatedConfig,
-        mode: this.mode,
-      });
+      this.value = { ...updatedConfig, mode: this.mode };
+      this.valueChange.emit({ ...updatedConfig, mode: this.mode });
     }
   }
 
@@ -273,6 +278,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
       .map((refType) => ({
         label: refType.entityType.label,
         entity: refType.entityType.ENTITY_TYPE,
+        relatedReferenceField: refType.referencingProperties.map((p) => p.id),
       }));
   }
 

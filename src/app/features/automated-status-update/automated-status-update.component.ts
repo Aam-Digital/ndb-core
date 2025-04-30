@@ -1,9 +1,100 @@
-import { Component } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
+import { MatButton } from "@angular/material/button";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { EntityBlockComponent } from "app/core/basic-datatypes/entity/entity-block/entity-block.component";
+import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
+import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
+import {
+  EntityForm,
+  EntityFormService,
+} from "app/core/common-components/entity-form/entity-form.service";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+
+/**
+ * Represents an entity that will be affected by a status update.
+ * This interface is used to define the structure of the data
+ * that will be passed to the
+ * AutomatedStatusUpdateComponent for processing.
+ */
+export interface AffectedEntity {
+  /** entityId of the affected entity */
+  id: string;
+
+  /** New status value to be applied to the target field */
+  newStatus: string;
+
+  /** Field Id that will receive the status update */
+  targetFieldId: string;
+
+  /** Entity type constructor for the target entity */
+  targetEntityType: EntityConstructor;
+
+  /** Actual entity which is being modified through automatedconfig rule */
+  affectedEntity?: Entity;
+
+  /** Reference field name that triggered the status update */
+  relatedReferenceField: string;
+
+  form?: EntityForm<Entity>;
+  selectedField?: FormFieldConfig;
+}
 
 @Component({
   selector: "app-automated-status-update",
-  imports: [],
+  imports: [
+    DialogCloseComponent,
+    EntityFieldEditComponent,
+    EntityBlockComponent,
+    MatButton,
+    MatDialogModule,
+  ],
   templateUrl: "./automated-status-update.component.html",
   styleUrl: "./automated-status-update.component.scss",
 })
-export class AutomatedStatusUpdateComponent {}
+export class AutomatedStatusUpdateComponent implements OnInit {
+  entityConstructor: EntityConstructor;
+  entityForm: EntityForm<Entity>;
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: { entities: AffectedEntity[] },
+    private dialogRef: MatDialogRef<AutomatedStatusUpdateComponent>,
+    private entityFormService: EntityFormService,
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    for (const entity of this.data.entities) {
+      const fieldId = entity.targetFieldId;
+      const entityConstructor = entity.targetEntityType;
+
+      entity.selectedField = this.entityFormService.extendFormFieldConfig(
+        fieldId,
+        entityConstructor,
+      );
+
+      entity.affectedEntity = new entityConstructor();
+      const entityForm = await this.entityFormService.createEntityForm(
+        [fieldId],
+        entity.affectedEntity,
+      );
+
+      entity.form = entityForm;
+      entity.form.formGroup.controls[fieldId].setValue(entity.newStatus);
+    }
+  }
+
+  onConfirm(): void {
+    for (const entity of this.data.entities) {
+      const fieldId = entity.targetFieldId;
+      const formControl = entity.form?.formGroup.controls[fieldId];
+      if (formControl) {
+        entity.newStatus = formControl.value;
+      }
+    }
+    this.dialogRef.close(this.data.entities);
+  }
+}

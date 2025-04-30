@@ -8,10 +8,12 @@ import {
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatOption, MatSelect } from "@angular/material/select";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
 import {
   EntityForm,
   EntityFormService,
@@ -31,20 +33,24 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
     MatOption,
     MatDialogModule,
     MatButtonModule,
+    MatTooltipModule,
     EntityFieldEditComponent,
+    EntityFieldLabelComponent,
   ],
   templateUrl: "./automated-field-mapping.component.html",
   styleUrl: "./automated-field-mapping.component.scss",
 })
 export class AutomatedFieldMappingComponent implements OnInit {
-  currentEntityEnumFields: [string, any][];
   availableFields: { id: string; label: string; additional: string }[] = [];
   selectedMappings: { [key: string]: string } = {};
   selectedField: string | null = null;
   sourceOptions: ConfigurableEnumValue[] = [];
   targetFieldConfig: FormFieldConfig;
-
+  isInvalid: boolean = false;
   fieldSchema: EntitySchemaField;
+  relatedReferenceFields: string[];
+  selectedRelatedReferenceField: string;
+
   mappingForms: {
     [sourceId: string]: {
       entity: Entity;
@@ -54,14 +60,16 @@ export class AutomatedFieldMappingComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    private data: {
+    public data: {
       currentEntity: EntityConstructor;
       refEntity: EntityConstructor;
       currentField: string;
       currentAutomatedMapping?: {
         automatedMapping: { [key: string]: string };
-        relatedField?: string;
+        relatedTriggerField?: string;
       };
+      relatedReferenceFields: string[];
+      currentRelatedReferenceField?: string;
     },
     private entityFormService: EntityFormService,
     private dialogRef: MatDialogRef<any>,
@@ -71,13 +79,16 @@ export class AutomatedFieldMappingComponent implements OnInit {
   ) {
     if (data.currentAutomatedMapping) {
       this.selectedMappings = data.currentAutomatedMapping?.automatedMapping;
-      this.selectedField = data.currentAutomatedMapping?.relatedField;
+      this.selectedField = data.currentAutomatedMapping?.relatedTriggerField;
     }
+    this.relatedReferenceFields = data?.relatedReferenceFields;
+    this.selectedRelatedReferenceField =
+      data?.currentRelatedReferenceField ||
+      (this.relatedReferenceFields ? this.relatedReferenceFields[0] : null);
   }
 
   ngOnInit(): void {
     this.availableFields = this.mapEnumFields(this.data.refEntity);
-    this.currentEntityEnumFields = this.getEnumFields(this.data.currentEntity);
     this.initializeSelectedField();
     this.targetFieldConfig = this.entityFormService.extendFormFieldConfig(
       this.data.currentField,
@@ -122,8 +133,9 @@ export class AutomatedFieldMappingComponent implements OnInit {
     for (const sourceOption of this.sourceOptions) {
       const entity = new this.data.currentEntity();
       let selectedValue: any = this.selectedMappings[sourceOption.id];
+      this.fieldSchema = entity.getSchema().get(this.data.currentField);
+
       if (selectedValue) {
-        this.fieldSchema = entity.getSchema().get(this.data.currentField);
         selectedValue = this.schemaService.valueToEntityFormat(
           selectedValue,
           this.fieldSchema,
@@ -146,6 +158,11 @@ export class AutomatedFieldMappingComponent implements OnInit {
   }
 
   save() {
+    this.isInvalid = Object.values(this.mappingForms).some((mappingForm) => {
+      mappingForm.form.formGroup.markAllAsTouched();
+      return mappingForm.form.formGroup.invalid;
+    });
+    if (this.isInvalid) return;
     const formattedMappings: { [key: string]: any } = {};
     Object.entries(this.selectedMappings).forEach(([key, value]) => {
       formattedMappings[key] = this.schemaService.valueToDatabaseFormat(
@@ -154,7 +171,8 @@ export class AutomatedFieldMappingComponent implements OnInit {
       );
     });
     this.dialogRef.close({
-      relatedField: this.selectedField,
+      relatedTriggerField: this.selectedField,
+      relatedReferenceField: this.selectedRelatedReferenceField,
       automatedMapping: formattedMappings,
     });
   }

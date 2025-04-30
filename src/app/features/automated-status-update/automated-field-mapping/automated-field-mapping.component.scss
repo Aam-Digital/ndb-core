@@ -19,8 +19,6 @@
   }
 }
 
-.dropdown-select {
-  mat-form-field {
-    width: 100%;
-  }
+:host ::ng-deep .mat-mdc-form-field {
+  width: 100%;
 }

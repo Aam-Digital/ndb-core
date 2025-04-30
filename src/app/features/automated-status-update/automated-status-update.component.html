@@ -1,1 +1,36 @@
-<p>automated-status-update works!</p>
+<h2 mat-dialog-title i18n>Update Related Statuses</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <p i18n>
+    You have updated the status of this record. The status is linked to the
+    following records through the
+    <b>{{ data.entities[0]?.relatedReferenceField }}</b> field. Please review
+    the affected records below and update their fields as necessary to ensure
+    data consistency across related entities.
+  </p>
+
+  <table class="full-width">
+    @for (entity of data.entities; track entity.id) {
+      <tr>
+        <td>
+          <app-entity-block [entityId]="entity.id"></app-entity-block>
+        </td>
+        <td>
+          <app-entity-field-edit
+            [field]="entity.selectedField"
+            [entity]="entity.affectedEntity"
+            [form]="entity.form"
+          ></app-entity-field-edit>
+        </td>
+      </tr>
+    }
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="onConfirm()" i18n="Button label">
+    Update related fields
+  </button>
+  <button mat-button mat-dialog-close i18n="Button label">Do not update</button>
+</mat-dialog-actions>
