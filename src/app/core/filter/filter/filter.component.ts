@@ -14,6 +14,8 @@ import { NgComponentOutlet } from "@angular/common";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { FilterService } from "../filter.service";
 import { DataFilter, Filter } from "../filters/filters";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -21,7 +23,7 @@ import { DataFilter, Filter } from "../filters/filters";
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
-  imports: [NgComponentOutlet],
+  imports: [NgComponentOutlet, FontAwesomeModule, MatButtonModule],
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   /**
@@ -59,6 +61,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
   filterSelections: Filter<T>[] = [];
   urlPath: string;
+  hasActiveFilters: boolean = false;
 
   constructor(
     private filterGenerator: FilterGeneratorService,
@@ -90,6 +93,9 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
   filterOptionSelected(filter: Filter<T>, selectedOptions: string[]) {
     filter.selectedOptionValues = selectedOptions;
+    if (filter.selectedOptionValues) {
+      this.hasActiveFilters = true;
+    }
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
       this.updateUrl(filter.name, selectedOptions.toString());
@@ -151,6 +157,9 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
       return;
     }
     const params = this.route.snapshot.queryParams;
+    if (params) {
+      this.hasActiveFilters = true;
+    }
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.name)) {
         f.selectedOptionValues = params[f.name]
@@ -158,5 +167,26 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
           .filter((value) => value !== "");
       }
     });
+  }
+
+  clearAllFilters() {
+    this.filterSelections.forEach((filter) => {
+      filter.selectedOptionValues = [];
+    });
+
+    this.route.queryParams.subscribe((params) => {
+      const newParams = { ...params };
+      this.filterSelections.forEach((filter) => {
+        newParams[filter.name] = undefined;
+      });
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: newParams,
+        queryParamsHandling: "merge",
+      });
+    });
+    this.hasActiveFilters = false;
+
+    this.filterObjChange.emit({});
   }
 }
