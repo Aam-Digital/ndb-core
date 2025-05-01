@@ -23,7 +23,7 @@ import {
 import { DefaultValueMode } from "app/core/entity/schema/default-value-config";
 
 const mockAutomnatedConfig = {
-  mode: "AutomatedConfigRule" as DefaultValueMode,
+  mode: "updated-from-referencing-entity" as DefaultValueMode,
   automatedConfigRule: [
     {
       relatedEntityType: "Mentorship",

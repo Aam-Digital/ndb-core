@@ -80,7 +80,10 @@ export class AutomatedStatusUpdateConfigService {
     fieldConfig: EntitySchemaField,
   ) {
     const rules = fieldConfig.defaultValue?.automatedConfigRule;
-    if (fieldConfig.defaultValue?.mode === "AutomatedConfigRule" && rules) {
+    if (
+      fieldConfig.defaultValue?.mode === "updated-from-referencing-entity" &&
+      rules
+    ) {
       for (const rule of rules) {
         this.processAutomatedRule(targetType, fieldKey, rule);
       }

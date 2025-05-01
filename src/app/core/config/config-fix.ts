@@ -1007,7 +1007,7 @@ export const defaultJsonConfig = {
         dataType: "string",
         label: $localize`:Label for the status of a child:Status`,
         defaultValue: {
-          mode: "AutomatedConfigRule",
+          mode: "updated-from-referencing-entity",
           automatedConfigRule: [{
             relatedEntityType: "School",
             relatedReferenceField: "linkedStudent1",

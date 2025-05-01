@@ -72,7 +72,7 @@
           }
         </mat-select>
       }
-      @case ("AutomatedConfigRule") {
+      @case ("updated-from-referencing-entity") {
         <mat-select formControlName="relatedEntity" #relatedEntitySelect>
           <div
             class="select-dropdown-header"
@@ -137,7 +137,7 @@
       </mat-button-toggle>
 
       <mat-button-toggle
-        value="AutomatedConfigRule"
+        value="updated-from-referencing-entity"
         matTooltip="Auto-update with changes from another record"
         i18n-matTooltip
       >

@@ -36,7 +36,7 @@ export type DefaultValueMode =
   | "inherited"
   | "static"
   | "dynamic"
-  | "AutomatedConfigRule";
+  | "updated-from-referencing-entity";
 
 /**
  * Special default value rule to continuously updates the value based a field of another related entity.
