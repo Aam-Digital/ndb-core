@@ -9,7 +9,7 @@ import { Entity, EntityConstructor } from "../../../../entity/model/entity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 
-fdescribe("DefaultValueOptionsComponent", () => {
+describe("DefaultValueOptionsComponent", () => {
   let component: DefaultValueOptionsComponent;
   let fixture: ComponentFixture<DefaultValueOptionsComponent>;
 
