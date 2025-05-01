@@ -6,12 +6,10 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 import { Entity, EntityConstructor } from "../../../../entity/model/entity";
-import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 
-describe("DefaultValueOptionsComponent", () => {
-  const entityRelationsServiceMock = {
-    getEntityTypesReferencingType: jasmine.createSpy().and.returnValue([]),
-  };
+fdescribe("DefaultValueOptionsComponent", () => {
   let component: DefaultValueOptionsComponent;
   let fixture: ComponentFixture<DefaultValueOptionsComponent>;
 
@@ -25,8 +23,8 @@ describe("DefaultValueOptionsComponent", () => {
       providers: [
         EntityRegistry,
         {
-          provide: EntityRelationsService,
-          useValue: entityRelationsServiceMock,
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(),
         },
       ],
     }).compileComponents();

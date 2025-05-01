@@ -12,6 +12,7 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { ConfigService } from "app/core/config/config.service";
+import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -49,6 +50,7 @@ export class AutomatedStatusUpdateConfigService {
     private unsavedChangesService: UnsavedChangesService,
     private entitySchemaService: EntitySchemaService,
     private configService: ConfigService,
+    private entityRelationsService: EntityRelationsService,
   ) {
     this.configService.configUpdates.subscribe(() =>
       // wait until EntityConfigService has updated the entityRegistry
@@ -96,7 +98,7 @@ export class AutomatedStatusUpdateConfigService {
     targetFieldId: string,
     rule: any,
   ) {
-    const key = `${rule.relatedEntityId}|${rule.relatedTriggerField}`;
+    const key = `${rule.relatedEntityType}|${rule.relatedTriggerField}`;
     const entry = {
       targetEntityType: targetEntityType,
       targetFieldId: targetFieldId,
@@ -106,6 +108,26 @@ export class AutomatedStatusUpdateConfigService {
 
     const existingEntries = this.dependencyMap.get(key) || [];
     this.dependencyMap.set(key, [...existingEntries, entry]);
+  }
+
+  /**
+   * Returns a list of related entities with reference info for the given entity type.
+   * Used in automated rule configuration.
+   */
+  public updateAvailableRelatedEntityForAutomated(entityType: string): {
+    label: string;
+    entity: string;
+    relatedReferenceField: string[];
+  }[] {
+    const relatedEntities =
+      this.entityRelationsService.getEntityTypesReferencingType(entityType);
+    return relatedEntities
+      .filter((refType) => !!refType.entityType.label)
+      .map((refType) => ({
+        label: refType.entityType.label,
+        entity: refType.entityType.ENTITY_TYPE,
+        relatedReferenceField: refType.referencingProperties.map((p) => p.id),
+      }));
   }
 
   /**

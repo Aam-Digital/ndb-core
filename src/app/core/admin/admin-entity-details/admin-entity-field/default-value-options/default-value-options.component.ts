@@ -45,7 +45,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { AutomatedFieldMappingComponent } from "app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component";
 import { lastValueFrom } from "rxjs";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
-import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
+import { AutomatedStatusUpdateConfigService } from "app/features/automated-status-update/automated-status-update-config-service";
 
 @Component({
   selector: "app-default-value-options",
@@ -99,7 +99,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
   constructor(
     private entityRegistry: EntityRegistry,
     private matDialog: MatDialog,
-    private entityRelationsService: EntityRelationsService,
+    private automatedStatusUpdateConfigService: AutomatedStatusUpdateConfigService,
   ) {
     this.initForm();
   }
@@ -163,7 +163,10 @@ export class DefaultValueOptionsComponent implements OnChanges {
     }
     if (changes.entityType) {
       this.updateAvailableInheritanceAttributes();
-      this.updateAvilableRelatedEntity();
+      this.relatedEntity =
+        this.automatedStatusUpdateConfigService.updateAvailableRelatedEntityForAutomated(
+          this.entityType.ENTITY_TYPE,
+        );
     }
   }
 
@@ -266,20 +269,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
     )
       .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
       .map(([id]) => id);
-  }
-
-  private updateAvilableRelatedEntity() {
-    const relatedEntities =
-      this.entityRelationsService.getEntityTypesReferencingType(
-        this.entityType.ENTITY_TYPE,
-      );
-    this.relatedEntity = relatedEntities
-      .filter((refType) => !!refType.entityType.label)
-      .map((refType) => ({
-        label: refType.entityType.label,
-        entity: refType.entityType.ENTITY_TYPE,
-        relatedReferenceField: refType.referencingProperties.map((p) => p.id),
-      }));
   }
 
   private updateCurrentInheritanceFields(localAttribute: string) {
