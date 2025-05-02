@@ -1008,12 +1008,12 @@ export const defaultJsonConfig = {
         label: $localize`:Label for the status of a child:Status`,
         defaultValue: {
           mode: "updated-from-referencing-entity",
-          automatedConfigRule: [{
+          automatedConfigRule: {
             relatedEntityType: "School",
             relatedReferenceField: "linkedStudent1",
             relatedTriggerField: "schoolStatus",
             automatedMapping: { "WARNING": "school warning", "OK": "school solved" }
-          }]
+          }
         }
       },
       dropoutDate: {
