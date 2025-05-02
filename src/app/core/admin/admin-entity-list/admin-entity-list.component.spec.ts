@@ -8,6 +8,10 @@ import { EntityFormService } from "../../common-components/entity-form/entity-fo
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../entity/model/entity";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
 
 describe("AdminEntityListComponent", () => {
   let component: AdminEntityListComponent;
@@ -25,6 +29,7 @@ describe("AdminEntityListComponent", () => {
         { provide: FilterService, useValue: {} },
         { provide: ActivatedRoute, useValue: {} },
         { provide: EntityFormService, useValue: {} },
+        { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
 
