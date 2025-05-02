@@ -186,7 +186,7 @@ export class InheritedValueService extends DefaultValueStrategy {
   private async updateLinkedEntities<T extends Entity>(form: EntityForm<T>) {
     let inheritedConfigs: Map<string, DefaultValueConfig> = getConfigsByMode(
       form.fieldConfigs,
-      ["inherited"],
+      ["inherited-from-referenced-entity"],
     );
 
     const linkedEntityRefs: Map<string, string[]> = this.getLinkedEntityRefs(
