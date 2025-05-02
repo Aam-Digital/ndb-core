@@ -42,9 +42,9 @@
     [cdkDropListDisabled]="!reorder"
   >
     <cdk-virtual-scroll-viewport
+      [style.height.px]="(autocompleteOptions?.length ?? 0) * 48"
       [itemSize]="48"
       minBufferPx="200"
-      [style.height]="(autocompleteOptions?.length ?? 0) * 48 + 'px'"
     >
       <mat-option
         [value]="item"
