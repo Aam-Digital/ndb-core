@@ -86,7 +86,7 @@ describe("DefaultValueOptionsComponent", () => {
   it("should emit valueChange event when changed form is valid (inherited mode)", () => {
     spyOn(component.valueChange, "emit");
     component.form.setValue({
-      mode: "inherited",
+      mode: "inherited-from-referenced-entity",
       value: null,
       localAttribute: "localAttribute",
       relatedEntity: null,
@@ -94,7 +94,7 @@ describe("DefaultValueOptionsComponent", () => {
     });
     expect(component.valueChange.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        mode: "inherited",
+        mode: "inherited-from-referenced-entity",
         localAttribute: "localAttribute",
         field: "field",
       }),
@@ -112,7 +112,7 @@ describe("DefaultValueOptionsComponent", () => {
     expect(component.valueChange.emit).not.toHaveBeenCalled();
 
     component.form.setValue({
-      mode: "inherited",
+      mode: "inherited-from-referenced-entity",
       value: null,
       localAttribute: "foo",
       relatedEntity: null,
