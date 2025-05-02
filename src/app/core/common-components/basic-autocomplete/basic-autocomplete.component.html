@@ -32,6 +32,8 @@
   (optionSelected)="select($event.option.value)"
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="true"
+  [class.custom-panel]="true"
+  [style.max-height.px]="maxPanelHeight"
 >
   <div
     cdkDropList
@@ -40,10 +42,9 @@
     [cdkDropListDisabled]="!reorder"
   >
     <cdk-virtual-scroll-viewport
-      [style.height]="(autocompleteOptions?.length ?? 0) * 48 + 'px'"
-      [style.max-height]="maxVisibleItems * 48 + 'px'"
-      itemSize="48"
+      [itemSize]="48"
       minBufferPx="200"
+      [style.height]="(autocompleteOptions?.length ?? 0) * 48 + 'px'"
     >
       <mat-option
         [value]="item"

@@ -136,7 +136,8 @@ export class BasicAutocompleteComponent<O, V = O>
   /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
   showAddOption = false;
 
-  maxVisibleItems: number = 3; //by default 3 items
+  // maximum height of the autocomplete panel
+  maxPanelHeight: number;
 
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
@@ -263,11 +264,12 @@ export class BasicAutocompleteComponent<O, V = O>
 
     // workaround for ExpressionChangedAfterItHasBeenCheckedError problems
     setTimeout(() => {
-      this.maxVisibleItems = Math.min(availableSpaceBelow / 48);
+      const maxVisibleItems = Math.max(3, Math.floor(availableSpaceBelow / 48));
+
+      this.maxPanelHeight = Math.min(maxVisibleItems * 48, availableSpaceBelow);
       this.virtualScrollViewport.checkViewportSize();
     }, 0);
   }
-
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
