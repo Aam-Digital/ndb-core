@@ -112,10 +112,14 @@ export class DefaultValueOptionsComponent implements OnChanges {
           validators: [this.requiredForMode(["static", "dynamic"])],
         }),
         localAttribute: new FormControl(this.value?.localAttribute, {
-          validators: [this.requiredForMode("inherited")],
+          validators: [
+            this.requiredForMode("inherited-from-referenced-entity"),
+          ],
         }),
         field: new FormControl(this.value?.field, {
-          validators: [this.requiredForMode("inherited")],
+          validators: [
+            this.requiredForMode("inherited-from-referenced-entity"),
+          ],
         }),
         relatedEntity: new FormControl(
           this.value?.automatedConfigRule?.[0]?.relatedTriggerField,
@@ -202,7 +206,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
           value: this.form.get("value").value,
         };
         break;
-      case "inherited":
+      case "inherited-from-referenced-entity":
         newConfigValue = {
           mode: this.mode,
           localAttribute: this.form.get("localAttribute").value,

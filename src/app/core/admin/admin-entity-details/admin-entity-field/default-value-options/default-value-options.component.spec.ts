@@ -144,7 +144,11 @@ describe("DefaultValueOptionsComponent", () => {
     expect(component.form.get("mode").value).toEqual("dynamic");
     expect(component.form.get("value").value).toEqual("Test value");
 
-    component.value = { mode: "inherited", localAttribute: "x", field: "y" };
+    component.value = {
+      mode: "inherited-from-referenced-entity",
+      localAttribute: "x",
+      field: "y",
+    };
     component.ngOnChanges({ value: { currentValue: component.value } as any });
     expect(component.form.get("localAttribute").value).toEqual("x");
     expect(component.form.get("field").value).toEqual("y");
