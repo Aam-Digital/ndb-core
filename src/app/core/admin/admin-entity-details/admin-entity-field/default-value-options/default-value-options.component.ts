@@ -122,7 +122,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
           ],
         }),
         relatedEntity: new FormControl(
-          this.value?.automatedConfigRule?.[0]?.relatedTriggerField,
+          this.value?.automatedConfigRule?.relatedTriggerField,
         ),
       },
       { updateOn: "blur" },
@@ -180,8 +180,9 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("localAttribute").setValue(newValue?.localAttribute);
     this.form.get("field").setValue(newValue?.field);
     if (newValue?.automatedConfigRule) {
-      const automatedRule = newValue?.automatedConfigRule[0];
-      this.form.get("relatedEntity").setValue(automatedRule?.relatedEntityType);
+      this.form
+        .get("relatedEntity")
+        .setValue(newValue?.automatedConfigRule?.relatedEntityType);
     }
 
     this.mode = newValue?.mode;
@@ -241,14 +242,12 @@ export class DefaultValueOptionsComponent implements OnChanges {
 
     if (result) {
       const updatedConfig = {
-        automatedConfigRule: [
-          {
-            relatedReferenceField: result.relatedReferenceField,
-            relatedEntityType: selectedEntity,
-            relatedTriggerField: result.relatedTriggerField,
-            automatedMapping: result.automatedMapping,
-          },
-        ],
+        automatedConfigRule: {
+          relatedReferenceField: result.relatedReferenceField,
+          relatedEntityType: selectedEntity,
+          relatedTriggerField: result.relatedTriggerField,
+          automatedMapping: result.automatedMapping,
+        },
       };
       this.value = { ...updatedConfig, mode: this.mode };
       this.valueChange.emit({ ...updatedConfig, mode: this.mode });

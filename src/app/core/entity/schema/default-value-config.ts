@@ -29,7 +29,7 @@ export interface DefaultValueConfig {
   /**
    * automation rules that trigger updates in related entities when this field changes.
    */
-  automatedConfigRule?: AutomatedConfigRule[];
+  automatedConfigRule?: AutomatedConfigRule;
 }
 
 export type DefaultValueMode =

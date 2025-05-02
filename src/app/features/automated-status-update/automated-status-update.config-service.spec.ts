@@ -24,17 +24,15 @@ import { DefaultValueMode } from "app/core/entity/schema/default-value-config";
 
 const mockAutomnatedConfig = {
   mode: "updated-from-referencing-entity" as DefaultValueMode,
-  automatedConfigRule: [
-    {
-      relatedEntityType: "Mentorship",
-      relatedTriggerField: "status",
-      relatedReferenceField: "mentee",
-      automatedMapping: {
-        active: "in-mentorship",
-        finished: "open for mentorship",
-      },
+  automatedConfigRule: {
+    relatedEntityType: "Mentorship",
+    relatedTriggerField: "status",
+    relatedReferenceField: "mentee",
+    automatedMapping: {
+      active: "in-mentorship",
+      finished: "open for mentorship",
     },
-  ],
+  },
 };
 @DatabaseEntity("Mentee")
 class Mentee extends Entity {
