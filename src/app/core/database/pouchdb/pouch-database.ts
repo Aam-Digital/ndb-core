@@ -4,6 +4,7 @@ import PouchDB from "pouchdb-browser";
 import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { HttpStatusCode } from "@angular/common/http";
+import { environment } from "environments/environment";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -310,7 +311,9 @@ export class PouchDatabase extends Database {
     }
 
     await this.put(designDoc, true);
-    await this.prebuildViewsOfDesignDoc(designDoc);
+    if (environment.production) {
+      await this.prebuildViewsOfDesignDoc(designDoc);
+    }
   }
 
   @PerformanceAnalysisLogging
