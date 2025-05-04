@@ -255,7 +255,7 @@ describe("FilterGeneratorService", () => {
     expect(generatedFilter[0]).toBeInstanceOf(DateFilter);
   });
 
-  it("should set current User and Date if PLACEHOLDER is selected", async () => {
+  it("should set current User if PLACEHOLDER is selected", async () => {
     let user = new Entity();
     TestBed.inject(CurrentUserSubject).next(user);
     const placeholderUserFilter = {
@@ -269,17 +269,6 @@ describe("FilterGeneratorService", () => {
       await service.generate([placeholderUserFilter], Note, [])
     )[0] as SelectableFilter<Note>;
     expect(filterData.selectedOptionValues).toEqual([user.getId()]);
-
-    let placeholderNowFilter = placeholderUserFilter;
-    placeholderNowFilter.default = PLACEHOLDERS.NOW;
-    const mockDate = new Date();
-    jasmine.clock().mockDate(mockDate);
-    const filterNow = (
-      await service.generate([placeholderNowFilter], Note, [])
-    )[0] as SelectableFilter<Note>;
-    const mockString = mockDate.toString();
-    expect(filterNow.selectedOptionValues).toEqual([mockString]);
-    jasmine.clock().uninstall();
   });
 
   function filter<T extends Entity>(

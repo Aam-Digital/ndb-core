@@ -24,6 +24,7 @@ import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { PLACEHOLDERS } from "app/core/entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "app/core/session/current-user-subject";
+import { DynamicPlaceholderValueService } from "app/core/default-values/dynamic-placeholder-value.service";
 
 @Injectable({
   providedIn: "root",
@@ -36,6 +37,7 @@ export class FilterGeneratorService {
     private filterService: FilterService,
     private schemaService: EntitySchemaService,
     private currentUser: CurrentUserSubject,
+    private placeholderService: DynamicPlaceholderValueService,
   ) {}
 
   /**
@@ -102,15 +104,14 @@ export class FilterGeneratorService {
       }
 
       if (filterConfig.hasOwnProperty("default")) {
-        if (filterConfig.default === PLACEHOLDERS.NOW) {
-          let now = new Date();
-          const dateString = now.toString();
-          filter.selectedOptionValues = [dateString];
-        } else if (filterConfig.default === PLACEHOLDERS.CURRENT_USER) {
-          let userId = this.currentUser.value?.getId();
-          if (userId) {
-            filter.selectedOptionValues = [userId];
-          }
+        const defaultVal =
+          this.placeholderService.getDefaultValueString(filterConfig);
+        if (
+          Object.values(PLACEHOLDERS).includes(
+            filterConfig.default as PLACEHOLDERS,
+          )
+        ) {
+          filter.selectedOptionValues = [defaultVal];
         } else {
           filter.selectedOptionValues = [filterConfig.default];
         }

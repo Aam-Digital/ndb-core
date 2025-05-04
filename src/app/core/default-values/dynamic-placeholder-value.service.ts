@@ -7,6 +7,7 @@ import {
 import { CurrentUserSubject } from "../session/current-user-subject";
 import { Logging } from "../logging/logging.service";
 import { DefaultValueStrategy } from "./default-value-strategy.interface";
+import { FilterConfig } from "../entity-list/EntityListConfig";
 
 /**
  * A simple default-value strategy that replaces placeholder strings with dynamic values, like the current date or user.
@@ -51,5 +52,15 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
         );
         break;
     }
+  }
+
+  getDefaultValueString(filterConfig: FilterConfig): string {
+    if (filterConfig.hasOwnProperty("default")) {
+      if (filterConfig.default === PLACEHOLDERS.CURRENT_USER) {
+        let userId = this.currentUser.value?.getId();
+        if (userId) return userId;
+      }
+    }
+    return "";
   }
 }
