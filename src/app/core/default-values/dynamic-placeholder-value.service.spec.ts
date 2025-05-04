@@ -11,7 +11,6 @@ import { createTestingConfigurableEnumService } from "../basic-datatypes/configu
 import { PrebuiltFilterConfig } from "../entity-list/EntityListConfig";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
 import { Note } from "app/child-dev-project/notes/model/note";
-import { empty } from "rxjs";
 
 describe("DynamicPlaceholderValueService", () => {
   let service: DynamicPlaceholderValueService;

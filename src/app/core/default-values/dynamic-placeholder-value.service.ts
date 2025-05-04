@@ -55,11 +55,9 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
   }
 
   getDefaultValueString(filterConfig: FilterConfig): string {
-    if (filterConfig.hasOwnProperty("default")) {
-      if (filterConfig.default === PLACEHOLDERS.CURRENT_USER) {
-        let userId = this.currentUser.value?.getId();
-        if (userId) return userId;
-      }
+    if (filterConfig.default === PLACEHOLDERS.CURRENT_USER) {
+      let userId = this.currentUser.value?.getId();
+      if (userId) return userId;
     }
     return "";
   }
