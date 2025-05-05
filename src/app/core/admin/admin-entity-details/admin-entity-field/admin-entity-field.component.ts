@@ -83,14 +83,19 @@ export class AdminEntityFieldComponent implements OnChanges {
   @Input() fieldId: string;
   @Input() entityType: EntityConstructor;
 
+  /** current state of the field being edited */
   entitySchemaField: EntitySchemaField;
+
   form: FormGroup;
   fieldIdForm: FormControl;
+
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
+
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
+
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
@@ -107,7 +112,9 @@ export class AdminEntityFieldComponent implements OnChanges {
   ) {
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
-    this.entitySchemaField = this.entityType.schema.get(this.fieldId) ?? {};
+    this.entitySchemaField = {
+      ...(this.entityType.schema.get(this.fieldId) ?? {}),
+    };
 
     this.initSettings();
     this.initAvailableDatatypes(allDataTypes);
@@ -115,7 +122,7 @@ export class AdminEntityFieldComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entitySchemaField) {
-      this.initSettings();
+      this.schemaFieldsForm.setValue(changes.entitySchemaField);
     }
   }
 
@@ -149,6 +156,11 @@ export class AdminEntityFieldComponent implements OnChanges {
     this.form = this.fb.group({
       id: this.fieldIdForm,
       schemaFields: this.schemaFieldsForm,
+    });
+
+    this.schemaFieldsForm.valueChanges.subscribe((v) => {
+      if (JSON.stringify(v) === JSON.stringify(this.entitySchemaField)) return;
+      this.entitySchemaField = { ...this.getUpdatedSchemaField(v) };
     });
 
     this.schemaFieldsForm
@@ -275,7 +287,18 @@ export class AdminEntityFieldComponent implements OnChanges {
       return;
     }
 
-    const formValues = this.schemaFieldsForm.getRawValue();
+    const fieldId = this.fieldIdForm.getRawValue();
+
+    this.adminEntityService.updateSchemaField(
+      this.entityType,
+      fieldId,
+      this.entitySchemaField,
+    );
+
+    this.dialogRef.close(fieldId);
+  }
+
+  private getUpdatedSchemaField(formValues): EntitySchemaField {
     for (const key of Object.keys(formValues)) {
       if (formValues[key] === null) {
         delete formValues[key];
@@ -286,15 +309,7 @@ export class AdminEntityFieldComponent implements OnChanges {
       this.entitySchemaField, // TODO: remove this merge once all schema fields are in the form (then only form values should apply)
       formValues,
     );
-    const fieldId = this.fieldIdForm.getRawValue();
-
-    this.adminEntityService.updateSchemaField(
-      this.entityType,
-      fieldId,
-      updatedEntitySchema,
-    );
-
-    this.dialogRef.close(fieldId);
+    return updatedEntitySchema;
   }
 
   openEnumOptions(event: Event) {

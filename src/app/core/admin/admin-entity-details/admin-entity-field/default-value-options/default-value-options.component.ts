@@ -46,6 +46,7 @@ import { AutomatedFieldMappingComponent } from "app/features/automated-status-up
 import { lastValueFrom } from "rxjs";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { AutomatedStatusUpdateConfigService } from "app/features/automated-status-update/automated-status-update-config-service";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 @Component({
   selector: "app-default-value-options",
@@ -100,6 +101,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     private entityRegistry: EntityRegistry,
     private matDialog: MatDialog,
     private automatedStatusUpdateConfigService: AutomatedStatusUpdateConfigService,
+    private entitySchemaService: EntitySchemaService,
   ) {
     this.initForm();
   }
@@ -124,6 +126,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
         relatedEntity: new FormControl(
           this.value?.automatedConfigRule?.relatedTriggerField,
         ),
+        automatedConfigRule: new FormControl(this.value?.automatedConfigRule),
       },
       { updateOn: "blur" },
     );
@@ -214,6 +217,12 @@ export class DefaultValueOptionsComponent implements OnChanges {
           field: this.form.get("field").value,
         };
         break;
+      case "updated-from-referencing-entity":
+        newConfigValue = {
+          mode: this.mode,
+          automatedConfigRule: this.form.get("automatedConfigRule").value,
+        };
+        break;
     }
 
     if (JSON.stringify(newConfigValue) !== JSON.stringify(this.value)) {
@@ -225,12 +234,17 @@ export class DefaultValueOptionsComponent implements OnChanges {
     const relatedEntity = this.relatedEntity.find(
       (r) => r.entity === selectedEntity,
     );
+    // add editComponent (because we cannot rely on the entity's schema yet for a new field)
+    this.entitySchemaField.editComponent =
+      this.entitySchemaField.editComponent ??
+      this.entitySchemaService.getComponent(this.entitySchemaField, "edit");
+
     const refEntity = this.entityRegistry.get(selectedEntity);
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
       data: {
         currentEntity: this.entityType,
         refEntity: refEntity,
-        currentField: this.field,
+        currentField: this.entitySchemaField,
         currentAutomatedMapping: this.currentAutomatedConfig,
         relatedReferenceFields: relatedEntity.relatedReferenceField,
         currentRelatedReferenceField:
@@ -241,16 +255,15 @@ export class DefaultValueOptionsComponent implements OnChanges {
     const result = await lastValueFrom(dialogRef.afterClosed());
 
     if (result) {
-      const updatedConfig = {
+      this.form.patchValue({
+        mode: this.mode,
         automatedConfigRule: {
           relatedReferenceField: result.relatedReferenceField,
           relatedEntityType: selectedEntity,
           relatedTriggerField: result.relatedTriggerField,
           automatedMapping: result.automatedMapping,
         },
-      };
-      this.value = { ...updatedConfig, mode: this.mode };
-      this.valueChange.emit({ ...updatedConfig, mode: this.mode });
+      });
     }
   }
 

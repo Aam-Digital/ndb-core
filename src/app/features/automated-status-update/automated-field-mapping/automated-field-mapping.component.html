@@ -60,11 +60,10 @@
       @for (sourceOption of sourceOptions; track sourceOption.id) {
         <div class="option-label">{{ sourceOption.label }}</div>
         <div class="dropdown-select">
-          @if (mappingForms[sourceOption.id]?.form) {
+          @if (mappingForms[sourceOption.id]) {
             <app-entity-field-edit
               [field]="targetFieldConfig"
-              [entity]="mappingForms[sourceOption.id].entity"
-              [form]="mappingForms[sourceOption.id].form"
+              [form]="mappingForms[sourceOption.id]"
             ></app-entity-field-edit>
           }
         </div>

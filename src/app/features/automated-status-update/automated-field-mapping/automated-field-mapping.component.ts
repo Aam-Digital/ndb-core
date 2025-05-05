@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
+import { FormControl, FormGroup } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatOptionModule } from "@angular/material/core";
 import {
@@ -42,20 +43,16 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 })
 export class AutomatedFieldMappingComponent implements OnInit {
   availableFields: { id: string; label: string; additional: string }[] = [];
-  selectedMappings: { [key: string]: string } = {};
+  selectedMappings: { [key: string]: any } = {};
   selectedField: string | null = null;
   sourceOptions: ConfigurableEnumValue[] = [];
   targetFieldConfig: FormFieldConfig;
   isInvalid: boolean = false;
-  fieldSchema: EntitySchemaField;
   relatedReferenceFields: string[];
   selectedRelatedReferenceField: string;
 
   mappingForms: {
-    [sourceId: string]: {
-      entity: Entity;
-      form: EntityForm<Entity>;
-    };
+    [sourceId: string]: EntityForm<Entity>;
   } = {};
 
   constructor(
@@ -63,7 +60,8 @@ export class AutomatedFieldMappingComponent implements OnInit {
     public data: {
       currentEntity: EntityConstructor;
       refEntity: EntityConstructor;
-      currentField: string;
+      currentField: FormFieldConfig;
+      // TODO: can/should we use currentField.defaultValue instead of passing the following?
       currentAutomatedMapping?: {
         automatedMapping: { [key: string]: string };
         relatedTriggerField?: string;
@@ -90,10 +88,8 @@ export class AutomatedFieldMappingComponent implements OnInit {
   ngOnInit(): void {
     this.availableFields = this.mapEnumFields(this.data.refEntity);
     this.initializeSelectedField();
-    this.targetFieldConfig = this.entityFormService.extendFormFieldConfig(
-      this.data.currentField,
-      this.data.currentEntity,
-    );
+
+    this.targetFieldConfig = this.data.currentField;
   }
 
   private initializeSelectedField() {
@@ -131,43 +127,42 @@ export class AutomatedFieldMappingComponent implements OnInit {
     this.mappingForms = {};
 
     for (const sourceOption of this.sourceOptions) {
-      const entity = new this.data.currentEntity();
       let selectedValue: any = this.selectedMappings[sourceOption.id];
-      this.fieldSchema = entity.getSchema().get(this.data.currentField);
 
       if (selectedValue) {
         selectedValue = this.schemaService.valueToEntityFormat(
           selectedValue,
-          this.fieldSchema,
+          this.targetFieldConfig,
         );
       }
-      entity[this.data.currentField] = selectedValue ?? null;
 
-      const form = await this.entityFormService.createEntityForm(
-        [this.data.currentField],
-        entity,
-      );
+      const formField = new FormControl(selectedValue);
+      //await this.entityFormService.createEntityForm([this.data.currentField], entity);
       // Track form value changes
-      form.formGroup
-        .get(this.data.currentField)
-        .valueChanges.subscribe((value) => {
-          this.selectedMappings[sourceOption.id] = value;
-        });
-      this.mappingForms[sourceOption.id] = { entity, form };
+      formField.valueChanges.subscribe((value) => {
+        this.selectedMappings[sourceOption.id] = value;
+      });
+      this.targetFieldConfig.id = "targetValue";
+      const formGroup = new FormGroup({
+        [this.targetFieldConfig.id]: formField,
+      });
+      this.mappingForms[sourceOption.id] = {
+        formGroup,
+      } as unknown as EntityForm<Entity>;
     }
   }
 
   save() {
     this.isInvalid = Object.values(this.mappingForms).some((mappingForm) => {
-      mappingForm.form.formGroup.markAllAsTouched();
-      return mappingForm.form.formGroup.invalid;
+      mappingForm.formGroup.markAllAsTouched();
+      return mappingForm.formGroup.invalid;
     });
     if (this.isInvalid) return;
     const formattedMappings: { [key: string]: any } = {};
     Object.entries(this.selectedMappings).forEach(([key, value]) => {
       formattedMappings[key] = this.schemaService.valueToDatabaseFormat(
         value,
-        this.fieldSchema,
+        this.targetFieldConfig,
       );
     });
     this.dialogRef.close({
