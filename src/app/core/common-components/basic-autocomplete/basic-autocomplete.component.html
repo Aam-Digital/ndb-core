@@ -33,6 +33,10 @@
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="true"
 >
+  <!-- Select All and Clear Buttons on top of options via content projection-->
+  <div>
+    <ng-content select="[autocompleteHeader]"></ng-content>
+  </div>
   <div
     cdkDropList
     (cdkDropListDropped)="drop($event)"
