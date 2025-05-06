@@ -74,7 +74,6 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 export class DefaultValueOptionsComponent implements OnChanges {
   @Input() value: DefaultValueConfig;
   @Output() valueChange = new EventEmitter<DefaultValueConfig>();
-  @Input() field?: string;
   @Input() entitySchemaField: EntitySchemaField;
   @Input() entityType: EntityConstructor;
 
@@ -230,6 +229,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
       this.valueChange.emit(newConfigValue);
     }
   }
+
   async openAutomatedMappingDialog(selectedEntity: string) {
     const relatedEntity = this.relatedEntity.find(
       (r) => r.entity === selectedEntity,
