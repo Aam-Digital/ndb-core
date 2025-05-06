@@ -128,7 +128,7 @@ describe("AdminDefaultValueComponent", () => {
 
     expect(component.form.get("mode").value).toBeUndefined();
     expect(component.form.get("value").value).toBeUndefined();
-    expect(component.valueChange.emit).toHaveBeenCalledWith(undefined);
+    expect(component.valueChange.emit).toHaveBeenCalledWith(null);
   });
 
   it("should apply input values to form", () => {

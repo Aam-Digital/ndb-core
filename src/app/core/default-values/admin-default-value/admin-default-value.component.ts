@@ -184,6 +184,11 @@ export class AdminDefaultValueComponent
         break;
     }
 
+    // output as `null` if no value is set to conform with standard form controls
+    if (!newConfigValue) {
+      newConfigValue = null;
+    }
+
     if (JSON.stringify(newConfigValue) !== JSON.stringify(this.value)) {
       this.value = newConfigValue;
     }
