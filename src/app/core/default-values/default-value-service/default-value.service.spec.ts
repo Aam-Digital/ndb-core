@@ -12,6 +12,8 @@ import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum
 import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import { StaticDefaultValueService } from "../x-static/static-default-value.service";
 
 /**
  * Helper function to add some custom schema fields to Entity for testing.
@@ -89,6 +91,8 @@ describe("DefaultValueService", () => {
       "initEntityForm",
       "onFormValueChanges",
     ]);
+    // @ts-ignore
+    mockInheritedValueService["mode"] = "inherited-from-referenced-entity";
 
     TestBed.configureTestingModule({
       providers: [
@@ -98,7 +102,21 @@ describe("DefaultValueService", () => {
           multi: true,
         },
         CurrentUserSubject,
-        { provide: InheritedValueService, useValue: mockInheritedValueService },
+        {
+          provide: DefaultValueStrategy,
+          useClass: StaticDefaultValueService,
+          multi: true,
+        },
+        {
+          provide: DefaultValueStrategy,
+          useClass: DynamicPlaceholderValueService,
+          multi: true,
+        },
+        {
+          provide: DefaultValueStrategy,
+          useValue: mockInheritedValueService,
+          multi: true,
+        },
         {
           provide: ConfigurableEnumService,
           useValue: createTestingConfigurableEnumService(),
@@ -268,8 +286,16 @@ describe("DefaultValueService", () => {
   });
 
   it("should call service on dynamic mode", fakeAsync(() => {
-    const setDefaultValueSpy = spyOn(
-      TestBed.inject(DynamicPlaceholderValueService),
+    const strategies: DefaultValueStrategy[] = TestBed.inject(
+      DefaultValueStrategy,
+    ) as any;
+
+    const dynamicStrategySpy = spyOn(
+      strategies.find((s) => s instanceof DynamicPlaceholderValueService),
+      "setDefaultValue",
+    );
+    const staticStrategySpy = spyOn(
+      strategies.find((s) => s instanceof StaticDefaultValueService),
       "setDefaultValue",
     );
 
@@ -286,7 +312,8 @@ describe("DefaultValueService", () => {
     tick();
 
     // then
-    expect(setDefaultValueSpy).toHaveBeenCalled();
+    expect(dynamicStrategySpy).toHaveBeenCalled();
+    expect(staticStrategySpy).not.toHaveBeenCalled();
   }));
 
   it("should call service on inherited mode", fakeAsync(() => {

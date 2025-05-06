@@ -1,9 +1,12 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityForm } from "../../common-components/entity-form/entity-form.service";
 import { Entity } from "../../entity/model/entity";
-import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import {
+  AdminDefaultValueContext,
+  DefaultValueStrategy,
+} from "../default-value-strategy.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { DefaultValueMode } from "../default-value-config";
 import { DefaultValueHint } from "../default-value-service/default-value.service";
@@ -21,8 +24,21 @@ import { DefaultValueConfigInherited } from "./default-value-config-inherited";
   providedIn: "root",
 })
 export class InheritedValueService extends DefaultValueStrategy {
-  constructor(private entityMapper: EntityMapperService) {
-    super();
+  override readonly mode = "inherited-from-referenced-entity";
+
+  private entityMapper = inject(EntityMapperService);
+
+  override async getAdminUI(): Promise<AdminDefaultValueContext> {
+    const component = await import(
+      "./admin-default-value-inherited/admin-default-value-inherited.component"
+    ).then((c) => c.AdminDefaultValueInheritedComponent);
+
+    return {
+      mode: this.mode,
+      component,
+      icon: "circle-nodes",
+      description: $localize`value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)`,
+    };
   }
 
   override async initEntityForm<T extends Entity>(form: EntityForm<T>) {
@@ -36,7 +52,7 @@ export class InheritedValueService extends DefaultValueStrategy {
    * @param fieldConfig
    * @param form
    */
-  async setDefaultValue(
+  override async setDefaultValue(
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
     form: EntityForm<any>,
@@ -154,7 +170,7 @@ export class InheritedValueService extends DefaultValueStrategy {
    * @param form
    * @param field
    */
-  getDefaultValueUiHint<T extends Entity>(
+  override getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
     field: FormFieldConfig,
   ): DefaultValueHint | undefined {

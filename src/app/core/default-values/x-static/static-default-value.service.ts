@@ -1,7 +1,10 @@
 import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import {
+  AdminDefaultValueContext,
+  DefaultValueStrategy,
+} from "../default-value-strategy.interface";
 import { DefaultValueConfigStatic } from "./default-value-config-static";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
@@ -12,9 +15,24 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
   providedIn: "root",
 })
 export class StaticDefaultValueService extends DefaultValueStrategy {
+  override readonly mode = "static";
+
   private entitySchemaService = inject(EntitySchemaService);
 
-  setDefaultValue(
+  override async getAdminUI(): Promise<AdminDefaultValueContext> {
+    const component = await import(
+      "./admin-default-value-static/admin-default-value-static.component"
+    ).then((c) => c.AdminDefaultValueStaticComponent);
+
+    return {
+      mode: this.mode,
+      component,
+      icon: "circle",
+      description: $localize`simple, fixed default value`,
+    };
+  }
+
+  override setDefaultValue(
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
   ) {

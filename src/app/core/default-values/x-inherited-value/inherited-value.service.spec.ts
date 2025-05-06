@@ -7,7 +7,6 @@ import {
   cleanUpTemporarySchemaFields,
   getDefaultInheritedForm,
 } from "../default-value-service/default-value.service.spec";
-import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { FormControl, FormGroup } from "@angular/forms";
 import { EntityForm } from "../../common-components/entity-form/entity-form.service";
 import { DefaultValueService } from "../default-value-service/default-value.service";
@@ -16,6 +15,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { Config } from "../../config/config";
 import { Subject } from "rxjs";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
@@ -29,12 +29,17 @@ describe("InheritedValueService", () => {
     mockEntityMapperService.receiveUpdates.and.returnValue(updateSubject);
     TestBed.configureTestingModule({
       providers: [
+        {
+          provide: DefaultValueStrategy,
+          useClass: InheritedValueService,
+          multi: true,
+        },
         { provide: EntityMapperService, useValue: mockEntityMapperService },
-        { provide: DynamicPlaceholderValueService, useValue: null },
         { provide: EntityAbility, useValue: mockAbility },
       ],
     });
-    service = TestBed.inject(InheritedValueService);
+    // @ts-ignore
+    service = TestBed.inject<DefaultValueStrategy[]>(DefaultValueStrategy)[0];
     defaultValueService = TestBed.inject(DefaultValueService);
   });
 

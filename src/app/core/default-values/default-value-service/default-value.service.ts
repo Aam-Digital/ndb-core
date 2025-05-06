@@ -1,11 +1,10 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { EntityForm } from "../../common-components/entity-form/entity-form.service";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
-import { InheritedValueService } from "../x-inherited-value/inherited-value.service";
-import { StaticDefaultValueService } from "../x-static/static-default-value.service";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import { Logging } from "../../logging/logging.service";
 
 /**
  * Handle default values like the current date or user for forms when editing an Entity.
@@ -15,9 +14,8 @@ import { StaticDefaultValueService } from "../x-static/static-default-value.serv
 })
 export class DefaultValueService {
   constructor(
-    private staticDefaultValueService: StaticDefaultValueService,
-    private dynamicPlaceholderValueService: DynamicPlaceholderValueService,
-    private inheritedValueService: InheritedValueService,
+    @Inject(DefaultValueStrategy)
+    private defaultValueStrategies: DefaultValueStrategy[],
   ) {}
 
   async handleEntityForm<T extends Entity>(
@@ -28,10 +26,16 @@ export class DefaultValueService {
       return;
     }
 
-    await this.inheritedValueService.initEntityForm(form);
+    for (const strategy of this.defaultValueStrategies) {
+      await strategy.initEntityForm(form);
+    }
     this.enableChangeListener(form);
 
     for (const fieldConfig of form.fieldConfigs) {
+      if (!fieldConfig.defaultValue) {
+        continue;
+      }
+
       let targetFormControl = form.formGroup.get(fieldConfig.id);
       if (
         !this.preConditionsFulfilled(
@@ -42,26 +46,16 @@ export class DefaultValueService {
       ) {
         continue;
       }
-      switch (fieldConfig.defaultValue?.mode) {
-        case "static":
-          this.staticDefaultValueService.setDefaultValue(
-            targetFormControl,
-            fieldConfig,
-          );
-          break;
-        case "dynamic":
-          this.dynamicPlaceholderValueService.setDefaultValue(
-            targetFormControl,
-            fieldConfig,
-          );
-          break;
-        case "inherited-from-referenced-entity":
-          await this.inheritedValueService.setDefaultValue(
-            targetFormControl,
-            fieldConfig,
-            form,
-          );
-          break;
+
+      const strategy = this.defaultValueStrategies.find(
+        (s) => s.mode === fieldConfig.defaultValue?.mode,
+      );
+      if (strategy) {
+        strategy.setDefaultValue(targetFormControl, fieldConfig, form);
+      } else {
+        Logging.warn(
+          `DefaultValue strategy "${fieldConfig.defaultValue?.mode}" not found`,
+        );
       }
     }
   }
@@ -98,7 +92,7 @@ export class DefaultValueService {
     form.watcher.set(
       "formGroupValueChanges",
       form.formGroup.valueChanges.subscribe(async (change) =>
-        this.inheritedValueService.onFormValueChanges(form),
+        this.defaultValueStrategies.forEach((s) => s.onFormValueChanges(form)),
       ),
     );
   }
@@ -112,14 +106,11 @@ export class DefaultValueService {
     }
 
     const fieldConfig = form?.fieldConfigs?.find((x) => x.id === fieldId);
-    if (
-      fieldConfig?.defaultValue?.mode === "inherited-from-referenced-entity"
-    ) {
-      return this.inheritedValueService.getDefaultValueUiHint(
-        form,
-        fieldConfig,
-      );
-    }
+    const strategy = this.defaultValueStrategies.find(
+      (s) => s.mode === fieldConfig.defaultValue?.mode,
+    );
+
+    return strategy?.getDefaultValueUiHint(form, fieldConfig);
   }
 }
 

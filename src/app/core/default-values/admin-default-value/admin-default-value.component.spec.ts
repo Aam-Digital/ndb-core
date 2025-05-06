@@ -6,6 +6,10 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../entity/model/entity";
 import { DefaultValueConfig } from "../default-value-config";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import { StaticDefaultValueService } from "../x-static/static-default-value.service";
+import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
 describe("AdminDefaultValueComponent", () => {
   let component: AdminDefaultValueComponent;
@@ -18,7 +22,20 @@ describe("AdminDefaultValueComponent", () => {
         FontAwesomeTestingModule,
         NoopAnimationsModule,
       ],
-      providers: [EntityRegistry],
+      providers: [
+        EntityRegistry,
+        {
+          provide: DefaultValueStrategy,
+          useClass: StaticDefaultValueService,
+          multi: true,
+        },
+        {
+          provide: DefaultValueStrategy,
+          useClass: DynamicPlaceholderValueService,
+          multi: true,
+        },
+        CurrentUserSubject,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AdminDefaultValueComponent);

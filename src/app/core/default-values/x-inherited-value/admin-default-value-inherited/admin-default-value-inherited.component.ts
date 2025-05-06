@@ -101,7 +101,7 @@ export class AdminDefaultValueInheritedComponent
       .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
       .map(([id]) => id);
 
-    setTimeout(() => this.localAttributeSelectElement.open(), 200);
+    setTimeout(() => this.localAttributeSelectElement?.open(), 200);
   }
 
   private updateCurrentInheritanceFields(
@@ -136,7 +136,7 @@ export class AdminDefaultValueInheritedComponent
     } else {
       // reset and automatically open the field select dropdown
       this.form.get("field").setValue(null);
-      setTimeout(() => this.inheritedFieldSelectElement.open());
+      setTimeout(() => this.inheritedFieldSelectElement?.open());
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import {
   EntitySchemaField,
@@ -6,7 +6,10 @@ import {
 } from "../../entity/schema/entity-schema-field";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { Logging } from "../../logging/logging.service";
-import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import {
+  AdminDefaultValueContext,
+  DefaultValueStrategy,
+} from "../default-value-strategy.interface";
 import { DefaultValueConfigDynamic } from "./default-value-config-dynamic";
 
 /**
@@ -16,11 +19,24 @@ import { DefaultValueConfigDynamic } from "./default-value-config-dynamic";
   providedIn: "root",
 })
 export class DynamicPlaceholderValueService extends DefaultValueStrategy {
-  constructor(private currentUser: CurrentUserSubject) {
-    super();
+  override readonly mode = "dynamic";
+
+  private currentUser = inject(CurrentUserSubject);
+
+  override async getAdminUI(): Promise<AdminDefaultValueContext> {
+    const component = await import(
+      "./admin-default-value-dynamic/admin-default-value-dynamic.component"
+    ).then((c) => c.AdminDefaultValueDynamicComponent);
+
+    return {
+      mode: this.mode,
+      component: component,
+      icon: "circle-left",
+      description: $localize`dynamic placeholder (e.g. current date or user)`,
+    };
   }
 
-  setDefaultValue(
+  override setDefaultValue(
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
   ) {

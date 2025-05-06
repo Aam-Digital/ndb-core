@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { DefaultValueConfig } from "../default-value-config";
 import {
   MatError,
@@ -18,6 +18,10 @@ import {
   MatButtonToggle,
   MatButtonToggleGroup,
 } from "@angular/material/button-toggle";
+import {
+  AdminDefaultValueContext,
+  DefaultValueStrategy,
+} from "../default-value-strategy.interface";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
@@ -63,8 +67,21 @@ export class AdminDefaultValueComponent
 
   form: FormGroup;
 
-  ngOnInit() {
+  private defaultValueStrategies = inject(
+    DefaultValueStrategy,
+  ) as unknown as DefaultValueStrategy[];
+
+  modes: AdminDefaultValueContext[];
+
+  async ngOnInit() {
     this.initForm();
+    await this.initAvailableModes();
+  }
+
+  private async initAvailableModes() {
+    this.modes = await Promise.all(
+      this.defaultValueStrategies.map((strategy) => strategy.getAdminUI()),
+    );
   }
 
   private initForm() {

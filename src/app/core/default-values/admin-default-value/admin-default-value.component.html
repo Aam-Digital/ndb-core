@@ -29,29 +29,14 @@
       hideSingleSelectionIndicator
       style="flex: none"
     >
-      <mat-button-toggle
-        value="static"
-        matTooltip="simple, fixed default value"
-        i18n-matTooltip
-      >
-        <fa-icon icon="circle"></fa-icon>
-      </mat-button-toggle>
-
-      <mat-button-toggle
-        value="dynamic"
-        matTooltip="dynamic placeholder (e.g. current date or user)"
-        i18n-matTooltip
-      >
-        <fa-icon icon="circle-left"></fa-icon>
-      </mat-button-toggle>
-
-      <mat-button-toggle
-        value="inherited-from-referenced-entity"
-        matTooltip="value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)"
-        i18n-matTooltip
-      >
-        <fa-icon icon="circle-nodes"></fa-icon>
-      </mat-button-toggle>
+      @for (strategy of modes; track strategy.mode) {
+        <mat-button-toggle
+          [value]="strategy.mode"
+          [matTooltip]="strategy.description"
+        >
+          <fa-icon [icon]="strategy.icon"></fa-icon>
+        </mat-button-toggle>
+      }
     </mat-button-toggle-group>
 
     <button

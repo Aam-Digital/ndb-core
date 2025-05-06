@@ -5,11 +5,9 @@ import { Entity } from "../../entity/model/entity";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { testDefaultValueCase } from "../default-value-service/default-value.service.spec";
 import { DefaultValueService } from "../default-value-service/default-value.service";
-import { InheritedValueService } from "../x-inherited-value/inherited-value.service";
-import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
 
-describe("StaticDefaultValueService", () => {
+describe("DynamicPlaceholderValueService", () => {
   let service: DynamicPlaceholderValueService;
   let defaultValueService: DefaultValueService;
 
@@ -18,16 +16,14 @@ describe("StaticDefaultValueService", () => {
       providers: [
         CurrentUserSubject,
         {
-          provide: InheritedValueService,
-          useValue: jasmine.createSpyObj(["initEntityForm"]),
-        },
-        {
-          provide: ConfigurableEnumService,
-          useValue: createTestingConfigurableEnumService(),
+          provide: DefaultValueStrategy,
+          useClass: DynamicPlaceholderValueService,
+          multi: true,
         },
       ],
     });
-    service = TestBed.inject(DynamicPlaceholderValueService);
+    // @ts-ignore
+    service = TestBed.inject<DefaultValueStrategy[]>(DefaultValueStrategy)[0];
     defaultValueService = TestBed.inject(DefaultValueService);
   });
 
