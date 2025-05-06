@@ -402,7 +402,7 @@ export const defaultJsonConfig = {
               component: "Form",
               config: {
                 fieldGroups: [
-                  { fields: ["name", "privateSchool", "parentSchool"] },
+                  { fields: ["name", "privateSchool"] },
                   { fields: ["address", "phone", "website"] },
                   { fields: ["language", "timing"] },
                   { fields: ["remarks"] }

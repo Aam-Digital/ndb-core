@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import {
   FormArray,
   FormBuilder,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { DefaultValueOptionsComponent } from "app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component";
+import { AdminDefaultValueComponent } from "../../../core/default-values/admin-default-value/admin-default-value.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EditComponent } from "app/core/entity/default-datatype/edit-component";
 import { EntityConstructor } from "app/core/entity/model/entity";
@@ -24,7 +24,7 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
   selector: "app-edit-prefilled-values",
   standalone: true,
   imports: [
-    DefaultValueOptionsComponent,
+    AdminDefaultValueComponent,
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,

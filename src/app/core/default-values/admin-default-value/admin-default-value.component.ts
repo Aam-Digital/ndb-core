@@ -1,17 +1,17 @@
 import {
   Component,
   ElementRef,
-  EventEmitter,
+  inject,
   Input,
   OnChanges,
-  Output,
+  OnInit,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
 import {
   DefaultValueConfig,
   DefaultValueMode,
-} from "../../../../entity/schema/default-value-config";
+} from "../../entity/schema/default-value-config";
 import {
   MatError,
   MatFormField,
@@ -34,15 +34,20 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
 import { MatOption, MatSelect } from "@angular/material/select";
-import { asArray } from "app/utils/asArray";
-import { EntityFieldLabelComponent } from "../../../../common-components/entity-field-label/entity-field-label.component";
-import { EntityConstructor } from "../../../../entity/model/entity";
-import { EntityRegistry } from "../../../../entity/database-entity.decorator";
-import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
+import { asArray } from "../../../utils/asArray";
+import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
+import { EntityConstructor } from "../../entity/model/entity";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { filter } from "rxjs/operators";
+import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 
+/**
+ * Admin UI component used in AdminEntityFieldComponent dialog
+ * to let users configure different defaultValue modes for an Entity field.
+ */
 @Component({
-  selector: "app-default-value-options",
+  selector: "app-admin-default-value",
   imports: [
     MatFormField,
     MatLabel,
@@ -60,14 +65,16 @@ import { filter } from "rxjs/operators";
     MatOption,
     EntityFieldLabelComponent,
   ],
-  templateUrl: "./default-value-options.component.html",
-  styleUrl: "./default-value-options.component.scss",
+  templateUrl: "./admin-default-value.component.html",
+  styleUrl: "./admin-default-value.component.scss",
 })
-export class DefaultValueOptionsComponent implements OnChanges {
-  @Input() value: DefaultValueConfig;
-  @Output() valueChange = new EventEmitter<DefaultValueConfig>();
-
+export class AdminDefaultValueComponent
+  extends CustomFormControlDirective<DefaultValueConfig>
+  implements OnInit, OnChanges
+{
   @Input() entityType: EntityConstructor;
+
+  private entityRegistry = inject(EntityRegistry);
 
   form: FormGroup;
   mode: DefaultValueMode;
@@ -82,7 +89,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     availableFields: string[];
   };
 
-  constructor(private entityRegistry: EntityRegistry) {
+  ngOnInit() {
     this.initForm();
   }
 
@@ -132,13 +139,12 @@ export class DefaultValueOptionsComponent implements OnChanges {
           return this.form.valid;
         }),
       )
-      .subscribe(() => this.emitValue());
+      .subscribe(() => this.updateValue());
+
+    this.updateForm(this.value);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.value) {
-      this.updateForm(this.value);
-    }
     if (changes.entityType) {
       this.updateAvailableInheritanceAttributes();
     }
@@ -161,7 +167,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form.get("field").setValue(null);
   }
 
-  private emitValue() {
+  private updateValue() {
     let newConfigValue: DefaultValueConfig | undefined = undefined;
 
     switch (this.mode) {
@@ -183,7 +189,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
 
     if (JSON.stringify(newConfigValue) !== JSON.stringify(this.value)) {
       this.value = newConfigValue;
-      this.valueChange.emit(newConfigValue);
     }
   }
 

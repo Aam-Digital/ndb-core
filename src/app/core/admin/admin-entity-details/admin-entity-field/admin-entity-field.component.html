@@ -150,14 +150,11 @@
       <mat-tab label="Advanced Options & Validation" i18n-label>
         <div class="grid-layout-wide margin-top-regular">
           <div class="entity-form-cell">
-            <app-default-value-options
-              [value]="entitySchemaField.defaultValue"
-              (valueChange)="
-                schemaFieldsForm.get('defaultValue').setValue($event)
-              "
+            <app-admin-default-value
+              formControlName="defaultValue"
               [entityType]="entityType"
             >
-            </app-default-value-options>
+            </app-admin-default-value>
 
             <app-anonymize-options
               [value]="entitySchemaField.anonymize"

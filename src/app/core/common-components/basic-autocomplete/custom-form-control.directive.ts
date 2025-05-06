@@ -142,6 +142,7 @@ export abstract class CustomFormControlDirective<T>
 
   onContainerClick(event: MouseEvent) {}
 
+  /** @deprecated the this.value setter seems to already do the same? */
   writeValue(val: T): void {
     this.value = val;
     this.valueChange.emit(val);

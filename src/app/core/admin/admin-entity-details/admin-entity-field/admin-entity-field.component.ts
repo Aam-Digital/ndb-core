@@ -40,7 +40,7 @@ import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
 import { MatCheckbox } from "@angular/material/checkbox";
-import { DefaultValueOptionsComponent } from "./default-value-options/default-value-options.component";
+import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 
 /**
@@ -69,7 +69,7 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
     ConfigureEntityFieldValidatorComponent,
     AnonymizeOptionsComponent,
     MatCheckbox,
-    DefaultValueOptionsComponent,
+    AdminDefaultValueComponent,
     EntityTypeSelectComponent,
   ],
 })

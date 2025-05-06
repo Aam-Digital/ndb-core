@@ -1,28 +1,28 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DefaultValueOptionsComponent } from "./default-value-options.component";
-import { EntityRegistry } from "../../../../entity/database-entity.decorator";
+import { AdminDefaultValueComponent } from "./admin-default-value.component";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
-import { Entity, EntityConstructor } from "../../../../entity/model/entity";
-import { DefaultValueConfig } from "../../../../entity/schema/default-value-config";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { DefaultValueConfig } from "../../entity/schema/default-value-config";
 
-describe("DefaultValueOptionsComponent", () => {
-  let component: DefaultValueOptionsComponent;
-  let fixture: ComponentFixture<DefaultValueOptionsComponent>;
+describe("AdminDefaultValueComponent", () => {
+  let component: AdminDefaultValueComponent;
+  let fixture: ComponentFixture<AdminDefaultValueComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        DefaultValueOptionsComponent,
+        AdminDefaultValueComponent,
         FontAwesomeTestingModule,
         NoopAnimationsModule,
       ],
       providers: [EntityRegistry],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DefaultValueOptionsComponent);
+    fixture = TestBed.createComponent(AdminDefaultValueComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
 
@@ -133,7 +133,7 @@ describe("DefaultValueOptionsComponent", () => {
 
   it("should apply input values to form", () => {
     component.value = { mode: "dynamic", value: "Test value" };
-    component.ngOnChanges({ value: { currentValue: component.value } as any });
+    component.ngOnInit();
     expect(component.form.get("mode").value).toEqual("dynamic");
     expect(component.form.get("value").value).toEqual("Test value");
 
@@ -142,7 +142,7 @@ describe("DefaultValueOptionsComponent", () => {
       localAttribute: "x",
       field: "y",
     } as DefaultValueConfig;
-    component.ngOnChanges({ value: { currentValue: component.value } as any });
+    component.ngOnInit();
     expect(component.form.get("localAttribute").value).toEqual("x");
     expect(component.form.get("field").value).toEqual("y");
   });
