@@ -1,17 +1,19 @@
-import { EntityForm } from "../common-components/entity-form/entity-form.service";
-import { Entity } from "../entity/model/entity";
+import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { Entity } from "../../entity/model/entity";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
-import { CurrentUserSubject } from "../session/current-user-subject";
-import { EntitySchemaField } from "../entity/schema/entity-schema-field";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "./default-value.service";
-import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
-import { InheritedValueService } from "./inherited-value.service";
+import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
+import { InheritedValueService } from "../x-inherited-value/inherited-value.service";
 import { EventEmitter } from "@angular/core";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
-import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
-import { ConfigurableEnumDatatype } from "../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import { StaticDefaultValueService } from "../x-static/static-default-value.service";
 
 /**
  * Helper function to add some custom schema fields to Entity for testing.
@@ -89,6 +91,8 @@ describe("DefaultValueService", () => {
       "initEntityForm",
       "onFormValueChanges",
     ]);
+    // @ts-ignore
+    mockInheritedValueService["mode"] = "inherited-from-referenced-entity";
 
     TestBed.configureTestingModule({
       providers: [
@@ -98,7 +102,21 @@ describe("DefaultValueService", () => {
           multi: true,
         },
         CurrentUserSubject,
-        { provide: InheritedValueService, useValue: mockInheritedValueService },
+        {
+          provide: DefaultValueStrategy,
+          useClass: StaticDefaultValueService,
+          multi: true,
+        },
+        {
+          provide: DefaultValueStrategy,
+          useClass: DynamicPlaceholderValueService,
+          multi: true,
+        },
+        {
+          provide: DefaultValueStrategy,
+          useValue: mockInheritedValueService,
+          multi: true,
+        },
         {
           provide: ConfigurableEnumService,
           useValue: createTestingConfigurableEnumService(),
@@ -122,7 +140,7 @@ describe("DefaultValueService", () => {
       undefinedField: {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
     });
@@ -148,7 +166,7 @@ describe("DefaultValueService", () => {
       additional: enumId,
       defaultValue: {
         mode: "static",
-        value: "M",
+        config: { value: "M" },
       },
     };
 
@@ -170,7 +188,7 @@ describe("DefaultValueService", () => {
       isArray: true,
       defaultValue: {
         mode: "static",
-        value: [testEnumValue.id],
+        config: { value: [testEnumValue.id] },
       },
     };
     testDefaultValueCase(service, fieldConfig, [testEnumValue]);
@@ -182,7 +200,7 @@ describe("DefaultValueService", () => {
       isArray: true,
       defaultValue: {
         mode: "static",
-        value: testEnumValue.id, // should also work with single value
+        config: { value: testEnumValue.id }, // should also work with single value
       },
     };
     testDefaultValueCase(service, fieldConfig2, [testEnumValue]);
@@ -195,7 +213,7 @@ describe("DefaultValueService", () => {
       field: {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
     });
@@ -217,7 +235,7 @@ describe("DefaultValueService", () => {
       field: {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
     });
@@ -238,7 +256,7 @@ describe("DefaultValueService", () => {
       field: {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
     });
@@ -260,7 +278,7 @@ describe("DefaultValueService", () => {
       {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
       "default_value",
@@ -268,8 +286,16 @@ describe("DefaultValueService", () => {
   });
 
   it("should call service on dynamic mode", fakeAsync(() => {
-    const setDefaultValueSpy = spyOn(
-      TestBed.inject(DynamicPlaceholderValueService),
+    const strategies: DefaultValueStrategy[] = TestBed.inject(
+      DefaultValueStrategy,
+    ) as any;
+
+    const dynamicStrategySpy = spyOn(
+      strategies.find((s) => s instanceof DynamicPlaceholderValueService),
+      "setDefaultValue",
+    );
+    const staticStrategySpy = spyOn(
+      strategies.find((s) => s instanceof StaticDefaultValueService),
       "setDefaultValue",
     );
 
@@ -278,7 +304,7 @@ describe("DefaultValueService", () => {
       {
         defaultValue: {
           mode: "dynamic",
-          value: "x",
+          config: { value: "x" },
         },
       },
       null,
@@ -286,7 +312,8 @@ describe("DefaultValueService", () => {
     tick();
 
     // then
-    expect(setDefaultValueSpy).toHaveBeenCalled();
+    expect(dynamicStrategySpy).toHaveBeenCalled();
+    expect(staticStrategySpy).not.toHaveBeenCalled();
   }));
 
   it("should call service on inherited mode", fakeAsync(() => {
@@ -295,8 +322,10 @@ describe("DefaultValueService", () => {
       {
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
       null,

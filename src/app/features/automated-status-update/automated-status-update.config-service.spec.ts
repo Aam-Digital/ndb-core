@@ -10,17 +10,17 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 import {
   DatabaseEntity,
   entityRegistry,
+  EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { DatabaseField } from "app/core/entity/database-field.decorator";
 import { Entity } from "app/core/entity/model/entity";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { of } from "rxjs";
 import {
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
-import { DefaultValueMode } from "app/core/entity/schema/default-value-config";
+import { DefaultValueMode } from "../../core/default-values/default-value-config";
 
 const mockAutomnatedConfig = {
   mode: "updated-from-referencing-entity" as DefaultValueMode,
@@ -34,6 +34,7 @@ const mockAutomnatedConfig = {
     },
   },
 };
+
 @DatabaseEntity("Mentee")
 class Mentee extends Entity {
   @DatabaseField()

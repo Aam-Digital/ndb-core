@@ -96,6 +96,7 @@ import { AngularFireModule } from "@angular/fire/compat";
 import { FirebaseConfiguration } from "./features/notification/notification-config.interface";
 import { UserAdminService } from "./core/user/user-admin-service/user-admin.service";
 import { KeycloakAdminService } from "./core/user/user-admin-service/keycloak-admin.service";
+import { defaultValueStrategyProviders } from "./core/default-values/standard-default-value-strategies";
 
 /**
  * Main entry point of the application.
@@ -184,6 +185,7 @@ import { KeycloakAdminService } from "./core/user/user-admin-service/keycloak-ad
     APP_INITIALIZER_DEMO_DATA,
     provideHttpClient(withInterceptorsFromDi()),
     NotificationService,
+    ...defaultValueStrategyProviders,
   ],
 })
 export class AppModule {

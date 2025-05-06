@@ -36,7 +36,7 @@ describe("PublicFormComponent", () => {
         fields: [
           {
             id: "name",
-            defaultValue: { mode: "static", value: "default name" },
+            defaultValue: { mode: "static", config: { value: "default name" } },
           },
           "category",
         ],
@@ -142,7 +142,7 @@ describe("PublicFormComponent", () => {
         fields: [
           {
             id: "name",
-            defaultValue: { mode: "static", value: "default name" },
+            defaultValue: { mode: "static", config: { value: "default name" } },
           },
         ],
       },
@@ -209,7 +209,7 @@ describe("PublicFormComponent", () => {
     config.prefilledFields = [
       {
         id: "other",
-        defaultValue: { mode: "static", value: "default value" },
+        defaultValue: { mode: "static", config: { value: "default value" } },
         hideFromForm: true,
       },
     ];
@@ -221,7 +221,7 @@ describe("PublicFormComponent", () => {
     expect(lastColumn?.fields).toContain(
       jasmine.objectContaining({
         id: "other",
-        defaultValue: { mode: "static", value: "default value" },
+        defaultValue: { mode: "static", config: { value: "default value" } },
         hideFromForm: true,
       }),
     );
@@ -234,7 +234,7 @@ describe("PublicFormComponent", () => {
         fields: [
           {
             id: "other",
-            defaultValue: { mode: "static", value: "base default" },
+            defaultValue: { mode: "static", config: { value: "base default" } },
           },
         ],
       },
@@ -242,7 +242,10 @@ describe("PublicFormComponent", () => {
     config.prefilledFields = [
       {
         id: "other",
-        defaultValue: { mode: "static", value: "prefilled default" },
+        defaultValue: {
+          mode: "static",
+          config: { value: "prefilled default" },
+        },
         hideFromForm: true,
       },
     ];

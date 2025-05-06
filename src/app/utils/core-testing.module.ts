@@ -12,6 +12,7 @@ import { EntityActionsService } from "../core/entity/entity-actions/entity-actio
 import { ConfigurableEnumModule } from "../core/basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
+import { defaultValueStrategyProviders } from "../core/default-values/standard-default-value-strategies";
 
 /**
  * A basic module that can be imported in unit tests to provide default datatypes.
@@ -33,6 +34,7 @@ import { EntitySchemaService } from "../core/entity/schema/entity-schema.service
     EntitySchemaService,
     EntityAbility,
     ComponentRegistry,
+    ...defaultValueStrategyProviders,
   ],
 })
 export class CoreTestingModule {

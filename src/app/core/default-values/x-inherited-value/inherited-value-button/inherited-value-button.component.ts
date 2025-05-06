@@ -1,14 +1,14 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { EntityForm } from "../../common-components/entity-form/entity-form.service";
-import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
+import { EntityForm } from "../../../common-components/entity-form/entity-form.service";
+import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { TemplateTooltipDirective } from "../../common-components/template-tooltip/template-tooltip.directive";
-import { Entity } from "../../entity/model/entity";
+import { TemplateTooltipDirective } from "../../../common-components/template-tooltip/template-tooltip.directive";
+import { Entity } from "../../../entity/model/entity";
 import {
   DefaultValueHint,
   DefaultValueService,
-} from "../default-value.service";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+} from "../../default-value-service/default-value.service";
+import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import { MatIconButton } from "@angular/material/button";
 
 /**

@@ -1,13 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
-import { Entity } from "../entity/model/entity";
-import { CurrentUserSubject } from "../session/current-user-subject";
-import { testDefaultValueCase } from "./default-value.service.spec";
-import { DefaultValueService } from "./default-value.service";
-import { InheritedValueService } from "./inherited-value.service";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
+import { Entity } from "../../entity/model/entity";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { testDefaultValueCase } from "../default-value-service/default-value.service.spec";
+import { DefaultValueService } from "../default-value-service/default-value.service";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
 
 describe("DynamicPlaceholderValueService", () => {
   let service: DynamicPlaceholderValueService;
@@ -18,16 +16,14 @@ describe("DynamicPlaceholderValueService", () => {
       providers: [
         CurrentUserSubject,
         {
-          provide: InheritedValueService,
-          useValue: jasmine.createSpyObj(["initEntityForm"]),
-        },
-        {
-          provide: ConfigurableEnumService,
-          useValue: createTestingConfigurableEnumService(),
+          provide: DefaultValueStrategy,
+          useClass: DynamicPlaceholderValueService,
+          multi: true,
         },
       ],
     });
-    service = TestBed.inject(DynamicPlaceholderValueService);
+    // @ts-ignore
+    service = TestBed.inject<DefaultValueStrategy[]>(DefaultValueStrategy)[0];
     defaultValueService = TestBed.inject(DefaultValueService);
   });
 
@@ -41,7 +37,7 @@ describe("DynamicPlaceholderValueService", () => {
       {
         defaultValue: {
           mode: "dynamic",
-          value: "invalid-placeholder",
+          config: { value: "invalid-placeholder" },
         },
       },
       null,
@@ -57,7 +53,7 @@ describe("DynamicPlaceholderValueService", () => {
       {
         defaultValue: {
           mode: "dynamic",
-          value: "$current_user",
+          config: { value: "$current_user" },
         },
       },
       user.getId(),
@@ -73,7 +69,7 @@ describe("DynamicPlaceholderValueService", () => {
       {
         defaultValue: {
           mode: "dynamic",
-          value: "$now",
+          config: { value: "$now" },
         },
       },
       mockDate,

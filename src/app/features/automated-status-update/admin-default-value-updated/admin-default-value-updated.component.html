@@ -1,0 +1,33 @@
+<div>
+  <mat-select formControlName="relatedEntity" #relatedEntitySelect>
+    <div
+      class="select-dropdown-header"
+      matTooltip="Select entity which you want to set automated rule mapping"
+      i18n-matTooltip
+      i18n
+    >
+      Select Related Entity:
+    </div>
+    @for (entity of relatedEntity; track entity) {
+      <mat-option [value]="entity.entity">
+        <app-entity-field-label
+          [field]="entity.label"
+          [entityType]="entity.entity"
+        ></app-entity-field-label>
+      </mat-option>
+    }
+  </mat-select>
+
+  <button
+    mat-raised-button
+    class="configure-button"
+    (click)="
+      $event.stopPropagation();
+      openAutomatedMappingDialog(relatedEntitySelect.value)
+    "
+    [disabled]="!relatedEntitySelect.value"
+    i18n
+  >
+    Configure Automation
+  </button>
+</div>
