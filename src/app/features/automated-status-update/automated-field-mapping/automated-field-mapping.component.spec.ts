@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AutomatedFieldMappingComponent } from "./automated-field-mapping.component";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AutomatedFieldMappingComponent", () => {
   let component: AutomatedFieldMappingComponent;
@@ -18,7 +19,7 @@ describe("AutomatedFieldMappingComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AutomatedFieldMappingComponent],
+      imports: [AutomatedFieldMappingComponent, FontAwesomeTestingModule],
       providers: [
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: mockDialogData },
