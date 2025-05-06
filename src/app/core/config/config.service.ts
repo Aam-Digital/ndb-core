@@ -8,7 +8,7 @@ import {
   PLACEHOLDERS,
 } from "../entity/schema/entity-schema-field";
 import { MenuItem } from "../ui/navigation/menu-item";
-import { DefaultValueConfig } from "../entity/schema/default-value-config";
+import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 import { Logging } from "../logging/logging.service";

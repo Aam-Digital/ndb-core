@@ -20,7 +20,7 @@ import {
   FormFieldConfig,
   toFormFieldConfig,
 } from "app/core/common-components/entity-form/FormConfig";
-import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
+import { DefaultValueConfig } from "../../core/default-values/default-value-config";
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";

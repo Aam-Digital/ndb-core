@@ -6,7 +6,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { DefaultValueConfig } from "../../entity/schema/default-value-config";
+import { DefaultValueConfig } from "../default-value-config";
 
 describe("AdminDefaultValueComponent", () => {
   let component: AdminDefaultValueComponent;

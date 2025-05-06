@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Entity } from "../entity/model/entity";
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
 import { EntitySchema } from "../entity/schema/entity-schema";
-import { DefaultValueConfig } from "../entity/schema/default-value-config";
+import { DefaultValueConfig } from "./default-value-config";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";

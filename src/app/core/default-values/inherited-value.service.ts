@@ -8,7 +8,7 @@ import {
   getConfigsByMode,
 } from "./default-value-strategy.interface";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { DefaultValueConfig } from "../entity/schema/default-value-config";
+import { DefaultValueConfig } from "./default-value-config";
 import { DefaultValueHint } from "./default-value.service";
 import { asArray } from "app/utils/asArray";
 import { FormFieldConfig } from "../common-components/entity-form/FormConfig";

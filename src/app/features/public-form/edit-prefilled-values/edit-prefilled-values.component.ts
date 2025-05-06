@@ -13,7 +13,7 @@ import { EntityConstructor } from "app/core/entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DefaultValueConfig } from "app/core/entity/schema/default-value-config";
+import { DefaultValueConfig } from "../../../core/default-values/default-value-config";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";

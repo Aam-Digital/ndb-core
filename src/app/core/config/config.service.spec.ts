@@ -5,7 +5,7 @@ import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
 import { EntityConfig } from "../entity/entity-config";
-import { DefaultValueConfig } from "../entity/schema/default-value-config";
+import { DefaultValueConfig } from "../default-values/default-value-config";
 
 describe("ConfigService", () => {
   let service: ConfigService;

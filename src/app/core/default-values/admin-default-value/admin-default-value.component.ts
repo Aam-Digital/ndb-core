@@ -8,10 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import {
-  DefaultValueConfig,
-  DefaultValueMode,
-} from "../../entity/schema/default-value-config";
+import { DefaultValueConfig, DefaultValueMode } from "../default-value-config";
 import {
   MatError,
   MatFormField,
