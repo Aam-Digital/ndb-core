@@ -3,10 +3,10 @@ import { AbstractControl } from "@angular/forms";
 import {
   EntitySchemaField,
   PLACEHOLDERS,
-} from "../entity/schema/entity-schema-field";
-import { CurrentUserSubject } from "../session/current-user-subject";
-import { Logging } from "../logging/logging.service";
-import { DefaultValueStrategy } from "./default-value-strategy.interface";
+} from "../../entity/schema/entity-schema-field";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { Logging } from "../../logging/logging.service";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
 
 /**
  * A simple default-value strategy that replaces placeholder strings with dynamic values, like the current date or user.

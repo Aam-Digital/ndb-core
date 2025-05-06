@@ -1,13 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
-import { Entity } from "../entity/model/entity";
-import { CurrentUserSubject } from "../session/current-user-subject";
-import { testDefaultValueCase } from "./default-value.service.spec";
-import { DefaultValueService } from "./default-value.service";
-import { InheritedValueService } from "./inherited-value.service";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
+import { Entity } from "../../entity/model/entity";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { testDefaultValueCase } from "../default-value-service/default-value.service.spec";
+import { DefaultValueService } from "../default-value-service/default-value.service";
+import { InheritedValueService } from "../x-inherited-value/inherited-value.service";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
 
 describe("DynamicPlaceholderValueService", () => {
   let service: DynamicPlaceholderValueService;

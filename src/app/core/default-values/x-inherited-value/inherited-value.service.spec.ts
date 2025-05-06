@@ -1,20 +1,20 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { InheritedValueService } from "./inherited-value.service";
-import { Entity } from "../entity/model/entity";
-import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import { Entity } from "../../entity/model/entity";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
   cleanUpTemporarySchemaFields,
   getDefaultInheritedForm,
-} from "./default-value.service.spec";
-import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
+} from "../default-value-service/default-value.service.spec";
+import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { FormControl, FormGroup } from "@angular/forms";
-import { EntityForm } from "../common-components/entity-form/entity-form.service";
-import { DefaultValueService } from "./default-value.service";
+import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { DefaultValueService } from "../default-value-service/default-value.service";
 import { EventEmitter } from "@angular/core";
-import { EntityAbility } from "../permissions/ability/entity-ability";
-import { UpdatedEntity } from "../entity/model/entity-update";
-import { Config } from "../config/config";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { UpdatedEntity } from "../../entity/model/entity-update";
+import { Config } from "../../config/config";
 import { Subject } from "rxjs";
 
 describe("InheritedValueService", () => {

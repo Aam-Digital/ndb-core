@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
-import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { EntityForm } from "../common-components/entity-form/entity-form.service";
-import { Entity } from "../entity/model/entity";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { Entity } from "../../entity/model/entity";
 import {
   DefaultValueStrategy,
   getConfigsByMode,
-} from "./default-value-strategy.interface";
-import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { DefaultValueConfig } from "./default-value-config";
-import { DefaultValueHint } from "./default-value.service";
-import { asArray } from "app/utils/asArray";
-import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
+} from "../default-value-strategy.interface";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { DefaultValueConfig } from "../default-value-config";
+import { DefaultValueHint } from "../default-value-service/default-value.service";
+import { asArray } from "../../../utils/asArray";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.

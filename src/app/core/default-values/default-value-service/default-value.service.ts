@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
-import { Entity } from "../entity/model/entity";
-import { EntityForm } from "../common-components/entity-form/entity-form.service";
-import { EntitySchema } from "../entity/schema/entity-schema";
-import { DefaultValueConfig } from "./default-value-config";
+import { Entity } from "../../entity/model/entity";
+import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EntitySchema } from "../../entity/schema/entity-schema";
+import { DefaultValueConfig } from "../default-value-config";
 import { AbstractControl } from "@angular/forms";
-import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
-import { InheritedValueService } from "./inherited-value.service";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
+import { InheritedValueService } from "../x-inherited-value/inherited-value.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 /**
  * Handle default values like the current date or user for forms when editing an Entity.

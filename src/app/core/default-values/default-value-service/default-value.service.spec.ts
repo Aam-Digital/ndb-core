@@ -1,17 +1,17 @@
-import { EntityForm } from "../common-components/entity-form/entity-form.service";
-import { Entity } from "../entity/model/entity";
+import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { Entity } from "../../entity/model/entity";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
-import { CurrentUserSubject } from "../session/current-user-subject";
-import { EntitySchemaField } from "../entity/schema/entity-schema-field";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "./default-value.service";
-import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
-import { InheritedValueService } from "./inherited-value.service";
+import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
+import { InheritedValueService } from "../x-inherited-value/inherited-value.service";
 import { EventEmitter } from "@angular/core";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
-import { DefaultDatatype } from "../entity/default-datatype/default.datatype";
-import { ConfigurableEnumDatatype } from "../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
 /**
  * Helper function to add some custom schema fields to Entity for testing.
