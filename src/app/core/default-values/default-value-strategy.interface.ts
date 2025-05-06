@@ -1,9 +1,7 @@
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
-import { DefaultValueConfig, DefaultValueMode } from "./default-value-config";
 import { Entity } from "../entity/model/entity";
-import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 
 /**
  * A special strategy to define and set default values, which can be used by the DefaultValueService,
@@ -27,24 +25,4 @@ export abstract class DefaultValueStrategy {
   ): Promise<void> {}
 
   async initEntityForm<T extends Entity>(form: EntityForm<T>): Promise<void> {}
-}
-
-/**
- * Get the default value configs filtered for the given mode.
- * @param fieldConfigs
- * @param mode
- */
-export function getConfigsByMode(
-  fieldConfigs: FormFieldConfig[],
-  mode: DefaultValueMode[],
-): Map<string, DefaultValueConfig> {
-  let configs: Map<string, DefaultValueConfig> = new Map();
-
-  for (const field of fieldConfigs) {
-    if (mode.includes(field.defaultValue?.mode)) {
-      configs.set(field.id, field.defaultValue);
-    }
-  }
-
-  return configs;
 }

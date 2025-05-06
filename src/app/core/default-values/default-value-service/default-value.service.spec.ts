@@ -122,7 +122,7 @@ describe("DefaultValueService", () => {
       undefinedField: {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
     });
@@ -148,7 +148,7 @@ describe("DefaultValueService", () => {
       additional: enumId,
       defaultValue: {
         mode: "static",
-        value: "M",
+        config: { value: "M" },
       },
     };
 
@@ -170,7 +170,7 @@ describe("DefaultValueService", () => {
       isArray: true,
       defaultValue: {
         mode: "static",
-        value: [testEnumValue.id],
+        config: { value: [testEnumValue.id] },
       },
     };
     testDefaultValueCase(service, fieldConfig, [testEnumValue]);
@@ -182,7 +182,7 @@ describe("DefaultValueService", () => {
       isArray: true,
       defaultValue: {
         mode: "static",
-        value: testEnumValue.id, // should also work with single value
+        config: { value: testEnumValue.id }, // should also work with single value
       },
     };
     testDefaultValueCase(service, fieldConfig2, [testEnumValue]);
@@ -195,7 +195,7 @@ describe("DefaultValueService", () => {
       field: {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
     });
@@ -217,7 +217,7 @@ describe("DefaultValueService", () => {
       field: {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
     });
@@ -238,7 +238,7 @@ describe("DefaultValueService", () => {
       field: {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
     });
@@ -260,7 +260,7 @@ describe("DefaultValueService", () => {
       {
         defaultValue: {
           mode: "static",
-          value: "default_value",
+          config: { value: "default_value" },
         },
       },
       "default_value",
@@ -278,7 +278,7 @@ describe("DefaultValueService", () => {
       {
         defaultValue: {
           mode: "dynamic",
-          value: "x",
+          config: { value: "x" },
         },
       },
       null,
@@ -295,8 +295,10 @@ describe("DefaultValueService", () => {
       {
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
       null,

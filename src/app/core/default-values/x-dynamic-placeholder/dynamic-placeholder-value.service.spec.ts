@@ -9,7 +9,7 @@ import { InheritedValueService } from "../x-inherited-value/inherited-value.serv
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
 
-describe("DynamicPlaceholderValueService", () => {
+describe("StaticDefaultValueService", () => {
   let service: DynamicPlaceholderValueService;
   let defaultValueService: DefaultValueService;
 
@@ -41,7 +41,7 @@ describe("DynamicPlaceholderValueService", () => {
       {
         defaultValue: {
           mode: "dynamic",
-          value: "invalid-placeholder",
+          config: { value: "invalid-placeholder" },
         },
       },
       null,
@@ -57,7 +57,7 @@ describe("DynamicPlaceholderValueService", () => {
       {
         defaultValue: {
           mode: "dynamic",
-          value: "$current_user",
+          config: { value: "$current_user" },
         },
       },
       user.getId(),
@@ -73,7 +73,7 @@ describe("DynamicPlaceholderValueService", () => {
       {
         defaultValue: {
           mode: "dynamic",
-          value: "$now",
+          config: { value: "$now" },
         },
       },
       mockDate,

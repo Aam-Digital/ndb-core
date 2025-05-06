@@ -7,6 +7,7 @@ import {
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { Logging } from "../../logging/logging.service";
 import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import { DefaultValueConfigDynamic } from "./default-value-config-dynamic";
 
 /**
  * A simple default-value strategy that replaces placeholder strings with dynamic values, like the current date or user.
@@ -23,33 +24,34 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
   ) {
-    switch (fieldConfig.defaultValue.value) {
-      case PLACEHOLDERS.NOW:
-        let now = new Date();
-        if (fieldConfig.isArray) {
-          targetFormControl.setValue([now]);
-        } else {
-          targetFormControl.setValue(now);
-        }
-        break;
-      case PLACEHOLDERS.CURRENT_USER:
-        let userId = this.currentUser.value?.getId();
-        if (!userId) {
-          break;
-        }
+    const config: DefaultValueConfigDynamic = fieldConfig.defaultValue.config;
 
-        if (fieldConfig.isArray) {
-          targetFormControl.setValue([userId]);
-        } else {
-          targetFormControl.setValue(userId);
-        }
+    let value;
+    switch (config.value) {
+      case PLACEHOLDERS.NOW:
+        value = new Date();
         break;
+
+      case PLACEHOLDERS.CURRENT_USER:
+        value = this.currentUser.value?.getId();
+        break;
+
       default:
         Logging.warn(
           "Unknown PLACEHOLDERS value used in fieldValueConfig: " +
             fieldConfig.defaultValue,
         );
         break;
+    }
+
+    if (!value) {
+      return;
+    }
+
+    if (fieldConfig.isArray && !Array.isArray(value)) {
+      targetFormControl.setValue([value]);
+    } else {
+      targetFormControl.setValue(value);
     }
   }
 }

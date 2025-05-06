@@ -69,8 +69,10 @@ describe("InheritedValueService", () => {
       {
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "invalid-field",
-          localAttribute: "reference-1",
+          config: {
+            field: "invalid-field",
+            localAttribute: "reference-1",
+          },
         },
       },
       form,
@@ -110,8 +112,10 @@ describe("InheritedValueService", () => {
         isArray: false,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "field2",
+          config: {
+            field: "foo",
+            localAttribute: "field2",
+          },
         },
       },
       form,
@@ -154,8 +158,10 @@ describe("InheritedValueService", () => {
         isArray: true,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "newField2",
+          config: {
+            field: "foo",
+            localAttribute: "newField2",
+          },
         },
       },
       form,
@@ -180,8 +186,10 @@ describe("InheritedValueService", () => {
         isArray: true,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
     });
@@ -207,8 +215,10 @@ describe("InheritedValueService", () => {
         isArray: true,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
     });
@@ -234,8 +244,10 @@ describe("InheritedValueService", () => {
         isArray: true,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
     });
@@ -273,8 +285,10 @@ describe("InheritedValueService", () => {
         isArray: false,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
     });
@@ -312,8 +326,10 @@ describe("InheritedValueService", () => {
         isArray: true,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
     });
@@ -337,8 +353,10 @@ describe("InheritedValueService", () => {
         isArray: true,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
     });
@@ -364,8 +382,10 @@ describe("InheritedValueService", () => {
         isArray: true,
         defaultValue: {
           mode: "inherited-from-referenced-entity",
-          field: "foo",
-          localAttribute: "reference-1",
+          config: {
+            field: "foo",
+            localAttribute: "reference-1",
+          },
         },
       },
     });

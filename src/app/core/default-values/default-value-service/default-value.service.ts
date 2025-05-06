@@ -1,13 +1,11 @@
 import { Injectable } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { EntityForm } from "../../common-components/entity-form/entity-form.service";
-import { EntitySchema } from "../../entity/schema/entity-schema";
-import { DefaultValueConfig } from "../default-value-config";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { InheritedValueService } from "../x-inherited-value/inherited-value.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { StaticDefaultValueService } from "../x-static/static-default-value.service";
 
 /**
  * Handle default values like the current date or user for forms when editing an Entity.
@@ -17,9 +15,9 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 })
 export class DefaultValueService {
   constructor(
+    private staticDefaultValueService: StaticDefaultValueService,
     private dynamicPlaceholderValueService: DynamicPlaceholderValueService,
     private inheritedValueService: InheritedValueService,
-    private entitySchemaService: EntitySchemaService,
   ) {}
 
   async handleEntityForm<T extends Entity>(
@@ -46,7 +44,10 @@ export class DefaultValueService {
       }
       switch (fieldConfig.defaultValue?.mode) {
         case "static":
-          this.handleStaticMode(targetFormControl, fieldConfig);
+          this.staticDefaultValueService.setDefaultValue(
+            targetFormControl,
+            fieldConfig,
+          );
           break;
         case "dynamic":
           this.dynamicPlaceholderValueService.setDefaultValue(
@@ -102,18 +103,6 @@ export class DefaultValueService {
     );
   }
 
-  private handleStaticMode(
-    targetFormControl: AbstractControl<any, any>,
-    fieldConfig: EntitySchemaField,
-  ) {
-    const transformedDefaultValue =
-      this.entitySchemaService.valueToEntityFormat(
-        fieldConfig.defaultValue.value,
-        fieldConfig,
-      );
-    targetFormControl.setValue(transformedDefaultValue);
-  }
-
   getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
     fieldId: string,
@@ -131,22 +120,6 @@ export class DefaultValueService {
         fieldConfig,
       );
     }
-  }
-
-  static getDefaultValueConfigs<T extends Entity>(
-    entity: T,
-  ): Map<string, DefaultValueConfig> {
-    let schema: EntitySchema = entity.getSchema();
-
-    const defaultValueConfigs: Map<string, DefaultValueConfig> = new Map();
-
-    for (const [key, entitySchemaField] of schema) {
-      if (entitySchemaField.defaultValue) {
-        defaultValueConfigs.set(key, entitySchemaField.defaultValue);
-      }
-    }
-
-    return defaultValueConfigs;
   }
 }
 

@@ -176,7 +176,10 @@ export function migratePublicFormConfig(
   }
 
   for (let [id, value] of Object.entries(formConfig["prefilled"] ?? [])) {
-    const defaultValue: DefaultValueConfig = { mode: "static", value };
+    const defaultValue: DefaultValueConfig = {
+      mode: "static",
+      config: { value },
+    };
 
     const field: FormFieldConfig = findFieldInFieldGroups(formConfig, id);
     if (!field) {
