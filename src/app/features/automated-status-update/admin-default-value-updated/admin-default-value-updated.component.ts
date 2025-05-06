@@ -6,7 +6,7 @@ import {
   OnInit,
   SimpleChanges,
 } from "@angular/core";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { MatButton } from "@angular/material/button";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -21,6 +21,7 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
 import { AutomatedFieldMappingComponent } from "../automated-field-mapping/automated-field-mapping.component";
 import { lastValueFrom } from "rxjs";
+import { MatFormFieldControl } from "@angular/material/form-field";
 
 @Component({
   selector: "app-admin-default-value-updated",
@@ -31,9 +32,16 @@ import { lastValueFrom } from "rxjs";
     MatTooltip,
     MatOption,
     EntityFieldLabelComponent,
+    FormsModule,
   ],
   templateUrl: "./admin-default-value-updated.component.html",
   styleUrl: "./admin-default-value-updated.component.scss",
+  providers: [
+    {
+      provide: MatFormFieldControl,
+      useExisting: AdminDefaultValueUpdatedComponent,
+    },
+  ],
 })
 export class AdminDefaultValueUpdatedComponent
   extends CustomFormControlDirective<DefaultValueConfigUpdatedFromReferencingEntity>
@@ -49,34 +57,39 @@ export class AdminDefaultValueUpdatedComponent
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly matDialog = inject(MatDialog);
 
-  formRelatedEntity: FormControl<string>;
+  relatedEntityType: any;
 
-  relatedEntity: {
+  availableRelatedEntities: {
     label: string;
-    entity: string;
+    entityType: string;
     relatedReferenceField: string[];
   }[];
 
   ngOnInit() {
-    //this.formControl = new FormControl(this.value?.value);
-    //this.formControl.valueChanges.subscribe((v) => (this.value = { value: v }));
-
-    this.formRelatedEntity = new FormControl(this.value?.relatedTriggerField);
+    this.relatedEntityType = this.value?.relatedEntityType;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entityType) {
-      this.relatedEntity =
+      this.availableRelatedEntities =
         this.automatedStatusUpdateConfigService.updateAvailableRelatedEntityForAutomated(
           this.entityType.ENTITY_TYPE,
         );
     }
   }
 
+  onEntityTypeSelected(newEntityType: any) {
+    this.relatedEntityType = newEntityType;
+
+    // show the dialog immediately, so that the user completes all necessary configuration
+    this.openAutomatedMappingDialog(newEntityType);
+  }
+
   async openAutomatedMappingDialog(selectedEntity: string) {
-    const relatedEntity = this.relatedEntity.find(
-      (r) => r.entity === selectedEntity,
+    const relatedEntityDetails = this.availableRelatedEntities.find(
+      (r) => r.entityType === selectedEntity,
     );
+
     // add editComponent (because we cannot rely on the entity's schema yet for a new field)
     this.entitySchemaField.editComponent =
       this.entitySchemaField.editComponent ??
@@ -89,13 +102,12 @@ export class AdminDefaultValueUpdatedComponent
         refEntity: refEntity,
         currentField: this.entitySchemaField,
         currentAutomatedMapping: this.value,
-        relatedReferenceFields: relatedEntity.relatedReferenceField,
+        relatedReferenceFields: relatedEntityDetails.relatedReferenceField,
         currentRelatedReferenceField: this.value?.relatedReferenceField,
       },
     });
 
     const result = await lastValueFrom(dialogRef.afterClosed());
-
     if (result) {
       this.value = {
         relatedReferenceField: result.relatedReferenceField,
@@ -103,6 +115,8 @@ export class AdminDefaultValueUpdatedComponent
         relatedTriggerField: result.relatedTriggerField,
         automatedMapping: result.automatedMapping,
       };
+    } else {
+      // we may need to write this.value = null to reset from an invalid config?
     }
   }
 }

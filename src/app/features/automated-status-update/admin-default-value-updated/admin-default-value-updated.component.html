@@ -1,5 +1,8 @@
-<div>
-  <mat-select formControlName="relatedEntity" #relatedEntitySelect>
+<div class="flex-row">
+  <mat-select
+    [(ngModel)]="relatedEntityType"
+    (ngModelChange)="onEntityTypeSelected($event)"
+  >
     <div
       class="select-dropdown-header"
       matTooltip="Select entity which you want to set automated rule mapping"
@@ -8,11 +11,11 @@
     >
       Select Related Entity:
     </div>
-    @for (entity of relatedEntity; track entity) {
-      <mat-option [value]="entity.entity">
+    @for (entity of availableRelatedEntities; track entity) {
+      <mat-option [value]="entity.entityType">
         <app-entity-field-label
           [field]="entity.label"
-          [entityType]="entity.entity"
+          [entityType]="entity.entityType"
         ></app-entity-field-label>
       </mat-option>
     }
@@ -22,10 +25,9 @@
     mat-raised-button
     class="configure-button"
     (click)="
-      $event.stopPropagation();
-      openAutomatedMappingDialog(relatedEntitySelect.value)
+      $event.stopPropagation(); openAutomatedMappingDialog(relatedEntityType)
     "
-    [disabled]="!relatedEntitySelect.value"
+    [disabled]="!relatedEntityType"
     i18n
   >
     Configure Automation

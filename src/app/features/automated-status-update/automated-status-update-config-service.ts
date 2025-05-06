@@ -117,7 +117,7 @@ export class AutomatedStatusUpdateConfigService {
    */
   public updateAvailableRelatedEntityForAutomated(entityType: string): {
     label: string;
-    entity: string;
+    entityType: string;
     relatedReferenceField: string[];
   }[] {
     const relatedEntities =
@@ -126,7 +126,7 @@ export class AutomatedStatusUpdateConfigService {
       .filter((refType) => !!refType.entityType.label)
       .map((refType) => ({
         label: refType.entityType.label,
-        entity: refType.entityType.ENTITY_TYPE,
+        entityType: refType.entityType.ENTITY_TYPE,
         relatedReferenceField: refType.referencingProperties.map((p) => p.id),
       }));
   }
