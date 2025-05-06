@@ -101,7 +101,7 @@ export class AdminDefaultValueUpdatedComponent
         currentEntity: this.entityType,
         refEntity: refEntity,
         currentField: this.entitySchemaField,
-        currentAutomatedMapping: this.value,
+        currentAutomatedMapping: this.value.automatedMapping,
         relatedReferenceFields: relatedEntityDetails.relatedReferenceField,
         currentRelatedReferenceField: this.value?.relatedReferenceField,
       },
