@@ -24,7 +24,6 @@ export abstract class DefaultValueStrategy {
   /**
    * Calculate and set the default value for a form control, according to the custom strategy.
    * This is the central function to set a default value to the given targetFormControl while a form is initialized.
-   * 
    * @param targetFormControl The form control to set the default value for.
    * @param fieldConfig The field configuration of this entity field.
    * @param form The overall entity form, including all related fields to support complex, interrelated value calculations.
