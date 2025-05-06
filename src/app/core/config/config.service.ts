@@ -76,6 +76,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityBlock,
       migrateGroupByConfig,
       addDefaultNoteDetailsConfig,
+      migrateDefaultValueName,
     ];
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
@@ -355,5 +356,20 @@ const migrateGroupByConfig: ConfigMigration = (key, configPart) => {
   }
 
   // Return the unchanged part if no modification is needed
+  return configPart;
+};
+
+/**
+ * The DefaultValueConfig `mode` "inherited" has been renamed to "inherited-from-referenced-entity"
+ */
+const migrateDefaultValueName: ConfigMigration = (key, configPart) => {
+  if (key !== "defaultValue") {
+    return configPart;
+  }
+
+  if (configPart?.mode === "inherited") {
+    configPart.mode = "inherited-from-referenced-entity";
+  }
+
   return configPart;
 };

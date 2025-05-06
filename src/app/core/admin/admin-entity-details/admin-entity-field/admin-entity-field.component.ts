@@ -1,10 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -79,9 +73,9 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
     EntityTypeSelectComponent,
   ],
 })
-export class AdminEntityFieldComponent implements OnChanges {
-  @Input() fieldId: string;
-  @Input() entityType: EntityConstructor;
+export class AdminEntityFieldComponent {
+  fieldId: string;
+  entityType: EntityConstructor;
 
   /** current state of the field being edited */
   entitySchemaField: EntitySchemaField;
@@ -118,12 +112,6 @@ export class AdminEntityFieldComponent implements OnChanges {
 
     this.initSettings();
     this.initAvailableDatatypes(allDataTypes);
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entitySchemaField) {
-      this.schemaFieldsForm.setValue(changes.entitySchemaField);
-    }
   }
 
   private initSettings() {
@@ -196,6 +184,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   entityFieldValidatorChanges(validatorData: FormValidatorConfig) {
     this.schemaFieldsForm.get("validators").setValue(validatorData);
   }
+
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
     const label =
@@ -213,6 +202,7 @@ export class AdminEntityFieldComponent implements OnChanges {
         value: d.dataType,
       }));
   }
+
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
   createNewAdditionalOption: (input: string) => SimpleDropdownValue;
