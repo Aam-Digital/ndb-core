@@ -11,22 +11,7 @@
     adjust the value during an automated update, after the related record
     changes.
   </p>
-  <div class="dropdown-select">
-    <mat-form-field appearance="fill">
-      <mat-label i18n>Select related field</mat-label>
-      <mat-select
-        [(value)]="selectedField"
-        (selectionChange)="loadSourceOptions($event.value)"
-        matTooltip="Choose the field in the related entity that will trigger updates to this field."
-        i18n-matTooltip
-        i18n
-      >
-        @for (field of availableFields; track field.id) {
-          <mat-option [value]="field.id">{{ field.label }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
+
   <div class="dropdown-select">
     <mat-form-field appearance="fill">
       <mat-label i18n>Related reference field</mat-label>
@@ -48,13 +33,28 @@
     </mat-form-field>
   </div>
 
+  <div class="dropdown-select">
+    <mat-form-field appearance="fill">
+      <mat-label i18n>Automation trigger field</mat-label>
+      <mat-select
+        [(value)]="selectedField"
+        (selectionChange)="loadSourceOptions($event.value)"
+        matTooltip="Choose the field in the related entity that will trigger updates to this field when it is changed."
+        i18n-matTooltip
+        i18n
+      >
+        @for (field of availableFields; track field.id) {
+          <mat-option [value]="field.id">{{ field.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
   @if (selectedField) {
     <div class="mapping-grid">
       <div class="header-row">
-        <h3 i18n>
-          <b>When related field changes to</b>
-        </h3>
-        <h3 i18n><b>then this field is updated to</b></h3>
+        <h3 class="mapping-header" i18n>When related field changes to</h3>
+        <h3 class="mapping-header" i18n>then this field is updated to</h3>
       </div>
 
       @for (sourceOption of sourceOptions; track sourceOption.id) {
@@ -78,6 +78,6 @@
   </mat-error>
 }
 <mat-dialog-actions>
-  <button mat-button (click)="save()" i18n="Button label">Save</button>
-  <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
+  <button mat-button (click)="save()" i18n>Save</button>
+  <button mat-button mat-dialog-close i18n>Cancel</button>
 </mat-dialog-actions>

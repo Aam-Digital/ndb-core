@@ -22,8 +22,8 @@ import {
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 
 @Component({
   selector: "app-automated-field-mapping",
@@ -37,6 +37,7 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
     MatTooltipModule,
     EntityFieldEditComponent,
     EntityFieldLabelComponent,
+    DialogCloseComponent,
   ],
   templateUrl: "./automated-field-mapping.component.html",
   styleUrl: "./automated-field-mapping.component.scss",

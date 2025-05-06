@@ -19,15 +19,15 @@
             matTooltip="Fill the current date initially, when a record is created."
             i18n-matTooltip
             i18n
-            >Current Date</mat-option
-          >
+            >Current Date
+          </mat-option>
           <mat-option
             value="$current_user"
             matTooltip="Fill the currently logged in user, when a record is created."
             i18n-matTooltip
             i18n
-            >Current User</mat-option
-          >
+            >Current User
+          </mat-option>
         </mat-select>
       }
       @case ("inherited-from-referenced-entity") {
@@ -99,8 +99,10 @@
             $event.stopPropagation();
             openAutomatedMappingDialog(relatedEntitySelect.value)
           "
+          [disabled]="!relatedEntitySelect.value"
+          i18n
         >
-          Configure Mapping
+          Configure Automation
         </button>
       }
     }
@@ -159,7 +161,7 @@
 
   @if (form.invalid) {
     <mat-error i18n="error message"
-      >Select default value or clear default value mode</mat-error
-    >
+      >Select default value or clear default value mode
+    </mat-error>
   }
 </mat-form-field>
