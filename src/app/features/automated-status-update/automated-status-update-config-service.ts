@@ -12,7 +12,7 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { ConfigService } from "app/core/config/config.service";
-import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
+import { DefaultValueConfigUpdatedFromReferencingEntity } from "./default-value-config-updated-from-referencing-entity";
 
 /**
  * Service to automatically update related entities based on configured rules.
@@ -39,7 +39,7 @@ export class AutomatedStatusUpdateConfigService {
       targetEntityType: EntityConstructor;
       targetFieldId: string;
       relatedReferenceField: string;
-      rule: any;
+      rule: DefaultValueConfigUpdatedFromReferencingEntity;
     }[]
   >();
 
@@ -50,7 +50,6 @@ export class AutomatedStatusUpdateConfigService {
     private unsavedChangesService: UnsavedChangesService,
     private entitySchemaService: EntitySchemaService,
     private configService: ConfigService,
-    private entityRelationsService: EntityRelationsService,
   ) {
     this.configService.configUpdates.subscribe(() =>
       // wait until EntityConfigService has updated the entityRegistry
@@ -97,7 +96,7 @@ export class AutomatedStatusUpdateConfigService {
   private processAutomatedRule(
     targetEntityType: EntityConstructor,
     targetFieldId: string,
-    rule: any,
+    rule: DefaultValueConfigUpdatedFromReferencingEntity,
   ) {
     const key = `${rule.relatedEntityType}|${rule.relatedTriggerField}`;
     const entry = {
@@ -109,26 +108,6 @@ export class AutomatedStatusUpdateConfigService {
 
     const existingEntries = this.dependencyMap.get(key) || [];
     this.dependencyMap.set(key, [...existingEntries, entry]);
-  }
-
-  /**
-   * Returns a list of related entities with reference info for the given entity type.
-   * Used in automated rule configuration.
-   */
-  public updateAvailableRelatedEntityForAutomated(entityType: string): {
-    label: string;
-    entityType: string;
-    relatedReferenceFields: string[];
-  }[] {
-    const relatedEntities =
-      this.entityRelationsService.getEntityTypesReferencingType(entityType);
-    return relatedEntities
-      .filter((refType) => !!refType.entityType.label)
-      .map((refType) => ({
-        label: refType.entityType.label,
-        entityType: refType.entityType.ENTITY_TYPE,
-        relatedReferenceFields: refType.referencingProperties.map((p) => p.id),
-      }));
   }
 
   /**
@@ -208,10 +187,7 @@ export class AutomatedStatusUpdateConfigService {
       .getSchema()
       .get(affected.relatedReferenceField);
     if (!entity) return;
-    const newValue = this.getMappedValue(
-      affected.rule.automatedMapping,
-      changedValue,
-    );
+    const newValue = affected.rule.automatedMapping[changedValue.id];
     const loadedEntities = await this.loadRelatedEntities(
       entity,
       affected.targetEntityType,
@@ -225,18 +201,6 @@ export class AutomatedStatusUpdateConfigService {
         affectedEntities,
       );
     }
-  }
-
-  /**
-   * Extracts the value to be applied to target entities.
-   * @param mapping - Mapping config from rule
-   * @param changedValue - The new value of the source field
-   */
-  private getMappedValue(
-    mapping: Record<string, string>,
-    changedValue: any,
-  ): any {
-    return mapping[changedValue.id];
   }
 
   /**

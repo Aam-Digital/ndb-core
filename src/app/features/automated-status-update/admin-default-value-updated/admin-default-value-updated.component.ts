@@ -14,7 +14,6 @@ import { EntityFieldLabelComponent } from "../../../core/common-components/entit
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
 import { DefaultValueConfigUpdatedFromReferencingEntity } from "../default-value-config-updated-from-referencing-entity";
 import { EntityConstructor } from "../../../core/entity/model/entity";
-import { AutomatedStatusUpdateConfigService } from "../automated-status-update-config-service";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -25,6 +24,7 @@ import {
 } from "../automated-field-mapping/automated-field-mapping.component";
 import { lastValueFrom } from "rxjs";
 import { MatFormFieldControl } from "@angular/material/form-field";
+import { EntityRelationsService } from "app/core/entity/entity-mapper/entity-relations.service";
 
 @Component({
   selector: "app-admin-default-value-updated",
@@ -53,9 +53,7 @@ export class AdminDefaultValueUpdatedComponent
   @Input() entityType: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
 
-  private readonly automatedStatusUpdateConfigService = inject(
-    AutomatedStatusUpdateConfigService,
-  );
+  private readonly entityRelationsService = inject(EntityRelationsService);
   private readonly entitySchemaService = inject(EntitySchemaService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly matDialog = inject(MatDialog);
@@ -75,7 +73,7 @@ export class AdminDefaultValueUpdatedComponent
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entityType) {
       this.availableRelatedEntities =
-        this.automatedStatusUpdateConfigService.updateAvailableRelatedEntityForAutomated(
+        this.updateAvailableRelatedEntityForAutomated(
           this.entityType.ENTITY_TYPE,
         );
     }
@@ -117,5 +115,25 @@ export class AdminDefaultValueUpdatedComponent
         automatedMapping: result.automatedMapping,
       };
     }
+  }
+
+  /**
+   * Returns a list of related entities with reference info for the given entity type.
+   * Used in automated rule configuration.
+   */
+  private updateAvailableRelatedEntityForAutomated(entityType: string): {
+    label: string;
+    entityType: string;
+    relatedReferenceFields: string[];
+  }[] {
+    const relatedEntities =
+      this.entityRelationsService.getEntityTypesReferencingType(entityType);
+    return relatedEntities
+      .filter((refType) => !!refType.entityType.label)
+      .map((refType) => ({
+        label: refType.entityType.label,
+        entityType: refType.entityType.ENTITY_TYPE,
+        relatedReferenceFields: refType.referencingProperties.map((p) => p.id),
+      }));
   }
 }
