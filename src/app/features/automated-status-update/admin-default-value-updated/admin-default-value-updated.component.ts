@@ -19,7 +19,10 @@ import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-fie
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
-import { AutomatedFieldMappingComponent } from "../automated-field-mapping/automated-field-mapping.component";
+import {
+  AutomatedFieldMappingComponent,
+  AutomatedFieldMappingDialogData,
+} from "../automated-field-mapping/automated-field-mapping.component";
 import { lastValueFrom } from "rxjs";
 import { MatFormFieldControl } from "@angular/material/form-field";
 
@@ -98,11 +101,11 @@ export class AdminDefaultValueUpdatedComponent
     const refEntity = this.entityRegistry.get(selectedEntity);
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
       data: {
-        currentEntity: this.entityType,
-        refEntity: refEntity,
+        currentEntityType: this.entityType,
+        relatedEntityType: refEntity,
         currentField: this.entitySchemaField,
         relatedReferenceFields: relatedEntityDetails.relatedReferenceFields,
-      },
+      } as AutomatedFieldMappingDialogData,
     });
 
     const result = await lastValueFrom(dialogRef.afterClosed());

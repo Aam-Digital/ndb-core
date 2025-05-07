@@ -17,11 +17,14 @@ import { EntityFieldEditComponent } from "app/core/common-components/entity-fiel
 import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
 import { EntityForm } from "app/core/common-components/entity-form/entity-form.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 
+/**
+ * Dialog to configure additional details for the "updated-from-referencing-entity"
+ * default value strategy, working in combination with the `AdminDefaultValueUpdatedComponent`.
+ */
 @Component({
   selector: "app-automated-field-mapping",
   imports: [
@@ -40,77 +43,91 @@ import { DialogCloseComponent } from "../../../core/common-components/dialog-clo
   styleUrl: "./automated-field-mapping.component.scss",
 })
 export class AutomatedFieldMappingComponent implements OnInit {
-  availableFields: { id: string; label: string; additional: string }[] = [];
-  selectedMappings: { [key: string]: any } = {};
-  selectedField: string | null = null;
-  sourceOptions: ConfigurableEnumValue[] = [];
-  targetFieldConfig: FormFieldConfig;
-  isInvalid: boolean = false;
-  relatedReferenceFields: string[];
-  selectedRelatedReferenceField: string;
+  /** The currently selected relatedReferenceField on the related entity */
+  selectedReferenceField: string;
+  /** all fields for selection as selectedReferenceField */
+  availableReferenceFields: string[];
 
+  /** The currently selected "relatedTriggerField" on the related entity */
+  selectedTriggerField: string | null = null;
+  /** all fields for selection as selectedTriggerField */
+  availableTriggerFields: { id: string; label: string; additional: string }[] =
+    [];
+
+  /**
+   *
+   */
   mappingForms: {
     [sourceId: string]: EntityForm<Entity>;
   } = {};
+  selectedMappings: { [key: string]: any } = {};
+  sourceOptions: ConfigurableEnumValue[] = [];
+
+  /** The full schema of the field for which this default value is configured */
+  targetFieldConfig: FormFieldConfig;
+  /** The entity type of the related entity that triggers the updates */
+  relatedEntityType: EntityConstructor;
+
+  isInvalid: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    public data: {
-      currentEntity: EntityConstructor;
-      refEntity: EntityConstructor;
-      currentField: FormFieldConfig;
-      relatedReferenceFields: string[];
-    },
+    data: AutomatedFieldMappingDialogData,
     private dialogRef: MatDialogRef<any>,
-    private entityRegistry: EntityRegistry,
     private configurableEnumService: ConfigurableEnumService,
     private schemaService: EntitySchemaService,
   ) {
+    this.targetFieldConfig = data.currentField;
+    this.relatedEntityType = data.relatedEntityType;
+    this.availableReferenceFields = data.relatedReferenceFields;
+
     const defaultValueConfig =
-      this.data.currentField.defaultValue?.config || {};
-    this.selectedMappings = defaultValueConfig.automatedMapping || {};
-    this.selectedField = defaultValueConfig.relatedTriggerField;
-    this.relatedReferenceFields = data?.relatedReferenceFields;
-    this.selectedRelatedReferenceField =
+      this.targetFieldConfig.defaultValue?.config || {};
+    this.selectedReferenceField =
       defaultValueConfig.relatedReferenceField ||
-      (this.relatedReferenceFields ? this.relatedReferenceFields[0] : null);
+      (this.availableReferenceFields ? this.availableReferenceFields[0] : null);
+    this.selectedMappings = defaultValueConfig.automatedMapping || {};
+    this.selectedTriggerField = defaultValueConfig.relatedTriggerField;
   }
 
   ngOnInit(): void {
-    this.availableFields = this.mapEnumFields(this.data.refEntity);
-    this.targetFieldConfig = this.data.currentField;
+    this.initAvailableTriggerFields();
 
-    this.initializeSelectedField();
+    this.initSelectedField();
   }
 
-  private initializeSelectedField() {
+  private initAvailableTriggerFields() {
+    this.availableTriggerFields = Array.from(
+      this.relatedEntityType.schema.entries(),
+    )
+      .filter(
+        ([_, schema]) => schema.dataType === ConfigurableEnumDatatype.dataType,
+      )
+      .map(([id, schema]) => ({
+        id,
+        label: schema.label,
+        additional: schema.additional,
+      }));
+  }
+
+  private initSelectedField() {
     if (
-      this.selectedField &&
-      this.availableFields.some((f) => f.id === this.selectedField)
+      this.selectedTriggerField &&
+      this.availableTriggerFields.some(
+        (f) => f.id === this.selectedTriggerField,
+      )
     ) {
-      this.loadSourceOptions(this.selectedField);
+      this.loadSourceOptions(this.selectedTriggerField);
     }
   }
 
-  private getEnumFields(entity: EntityConstructor) {
-    const entityType = this.entityRegistry.get(entity.ENTITY_TYPE);
-    return Array.from(entityType.schema.entries()).filter(
-      ([_, schema]) => schema.dataType === ConfigurableEnumDatatype.dataType,
+  loadSourceOptions(fieldId: string) {
+    const selectedField = this.availableTriggerFields.find(
+      (f) => f.id === fieldId,
     );
-  }
-
-  private mapEnumFields(entity: EntityConstructor) {
-    return this.getEnumFields(entity).map(([id, schema]) => ({
-      id,
-      label: schema.label,
-      additional: schema.additional,
-    }));
-  }
-
-  async loadSourceOptions(fieldId: string) {
-    const selectedField = this.availableFields.find((f) => f.id === fieldId);
     if (!selectedField) return;
-    this.selectedField = fieldId;
+
+    this.selectedTriggerField = fieldId;
     const enumEntity = this.configurableEnumService.getEnum(
       selectedField.additional,
     );
@@ -158,9 +175,19 @@ export class AutomatedFieldMappingComponent implements OnInit {
     });
 
     this.dialogRef.close({
-      relatedTriggerField: this.selectedField,
-      relatedReferenceField: this.selectedRelatedReferenceField,
+      relatedTriggerField: this.selectedTriggerField,
+      relatedReferenceField: this.selectedReferenceField,
       automatedMapping: formattedMappings,
     });
   }
+}
+
+/**
+ * The DialogData for the `AutomatedFieldMappingComponent`
+ */
+export interface AutomatedFieldMappingDialogData {
+  currentEntityType: EntityConstructor;
+  relatedEntityType: EntityConstructor;
+  currentField: FormFieldConfig;
+  relatedReferenceFields: string[];
 }

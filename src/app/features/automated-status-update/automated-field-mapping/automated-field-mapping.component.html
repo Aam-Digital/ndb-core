@@ -16,18 +16,18 @@
 
   <mat-form-field appearance="fill">
     <mat-label i18n
-      >Related reference field (of {{ data.refEntity.label }})
+      >Related reference field (of {{ data.relatedEntityType.label }})
     </mat-label>
     <mat-select
-      [(value)]="selectedRelatedReferenceField"
+      [(value)]="selectedReferenceField"
       matTooltip="Select the field in the related entity that links it to this entity. For example, if a child's field is updated based on a school's value, this is the field in the school entity that references the child."
       i18n-matTooltip
     >
-      @for (field of relatedReferenceFields; track field) {
+      @for (field of availableReferenceFields; track field) {
         <mat-option [value]="field">
           <app-entity-field-label
             [field]="field"
-            [entityType]="data.refEntity"
+            [entityType]="data.relatedEntityType"
           ></app-entity-field-label>
         </mat-option>
       }
@@ -36,16 +36,16 @@
 
   <mat-form-field appearance="fill">
     <mat-label i18n
-      >Automation trigger field (of {{ data.refEntity.label }})
+      >Automation trigger field (of {{ data.relatedEntityType.label }})
     </mat-label>
 
     <mat-select
-      [(value)]="selectedField"
+      [(value)]="selectedTriggerField"
       (selectionChange)="loadSourceOptions($event.value)"
       matTooltip="Choose the field in the related entity that will trigger updates to this field when it is changed."
       i18n-matTooltip
     >
-      @for (field of availableFields; track field.id) {
+      @for (field of availableTriggerFields; track field.id) {
         <mat-option [value]="field.id">{{ field.label }}</mat-option>
       } @empty {
         <mat-option
@@ -53,7 +53,8 @@
           matTooltip='The trigger field on the other, related entity must be of type "dropdown". It seems there are no such field on that record type.'
           i18n-matTooltip
           i18n
-          >No suitable fields available in {{ data.refEntity.labelPlural }}
+          >No suitable fields available in
+          {{ relatedEntityType.labelPlural }}
         </mat-option>
       }
     </mat-select>
@@ -66,7 +67,7 @@
   <!--
     Detailed trigger value -> target value mapping
   -->
-  @if (selectedField) {
+  @if (selectedTriggerField) {
     <div class="mapping-grid">
       <div class="header-row">
         <h3 class="mapping-header" i18n>When "trigger field" changes to</h3>
@@ -92,7 +93,7 @@
   <button
     mat-button
     (click)="save()"
-    [disabled]="!selectedRelatedReferenceField || !selectedField"
+    [disabled]="!selectedReferenceField || !selectedTriggerField"
     i18n
   >
     Save
