@@ -116,7 +116,6 @@ export class AutomatedStatusUpdateConfigService {
 
     const existingEntries = this.dependencyMap.get(key) || [];
     this.dependencyMap.set(key, [...existingEntries, entry]);
-    console.log(this.dependencyMap, "dependencyMap");
   }
 
   /**
