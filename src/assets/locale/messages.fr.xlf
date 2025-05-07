@@ -136,7 +136,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">200</context>
+          <context context-type="linenumber">193</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
@@ -1760,7 +1760,7 @@
         <target><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon           aria-label=&quot;add element&quot;           icon=&quot;plus-circle&quot;           class=&quot;standard-icon-with-text&quot;         &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Ajouter une section </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html</context>
-          <context context-type="linenumber">50,56</context>
+          <context context-type="linenumber">55,61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6614677774493793726" datatype="html">
@@ -1798,7 +1798,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">201</context>
+          <context context-type="linenumber">194</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
@@ -1823,6 +1823,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-bulk-edit/entity-bulk-edit.component.html</context>
           <context context-type="linenumber">42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">104</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
@@ -1963,7 +1967,7 @@
         <target>Options avancées et validation</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">155</context>
+          <context context-type="linenumber">150</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8799362079868541767" datatype="html">
@@ -1971,7 +1975,7 @@
         <target>Anonymiser</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">164</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
@@ -1983,7 +1987,7 @@
         <target>En option, cela supprimera toutes les informations personnelles (PII) liées de manière permanente à ce champ.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">174</context>
+          <context context-type="linenumber">167</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2086294539661962129" datatype="html">
@@ -2106,7 +2110,7 @@
         <source>Default Value</source>
         <target>Valeur par défaut</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="sourcefile">src/app/core/default-values/admin-default-value/admin-default-value.component.html</context>
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
@@ -2114,117 +2118,92 @@
         <source>no default value</source>
         <target>aucune valeur par défaut</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">11</context>
+          <context context-type="sourcefile">src/app/core/default-values/x-static/admin-default-value-static/admin-default-value-static.component.html</context>
+          <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7811514932000727489" datatype="html">
         <source>Fill the current date initially, when a record is created.</source>
         <target>Remplissez initialement la date actuelle, lorsqu&apos;un enregistrement est créé.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2839876707460519849" datatype="html">
-        <source>Current Date</source>
-        <target>Date actuelle</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="sourcefile">src/app/core/default-values/x-dynamic-placeholder/admin-default-value-dynamic/admin-default-value-dynamic.component.html</context>
+          <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2901251516715498028" datatype="html">
         <source>Fill the currently logged in user, when a record is created.</source>
         <target>Remplissez l&apos;utilisateur actuellement connecté, lorsqu&apos;un enregistrement est créé.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">26</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8743905679911132812" datatype="html">
-        <source>Current User</source>
-        <target>Utilisateur actuel</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="sourcefile">src/app/core/default-values/x-dynamic-placeholder/admin-default-value-dynamic/admin-default-value-dynamic.component.html</context>
+          <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3805430755377848082" datatype="html">
         <source>The field of this record that defines the related record from which you want to inherit a value.</source>
         <target>Le champ de cet enregistrement qui définit l’enregistrement associé à partir duquel vous souhaitez hériter d’une valeur.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component.html</context>
+          <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1862927001388260757" datatype="html">
         <source> Inherit from linked record: </source>
         <target> Hériter de l&apos;enregistrement lié: </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component.html</context>
+          <context context-type="linenumber">9,11</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9092645085005527863" datatype="html">
         <source>The field of the linked record from which the value is copied into this field.</source>
         <target>Le champ de l&apos;enregistrement lié à partir duquel la valeur est copiée dans ce champ.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component.html</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8666441867249277193" datatype="html">
         <source> Inherited field of linked record: </source>
         <target> Champ hérité de l&apos;enregistrement lié: </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">59,61</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component.html</context>
+          <context context-type="linenumber">28,30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="325266169130845418" datatype="html">
         <source>simple, fixed default value</source>
         <target>simple valeur fixe par défaut</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="sourcefile">src/app/core/default-values/x-static/static-default-value.service.ts</context>
+          <context context-type="linenumber">31</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1965232748981290211" datatype="html">
         <source>dynamic placeholder (e.g. current date or user)</source>
         <target>valeur dynamique (par exemple, date du jour ou utilisateur)</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="sourcefile">src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.ts</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8383482611127275827" datatype="html">
         <source>value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)</source>
         <target>valeur héritée de la valeur d&apos;un autre enregistrement lié (nécessite qu&apos;un autre champ de ce type d&apos;enregistrement soit un lien vers un enregistrement)</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/inherited-value.service.ts</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6585878881795141289" datatype="html">
         <source>Remove default value</source>
         <target>Supprimer la valeur par défaut</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">112</context>
+          <context context-type="sourcefile">src/app/core/default-values/admin-default-value/admin-default-value.component.html</context>
+          <context context-type="linenumber">52</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
-          <context context-type="linenumber">48</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3453820570447962676" datatype="html">
-        <source>Select default value or clear default value mode</source>
-        <target>Sélectionner la valeur par défaut ou effacer le mode de valeur par défaut</target>
-        <note priority="1" from="description">error message</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
-          <context context-type="linenumber">123</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3942266656992195970" datatype="html">
@@ -2249,7 +2228,7 @@
         <target>Vous pouvez regrouper les champs de manière à ce qu&apos;ils apparaissent toujours les uns à côté des autres tandis que la mise en page s&apos;adapte automatiquement aux différentes tailles d&apos;écran. Ces groupes de champs peuvent également avoir un titre affiché aux utilisateurs.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1500859009281693254" datatype="html">
@@ -2258,7 +2237,7 @@
         <note priority="1" from="description">title for drag and drop section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6586271653607682602" datatype="html">
@@ -2267,7 +2246,7 @@
         <note priority="1" from="description">subtitle for drag and drop section</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">109,111</context>
+          <context context-type="linenumber">110,112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5001163309666256786" datatype="html">
@@ -2275,7 +2254,7 @@
         <target>Vous pouvez supprimer des champs de ce formulaire sans les supprimer complètement. Les champs ici ne seront pas visibles ou modifiables pour les utilisateurs, mais vous pouvez les afficher dans d&apos;autres vues ou les conserver archivés pour ne pas perdre les données précédemment collectées. Faites glisser un champ dans l&apos;aperçu du formulaire pour l&apos;afficher.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">115</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3972154626835212608" datatype="html">
@@ -2284,7 +2263,7 @@
         <note priority="1" from="description">Label drag and drop item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4704280698666275116" datatype="html">
@@ -2293,7 +2272,7 @@
         <note priority="1" from="description">Label drag and drop item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">117</context>
         </context-group>
       </trans-unit>
       <trans-unit id="594027083086692935" datatype="html">
@@ -2464,6 +2443,10 @@
           <context context-type="linenumber">63,65</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">101,103</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
           <context context-type="linenumber">28,30</context>
         </context-group>
@@ -2613,7 +2596,7 @@
         <target>ajouter un nouvel onglet</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/building-blocks/admin-tabs/admin-tabs.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3492007542396725315" datatype="html">
@@ -2921,7 +2904,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6031162605459514264" datatype="html">
@@ -2933,7 +2916,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5432260252143962374" datatype="html">
@@ -2941,7 +2924,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Créer une nouvelle option</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5006850401853518123" datatype="html">
@@ -2949,7 +2932,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Voulez-vous créer la nouvelle option &quot;<x id="PH" equiv-text="addedOption.label"/>&quot;?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">103</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3938396793871184620" datatype="html">
@@ -2976,7 +2959,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Placeholder for the input that displays the age</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date-with-age/edit-age/edit-age.component.html</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">29</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -2989,7 +2972,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Tooltip for the disabled age field</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date-with-age/edit-age/edit-age.component.html</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3733378544613473393" datatype="html">
@@ -3128,11 +3111,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/edit-date/edit-date.component.html</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">15</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/month/edit-month/edit-month.component.html</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1854059228407793522" datatype="html">
@@ -3277,15 +3260,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="meaning">Label for adding an option in a dropdown</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">87</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">87</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2123171795960509943" datatype="html">
@@ -3294,15 +3277,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">tooltip for remove icon on chips of dropdown item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">134</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">134</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">134</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1115283280221159212" datatype="html">
@@ -3441,14 +3424,6 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-create-button/entity-create-button.component.html</context>
           <context context-type="linenumber">24</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5989540158358824356" datatype="html">
-        <source>Add or remove visible fields</source>
-        <target>Ajouter ou supprimer des champs visibles</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/entity-fields-menu/entity-fields-menu.component.html</context>
-          <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3813876381901859208" datatype="html">
@@ -3594,11 +3569,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">22</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
@@ -4885,7 +4860,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Inherited value from parent record selected in field &quot;<x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [field]=&quot;defaultValueHint.inheritedFromField&quot;         [entityType]=&quot;entity.getConstructor()&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label       &gt;"/>&quot; </source>
         <target> Valeur héritée de l&apos;enregistrement parent sélectionné dans le champ &quot;<x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [field]=&quot;defaultValueHint.inheritedFromField&quot;         [entityType]=&quot;entity.getConstructor()&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label       &gt;"/>&quot; </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/default-values/inherited-value-button/inherited-value-button.component.html</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/inherited-value-button/inherited-value-button.component.html</context>
           <context context-type="linenumber">22,29</context>
         </context-group>
       </trans-unit>
@@ -4893,7 +4868,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Select exactly one record in the parent field to automatically inherit its value here. </source>
         <target> Sélectionnez exactement un enregistrement dans le champ parent pour hériter automatiquement de sa valeur ici. </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/default-values/inherited-value-button/inherited-value-button.component.html</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/inherited-value-button/inherited-value-button.component.html</context>
           <context context-type="linenumber">34,37</context>
         </context-group>
       </trans-unit>
@@ -4901,7 +4876,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>(up-to-date, inherited from parent record)</source>
         <target>(à jour, hérité de l&apos;enregistrement parent)</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/default-values/inherited-value-button/inherited-value-button.component.html</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/inherited-value-button/inherited-value-button.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
       </trans-unit>
@@ -4909,7 +4884,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> (manually overwritten): click to reset value to inherited from parent record <x id="START_BLOCK_IF" equiv-text="@if (!form.formGroup.enabled) {"/> (requires the form to be in &quot;Edit&quot; mode) <x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
         <target> (écrasé manuellement) : cliquez pour réinitialiser la valeur héritée de l&apos;enregistrement parent <x id="START_BLOCK_IF" equiv-text="@if (!form.formGroup.enabled) {"/> (nécessite que le formulaire soit en mode «Edition») <x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/default-values/inherited-value-button/inherited-value-button.component.html</context>
+          <context context-type="sourcefile">src/app/features/default-value-inherited/inherited-value-button/inherited-value-button.component.html</context>
           <context context-type="linenumber">41,46</context>
         </context-group>
       </trans-unit>
@@ -4963,11 +4938,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">244</context>
+          <context context-type="linenumber">246</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">244</context>
+          <context context-type="linenumber">246</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8062293593030116402" datatype="html">
@@ -4993,11 +4968,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">329,331</context>
+          <context context-type="linenumber">331,333</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">329,331</context>
+          <context context-type="linenumber">331,333</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-confirm-summary/import-confirm-summary.component.html</context>
@@ -5125,11 +5100,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="meaning">Filter placeholder</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">91,92</context>
+          <context context-type="linenumber">93,94</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">91,92</context>
+          <context context-type="linenumber">93,94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1409893755354039025" datatype="html">
@@ -5138,11 +5113,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Examples of things to filter</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">99</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4416501390500692229" datatype="html">
@@ -5151,11 +5126,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Add a new entity to a list of multiple entities</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">150,152</context>
+          <context context-type="linenumber">152,154</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">150,152</context>
+          <context context-type="linenumber">152,154</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2623334410136043738" datatype="html">
@@ -5164,11 +5139,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Show filter options popup for list</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">162</context>
+          <context context-type="linenumber">164</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">162</context>
+          <context context-type="linenumber">164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5565098424836208406" datatype="html">
@@ -5177,11 +5152,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Download list contents as CSV</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">181</context>
+          <context context-type="linenumber">183</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">181</context>
+          <context context-type="linenumber">183</context>
         </context-group>
       </trans-unit>
       <trans-unit id="880922127227000253" datatype="html">
@@ -5190,11 +5165,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Download list contents as CSV</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">199</context>
+          <context context-type="linenumber">201</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">199</context>
+          <context context-type="linenumber">201</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6689023236721719187" datatype="html">
@@ -5202,11 +5177,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target> Importer d&apos;un fichier </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">215</context>
+          <context context-type="linenumber">217</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">215</context>
+          <context context-type="linenumber">217</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1040786538618991636" datatype="html">
@@ -5214,11 +5189,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Sélectionnez plusieurs enregistrements pour des actions en masse telles que la duplication ou la suppression</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">221</context>
+          <context context-type="linenumber">223</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">221</context>
+          <context context-type="linenumber">223</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4784348917657601711" datatype="html">
@@ -5226,11 +5201,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target> Actions en masse </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">230</context>
+          <context context-type="linenumber">232</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">230</context>
+          <context context-type="linenumber">232</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9214639802980140270" datatype="html">
@@ -5238,11 +5213,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target> Actions sur <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/><x id="INTERPOLATION" equiv-text="th }}"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="selected reco"/> enregistrements sélectionnés: </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">252,254</context>
+          <context context-type="linenumber">254,256</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">252,254</context>
+          <context context-type="linenumber">254,256</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4025334986649729672" datatype="html">
@@ -5250,11 +5225,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Sélectionner des lignes pour une action sur plusieurs enregistrements</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">258</context>
+          <context context-type="linenumber">260</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">258</context>
+          <context context-type="linenumber">260</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3859231369706026080" datatype="html">
@@ -5263,11 +5238,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">267,269</context>
+          <context context-type="linenumber">269,271</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">267,269</context>
+          <context context-type="linenumber">269,271</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1910227132918837305" datatype="html">
@@ -5276,11 +5251,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">276,278</context>
+          <context context-type="linenumber">278,280</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">276,278</context>
+          <context context-type="linenumber">278,280</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7039933822426808326" datatype="html">
@@ -5289,11 +5264,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">286,288</context>
+          <context context-type="linenumber">288,290</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">286,288</context>
+          <context context-type="linenumber">288,290</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6660925946511264619" datatype="html">
@@ -5302,11 +5277,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">296,298</context>
+          <context context-type="linenumber">298,300</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">296,298</context>
+          <context context-type="linenumber">298,300</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3278358550418950949" datatype="html">
@@ -5315,11 +5290,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">305,307</context>
+          <context context-type="linenumber">307,309</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">305,307</context>
+          <context context-type="linenumber">307,309</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7532581571486706488" datatype="html">
@@ -6214,7 +6189,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target> Modifier le mot de passe </target>
         <note priority="1" from="description">Button which opens password reset page</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
+          <context context-type="sourcefile">src/app/core/user/account-page/account-page.component.html</context>
           <context context-type="linenumber">9,11</context>
         </context-group>
       </trans-unit>
@@ -6223,34 +6198,8 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Votre adresse e-mail</target>
         <note priority="1" from="description">Email address input field</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
+          <context context-type="sourcefile">src/app/core/user/account-page/account-page.component.html</context>
           <context context-type="linenumber">19</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7418188192717050175" datatype="html">
-        <source> Please provide a valid email </source>
-        <target> Fournez une adresse e-mail valide </target>
-        <note priority="1" from="description">Error message if email format is invalid</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">25,27</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7703027023112056914" datatype="html">
-        <source> Update email </source>
-        <target> Mettre à jour l&apos;e-mail </target>
-        <note priority="1" from="description">Button which updates the user&apos;s email</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">40,42</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4210747844204240754" datatype="html">
-        <source>Please click the link in the email we sent you to verify your email address.</source>
-        <target>Veuillez cliquer sur le lien dans l&apos;e-mail que nous vous avons envoyé pour vérifier votre adresse e-mail.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.ts</context>
-          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5004902687162041164" datatype="html">
@@ -6837,7 +6786,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1879173756828666065" datatype="html">
@@ -6846,7 +6795,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3263679890047861885" datatype="html">
@@ -6855,7 +6804,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">163,165</context>
+          <context context-type="linenumber">173,175</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8057515795040006849" datatype="html">
@@ -6864,7 +6813,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">184</context>
+          <context context-type="linenumber">194</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1010230655185601893" datatype="html">
@@ -7346,11 +7295,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Tooltip show file</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8605421971099461066" datatype="html">
@@ -7359,11 +7308,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Tooltip upload file button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">47</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">47</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
@@ -7375,11 +7324,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Les modifications apportées aux fichiers ne sont pas possibles hors ligne.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">54</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">54</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
@@ -8853,11 +8802,11 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">315,317</context>
+          <context context-type="linenumber">317,319</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">315,317</context>
+          <context context-type="linenumber">317,319</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/skill/link-external-profile/link-external-profile-dialog/link-external-profile-dialog.component.html</context>
@@ -9277,7 +9226,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">Header of drag and drop box</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9144258997640819235" datatype="html">
@@ -9285,7 +9234,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <target>Ajouter un filtre:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5801022225533937256" datatype="html">
@@ -9293,7 +9242,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <target>Faites glisser et déposez les en-têtes des colonnes du tableau. Ajoutez des colonnes:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
-          <context context-type="linenumber">89</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4915431133669985304" datatype="html">
@@ -9485,7 +9434,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Ajouter une valeur fixe pour un autre champ</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
-          <context context-type="linenumber">64</context>
+          <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2683074819143881476" datatype="html">
@@ -9493,7 +9442,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Ajouter une valeur prédéfinie</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
-          <context context-type="linenumber">72</context>
+          <context context-type="linenumber">71</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9033045811000879464" datatype="html">
@@ -9547,7 +9496,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Entrez l&apos;URL</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/string/edit-url/edit-url.component.html</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4743703046972762929" datatype="html">
@@ -9555,7 +9504,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Format d&apos;URL non valide</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/string/edit-url/edit-url.component.html</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2375260419993138758" datatype="html">
@@ -9631,7 +9580,7 @@ En cas de doute, veuillez vous référer aux guides d&apos;utilisation, aux vid�
         <target>Lier les <x id="PH" equiv-text="sourceType.toString(true)"/> importées à l&apos;<x id="PH_1" equiv-text="targetType.toString()"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional.service.ts</context>
-          <context context-type="linenumber">317</context>
+          <context context-type="linenumber">311</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7678944712217496016" datatype="html">
@@ -9639,7 +9588,7 @@ En cas de doute, veuillez vous référer aux guides d&apos;utilisation, aux vid�
         <target>Importer des <x id="PH" equiv-text="sourceType.toString(true)"/> liés à cette <x id="PH_1" equiv-text="targetType.toString()"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/additional-actions/import-additional.service.ts</context>
-          <context context-type="linenumber">319</context>
+          <context context-type="linenumber">313</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7463715960858876246" datatype="html">
@@ -9648,11 +9597,11 @@ En cas de doute, veuillez vous référer aux guides d&apos;utilisation, aux vid�
         <note priority="1" from="description">bulk action button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">325,327</context>
+          <context context-type="linenumber">327,329</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">325,327</context>
+          <context context-type="linenumber">327,329</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-records/bulk-merge-records.component.html</context>
@@ -9736,7 +9685,7 @@ Are you sure you want to continue?</source>
         <target>Fusionné avec succès.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/de-duplication/bulk-merge-service.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8432128597269269042" datatype="html">
@@ -10242,7 +10191,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Paramètres de notification initiaux créés et enregistrés.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2697874063201718403" datatype="html">
@@ -10250,7 +10199,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Supprimer la règle de notification</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">195</context>
+          <context context-type="linenumber">193</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3173500569851728935" datatype="html">
@@ -10258,7 +10207,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Êtes-vous sûr de vouloir supprimer cette règle de notification ?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">196</context>
+          <context context-type="linenumber">194</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9181790066849638690" datatype="html">
@@ -10267,7 +10216,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">Default notification rule label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">222</context>
+          <context context-type="linenumber">220</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2949628569044050352" datatype="html">
@@ -10276,7 +10225,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">Default notification rule label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">230</context>
+          <context context-type="linenumber">228</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5449135813027171237" datatype="html">
@@ -10285,7 +10234,7 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <note priority="1" from="description">Default notification rule label</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification-settings/notification-settings.component.ts</context>
-          <context context-type="linenumber">238</context>
+          <context context-type="linenumber">236</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3768499663881435063" datatype="html">
@@ -10554,6 +10503,287 @@ _Nous serions ravis de vous aider !_</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/markdown-page/markdown-page/markdown-page.component.html</context>
           <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1080568556892591354" datatype="html">
+        <source>Changing your email is temporarily only possible for administrators. Please contact your project coordinator or the support team. </source>
+        <target>La modification de votre adresse électronique n&apos;est temporairement possible que pour les administrateurs. Veuillez contacter votre coordinateur de projet ou l&apos;équipe d&apos;assistance. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/account-page/account-page.component.html</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="108805775460398830" datatype="html">
+        <source>Could not connect to the server. Please check your network connection, try again later or reach out to your technical support team.</source>
+        <target>Impossible de se connecter au serveur. Veuillez vérifier votre connexion réseau, réessayer plus tard ou contacter votre équipe de support technique.</target>
+        <note priority="1" from="description">User API error</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-admin-service/keycloak-admin.service.ts</context>
+          <context context-type="linenumber">301</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5234982986829654425" datatype="html">
+        <source>The entry does not exist.</source>
+        <target>L&apos;entrée n&apos;existe pas.</target>
+        <note priority="1" from="description">User API error</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-admin-service/user-admin.service.ts</context>
+          <context context-type="linenumber">83</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7169942898229829348" datatype="html">
+        <source>The email address is already in use. Only one account is allowed per email address.</source>
+        <target>L&apos;adresse électronique est déjà utilisée. Un seul compte est autorisé par adresse électronique.</target>
+        <note priority="1" from="description">User API error</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-admin-service/user-admin.service.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3764866960445085674" datatype="html">
+        <source>There was an internal error at the user management server. Please try again later or reach out to your technical support team.</source>
+        <target>Une erreur interne s&apos;est produite au niveau du serveur de gestion des utilisateurs. Veuillez réessayer plus tard ou contacter votre équipe de support technique.</target>
+        <note priority="1" from="description">User API error</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-admin-service/user-admin.service.ts</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4176168554520872982" datatype="html">
+        <source>Clear all filters</source>
+        <target>Effacer tous les filtres</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/filter/filter/filter.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8700121026680200191" datatype="html">
+        <source>Clear</source>
+        <target>Effacer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/filter/filter/filter.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7157791362826198470" datatype="html">
+        <source>Current Date </source>
+        <target>Date actuelle </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/default-values/x-dynamic-placeholder/admin-default-value-dynamic/admin-default-value-dynamic.component.html</context>
+          <context context-type="linenumber">7,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5063911269029768191" datatype="html">
+        <source>Current User </source>
+        <target>Utilisateur actuel </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/default-values/x-dynamic-placeholder/admin-default-value-dynamic/admin-default-value-dynamic.component.html</context>
+          <context context-type="linenumber">15,16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7884256722053782538" datatype="html">
+        <source>This requires another field in this record type to be a link to a record</source>
+        <target>Il faut donc qu&apos;un autre champ de ce type d&apos;enregistrement soit un lien vers un enregistrement.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3841989706323728259" datatype="html">
+        <source>Not available</source>
+        <target>Non disponible</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/admin-default-value-updated/admin-default-value-updated.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component.html</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7164221698419253495" datatype="html">
+        <source>Select and fully configure default value or clear the mode </source>
+        <target>Sélectionner et configurer entièrement la valeur par défaut ou effacer le mode </target>
+        <note priority="1" from="description">error message</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/default-values/admin-default-value/admin-default-value.component.html</context>
+          <context context-type="linenumber">63,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2427257728726929620" datatype="html">
+        <source>Select entity which you want to set automated rule mapping</source>
+        <target>Sélectionnez l&apos;entité pour laquelle vous souhaitez établir un mappage de règles automatisé.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/admin-default-value-updated/admin-default-value-updated.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8852610530456265162" datatype="html">
+        <source> Select Related Entity: </source>
+        <target> Sélectionnez Entité liée : </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/admin-default-value-updated/admin-default-value-updated.component.html</context>
+          <context context-type="linenumber">12,14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1417391795783320393" datatype="html">
+        <source> Configure Automation </source>
+        <target> Configurer l&apos;automatisation </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/admin-default-value-updated/admin-default-value-updated.component.html</context>
+          <context context-type="linenumber">33,35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7651411296801182759" datatype="html">
+        <source>This requires that another entity has a field that links to this entity type, so that it can be used to trigger updates to this record.</source>
+        <target>Pour cela, il faut qu&apos;une autre entité dispose d&apos;un champ lié à ce type d&apos;entité, afin qu&apos;il puisse être utilisé pour déclencher des mises à jour de cet enregistrement.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/admin-default-value-updated/admin-default-value-updated.component.html</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2447266966779250793" datatype="html">
+        <source>Configure Automation Rule</source>
+        <target>Configurer la règle d&apos;automatisation</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7710820937988011657" datatype="html">
+        <source> You can create an automation rule for this field. The system will then suggest to automatically update this field whenever the related record&apos;s field changes. This helps you ensure data consistency and reduces manual work. </source>
+        <target> Vous pouvez créer une règle d&apos;automatisation pour ce champ. Le système proposera alors de mettre à jour automatiquement ce champ chaque fois que le champ de l&apos;enregistrement lié est modifié. Cela vous permet d&apos;assurer la cohérence des données et de réduire le travail manuel. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">5,10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5991141320458034244" datatype="html">
+        <source> Please select the field and configure the mapping carefully to avoid unintended updates. You will see a confirmation dialog to check and manually adjust the value whenever you change records that trigger this automation. </source>
+        <target> Veuillez sélectionner le champ et configurer le mappage avec soin afin d&apos;éviter des mises à jour involontaires. Une boîte de dialogue de confirmation s&apos;affichera pour vous permettre de vérifier et d&apos;ajuster manuellement la valeur chaque fois que vous modifierez les enregistrements qui déclenchent cette automatisation. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">11,15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7675631140179017104" datatype="html">
+        <source>Related reference field (of <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.label }}"/>) </source>
+        <target>Champ de référence connexe (de <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.label }}"/>) </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">19,20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7442388950965434835" datatype="html">
+        <source>Select the field in the related entity that links it to this entity. For example, if a child&apos;s field is updated based on a school&apos;s value, this is the field in the school entity that references the child.</source>
+        <target>Sélectionnez le champ de l&apos;entité liée qui le relie à cette entité. Par exemple, si le champ d&apos;un enfant est mis à jour en fonction de la valeur d&apos;une école, il s&apos;agit du champ de l&apos;entité école qui fait référence à l&apos;enfant.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1326423602241014365" datatype="html">
+        <source>Automation trigger field (of <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.label }}"/>) </source>
+        <target>Champ de déclenchement de l&apos;automatisation (de <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.label }}"/>) </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">39,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5201095002395117362" datatype="html">
+        <source>Choose the field in the related entity that will trigger updates to this field when it is changed.</source>
+        <target>Choisissez le champ de l&apos;entité liée qui déclenchera la mise à jour de ce champ lorsqu&apos;il sera modifié.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3811418322519955660" datatype="html">
+        <source>The trigger field on the other, related entity must be of type &quot;dropdown&quot;. It seems there are no such field on that record type.</source>
+        <target>Le champ déclencheur de l&apos;autre entité apparentée doit être de type &quot;dropdown&quot;. Il semble que ce type de champ n&apos;existe pas sur ce type d&apos;enregistrement.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5578909251741792919" datatype="html">
+        <source>No suitable fields available in <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.labelPlural }}"/> </source>
+        <target>Aucun champ approprié n&apos;est disponible dans <x id="INTERPOLATION" equiv-text="{{ relatedEntityType.labelPlural }}"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">56,58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1871735250314999945" datatype="html">
+        <source>Currently only fields of type &quot;dropdown&quot; can be used as trigger field. </source>
+        <target>Actuellement, seuls les champs de type &quot;dropdown&quot; peuvent être utilisés comme champ déclencheur. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">63,64</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7202538312399759639" datatype="html">
+        <source>When &quot;trigger field&quot; changes to</source>
+        <target>Lorsque le &quot;champ de déclenchement&quot; devient</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">73</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3301756976043125639" datatype="html">
+        <source>then this field is updated to</source>
+        <target>ce champ est alors mis à jour et devient</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3438339975662660773" datatype="html">
+        <source> The data is invalid, please check the fields in the &quot;Configure mapping&quot; </source>
+        <target> Les données ne sont pas valides, veuillez vérifier les champs dans la section &quot;Configurer le mappage&quot;. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
+          <context context-type="linenumber">106,108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6664392235203810397" datatype="html">
+        <source>Update Related Records</source>
+        <target>Mise à jour des dossiers connexes</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-status-update.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6335936872080131485" datatype="html">
+        <source> You have made changes to a field that is linked to other records and can automatically update them. The following records are linked through the <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>&quot;<x id="INTERPOLATION" equiv-text="{{ data.entities[0]?.relatedReferenceField }}"/>&quot;<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> field. Please review these affected records below. You can manually change the new value if the automatically suggested value is not matching what you need. </source>
+        <target> Vous avez modifié une rubrique qui est liée à d&apos;autres enregistrements et qui peut les mettre à jour automatiquement. Les enregistrements suivants sont liés par le champ <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&amp;gt ;"/>&quot;<x id="INTERPOLATION" equiv-text="{{ data.entities[0] ?.relatedReferenceField }}"/>&quot;<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&amp;gt ;"/>. Veuillez examiner les enregistrements concernés ci-dessous. Vous pouvez modifier manuellement la nouvelle valeur si la valeur proposée automatiquement ne correspond pas à ce dont vous avez besoin. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-status-update.component.html</context>
+          <context context-type="linenumber">5,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2498303411437134874" datatype="html">
+        <source>Update related records</source>
+        <target>Mise à jour des dossiers connexes</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-status-update.component.html</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3959146184075429040" datatype="html">
+        <source>Do not update</source>
+        <target>Ne pas mettre à jour</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/automated-status-update.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3797939011647008470" datatype="html">
+        <source>Auto-update with changes from another record</source>
+        <target>Mise à jour automatique en cas de modification d&apos;un autre enregistrement</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/automated-status-update/updated-from-referencing-entity-default-value.service.ts</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
     </body>
