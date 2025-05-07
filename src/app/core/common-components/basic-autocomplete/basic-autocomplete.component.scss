@@ -12,3 +12,8 @@ em {
 .autocomplete-footer {
   margin: sizes.$small sizes.$regular;
 }
+
+.mat-autocomplete-panel.custom-panel {
+  overflow-y: hidden !important;
+  max-height: none !important;
+}

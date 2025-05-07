@@ -1,10 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -47,6 +41,7 @@ import { FormValidatorConfig } from "app/core/common-components/entity-form/dyna
 import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
 import { MatCheckbox } from "@angular/material/checkbox";
 import { DefaultValueOptionsComponent } from "./default-value-options/default-value-options.component";
+import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -75,20 +70,26 @@ import { DefaultValueOptionsComponent } from "./default-value-options/default-va
     AnonymizeOptionsComponent,
     MatCheckbox,
     DefaultValueOptionsComponent,
+    EntityTypeSelectComponent,
   ],
 })
-export class AdminEntityFieldComponent implements OnChanges {
-  @Input() fieldId: string;
-  @Input() entityType: EntityConstructor;
+export class AdminEntityFieldComponent {
+  fieldId: string;
+  entityType: EntityConstructor;
 
+  /** current state of the field being edited */
   entitySchemaField: EntitySchemaField;
+
   form: FormGroup;
   fieldIdForm: FormControl;
+
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
+
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
+
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
@@ -105,16 +106,12 @@ export class AdminEntityFieldComponent implements OnChanges {
   ) {
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
-    this.entitySchemaField = this.entityType.schema.get(this.fieldId) ?? {};
+    this.entitySchemaField = {
+      ...(this.entityType.schema.get(this.fieldId) ?? {}),
+    };
 
     this.initSettings();
     this.initAvailableDatatypes(allDataTypes);
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entitySchemaField) {
-      this.initSettings();
-    }
   }
 
   private initSettings() {
@@ -147,6 +144,11 @@ export class AdminEntityFieldComponent implements OnChanges {
     this.form = this.fb.group({
       id: this.fieldIdForm,
       schemaFields: this.schemaFieldsForm,
+    });
+
+    this.schemaFieldsForm.valueChanges.subscribe((v) => {
+      if (JSON.stringify(v) === JSON.stringify(this.entitySchemaField)) return;
+      this.entitySchemaField = { ...this.getUpdatedSchemaField(v) };
     });
 
     this.schemaFieldsForm
@@ -182,6 +184,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   entityFieldValidatorChanges(validatorData: FormValidatorConfig) {
     this.schemaFieldsForm.get("validators").setValue(validatorData);
   }
+
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
     const label =
@@ -199,6 +202,7 @@ export class AdminEntityFieldComponent implements OnChanges {
         value: d.dataType,
       }));
   }
+
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
   createNewAdditionalOption: (input: string) => SimpleDropdownValue;
@@ -273,7 +277,18 @@ export class AdminEntityFieldComponent implements OnChanges {
       return;
     }
 
-    const formValues = this.schemaFieldsForm.getRawValue();
+    const fieldId = this.fieldIdForm.getRawValue();
+
+    this.adminEntityService.updateSchemaField(
+      this.entityType,
+      fieldId,
+      this.entitySchemaField,
+    );
+
+    this.dialogRef.close(fieldId);
+  }
+
+  private getUpdatedSchemaField(formValues): EntitySchemaField {
     for (const key of Object.keys(formValues)) {
       if (formValues[key] === null) {
         delete formValues[key];
@@ -284,15 +299,7 @@ export class AdminEntityFieldComponent implements OnChanges {
       this.entitySchemaField, // TODO: remove this merge once all schema fields are in the form (then only form values should apply)
       formValues,
     );
-    const fieldId = this.fieldIdForm.getRawValue();
-
-    this.adminEntityService.updateSchemaField(
-      this.entityType,
-      fieldId,
-      updatedEntitySchema,
-    );
-
-    this.dialogRef.close(fieldId);
+    return updatedEntitySchema;
   }
 
   openEnumOptions(event: Event) {

@@ -294,7 +294,7 @@ describe("DefaultValueService", () => {
       service,
       {
         defaultValue: {
-          mode: "inherited",
+          mode: "inherited-from-referenced-entity",
           field: "foo",
           localAttribute: "reference-1",
         },

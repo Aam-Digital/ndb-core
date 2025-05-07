@@ -5,6 +5,7 @@ import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
 import { EntityConfig } from "../entity/entity-config";
+import { DefaultValueConfig } from "../entity/schema/default-value-config";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -479,5 +480,41 @@ describe("ConfigService", () => {
       },
     };
     testConfigMigration(otherConfig, otherConfig);
+  }));
+
+  it("should migrate defaultValue mode 'inherited' to 'inherited-from-referenced-entity'", fakeAsync(() => {
+    const previousDefaultValueConfig = {
+      mode: "inherited",
+      localAttribute: "localAttribute",
+      field: "field",
+    };
+
+    const expectedDefaultValueConfig: DefaultValueConfig = {
+      mode: "inherited-from-referenced-entity",
+      localAttribute: "localAttribute",
+      field: "field",
+    };
+
+    let testEntity = "entity:old-format";
+    updateSubject.next({
+      entity: Object.assign(new Config(), {
+        data: {
+          [testEntity]: {
+            attributes: {
+              fieldName: {
+                defaultValue: previousDefaultValueConfig,
+              },
+            },
+          },
+        },
+      }),
+      type: "update",
+    });
+    tick();
+
+    const config = service.getConfig(testEntity);
+    expect(config["attributes"].fieldName.defaultValue).toEqual(
+      expectedDefaultValueConfig,
+    );
   }));
 });

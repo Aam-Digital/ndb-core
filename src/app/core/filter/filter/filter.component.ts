@@ -14,6 +14,9 @@ import { NgComponentOutlet } from "@angular/common";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { FilterService } from "../filter.service";
 import { DataFilter, Filter } from "../filters/filters";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltip } from "@angular/material/tooltip";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -21,7 +24,7 @@ import { DataFilter, Filter } from "../filters/filters";
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
-  imports: [NgComponentOutlet],
+  imports: [NgComponentOutlet, FontAwesomeModule, MatButtonModule, MatTooltip],
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   /**
@@ -46,7 +49,11 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    * default `false`
    */
   @Input() onlyShowRelevantFilterOptions = false;
-
+  /**
+   * A string representation of the current filter state.
+   * This can be used to display the active filters as a single string.
+   */
+  @Input() filterString: string;
   /**
    * The filter query which is build by combining all selected filters.
    * This can be used as two-way-binding or through the `filterObjChange` output.
@@ -56,9 +63,14 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    * An event emitter that notifies about updates of the filter.
    */
   @Output() filterObjChange = new EventEmitter<DataFilter<T>>();
+  /**
+   * An event emitter that notifies about updates to the filter string.
+   */
+  @Output() filterStringChange = new EventEmitter<string>();
 
   filterSelections: Filter<T>[] = [];
   urlPath: string;
+  hasActiveFilters: boolean = false;
 
   constructor(
     private filterGenerator: FilterGeneratorService,
@@ -90,6 +102,9 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
   filterOptionSelected(filter: Filter<T>, selectedOptions: string[]) {
     filter.selectedOptionValues = selectedOptions;
+    if (filter.selectedOptionValues) {
+      this.hasActiveFilters = true;
+    }
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
       this.updateUrl(filter.name, selectedOptions.toString());
@@ -153,10 +168,32 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     const params = this.route.snapshot.queryParams;
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.name)) {
+        this.hasActiveFilters = true;
         f.selectedOptionValues = params[f.name]
           .split(",")
           .filter((value) => value !== "");
       }
+    });
+  }
+
+  clearAllFilters() {
+    this.filterSelections.forEach((filter) => {
+      filter.selectedOptionValues = [];
+    });
+
+    this.hasActiveFilters = false;
+
+    this.filterObjChange.emit({});
+    this.filterStringChange.emit("");
+
+    let newParams = { ...this.route.snapshot.queryParams };
+    this.filterSelections.forEach((filter) => {
+      newParams[filter.name] = undefined;
+    });
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: newParams,
+      queryParamsHandling: "merge",
     });
   }
 }
