@@ -29,6 +29,8 @@ import { EntityConstructor } from "../../entity/model/entity";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { AdminDefaultValueDynamicComponent } from "../x-dynamic-placeholder/admin-default-value-dynamic/admin-default-value-dynamic.component";
 import { AdminDefaultValueStaticComponent } from "../x-static/admin-default-value-static/admin-default-value-static.component";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { AdminDefaultValueUpdatedComponent } from "../../../features/automated-status-update/admin-default-value-updated/admin-default-value-updated.component";
 import { AdminDefaultValueInheritedComponent } from "../../../features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component";
 
 /**
@@ -52,6 +54,7 @@ import { AdminDefaultValueInheritedComponent } from "../../../features/default-v
     AdminDefaultValueDynamicComponent,
     AdminDefaultValueStaticComponent,
     AdminDefaultValueInheritedComponent,
+    AdminDefaultValueUpdatedComponent,
   ],
   templateUrl: "./admin-default-value.component.html",
   styleUrl: "./admin-default-value.component.scss",
@@ -64,6 +67,7 @@ export class AdminDefaultValueComponent
   implements OnInit
 {
   @Input() entityType: EntityConstructor;
+  @Input() entitySchemaField: EntitySchemaField;
 
   form: FormGroup;
 

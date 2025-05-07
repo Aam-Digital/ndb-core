@@ -27,4 +27,5 @@ export interface DefaultValueConfig {
 export type DefaultValueMode =
   | "inherited-from-referenced-entity"
   | "static"
-  | "dynamic";
+  | "dynamic"
+  | "updated-from-referencing-entity";

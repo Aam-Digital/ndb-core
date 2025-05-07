@@ -20,6 +20,13 @@
             [entityType]="entityType"
           ></app-admin-default-value-inherited>
         }
+        @case ("updated-from-referencing-entity") {
+          <app-admin-default-value-updated
+            formControlName="config"
+            [entityType]="entityType"
+            [entitySchemaField]="entitySchemaField"
+          ></app-admin-default-value-updated>
+        }
       }
     </div>
 
@@ -53,7 +60,7 @@
 
   @if (form.invalid) {
     <mat-error i18n="error message"
-      >Select default value or clear default value mode
+      >Select and fully configure default value or clear the mode
     </mat-error>
   }
 </mat-form-field>
