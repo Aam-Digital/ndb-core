@@ -15,10 +15,7 @@ import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-e
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
-import {
-  EntityForm,
-  EntityFormService,
-} from "app/core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "app/core/common-components/entity-form/entity-form.service";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
@@ -70,7 +67,6 @@ export class AutomatedFieldMappingComponent implements OnInit {
       relatedReferenceFields: string[];
       currentRelatedReferenceField?: string;
     },
-    private entityFormService: EntityFormService,
     private dialogRef: MatDialogRef<any>,
     private entityRegistry: EntityRegistry,
     private configurableEnumService: ConfigurableEnumService,
@@ -138,7 +134,6 @@ export class AutomatedFieldMappingComponent implements OnInit {
       }
 
       const formField = new FormControl(selectedValue);
-      //await this.entityFormService.createEntityForm([this.data.currentField], entity);
       // Track form value changes
       formField.valueChanges.subscribe((value) => {
         this.selectedMappings[sourceOption.id] = value;
