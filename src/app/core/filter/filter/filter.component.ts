@@ -65,7 +65,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   /**
    * An event emitter that notifies about updates to the filter string.
    */
-  @Output() filterStringChange = new EventEmitter<void>();
+  @Output() filterStringChange = new EventEmitter<string>();
 
   filterSelections: Filter<T>[] = [];
   urlPath: string;
@@ -183,7 +183,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     this.hasActiveFilters = false;
 
     this.filterObjChange.emit({});
-    this.filterStringChange.emit();
+    this.filterStringChange.emit("");
 
     let newParams = { ...this.route.snapshot.queryParams };
     this.filterSelections.forEach((filter) => {

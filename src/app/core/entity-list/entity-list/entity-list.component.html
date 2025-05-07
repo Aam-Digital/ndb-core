@@ -31,7 +31,7 @@
       [useUrlQueryParams]="true"
       [(filterObj)]="filterObj"
       [filterString]="filterString"
-      (filterStringChange)="filterString = ''; applyFilter('')"
+      (filterStringChange)="filterString = $event; applyFilter($event)"
     ></app-filter>
   </div>
 
