@@ -54,7 +54,7 @@ export class DefaultValueService {
             fieldConfig,
           );
           break;
-        case "inherited":
+        case "inherited-from-referenced-entity":
           await this.inheritedValueService.setDefaultValue(
             targetFormControl,
             fieldConfig,
@@ -123,7 +123,9 @@ export class DefaultValueService {
     }
 
     const fieldConfig = form?.fieldConfigs?.find((x) => x.id === fieldId);
-    if (fieldConfig?.defaultValue?.mode === "inherited") {
+    if (
+      fieldConfig?.defaultValue?.mode === "inherited-from-referenced-entity"
+    ) {
       return this.inheritedValueService.getDefaultValueUiHint(
         form,
         fieldConfig,
