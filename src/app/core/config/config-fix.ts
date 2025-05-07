@@ -1004,6 +1004,7 @@ export const defaultJsonConfig = {
       },
       status: {
         dataType: "string",
+        label: $localize`:Label for the status of a child:Status`
       },
       dropoutDate: {
         dataType: "date-only",
