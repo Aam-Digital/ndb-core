@@ -55,11 +55,20 @@ export class AutomatedFieldMappingComponent implements OnInit {
     [];
 
   /**
-   *
+   * A mapping of triggerfieldValues to their corresponding EntityForm instances.
+   * Each EntityForm represents the form configuration for a specific trigger field value.
+   * For example:
+   * {
+   *   "male ": { formGroup },
+   *   "female": { formGroup },
+   * }
    */
   mappingForms: {
-    [sourceId: string]: EntityForm<Entity>;
+    [triggerfieldValue: string]: EntityForm<Entity>;
   } = {};
+  /** The automatedMapping rules for the selectedTriggerField
+   * The mapping is a dictionary where the key is the triggerFieldValue and the value is the currentField value.
+   */
   selectedMappings: { [key: string]: any } = {};
   /** The available values for the selectedTriggerField */
   triggerFieldValues: ConfigurableEnumValue[] = [];
