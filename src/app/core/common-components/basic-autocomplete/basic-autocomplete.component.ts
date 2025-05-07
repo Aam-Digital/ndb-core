@@ -136,7 +136,10 @@ export class BasicAutocompleteComponent<O, V = O>
   /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
   showAddOption = false;
 
-  // maximum height of the autocomplete panel
+  /**
+   * maximum height of the autocomplete panel.
+   * We need a calculation to avoid multiple scrollbars, couldn't get this working just with css.
+   */
   maxPanelHeight: number;
 
   get displayText() {
