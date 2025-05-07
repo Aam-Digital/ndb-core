@@ -311,7 +311,7 @@ describe("EntityFormService", () => {
     const schema: EntitySchemaField = {
       defaultValue: {
         mode: "static",
-        value: 1,
+        config: { value: 1 },
       },
     };
     Entity.schema.set("test", schema);
@@ -321,7 +321,7 @@ describe("EntityFormService", () => {
 
     schema.defaultValue = {
       mode: "dynamic",
-      value: PLACEHOLDERS.NOW,
+      config: { value: PLACEHOLDERS.NOW },
     };
 
     form = await service.createEntityForm([{ id: "test" }], new Entity());
@@ -331,7 +331,7 @@ describe("EntityFormService", () => {
 
     schema.defaultValue = {
       mode: "dynamic",
-      value: PLACEHOLDERS.CURRENT_USER,
+      config: { value: PLACEHOLDERS.CURRENT_USER },
     };
     form = await service.createEntityForm([{ id: "test" }], new Entity());
     expect(form.formGroup.get("test")).toHaveValue(
@@ -355,7 +355,7 @@ describe("EntityFormService", () => {
     Entity.schema.set("user", {
       defaultValue: {
         mode: "dynamic",
-        value: PLACEHOLDERS.CURRENT_USER,
+        config: { value: PLACEHOLDERS.CURRENT_USER },
       },
     });
     let form = await service.createEntityForm([{ id: "user" }], new Entity());
@@ -374,7 +374,7 @@ describe("EntityFormService", () => {
     Entity.schema.set("test", {
       defaultValue: {
         mode: "static",
-        value: 1,
+        config: { value: 1 },
       },
     });
 
@@ -390,7 +390,7 @@ describe("EntityFormService", () => {
     Entity.schema.set("test", {
       defaultValue: {
         mode: "static",
-        value: 1,
+        config: { value: 1 },
       },
     });
 

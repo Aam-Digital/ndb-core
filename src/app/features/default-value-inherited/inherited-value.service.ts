@@ -1,17 +1,18 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
-import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { EntityForm } from "../common-components/entity-form/entity-form.service";
-import { Entity } from "../entity/model/entity";
+import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
+import { EntityForm } from "../../core/common-components/entity-form/entity-form.service";
+import { Entity } from "../../core/entity/model/entity";
 import {
+  AdminDefaultValueContext,
   DefaultValueStrategy,
-  getConfigsByMode,
-} from "./default-value-strategy.interface";
-import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { DefaultValueConfig } from "../entity/schema/default-value-config";
-import { DefaultValueHint } from "./default-value.service";
-import { asArray } from "app/utils/asArray";
-import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
+} from "../../core/default-values/default-value-strategy.interface";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { DefaultValueMode } from "../../core/default-values/default-value-config";
+import { DefaultValueHint } from "../../core/default-values/default-value-service/default-value.service";
+import { asArray } from "../../utils/asArray";
+import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
+import { DefaultValueConfigInherited } from "./default-value-config-inherited";
 
 /**
  * An advanced default-value strategy that sets values based on the value in a referenced related entity.
@@ -23,8 +24,21 @@ import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
   providedIn: "root",
 })
 export class InheritedValueService extends DefaultValueStrategy {
-  constructor(private entityMapper: EntityMapperService) {
-    super();
+  override readonly mode = "inherited-from-referenced-entity";
+
+  private entityMapper = inject(EntityMapperService);
+
+  override async getAdminUI(): Promise<AdminDefaultValueContext> {
+    const component = await import(
+      "./admin-default-value-inherited/admin-default-value-inherited.component"
+    ).then((c) => c.AdminDefaultValueInheritedComponent);
+
+    return {
+      mode: this.mode,
+      component,
+      icon: "circle-nodes",
+      description: $localize`value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)`,
+    };
   }
 
   override async initEntityForm<T extends Entity>(form: EntityForm<T>) {
@@ -38,26 +52,31 @@ export class InheritedValueService extends DefaultValueStrategy {
    * @param fieldConfig
    * @param form
    */
-  async setDefaultValue(
+  override async setDefaultValue(
     targetFormControl: AbstractControl<any, any>,
     fieldConfig: EntitySchemaField,
     form: EntityForm<any>,
   ) {
+    const config: DefaultValueConfigInherited =
+      fieldConfig.defaultValue?.config;
+    if (!config) {
+      return;
+    }
+
     // load inherited from initial entity
     await this.onSourceValueChange(
       form,
       targetFormControl,
       fieldConfig,
-      this.getParentRefId(form, fieldConfig.defaultValue),
+      this.getParentRefId(form, config),
     );
 
     // subscribe to update inherited whenever source field changes
     let sourceFormControl: AbstractControl<any, any> | null =
-      form.formGroup.get(fieldConfig.defaultValue.localAttribute);
+      form.formGroup.get(config.localAttribute);
     if (sourceFormControl && targetFormControl) {
       form.watcher.set(
-        "sourceFormControlValueChanges_" +
-          fieldConfig.defaultValue.localAttribute,
+        "sourceFormControlValueChanges_" + config.localAttribute,
         sourceFormControl.valueChanges.subscribe(
           async (change) =>
             await this.onSourceValueChange(
@@ -85,6 +104,12 @@ export class InheritedValueService extends DefaultValueStrategy {
     fieldConfig: EntitySchemaField,
     change,
   ) {
+    const defaultConfig: DefaultValueConfigInherited =
+      fieldConfig.defaultValue?.config;
+    if (!defaultConfig) {
+      return;
+    }
+
     if (form.formGroup.disabled) {
       return;
     }
@@ -121,19 +146,14 @@ export class InheritedValueService extends DefaultValueStrategy {
       change,
     );
 
-    if (
-      !parentEntity ||
-      parentEntity[fieldConfig.defaultValue.field] === undefined
-    ) {
+    if (!parentEntity || parentEntity[defaultConfig.field] === undefined) {
       return;
     }
 
     if (fieldConfig.isArray) {
-      targetFormControl.setValue([
-        ...parentEntity[fieldConfig.defaultValue.field],
-      ]);
+      targetFormControl.setValue([...parentEntity[defaultConfig.field]]);
     } else {
-      targetFormControl.setValue(parentEntity[fieldConfig.defaultValue.field]);
+      targetFormControl.setValue(parentEntity[defaultConfig.field]);
     }
 
     targetFormControl.markAsUntouched();
@@ -150,11 +170,12 @@ export class InheritedValueService extends DefaultValueStrategy {
    * @param form
    * @param field
    */
-  getDefaultValueUiHint<T extends Entity>(
+  override getDefaultValueUiHint<T extends Entity>(
     form: EntityForm<T>,
     field: FormFieldConfig,
   ): DefaultValueHint | undefined {
-    const defaultConfig = field?.defaultValue;
+    const defaultConfig: DefaultValueConfigInherited =
+      field?.defaultValue?.config;
     if (!defaultConfig) {
       return;
     }
@@ -184,10 +205,8 @@ export class InheritedValueService extends DefaultValueStrategy {
   }
 
   private async updateLinkedEntities<T extends Entity>(form: EntityForm<T>) {
-    let inheritedConfigs: Map<string, DefaultValueConfig> = getConfigsByMode(
-      form.fieldConfigs,
-      ["inherited-from-referenced-entity"],
-    );
+    let inheritedConfigs: Map<string, DefaultValueConfigInherited> =
+      getConfigsForInheritedMode(form.fieldConfigs);
 
     const linkedEntityRefs: Map<string, string[]> = this.getLinkedEntityRefs(
       inheritedConfigs,
@@ -225,7 +244,7 @@ export class InheritedValueService extends DefaultValueStrategy {
    * @private
    */
   private getLinkedEntityRefs<T extends Entity>(
-    inheritedConfigs: Map<string, DefaultValueConfig>,
+    inheritedConfigs: Map<string, DefaultValueConfigInherited>,
     form: EntityForm<T>,
   ): Map<string, string[]> {
     const linkedEntityRefs: Map<string, string[]> = new Map();
@@ -256,7 +275,7 @@ export class InheritedValueService extends DefaultValueStrategy {
    */
   private getParentRefId<T extends Entity>(
     form: EntityForm<T>,
-    defaultConfig: DefaultValueConfig,
+    defaultConfig: DefaultValueConfigInherited,
     castToSingle = true,
   ): string | undefined {
     const linkedFieldValue =
@@ -274,4 +293,24 @@ export class InheritedValueService extends DefaultValueStrategy {
       return linkedFieldValue;
     }
   }
+}
+
+/**
+ * Get the default value configs filtered for the given mode.
+ * @param fieldConfigs
+ */
+export function getConfigsForInheritedMode(
+  fieldConfigs: FormFieldConfig[],
+): Map<string, DefaultValueConfigInherited> {
+  const mode: DefaultValueMode[] = ["inherited-from-referenced-entity"];
+
+  let configs: Map<string, DefaultValueConfigInherited> = new Map();
+
+  for (const field of fieldConfigs) {
+    if (mode.includes(field.defaultValue?.mode)) {
+      configs.set(field.id, field.defaultValue?.config);
+    }
+  }
+
+  return configs;
 }

@@ -34,11 +34,10 @@
 
         <div class="flex-grow">
           <div class="full-width-field">
-            <app-default-value-options
-              [value]="fieldGroup.get('defaultValue').value"
-              (valueChange)="fieldGroup.get('defaultValue').setValue($event)"
+            <app-admin-default-value
+              formControlName="defaultValue"
               [entityType]="entityConstructor"
-            ></app-default-value-options>
+            ></app-admin-default-value>
           </div>
         </div>
 

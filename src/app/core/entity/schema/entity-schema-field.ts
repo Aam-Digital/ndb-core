@@ -17,7 +17,7 @@
 
 import { FormValidatorConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-reference-role";
-import { DefaultValueConfig } from "./default-value-config";
+import { DefaultValueConfig } from "../../default-values/default-value-config";
 
 /**
  * Interface for additional configuration about a DatabaseField schema.
