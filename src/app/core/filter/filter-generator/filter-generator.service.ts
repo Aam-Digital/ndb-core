@@ -22,6 +22,9 @@ import { DateFilter } from "../filters/dateFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
+import { PLACEHOLDERS } from "app/core/entity/schema/entity-schema-field";
+import { CurrentUserSubject } from "app/core/session/current-user-subject";
+import { DynamicPlaceholderValueService } from "app/core/default-values/dynamic-placeholder-value.service";
 
 @Injectable({
   providedIn: "root",
@@ -33,6 +36,8 @@ export class FilterGeneratorService {
     private entityMapperService: EntityMapperService,
     private filterService: FilterService,
     private schemaService: EntitySchemaService,
+    private currentUser: CurrentUserSubject,
+    private placeholderService: DynamicPlaceholderValueService,
   ) {}
 
   /**
@@ -99,7 +104,17 @@ export class FilterGeneratorService {
       }
 
       if (filterConfig.hasOwnProperty("default")) {
-        filter.selectedOptionValues = [filterConfig.default];
+        const defaultVal =
+          this.placeholderService.getDefaultValueString(filterConfig);
+        if (
+          Object.values(PLACEHOLDERS).includes(
+            filterConfig.default as PLACEHOLDERS,
+          )
+        ) {
+          filter.selectedOptionValues = [defaultVal];
+        } else {
+          filter.selectedOptionValues = [filterConfig.default];
+        }
       }
 
       if (filter instanceof SelectableFilter) {
