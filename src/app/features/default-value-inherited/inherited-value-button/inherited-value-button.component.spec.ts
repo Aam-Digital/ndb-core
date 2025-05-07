@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { InheritedValueButtonComponent } from "./inherited-value-button.component";
-import { DefaultValueService } from "../../default-value-service/default-value.service";
+import { DefaultValueService } from "../../../core/default-values/default-value-service/default-value.service";
 
 describe("InheritedValueButtonComponent", () => {
   let component: InheritedValueButtonComponent;

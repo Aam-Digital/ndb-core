@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AdminDefaultValueInheritedComponent } from "./admin-default-value-inherited.component";
-import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
-import { Entity, EntityConstructor } from "../../../entity/model/entity";
-import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
+import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 
 describe("AdminDefaultValueInheritedComponent", () => {
   let component: AdminDefaultValueInheritedComponent;

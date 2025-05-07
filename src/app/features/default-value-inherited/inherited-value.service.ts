@@ -1,17 +1,17 @@
 import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { EntityForm } from "../../common-components/entity-form/entity-form.service";
-import { Entity } from "../../entity/model/entity";
+import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
+import { EntityForm } from "../../core/common-components/entity-form/entity-form.service";
+import { Entity } from "../../core/entity/model/entity";
 import {
   AdminDefaultValueContext,
   DefaultValueStrategy,
-} from "../default-value-strategy.interface";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { DefaultValueMode } from "../default-value-config";
-import { DefaultValueHint } from "../default-value-service/default-value.service";
-import { asArray } from "../../../utils/asArray";
-import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
+} from "../../core/default-values/default-value-strategy.interface";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { DefaultValueMode } from "../../core/default-values/default-value-config";
+import { DefaultValueHint } from "../../core/default-values/default-value-service/default-value.service";
+import { asArray } from "../../utils/asArray";
+import { FormFieldConfig } from "../../core/common-components/entity-form/FormConfig";
 import { DefaultValueConfigInherited } from "./default-value-config-inherited";
 
 /**
