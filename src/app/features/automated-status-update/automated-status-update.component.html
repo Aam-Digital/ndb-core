@@ -1,13 +1,13 @@
-<h2 mat-dialog-title i18n>Update Related Statuses</h2>
+<h2 mat-dialog-title i18n>Update Related Records</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
   <p i18n>
-    You have updated the status of this record. The status is linked to the
-    following records through the
-    <b>{{ data.entities[0]?.relatedReferenceField }}</b> field. Please review
-    the affected records below and update their fields as necessary to ensure
-    data consistency across related entities.
+    You have made changes to a field that is linked to other records and can
+    automatically update them. The following records are linked through the
+    <b>"{{ data.entities[0]?.relatedReferenceField }}"</b> field. Please review
+    these affected records below. You can manually change the new value if the
+    automatically suggested value is not matching what you need.
   </p>
 
   <table class="full-width">
@@ -29,8 +29,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button (click)="onConfirm()" i18n="Button label">
-    Update related fields
-  </button>
-  <button mat-button mat-dialog-close i18n="Button label">Do not update</button>
+  <button mat-button (click)="onConfirm()" i18n>Update related records</button>
+  <button mat-button mat-dialog-close i18n>Do not update</button>
 </mat-dialog-actions>
