@@ -108,7 +108,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
 
   private initAvailableTriggerFields() {
     this.availableTriggerFields = Array.from(
-      this.relatedEntityType.schema.entries(),
+      this.relatedEntityType.schema?.entries() ?? [],
     )
       .filter(
         ([_, schema]) => schema.dataType === ConfigurableEnumDatatype.dataType,

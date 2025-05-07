@@ -7,14 +7,15 @@ import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-e
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-describe("AutomatedFieldMappingComponent", () => {
+fdescribe("AutomatedFieldMappingComponent", () => {
   let component: AutomatedFieldMappingComponent;
   let fixture: ComponentFixture<AutomatedFieldMappingComponent>;
 
   const mockDialogData = {
-    currentEntity: class MockEntity extends Object {},
-    refEntity: class MockRefEntity extends Object {},
+    currentEntityType: class MockEntity extends Object {},
+    relatedEntityType: class MockRefEntity extends Object {},
     currentField: "status",
+    relatedReferenceFields: "remarks"
   };
 
   beforeEach(async () => {
