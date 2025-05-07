@@ -33,6 +33,14 @@ export class AutomatedStatusUpdateConfigService {
    */
   relatedReferenceFieldConfig: EntitySchemaField;
 
+  /**
+   * A map that tracks dependencies between entities and their fields for automated status updates.
+   * - Key: A unique identifier in the format "entityType|fieldId" (e.g., "School|schoolStatus").
+   * - Value: An array of rules that define how changes in the specified field affect related entities and fields.
+   *
+   * This map is used to determine which entities and fields need to be updated automatically
+   * when a specific field in a source entity changes.
+   */
   private dependencyMap = new Map<
     string,
     {
@@ -108,6 +116,7 @@ export class AutomatedStatusUpdateConfigService {
 
     const existingEntries = this.dependencyMap.get(key) || [];
     this.dependencyMap.set(key, [...existingEntries, entry]);
+    console.log(this.dependencyMap, "dependencyMap");
   }
 
   /**
