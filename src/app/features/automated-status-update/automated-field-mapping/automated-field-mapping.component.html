@@ -16,7 +16,7 @@
 
   <mat-form-field appearance="fill">
     <mat-label i18n
-      >Related reference field (of {{ data.relatedEntityType.label }})
+      >Related reference field (of {{ relatedEntityType.label }})
     </mat-label>
     <mat-select
       [(value)]="selectedReferenceField"
@@ -27,7 +27,7 @@
         <mat-option [value]="field">
           <app-entity-field-label
             [field]="field"
-            [entityType]="data.relatedEntityType"
+            [entityType]="relatedEntityType"
           ></app-entity-field-label>
         </mat-option>
       }
@@ -36,7 +36,7 @@
 
   <mat-form-field appearance="fill">
     <mat-label i18n
-      >Automation trigger field (of {{ data.relatedEntityType.label }})
+      >Automation trigger field (of {{ relatedEntityType.label }})
     </mat-label>
 
     <mat-select
