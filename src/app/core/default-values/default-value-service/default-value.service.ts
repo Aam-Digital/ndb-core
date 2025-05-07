@@ -107,7 +107,7 @@ export class DefaultValueService {
 
     const fieldConfig = form?.fieldConfigs?.find((x) => x.id === fieldId);
     const strategy = this.defaultValueStrategies.find(
-      (s) => s.mode === fieldConfig.defaultValue?.mode,
+      (s) => s.mode === fieldConfig?.defaultValue?.mode,
     );
 
     return strategy?.getDefaultValueUiHint(form, fieldConfig);

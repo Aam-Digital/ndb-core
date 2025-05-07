@@ -62,7 +62,7 @@ export class AdminDefaultValueUpdatedComponent
   availableRelatedEntities: {
     label: string;
     entityType: string;
-    relatedReferenceField: string[];
+    relatedReferenceFields: string[];
   }[];
 
   ngOnInit() {
@@ -101,9 +101,7 @@ export class AdminDefaultValueUpdatedComponent
         currentEntity: this.entityType,
         refEntity: refEntity,
         currentField: this.entitySchemaField,
-        currentAutomatedMapping: this.value.automatedMapping,
-        relatedReferenceFields: relatedEntityDetails.relatedReferenceField,
-        currentRelatedReferenceField: this.value?.relatedReferenceField,
+        relatedReferenceFields: relatedEntityDetails.relatedReferenceFields,
       },
     });
 

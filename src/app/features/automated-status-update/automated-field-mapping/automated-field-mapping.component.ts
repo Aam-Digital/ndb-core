@@ -59,34 +59,28 @@ export class AutomatedFieldMappingComponent implements OnInit {
       currentEntity: EntityConstructor;
       refEntity: EntityConstructor;
       currentField: FormFieldConfig;
-      // TODO: can/should we use currentField.defaultValue instead of passing the following?
-      currentAutomatedMapping?: {
-        automatedMapping: { [key: string]: string };
-        relatedTriggerField?: string;
-      };
       relatedReferenceFields: string[];
-      currentRelatedReferenceField?: string;
     },
     private dialogRef: MatDialogRef<any>,
     private entityRegistry: EntityRegistry,
     private configurableEnumService: ConfigurableEnumService,
     private schemaService: EntitySchemaService,
   ) {
-    if (data.currentAutomatedMapping) {
-      this.selectedMappings = data.currentAutomatedMapping?.automatedMapping;
-      this.selectedField = data.currentAutomatedMapping?.relatedTriggerField;
-    }
+    const defaultValueConfig =
+      this.data.currentField.defaultValue?.config || {};
+    this.selectedMappings = defaultValueConfig.automatedMapping || {};
+    this.selectedField = defaultValueConfig.relatedTriggerField;
     this.relatedReferenceFields = data?.relatedReferenceFields;
     this.selectedRelatedReferenceField =
-      data?.currentRelatedReferenceField ||
+      defaultValueConfig.relatedReferenceField ||
       (this.relatedReferenceFields ? this.relatedReferenceFields[0] : null);
   }
 
   ngOnInit(): void {
     this.availableFields = this.mapEnumFields(this.data.refEntity);
-    this.initializeSelectedField();
-
     this.targetFieldConfig = this.data.currentField;
+
+    this.initializeSelectedField();
   }
 
   private initializeSelectedField() {
