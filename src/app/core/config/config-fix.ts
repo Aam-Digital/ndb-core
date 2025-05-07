@@ -403,7 +403,6 @@ export const defaultJsonConfig = {
               config: {
                 fieldGroups: [
                   { fields: ["name", "privateSchool"] },
-                  { fields: ["linkedStudent1", "linkedStudent2", "schoolStatus"] },
                   { fields: ["address", "phone", "website"] },
                   { fields: ["language", "timing"] },
                   { fields: ["remarks"] }
@@ -1005,16 +1004,6 @@ export const defaultJsonConfig = {
       },
       status: {
         dataType: "string",
-        label: $localize`:Label for the status of a child:Status`,
-        defaultValue: {
-          mode: "updated-from-referencing-entity",
-          config: {
-            relatedEntityType: "School",
-            relatedReferenceField: "linkedStudent1",
-            relatedTriggerField: "schoolStatus",
-            automatedMapping: { "WARNING": "school warning", "OK": "school solved" }
-          }
-        }
       },
       dropoutDate: {
         dataType: "date-only",
@@ -1081,22 +1070,6 @@ export const defaultJsonConfig = {
         validators: {
           required: true
         }
-      },
-      linkedStudent1: {
-        dataType: "entity",
-        additional: "Child",
-        label: "Linked Student 1 (for status-automation test)"
-      },
-      linkedStudent2: {
-        dataType: "entity",
-        additional: "Child",
-        isArray: true,
-        label: "Linked Student 2 (for status-automation test)"
-      },
-      schoolStatus: {
-        dataType: "configurable-enum",
-        additional: "warning-levels",
-        label: "Status (for status-automation test)"
       },
       privateSchool: {
         dataType: "boolean",
