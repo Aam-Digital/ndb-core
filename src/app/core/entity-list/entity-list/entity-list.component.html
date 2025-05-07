@@ -30,6 +30,8 @@
       [entities]="allEntities"
       [useUrlQueryParams]="true"
       [(filterObj)]="filterObj"
+      [filterString]="filterString"
+      (filterStringChange)="filterString = ''; applyFilter('')"
     ></app-filter>
   </div>
 

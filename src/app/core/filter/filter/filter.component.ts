@@ -48,7 +48,11 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    * default `false`
    */
   @Input() onlyShowRelevantFilterOptions = false;
-
+  /**
+   * A string representation of the current filter state.
+   * This can be used to display the active filters as a single string.
+   */
+  @Input() filterString: string;
   /**
    * The filter query which is build by combining all selected filters.
    * This can be used as two-way-binding or through the `filterObjChange` output.
@@ -58,6 +62,10 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    * An event emitter that notifies about updates of the filter.
    */
   @Output() filterObjChange = new EventEmitter<DataFilter<T>>();
+  /**
+   * An event emitter that notifies about updates to the filter string.
+   */
+  @Output() filterStringChange = new EventEmitter<void>();
 
   filterSelections: Filter<T>[] = [];
   urlPath: string;
@@ -186,5 +194,6 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     this.hasActiveFilters = false;
 
     this.filterObjChange.emit({});
+    this.filterStringChange.emit();
   }
 }
