@@ -61,7 +61,8 @@ export class AutomatedFieldMappingComponent implements OnInit {
     [sourceId: string]: EntityForm<Entity>;
   } = {};
   selectedMappings: { [key: string]: any } = {};
-  sourceOptions: ConfigurableEnumValue[] = [];
+  /** The available values for the selectedTriggerField */
+  triggerFieldValues: ConfigurableEnumValue[] = [];
 
   /** The full schema of the field for which this default value is configured */
   targetFieldConfig: FormFieldConfig;
@@ -117,11 +118,11 @@ export class AutomatedFieldMappingComponent implements OnInit {
         (f) => f.id === this.selectedTriggerField,
       )
     ) {
-      this.loadSourceOptions(this.selectedTriggerField);
+      this.loadtriggerFieldValues(this.selectedTriggerField);
     }
   }
 
-  loadSourceOptions(fieldId: string) {
+  loadtriggerFieldValues(fieldId: string) {
     const selectedField = this.availableTriggerFields.find(
       (f) => f.id === fieldId,
     );
@@ -131,11 +132,11 @@ export class AutomatedFieldMappingComponent implements OnInit {
     const enumEntity = this.configurableEnumService.getEnum(
       selectedField.additional,
     );
-    this.sourceOptions = enumEntity?.values ?? [];
+    this.triggerFieldValues = enumEntity?.values ?? [];
     this.mappingForms = {};
 
-    for (const sourceOption of this.sourceOptions) {
-      let selectedValue: any = this.selectedMappings[sourceOption.id];
+    for (const triggerFieldValue of this.triggerFieldValues) {
+      let selectedValue: any = this.selectedMappings[triggerFieldValue.id];
 
       if (selectedValue) {
         selectedValue = this.schemaService.valueToEntityFormat(
@@ -147,13 +148,13 @@ export class AutomatedFieldMappingComponent implements OnInit {
       const formField = new FormControl(selectedValue);
       // Track form value changes
       formField.valueChanges.subscribe((value) => {
-        this.selectedMappings[sourceOption.id] = value;
+        this.selectedMappings[triggerFieldValue.id] = value;
       });
       this.targetFieldConfig.id = "targetValue";
       const formGroup = new FormGroup({
         [this.targetFieldConfig.id]: formField,
       });
-      this.mappingForms[sourceOption.id] = {
+      this.mappingForms[triggerFieldValue.id] = {
         formGroup,
       } as unknown as EntityForm<Entity>;
     }

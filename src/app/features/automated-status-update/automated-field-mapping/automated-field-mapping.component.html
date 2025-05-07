@@ -74,13 +74,16 @@
         <h3 class="mapping-header" i18n>then this field is updated to</h3>
       </div>
 
-      @for (sourceOption of sourceOptions; track sourceOption.id) {
-        <div class="option-label">{{ sourceOption.label }}</div>
+      @for (
+        triggerFieldValue of triggerFieldValues;
+        track triggerFieldValue.id
+      ) {
+        <div class="option-label">{{ triggerFieldValue.label }}</div>
         <div class="dropdown-select">
-          @if (mappingForms[sourceOption.id]) {
+          @if (mappingForms[triggerFieldValue.id]) {
             <app-entity-field-edit
               [field]="targetFieldConfig"
-              [form]="mappingForms[sourceOption.id]"
+              [form]="mappingForms[triggerFieldValue.id]"
             ></app-entity-field-edit>
           }
         </div>
