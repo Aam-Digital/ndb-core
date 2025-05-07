@@ -180,20 +180,19 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
       filter.selectedOptionValues = [];
     });
 
-    this.route.queryParams.subscribe((params) => {
-      const newParams = { ...params };
-      this.filterSelections.forEach((filter) => {
-        newParams[filter.name] = undefined;
-      });
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: newParams,
-        queryParamsHandling: "merge",
-      });
-    });
     this.hasActiveFilters = false;
 
     this.filterObjChange.emit({});
     this.filterStringChange.emit();
+
+    let newParams = { ...this.route.snapshot.queryParams };
+    this.filterSelections.forEach((filter) => {
+      newParams[filter.name] = undefined;
+    });
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: newParams,
+      queryParamsHandling: "merge",
+    });
   }
 }
