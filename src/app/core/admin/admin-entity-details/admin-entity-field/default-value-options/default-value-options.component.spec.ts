@@ -6,6 +6,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 import { Entity, EntityConstructor } from "../../../../entity/model/entity";
+import { DefaultValueConfig } from "../../../../entity/schema/default-value-config";
 
 describe("DefaultValueOptionsComponent", () => {
   let component: DefaultValueOptionsComponent;
@@ -56,9 +57,12 @@ describe("DefaultValueOptionsComponent", () => {
       value: "New value",
       localAttribute: null,
       field: null,
-    });
+    } as DefaultValueConfig);
     expect(component.valueChange.emit).toHaveBeenCalledWith(
-      jasmine.objectContaining({ mode: "static", value: "New value" }),
+      jasmine.objectContaining({
+        mode: "static",
+        value: "New value",
+      } as DefaultValueConfig),
     );
   });
   it("should emit valueChange event when changed form is valid (dynamic mode)", () => {
@@ -68,25 +72,28 @@ describe("DefaultValueOptionsComponent", () => {
       value: "New value",
       localAttribute: null,
       field: null,
-    });
+    } as DefaultValueConfig);
     expect(component.valueChange.emit).toHaveBeenCalledWith(
-      jasmine.objectContaining({ mode: "dynamic", value: "New value" }),
+      jasmine.objectContaining({
+        mode: "dynamic",
+        value: "New value",
+      } as DefaultValueConfig),
     );
   });
   it("should emit valueChange event when changed form is valid (inherited mode)", () => {
     spyOn(component.valueChange, "emit");
     component.form.setValue({
-      mode: "inherited",
+      mode: "inherited-from-referenced-entity",
       value: null,
       localAttribute: "localAttribute",
       field: "field",
-    });
+    } as DefaultValueConfig);
     expect(component.valueChange.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        mode: "inherited",
+        mode: "inherited-from-referenced-entity",
         localAttribute: "localAttribute",
         field: "field",
-      }),
+      } as DefaultValueConfig),
     );
   });
   it("should not emit valueChange event when changed form is invalid", () => {
@@ -96,15 +103,15 @@ describe("DefaultValueOptionsComponent", () => {
       value: null,
       localAttribute: null,
       field: null,
-    });
+    } as DefaultValueConfig);
     expect(component.valueChange.emit).not.toHaveBeenCalled();
 
     component.form.setValue({
-      mode: "inherited",
+      mode: "inherited-from-referenced-entity",
       value: null,
       localAttribute: "foo",
       field: null,
-    });
+    } as DefaultValueConfig);
     expect(component.valueChange.emit).not.toHaveBeenCalled();
   });
 
@@ -114,7 +121,7 @@ describe("DefaultValueOptionsComponent", () => {
       value: "Test value",
       localAttribute: "x",
       field: "y",
-    });
+    } as DefaultValueConfig);
     spyOn(component.valueChange, "emit");
 
     component.clearDefaultValue();
@@ -130,7 +137,11 @@ describe("DefaultValueOptionsComponent", () => {
     expect(component.form.get("mode").value).toEqual("dynamic");
     expect(component.form.get("value").value).toEqual("Test value");
 
-    component.value = { mode: "inherited", localAttribute: "x", field: "y" };
+    component.value = {
+      mode: "inherited-from-referenced-entity",
+      localAttribute: "x",
+      field: "y",
+    } as DefaultValueConfig;
     component.ngOnChanges({ value: { currentValue: component.value } as any });
     expect(component.form.get("localAttribute").value).toEqual("x");
     expect(component.form.get("field").value).toEqual("y");
