@@ -113,8 +113,6 @@ export class AdminDefaultValueUpdatedComponent
         relatedTriggerField: result.relatedTriggerField,
         automatedMapping: result.automatedMapping,
       };
-    } else {
-      // we may need to write this.value = null to reset from an invalid config?
     }
   }
 }
