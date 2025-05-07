@@ -29,7 +29,7 @@ import { EntityConstructor } from "../../entity/model/entity";
 import { CustomFormControlDirective } from "../../common-components/basic-autocomplete/custom-form-control.directive";
 import { AdminDefaultValueDynamicComponent } from "../x-dynamic-placeholder/admin-default-value-dynamic/admin-default-value-dynamic.component";
 import { AdminDefaultValueStaticComponent } from "../x-static/admin-default-value-static/admin-default-value-static.component";
-import { AdminDefaultValueInheritedComponent } from "../x-inherited-value/admin-default-value-inherited/admin-default-value-inherited.component";
+import { AdminDefaultValueInheritedComponent } from "../../../features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component";
 
 /**
  * Admin UI component used in AdminEntityFieldComponent dialog

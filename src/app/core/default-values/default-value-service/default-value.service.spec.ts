@@ -6,7 +6,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "./default-value.service";
 import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
-import { InheritedValueService } from "../x-inherited-value/inherited-value.service";
+import { InheritedValueService } from "../../../features/default-value-inherited/inherited-value.service";
 import { EventEmitter } from "@angular/core";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
