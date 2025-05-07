@@ -148,6 +148,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
       return mappingForm.formGroup.invalid;
     });
     if (this.isInvalid) return;
+
     const formattedMappings: { [key: string]: any } = {};
     Object.entries(this.selectedMappings).forEach(([key, value]) => {
       formattedMappings[key] = this.schemaService.valueToDatabaseFormat(
@@ -155,6 +156,7 @@ export class AutomatedFieldMappingComponent implements OnInit {
         this.targetFieldConfig,
       );
     });
+
     this.dialogRef.close({
       relatedTriggerField: this.selectedField,
       relatedReferenceField: this.selectedRelatedReferenceField,

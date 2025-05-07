@@ -1,59 +1,75 @@
-<h2 mat-dialog-title i18n>Select a field to configure Mapping</h2>
+<h2 mat-dialog-title i18n>Configure Automation Rule</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
   <p i18n>
-    You can create an automation rule for this field. Once set up, any changes
-    will automatically update the related field, ensuring data consistency and
-    reducing manual work.<br />
+    You can create an automation rule for this field. The system will then
+    suggest to automatically update this field whenever the related record's
+    field changes. This helps you ensure data consistency and reduces manual
+    work.
+  </p>
+  <p i18n>
     Please select the field and configure the mapping carefully to avoid
     unintended updates. You will see a confirmation dialog to check and manually
-    adjust the value during an automated update, after the related record
-    changes.
+    adjust the value whenever you change records that trigger this automation.
   </p>
 
-  <div class="dropdown-select">
-    <mat-form-field appearance="fill">
-      <mat-label i18n>Related reference field</mat-label>
-      <mat-select
-        [(value)]="selectedRelatedReferenceField"
-        matTooltip="Select the field in the related entity that links it to this entity. For example, if a child's field is updated based on a school's value, this is the field in the school entity that references the child."
-        i18n-matTooltip
-        i18n
-      >
-        @for (field of relatedReferenceFields; track field) {
-          <mat-option [value]="field">
-            <app-entity-field-label
-              [field]="field"
-              [entityType]="data.refEntity"
-            ></app-entity-field-label>
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
+  <mat-form-field appearance="fill">
+    <mat-label i18n
+      >Related reference field (of {{ data.refEntity.label }})
+    </mat-label>
+    <mat-select
+      [(value)]="selectedRelatedReferenceField"
+      matTooltip="Select the field in the related entity that links it to this entity. For example, if a child's field is updated based on a school's value, this is the field in the school entity that references the child."
+      i18n-matTooltip
+    >
+      @for (field of relatedReferenceFields; track field) {
+        <mat-option [value]="field">
+          <app-entity-field-label
+            [field]="field"
+            [entityType]="data.refEntity"
+          ></app-entity-field-label>
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-  <div class="dropdown-select">
-    <mat-form-field appearance="fill">
-      <mat-label i18n>Automation trigger field</mat-label>
-      <mat-select
-        [(value)]="selectedField"
-        (selectionChange)="loadSourceOptions($event.value)"
-        matTooltip="Choose the field in the related entity that will trigger updates to this field when it is changed."
-        i18n-matTooltip
-        i18n
-      >
-        @for (field of availableFields; track field.id) {
-          <mat-option [value]="field.id">{{ field.label }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
+  <mat-form-field appearance="fill">
+    <mat-label i18n
+      >Automation trigger field (of {{ data.refEntity.label }})
+    </mat-label>
 
+    <mat-select
+      [(value)]="selectedField"
+      (selectionChange)="loadSourceOptions($event.value)"
+      matTooltip="Choose the field in the related entity that will trigger updates to this field when it is changed."
+      i18n-matTooltip
+    >
+      @for (field of availableFields; track field.id) {
+        <mat-option [value]="field.id">{{ field.label }}</mat-option>
+      } @empty {
+        <mat-option
+          class="no-options-message"
+          matTooltip='The trigger field on the other, related entity must be of type "dropdown". It seems there are no such field on that record type.'
+          i18n-matTooltip
+          i18n
+          >No suitable fields available in {{ data.refEntity.labelPlural }}
+        </mat-option>
+      }
+    </mat-select>
+
+    <mat-hint i18n
+      >Currently only fields of type "dropdown" can be used as trigger field.
+    </mat-hint>
+  </mat-form-field>
+
+  <!--
+    Detailed trigger value -> target value mapping
+  -->
   @if (selectedField) {
     <div class="mapping-grid">
       <div class="header-row">
-        <h3 class="mapping-header" i18n>When related field changes to</h3>
+        <h3 class="mapping-header" i18n>When "trigger field" changes to</h3>
         <h3 class="mapping-header" i18n>then this field is updated to</h3>
       </div>
 
@@ -72,12 +88,19 @@
   }
 </mat-dialog-content>
 
-@if (isInvalid) {
-  <mat-error i18n>
-    The data is invalid, please check the fields in the "Configure mapping"
-  </mat-error>
-}
-<mat-dialog-actions>
-  <button mat-button (click)="save()" i18n>Save</button>
+<mat-dialog-actions class="flex-row flex-wrap">
+  <button
+    mat-button
+    (click)="save()"
+    [disabled]="!selectedRelatedReferenceField || !selectedField"
+    i18n
+  >
+    Save
+  </button>
   <button mat-button mat-dialog-close i18n>Cancel</button>
+  @if (isInvalid) {
+    <mat-error i18n>
+      The data is invalid, please check the fields in the "Configure mapping"
+    </mat-error>
+  }
 </mat-dialog-actions>
