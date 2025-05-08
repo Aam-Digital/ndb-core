@@ -30,6 +30,8 @@
       [entities]="allEntities"
       [useUrlQueryParams]="true"
       [(filterObj)]="filterObj"
+      [filterString]="filterString"
+      (filterStringChange)="filterString = $event; applyFilter($event)"
     ></app-filter>
   </div>
 

@@ -17,14 +17,15 @@ export interface DefaultValueConfig {
    */
   mode: DefaultValueMode;
 
-  /** used as default value in "static" and "dynamic" mode */
-  value?: any;
-
-  /** local field holding the reference to an Entity (for inherited only) */
-  localAttribute?: string;
-
-  /** field on the referenced Entity (identified by the id value in `localAttribute`), which is used as default value (for inherited only) */
-  field?: string;
+  /**
+   * The configuration for the given defaultValue mode.
+   * See implementation of each mode for details.
+   */
+  config?: any;
 }
 
-export type DefaultValueMode = "inherited" | "static" | "dynamic";
+export type DefaultValueMode =
+  | "inherited-from-referenced-entity"
+  | "static"
+  | "dynamic"
+  | "updated-from-referencing-entity";

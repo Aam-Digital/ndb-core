@@ -1,0 +1,66 @@
+<mat-form-field [formGroup]="form" floatLabel="always">
+  <mat-label i18n>Default Value</mat-label>
+
+  <div class="flex-row gap-regular align-center">
+    <div class="flex-grow">
+      @switch (this.form.get("mode")?.value) {
+        @default {
+          <app-admin-default-value-static
+            formControlName="config"
+          ></app-admin-default-value-static>
+        }
+        @case ("dynamic") {
+          <app-admin-default-value-dynamic
+            formControlName="config"
+          ></app-admin-default-value-dynamic>
+        }
+        @case ("inherited-from-referenced-entity") {
+          <app-admin-default-value-inherited
+            formControlName="config"
+            [entityType]="entityType"
+          ></app-admin-default-value-inherited>
+        }
+        @case ("updated-from-referencing-entity") {
+          <app-admin-default-value-updated
+            formControlName="config"
+            [entityType]="entityType"
+            [entitySchemaField]="entitySchemaField"
+          ></app-admin-default-value-updated>
+        }
+      }
+    </div>
+
+    <mat-button-toggle-group
+      formControlName="mode"
+      aria-label="default value mode"
+      hideSingleSelectionIndicator
+      style="flex: none"
+    >
+      @for (strategy of modes; track strategy.mode) {
+        <mat-button-toggle
+          [value]="strategy.mode"
+          [matTooltip]="strategy.description"
+        >
+          <fa-icon [icon]="strategy.icon"></fa-icon>
+        </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+
+    <button
+      mat-icon-button
+      matIconSuffix
+      matTooltip="Remove default value"
+      i18n-matTooltip
+      (click)="clearDefaultValue()"
+      color="{{ form.invalid ? 'accent' : '' }}"
+    >
+      <fa-icon icon="times"></fa-icon>
+    </button>
+  </div>
+
+  @if (form.invalid) {
+    <mat-error i18n="error message"
+      >Select and fully configure default value or clear the mode
+    </mat-error>
+  }
+</mat-form-field>
