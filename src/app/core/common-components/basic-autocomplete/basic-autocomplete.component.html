@@ -68,7 +68,9 @@
           </div>
           <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
           <ng-container *ngIf="!templateRef; else itemTemplate">
-            {{ item.asString }}
+            <span class="text-truncate">
+              {{ item.asString }}
+            </span>
           </ng-container>
           <ng-template
             class="item-option"
