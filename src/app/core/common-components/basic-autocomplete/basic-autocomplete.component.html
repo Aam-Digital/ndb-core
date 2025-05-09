@@ -68,7 +68,11 @@
           </div>
           <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
           <ng-container *ngIf="!templateRef; else itemTemplate">
-            <span class="text-truncate">
+            <span
+              class="text-truncate"
+              matTooltip="{{ item.asString }}"
+              matTooltipPosition="above"
+            >
               {{ item.asString }}
             </span>
           </ng-container>
