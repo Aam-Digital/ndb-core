@@ -1,11 +1,11 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { BorderHighlightDirective } from "../../common-components/border-highlight/border-highlight.directive";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { SelectableFilter } from "../filters/filters";
 import { MatButtonModule } from "@angular/material/button";
+import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
 
 @Component({
   selector: "app-list-filter",
@@ -15,28 +15,37 @@ import { MatButtonModule } from "@angular/material/button";
     MatFormFieldModule,
     MatSelectModule,
     ReactiveFormsModule,
-    BorderHighlightDirective,
     MatButtonModule,
     ReactiveFormsModule,
+    BasicAutocompleteComponent,
   ],
 })
-export class ListFilterComponent<E extends Entity> {
+export class ListFilterComponent<E extends Entity> implements OnInit {
   @Input({ transform: (value: any) => value as SelectableFilter<E> })
   filterConfig: SelectableFilter<E>;
 
+  autocompleteControl = new FormControl([]);
+
+  ngOnInit() {
+    this.autocompleteControl.setValue(this.filterConfig.selectedOptionValues);
+
+    this.autocompleteControl.valueChanges.subscribe((values) => {
+      this.filterConfig.selectedOptionChange.emit(values);
+    });
+    this.filterConfig.selectedOptionChange.subscribe((values) => {
+      this.autocompleteControl.setValue(values, { emitEvent: false });
+    });
+  }
+
+  getOptionLabel = (option: any) => option.label;
+  getOptionValue = (option: any) => option.key;
+
   selectAll() {
-    this.filterConfig.selectedOptionValues = this.filterConfig.options.map(
-      (option) => option.key,
-    );
-    this.filterConfig.selectedOptionChange.emit(
-      this.filterConfig.selectedOptionValues,
-    );
+    const allValues = this.filterConfig.options.map((opt) => opt.key);
+    this.autocompleteControl.setValue(allValues);
   }
 
   deselectAll() {
-    this.filterConfig.selectedOptionValues = [];
-    this.filterConfig.selectedOptionChange.emit(
-      this.filterConfig.selectedOptionValues,
-    );
+    this.autocompleteControl.setValue([]);
   }
 }

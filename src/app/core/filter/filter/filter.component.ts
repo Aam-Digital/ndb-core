@@ -179,6 +179,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   clearAllFilters() {
     this.filterSelections.forEach((filter) => {
       filter.selectedOptionValues = [];
+      filter.selectedOptionChange.emit(filter.selectedOptionValues);
     });
 
     this.hasActiveFilters = false;
