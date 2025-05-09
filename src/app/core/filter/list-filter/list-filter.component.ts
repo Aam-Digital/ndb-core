@@ -32,6 +32,9 @@ export class ListFilterComponent<E extends Entity> implements OnInit {
     this.autocompleteControl.valueChanges.subscribe((values) => {
       this.filterConfig.selectedOptionChange.emit(values);
     });
+    this.filterConfig.selectedOptionChange.subscribe((values) => {
+      this.autocompleteControl.setValue(values, { emitEvent: false });
+    });
   }
 
   getOptionLabel = (option: any) => option.label;
