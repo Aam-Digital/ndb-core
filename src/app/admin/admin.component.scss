@@ -1,0 +1,73 @@
+@use "variables/colors";
+@use "variables/sizes";
+.menu-item-container {
+  display: flex;
+  align-items: center; /* Vertically center everything */
+  justify-content: space-between; /* Distribute drag - content - close */
+  padding: 8px;
+  margin: auto;
+  gap: 8px; /* Add a bit of spacing between elements */
+}
+
+  
+/* Menu content (middle) */
+.menu-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  gap: 10px;
+}
+
+  .cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow:
+      0 5px 5px -3px rgba(0, 0, 0, 0.2),
+      0 8px 10px 1px rgba(0, 0, 0, 0.14),
+      0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  }
+  
+  .cdk-drag-placeholder {
+    opacity: 0;
+  }
+  
+  .cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  
+  .drop-list.cdk-drop-list-dragging .drop-item:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+  
+
+ /* Drag handle (left) */
+.drag-handle {
+  cursor: move;
+  color: colors.$accent;
+  display: flex;
+  align-items: center;
+}
+  /* Allow <app-menu-item> to grow */
+app-menu-item {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+  
+  /* Remove icon (right) */
+.remove-icon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+  .drop-item:has(.remove-icon:hover) {
+    color: rgb(255, 0, 0);
+    background-color: rgba(255, 0, 0, 0.1);
+  }
+
+  .section-add-button {
+    padding: sizes.$large;
+    margin: sizes.$small;
+  }  
+  
+  

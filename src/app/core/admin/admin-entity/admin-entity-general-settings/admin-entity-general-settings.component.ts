@@ -29,7 +29,7 @@ import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-enti
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
-
+import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
 @Component({
   selector: "app-admin-entity-general-settings",
   standalone: true,
@@ -56,6 +56,7 @@ import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.d
     HelpButtonComponent,
     AnonymizeOptionsComponent,
     FaIconComponent,
+    AdminIconComponent, // Importing the reusable AdminIconComponent
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
@@ -87,7 +88,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.basicSettingsForm = this.fb.group({
       label: [this.generalSettings.label, Validators.required],
       labelPlural: [this.generalSettings.labelPlural],
-      icon: [this.generalSettings.icon],
+      icon: [this.generalSettings.icon], // Icon field handled via AdminIconComponent
       color: [this.generalSettings.color],
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],

@@ -7,10 +7,11 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
 import { Config } from "app/core/config/config";
 import { AdminComponent } from "app/admin/admin.component";
 
+/** Load and Store Menu Items for Administration */
 @Component({
   selector: 'app-admin-menu',
   standalone: true,
-  imports: [CommonModule, AdminComponent],
+  imports: [CommonModule, AdminComponent, MatListModule, MenuItemComponent],
   templateUrl: './admin-menu.component.html',
   styleUrl: './admin-menu.component.scss'
 })

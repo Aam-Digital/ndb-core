@@ -21,7 +21,11 @@ const Template: StoryFn<AdminComponent> = (args: AdminComponent) => ({
 const testMenuItems: MenuItem[] = [
   { label: "Home", icon: "home", link: "/" },
   { label: "About", icon: "info", link: "/about" },
-  { label: "Contact", icon: "question-circle", link: "/contact" },
+  { label: "Contact", icon: "question-circle", link: "/contact", subMenu: [
+      { label: "Email", icon: "envelope", link: "/contact/email" },
+      { label: "Phone", icon: "phone", link: "/contact/phone" },
+    ]
+  },
 ];
 
 export const Primary = Template.bind({});

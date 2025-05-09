@@ -32,27 +32,10 @@
             />
           </mat-form-field>
 
-          <mat-form-field floatLabel="always">
-            <mat-label>
-              <span i18n>Icon</span>
-              &nbsp;
-              <fa-icon
-                icon="question-circle"
-                matTooltip="The icon to represent this entity type, e.g. when displaying records as a small preview block."
-                i18n-matTooltip
-              ></fa-icon>
-            </mat-label>
-            <input formControlName="icon" matInput />
-
-            <mat-hint i18n>
-              Find available icon names at
-              <a
-                href="https://fontawesome.com/v6/search?o=r&m=free"
-                target="_blank"
-                >fontawesome.com</a
-              >
-            </mat-hint>
-          </mat-form-field>
+          <app-admin-icon-input
+  [icon]="basicSettingsForm.get('icon').value"
+  (iconChange)="basicSettingsForm.get('icon').setValue($event)"
+></app-admin-icon-input>
 
           <mat-form-field floatLabel="always">
             <mat-label>

@@ -1,7 +1,40 @@
-<mat-nav-list>
+<div class="flex-row gap-small save-buttons">
+  <button mat-raised-button color="accent" (click)="save()" i18n>
+    Save
+  </button>
+  <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+</div>
+
+<mat-nav-list 
+  cdkDropList 
+  cdkDropListOrientation="vertical"
+  cdkDropListLockAxis="y"
+  (cdkDropListDropped)="drop($event)"
+  class="drop-list flex-column gap-regular"
+>
   <ng-container *ngFor="let item of menuItems; let i = index">
-    <div class="menu-item-container">
-      <app-menu-item [item]="item"></app-menu-item>
+    <div class="menu-item-container drop-item" cdkDrag>
+      
+      <!-- Drag handle -->
+      <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+
+      <app-menu-item [item]="item" ></app-menu-item>
+
+      <fa-icon
+        icon="edit"
+        class="edit-icon"
+        (click)="editMenuItem(i)"
+      ></fa-icon>
+
+
+      <!-- Remove icon on the right -->
+      <fa-icon
+        icon="times"
+        class="remove-icon"
+        (click)="removeMenuItem(i)"
+      ></fa-icon>
+      
     </div>
   </ng-container>
 </mat-nav-list>
+

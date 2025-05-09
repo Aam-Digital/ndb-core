@@ -1,0 +1,27 @@
+<h2>Edit Menu Item</h2>
+
+<!-- Label -->
+<mat-form-field >
+  <mat-label>Label</mat-label>
+  <input matInput [(ngModel)]="item.label" name="label" placeholder="Enter label" />
+</mat-form-field>
+
+<!-- Icon -->
+<app-admin-icon-input [(icon)]="item.icon"></app-admin-icon-input>
+
+<!-- Link Target -->
+<mat-form-field >
+  <mat-label>Link Target</mat-label>
+  <mat-select [(ngModel)]="item.link" name="link">
+    <mat-option value="Type A">Type A</mat-option>
+    <mat-option value="Type B">Type B</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- Actions -->
+<div class="actions">
+  <button mat-raised-button color="accent" (click)="save()">Save</button>
+  <button mat-stroked-button (click)="cancel()">Cancel</button>
+</div>
+
+
