@@ -176,12 +176,17 @@ export class AutomatedFieldMappingComponent implements OnInit {
     });
     if (this.isInvalid) return;
 
-    const formattedMappings: { [key: string]: any } = {};
-    Object.entries(this.selectedMappings).forEach(([key, value]) => {
-      formattedMappings[key] = this.schemaService.valueToDatabaseFormat(
-        value,
-        this.targetFieldConfig,
-      );
+    const formattedMappings: { [key: string]: any } = {
+      ...this.selectedMappings,
+    };
+    Object.entries(this.mappingForms).forEach(([key, mappingForm]) => {
+      const value = mappingForm.formGroup.get(this.targetFieldConfig.id)?.value;
+      if (value) {
+        formattedMappings[key] = this.schemaService.valueToDatabaseFormat(
+          value,
+          this.targetFieldConfig,
+        );
+      }
     });
 
     this.dialogRef.close({
