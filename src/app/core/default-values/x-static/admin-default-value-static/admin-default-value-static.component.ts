@@ -61,4 +61,10 @@ export class AdminDefaultValueStaticComponent
       }
     });
   }
+
+  // override writeValue(value: DefaultValueConfigStatic | null): void {
+  //   if (this.formControl && value?.value !== this.formControl.value) {
+  //     this.formControl.setValue(value?.value ?? null, { emitEvent: false });
+  //   }
+  // }
 }
