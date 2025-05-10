@@ -32,7 +32,7 @@ export class DemoPublicFormGeneratorService extends DemoDataGenerator<PublicForm
             id: "admissionDate",
             defaultValue: {
               mode: "dynamic",
-              value: PLACEHOLDERS.NOW,
+              config: { value: PLACEHOLDERS.NOW },
             },
           },
         ],

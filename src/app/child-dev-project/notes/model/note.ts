@@ -100,7 +100,7 @@ export class Note extends Entity {
     dataType: "date-only",
     defaultValue: {
       mode: "dynamic",
-      value: PLACEHOLDERS.NOW,
+      config: { value: PLACEHOLDERS.NOW },
     },
     anonymize: "retain",
   })
@@ -125,7 +125,7 @@ export class Note extends Entity {
     additional: "User",
     defaultValue: {
       mode: "dynamic",
-      value: PLACEHOLDERS.CURRENT_USER,
+      config: { value: PLACEHOLDERS.CURRENT_USER },
     },
     anonymize: "retain",
   })

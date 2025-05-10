@@ -1,0 +1,32 @@
+.mapping-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-top: 20px;
+
+  .header-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .option-label {
+    font-weight: 500;
+    padding: 8px 0;
+  }
+}
+
+:host ::ng-deep .mat-mdc-form-field {
+  width: 100%;
+}
+
+.mapping-header {
+  font-weight: bold;
+}
+
+.no-options-message {
+  font-style: italic;
+}

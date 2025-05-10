@@ -1,19 +1,19 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import {
   FormArray,
   FormBuilder,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { DefaultValueOptionsComponent } from "app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component";
+import { AdminDefaultValueComponent } from "../../../core/default-values/admin-default-value/admin-default-value.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EditComponent } from "app/core/entity/default-datatype/edit-component";
 import { EntityConstructor } from "app/core/entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DefaultValueConfig } from "app/core/entity/schema/default-value-config";
+import { DefaultValueConfig } from "../../../core/default-values/default-value-config";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -24,7 +24,7 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
   selector: "app-edit-prefilled-values",
   standalone: true,
   imports: [
-    DefaultValueOptionsComponent,
+    AdminDefaultValueComponent,
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
