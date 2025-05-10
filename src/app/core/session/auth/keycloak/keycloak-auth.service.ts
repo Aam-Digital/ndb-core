@@ -1,5 +1,4 @@
 import { inject, Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
 import { SessionInfo } from "../session-info";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
@@ -7,9 +6,7 @@ import { Entity } from "../../../entity/model/entity";
 import { ParsedJWT, parseJwt } from "../../session-utils";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-dto";
-import { switchMap } from "rxjs/operators";
-import { ActivatedRoute, Params } from "@angular/router";
-import { Acr } from "keycloak-js";
+import { ActivatedRoute } from "@angular/router";
 
 /**
  * Handles the remote session with keycloak
@@ -20,17 +17,8 @@ export class KeycloakAuthService {
   private keycloakInitialised = false;
   accessToken: string;
 
-  private routes = inject(ActivatedRoute);
-  private params: Params | null = null;
-
-  constructor(
-    private httpClient: HttpClient,
-    private keycloak: KeycloakService,
-  ) {
-    this.routes.queryParams.subscribe((params) => {
-      this.params = params;
-    });
-  }
+  private keycloak = inject(KeycloakService);
+  private activatedRoute = inject(ActivatedRoute);
 
   /**
    * Check for an existing session or forward to the login page.
@@ -43,25 +31,35 @@ export class KeycloakAuthService {
     await this.keycloak.updateToken();
     let token = await this.keycloak.getToken();
     if (!token) {
-      let acr: Acr = { values: [], essential: false };
-
-      // third-party-authentication session information
-      const tpaSessionParam = this.params["tpa_session"];
-      let idpHint = "";
-      if (tpaSessionParam) {
-        idpHint = "tpa_session:" + tpaSessionParam;
-      }
-
       // Forward to the keycloak login page.
       await this.keycloak.login({
         redirectUri: location.href,
-        idpHint: idpHint,
-        loginHint: idpHint,
+        ...this.getThirdPartyAuthenticationParams(),
       });
       token = await this.keycloak.getToken();
     }
 
     return this.processToken(token);
+  }
+
+  /**
+   * Check for session params from the third-party-authentication API Module
+   * and pass them on to the Keycloak login flow, if available.
+   *
+   * see https://github.com/Aam-Digital/aam-services/blob/main/docs/modules/third-party-authentication.md
+   */
+  private getThirdPartyAuthenticationParams():
+    | { idpHint: string; loginHint: string }
+    | {} {
+    const tpaSessionParam =
+      this.activatedRoute.snapshot.queryParams["tpa_session"];
+
+    if (tpaSessionParam) {
+      let idpHint = "tpa_session:" + tpaSessionParam;
+      return { idpHint, loginHint: idpHint };
+    } else {
+      return {};
+    }
   }
 
   private async initKeycloak() {
