@@ -68,7 +68,7 @@ export class AdminDefaultValueComponent
 {
   @Input() entityType: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
-
+  @Input() fieldId: string;
   form: FormGroup;
 
   private defaultValueStrategies = inject(

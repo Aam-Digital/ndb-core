@@ -10,12 +10,19 @@ import { DefaultValueStrategy } from "../default-value-strategy.interface";
 import { StaticDefaultValueService } from "../x-static/static-default-value.service";
 import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic-placeholder-value.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 
 describe("AdminDefaultValueComponent", () => {
   let component: AdminDefaultValueComponent;
   let fixture: ComponentFixture<AdminDefaultValueComponent>;
+  let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
+
 
   beforeEach(async () => {
+    mockEntityFormService = jasmine.createSpyObj("EntityFormService", [
+      "createEntityForm",
+      "extendFormFieldConfig",
+    ]);
     await TestBed.configureTestingModule({
       imports: [
         AdminDefaultValueComponent,
@@ -34,6 +41,7 @@ describe("AdminDefaultValueComponent", () => {
           useClass: DynamicPlaceholderValueService,
           multi: true,
         },
+        { provide: EntityFormService, useValue: mockEntityFormService },
         CurrentUserSubject,
       ],
     }).compileComponents();
