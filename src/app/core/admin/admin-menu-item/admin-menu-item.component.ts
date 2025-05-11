@@ -8,6 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MenuItem } from 'app/core/ui/navigation/menu-item';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminIconComponent } from 'app/admin-icon-input/admin-icon-input.component';
+import { ConfigService } from 'app/core/config/config.service';
+import { PREFIX_VIEW_CONFIG, ViewConfig } from 'app/core/config/dynamic-routing/view-config.interface';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-admin-menu-item',
@@ -21,6 +24,7 @@ import { AdminIconComponent } from 'app/admin-icon-input/admin-icon-input.compon
     MatSelectModule,
     MatButtonModule,
     AdminIconComponent,
+    MatDialogModule,
   ],
   templateUrl: './admin-menu-item.component.html',
   styleUrls: ['./admin-menu-item.component.scss'],
@@ -28,15 +32,35 @@ import { AdminIconComponent } from 'app/admin-icon-input/admin-icon-input.compon
 export class AdminMenuItemComponent implements OnInit {
   item: MenuItem;
 
+  availableRoutes: { value: string, label: string }[];
+
   constructor(
+    private configService: ConfigService,
     public dialogRef: MatDialogRef<AdminMenuItemComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { item: MenuItem }
   ) {
     this.item = data.item;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.availableRoutes = this.loadAvailableRoutes();
+  }
 
+  private loadAvailableRoutes(): { value: string, label: string }[] {
+    const allConfigs: ViewConfig[] = this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
+  
+    return allConfigs
+      .filter(view => !view._id.includes('/:'))  // filter out configs like 'view:note/:id'
+      .map(view => {
+        const id = view._id;
+        const label =
+          view.config?.entityType?.trim() ||
+          view.component ||
+          id;
+  
+        return { value: id, label };
+      });
+  }
   save() {
     this.dialogRef.close(this.item);
   }

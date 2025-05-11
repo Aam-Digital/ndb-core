@@ -1,11 +1,37 @@
-.full-width {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-  
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-  
+@use "../../../../styles/mixins/grid-layout" as *;
+
+.grid-layout-wide {
+  @include adaptive(
+    $min-block-width: 250px,
+    $max-screen-width: 414px
+  );
+  display: grid;
+  gap: 16px;
+  padding: 16px 24px 0 24px;
+}
+
+
+.menu-item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+}
+
+mat-dialog-content {
+  padding: 0; 
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+}
