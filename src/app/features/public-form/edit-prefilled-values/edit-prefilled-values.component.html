@@ -38,6 +38,9 @@
                 formControlName="defaultValue"
                 [entityType]="entityConstructor"
                 [fieldId]="fieldGroup.get('field').value"
+                [entitySchemaField]="
+                  getSchemaField(fieldGroup.get('field').value)
+                "
               ></app-admin-default-value>
             </div>
           </div>

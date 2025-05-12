@@ -46,7 +46,16 @@ export class AdminDefaultValueStaticComponent
   private readonly entitySchemaService = inject(EntitySchemaService);
 
   ngOnInit() {
-    this.formControl = new FormControl(this.value?.value);
+    let initialValue = this.value?.value ?? null;
+
+    if (initialValue) {
+      initialValue = this.entitySchemaService.valueToEntityFormat(
+        initialValue,
+        this.entitySchemaField,
+      );
+    }
+    this.formControl = new FormControl(initialValue);
+
     this.formControl.valueChanges.subscribe((v) => (this.value = { value: v }));
 
     this.updateTargetFieldConfig();
