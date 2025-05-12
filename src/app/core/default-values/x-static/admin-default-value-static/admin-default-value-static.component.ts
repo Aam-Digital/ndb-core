@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, inject } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  inject,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { CustomFormControlDirective } from "../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { DefaultValueConfigStatic } from "../default-value-config-static";
@@ -7,6 +14,8 @@ import { EntityFieldEditComponent } from "app/core/common-components/entity-fiel
 import { EntityForm } from "app/core/common-components/entity-form/entity-form.service";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-admin-default-value-static",
@@ -22,10 +31,13 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 })
 export class AdminDefaultValueStaticComponent
   extends CustomFormControlDirective<DefaultValueConfigStatic>
-  implements OnInit
+  implements OnInit, OnChanges
 {
   @Input() fieldId: string;
   @Input() entityType: EntityConstructor;
+  @Input() entitySchemaField: EntitySchemaField;
+
+  targetFieldConfig: FormFieldConfig;
 
   entity: Entity;
   formControl: FormControl<string>;
@@ -35,36 +47,46 @@ export class AdminDefaultValueStaticComponent
 
   ngOnInit() {
     this.formControl = new FormControl(this.value?.value);
-    this.formControl.valueChanges.subscribe((v) => (this.value = { value: v }));
+    this.formControl.valueChanges.subscribe(
+      (v) => ((this.value = { value: v }), console.log("newValue", v)),
+    );
+
+    this.updateTargetFieldConfig();
+
     const formGroup = new FormGroup({
-      [this.fieldId]: this.formControl,
+      [this.targetFieldConfig.id]: this.formControl,
     });
-    this.entity = new this.entityType();
     this.staticvalueForm = {
       formGroup,
     } as unknown as EntityForm<Entity>;
-    this.staticvalueForm.formGroup.valueChanges.subscribe((v) => {
-      if (this.staticvalueForm.formGroup.valid) {
-        const field = this.staticvalueForm.formGroup.get(
-          this.fieldId.toString(),
-        );
-        const value = this.entitySchemaService.valueToDatabaseFormat(
-          field.value,
-          this.entityType.schema.get(this.fieldId.toString()),
-        );
-        if (value) {
-          const valueControl = formGroup.get("value");
-          if (valueControl) {
-            valueControl.setValue(value);
-          }
-        }
-      }
-    });
+    this.ngControl.valueChanges.subscribe(
+      (newValue: DefaultValueConfigStatic) => {
+        console.log("newValue", newValue?.value);
+        this.formControl.setValue(newValue?.value, { emitEvent: false });
+      },
+    );
+
+    this.entity = new this.entityType();
   }
 
-  // override writeValue(value: DefaultValueConfigStatic | null): void {
-  //   if (this.formControl && value?.value !== this.formControl.value) {
-  //     this.formControl.setValue(value?.value ?? null, { emitEvent: false });
-  //   }
-  // }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.entitySchemaField) {
+      if (!this.targetFieldConfig) {
+        this.updateTargetFieldConfig();
+      } else {
+        Object.assign(this.targetFieldConfig, this.entitySchemaField);
+      }
+    }
+  }
+  private updateTargetFieldConfig() {
+    const newConfig = {
+      id: "defaultValueId",
+      ...this.entitySchemaField,
+    };
+
+    // Compare existing config to avoid unnecessary reassignment
+    if (JSON.stringify(this.targetFieldConfig) !== JSON.stringify(newConfig)) {
+      this.targetFieldConfig = newConfig;
+    }
+  }
 }
