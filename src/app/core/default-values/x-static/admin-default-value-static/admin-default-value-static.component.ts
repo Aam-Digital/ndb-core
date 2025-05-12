@@ -33,13 +33,10 @@ export class AdminDefaultValueStaticComponent
   extends CustomFormControlDirective<DefaultValueConfigStatic>
   implements OnInit, OnChanges
 {
-  @Input() fieldId: string;
-  @Input() entityType: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
 
   targetFieldConfig: FormFieldConfig;
 
-  entity: Entity;
   formControl: FormControl<string>;
   staticvalueForm: EntityForm<Entity>;
 
@@ -66,13 +63,11 @@ export class AdminDefaultValueStaticComponent
     this.staticvalueForm = {
       formGroup,
     } as unknown as EntityForm<Entity>;
-    this.ngControl.valueChanges.subscribe(
+    this.ngControl?.valueChanges.subscribe(
       (newValue: DefaultValueConfigStatic) => {
         this.formControl.setValue(newValue?.value, { emitEvent: false });
       },
     );
-
-    this.entity = new this.entityType();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
