@@ -42,6 +42,7 @@ import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options
 import { MatCheckbox } from "@angular/material/checkbox";
 import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -103,6 +104,7 @@ export class AdminEntityFieldComponent implements OnInit {
     private entityRegistry: EntityRegistry,
     private adminEntityService: AdminEntityService,
     private dialog: MatDialog,
+    private entitySchemaService: EntitySchemaService,
   ) {
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
@@ -281,6 +283,14 @@ export class AdminEntityFieldComponent implements OnInit {
 
     const fieldId = this.fieldIdForm.getRawValue();
 
+    // If a default value is configured, convert it to the database format
+    const defaultValueConfig = this.entitySchemaField?.defaultValue?.config;
+    if (defaultValueConfig?.value) {
+      defaultValueConfig.value = this.entitySchemaService.valueToDatabaseFormat(
+        defaultValueConfig.value,
+        this.entitySchemaField,
+      );
+    }
     this.adminEntityService.updateSchemaField(
       this.entityType,
       fieldId,

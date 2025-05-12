@@ -47,9 +47,7 @@ export class AdminDefaultValueStaticComponent
 
   ngOnInit() {
     this.formControl = new FormControl(this.value?.value);
-    this.formControl.valueChanges.subscribe(
-      (v) => ((this.value = { value: v }), console.log("newValue", v)),
-    );
+    this.formControl.valueChanges.subscribe((v) => (this.value = { value: v }));
 
     this.updateTargetFieldConfig();
 
@@ -61,7 +59,6 @@ export class AdminDefaultValueStaticComponent
     } as unknown as EntityForm<Entity>;
     this.ngControl.valueChanges.subscribe(
       (newValue: DefaultValueConfigStatic) => {
-        console.log("newValue", newValue?.value);
         this.formControl.setValue(newValue?.value, { emitEvent: false });
       },
     );

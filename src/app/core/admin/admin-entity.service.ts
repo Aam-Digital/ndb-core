@@ -7,7 +7,6 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { EntityListConfig } from "../entity-list/EntityListConfig";
 import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
 import { DynamicComponentConfig } from "../config/dynamic-components/dynamic-component-config.interface";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 /**
  * Simply service to centralize updates between various admin components in the form builder.
@@ -18,7 +17,6 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 export class AdminEntityService {
   public entitySchemaUpdated = new EventEmitter<void>();
   private entityMapper = inject(EntityMapperService);
-  private entitySchemaService = inject(EntitySchemaService);
 
   /**
    * Set a new schema field to the given entity and trigger update event for related admin components.
@@ -31,14 +29,6 @@ export class AdminEntityService {
     fieldId: any,
     updatedEntitySchema: any,
   ) {
-    // If a default value is configured, convert it to the database format
-    const defaultValueConfig = updatedEntitySchema?.defaultValue?.config;
-    if (defaultValueConfig?.value) {
-      defaultValueConfig.value = this.entitySchemaService.valueToDatabaseFormat(
-        defaultValueConfig.value,
-        entityType.schema.get(fieldId),
-      );
-    }
     entityType.schema.set(fieldId, updatedEntitySchema);
     this.entitySchemaUpdated.next();
   }
