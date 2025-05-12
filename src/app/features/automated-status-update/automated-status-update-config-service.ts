@@ -222,10 +222,13 @@ export class AutomatedStatusUpdateConfigService {
   ): Promise<Entity[]> {
     const relatedEntities = Array.isArray(entityids) ? entityids : [entityids];
 
-    this.relatedEntities = await Promise.all(
+    const loadedEntities = await Promise.all(
       relatedEntities.map((id) => this.entityMapper.load(entityType, id)),
     );
-    return this.relatedEntities;
+
+    this.relatedEntities.push(...loadedEntities);
+
+    return loadedEntities;
   }
 
   /**
