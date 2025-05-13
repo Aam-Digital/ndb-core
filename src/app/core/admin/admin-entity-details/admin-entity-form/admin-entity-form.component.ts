@@ -271,6 +271,8 @@ export class AdminEntityFormComponent implements OnChanges {
 
   dropfieldGroups<E>(event: CdkDragDrop<E[], any>, fieldGroupsArray: E[]) {
     moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
+
+    this.emitUpdatedConfig();
   }
 
   /**
