@@ -12,7 +12,7 @@ import { DefaultValueConfigStatic } from "../default-value-config-static";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import { EntityForm } from "app/core/common-components/entity-form/entity-form.service";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { Entity } from "app/core/entity/model/entity";
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
@@ -85,7 +85,6 @@ export class AdminDefaultValueStaticComponent
       ...this.entitySchemaField,
     };
 
-    // Compare existing config to avoid unnecessary reassignment
     if (JSON.stringify(this.targetFieldConfig) !== JSON.stringify(newConfig)) {
       this.targetFieldConfig = newConfig;
     }
