@@ -14,6 +14,7 @@ import { DynamicComponentDirective } from "../../../config/dynamic-components/dy
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 
 /**
  * UI to configure import value mappings for discrete datatypes like boolean or enum.
@@ -44,6 +45,7 @@ export class DiscreteImportConfigComponent implements OnInit {
     private dialog: MatDialogRef<any>,
     private confirmation: ConfirmationDialogService,
     private schemaService: EntitySchemaService,
+    private configurableEnumService: ConfigurableEnumService,
   ) {}
 
   ngOnInit() {
@@ -54,23 +56,30 @@ export class DiscreteImportConfigComponent implements OnInit {
   }
 
   private getFormValues(additional: any) {
-    if (!additional) {
-      additional = {};
-    }
+    additional = additional || {};
+
+    const enumEntity = this.configurableEnumService.getEnum(
+      this.schema?.additional,
+    );
+    const enumOptions = enumEntity?.values ?? [];
 
     const formObj = {};
-    this.data.values
-      .filter((val) => !!val)
-      .forEach((val) => {
-        let selectedMapping;
-        if (additional.hasOwnProperty(val)) {
-          selectedMapping = this.schemaService.valueToEntityFormat(
-            additional[val],
-            this.schema,
-          );
-        }
-        formObj[val] = new FormControl(selectedMapping);
-      });
+
+    for (const value of this.data.values.filter(Boolean)) {
+      let initialValue: string;
+
+      if (value in additional) {
+        initialValue = additional[value];
+      } else {
+        initialValue = enumOptions.find(
+          (opt) => opt.id === value || opt.label === value,
+        )?.id;
+      }
+
+      formObj[value] = new FormControl(
+        this.schemaService.valueToEntityFormat(initialValue, this.schema),
+      );
+    }
 
     return formObj;
   }
