@@ -20,6 +20,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 @Component({
   selector: "app-edit-prefilled-values",
@@ -48,6 +49,7 @@ export class EditPrefilledValuesComponent
 
   private entities = inject(EntityRegistry);
   private fb = inject(FormBuilder);
+  private entitySchemaService = inject(EntitySchemaService);
 
   prefilledValueSettings = this.fb.group({
     prefilledValue: this.fb.array([]),
@@ -116,11 +118,24 @@ export class EditPrefilledValuesComponent
     }
 
     const updatedFields: FormFieldConfig[] = value.prefilledValue.map(
-      ({ field, defaultValue, hideFromForm }) => ({
-        id: field,
-        defaultValue,
-        hideFromForm: hideFromForm ?? true,
-      }),
+      ({ field, defaultValue, hideFromForm }) => {
+        const transformedValue = this.entitySchemaService.valueToDatabaseFormat(
+          defaultValue.config?.value,
+          this.getSchemaField(field),
+        );
+        defaultValue = {
+          ...defaultValue,
+          config: {
+            ...defaultValue.config,
+            value: transformedValue,
+          },
+        };
+        return {
+          id: field,
+          defaultValue,
+          hideFromForm: hideFromForm ?? true,
+        };
+      },
     );
 
     this.formControl.setValue(updatedFields);
