@@ -4,7 +4,7 @@ import { AdminDefaultValueStaticComponent } from "./admin-default-value-static.c
 import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 
-fdescribe("AdminDefaultValueStaticComponent", () => {
+describe("AdminDefaultValueStaticComponent", () => {
   let component: AdminDefaultValueStaticComponent;
   let fixture: ComponentFixture<AdminDefaultValueStaticComponent>;
   let mockEntityFormService: jasmine.SpyObj<EntityFormService>;
@@ -20,7 +20,7 @@ fdescribe("AdminDefaultValueStaticComponent", () => {
           provide: EntitySchemaService,
           useValue: {
             valueToEntityFormat: (v) => v,
-            valueToDatabaseFormat: (v) => v,
+            getComponent: () => null,
           },
         },
         { provide: EntityFormService, useValue: mockEntityFormService },
