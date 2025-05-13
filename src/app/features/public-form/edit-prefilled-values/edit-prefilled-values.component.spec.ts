@@ -10,6 +10,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 describe("EditPrefilledValuesComponent", () => {
   let component: EditPrefilledValuesComponent;
@@ -32,7 +33,15 @@ describe("EditPrefilledValuesComponent", () => {
         MatButtonModule,
         NoopAnimationsModule,
       ],
-      providers: [{ provide: EntityRegistry, useValue: mockEntityRegistry }],
+      providers: [
+        { provide: EntityRegistry, useValue: mockEntityRegistry },
+        {
+          provide: EntitySchemaService,
+          useValue: {
+            valueToDatabaseFormat: (v) => v,
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditPrefilledValuesComponent);
@@ -50,7 +59,12 @@ describe("EditPrefilledValuesComponent", () => {
     component.prefilledValues.push(
       new FormBuilder().group({
         field: "name",
-        defaultValue: { mode: "static", value: "default name" },
+        defaultValue: {
+          mode: "static",
+          config: {
+            value: "Default name",
+          },
+        },
         hideFromForm: true,
       }),
     );

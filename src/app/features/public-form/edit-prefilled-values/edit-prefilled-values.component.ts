@@ -106,6 +106,7 @@ export class EditPrefilledValuesComponent
   }
 
   getSchemaField(fieldId: string): EntitySchemaField {
+    console.log(this.entityConstructor?.schema, "test")
     return this.entityConstructor?.schema.get(fieldId);
   }
 
@@ -119,6 +120,8 @@ export class EditPrefilledValuesComponent
 
     const updatedFields: FormFieldConfig[] = value.prefilledValue.map(
       ({ field, defaultValue, hideFromForm }) => {
+        console.log(field,"test")
+
         const transformedValue = this.entitySchemaService.valueToDatabaseFormat(
           defaultValue.config?.value,
           this.getSchemaField(field),
