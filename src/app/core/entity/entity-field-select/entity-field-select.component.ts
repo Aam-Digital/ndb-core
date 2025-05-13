@@ -11,7 +11,6 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 
 @Component({
   selector: "app-entity-field-select",
-  standalone: true,
   imports: BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS,
   templateUrl:
     "../../common-components/basic-autocomplete/basic-autocomplete.component.html",
@@ -28,6 +27,8 @@ export class EntityFieldSelectComponent extends BasicAutocompleteComponent<
 
   override optionToString = (option: FormFieldConfig) => option.label;
   override valueMapper = (option: FormFieldConfig) => option.id;
+
+  @Input() override multi?: boolean;
 
   @Input() override hideOption: (option: FormFieldConfig) => boolean;
 

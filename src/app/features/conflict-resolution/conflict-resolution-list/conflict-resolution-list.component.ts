@@ -28,7 +28,6 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
     NgForOf,
     MatPaginatorModule,
   ],
-  standalone: true,
 })
 export class ConflictResolutionListComponent implements AfterViewInit {
   /** visible table columns in the template */

@@ -8,7 +8,7 @@ import {
   PLACEHOLDERS,
 } from "../entity/schema/entity-schema-field";
 import { MenuItem } from "../ui/navigation/menu-item";
-import { DefaultValueConfig } from "../entity/schema/default-value-config";
+import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 import { Logging } from "../logging/logging.service";
@@ -76,6 +76,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityBlock,
       migrateGroupByConfig,
       addDefaultNoteDetailsConfig,
+      migrateDefaultValue,
     ];
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
@@ -355,5 +356,37 @@ const migrateGroupByConfig: ConfigMigration = (key, configPart) => {
   }
 
   // Return the unchanged part if no modification is needed
+  return configPart;
+};
+
+/**
+ * The DefaultValueConfig `mode` "inherited" has been renamed to "inherited-from-referenced-entity"
+ * and structure moved into a "config" subproperty.
+ */
+const migrateDefaultValue: ConfigMigration = (key, configPart) => {
+  if (key !== "defaultValue") {
+    return configPart;
+  }
+
+  if (configPart?.mode === "inherited") {
+    configPart.mode = "inherited-from-referenced-entity";
+  }
+
+  if (!configPart.config) {
+    configPart.config = {};
+    if (configPart.value) {
+      configPart.config.value = configPart.value;
+      delete configPart.value;
+    }
+    if (configPart.localAttribute) {
+      configPart.config.localAttribute = configPart.localAttribute;
+      delete configPart.localAttribute;
+    }
+    if (configPart.field) {
+      configPart.config.field = configPart.field;
+      delete configPart.field;
+    }
+  }
+
   return configPart;
 };

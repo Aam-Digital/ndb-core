@@ -22,7 +22,6 @@ import { EntityAction } from "./entity-action.interface";
   selector: "app-entity-actions-menu",
   templateUrl: "./entity-actions-menu.component.html",
   styleUrls: ["./entity-actions-menu.component.scss"],
-  standalone: true,
   imports: [
     MatButtonModule,
     FontAwesomeModule,

@@ -14,7 +14,6 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
   selector: "app-display-configurable-enum",
   templateUrl: "./display-configurable-enum.component.html",
   styleUrls: ["./display-configurable-enum.component.scss"],
-  standalone: true,
   imports: [NgForOf, NgIf, NgClass],
 })
 export class DisplayConfigurableEnumComponent

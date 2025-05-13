@@ -1,0 +1,17 @@
+<mat-select [formControl]="formControl">
+  <mat-option
+    value="$now"
+    matTooltip="Fill the current date initially, when a record is created."
+    i18n-matTooltip
+    i18n
+    >Current Date
+  </mat-option>
+
+  <mat-option
+    value="$current_user"
+    matTooltip="Fill the currently logged in user, when a record is created."
+    i18n-matTooltip
+    i18n
+    >Current User
+  </mat-option>
+</mat-select>

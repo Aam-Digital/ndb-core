@@ -58,7 +58,6 @@ import { TableRow } from "./table-row";
 @UntilDestroy()
 @Component({
   selector: "app-entities-table",
-  standalone: true,
   imports: [
     CommonModule,
     EntityFieldEditComponent,
@@ -453,6 +452,11 @@ export class EntitiesTableComponent<T extends Entity>
    * @private
    */
   private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
+    if (c.viewComponent === "DisplayAge") {
+      // we have implemented support for age specifically
+      return;
+    }
+
     // if no dataType is defined, these are dynamic, display-only components
     if (c.isArray || c.dataType === EntityDatatype.dataType || !c.dataType) {
       c.noSorting = true;

@@ -14,7 +14,6 @@ import { HelpButtonComponent } from "../../../../common-components/help-button/h
 
 @Component({
   selector: "app-configure-entity-field-validator",
-  standalone: true,
   imports: [
     MatInputModule,
     FormsModule,

@@ -27,7 +27,6 @@ import { RouteTarget } from "../../../route-target";
     FontAwesomeModule,
     NgIf,
   ],
-  standalone: true,
 })
 export class ComingSoonComponent implements OnInit {
   /**

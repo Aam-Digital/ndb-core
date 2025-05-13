@@ -2,8 +2,8 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { KeycloakAuthService } from "./keycloak-auth.service";
 import { HttpClient } from "@angular/common/http";
-import { KeycloakEventType, KeycloakService } from "keycloak-angular";
-import { of, Subject } from "rxjs";
+import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
+import { Subject } from "rxjs";
 
 /**
  * Check {@link https://jwt.io} to decode the token.
@@ -82,28 +82,6 @@ describe("KeycloakAuthService", () => {
     );
   });
 
-  it("should delete user by username", fakeAsync(() => {
-    // given
-    mockHttpClient.get.and.returnValue(
-      of({
-        id: "user-id",
-      }),
-    );
-
-    mockHttpClient.delete.and.returnValue(of(""));
-
-    // when
-    service.deleteUser("foo-user").subscribe(() => {
-      // then
-      expect(mockHttpClient.get).toHaveBeenCalledWith(
-        "https://accounts.aam-digital.net/account/foo-user",
-      );
-      expect(mockHttpClient.delete).toHaveBeenCalledWith(
-        "https://accounts.aam-digital.net/account/user-id",
-      );
-    });
-  }));
-
   it("should add the Bearer token to a request", async () => {
     await service.login();
 
@@ -125,7 +103,7 @@ describe("KeycloakAuthService", () => {
     mockKeycloak.getToken.calls.reset();
 
     mockKeycloak.keycloakEvents$.next({
-      type: KeycloakEventType.OnTokenExpired,
+      type: KeycloakEventTypeLegacy.OnTokenExpired,
     });
     tick();
     expect(mockKeycloak.updateToken).toHaveBeenCalled();
@@ -143,7 +121,7 @@ describe("KeycloakAuthService", () => {
 
     mockKeycloak.updateToken.and.resolveTo(false);
     mockKeycloak.keycloakEvents$.next({
-      type: KeycloakEventType.OnTokenExpired,
+      type: KeycloakEventTypeLegacy.OnTokenExpired,
     });
     tick();
     expect(mockKeycloak.updateToken).toHaveBeenCalled();

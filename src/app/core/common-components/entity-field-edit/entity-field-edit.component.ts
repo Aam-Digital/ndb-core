@@ -6,10 +6,14 @@ import {
   EntityForm,
   EntityFormService,
 } from "../entity-form/entity-form.service";
-import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../entity-form/FormConfig";
 import { NgClass, NgIf } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
-import { InheritedValueButtonComponent } from "../../default-values/inherited-value-button/inherited-value-button.component";
+import { InheritedValueButtonComponent } from "../../../features/default-value-inherited/inherited-value-button/inherited-value-button.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -26,7 +30,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   selector: "app-entity-field-edit",
   templateUrl: "./entity-field-edit.component.html",
   styleUrls: ["./entity-field-edit.component.scss"],
-  standalone: true,
   imports: [
     DynamicComponentDirective,
     HelpButtonComponent,
@@ -65,7 +68,7 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
 
   private updateField() {
     if (!this.entity?.getConstructor()) {
-      this._field = undefined;
+      this._field = !!this.field ? toFormFieldConfig(this.field) : undefined;
       return;
     }
 

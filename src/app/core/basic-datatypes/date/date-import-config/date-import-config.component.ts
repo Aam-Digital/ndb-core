@@ -23,7 +23,6 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   selector: "app-date-import-config",
   templateUrl: "./date-import-config.component.html",
   styleUrls: ["./date-import-config.component.scss"],
-  standalone: true,
   imports: [
     MatDialogModule,
     MatInputModule,

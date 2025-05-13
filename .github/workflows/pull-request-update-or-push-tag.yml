@@ -38,17 +38,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
-        os:
-          - ubuntu-latest
-          - [ self-hosted, Linux, ARM64 ]
-        exclude:
-          - platform: linux/arm64
-            os: ubuntu-latest
+        include:
           - platform: linux/amd64
-            os: [ self-hosted, Linux, ARM64 ]
+            os: ubuntu-latest
+          - platform: linux/arm64
+            os: ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
@@ -82,7 +76,9 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           outputs: type=local,dest=./tmp/coverage/${{ env.PLATFORM_PAIR }}
           target: test-coverage
-          cache-from: type=gha
+          cache-from: type=gha,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+          cache-to: type=gha,mode=max,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+        
 
       - name: Run tests with timezone
         if: ${{ matrix.platform == 'linux/amd64' }}
@@ -141,17 +137,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
-        os:
-          - ubuntu-latest
-          - [ self-hosted, Linux, ARM64 ]
-        exclude:
-          - platform: linux/arm64
-            os: ubuntu-latest
+        include:
           - platform: linux/amd64
-            os: [ self-hosted, Linux, ARM64 ]
+            os: ubuntu-latest
+          - platform: linux/arm64
+            os: ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
@@ -203,8 +193,8 @@ jobs:
           file: ./build/Dockerfile
           target: dist-build
           outputs: type=local,dest=./tmp/build/${{ env.PLATFORM_PAIR }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+          cache-to: type=gha,mode=min,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
           build-args: |
             APP_VERSION=${{ env.TAG }}
         env:
@@ -228,8 +218,8 @@ jobs:
           target: app
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+          cache-to: type=gha,mode=min,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
           build-args: |
             DIST_TYPE=local
             LOCAL_DIST_PATH=./tmp/build/${{ env.PLATFORM_PAIR }}/dist

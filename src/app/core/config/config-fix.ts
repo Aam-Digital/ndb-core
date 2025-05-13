@@ -184,7 +184,7 @@ export const defaultJsonConfig = {
         dataType: "date-only",
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         },
         anonymize: "retain"
       },
@@ -203,7 +203,7 @@ export const defaultJsonConfig = {
         additional: "User",
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.CURRENT_USER
+          config: { value: PLACEHOLDERS.CURRENT_USER }
         },
         anonymize: "retain"
       },
@@ -362,7 +362,7 @@ export const defaultJsonConfig = {
   "view:help": {
     component: "MarkdownPage",
     config: {
-      markdownFile: $localize`:Filename of markdown help page (make sure the filename you enter as a translation actually exists on the server!):assets/help/help.en.md`
+      markdownEntityId: "help"
     }
   },
   "view:attendance": {
@@ -402,7 +402,7 @@ export const defaultJsonConfig = {
               component: "Form",
               config: {
                 fieldGroups: [
-                  { fields: ["name", "privateSchool", "parentSchool"] },
+                  { fields: ["name", "privateSchool"] },
                   { fields: ["address", "phone", "website"] },
                   { fields: ["language", "timing"] },
                   { fields: ["remarks"] }
@@ -812,7 +812,7 @@ export const defaultJsonConfig = {
         label: $localize`:Date on which the material has been borrowed:Date`,
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         }
       },
       materialType: {
@@ -828,7 +828,7 @@ export const defaultJsonConfig = {
         label: $localize`:The amount of the material which has been borrowed:Amount`,
         defaultValue: {
           mode: "static",
-          value: 1
+          config: { value: 1 }
         },
         validators: {
           required: true
@@ -1094,13 +1094,13 @@ export const defaultJsonConfig = {
       },
       remarks: {
         dataType: "string",
-        label: $localize`:Label for the remarks for a school:Remarks`,
+        label: $localize`:Label for the remarks for a school:Remarks`
       },
       website: {
         dataType: "url",
-        label: $localize`:Label for the website of a school:Website`,
-      },
-    },
+        label: $localize`:Label for the website of a school:Website`
+      }
+    }
   },
   "entity:HistoricalEntityData": {
     hasPII: true,
@@ -1110,7 +1110,7 @@ export const defaultJsonConfig = {
         label: $localize`:Label for date of historical data:Date`,
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         },
         anonymize: "retain-anonymized"
       },
@@ -1209,7 +1209,7 @@ export const defaultJsonConfig = {
         label: $localize`:Label for date of the ASER results:Date`,
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         },
         anonymize: "retain-anonymized"
       },
@@ -1256,7 +1256,7 @@ export const defaultJsonConfig = {
         anonymize: "retain-anonymized",
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         }
       },
       height: {

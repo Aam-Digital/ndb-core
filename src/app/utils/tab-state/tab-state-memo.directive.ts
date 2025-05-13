@@ -19,6 +19,7 @@ import { ViewComponentContext } from "../../core/ui/abstract-view/view-component
 @UntilDestroy()
 @Directive({
   selector: "[appTabStateMemo]",
+  standalone: false,
 })
 export class TabStateMemoDirective implements OnInit {
   private readonly tabIndexKey = "tabIndex";

@@ -23,7 +23,7 @@ import { merge, Subject } from "rxjs";
 import { GeoResult, GeoService } from "../geo.service";
 import { concatMap, debounceTime, filter, map, tap } from "rxjs/operators";
 import { Logging } from "../../../core/logging/logging.service";
-import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";
 
@@ -33,7 +33,6 @@ import { GeoLocation } from "../geo-location";
  */
 @Component({
   selector: "app-address-search",
-  standalone: true,
   imports: [
     MatOption,
     MatAutocomplete,
@@ -42,7 +41,6 @@ import { GeoLocation } from "../geo-location";
     MatAutocompleteTrigger,
     MatInput,
     AsyncPipe,
-    MatButton,
     MatIconButton,
     MatSuffix,
     FaIconComponent,

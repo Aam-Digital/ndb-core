@@ -2,7 +2,9 @@
   (click)="openLinkIfDisabled()"
   [class.clickable]="formControl.disabled && formControl.value"
 >
-  <mat-label>{{ label }}</mat-label>
+  <mat-label>
+    <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
+  </mat-label>
 
   <input
     [formControl]="formControl"

@@ -49,7 +49,6 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
     "../../building-blocks/admin-section-header/admin-section-header.component.scss",
     "../../../common-components/entity-form/entity-form/entity-form.component.scss",
   ],
-  standalone: true,
   imports: [
     DragDropModule,
     NgForOf,
@@ -65,6 +64,12 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 })
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
+
+  /**
+   * Unique identifier for the drag-and-drop area to ensure correct drag&drop behavior.
+   * (e.g. a combination of tabindex and section index)
+   */
+  @Input() uniqueAreaId: string;
 
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
@@ -144,6 +149,19 @@ export class AdminEntityFormComponent implements OnChanges {
 
   private getUsedFields(config: FormConfig): ColumnConfig[] {
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
+  }
+
+  /**
+   * Returns a list of group IDs that are connected to the drag&drop area.
+   * This is used to determine which groups are connected to the drag&drop area.
+   */
+  getConnectedGroups(): string[] {
+    return [
+      ...this.config.fieldGroups.map(
+        (_, groupIndex) => `${this.uniqueAreaId}-group${groupIndex}`,
+      ),
+      `newGroupDropArea-${this.uniqueAreaId}`,
+    ];
   }
 
   /**
@@ -247,6 +265,12 @@ export class AdminEntityFormComponent implements OnChanges {
       // ensure available fields have consistent order
       this.initAvailableFields();
     }
+
+    this.emitUpdatedConfig();
+  }
+
+  dropfieldGroups<E>(event: CdkDragDrop<E[], any>, fieldGroupsArray: E[]) {
+    moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
 
     this.emitUpdatedConfig();
   }

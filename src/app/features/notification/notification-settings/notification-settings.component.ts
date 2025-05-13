@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import {
   MatSlideToggle,
   MatSlideToggleChange,
@@ -54,15 +54,13 @@ export class NotificationSettingsComponent implements OnInit {
   isBrowserSupported: boolean;
   isPushNotificationEnabled = false;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private sessionInfo: SessionSubject,
-    private userEntity: CurrentUserSubject,
-    private confirmationDialog: ConfirmationDialogService,
-    private notificationService: NotificationService,
-    private alertService: AlertService,
-    @Inject(NAVIGATOR_TOKEN) protected navigator: Navigator,
-  ) {}
+  private readonly entityMapper = inject(EntityMapperService);
+  private readonly sessionInfo = inject(SessionSubject);
+  private readonly userEntity = inject(CurrentUserSubject);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly alertService = inject(AlertService);
+  protected readonly navigator: Navigator = inject(NAVIGATOR_TOKEN);
 
   /**
    * Get the logged-in user id
