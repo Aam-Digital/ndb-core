@@ -311,6 +311,9 @@ export class PouchDatabase extends Database {
     }
 
     await this.put(designDoc, true);
+
+    // for faster initial loading we disable prebuilding views in development
+    // TODO: check if this should be completely removed, also for production systems
     if (environment.production) {
       await this.prebuildViewsOfDesignDoc(designDoc);
     }
