@@ -10,7 +10,7 @@
     "test-ci": "ng test --code-coverage --karma-config=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core",
     "e2e": "playwright test",
-    "e2e:debug": "playwright test --project chromium --headed",
+    "e2e:debug": "playwright test --headed --timeout=0",
     "percy-storybook": "npm run build-storybook && percy storybook ./storybook-static",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
@@ -22,6 +22,9 @@
   "private": true,
   "browser": {
     "stream": "./node_modules/stream-browserify"
+  },
+  "imports": {
+    "#e2e/*": "./e2e/*"
   },
   "dependencies": {
     "@angular/animations": "^19.2.6",
@@ -68,6 +71,7 @@
     "process": "^0.11.10",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "serve": "^14.2.4",
     "stream-browserify": "^3.0.0",
     "tslib": "^2.8.1",
     "util": "^0.12.5",
