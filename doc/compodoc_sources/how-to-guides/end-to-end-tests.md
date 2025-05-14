@@ -3,8 +3,8 @@
 End-to-end tests run the app in the browser using browser-local database. We use
 [Playwright][] as the testing framework.
 
-Before run the tests you need to start a local development server with `npm
-start`. You can use the `playwright` CLI to run the tests from the terminal or
+Before you run the tests you need to start a local development server with 
+`npm start`. You can use the `playwright` CLI to run the tests from the terminal or
 start the [Playwright UI].
 
 ```bash
