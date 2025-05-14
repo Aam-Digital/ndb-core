@@ -9,6 +9,8 @@
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karma-config=build/karma-ci.conf.js ",
     "lint": "ng lint ndb-core",
+    "e2e": "playwright test",
+    "e2e:debug": "playwright test --headed --timeout=0",
     "percy-storybook": "npm run build-storybook && percy storybook ./storybook-static",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
