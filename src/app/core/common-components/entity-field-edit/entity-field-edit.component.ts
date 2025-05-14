@@ -83,17 +83,16 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
 
     this._field = toFormFieldConfig(this.field);
 
-    if (!this.entity?.getConstructor()) {
+    if (this.entity?.getConstructor()) {
+      this._field = this.entityFormService.extendFormFieldConfig(
+        this.field,
+        this.entity.getConstructor(),
+      );
+    } else {
       // add editComponent (because we cannot rely on the entity's schema yet for a new field)
       this._field.editComponent =
         this._field.editComponent ??
         this.entitySchemaService.getComponent(this._field, "edit");
-      return;
     }
-
-    this._field = this.entityFormService.extendFormFieldConfig(
-      this.field,
-      this.entity.getConstructor(),
-    );
   }
 }
