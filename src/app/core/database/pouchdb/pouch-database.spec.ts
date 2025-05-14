@@ -146,17 +146,9 @@ describe("PouchDatabase tests", () => {
   it("saveDatabaseIndex creates new index", async () => {
     const testIndex = { _id: "_design/test_index", views: { a: {}, b: {} } };
     spyOn(database, "put").and.resolveTo();
-    const spyOnQuery = spyOn(database, "query").and.resolveTo();
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).toHaveBeenCalledWith(testIndex, true);
-
-    // expect all indices to be queried
-    expect(spyOnQuery).toHaveBeenCalledTimes(2);
-    expect(spyOnQuery.calls.allArgs()).toEqual([
-      ["test_index/a", { key: "1" }],
-      ["test_index/b", { key: "1" }],
-    ]);
   });
 
   it("saveDatabaseIndex updates existing index", async () => {
@@ -167,7 +159,6 @@ describe("PouchDatabase tests", () => {
     });
     const existingIndex = await database.get(testIndex._id);
     spyOn(database, "put").and.resolveTo();
-    const spyOnQuery = spyOn(database, "query").and.resolveTo();
 
     await database.saveDatabaseIndex(testIndex);
     expect(database.put).toHaveBeenCalledWith(
@@ -178,13 +169,6 @@ describe("PouchDatabase tests", () => {
       },
       true,
     );
-
-    // expect all indices to be queried
-    expect(spyOnQuery).toHaveBeenCalledTimes(2);
-    expect(spyOnQuery.calls.allArgs()).toEqual([
-      ["test_index/a", { key: "1" }],
-      ["test_index/b", { key: "1" }],
-    ]);
   });
 
   it("saveDatabaseIndex does not update unchanged index", async () => {

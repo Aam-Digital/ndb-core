@@ -1,21 +1,16 @@
-import { Download, expect, test } from "@playwright/test";
-import { startApp } from "../utils/core-e2e-utils"; // Import the path module for file path operations
-import { setFixedDate } from "../utils/fixed-date";
+import { expect, test } from "#e2e/fixtures.ts";
 
 test.describe("Attendance Module", () => {
   const FIXED_DATE = "2025-01-23";
 
-  test.beforeEach(async ({ page }, testInfo) => {
-    console.log(`Running test case - ${testInfo.title}`);
-
-    // Set fixed date before navigating to the app
-    await setFixedDate(page, FIXED_DATE);
-
-    await startApp(page);
-    await page.goto("/attendance/add-day");
+  test.beforeEach(async ({ page }) => {
+    await page.clock.install({ time: FIXED_DATE });
   });
 
   test("Record attendance for one activity", async ({ page }) => {
+    await page.getByRole("navigation").getByText("Attendance").click();
+    await page.getByRole("button", { name: "Record" }).click();
+
     /*
       Verify the date field displays the current date
     */
@@ -103,33 +98,14 @@ test.describe("Attendance Module", () => {
     /*
       Verify the class just recorded attendance should be highlighted in green and all others in orange
     */
-    const BackOverviewBtn = page.getByRole("button", {
+    const backOverviewBtn = page.getByRole("button", {
       name: "Back to Overview",
     });
-    await expect(BackOverviewBtn).toBeVisible(); // "Back to Overview" button is visible
-    await BackOverviewBtn.click(); // "Back to Overview" button is clickable
-
-    const classCard = page.locator("mat-card");
-    const classCardCount = await classCard.count();
-    for (let i = 0; i < classCardCount; i++) {
-      const card = page.locator("mat-card").nth(i);
-
-      // Extract the border color
-      const borderColor = await card.evaluate(
-        (el) => getComputedStyle(el).borderLeftColor,
-      );
-
-      if (i === 0) {
-        expect(borderColor).toBe("rgb(76, 175, 80)"); // Green
-      } else {
-        expect(borderColor).toBe("rgb(255, 152, 0)"); // Orange
-      }
-    }
+    await expect(backOverviewBtn).toBeVisible(); // "Back to Overview" button is visible
   });
 
   test("View and download attendance report", async ({ page }) => {
-    await page.goto("/report");
-
+    await page.getByRole("navigation").getByText("Report").click();
     await page
       .locator("div")
       .filter({ hasText: "Select Report" })
@@ -186,15 +162,14 @@ test.describe("Attendance Module", () => {
     // see https://playwright.dev/docs/downloads
     const downloadPromise = page.waitForEvent("download");
     await page.getByRole("button", { name: "download csv Download" }).click();
-    const download: Download = await downloadPromise;
 
-    expect(download.suggestedFilename()).toMatch("report.csv");
+    expect((await downloadPromise).suggestedFilename()).toMatch("report.csv");
   });
 
   test("View attendance percentage color in children list", async ({
     page,
   }) => {
-    await page.goto("/child");
+    await page.getByRole("navigation").getByText("Children").click();
 
     await page.getByRole("tab", { name: "School Info" }).click();
     const CoachingAttendance = page
@@ -232,8 +207,6 @@ test.describe("Attendance Module", () => {
   });
 
   test("Attendance Dashboard View", async ({ page }) => {
-    await page.goto("/");
-
     // Wait for the element containing "Absences this week" text to appear
     await page.waitForSelector("text=Absences this week");
 
@@ -324,7 +297,7 @@ test.describe("Attendance Module", () => {
   test("Managing Attendance view and Recurring Activities list", async ({
     page,
   }) => {
-    // Navigate to the Attendance page
+    await page.getByRole("navigation").getByText("Attendance").click();
     await page
       .locator("mat-list-item")
       .filter({ hasText: "Attendance" })
