@@ -19,6 +19,10 @@ export class ImportColumnMappingService {
     const allPropertyNames = Array.from(entitySchema.keys());
 
     for (const colMap of columnMapping) {
+      if (colMap.manuallyUpdated) {
+        // Skip manually modified columns
+        continue;
+      }
       if (!!colMap.propertyName) {
         // skip already mapped columns
         continue;
