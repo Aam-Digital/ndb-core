@@ -25,6 +25,20 @@ npx playwright test --ui
 
   This prepare the application properly and loads it in the browser.
 
+* Prefer actions over expectations. Instead of the following
+
+  ```typescript
+  const someButton = page.getByLabel("...")
+  await expect(someButton).toBeVisible();
+  await someButton.click();
+  ```
+
+  write
+
+  ```typescript
+  await page.getByLabel("...").click();
+  ```
+
 * Use accesibility-based locator, in descending preference
   * [`getByLabel()`](https://playwright.dev/docs/locators#locate-by-label)
   * [`getByTitle()`](https://playwright.dev/docs/locators#locate-by-title)
