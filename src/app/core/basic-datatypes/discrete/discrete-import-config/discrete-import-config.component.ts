@@ -58,24 +58,26 @@ export class DiscreteImportConfigComponent implements OnInit {
   private getFormValues(additional: any) {
     additional = additional || {};
 
-    const enumEntity = this.configurableEnumService.getEnum(
-      this.schema?.additional,
-    );
-    const enumOptions = enumEntity?.values ?? [];
+    let enumOptions = [];
+    if (this.schema?.additional) {
+      const enumEntity = this.configurableEnumService.getEnum(
+        this.schema.additional,
+      );
+      enumOptions = enumEntity?.values ?? [];
+    }
 
     const formObj = {};
-
     for (const value of this.data.values.filter(Boolean)) {
       let initialValue: string;
 
       if (value in additional) {
         initialValue = additional[value];
       } else {
-        initialValue = enumOptions.find(
+        const matchedEnumOption = enumOptions.find(
           (opt) => opt.id === value || opt.label === value,
-        )?.id;
+        );
+        initialValue = matchedEnumOption?.id ?? value;
       }
-
       formObj[value] = new FormControl(
         this.schemaService.valueToEntityFormat(initialValue, this.schema),
       );
