@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FilterComponent } from "./filter.component";
 import { Note } from "../../../child-dev-project/notes/model/note";
+import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -149,5 +150,38 @@ describe("FilterComponent", () => {
     expect(component.filterSelections.length).toBe(1);
     expect(component.filterSelections[0].name).toBe("category");
     expect(component.filterSelections[0].selectedOptionValues).toBeEmpty();
+  });
+
+  it("should compute available category options and build filterObj", async () => {
+    component.entityType = Note;
+    const t1 = defaultInteractionTypes[0];
+    const t2 = defaultInteractionTypes[1];
+
+    const n1 = new Note();
+    n1.category = t1;
+    const n2 = new Note();
+    n2.category = t2;
+
+    component.entities = [n1, n2];
+    component.onlyShowRelevantFilterOptions = true;
+    component.filterConfig = [{ id: "category" }];
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    const avilableOptions = component.filterSelections.find(
+      (f) => f.name === "category",
+    );
+    expect(avilableOptions).toBeTruthy();
+    expect((avilableOptions as any).options.length).toBe(2);
+
+    component.filterOptionSelected(avilableOptions, [t1.id]);
+
+    expect(component.filterObj).toEqual({
+      $and: [
+        {
+          $or: [{ "category.id": t1.id }],
+        },
+      ],
+    } as any);
   });
 });
