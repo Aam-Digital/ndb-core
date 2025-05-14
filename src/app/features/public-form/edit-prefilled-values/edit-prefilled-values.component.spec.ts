@@ -10,7 +10,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Entity } from "app/core/entity/model/entity";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 describe("EditPrefilledValuesComponent", () => {
   let component: EditPrefilledValuesComponent;
@@ -33,15 +32,7 @@ describe("EditPrefilledValuesComponent", () => {
         MatButtonModule,
         NoopAnimationsModule,
       ],
-      providers: [
-        { provide: EntityRegistry, useValue: mockEntityRegistry },
-        {
-          provide: EntitySchemaService,
-          useValue: {
-            valueToDatabaseFormat: (v) => v,
-          },
-        },
-      ],
+      providers: [{ provide: EntityRegistry, useValue: mockEntityRegistry }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditPrefilledValuesComponent);
