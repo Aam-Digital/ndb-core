@@ -9,8 +9,17 @@
   >
     <ng-container autocompleteHeader>
       <div class="flex-row">
-        <button mat-flat-button i18n (click)="selectAll()">Select All</button>
-        <button mat-flat-button i18n (click)="deselectAll()">Clear</button>
+        <button mat-flat-button i18n class="util-button" (click)="selectAll()">
+          Select All
+        </button>
+        <button
+          mat-flat-button
+          i18n
+          class="util-button"
+          (click)="deselectAll()"
+        >
+          Clear
+        </button>
       </div>
     </ng-container>
   </app-basic-autocomplete>
