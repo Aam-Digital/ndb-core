@@ -69,7 +69,11 @@ describe("DiscreteImportConfigComponent", () => {
 
     expect(component.form.getRawValue()).toEqual({
       male: genders.find((e) => e.id === "M"),
-      female: null,
+      female: {
+        id: "female",
+        isInvalidOption: true,
+        label: "[invalid option] female",
+      },
     });
   });
 
