@@ -59,6 +59,11 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
    */
   @Input() compactMode: boolean;
 
+  /**
+   * Whether to display the field label or not.
+   */
+  @Input() hideLabel: boolean;
+
   constructor(
     private entityFormService: EntityFormService,
     private entitySchemaService: EntitySchemaService,

@@ -5,9 +5,13 @@
       !(entity?.anonymized && formFieldConfig.anonymize === 'retain-anonymized')
     "
   >
-    <mat-label>
-      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
-    </mat-label>
+    @if (!hideLabel) {
+      <mat-label>
+        <span [matTooltip]="label" matTooltipPosition="before">{{
+          label
+        }}</span>
+      </mat-label>
+    }
     <input
       matInput
       [formControlName]="formControlName"
@@ -25,9 +29,11 @@
   </mat-form-field>
 
   <mat-form-field style="width: 30%">
-    <mat-label i18n="Placeholder for the input that displays the age"
-      >Age</mat-label
-    >
+    @if (!hideLabel) {
+      <mat-label i18n="Placeholder for the input that displays the age"
+        >Age</mat-label
+      >
+    }
     <fa-icon
       *ngIf="formControl.enabled"
       matIconSuffix
