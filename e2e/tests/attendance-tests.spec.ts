@@ -8,6 +8,7 @@ test("Record attendance for one activity", async ({ page }) => {
   await expect(dateField).toHaveValue("1/23/2025");
 
   await dateField.fill("12/15/2024");
+  await dateField.blur();
 
   // FIXME: A simple .click() does not trigger the action and we don’t know why.
   await page.getByText("School Class 2B").dispatchEvent("click");

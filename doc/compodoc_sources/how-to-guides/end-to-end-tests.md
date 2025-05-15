@@ -3,14 +3,18 @@
 End-to-end tests run the app in the browser using browser-local database. We use
 [Playwright][] as the testing framework.
 
-Before you run the tests you need to start a local development server with 
-`npm start`. You can use the `playwright` CLI to run the tests from the terminal or
+Before you run the tests you need to start a local development server with `npm
+start`. You can use the `playwright` CLI to run the tests from the terminal or
 start the [Playwright UI].
 
 ```bash
 npx playwright test
 npx playwright test --ui
 ```
+
+To debug test runs your can use Playwright’s [Trace Viewer]. On CI traces for
+all test runs are uploaded as artifacts. On the page of a workflow run you can
+find them in “Artifacts” section.
 
 ## Writing tests
 
@@ -52,6 +56,6 @@ npx playwright test --ui
 * Avoid navigation with `page.goto()`. Instead, click on the links that lead you
   to the desired page. This avoid reloading the app which is slow.
 
-
 [Playwright]: https://playwright.dev/
 [Playwright UI]: https://playwright.dev/docs/test-ui-mode
+[Trace Viewer]: https://playwright.dev/docs/trace-viewer
