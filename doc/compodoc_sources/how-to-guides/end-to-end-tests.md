@@ -12,7 +12,7 @@ npx playwright test
 npx playwright test --ui
 ```
 
-To debug test runs your can use Playwright’s [Trace Viewer]. On CI traces for
+To debug test runs you can use Playwright’s [Trace Viewer]. On CI traces for
 all test runs are uploaded as artifacts. On the page of a workflow run you can
 find them in “Artifacts” section.
 
