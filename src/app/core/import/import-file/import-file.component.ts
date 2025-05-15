@@ -12,7 +12,6 @@ import { NgIf } from "@angular/common";
   selector: "app-import-file",
   templateUrl: "./import-file.component.html",
   styleUrls: ["./import-file.component.scss"],
-  standalone: true,
   imports: [InputFileComponent, NgIf],
 })
 export class ImportFileComponent {

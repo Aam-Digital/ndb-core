@@ -36,7 +36,6 @@ import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/
   selector: "app-import-review-data",
   templateUrl: "./import-review-data.component.html",
   styleUrls: ["./import-review-data.component.scss"],
-  standalone: true,
   imports: [
     MatButtonModule,
     HelpButtonComponent,
@@ -96,9 +95,12 @@ export class ImportReviewDataComponent implements OnChanges {
         additionalActions: this.additionalActions,
         matchExistingByFields: this.matchExistingByFields,
       })
-    )
+    ).sort((a, b) => {
       // sort _rev (existing records being updated) first, then new records
-      .sort((a, b) => (a._rev === b._rev ? 0 : !!a._rev ? -1 : 1));
+      if (a._rev === b._rev) return 0;
+      if (!!a._rev) return -1;
+      return 1;
+    });
 
     this.displayColumns = [
       this.IMPORT_STATUS_COLUMN,

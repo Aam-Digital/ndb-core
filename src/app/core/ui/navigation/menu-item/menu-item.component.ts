@@ -24,7 +24,6 @@ import { DragDropModule, CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-
     MatMenuModule,
     DragDropModule,  // Added DragDropModule for drag-and-drop support
   ],
-  standalone: true,
 })
 export class MenuItemComponent {
   /**

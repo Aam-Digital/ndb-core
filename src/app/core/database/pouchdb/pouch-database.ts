@@ -4,6 +4,7 @@ import PouchDB from "pouchdb-browser";
 import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { HttpStatusCode } from "@angular/common/http";
+import { environment } from "environments/environment";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -202,8 +203,8 @@ export class PouchDatabase extends Database {
   }
 
   /**
-   * Listen to changes to documents which have an _id with the given prefix
-   * @param prefix for which document changes are emitted
+   * Listen to changes to documents in the database.
+   * Use rxjs operators to filter for specific prefixes etc. if needed.
    * @returns observable which emits the filtered changes
    */
   changes(): Observable<any> {
@@ -252,8 +253,7 @@ export class PouchDatabase extends Database {
    */
   async reset() {
     this.pouchDB = undefined;
-    this.changesFeed?.complete();
-    this.changesFeed = undefined;
+    // keep this.changesFeed because some services are already subscribed to this reference
     this.databaseInitialized = new Subject();
   }
 
@@ -311,7 +311,12 @@ export class PouchDatabase extends Database {
     }
 
     await this.put(designDoc, true);
-    await this.prebuildViewsOfDesignDoc(designDoc);
+
+    // for faster initial loading we disable prebuilding views in development
+    // TODO: check if this should be completely removed, also for production systems
+    if (environment.production) {
+      await this.prebuildViewsOfDesignDoc(designDoc);
+    }
   }
 
   @PerformanceAnalysisLogging

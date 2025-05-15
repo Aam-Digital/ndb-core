@@ -18,7 +18,7 @@ import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { DefaultValueService } from "../../default-values/default-value.service";
+import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`

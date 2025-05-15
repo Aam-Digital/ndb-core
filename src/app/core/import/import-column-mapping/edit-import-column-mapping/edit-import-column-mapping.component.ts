@@ -103,6 +103,8 @@ export class EditImportColumnMappingComponent {
       delete this.columnMapping.additional;
     }
 
+    this.columnMapping.manuallyUpdated = true;
+
     this.updateDatatypeAndWarning();
     this.columnMappingChange.emit(this.columnMapping);
   }

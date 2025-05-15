@@ -7,11 +7,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import {
-  KeycloakAuthService,
-  KeycloakUserDto,
-  Role,
-} from "../../session/auth/keycloak/keycloak-auth.service";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { NgForOf, NgIf } from "@angular/common";
@@ -23,8 +18,15 @@ import { MatSelectModule } from "@angular/material/select";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionSubject } from "../../session/auth/session-info";
 import { Entity } from "../../entity/model/entity";
-import { catchError } from "rxjs/operators";
+import { switchMap } from "rxjs/operators";
 import { environment } from "../../../../environments/environment";
+import {
+  UserAdminApiError,
+  UserAdminService,
+} from "../user-admin-service/user-admin.service";
+import { Role, UserAccount } from "../user-admin-service/user-account";
+import { Logging } from "app/core/logging/logging.service";
+import { of } from "rxjs";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")
@@ -42,33 +44,30 @@ import { environment } from "../../../../environments/environment";
     MatSelectModule,
     NgForOf,
   ],
-  standalone: true,
 })
 export class UserSecurityComponent implements OnInit {
   @Input() entity: Entity;
   form: FormGroup;
   availableRoles: Role[] = [];
-  user: KeycloakUserDto;
+  user: UserAccount;
   editing = true;
   userIsPermitted = false;
 
   constructor(
-    private authService: KeycloakAuthService,
+    private userAdminService: UserAdminService,
     sessionInfo: SessionSubject,
     private fb: FormBuilder,
     private alertService: AlertService,
     private http: HttpClient,
   ) {
     this.form = this.fb.group({
-      username: [{ value: "", disabled: true }],
+      userEntityId: [{ value: "", disabled: true }],
       email: ["", [Validators.required, Validators.email]],
       roles: new FormControl<Role[]>([], Validators.required),
     });
 
     if (
-      sessionInfo.value?.roles.includes(
-        KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
-      )
+      sessionInfo.value?.roles.includes(UserAdminService.ACCOUNT_MANAGER_ROLE)
     ) {
       this.userIsPermitted = true;
     } else {
@@ -80,8 +79,8 @@ export class UserSecurityComponent implements OnInit {
         this.form.get("email").setValue(next.email.trim());
       }
     });
-    this.authService
-      .getRoles()
+    this.userAdminService
+      .getAllRoles()
       .subscribe((roles) => this.initializeRoles(roles));
   }
 
@@ -100,17 +99,24 @@ export class UserSecurityComponent implements OnInit {
     if (!this.userIsPermitted) {
       return;
     }
-    this.form.get("username").setValue(this.entity.getId());
-    this.authService
-      .getUser(this.entity.getId(true))
-      .pipe(catchError(() => this.authService.getUser(this.entity.getId())))
+    this.form.get("userEntityId").setValue(this.entity.getId());
+    this.userAdminService
+      .getUser(this.entity.getId())
+      .pipe(
+        // fallback: retry without entity prefix for legacy users
+        switchMap((user) =>
+          user === null
+            ? this.userAdminService.getUser(this.entity.getId(true))
+            : of(user),
+        ),
+      )
       .subscribe({
         next: (res) => this.assignUser(res),
-        error: () => undefined,
+        error: (err) => this.setError(err),
       });
   }
 
-  private assignUser(user: KeycloakUserDto) {
+  private assignUser(user: UserAccount) {
     this.user = user;
     this.initializeForm();
     if (this.user) {
@@ -135,7 +141,7 @@ export class UserSecurityComponent implements OnInit {
     if (enabled) {
       message = $localize`:Snackbar message:Account has been activated, user can login again.`;
     }
-    this.updateKeycloakUser({ enabled }, message);
+    this.updateUserAccount({ enabled }, message);
   }
 
   editForm() {
@@ -158,18 +164,21 @@ export class UserSecurityComponent implements OnInit {
     }
     user.enabled = true;
     if (user) {
-      this.authService.createUser(user).subscribe({
-        next: () => {
-          this.alertService.addInfo(
-            $localize`:Snackbar message:Account created. An email has been sent to ${
-              this.form.get("email").value
-            }`,
-          );
-          this.user = user as KeycloakUserDto;
-          this.disableForm();
-        },
-        error: ({ error }) => this.form.setErrors({ failed: error.message }),
-      });
+      this.userAdminService
+        .createUser(user.userEntityId, user.email, user.roles)
+        .subscribe({
+          // TODO: check which form fields are really needed
+          next: () => {
+            this.alertService.addInfo(
+              $localize`:Snackbar message:Account created. An email has been sent to ${
+                this.form.get("email").value
+              }`,
+            );
+            this.user = user as UserAccount;
+            this.disableForm();
+          },
+          error: (err) => this.setError(err),
+        });
     }
   }
 
@@ -180,18 +189,15 @@ export class UserSecurityComponent implements OnInit {
       this.form.get(control).pristine ? delete update[control] : undefined,
     );
     if (update) {
-      this.updateKeycloakUser(
+      this.updateUserAccount(
         update,
         $localize`:Snackbar message:Successfully updated user`,
       );
     }
   }
 
-  private updateKeycloakUser(
-    update: Partial<KeycloakUserDto>,
-    message: string,
-  ) {
-    this.authService.updateUser(this.user.id, update).subscribe({
+  private updateUserAccount(update: Partial<UserAccount>, message: string) {
+    this.userAdminService.updateUser(this.user.id, update).subscribe({
       next: () => {
         this.alertService.addInfo(message);
         Object.assign(this.user, update);
@@ -201,11 +207,14 @@ export class UserSecurityComponent implements OnInit {
           this.triggerSyncReset();
         }
       },
-      error: ({ error }) => this.form.setErrors({ failed: error.message }),
+      error: (error) => {
+        console.log(error);
+        this.form.setErrors({ failed: error.message });
+      },
     });
   }
 
-  getFormValues(): Partial<KeycloakUserDto> {
+  getFormValues(): Partial<UserAccount> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -227,5 +236,16 @@ export class UserSecurityComponent implements OnInit {
         // request fails if no permission backend is used - this is fine
         error: () => undefined,
       });
+  }
+
+  private setError(err: UserAdminApiError | any) {
+    let errorMessage = err?.error?.message ?? err?.message;
+    if (err instanceof UserAdminApiError) {
+      errorMessage = err.message;
+    } else {
+      Logging.warn("Unexpected error from UserAdminService", err);
+    }
+
+    this.form.setErrors({ failed: errorMessage });
   }
 }

@@ -23,7 +23,7 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
-import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
+import { AccountPageComponent } from "../account-page/account-page.component";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { AsyncPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
@@ -48,7 +48,6 @@ import { NotificationSettingsComponent } from "../../../features/notification/no
     EntityBlockComponent,
     NotificationSettingsComponent,
   ],
-  standalone: true,
 })
 export class UserAccountComponent implements OnInit {
   passwordChangeDisabled = false;

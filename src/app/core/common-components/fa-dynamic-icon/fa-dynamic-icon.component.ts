@@ -37,7 +37,6 @@ const iconAliases = new Map<string, IconDefinition>([
   selector: "app-fa-dynamic-icon",
   template: ` <fa-icon *ngIf="_icon" [icon]="_icon"></fa-icon>`,
   imports: [FontAwesomeModule, NgIf],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FaDynamicIconComponent {

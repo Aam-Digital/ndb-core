@@ -14,7 +14,6 @@ import { migratePublicFormConfig } from "../public-form.component";
 
 @Component({
   selector: "app-edit-public-form-columns",
-  standalone: true,
   imports: [AdminEntityFormComponent],
   templateUrl: "./edit-public-form-columns.component.html",
   styleUrl: "./edit-public-form-columns.component.scss",

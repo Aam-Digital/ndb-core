@@ -38,7 +38,6 @@ export interface ViewDistanceConfig {
     ></app-readonly-function>
   `,
   imports: [ReadonlyFunctionComponent],
-  standalone: true,
 })
 export class ViewDistanceComponent
   extends ViewDirective<Geolocation, ViewDistanceConfig>

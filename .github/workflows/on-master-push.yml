@@ -30,17 +30,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
-        os:
-          - ubuntu-latest
-          - [ self-hosted, Linux, ARM64 ]
-        exclude:
-          - platform: linux/arm64
-            os: ubuntu-latest
+        include:
           - platform: linux/amd64
-            os: [ self-hosted, Linux, ARM64 ]
+            os: ubuntu-latest
+          - platform: linux/arm64
+            os: ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository files
@@ -73,10 +67,47 @@ jobs:
           build-args: |
             TZ=America/Detroit
 
+  test-e2e:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Berlin
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - run: npm install --ci
+      - name: Cache playwright
+        id: cache-playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-v1-${{ hashFiles('package-lock.json') }}
+
+      - if: steps.cache-playwright.outputs.cache-hit != 'true'
+        run: npm exec playwright install chromium
+
+      - run: npm exec ng build --configuration=development
+
+      # See playwright.config.ts for more CI-specific configuration
+      - run: npx playwright test --browser chromium
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: |
+            test-results/**/trace.zip
+
   pre-release:
     runs-on: ubuntu-latest
     needs:
       - test
+      - test-e2e
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4

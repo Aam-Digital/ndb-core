@@ -5,6 +5,7 @@ import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
 import { EntityConfig } from "../entity/entity-config";
+import { DefaultValueConfig } from "../default-values/default-value-config";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -130,131 +131,6 @@ describe("ConfigService", () => {
     const result = service.exportConfig();
     expect(result).toEqual(expected);
   }));
-
-  describe("should migrate EntitySchemaField.defaultValue", () => {
-    it("should not migrate defaultValue matching the new format", fakeAsync(() => {
-      let testEntity = "entity:old-format";
-
-      updateSubject.next({
-        entity: Object.assign(new Config(), {
-          data: {
-            [testEntity]: {
-              attributes: {
-                fieldName: {
-                  defaultValue: {
-                    mode: "static",
-                    value: 3,
-                  },
-                },
-              },
-            },
-          },
-        }),
-        type: "update",
-      });
-      tick();
-
-      const expectedEntityAttributes = {
-        mode: "static",
-        value: 3,
-      };
-
-      const config = service.getConfig(testEntity);
-      expect(config["attributes"].fieldName.defaultValue).toEqual(
-        expectedEntityAttributes,
-      );
-    }));
-
-    it("should migrate defaultValue with number value", fakeAsync(() => {
-      let testEntity = "entity:old-format";
-
-      updateSubject.next({
-        entity: Object.assign(new Config(), {
-          data: {
-            [testEntity]: {
-              attributes: {
-                fieldName: {
-                  defaultValue: 3,
-                },
-              },
-            },
-          },
-        }),
-        type: "update",
-      });
-      tick();
-
-      const expectedEntityAttributes = {
-        mode: "static",
-        value: 3,
-      };
-
-      const config = service.getConfig(testEntity);
-      expect(config["attributes"].fieldName.defaultValue).toEqual(
-        expectedEntityAttributes,
-      );
-    }));
-
-    it("should migrate defaultValue with string value", fakeAsync(() => {
-      let testEntity = "entity:old-format";
-
-      updateSubject.next({
-        entity: Object.assign(new Config(), {
-          data: {
-            [testEntity]: {
-              attributes: {
-                fieldName: {
-                  defaultValue: "foo",
-                },
-              },
-            },
-          },
-        }),
-        type: "update",
-      });
-      tick();
-
-      const expectedEntityAttributes = {
-        mode: "static",
-        value: "foo",
-      };
-
-      const config = service.getConfig(testEntity);
-      expect(config["attributes"].fieldName.defaultValue).toEqual(
-        expectedEntityAttributes,
-      );
-    }));
-
-    it("should migrate defaultValue with placeholder value", fakeAsync(() => {
-      let testEntity = "entity:old-format";
-
-      updateSubject.next({
-        entity: Object.assign(new Config(), {
-          data: {
-            [testEntity]: {
-              attributes: {
-                fieldName: {
-                  defaultValue: "$now",
-                },
-              },
-            },
-          },
-        }),
-        type: "update",
-      });
-      tick();
-
-      const expectedEntityAttributes = {
-        mode: "dynamic",
-        value: "$now",
-      };
-
-      const config = service.getConfig(testEntity);
-      expect(config["attributes"].fieldName.defaultValue).toEqual(
-        expectedEntityAttributes,
-      );
-    }));
-  });
 
   it("should migrate entity-array dataType", fakeAsync(() => {
     const config = new Config();
@@ -479,5 +355,78 @@ describe("ConfigService", () => {
       },
     };
     testConfigMigration(otherConfig, otherConfig);
+  }));
+
+  it("should migrate defaultValue mode 'inherited' to 'inherited-from-referenced-entity'", fakeAsync(() => {
+    const previousDefaultValueConfig = {
+      mode: "inherited",
+      localAttribute: "localAttribute",
+      field: "field",
+    };
+
+    const expectedDefaultValueConfig: DefaultValueConfig = {
+      mode: "inherited-from-referenced-entity",
+      config: {
+        localAttribute: "localAttribute",
+        field: "field",
+      },
+    };
+
+    let testEntity = "entity:old-format";
+    updateSubject.next({
+      entity: Object.assign(new Config(), {
+        data: {
+          [testEntity]: {
+            attributes: {
+              fieldName: {
+                defaultValue: previousDefaultValueConfig,
+              },
+            },
+          },
+        },
+      }),
+      type: "update",
+    });
+    tick();
+
+    const config = service.getConfig(testEntity);
+    expect(config["attributes"].fieldName.defaultValue).toEqual(
+      expectedDefaultValueConfig,
+    );
+  }));
+  it("should migrate defaultValue mode 'dynamic' new config format", fakeAsync(() => {
+    const previousDefaultValueConfig = {
+      mode: "dynamic",
+      value: "$now",
+    };
+
+    const expectedDefaultValueConfig: DefaultValueConfig = {
+      mode: "dynamic",
+      config: {
+        value: "$now",
+      },
+    };
+
+    let testEntity = "entity:old-format";
+    updateSubject.next({
+      entity: Object.assign(new Config(), {
+        data: {
+          [testEntity]: {
+            attributes: {
+              fieldName: {
+                defaultValue: previousDefaultValueConfig,
+              },
+            },
+          },
+        },
+      }),
+      type: "update",
+    });
+    tick();
+
+    const config = service.getConfig(testEntity);
+    expect(config["attributes"].fieldName.defaultValue).toEqual(
+      expectedDefaultValueConfig,
+    );
   }));
 });

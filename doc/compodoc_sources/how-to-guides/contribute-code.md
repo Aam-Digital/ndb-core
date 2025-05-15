@@ -20,8 +20,11 @@ In summary, this means each feature will be implemented on it's own branch, whic
    All problems must be resolved before your contribution can be accepted.
 6. Once you have finished your work or want some feedback/discussion about it, open a new [pull request (PR) on GitHub](https://github.com/Aam-Digital/ndb-core/pulls).
    Any reviews, feedback and discussions about your code will take place in this PR on GitHub. Please follow it and explain or adapt your code if necessary.
-7. A **different developer will merge** your PR back onto the `master` branch. This makes sure there was a code review and manual testing.
-8. After merging, **delete your feature branch** and make sure the corresponding issue(s) and pull request are closed.
+7. A **different developer will review** your PR and provide feedback or approve it.
+8. PRs have an automatic test system (the CI adds a comment with the link) where others can test the changes.
+  - each PR and each commit on `master` branch also are available as a docker image (`pr-<pr_number>`, e.g. pr-101; `<version>-master.<built>`, e.g. 3.52.0-master.1) that can be deployed for testing or as a hotfix, if necessary
+9. A core team member will merge the PR onto the `master` branch after review.
+10. After merging, the branch is automatically deleted and the corresponding issue(s) are closed.
 
 ### Remarks
 
@@ -31,3 +34,18 @@ In summary, this means each feature will be implemented on it's own branch, whic
   This can be done with a git rebase on your feature branch (please **never** rebase the master branch).
   Further information can be found in the [Git Book](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History).
 - The [Angular Style Guide](https://github.com/johnpapa/angular-styleguide) provides helpful principles for Angular development.
+
+## Releases
+
+Official "releases" of the project are done by a core team member regularly
+(the GitHub Action to create a release is triggered manually on GitHub).
+The CI then runs "semantic-release", which automatically creates a new version of the project and generates a changelog for release notes.
+Releases are published on GitHub and as docker images to the GitHub Container Registry.
+
+### i18n - Translations
+
+We manage translations using the [POEditor](https://poeditor.com/join/project/CGn4IA7Ilz) platform.
+The latest translation keys to be translated are automatically sent to POEditor by the CI whenever the `master` branch is updated.
+After translations are done, we have to manually trigger another GitHub Action ([here](https://github.com/Aam-Digital/ndb-core/actions/workflows/i18n-pull-translations-poeditor.yml))
+to create a Pull Request updating the translation files in the repository.
+Translations are part of the codebase and built into the final release image (not loaded at runtime).

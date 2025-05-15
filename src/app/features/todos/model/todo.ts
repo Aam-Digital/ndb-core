@@ -63,7 +63,7 @@ export class Todo extends Entity {
     showInDetailsView: true,
     defaultValue: {
       mode: "dynamic",
-      value: PLACEHOLDERS.CURRENT_USER,
+      config: { value: PLACEHOLDERS.CURRENT_USER },
     },
     anonymize: "retain",
   })

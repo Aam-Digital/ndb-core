@@ -94,6 +94,9 @@ import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty
 import { NotificationService } from "./features/notification/notification.service";
 import { AngularFireModule } from "@angular/fire/compat";
 import { FirebaseConfiguration } from "./features/notification/notification-config.interface";
+import { UserAdminService } from "./core/user/user-admin-service/user-admin.service";
+import { KeycloakAdminService } from "./core/user/user-admin-service/keycloak-admin.service";
+import { defaultValueStrategyProviders } from "./core/default-values/standard-default-value-strategies";
 
 /**
  * Main entry point of the application.
@@ -153,6 +156,7 @@ import { FirebaseConfiguration } from "./features/notification/notification-conf
     ...Logging.getAngularTracingProviders(),
     { provide: ComponentRegistry, useValue: componentRegistry },
     { provide: EntityRegistry, useValue: entityRegistry },
+    { provide: UserAdminService, useClass: KeycloakAdminService },
     { provide: WINDOW_TOKEN, useValue: window },
     { provide: LOCATION_TOKEN, useValue: window.location },
     { provide: NAVIGATOR_TOKEN, useValue: navigator },
@@ -181,6 +185,7 @@ import { FirebaseConfiguration } from "./features/notification/notification-conf
     APP_INITIALIZER_DEMO_DATA,
     provideHttpClient(withInterceptorsFromDi()),
     NotificationService,
+    ...defaultValueStrategyProviders,
   ],
 })
 export class AppModule {

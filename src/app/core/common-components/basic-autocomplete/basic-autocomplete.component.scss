@@ -12,3 +12,20 @@ em {
 .autocomplete-footer {
   margin: sizes.$small sizes.$regular;
 }
+
+.mat-autocomplete-panel.custom-panel {
+  overflow-y: hidden !important;
+  max-height: none !important;
+}
+
+::ng-deep {
+  .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper {
+    width: -webkit-fill-available !important;
+  }
+}
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -18,7 +18,6 @@ import { TemplateExportApiService } from "../template-export-api/template-export
   templateUrl: "../../file/edit-file/edit-file.component.html",
   styleUrls: ["../../file/edit-file/edit-file.component.scss"],
   imports: EditFileComponent_IMPORTS,
-  standalone: true,
 })
 export class EditTemplateExportFileComponent extends EditFileComponent {
   constructor(

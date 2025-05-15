@@ -1,5 +1,9 @@
 <mat-form-field [formGroup]="parent">
-  <mat-label>{{ label }}</mat-label>
+  @if (!hideLabel) {
+    <mat-label>
+      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
+    </mat-label>
+  }
   <input
     matInput
     [formControlName]="formControlName"

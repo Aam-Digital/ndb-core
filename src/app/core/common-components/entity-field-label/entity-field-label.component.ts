@@ -13,7 +13,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 @Component({
   selector: "app-entity-field-label",
   templateUrl: "./entity-field-label.component.html",
-  standalone: true,
   imports: [MatTooltipModule, NgIf],
 })
 export class EntityFieldLabelComponent implements OnChanges {

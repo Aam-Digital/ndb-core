@@ -10,7 +10,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "app-entity-create-button",
-  standalone: true,
   imports: [
     CommonModule,
     DisableEntityOperationDirective,

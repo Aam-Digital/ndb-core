@@ -53,7 +53,6 @@ import { Angulartics2Module } from "angulartics2";
     MatButtonModule,
     Angulartics2Module,
   ],
-  standalone: true,
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {
@@ -142,8 +141,8 @@ export class AttendanceCalendarComponent implements OnChanges {
 
     if (this.calendar) {
       // it is only possible to update the active date (i.e. which month is visible)
-      // after minDate is propagated with the next change cycle ...
-      setTimeout(() => (this.calendar.activeDate = this.minDate));
+      // to ensure the calendar initially displays the current month maxDate is propagated.
+      setTimeout(() => (this.calendar.activeDate = this.maxDate));
     }
   }
 

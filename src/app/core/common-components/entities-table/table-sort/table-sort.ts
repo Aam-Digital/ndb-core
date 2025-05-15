@@ -23,7 +23,17 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   data.sort((objA, objB) => {
     const valueA = getComparableValue(objA.record, active);
     const valueB = getComparableValue(objB.record, active);
-    return compareValues(valueA, valueB);
+    const primaryComparison = compareValues(valueA, valueB);
+
+    // If the primary values are equal, sort by the created at
+    if (primaryComparison === 0) {
+      const dateA = new Date(objA.record.created?.at || 0).getTime();
+      const dateB = new Date(objB.record.created?.at || 0).getTime();
+
+      return dateA - dateB;
+    }
+
+    return primaryComparison;
   });
   if (direction === "desc") {
     data.reverse();
@@ -36,6 +46,17 @@ function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   key: PROPERTY,
 ): number | string | Symbol {
   let value = obj[key];
+
+  // Special handling for Age columns
+  if (value === undefined && key === "age") {
+    // default assuming dateOfBirth field
+    key = "age_dateOfBirth" as any;
+  }
+  if (value === undefined && String(key).startsWith("age_")) {
+    const fieldKey = String(key).replace("age_", "");
+    return obj[fieldKey]?.age;
+  }
+
   if (Ordering.hasOrdinalValue(value)) {
     return value._ordinal;
   }
@@ -58,5 +79,7 @@ function compareValues(a, b) {
     return -1;
   } else if (a < b || a === null || a === undefined) {
     return 1;
+  } else if (typeof a === "number" && typeof b === "number") {
+    return a - b;
   }
 }

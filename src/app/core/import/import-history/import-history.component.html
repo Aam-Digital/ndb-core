@@ -11,8 +11,8 @@
       </mat-panel-title>
 
       <mat-panel-description i18n>
-        {{ item.createdEntities.length }} new,
-        {{ item.updatedEntities.length }} updated "{{
+        {{ item.createdEntities?.length ?? 0 }} new,
+        {{ item.updatedEntities?.length ?? 0 }} updated "{{
           item.config.entityType | entityTypeLabel
         }}" records
       </mat-panel-description>
@@ -22,7 +22,6 @@
       imported by
       <app-entity-block
         [entityId]="item.user"
-        entityType="User"
         [linkDisabled]="true"
       ></app-entity-block>
       at {{ item.date | date: "medium" }}
