@@ -6,7 +6,6 @@ import {
   SyncStateSubject,
 } from "../session-type";
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
-import { PouchDatabase } from "../../database/pouchdb/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { LocalAuthService } from "../auth/local/local-auth.service";
@@ -19,10 +18,8 @@ import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
-import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
 import { Config } from "../../config/config";
 import { ConfigService } from "../../config/config.service";
-import { Entity } from "../../entity/model/entity";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -31,7 +28,6 @@ describe("SessionManagerService", () => {
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator: { onLine: boolean };
   let dbUser: SessionInfo;
-  const userDBName = `${TEST_USER}-${Entity.DATABASE}`;
   let mockDatabaseResolver: jasmine.SpyObj<DatabaseResolverService>;
 
   beforeEach(waitForAsync(() => {
@@ -78,9 +74,6 @@ describe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    const tmpDB = new MemoryPouchDatabase(userDBName);
-    tmpDB.init();
-    await tmpDB.destroy();
   });
 
   it("should update the session info once authenticated", async () => {
@@ -244,18 +237,10 @@ describe("SessionManagerService", () => {
   });
 
   it("should use current user db if database has content", async () => {
-    await defineExistingDatabases();
-
     await service.remoteLogin();
 
     expect(
       mockDatabaseResolver.initDatabasesForSession,
     ).toHaveBeenCalledOnceWith(dbUser);
   });
-
-  async function defineExistingDatabases() {
-    const tmpDB = new PouchDatabase(userDBName);
-    tmpDB.init();
-    await tmpDB.put({ _id: "someDoc" });
-  }
 });
