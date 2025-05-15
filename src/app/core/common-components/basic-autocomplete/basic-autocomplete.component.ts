@@ -217,6 +217,9 @@ export class BasicAutocompleteComponent<O, V = O>
   ngOnInit() {
     this.autocompleteSuggestedOptions.subscribe((options) => {
       this.autocompleteOptions = options;
+      setTimeout(() => {
+        this.virtualScrollViewport.checkViewportSize();
+      });
     });
     // Subscribe to the valueChanges observable to print the input value
     this.autocompleteForm.valueChanges.subscribe((value) => {
@@ -428,6 +431,7 @@ export class BasicAutocompleteComponent<O, V = O>
         this.select(undefined);
       }
       this.isInSearchMode.set(false);
+      this.retainSearchValue = "";
     }
   }
 

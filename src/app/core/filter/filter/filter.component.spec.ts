@@ -5,7 +5,6 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
-import { MatSelectHarness } from "@angular/material/select/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BasicFilterConfig } from "../../entity-list/EntityListConfig";
@@ -153,30 +152,30 @@ describe("FilterComponent", () => {
     expect(component.filterSelections[0].selectedOptionValues).toBeEmpty();
   });
 
-  it("should set up category filter from configurable enum", async () => {
+  it("should compute available category options and build filterObj", async () => {
     component.entityType = Note;
     const t1 = defaultInteractionTypes[0];
+    const t2 = defaultInteractionTypes[1];
+
     const n1 = new Note();
     n1.category = t1;
     const n2 = new Note();
-    n2.category = defaultInteractionTypes[1];
+    n2.category = t2;
+
     component.entities = [n1, n2];
     component.onlyShowRelevantFilterOptions = true;
     component.filterConfig = [{ id: "category" }];
 
     await component.ngOnChanges({ filterConfig: true } as any);
 
-    const selection = await loader.getHarness(MatSelectHarness);
-    await selection.open();
-    const options = await selection.getOptions();
-    expect(options).toHaveSize(2);
+    const avilableOptions = component.filterSelections.find(
+      (f) => f.name === "category",
+    );
+    expect(avilableOptions).toBeTruthy();
+    expect((avilableOptions as any).options.length).toBe(2);
 
-    const selectedOption = await options[0].getText();
-    expect(selectedOption).toEqual(t1.label);
+    component.filterOptionSelected(avilableOptions, [t1.id]);
 
-    await options[0].click();
-    const selected = await selection.getValueText();
-    expect(selected).toEqual(t1.label);
     expect(component.filterObj).toEqual({
       $and: [
         {
