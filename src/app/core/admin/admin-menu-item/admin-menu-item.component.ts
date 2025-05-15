@@ -31,15 +31,16 @@ import { MatDialogModule } from '@angular/material/dialog';
 })
 export class AdminMenuItemComponent implements OnInit {
   item: MenuItem;
-
   availableRoutes: { value: string, label: string }[];
+  isEditMode: boolean;
 
   constructor(
     private configService: ConfigService,
     public dialogRef: MatDialogRef<AdminMenuItemComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { item: MenuItem }
+    @Inject(MAT_DIALOG_DATA) public data: { item: MenuItem, index: number | null }
   ) {
     this.item = data.item;
+    this.isEditMode = data.index !== null;
   }
 
   ngOnInit(): void {
@@ -48,19 +49,18 @@ export class AdminMenuItemComponent implements OnInit {
 
   private loadAvailableRoutes(): { value: string, label: string }[] {
     const allConfigs: ViewConfig[] = this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
-  
     return allConfigs
-      .filter(view => !view._id.includes('/:'))  // filter out configs like 'view:note/:id'
+      .filter(view => !view._id.includes('/:'))
       .map(view => {
         const id = view._id;
         const label =
           view.config?.entityType?.trim() ||
           view.component ||
           id;
-  
         return { value: id, label };
       });
   }
+
   save() {
     this.dialogRef.close(this.item);
   }
@@ -69,4 +69,5 @@ export class AdminMenuItemComponent implements OnInit {
     this.dialogRef.close();
   }
 }
+
 

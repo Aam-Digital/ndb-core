@@ -64,10 +64,23 @@ app-menu-item {
     color: rgb(255, 0, 0);
     background-color: rgba(255, 0, 0, 0.1);
   }
+ 
 
-  .section-add-button {
-    padding: sizes.$large;
-    margin: sizes.$small;
-  }  
+.top-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.left-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.right-button {
+  display: flex;
+}
+
   
   

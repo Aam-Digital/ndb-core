@@ -13,6 +13,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { AdminMenuItemComponent } from "app/core/admin/admin-menu-item/admin-menu-item.component";
+import { MatTooltip } from "@angular/material/tooltip";
 
 /** UI to edit Menu Items (display content only and not interacting with the database) */
 @Component({
@@ -30,6 +31,7 @@ import { AdminMenuItemComponent } from "app/core/admin/admin-menu-item/admin-men
     FormsModule,
     MatInputModule,
     MatButton,
+    MatTooltip
   ],
   templateUrl: "./admin.component.html",
   styleUrls: ["./admin.component.scss"],
@@ -60,6 +62,24 @@ export class AdminComponent {
     dialogRef.afterClosed().subscribe((updatedItem: MenuItem) => {
       if (updatedItem) {
         this.menuItems[index] = updatedItem;
+      }
+    });
+  }
+
+  // Add a new menu item
+  addNewMenuItem(): void {
+    const dialogRef = this.dialog.open(AdminMenuItemComponent, {
+      height: '400px',
+      width: '600px',
+      data: {
+        item: {}, // Empty object for a new item
+        index: null,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((newItem: MenuItem) => {
+      if (newItem) {
+        this.menuItems.push(newItem); // Add the new item to the list
       }
     });
   }

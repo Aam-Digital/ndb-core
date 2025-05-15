@@ -1,4 +1,6 @@
-<h2 mat-dialog-title>Edit Menu Item</h2>
+<h2 mat-dialog-title>
+  {{ isEditMode ? 'Edit Menu Item' : 'Adding New Menu Item' }}
+</h2>
 
 <mat-dialog-content class="menu-item-form">
   <form class="form-grid">
@@ -25,7 +27,6 @@
   </form>
 </mat-dialog-content>
 
-<!-- Actions -->
 <mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="save()">Save</button>
   <button mat-button (click)="cancel()">Cancel</button>
