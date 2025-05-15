@@ -24,7 +24,7 @@ This document aims to explain how cofiguration defines the rest of the applicati
 
 ## Config Service
 
-![](../../images/config_service.png)
+![](../../images/config-system.drawio.png)
 
 The [ConfigService](../../injectables/ConfigService.html) is an Angular service that you can inject anywhere in the code if you need to access configuration values.
 It loads the configuration from the database (or the default file if no entry is available) first thing when starting the application.
@@ -52,7 +52,9 @@ Example:
   "_id": "Config:CONFIG_ENTITY",
   "data": {
     "navigationMenu": {
-      "items": [ ...],
+      "items": [
+        ...
+      ]
     }
     ...
   }
@@ -85,25 +87,25 @@ Example:
 
 ```json
   "navigationMenu": {
-    "items": [
-      {
-        "name": "Dashboard",
-        "icon": "home",
-        "link": "/"
-      },
-      {
-        "name": "Children",
-        "icon": "child",
-        "link": "/child"
-      },
-      ...
-      {
-        "name": "Help",
-        "icon": "question-circle",
-        "link": "/help"
-      }
-    ]
-  },
+"items": [
+{
+"name": "Dashboard",
+"icon": "home",
+"link": "/"
+},
+{
+"name": "Children",
+"icon": "child",
+"link": "/child"
+},
+...
+{
+"name": "Help",
+"icon": "question-circle",
+"link": "/help"
+}
+]
+},
 ```
 
 ### Views
@@ -130,23 +132,23 @@ Example:
 
 ```json
 "view:": {
-  "component": "Dashboard",
-  "config": {
-    "widgets": [
-      {
-        "component": "ChildrenCountDashboard"
-      },
-      {
-        "component": "RecentNotesDashboard"
-      },
-      {
-        "component": "NoRecentNotesDashboard",
-        "config": {
-          "sinceDays": 28,
-          "fromBeginningOfWeek": false
-      }
-      },
-      ...
+"component": "Dashboard",
+"config": {
+"widgets": [
+{
+"component": "ChildrenCountDashboard"
+},
+{
+"component": "RecentNotesDashboard"
+},
+{
+"component": "NoRecentNotesDashboard",
+"config": {
+"sinceDays": 28,
+"fromBeginningOfWeek": false
+}
+},
+...
 ```
 
 #### List components
@@ -164,17 +166,17 @@ Example:
 
 ```json
 "view:child": {
-  "component": "ChildrenList",
-  "config": {
-    "title": "Children List",
-    "columns": [
-      "projectNumber",
-      {
-        "viewComponent": "ChildBlock",
-        "label": "Name",
-        "id": "name"
-      },
-        ...
+"component": "ChildrenList",
+"config": {
+"title": "Children List",
+"columns": [
+"projectNumber",
+{
+"viewComponent": "ChildBlock",
+"label": "Name",
+"id": "name"
+},
+...
 ```
 
 The `"columnGroup"` object holds the three properties `"default"`, `"mobile"` and `"groups"`.
@@ -188,26 +190,26 @@ Example:
 
 ```json
 "columnGroup": {
-  "default": "School Info",
-  "mobile": "Mobile",
-  "groups": [
-  {
-    "name": "Basic Info",
-    "columns": [
-      "projectNumber",
-      "name",
-      ...
-      "status"
-    ]
-  },
-  {
-    "name": "School Info",
-    "columns": [
-      "projectNumber",
-      "name",
-      ...
-    ]
-  },
+"default": "School Info",
+"mobile": "Mobile",
+"groups": [
+{
+"name": "Basic Info",
+"columns": [
+"projectNumber",
+"name",
+...
+"status"
+]
+},
+{
+"name": "School Info",
+"columns": [
+"projectNumber",
+"name",
+...
+]
+},
 
 ```
 
@@ -223,20 +225,20 @@ Example:
 
 ```json
 "filters": [
-  {
-    "id": "language"
-  },
-  {
-    "id": "privateSchool",
-    "default": "all",
-    "true": "Private School",
-    "false": "Government School",
-    "all": "All"
-  },
-  {
-    "id": "date",
-    "type": "prebuilt"
-  },
+{
+"id": "language"
+},
+{
+"id": "privateSchool",
+"default": "all",
+"true": "Private School",
+"false": "Government School",
+"all": "All"
+},
+{
+"id": "date",
+"type": "prebuilt"
+},
 ]
 ```
 
@@ -258,35 +260,37 @@ The component configuration requires another `"title"`, the `"component"` that s
 
 ```json
     "config": {
-      "icon": "child",
-      "entity": "Child",
-      "panels": [
-        {
-          "title": "Basic Information",
-          "components": [
-            {
-              "title": "",
-              "component": "Form",
-              "config": { }
-            }
-          ]
-        },
-        {
-          "title": "Education",
-          "components": [
-            {
-              "title": "School History",
-              "component": "PreviousSchools"
-            },
-            {
-              "title": "Literacy Test Results",
-              "component": "RelatedEntities",
-              "config": {}
-            }
-          ]
-        }
-      ]
-    }
+"icon": "child",
+"entity": "Child",
+"panels": [
+{
+"title": "Basic Information",
+"components": [
+{
+"title": "",
+"component": "Form",
+"config": {
+}
+}
+]
+},
+{
+"title": "Education",
+"components": [
+{
+"title": "School History",
+"component": "PreviousSchools"
+},
+{
+"title": "Literacy Test Results",
+"component": "RelatedEntities",
+"config": {
+}
+}
+]
+}
+]
+}
 ```
 
 #### The Form Component
@@ -304,15 +308,15 @@ This means instead of placing an object in the `fields` array, simple strings do
 
 ```json
   "config": {
-    "fieldGroups": [
-      { "fields": ["photo"] },
-      { "fields": ["name", "projectNumber"] }
-      {
-        "fields": ["dateOfBirth"],
-        "header": "Demographics"
-      }
-    ]
-  }
+"fieldGroups": [
+{"fields": ["photo"] },
+{"fields": ["name", "projectNumber"] }
+{
+"fields": ["dateOfBirth"],
+"header": "Demographics"
+}
+]
+}
 ```
 
 #### The PreviousSchools Component
@@ -329,15 +333,15 @@ Example:
 
 ```json
   "config": {
-    "single": true,
-    "columns": [
-      "schoolId",
-      "schoolClass",
-      "start",
-      "end",
-      "result",
-    ],
-  }
+"single": true,
+"columns": [
+"schoolId",
+"schoolClass",
+"start",
+"end",
+"result",
+],
+}
 ```
 
 ### Entity
@@ -354,12 +358,15 @@ Example:
 
 ```json
 "entity:Child": {
-    "attributes": {
-        "address": { "dataType": "string", "label": "Address" },
-        "phone": { "dataType": "string", "label": "Phone number" },
-        ...
-        "health_lastDeworming": { "dataType": "Date", "label": "Last deworming" }
-    }
+"attributes": {
+"address": {"dataType": "string", "label": "Address"
+},
+"phone": {
+"dataType": "string", "label": "Phone number"
+},
+...
+"health_lastDeworming": {"dataType": "Date", "label": "Last deworming"}
+}
 }
 
 ```
@@ -376,12 +383,16 @@ To achieve this, the configuration of the `Child` entity can be extended like th
 
 ```json
 "entity:Child": {
-    "toStringAttributes": ["firstname", "lastname"],
-    "attributes": {
-        "firstname": { ... },
-        "lastname": { ... },
-        ...
-    ]
+"toStringAttributes": ["firstname", "lastname"],
+"attributes": {
+"firstname": {
+...
+},
+"lastname": {
+...
+},
+...
+]
 }
 
 ```
@@ -403,10 +414,10 @@ E.g.
 
 ```json
 "entity:Child": {
-  "label": "Patient",
-  "labelPlural": "Patients",
-  "icon": "bed",
-  ...
+"label": "Patient",
+"labelPlural": "Patients",
+"icon": "bed",
+...
 }
 ```
 
@@ -427,18 +438,18 @@ Example:
 
 ```json
 "enum:project-status": [
-    {
-        "id": "ACTIVE",
-        "label": "active"
-    },
-    {
-        "id": "COMPLETED",
-        "label": "completed the programme"
-    },
-    {
-        "id": "DROPPED",
-        "label": "dropped out of the programme"
-    }
+{
+"id": "ACTIVE",
+"label": "active"
+},
+{
+"id": "COMPLETED",
+"label": "completed the programme"
+},
+{
+"id": "DROPPED",
+"label": "dropped out of the programme"
+}
 ]
 ```
 
@@ -450,8 +461,10 @@ In the entity, set the dataType to "configurable-enum" and the "additional" to t
 
 ```json
 "entity:Child": {
-  "attritubtes": { "status": { "dataType": "configurable-enum", "additional": "project-status"  } }
-  ...
+"attritubtes": {"status": {"dataType": "configurable-enum", "additional": "project-status"
+}
+}
+...
 ```
 
 #### Display a configurable enum property in the list view
@@ -460,12 +473,12 @@ In the List View columns config, use the "DisplayConfigurableEnum" component for
 
 ```json
 "columns": [
-  {
-    "component": "DisplayConfigurableEnum",
-    "title": "Status",
-    "id": "status"
-  },
-  ...
+{
+"component": "DisplayConfigurableEnum",
+"title": "Status",
+"id": "status"
+},
+...
 ]
 ```
 
