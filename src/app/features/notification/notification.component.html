@@ -97,14 +97,13 @@
     class="notification-panel"
     (click)="closeOnlySubmenu(settingsMenuTrigger, $event)"
   >
-    <button mat-menu-item class="text-container" (click)="markAllRead()">
+    <button mat-menu-item (click)="markAllRead()">
       <fa-icon icon="check" class="standard-icon-with-text"></fa-icon>
       <span i18n>Mark all as read</span>
     </button>
 
     <button
       mat-menu-item
-      class="text-container"
       [routerLink]="['/user-account']"
       [queryParams]="{ tabIndex: 1 }"
       (click)="closeOnlySubmenu(notificationListTrigger, $event)"

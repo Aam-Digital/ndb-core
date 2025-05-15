@@ -196,13 +196,18 @@ export class NotificationComponent implements OnInit {
   async notificationClicked(
     notification: NotificationEvent,
     notificationListTrigger: MatMenuTrigger,
-    event: any,
+    event: NotificationEvent,
   ) {
     await this.updateReadStatus([notification], true);
     const actionURL = this.generateNotificationActionURL(notification);
     if (!actionURL) return;
     await this.router.navigate([actionURL]);
-    this.closeOnlySubmenu(notificationListTrigger, event);
+
+    // Close the notification menu after clicking a notification
+    this.closeOnlySubmenu(
+      notificationListTrigger,
+      event as unknown as MouseEvent,
+    );
   }
 
   // TODO: remove test code after test

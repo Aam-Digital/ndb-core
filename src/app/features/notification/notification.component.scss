@@ -24,7 +24,7 @@
 }
 
 .notification-panel {
-  width: 280px;
+  width: auto;
   max-height: 90vh;
 }
 
@@ -39,6 +39,6 @@
   color: colors.$inactive;
 }
 
-.text-container {
-  word-break: break-word !important;
+::ng-deep .mat-mdc-menu-panel {
+  min-width: 310px !important;
 }
