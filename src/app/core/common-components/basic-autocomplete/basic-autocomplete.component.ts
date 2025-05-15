@@ -428,6 +428,7 @@ export class BasicAutocompleteComponent<O, V = O>
         this.select(undefined);
       }
       this.isInSearchMode.set(false);
+      this.retainSearchValue = "";
     }
   }
 
