@@ -57,7 +57,7 @@ COPY ./e2e /opt/app/e2e/
 COPY ./build /opt/app/build/
 COPY ./.browserslistrc /opt/app/
 COPY ./.codeclimate.yml /opt/app/
-COPY ./.eslintrc.json /opt/app/
+COPY ./eslint.config.mjs /opt/app/
 COPY ./.prettierignore /opt/app/
 COPY ./.prettierrc.json /opt/app/
 COPY ./angular.json /opt/app/
