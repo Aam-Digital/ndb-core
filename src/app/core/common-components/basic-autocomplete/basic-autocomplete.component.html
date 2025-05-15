@@ -1,6 +1,7 @@
 <!--Display-->
 <input
   *ngIf="display === 'text' || display === 'none'; else chipsDisplay"
+  [id]="id"
   [hidden]="isInSearchMode() || display === 'none'"
   [disabled]="_disabled"
   matInput
