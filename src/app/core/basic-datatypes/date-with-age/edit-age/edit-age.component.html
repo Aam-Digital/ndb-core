@@ -9,8 +9,8 @@
       <mat-label>
         <span [matTooltip]="label" matTooltipPosition="before">{{
           label
-        }}</span>
-      </mat-label>
+        }}</span></mat-label
+      >
     }
     <input
       matInput
@@ -29,11 +29,9 @@
   </mat-form-field>
 
   <mat-form-field style="width: 30%">
-    @if (!hideLabel) {
-      <mat-label i18n="Placeholder for the input that displays the age"
-        >Age</mat-label
-      >
-    }
+    <mat-label i18n="Placeholder for the input that displays the age"
+      >Age
+    </mat-label>
     <fa-icon
       *ngIf="formControl.enabled"
       matIconSuffix
