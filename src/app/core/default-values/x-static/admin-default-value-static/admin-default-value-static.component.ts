@@ -1,9 +1,9 @@
 import {
   Component,
-  OnInit,
-  Input,
   inject,
+  Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
@@ -17,6 +17,11 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
+/**
+ * UI to edit a static default value in the Admin UI.
+ * Note that the Input/Output of values is in database-format (not entity-format)
+ * as this is the format how it should be saved in the config.
+ */
 @Component({
   selector: "app-admin-default-value-static",
   imports: [ReactiveFormsModule, EntityFieldEditComponent],
@@ -43,17 +48,8 @@ export class AdminDefaultValueStaticComponent
   private readonly entitySchemaService = inject(EntitySchemaService);
 
   ngOnInit() {
-    let initialValue = this.value?.value ?? null;
-
-    if (initialValue) {
-      initialValue = this.entitySchemaService.valueToEntityFormat(
-        initialValue,
-        this.entitySchemaField,
-      );
-    }
-    this.formControl = new FormControl(initialValue);
-
-    this.formControl.valueChanges.subscribe((v) => (this.value = { value: v }));
+    this.formControl = new FormControl(this.getInternalValue(this.value));
+    this.formControl.valueChanges.subscribe((v) => this.emitNewValue(v));
 
     this.updateTargetFieldConfig();
 
@@ -63,11 +59,25 @@ export class AdminDefaultValueStaticComponent
     this.staticvalueForm = {
       formGroup,
     } as unknown as EntityForm<Entity>;
+
     this.ngControl?.valueChanges.subscribe(
       (newValue: DefaultValueConfigStatic) => {
-        this.formControl.setValue(newValue?.value, { emitEvent: false });
+        this.formControl.setValue(this.getInternalValue(newValue), {
+          emitEvent: false,
+        });
       },
     );
+  }
+
+  private getInternalValue(defaultValueConfig: DefaultValueConfigStatic) {
+    let value = defaultValueConfig?.value ?? null;
+    if (value) {
+      value = this.entitySchemaService.valueToEntityFormat(
+        value,
+        this.entitySchemaField,
+      );
+    }
+    return value;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -79,6 +89,7 @@ export class AdminDefaultValueStaticComponent
       }
     }
   }
+
   private updateTargetFieldConfig() {
     const newConfig = {
       id: "defaultValueId",
@@ -88,5 +99,22 @@ export class AdminDefaultValueStaticComponent
     if (JSON.stringify(this.targetFieldConfig) !== JSON.stringify(newConfig)) {
       this.targetFieldConfig = newConfig;
     }
+  }
+
+  /**
+   * Set the CustomFormControl value as output (after transforming it to desired format).
+   * @param newValue
+   * @private
+   */
+  private emitNewValue(newValue: any) {
+    // to the outside we want to set the value in the database format for simplified storing in the config object
+    if (newValue) {
+      newValue = this.entitySchemaService.valueToDatabaseFormat(
+        newValue,
+        this.entitySchemaField,
+      );
+    }
+
+    this.value = { value: newValue };
   }
 }

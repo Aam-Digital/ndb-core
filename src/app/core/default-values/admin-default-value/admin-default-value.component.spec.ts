@@ -12,7 +12,7 @@ import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
 import { componentRegistry, ComponentRegistry } from "app/dynamic-components";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("AdminDefaultValueComponent", () => {
   let component: AdminDefaultValueComponent;
@@ -47,6 +47,7 @@ describe("AdminDefaultValueComponent", () => {
         {
           provide: EntitySchemaService,
           useValue: {
+            valueToEntityFormat: (v) => v,
             valueToDatabaseFormat: (v) => v,
             getComponent: () => null,
           },

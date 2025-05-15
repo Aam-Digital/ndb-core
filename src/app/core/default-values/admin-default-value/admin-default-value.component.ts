@@ -32,7 +32,6 @@ import { AdminDefaultValueStaticComponent } from "../x-static/admin-default-valu
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { AdminDefaultValueUpdatedComponent } from "../../../features/automated-status-update/admin-default-value-updated/admin-default-value-updated.component";
 import { AdminDefaultValueInheritedComponent } from "../../../features/default-value-inherited/admin-default-value-inherited/admin-default-value-inherited.component";
-import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 /**
  * Admin UI component used in AdminEntityFieldComponent dialog
@@ -74,7 +73,6 @@ export class AdminDefaultValueComponent
   private defaultValueStrategies = inject(
     DefaultValueStrategy,
   ) as unknown as DefaultValueStrategy[];
-  private entitySchemaService = inject(EntitySchemaService);
 
   modes: AdminDefaultValueContext[];
 
@@ -126,15 +124,6 @@ export class AdminDefaultValueComponent
     }
 
     if (JSON.stringify(newConfigValue) !== JSON.stringify(this.value)) {
-      // If a default value is configured, convert it to the database format
-      if (newConfigValue?.config?.value) {
-        newConfigValue.config.value =
-          this.entitySchemaService.valueToDatabaseFormat(
-            newConfigValue.config.value,
-            this.entitySchemaField,
-          );
-      }
-
       this.value = newConfigValue;
     }
   }
