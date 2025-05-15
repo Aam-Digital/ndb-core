@@ -91,11 +91,6 @@ export class AdminDefaultValueUpdatedComponent
       (r) => r.entityType === selectedEntity,
     );
 
-    // add editComponent (because we cannot rely on the entity's schema yet for a new field)
-    this.entitySchemaField.editComponent =
-      this.entitySchemaField.editComponent ??
-      this.entitySchemaService.getComponent(this.entitySchemaField, "edit");
-
     const refEntity = this.entityRegistry.get(selectedEntity);
     const dialogRef = this.matDialog.open(AutomatedFieldMappingComponent, {
       data: {

@@ -40,6 +40,7 @@ export class EnumDropdownComponent implements OnChanges {
   @Input() label: string;
   @Input() enumId: string;
   @Input() multi = false;
+  @Input() hideLabel = false;
 
   enumEntity: ConfigurableEnum;
   invalidOptions: ConfigurableEnumValue[] = [];

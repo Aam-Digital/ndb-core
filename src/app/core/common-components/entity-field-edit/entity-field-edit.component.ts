@@ -17,6 +17,7 @@ import { InheritedValueButtonComponent } from "../../../features/default-value-i
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { EntitySchemaService } from "app/core/entity/schema/entity-schema.service";
 
 /**
  * Generic component to display one entity property field's editComponent.
@@ -58,7 +59,15 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
    */
   @Input() compactMode: boolean;
 
-  constructor(private entityFormService: EntityFormService) {}
+  /**
+   * Whether to display the field label or not.
+   */
+  @Input() hideLabel: boolean;
+
+  constructor(
+    private entityFormService: EntityFormService,
+    private entitySchemaService: EntitySchemaService,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
@@ -67,14 +76,22 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
   }
 
   private updateField() {
-    if (!this.entity?.getConstructor()) {
-      this._field = !!this.field ? toFormFieldConfig(this.field) : undefined;
+    if (!this.field) {
+      this._field = undefined;
       return;
     }
 
-    this._field = this.entityFormService.extendFormFieldConfig(
-      this.field,
-      this.entity.getConstructor(),
-    );
+    if (this.entity?.getConstructor()) {
+      this._field = this.entityFormService.extendFormFieldConfig(
+        this.field,
+        this.entity.getConstructor(),
+      );
+    } else {
+      this._field = toFormFieldConfig(this.field);
+      // add editComponent (because we cannot rely on the entity's schema yet for a new field)
+      this._field.editComponent =
+        this._field.editComponent ??
+        this.entitySchemaService.getComponent(this._field, "edit");
+    }
   }
 }

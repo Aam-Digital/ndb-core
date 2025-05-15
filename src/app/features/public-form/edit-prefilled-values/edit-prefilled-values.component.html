@@ -31,15 +31,19 @@
             i18n-text
           ></app-help-button>
         </div>
-
-        <div class="flex-grow">
-          <div class="full-width-field">
-            <app-admin-default-value
-              formControlName="defaultValue"
-              [entityType]="entityConstructor"
-            ></app-admin-default-value>
+        @if (fieldGroup.get("field").value) {
+          <div class="flex-grow">
+            <div class="full-width-field">
+              <app-admin-default-value
+                formControlName="defaultValue"
+                [entityType]="entityConstructor"
+                [entitySchemaField]="
+                  getSchemaField(fieldGroup.get('field').value)
+                "
+              ></app-admin-default-value>
+            </div>
           </div>
-        </div>
+        }
 
         <button
           mat-icon-button

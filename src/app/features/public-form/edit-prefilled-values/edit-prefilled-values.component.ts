@@ -19,6 +19,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
 @Component({
   selector: "app-edit-prefilled-values",
@@ -43,6 +44,7 @@ export class EditPrefilledValuesComponent
   implements OnInit
 {
   entityConstructor: EntityConstructor;
+  entitySchemaField: EntitySchemaField;
 
   private entities = inject(EntityRegistry);
   private fb = inject(FormBuilder);
@@ -101,6 +103,10 @@ export class EditPrefilledValuesComponent
     this.formControl.markAsDirty();
   }
 
+  getSchemaField(fieldId: string): EntitySchemaField {
+    return this.entityConstructor?.schema.get(fieldId);
+  }
+
   private updateFieldGroups(value: { prefilledValue: PrefilledValue[] }): void {
     if (!value?.prefilledValue) return;
     if (this.prefilledValueSettings.invalid) {
@@ -110,11 +116,13 @@ export class EditPrefilledValuesComponent
     }
 
     const updatedFields: FormFieldConfig[] = value.prefilledValue.map(
-      ({ field, defaultValue, hideFromForm }) => ({
-        id: field,
-        defaultValue,
-        hideFromForm: hideFromForm ?? true,
-      }),
+      ({ field, defaultValue, hideFromForm }) => {
+        return {
+          id: field,
+          defaultValue,
+          hideFromForm: hideFromForm ?? true,
+        };
+      },
     );
 
     this.formControl.setValue(updatedFields);
