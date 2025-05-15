@@ -21,26 +21,32 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Present" }).click();
 
   await expect(page.getByText("2 / 6")).toBeVisible();
-  // FIXME: There are two buttons with name Absent. This is caused by the
-  // roll-call-tab component which briefly shows both tabs when animating the
-  // transition. Can we globally disable animations? Or can we find a way to
-  // disable the outgoing tab
-  await expect(page.getByRole("button", { name: "Absent" })).toHaveCount(1);
+  // FIXME: After choosing the attendance option there is a transition to the
+  // tab with the next child. During this transition the roll-call-tab component
+  // briefly shows both tabs. This means we have to explicitly wait for the
+  // transition to start and to finish, otherwise there may be two buttons with
+  // the name "Absent".
+  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
+  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
   await page.getByRole("button", { name: "Absent" }).click();
 
   await expect(page.getByText("3 / 6")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Late" })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
+  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
   await page.getByRole("button", { name: "Late" }).click();
 
   await expect(page.getByText("4 / 6")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Excused" })).toHaveCount(1);
+  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
+  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
   await page.getByRole("button", { name: "Excused" }).click();
 
   await expect(page.getByText("5 / 6")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
   await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
   await page.getByRole("button", { name: "Present" }).click();
 
   await expect(page.getByText("6 / 6")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
   await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
   await page.getByRole("button", { name: "Present" }).click();
 
