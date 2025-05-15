@@ -193,10 +193,38 @@ export class NotificationComponent implements OnInit {
    * Handles notification events by redirecting the user to the corresponding action URL.
    * @param {NotificationEvent} notification - The notification event containing the action URL.
    */
-  async notificationClicked(notification: NotificationEvent) {
+  async notificationClicked(
+    notification: NotificationEvent,
+    notificationListTrigger: MatMenuTrigger,
+    event: any,
+  ) {
     await this.updateReadStatus([notification], true);
     const actionURL = this.generateNotificationActionURL(notification);
     if (!actionURL) return;
     await this.router.navigate([actionURL]);
+    this.closeOnlySubmenu(notificationListTrigger, event);
+  }
+
+  // TODO: remove test code after test
+  private testEventTypeToggle = false;
+  async createTestEvent() {
+    this.testEventTypeToggle = !this.testEventTypeToggle;
+
+    const event = new NotificationEvent();
+    event.title = "Test Notification";
+    event.body = "This is a test notification.";
+    event.notificationType = "entity_change";
+    event.context = {
+      entityType: "School",
+      entityId: "1",
+    };
+    if (this.testEventTypeToggle) {
+      event.actionURL = "/school/1";
+      event.context = undefined;
+      event.notificationType = "other" as any;
+      event.title = event.title + " (with explicit action)";
+    }
+
+    await this.entityMapper.save(event);
   }
 }
