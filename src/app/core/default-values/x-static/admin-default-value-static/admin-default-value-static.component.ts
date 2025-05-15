@@ -90,7 +90,6 @@ export class AdminDefaultValueStaticComponent
     }
   }
 
-
   private updateTargetFieldConfig() {
     const newConfig = {
       id: "defaultValueId",
