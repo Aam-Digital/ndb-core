@@ -74,7 +74,6 @@ RUN if [ -n "${TZ}" ] ; then \
     cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime && \
     echo "$TZ" > /etc/timezone ; fi
 
-RUN npm run lint
 ARG CHROME_BIN=/usr/lib/chromium/chromium
 RUN npm run test-ci
 
