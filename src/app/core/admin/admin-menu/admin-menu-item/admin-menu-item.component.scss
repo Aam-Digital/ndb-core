@@ -1,4 +1,4 @@
-@use "../../../../styles/mixins/grid-layout" as *;
+@use "../../../../../styles/mixins/grid-layout" as *;
 
 .grid-layout-wide {
   @include adaptive(

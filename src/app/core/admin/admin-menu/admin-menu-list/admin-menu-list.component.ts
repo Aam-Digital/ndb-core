@@ -12,12 +12,12 @@ import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
-import { AdminMenuItemComponent } from "app/core/admin/admin-menu-item/admin-menu-item.component";
+import { AdminMenuItemComponent } from "app/core/admin/admin-menu/admin-menu-item/admin-menu-item.component";
 import { MatTooltip } from "@angular/material/tooltip";
 
 /** UI to edit Menu Items (display content only and not interacting with the database) */
 @Component({
-  selector: "app-admin",
+  selector: "app-admin-menu-list",
   standalone: true,
   imports: [
     CommonModule,
@@ -33,10 +33,10 @@ import { MatTooltip } from "@angular/material/tooltip";
     MatButton,
     MatTooltip
   ],
-  templateUrl: "./admin.component.html",
-  styleUrls: ["./admin.component.scss"],
+  templateUrl: "./admin-menu-list.component.html",
+  styleUrls: ["./admin-menu-list.component.scss"],
 })
-export class AdminComponent {
+export class AdminMenuListComponent {
   @Input() menuItems: MenuItem[];
 
   constructor(private dialog: MatDialog) {}

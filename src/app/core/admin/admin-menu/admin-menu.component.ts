@@ -5,13 +5,13 @@ import { MenuItem, NavigationMenuConfig } from "app/core/ui/navigation/menu-item
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Config } from "app/core/config/config";
-import { AdminComponent } from "app/admin/admin.component";
+import { AdminMenuListComponent } from "app/core/admin/admin-menu/admin-menu-list/admin-menu-list.component";
 
 /** Load and Store Menu Items for Administration */
 @Component({
   selector: 'app-admin-menu',
   standalone: true,
-  imports: [CommonModule, AdminComponent, MatListModule, MenuItemComponent],
+  imports: [CommonModule, AdminMenuListComponent, MatListModule, MenuItemComponent],
   templateUrl: './admin-menu.component.html',
   styleUrl: './admin-menu.component.scss'
 })
