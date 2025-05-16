@@ -24,7 +24,7 @@
 }
 
 .notification-panel {
-  width: 280px;
+  width: auto;
   max-height: 90vh;
 }
 
@@ -39,6 +39,12 @@
   color: colors.$inactive;
 }
 
-.menu-option {
-  margin-left: 12px;
+::ng-deep .mat-mdc-menu-panel {
+  min-width: 310px !important;
+
+  .mat-mdc-menu-item-text {
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
