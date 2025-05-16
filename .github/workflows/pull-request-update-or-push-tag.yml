@@ -22,6 +22,10 @@ jobs:
       - run: npm install --ci
       - run: npx eslint
       - run: npx tsc -p e2e
+      - name: actionlint
+        run: |
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
 
   test-unit:
     runs-on: ubuntu-latest
@@ -103,16 +107,16 @@ jobs:
 
       - name: Extract tag (release)
         if: ${{ github.event.ref  != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
 
       - name: Extract tag (pull request)
         if: ${{ github.event.ref  == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
+        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
 
       - name: Prepare Platform
         run: |
           platform=${{ matrix.platform }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
 
       - name: Docker meta
         id: meta
@@ -147,8 +151,8 @@ jobs:
           file: ./build/Dockerfile
           target: dist-build
           outputs: type=local,dest=./tmp/build/${{ env.PLATFORM_PAIR }}
-          cache-from: type=gha,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
-          cache-to: type=gha,mode=min,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
           build-args: |
             APP_VERSION=${{ env.TAG }}
         env:
@@ -172,8 +176,8 @@ jobs:
           target: app
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
-          cache-to: type=gha,mode=min,url=${{ runner.env.ACTIONS_CACHE_URL }},token=${{ runner.env.ACTIONS_RUNTIME_TOKEN }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
           build-args: |
             DIST_TYPE=local
             LOCAL_DIST_PATH=./tmp/build/${{ env.PLATFORM_PAIR }}/dist
@@ -218,11 +222,11 @@ jobs:
 
       - name: Extract tag (release)
         if: ${{ github.event.ref != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
 
       - name: Extract tag (pull request)
         if: ${{ github.event.ref == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
+        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:
@@ -270,6 +274,7 @@ jobs:
       - name: Create manifest list and push
         working-directory: ./tmp/digests
         run: |
+          # shellcheck disable=SC2046
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
 
@@ -290,11 +295,11 @@ jobs:
     steps:
       - name: Extract tag (release)
         if: ${{ github.event.ref != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
 
       - name: Extract tag (pull request)
         if: ${{ github.event.ref == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> $GITHUB_ENV
+        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:

@@ -38,6 +38,10 @@ jobs:
       - run: npm install --ci
       - run: npx eslint
       - run: npx tsc -p e2e
+      - name: actionlint
+        run: |
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
 
   test-unit:
     runs-on: ubuntu-latest
