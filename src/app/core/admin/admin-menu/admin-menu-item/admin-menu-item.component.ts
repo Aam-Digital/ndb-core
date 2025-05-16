@@ -45,9 +45,6 @@ export class AdminMenuItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.availableRoutes = this.loadAvailableRoutes();
-
-    console.log("item", this.item.link);
-    console.log("routes", this.availableRoutes);
   }
 
   private loadAvailableRoutes(): { value: string, label: string }[] {

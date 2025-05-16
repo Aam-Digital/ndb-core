@@ -1,2 +1,8 @@
+<div class="top-action-bar">
+  <div class="left-buttons">
+    <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
+    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  </div>
+</div>
 
-<app-admin-menu-list [menuItems]="menuItems"></app-admin-menu-list>
+<app-admin-menu-list [(menuItems)]="menuItems"></app-admin-menu-list>

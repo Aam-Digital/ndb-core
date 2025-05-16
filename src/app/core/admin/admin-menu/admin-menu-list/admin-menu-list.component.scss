@@ -73,14 +73,14 @@ app-menu-item {
   margin-bottom: 1rem;
 }
 
-.left-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
 .right-button {
   display: flex;
 }
+
+.limit-width {
+  max-width: 400px;
+}
+
 
   
   

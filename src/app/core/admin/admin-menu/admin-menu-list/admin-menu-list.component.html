@@ -1,23 +1,17 @@
-
 <div class="top-action-bar">
-  <div class="left-buttons">
-    <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
-    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
-  </div>
   <div class="right-button">
-    <button mat-stroked-button color="accent" matTooltip="Add a new menu item"
-        i18n-matTooltip (click)="addNewMenuItem()" >  
-        <fa-icon aria-label="add" icon="plus-circle"></fa-icon>Add New</button>
-  </div>
+  <button mat-stroked-button color="accent" (click)="addNewMenuItem()">  
+    <fa-icon aria-label="add" icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+    <span i18n>Add New</span>
+  </button>
 </div>
-
-
+</div>
 <mat-nav-list 
   cdkDropList 
   cdkDropListOrientation="vertical"
   cdkDropListLockAxis="y"
   (cdkDropListDropped)="drop($event)"
-  class="drop-list flex-column gap-regular"
+  class="drop-list flex-column gap-regular limit-width"
 >
   <ng-container *ngFor="let item of menuItems; let i = index">
     <div class="menu-item-container drop-item" cdkDrag>
