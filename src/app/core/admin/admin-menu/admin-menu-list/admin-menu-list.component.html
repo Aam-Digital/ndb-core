@@ -1,0 +1,40 @@
+<div class="top-action-bar">
+  <div class="right-button">
+  <button mat-stroked-button color="accent" (click)="addNewMenuItem()">  
+    <fa-icon aria-label="add" icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+    <span i18n>Add New</span>
+  </button>
+</div>
+</div>
+<mat-nav-list 
+  cdkDropList 
+  cdkDropListOrientation="vertical"
+  cdkDropListLockAxis="y"
+  (cdkDropListDropped)="drop($event)"
+  class="drop-list flex-column gap-regular limit-width"
+>
+  <ng-container *ngFor="let item of menuItems; let i = index">
+    <div class="menu-item-container drop-item" cdkDrag>
+      
+      <!-- Drag handle -->
+      <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+
+      <app-menu-item [item]="item" ></app-menu-item>
+
+      <fa-icon
+        icon="edit"
+        class="edit-icon"
+        (click)="editMenuItem(i)"
+      ></fa-icon>
+
+      <!-- Remove icon on the right -->
+      <fa-icon
+        icon="times"
+        class="remove-icon"
+        (click)="removeMenuItem(i)"
+      ></fa-icon>
+      
+    </div>
+  </ng-container>
+</mat-nav-list>
+

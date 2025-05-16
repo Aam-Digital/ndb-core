@@ -53,6 +53,12 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return this.currentConfig.data[id];
   }
 
+  /**
+   * Return all config items of the given "type"
+   * (determined by the given prefix of their id).
+   * 
+   * @param prefix The prefix of config items to return (e.g. "view:" or "entity:")
+   */
   public getAllConfigs<T>(prefix: string): T[] {
     const matchingConfigs = [];
     for (const id of Object.keys(this.currentConfig.data)) {
