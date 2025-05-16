@@ -12,6 +12,7 @@ env:
 jobs:
   qa:
     uses: ./.github/workflows/_qa.yaml
+    secrets: inherit
 
   build:
     strategy:

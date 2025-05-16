@@ -8,6 +8,7 @@ on:
 jobs:
   qa:
     uses: ./.github/workflows/_qa.yaml
+    secrets: inherit
 
   create-and-deploy-compodoc:
     runs-on: ubuntu-latest
