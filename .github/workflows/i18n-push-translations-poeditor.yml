@@ -44,7 +44,7 @@ jobs:
             -F "fuzzy_trigger=1" \
             -F "file=@${file}")
 
-          status=$(echo $response | jq -r '.response.status')
+          status=$(echo "$response" | jq -r '.response.status')
           echo "API Response: $response"
           if [ "$status" != "success" ]; then
             echo "Error uploading file for $lang: $response"
