@@ -193,10 +193,20 @@ export class NotificationComponent implements OnInit {
    * Handles notification events by redirecting the user to the corresponding action URL.
    * @param {NotificationEvent} notification - The notification event containing the action URL.
    */
-  async notificationClicked(notification: NotificationEvent) {
+  async notificationClicked(
+    notification: NotificationEvent,
+    notificationListTrigger: MatMenuTrigger,
+    event: NotificationEvent,
+  ) {
     await this.updateReadStatus([notification], true);
     const actionURL = this.generateNotificationActionURL(notification);
     if (!actionURL) return;
     await this.router.navigate([actionURL]);
+
+    // Close the notification menu after clicking a notification
+    this.closeOnlySubmenu(
+      notificationListTrigger,
+      event as unknown as MouseEvent,
+    );
   }
 }
