@@ -29,6 +29,7 @@ import { Component } from "@angular/core";
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </mat-dialog-content>
   `,
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 export class DemoDataGeneratingProgressDialogComponent {}

@@ -1,7 +1,10 @@
+import * as path from "node:path";
 import { defineConfig } from "eslint/config";
 import angular from "angular-eslint";
 import prettier from "eslint-plugin-prettier/recommended";
 import storybook from "eslint-plugin-storybook";
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
   { ignores: [".angular", "dist", "doc/compodoc"] },
@@ -33,6 +36,19 @@ export default defineConfig([
       ],
 
       "@angular-eslint/no-output-native": "off",
+    },
+  },
+  {
+    files: ["e2e/**/*.ts"],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommendedTypeChecked,
+    ],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: path.join(import.meta.dirname, "e2e"),
+      },
     },
   },
   {

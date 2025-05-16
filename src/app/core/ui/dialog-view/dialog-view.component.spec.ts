@@ -9,6 +9,7 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
 @Component({
   template: ``,
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 class MockComponent {}
