@@ -20,7 +20,7 @@ jobs:
           cache: npm
 
       - run: npm install --ci
-      - run: npx eslint
+      - run: npx eslint --max-warnings=0
       - run: npx tsc -p e2e
 
   prepare-code-coverage:
