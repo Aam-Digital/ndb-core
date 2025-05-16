@@ -45,14 +45,17 @@ export class AdminMenuItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.availableRoutes = this.loadAvailableRoutes();
+
+    console.log("item", this.item.link);
+    console.log("routes", this.availableRoutes);
   }
 
   private loadAvailableRoutes(): { value: string, label: string }[] {
     const allConfigs: ViewConfig[] = this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
     return allConfigs
-      .filter(view => !view._id.includes('/:'))
+      .filter(view => !view._id.includes('/:id')) // skip details views (with "/:id" placeholder)
       .map(view => {
-        const id = view._id;
+        const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
         const label =
           view.config?.entityType?.trim() ||
           view.component ||
