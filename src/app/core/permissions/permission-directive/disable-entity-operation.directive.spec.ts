@@ -88,6 +88,7 @@ describe("DisableEntityOperationDirective", () => {
     }"
     #button
   ></button>`,
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 class TestComponent {

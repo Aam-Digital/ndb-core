@@ -19,6 +19,7 @@ import { ViewComponentContext } from "../../core/ui/abstract-view/view-component
 @UntilDestroy()
 @Directive({
   selector: "[appTabStateMemo]",
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 export class TabStateMemoDirective implements OnInit {
