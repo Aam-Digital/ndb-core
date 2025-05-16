@@ -6,6 +6,9 @@ on:
       - master
 
 jobs:
+  qa:
+    uses: ./.github/workflows/_qa.yaml
+
   create-and-deploy-compodoc:
     runs-on: ubuntu-latest
     steps:
@@ -26,91 +29,10 @@ jobs:
           destination_dir: documentation
           force_orphan: true
 
-  code-quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
-
-      - run: npm install --ci
-      - run: npx eslint
-      - run: npx tsc -p e2e
-      - name: actionlint
-        run: |
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint -color
-
-  test-unit:
-    runs-on: ubuntu-latest
-    env:
-      TZ: Europe/Berlin
-      FORCE_COLOR: 1
-      CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
-      - name: Install Code Climate Test Reporter
-        run: |
-          curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-          chmod +x ./cc-test-reporter
-      - name: cc-test-reporter before-build
-        run: >
-          GIT_COMMITTED_AT="$(git log -1 --pretty=format:%ct)"
-          ./cc-test-reporter before-build
-
-      - run: npm ci --no-progress
-      - run: npm run test-ci
-      - run: ./cc-test-reporter format-coverage coverage/lcov.info -t lcov
-      - run: ./cc-test-reporter upload-coverage
-
-  test-e2e:
-    runs-on: ubuntu-latest
-    env:
-      TZ: Europe/Berlin
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
-
-      - run: npm install --ci
-      - name: Cache playwright
-        id: cache-playwright
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-v1-${{ hashFiles('package-lock.json') }}
-
-      - if: steps.cache-playwright.outputs.cache-hit != 'true'
-        run: npm exec playwright install chromium
-
-      - run: npm exec ng build --configuration=development
-
-      # See playwright.config.ts for more CI-specific configuration
-      - run: npx playwright test --browser chromium
-
-      - name: Upload test artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-test-results
-          path: |
-            test-results/**/trace.zip
-
   pre-release:
     runs-on: ubuntu-latest
     needs:
-      - test-unit
-      - test-e2e
+      - qa
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
