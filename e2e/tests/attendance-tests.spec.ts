@@ -177,7 +177,7 @@ test("Attendance Dashboard View", async ({ page }) => {
     }
   } else {
     // If there are no absent students, assert that the "no current entries" message is visible
-    const noEntriesMessage = await page.locator('text="no current entries"');
+    const noEntriesMessage = page.locator('text="no current entries"');
     await expect(noEntriesMessage).toBeVisible();
   }
   //Verify for the absences last week
@@ -222,7 +222,7 @@ test("Attendance Dashboard View", async ({ page }) => {
     }
   } else {
     // If there are no absent students, assert that the "no current entries" message is visible
-    const noEntriesMessage = await page.locator('text="no current entries"');
+    const noEntriesMessage = page.locator('text="no current entries"');
     await expect(noEntriesMessage).toBeVisible();
   }
 });
