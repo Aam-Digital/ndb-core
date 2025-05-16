@@ -1,0 +1,247 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>How to create a new Entity Type</h1>
+<p>&quot;Entities&quot; are the objects around which our whole system is built.
+Entity types specify a data structure for records in the case management system,
+defining both the data object as well as some details how the records are displayed in the UI to users.
+There may for example be User, Child or School classes representing the types of objects the users can view in lists and detail forms and interact with.</p>
+<p>To adapt the platform to a certain use case, you usually want to adapt entity types or create new ones.
+This defines what fields users can see and edit in forms, among other things.</p>
+<p>There are two approaches to define entity types:</p>
+<ul>
+<li>at runtime in the config file (see <a href="./configure-and-customize-a-system.html">How to Configure and Customize a System</a>)</li>
+<li>at build time in the code (this guide)</li>
+</ul>
+<p>Unless you have special requirements and write further code specifically for your entity type,
+you usually should rely on the more flexible and easy approach defining them in the config.</p>
+<p><em>This guide talks about the advance topic of implementing an entity type via code.</em></p>
+<hr>
+<h2>Creating a custom Entity type in code</h2>
+<p>To extend the system with types, you can create a new module and extend the existing base class of the Entity system.
+This is something you would only do if you are also implementing special components or services in the code base to handle this entity type.
+Otherwise, it is easier and more flexible to define an entity type through the config system only, as shown above.</p>
+<p>The <a href="../../modules/EntityModule.html">EntityModule</a> specifies the base class and generic features, specific entity types can extend upon it.
+For an example, have a look at the <a href="../../classes/User.html#source">User</a> class that extends <code>Entity</code>.</p>
+<h3>The <code>Entity</code> class</h3>
+<p><code>Entity</code> and any class extending it are only plain TypeScript classes defining the attributes (and possibly some &quot;business logic&quot; methods).</p>
+<p>The classes should never contain code for saving/deleting or other database related code because we are keeping this separate in an EntityMapper class (see <a href="https://en.wikipedia.org/wiki/Data_mapper_pattern">Data Mapper Pattern</a>).</p>
+<p>To keep them easy to understand and extend the Entity (sub-)classes also shouldn&#39;t depend on other components or services - Entity classes are not by themselves part of the Angular system and do not have dependency injection!</p>
+<h3>The EntitySchema</h3>
+<p>The EntitySchema object is defining which attributes of the class will be saved to the database.
+Attributes not explicitly defined in the Entity sub-type&#39;s schema are ignored when an instance is saved.</p>
+<p>You must annotate your Entity class with the <code>@DatabaseEntity(&#39;ENTITY_TYPE&#39;)</code> decorator
+thereby defining a database prefix for your Entity type.</p>
+<p>Any properties that you want to be persisted in the database when saving entities of this type
+must have the <code>@DatabaseField()</code> decorator.
+Any other properties are ignored and will be lost after saving and loading an entity of this type.
+As an example look at this class&#39; schema definition:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">&#64;DatabaseEntity(&#39;Dummy&#39;)
+class Dummy extends Entity {
+  &#64;DatabaseField() name: string;
+  &#64;DatabaseField() size: number = 1;
+  &#64;DatabaseField({dataType: &#39;month&#39;}) month: Date;
+  temp: string = &#39;foo&#39;;
+}</code></pre></div><p>Only <code>dummy.name</code>, <code>dummy.size</code> and <code>dummy.month</code> of a Dummy class instance are saved to the database.
+The <code>dummy.temp</code> property is available for internal processing but will be ignored when saving the entity to the database.</p>
+<p>You can also set additional options for DatabaseFields and implement your own data transformations.
+For more details see the concept of the <a href="../concepts/entity-schema.html">EntitySchema System</a>.</p>
+<h3>Other components to be implemented for a new sub-type</h3>
+<p>The following components are related to display an Entity sub-type and currently implemented for each new sub-type as Angular components:</p>
+<ul>
+<li><code>EntityDetailsComponent</code>: displays all attributes of one of the Entity&#39;s objects to the user</li>
+<li><code>EntityListComponent</code>: displays a list of all the Entity&#39;s objects</li>
+<li><code>EntityBlockComponent</code>: displays a small, inline representation of one of the Entity&#39;s objects for use in other components</li>
+</ul>
+<h3>Example: Creating a new Entity sub-type</h3>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">import { Entity } from &#39;../entity/entity&#39;;
+import { Gender} from &#39;./Gender&#39;;
+
+&#64;DatabaseEntity(&#39;Child&#39;)
+export class Child extends Entity {
+  &#64;DatabaseField() name: string;
+  &#64;DatabaseField({dataType: &#39;string&#39;}) gender: Gender;
+  &#64;DatabaseField() dateOfBirth: Date;
+  &#64;DatabaseField() marks: [];
+
+  age(): number {
+     // calculate from this.dateOfBirth
+  }
+
+  // Override this to define a human-readable, textual summary of the instance
+  toString(): string {
+    return this.name + &#39; (&#39; + this.age() + &#39;)&#39;;
+  }
+}</code></pre></div>
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'create-a-new-entity-type.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
