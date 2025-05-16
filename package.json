@@ -8,7 +8,7 @@
     "build": "ng build --configuration production",
     "test": "ng test",
     "test-ci": "ng test --code-coverage --karma-config=build/karma-ci.conf.js ",
-    "lint": "ng lint ndb-core",
+    "lint": "eslint",
     "e2e": "playwright test",
     "e2e:debug": "playwright test --headed --timeout=0",
     "percy-storybook": "npm run build-storybook && percy storybook ./storybook-static",
@@ -87,6 +87,7 @@
     "@angular/compiler-cli": "^19.2.6",
     "@babel/core": "^7.26.10",
     "@compodoc/compodoc": "^1.1.26",
+    "@eslint/js": "^9.26.0",
     "@percy/cli": "^1.30.9",
     "@playwright/test": "^1.51.1",
     "@schematics/angular": "^19.2.7",
@@ -123,6 +124,7 @@
     "storybook": "^8.6.12",
     "ts-node": "^10.9.2",
     "typescript": "~5.8.3",
+    "typescript-eslint": "^8.32.1",
     "xliff": "^6.2.2"
   },
   "overrides": {
