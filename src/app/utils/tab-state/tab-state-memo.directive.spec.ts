@@ -59,6 +59,7 @@ describe("TabStateService", () => {
     <mat-tab label="D">D</mat-tab>
     <mat-tab label="E">E</mat-tab>
   </mat-tab-group>`,
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 class TestAppComponent {}

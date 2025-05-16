@@ -14,8 +14,6 @@ import { LoginStateSubject } from "../session/session-type";
 import { SessionSubject } from "../session/auth/session-info";
 import { TraceService } from "@sentry/angular";
 
-/* eslint-disable no-console */
-
 /**
  * Centrally managed logging to allow log messages to be filtered by level and even sent to a remote logging service
  * that allows developers to monitor and analyse problems.
