@@ -37,6 +37,7 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
     } @else {
       <app-ui></app-ui>
     }`,
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 export class AppComponent {
