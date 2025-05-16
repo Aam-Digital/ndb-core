@@ -41,4 +41,10 @@
 
 ::ng-deep .mat-mdc-menu-panel {
   min-width: 310px !important;
+
+  .mat-mdc-menu-item-text {
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }

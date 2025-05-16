@@ -95,7 +95,13 @@
   >
     <button mat-menu-item (click)="markAllRead()">
       <fa-icon icon="check" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Mark all as read</span>
+      <span
+        matTooltip="Mark all as read"
+        i18n-matTooltip="Tooltip for notification settings button"
+        matTooltipPosition="above"
+        i18n
+        >Mark all as read</span
+      >
     </button>
 
     <button
@@ -105,7 +111,13 @@
       (click)="closeOnlySubmenu(notificationListTrigger, $event)"
     >
       <fa-icon icon="gear" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Notification settings</span>
+      <span
+        matTooltip="Notification settings"
+        i18n-matTooltip="Tooltip for notification settings button"
+        matTooltipPosition="above"
+        i18n
+        >Notification settings</span
+      >
     </button>
   </div>
 </mat-menu>
