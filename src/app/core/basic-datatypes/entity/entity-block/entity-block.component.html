@@ -8,12 +8,10 @@
   [appTemplateTooltip]="tooltip"
   [tooltipDisabled]="!entityBlockConfig"
 >
-  @if (entityIcon) {
-    <app-fa-dynamic-icon
-      [icon]="entityIcon"
-      class="margin-right-small"
-    ></app-fa-dynamic-icon>
-  }
+  <app-fa-dynamic-icon
+    [icon]="entityIcon"
+    class="margin-right-small"
+  ></app-fa-dynamic-icon>
 
   {{ entity?.toString() }}
 </span>
