@@ -8,6 +8,15 @@ on:
 
 env:
   REGISTRY_IMAGE: aamdigital/ndb-server
+  # Either the tag name for tag builds or 'pr-XXX' for pull request builds,
+  # where XXX is the number of the PR.
+  # Doubles as release name and app version
+  BUILD_NAME: >-
+    ${{
+      github.event_name == 'pull_request'
+      && format('pr-{0}', github.event.number)
+      || github.event.ref_name
+    }}
 
 jobs:
   code-quality:
@@ -105,14 +114,6 @@ jobs:
       - name: Checkout repository files
         uses: actions/checkout@v4
 
-      - name: Extract tag (release)
-        if: ${{ github.event.ref  != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
-
-      - name: Extract tag (pull request)
-        if: ${{ github.event.ref  == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
-
       - name: Prepare Platform
         run: |
           platform=${{ matrix.platform }}
@@ -154,7 +155,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=min
           build-args: |
-            APP_VERSION=${{ env.TAG }}
+            APP_VERSION=${{ env.BUILD_NAME }}
         env:
           SOURCE_DATE_EPOCH: 0
 
@@ -220,14 +221,6 @@ jobs:
           path: ./tmp/build
           pattern: build-*
 
-      - name: Extract tag (release)
-        if: ${{ github.event.ref != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
-
-      - name: Extract tag (pull request)
-        if: ${{ github.event.ref == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -241,8 +234,8 @@ jobs:
           ls -lsa ./tmp/build
           ls -lsa ./tmp/build/build-linux-amd64
           # todo
-          sentry-cli sourcemaps upload --release="ndb-core@${{ env.TAG }}" ./tmp/build/build-linux-amd64/dist
-          sentry-cli sourcemaps upload --release="ndb-core@${{ env.TAG }}" ./tmp/build/build-linux-arm64/dist
+          sentry-cli sourcemaps upload --release="ndb-core@${{ env.BUILD_NAME }}" ./tmp/build/build-linux-amd64/dist
+          sentry-cli sourcemaps upload --release="ndb-core@${{ env.BUILD_NAME }}" ./tmp/build/build-linux-arm64/dist
 
   merge:
     runs-on: ubuntu-latest
@@ -293,14 +286,6 @@ jobs:
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
     steps:
-      - name: Extract tag (release)
-        if: ${{ github.event.ref != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
-
-      - name: Extract tag (pull request)
-        if: ${{ github.event.ref == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -312,7 +297,7 @@ jobs:
       - name: Create Release
         if: ${{ github.event.ref != '' }} # only send "official" releases to Sentry
         run: |
-          sentry-cli releases new "ndb-core@${{ env.TAG }}"
+          sentry-cli releases new "ndb-core@${{ env.BUILD_NAME }}"
 
   deploy:
     runs-on: ubuntu-latest
