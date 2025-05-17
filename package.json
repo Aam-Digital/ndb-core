@@ -91,6 +91,7 @@
     "@percy/cli": "^1.30.9",
     "@playwright/test": "^1.51.1",
     "@schematics/angular": "^19.2.7",
+    "@sentry/cli": "^2.45.0",
     "@storybook/addon-actions": "^8.6.12",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/angular": "^8.6.12",
