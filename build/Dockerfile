@@ -1,67 +1,6 @@
-# This docker image can be used to run the application locally.
-# To use it only Docker needs to be installed locally.
-
-## Build the application:
-# >> docker build --target dist-build -f build/Dockerfile -o . -t aam-digital .
-
-## Build and start application container:
-# >> docker build --target app -f build/Dockerfile -t aam-digital .
-# >> docker run -p=80:80 aam-digital
-
-# DIST_TYPE
-#   --build-arg DIST_TYPE=build
-# -> build (default): will build the application
-# -> local: will use existing $LOCAL_DIST_PATH (default ./dist/) folder from file system
-# Will be used for packaging the application into a web container.
-# Just relevant for the stage "app"
-ARG DIST_TYPE="build"
-
-FROM node:lts AS base
-COPY package.json ./opt/app/package.json
-COPY package-lock.json ./opt/app/package-lock.json
-
-
-FROM base AS base-with-dependencies
-WORKDIR /opt/app
-RUN npm ci --no-progress
-
-FROM base-with-dependencies AS build
-WORKDIR /opt/app
-COPY ./src /opt/app/src/
-COPY ./build /opt/app/build/
-COPY ./angular.json /opt/app/
-COPY ./tsconfig.json /opt/app/
-COPY ./tsconfig.app.json /opt/app/
-COPY ./tsconfig.spec.json /opt/app/
-COPY ./ngsw-config.json /opt/app/
-
-ARG APP_VERSION="UNKNOWN"
-RUN sed -i "s/appVersion: \".*\"/appVersion: \"$APP_VERSION\"/g" src/environments/environment*.ts
-
-RUN node build/prepare-translation-files.js
-RUN npm run build
-
-RUN npm install -g @sentry/cli && sentry-cli sourcemaps inject ./dist
-RUN ./node_modules/.bin/ngsw-config dist ngsw-config.json
-
-
-FROM scratch AS dist-build
-COPY --from=build /opt/app/dist/ ./dist/
-
-
-FROM scratch AS dist-local
-ARG LOCAL_DIST_PATH=./dist/
-COPY $LOCAL_DIST_PATH ./dist/
-
-
-FROM dist-${DIST_TYPE} AS dist
-
-
-### PROD image
 FROM nginxinc/nginx-unprivileged:alpine AS app
 COPY ./build/default.conf /etc/nginx/templates/default.conf
-
-COPY --from=dist /dist/ /usr/share/nginx/html
+COPY ./dist/ /usr/share/nginx/html
 
 # The port on which the app will run in the Docker container
 ENV PORT=8080
