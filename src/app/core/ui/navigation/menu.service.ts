@@ -46,7 +46,7 @@ export class MenuService {
    * parse special EntityMenuItem to regular item recursively
    * by looking up the entityType from EntityRegistry and then using its config.
    */
-  private generateMenuItemForEntityType(item: MenuItem): MenuItem {
+  generateMenuItemForEntityType(item: MenuItem): MenuItem {
     if ("entityType" in item) {
       const entityType = this.entities.get((item as EntityMenuItem).entityType);
       return {

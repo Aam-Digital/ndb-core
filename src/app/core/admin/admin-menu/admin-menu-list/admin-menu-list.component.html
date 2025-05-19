@@ -14,7 +14,7 @@
   (cdkDropListDropped)="drop($event)"
   class="drop-list flex-column gap-regular limit-width"
 >
-  <ng-container *ngFor="let item of menuItems; let i = index">
+  <ng-container *ngFor="let item of menuItemsToDisplay; let i = index">
     <div class="menu-item-container drop-item" cdkDrag>
       
       <!-- Drag handle -->

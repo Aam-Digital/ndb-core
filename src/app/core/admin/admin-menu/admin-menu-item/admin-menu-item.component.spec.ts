@@ -8,6 +8,7 @@ import { NEVER } from 'rxjs';
 import { MenuItem } from 'app/core/ui/navigation/menu-item';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
+import { EntityRegistry } from 'app/core/entity/database-entity.decorator';
 
 describe('AdminMenuItemComponent', () => {
   let component: AdminMenuItemComponent;
@@ -32,6 +33,7 @@ describe('AdminMenuItemComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: { item: menuItem } },
         { provide: MatDialogRef, useValue: { afterClosed: () => NEVER } },
         { provide: ConfigService, useValue: mockConfigService },
+        EntityRegistry,
       ],
     })
     .compileComponents();
