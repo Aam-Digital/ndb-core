@@ -47,8 +47,6 @@
         type="number"
         [value]="entity.countEventsPresent(forChild)"
         readonly
-        title="Number of days the child was present"
-        placeholder="Enter number of days present"
       />
     </mat-form-field>
 
@@ -60,9 +58,7 @@
         matInput
         type="number"
         [value]="entity.countEventsAbsent(forChild)"
-        readonly
-        title="Number of days the child was absent"
-        placeholder="Enter number of days absent"
+        readonly    
       />
     </mat-form-field>
 
@@ -78,9 +74,7 @@
         matInput
         type="number"
         [value]="entity.countEventsWithUnknownStatus(forChild)"
-        readonly
-        title="Number of days with unknown status"
-        placeholder="Enter number of days with unknown status"
+        readonly     
       />
     </mat-form-field>
   </div>
@@ -94,9 +88,7 @@
         matInput
         type="number"
         [value]="entity.countTotalPresent()"
-        readonly
-        title="Number of children present"
-        placeholder="Enter total number of children present"
+        readonly   
       />
     </mat-form-field>
 
@@ -108,9 +100,7 @@
         matInput
         type="number"
         [value]="entity.countTotalAbsent()"
-        readonly
-        title="Number of children absent"
-        placeholder="Enter total number of children absent"
+        readonly   
       />
     </mat-form-field>
 
@@ -127,8 +117,6 @@
         type="number"
         [value]="entity.countEventsWithUnknownStatus()"
         readonly
-        title="Number of children with unknown status"
-        placeholder="Enter total number of children with unknown status"
       />
     </mat-form-field>
   </div>

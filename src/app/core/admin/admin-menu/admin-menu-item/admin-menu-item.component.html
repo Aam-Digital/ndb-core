@@ -15,7 +15,7 @@
 
     <!-- EntityType -->
     <mat-form-field appearance="fill" class="margin-bottom-large">
-      <mat-label>Entity Type</mat-label>
+      <mat-label i18n>Entity Type</mat-label>
       <app-entity-type-select [value]="item?.['entityType']" (valueChange)="onEntityTypeSelected($event)" [multi]="false"></app-entity-type-select>
     </mat-form-field>
 
@@ -24,8 +24,8 @@
     } @else {
       <!-- Label -->
       <mat-form-field appearance="fill">
-        <mat-label>Label</mat-label>
-        <input matInput [(ngModel)]="item.label" name="label" placeholder="Enter label"/>
+        <mat-label i18n>Label</mat-label>
+        <input matInput [(ngModel)]="item.label" name="label" placeholder="Enter label" i18n-placeholder/>
       </mat-form-field>
 
       <!-- Icon -->
@@ -33,7 +33,7 @@
 
       <!-- Link Target -->
       <mat-form-field appearance="fill">
-        <mat-label>Link Target</mat-label>
+        <mat-label i18n>Link Target</mat-label>
         <mat-select [(ngModel)]="item.link" name="link">
           @for(option of availableRoutes; track option.value) {
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
@@ -46,7 +46,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="accent" (click)="save()">Save</button>
-  <button mat-button (click)="cancel()" cdkFocusInitial>Cancel</button>
+  <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
+  <button mat-button (click)="cancel()" cdkFocusInitial i18n>Cancel</button>
 </mat-dialog-actions>
 

@@ -22,22 +22,4 @@
   </a>
 </mat-list-item>
 
-<!-- Render submenus if they exist and are expanded -->
-<div *ngIf="isExpanded" class="submenu" cdkDropList (cdkDropListDropped)="dropSubMenu($event)"  cdkDropListOrientation="vertical"
-cdkDropListLockAxis="y"
-class="drop-list flex-column gap-regular">
-  <ng-container *ngFor="let subItem of item.subMenu; let i = index">
-    <div class="submenu-item-container" cdkDrag>
-      <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
-
-      <app-menu-item [item]="subItem" [activeLink]="activeLink"></app-menu-item>
-
-      <fa-icon
-        icon="times"
-        class="remove-icon"
-        (click)="removeSubMenuItem(i)"
-      ></fa-icon>
-    </div>
-  </ng-container>
-</div>
 

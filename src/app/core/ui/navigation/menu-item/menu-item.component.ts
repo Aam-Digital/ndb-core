@@ -7,7 +7,7 @@ import { RouterLink } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MenuItem } from "../menu-item";
 import { MatMenuModule } from "@angular/material/menu";
-import { DragDropModule, CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 
 @Component({
   selector: "app-menu-item",
@@ -22,7 +22,7 @@ import { DragDropModule, CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-
     Angulartics2Module,
     NgForOf,
     MatMenuModule,
-    DragDropModule,  // Added DragDropModule for drag-and-drop support
+  
   ],
 })
 export class MenuItemComponent {
