@@ -81,7 +81,7 @@ export class EntityBlockComponent implements OnInit {
     const entityType = this.entity.getConstructor();
 
     this.entityBlockConfig = entityType.toBlockDetailsAttributes;
-    this.entityIcon = entityType.icon;
+    this.entityIcon = entityType.icon || "diamond";
   }
 
   showDetailsPage() {
