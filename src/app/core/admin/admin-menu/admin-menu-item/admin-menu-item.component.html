@@ -1,5 +1,9 @@
 <h2 mat-dialog-title>
-  {{ !isNew ? 'Edit Menu Item' : 'Adding New Menu Item' }}
+  @if(isNew) {
+    <ng-container i18n>Add New Menu Item</ng-container>
+  } @else {
+    <ng-container i18n>Edit Menu Item</ng-container>
+  }
 </h2>
 
 <mat-dialog-content class="menu-item-form">
