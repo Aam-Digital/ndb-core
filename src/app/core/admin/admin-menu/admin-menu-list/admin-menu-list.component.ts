@@ -85,24 +85,12 @@ export class AdminMenuListComponent {
   }
 
   // Add a new menu item
-  addNewMenuItem() {
-    // TODO: refactor this to use the same dialog as edit
-
-    const dialogRef = this.dialog.open(AdminMenuItemComponent, {
-      height: "400px",
-      width: "600px",
-      data: {
-        item: {}, // Empty object for a new item
-        index: null,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((newItem: MenuItem) => {
-      if (newItem) {
-        this.menuItems.push(newItem); // Add the new item to the list
-        this.menuItemsChange.emit(this.menuItems);
-      }
-    });
+  async addNewMenuItem() {
+    const newItem = await this.openEditDialog(undefined);
+    if (newItem) {
+      this.menuItems.push(newItem); // Add the new item to the list
+      this.menuItemsChange.emit(this.menuItems);
+    }
   }
 
   private async openEditDialog(item?: MenuItem): Promise<MenuItem | undefined> {
