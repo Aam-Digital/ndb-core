@@ -1,7 +1,6 @@
-import { Component, inject } from "@angular/core";
-import { EntityMenuItem, MenuItem, NavigationMenuConfig } from "../menu-item";
-import { ConfigService } from "../../../config/config.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Component } from "@angular/core";
+import { MenuItem } from "../menu-item";
+import { UntilDestroy } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
 import { MatListModule } from "@angular/material/list";
@@ -10,7 +9,7 @@ import { Angulartics2Module } from "angulartics2";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { MenuItemComponent } from "../menu-item/menu-item.component";
-import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { MenuService } from "../menu.service";
 
 /**
  * Main app menu listing.
@@ -30,25 +29,26 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
   ],
 })
 export class NavigationComponent {
-  private entities = inject(EntityRegistry);
-
   /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
-
-  /** name of config array in the config json file */
-  private readonly CONFIG_ID = "navigationMenu";
 
   /** all menu items to be displayed */
   public menuItems: MenuItem[] = [];
 
   constructor(
-    private configService: ConfigService,
+    private menuService: MenuService,
     private router: Router,
     private routePermissionService: RoutePermissionsService,
   ) {
-    this.configService.configUpdates
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.initMenuItemsFromConfig());
+    // subscribe to menu items from the menu service
+    this.menuService.menuItems.subscribe(async (menuItems) => {
+      this.menuItems =
+        await this.routePermissionService.filterPermittedRoutes(menuItems);
+
+      // re-select active menu item after menu has been fully initialized
+      this.activeLink = this.computeActiveLink(location.pathname);
+    });
+
     this.router.events
       .pipe(
         startWith(new NavigationEnd(0, this.router.url, "")),
@@ -95,49 +95,6 @@ export class NavigationComponent {
         return items.reduce((i1, i2) =>
           i1.link.length > i2.link.length ? i1 : i2,
         ).link;
-    }
-  }
-
-  /**
-   * Load menu items from config file
-   */
-  private async initMenuItemsFromConfig() {
-    const config = this.configService.getConfig<NavigationMenuConfig>(
-      this.CONFIG_ID,
-    );
-
-    const menuItems = config.items.map((item) =>
-      this.generateMenuItemForEntityType(item),
-    );
-
-    this.menuItems =
-      await this.routePermissionService.filterPermittedRoutes(menuItems);
-
-    // re-select active menu item after menu has been fully initialized
-    this.activeLink = this.computeActiveLink(location.pathname);
-  }
-
-  /**
-   * parse special EntityMenuItem to regular item recursively
-   * by looking up the entityType from EntityRegistry and then using its config.
-   */
-  private generateMenuItemForEntityType(item: MenuItem): MenuItem {
-    if ("entityType" in item) {
-      const entityType = this.entities.get((item as EntityMenuItem).entityType);
-      return {
-        label: entityType.labelPlural,
-        icon: entityType.icon,
-        link: entityType.route,
-      };
-    } else if (item.subMenu) {
-      return {
-        ...item,
-        subMenu: item.subMenu.map((subItem) =>
-          this.generateMenuItemForEntityType(subItem),
-        ),
-      };
-    } else {
-      return item;
     }
   }
 }
