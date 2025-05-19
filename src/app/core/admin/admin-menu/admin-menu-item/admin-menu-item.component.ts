@@ -16,6 +16,9 @@ import {
 import { MatDialogModule } from "@angular/material/dialog";
 import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
 
+/**
+ * Dialog component to edit a single menu item's details.
+ */
 @Component({
   selector: "app-admin-menu-item",
   standalone: true,
