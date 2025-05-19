@@ -6,6 +6,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
+/**
+ * A MatFormField to let the user define a FontAwesome icon
+ * (showing some additional explanation in the UI).
+ */ 
 @Component({
   selector: 'app-admin-icon-input',
   standalone: true,
