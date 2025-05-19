@@ -255,7 +255,7 @@
         <note priority="1" from="meaning">Attendance completed</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">119,121</context>
+          <context context-type="linenumber">120,122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5227018528149815658" datatype="html">
@@ -264,7 +264,7 @@
         <note priority="1" from="description">Open details of recorded event for review</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">129,131</context>
+          <context context-type="linenumber">130,132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="200985446354555594" datatype="html">
@@ -273,7 +273,7 @@
         <note priority="1" from="description">Back to overview button after finishing a roll call</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.html</context>
-          <context context-type="linenumber">139,141</context>
+          <context context-type="linenumber">140,142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6006342624356570730" datatype="html">
@@ -2114,14 +2114,6 @@
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3644941401286328744" datatype="html">
-        <source>no default value</source>
-        <target>aucune valeur par défaut</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/default-values/x-static/admin-default-value-static/admin-default-value-static.component.html</context>
-          <context context-type="linenumber">4</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="7811514932000727489" datatype="html">
         <source>Fill the current date initially, when a record is created.</source>
         <target>Remplissez initialement la date actuelle, lorsqu&apos;un enregistrement est créé.</target>
@@ -2199,11 +2191,11 @@
         <target>Supprimer la valeur par défaut</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/default-values/admin-default-value/admin-default-value.component.html</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">53</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3942266656992195970" datatype="html">
@@ -2904,7 +2896,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">93</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6031162605459514264" datatype="html">
@@ -2916,7 +2908,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">94</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5432260252143962374" datatype="html">
@@ -2924,7 +2916,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Créer une nouvelle option</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">105</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5006850401853518123" datatype="html">
@@ -2932,7 +2924,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Voulez-vous créer la nouvelle option &quot;<x id="PH" equiv-text="addedOption.label"/>&quot;?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">106</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3938396793871184620" datatype="html">
@@ -2958,10 +2950,6 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Âge</target>
         <note priority="1" from="description">Placeholder for the input that displays the age</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/date-with-age/edit-age/edit-age.component.html</context>
-          <context context-type="linenumber">29</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
           <context context-type="linenumber">447</context>
         </context-group>
@@ -2972,7 +2960,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Tooltip for the disabled age field</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date-with-age/edit-age/edit-age.component.html</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3733378544613473393" datatype="html">
@@ -3033,7 +3021,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.ts</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">95</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2844542848589379119" datatype="html">
@@ -3045,7 +3033,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.ts</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">96</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6017615317312721960" datatype="html">
@@ -3111,11 +3099,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/edit-date/edit-date.component.html</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">17</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/month/edit-month/edit-month.component.html</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1854059228407793522" datatype="html">
@@ -3260,15 +3248,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="meaning">Label for adding an option in a dropdown</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">98</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">98</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">98</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2123171795960509943" datatype="html">
@@ -3277,15 +3265,15 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">tooltip for remove icon on chips of dropdown item</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">145</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">145</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">145</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1115283280221159212" datatype="html">
@@ -3569,11 +3557,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
@@ -5642,7 +5630,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target> Effacer </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/list-filter/list-filter.component.html</context>
-          <context context-type="linenumber">15,17</context>
+          <context context-type="linenumber">20,22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1786540073279549582" datatype="html">
@@ -7295,11 +7283,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Tooltip show file</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">26</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8605421971099461066" datatype="html">
@@ -7308,11 +7296,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Tooltip upload file button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">49</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">49</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
@@ -7324,11 +7312,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target>Les modifications apportées aux fichiers ne sont pas possibles hors ligne.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">56</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">56</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
@@ -9434,7 +9422,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Ajouter une valeur fixe pour un autre champ</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2683074819143881476" datatype="html">
@@ -9442,7 +9430,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Ajouter une valeur prédéfinie</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/edit-prefilled-values/edit-prefilled-values.component.html</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9033045811000879464" datatype="html">
@@ -9477,7 +9465,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Ce champ ne peut être défini que lors de la création d&apos;un enregistrement et ne peut pas être modifié par la suite</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-field-edit/entity-field-edit.component.html</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2286125960560188437" datatype="html">
@@ -9496,7 +9484,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Entrez l&apos;URL</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/string/edit-url/edit-url.component.html</context>
-          <context context-type="linenumber">15</context>
+          <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4743703046972762929" datatype="html">
@@ -9504,7 +9492,7 @@ Si vous rencontrez des problèmes lors de la soumission du formulaire, veuillez 
         <target>Format d&apos;URL non valide</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/string/edit-url/edit-url.component.html</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2375260419993138758" datatype="html">
@@ -10323,23 +10311,33 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <target>Vous n&apos;avez aucune notification</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="linenumber">82</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2333314224059826550" datatype="html">
         <source>Mark all as read</source>
         <target>Tout marquer comme lu</target>
+        <note priority="1" from="description">Tooltip for notification settings button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
-          <context context-type="linenumber">96</context>
+          <context context-type="linenumber">99</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="459846565670024354" datatype="html">
         <source>Notification settings</source>
         <target>Paramètres de notification</target>
+        <note priority="1" from="description">Tooltip for notification settings button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/notification/notification.component.html</context>
+          <context context-type="linenumber">119</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4072979024240324393" datatype="html">
@@ -10607,7 +10605,7 @@ _Nous serions ravis de vous aider !_</target>
         <note priority="1" from="description">error message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/default-values/admin-default-value/admin-default-value.component.html</context>
-          <context context-type="linenumber">63,64</context>
+          <context context-type="linenumber">64,65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2427257728726929620" datatype="html">
@@ -10784,6 +10782,15 @@ _Nous serions ravis de vous aider !_</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/automated-status-update/updated-from-referencing-entity-default-value.service.ts</context>
           <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3006566080468948918" datatype="html">
+        <source>Age </source>
+        <target>Âge </target>
+        <note priority="1" from="description">Placeholder for the input that displays the age</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/date-with-age/edit-age/edit-age.component.html</context>
+          <context context-type="linenumber">33,34</context>
         </context-group>
       </trans-unit>
     </body>
