@@ -47,48 +47,53 @@ describe('AdminMenuItemComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  fit('should load availableRoutes from config service and skip routes with /:id', () => {
+  it("should load availableRoutes from config service and skip routes with /:id", () => {
     //when
     let testView1: ViewConfig = {
-      _id: "child",
+      _id: "view:child",
       component: "ChildrenList",
-      config: { entityType: "Child"
+      config: {
+        entityType: "Child",
         //...
-       }
+      },
     };
     let testView2: ViewConfig = {
-      _id: "school",
+      _id: "view:school",
       component: "EntityList",
-      config: { entityType: "School"
+      config: {
+        entityType: "School",
         //...
-       }
+      },
     };
     let testView3: ViewConfig = {
-      _id: "note/:id",
+      _id: "view:note/:id",
       component: "NoteDetails",
-      config: { entityType: "Note" 
+      config: {
+        entityType: "Note",
         //...
-      }
+      },
     };
     let testView4: ViewConfig = {
       _id: "view:",
       component: "Dashboard",
-      config: { widgets: [] }  // No entityType
+      config: { widgets: [] }, // No entityType
     };
-  
+
     mockConfigService.getAllConfigs.and.returnValue([
-      testView1, testView2, testView3, testView4
+      testView1,
+      testView2,
+      testView3,
+      testView4,
     ]);
-    
+
     // action
     component.ngOnInit();
-    
 
     // then
     expect(component.availableRoutes).toEqual([
-      { value: "child", label: "Child" },
-      { value: "school", label: "School" },
-      { value: "view:", label: "Dashboard" },  // Fallback label from component name
+      { value: "/child", label: "Child" },
+      { value: "/school", label: "School" },
+      { value: "/", label: "Dashboard" }, // Fallback label from component name
     ]);
   });  
 });
