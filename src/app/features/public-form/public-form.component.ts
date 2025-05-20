@@ -180,7 +180,7 @@ export function migratePublicFormConfig(
    */
   if (formConfig.prefilledFields) {
     for (const field of formConfig.prefilledFields) {
-      if (field.defaultValue) {
+      if (field.defaultValue["value"]) {
         field.defaultValue = {
           mode: "static",
           config: { value: field.defaultValue["value"] },
