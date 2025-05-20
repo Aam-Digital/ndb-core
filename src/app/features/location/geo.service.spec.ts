@@ -3,11 +3,11 @@ import { TestBed } from "@angular/core/testing";
 import { GeoService } from "./geo.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { ConfigService } from "../../core/config/config.service";
-import { of, Subject } from "rxjs";
+import { of, Subject, throwError } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 
-describe("GeoService", () => {
+fdescribe("GeoService", () => {
   let service: GeoService;
   let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
@@ -51,6 +51,17 @@ describe("GeoService", () => {
     });
   });
 
+  it("should propagate error when nomination/search API fails", () => {
+    const error = new Error("Unhandeled error");
+    mockHttp.get.and.returnValue(throwError(() => error));
+
+    let actualError: Error | undefined;
+    service.lookup("test").subscribe({
+      error: (err) => (actualError = err),
+    });
+
+    expect(actualError).toBe(error);
+  });
   it("should track requests in analytics service", () => {
     const searchTerm = "mySearchTerm";
     service.lookup(searchTerm).subscribe();
