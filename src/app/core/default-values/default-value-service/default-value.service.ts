@@ -52,11 +52,11 @@ export class DefaultValueService {
       );
 
       // todo: need to check why our migration method is not working here for Public forms
-      const configPart = fieldConfig.defaultValue as any;
-      if (configPart.value) {
-        configPart.config = configPart.value;
-        delete configPart.value;
-      }
+      // const configPart = fieldConfig.defaultValue as any;
+      // if (configPart.value) {
+      //   configPart.config = configPart.value;
+      //   delete configPart.value;
+      // }
       if (strategy) {
         strategy.setDefaultValue(targetFormControl, fieldConfig, form);
       } else {

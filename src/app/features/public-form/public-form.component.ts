@@ -26,6 +26,7 @@ import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MarkdownPageModule } from "../markdown-page/markdown-page.module";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { AdminEntityService } from "app/core/admin/admin-entity.service";
 
 @UntilDestroy()
 @Component({
@@ -59,6 +60,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     private snackbar: MatSnackBar,
     private ability: EntityAbility,
     private router: Router,
+    private adminEntityService: AdminEntityService,
+    private entityRegistry: EntityRegistry,
   ) {}
 
   ngOnInit() {
@@ -102,6 +105,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       return;
     }
 
+
     this.entityType = this.entities.get(
       this.formConfig.entity,
     ) as EntityConstructor<E>;
@@ -109,6 +113,18 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.error = "no_permissions";
       return;
     }
+    this.configService
+    .migrateDocument(
+      entityType,
+    )
+    .then((config) => {
+      this.adminEntityService.setAndSaveEntityConfig(
+        config as unknown as EntityConstructor,
+      );
+    })
+    .catch((error) => {
+      console.error("Error migrating public form config:", error);
+    });
     this.formConfig = migratePublicFormConfig(this.formConfig);
     this.fieldGroups = this.formConfig.columns;
     this.handlePrefilledFields();

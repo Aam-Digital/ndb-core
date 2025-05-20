@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Config } from "./config";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
@@ -12,6 +12,7 @@ import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 import { Logging } from "../logging/logging.service";
+import { Entity } from "../entity/model/entity";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -23,7 +24,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
   private currentConfig: Config;
-
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
   constructor(entityMapper: EntityMapperService) {
@@ -62,6 +62,46 @@ export class ConfigService extends LatestEntityLoader<Config> {
       }
     }
     return matchingConfigs;
+  }
+
+  public async migrateDocument(entity: Entity): Promise<Entity> {
+    const migratedEntity = await this.applyMigrationsToCustomEntity(entity);
+    console.log("migratedEntity entity", migratedEntity);
+
+    return migratedEntity;
+  }
+
+  public async applyMigrationsToCustomEntity(entity: Entity): Promise<any> {
+    if (!entity) {
+      throw new Error(`Config document with id '${entity}' not found.`);
+    }
+
+    const migrations: ConfigMigration[] = [
+      migrateEntityDetailsInputEntityType,
+      migrateEntityArrayDatatype,
+      migrateEntitySchemaDefaultValue,
+      migrateChildrenListConfig,
+      migrateHistoricalDataComponent,
+      migratePhotoDatatype,
+      migratePercentageDatatype,
+      migrateEntityBlock,
+      migrateGroupByConfig,
+      addDefaultNoteDetailsConfig,
+      migrateDefaultValue,
+      migrateFormFieldConfigView2ViewComponent,
+      migrateMenuItemConfig,
+    ];
+
+    const migrated = JSON.parse(JSON.stringify(entity), (_key, rawValue) => {
+      let configPart = rawValue;
+      for (const migration of migrations) {
+        configPart = migration(_key, configPart);
+        console.log(configPart, "configPart1");
+      }
+      return configPart;
+    });
+    console.log(migrated, "migrated");
+    return migrated;
   }
 
   private applyMigrations(config: Config): Config {
