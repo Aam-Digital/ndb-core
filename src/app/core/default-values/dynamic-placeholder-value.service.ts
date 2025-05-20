@@ -54,7 +54,12 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
     }
   }
 
-  getDefaultValueString(filterConfig: FilterConfig): string {
+  /**
+   * Get the current value for a given placeholder.
+   * @param placeholder The placeholder string to resolve.
+   * @returns The value for the given placeholder or `undefined` if not found.
+   */
+  getPlaceholderValue(placeholder: string): string | undefined {
     if (filterConfig.default === PLACEHOLDERS.CURRENT_USER) {
       let userId = this.currentUser.value?.getId();
       if (userId) return userId;
