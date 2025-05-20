@@ -175,6 +175,20 @@ export function migratePublicFormConfig(
     );
   }
 
+  /* 
+  Convert old prefilledFields to new format of defaultvalue config
+   */
+  if (formConfig.prefilledFields) {
+    for (const field of formConfig.prefilledFields) {
+      if (field.defaultValue) {
+        field.defaultValue = {
+          mode: "static",
+          config: { value: field.defaultValue["value"] },
+        };
+      }
+    }
+  }
+
   for (let [id, value] of Object.entries(formConfig["prefilled"] ?? [])) {
     const defaultValue: DefaultValueConfig = {
       mode: "static",
