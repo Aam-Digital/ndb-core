@@ -7,7 +7,6 @@ import { RouterLink } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { MenuItem } from "../menu-item";
 import { MatMenuModule } from "@angular/material/menu";
-import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 
 @Component({
   selector: "app-menu-item",
@@ -22,8 +21,8 @@ import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
     Angulartics2Module,
     NgForOf,
     MatMenuModule,
-  
   ],
+  standalone: true,
 })
 export class MenuItemComponent {
   /**
@@ -38,37 +37,10 @@ export class MenuItemComponent {
   @Input() activeLink: string;
 
   isExpanded: boolean = false;
-
-  /**
-   * Toggles the submenu visibility.
-   */
   toggleSubMenu(): void {
     this.isExpanded = !this.isExpanded;
   }
-
-  /**
-   * Checks if a menu item has a submenu.
-   */
   hasSubMenu(item: MenuItem): boolean {
     return !!item.subMenu && item.subMenu.length > 0;
   }
-
-  /**
-   * Removes a submenu item at the specified index.
-   */
-  removeSubMenuItem(index: number): void {
-    if (this.item.subMenu && index > -1) {
-      this.item.subMenu.splice(index, 1);
-    }
-  }
-
-  /**
-   * Handles drag-and-drop reordering of submenu items.
-   */
-  dropSubMenu(event: CdkDragDrop<MenuItem[]>): void {
-    if (this.item.subMenu) {
-      moveItemInArray(this.item.subMenu, event.previousIndex, event.currentIndex);
-    }
-  }
 }
-
