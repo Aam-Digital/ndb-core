@@ -93,9 +93,11 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     const id = this.route.snapshot.paramMap.get("id");
 
     const publicForms = (await this.entityMapper.loadType(PublicFormConfig))
-      .map((formConfig) => this.configService.applyMigrations(formConfig))
+      .map((formConfig) => {
+        const migrated = this.configService.applyMigrations(formConfig);
+        return Object.assign(new PublicFormConfig(), migrated);
+      })
       .map((formConfig) => migratePublicFormConfig(formConfig));
-
     this.formConfig = publicForms.find(
       (form: PublicFormConfig) => form.route === id || form.getId(true) === id,
     );
