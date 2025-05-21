@@ -87,7 +87,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       return docPart;
     });
 
-    return newDoc;
+    return Object.assign(new (doc.constructor as new () => E)(), newDoc);
   }
 }
 
