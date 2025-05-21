@@ -8,57 +8,23 @@ on:
 
 env:
   REGISTRY_IMAGE: aamdigital/ndb-server
+  # Either the tag name for tag builds or 'pr-XXX' for pull request builds,
+  # where XXX is the number of the PR.
+  # Doubles as release name and app version
+  BUILD_NAME: >-
+    ${{
+      github.event_name == 'pull_request'
+      && format('pr-{0}', github.event.number)
+      || github.event.ref_name
+    }}
 
 jobs:
-  code-quality:
+  qa:
+    uses: ./.github/workflows/_qa.yaml
+    secrets: inherit
+
+  build-webapp:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
-
-      - run: npm install --ci
-      - run: npx eslint --max-warnings=0
-      - run: npx tsc -p e2e
-      - name: actionlint
-        run: |
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
-          ./actionlint -color
-
-  test-unit:
-    runs-on: ubuntu-latest
-    env:
-      TZ: Europe/Berlin
-      FORCE_COLOR: 1
-      CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: npm
-      - name: Install Code Climate Test Reporter
-        run: |
-          curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-          chmod +x ./cc-test-reporter
-      - name: cc-test-reporter before-build
-        run: >
-          GIT_COMMITTED_AT="$(git log -1 --pretty=format:%ct)"
-          ./cc-test-reporter before-build
-
-      - run: npm ci --no-progress
-      - run: npm run test-ci
-      - run: ./cc-test-reporter format-coverage coverage/lcov.info -t lcov
-      - run: ./cc-test-reporter upload-coverage
-
-  test-e2e:
-    runs-on: ubuntu-latest
-    env:
-      TZ: Europe/Berlin
-      FORCE_COLOR: 1
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -68,30 +34,24 @@ jobs:
           cache: npm
 
       - run: npm install --ci
-      - name: Cache playwright
-        id: cache-playwright
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-v1-${{ hashFiles('package-lock.json') }}
+      - run: |
+          sed -i 's/appVersion: ".*"/appVersion: "${{ env.BUILD_NAME }}"/g' \
+            src/environments/environment*.ts
 
-      - if: steps.cache-playwright.outputs.cache-hit != 'true'
-        run: npm exec playwright install chromium
+      - run: npx ng build --configuration production
+      - run: npx ngsw-config dist ngsw-config.json
+      - run: npx sentry-cli sourcemaps inject ./dist
 
-      - run: npm exec ng build --configuration=development
-
-      # See playwright.config.ts for more CI-specific configuration
-      - run: npx playwright test --browser chromium
-
-      - name: Upload test artifacts
-        if: always()
+      - name: Upload webapp files
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-test-results
-          path: |
-            test-results/**/trace.zip
+          name: webapp-files
+          path: ./dist
+          if-no-files-found: error
+          retention-days: 1
 
-  build:
+
+  build-image:
     strategy:
       fail-fast: false
       matrix:
@@ -101,22 +61,22 @@ jobs:
           - platform: linux/arm64
             os: ubuntu-24.04-arm
     runs-on: ${{ matrix.os }}
+    needs:
+      - build-webapp
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4
-
-      - name: Extract tag (release)
-        if: ${{ github.event.ref  != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
-
-      - name: Extract tag (pull request)
-        if: ${{ github.event.ref  == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
 
       - name: Prepare Platform
         run: |
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
+
+      - name: Download webapp files
+        uses: actions/download-artifact@v4
+        with:
+          name: webapp-files
+          path: dist
 
       - name: Docker meta
         id: meta
@@ -136,36 +96,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Create export directories
-        run: |
-          mkdir -p ./tmp/build
-          mkdir -p ./tmp/build/${{ env.PLATFORM_PAIR }}
-          mkdir -p ./tmp/digests
-
-      - name: Build
-        id: build
-        uses: docker/build-push-action@v6
-        with:
-          platforms: ${{ matrix.platform }}
-          context: ./
-          file: ./build/Dockerfile
-          target: dist-build
-          outputs: type=local,dest=./tmp/build/${{ env.PLATFORM_PAIR }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
-          build-args: |
-            APP_VERSION=${{ env.TAG }}
-        env:
-          SOURCE_DATE_EPOCH: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Sentry CLI
-        run: |
-          npm install -g @sentry/cli
-
       - name: Build Image and push by digest
         id: build-image
         uses: docker/build-push-action@v6
@@ -173,19 +103,16 @@ jobs:
           platforms: ${{ matrix.platform }}
           context: ./
           file: ./build/Dockerfile
-          target: app
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha
           cache-to: type=gha,mode=min
-          build-args: |
-            DIST_TYPE=local
-            LOCAL_DIST_PATH=./tmp/build/${{ env.PLATFORM_PAIR }}/dist
         env:
           SOURCE_DATE_EPOCH: 0
 
       - name: Export digest
         run: |
+          mkdir -p "./tmp/digests"
           digest="${{ steps.build-image.outputs.digest }}"
           touch "./tmp/digests/${digest#sha256:}"
 
@@ -197,57 +124,30 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-      - name: Upload build archive
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-${{ env.PLATFORM_PAIR }}
-          path: ./tmp/build/${{ env.PLATFORM_PAIR }}
-          if-no-files-found: error
-          retention-days: 1
-
   upload-sourcemaps:
     runs-on: ubuntu-latest
     needs:
-      - build
+      - build-webapp
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
     steps:
-      - name: Download builds
+      - name: Download webapp files
         uses: actions/download-artifact@v4
         with:
-          path: ./tmp/build
-          pattern: build-*
-
-      - name: Extract tag (release)
-        if: ${{ github.event.ref != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
-
-      - name: Extract tag (pull request)
-        if: ${{ github.event.ref == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
+          name: webapp-files
+          path: dist
 
       - name: Install Sentry CLI
-        run: |
-          npm install -g @sentry/cli
+        run: npm install -g @sentry/cli
 
-      - name: Upload sourcemaps
-        run: |
-          ls -lsa ./tmp/build
-          ls -lsa ./tmp/build/build-linux-amd64
-          # todo
-          sentry-cli sourcemaps upload --release="ndb-core@${{ env.TAG }}" ./tmp/build/build-linux-amd64/dist
-          sentry-cli sourcemaps upload --release="ndb-core@${{ env.TAG }}" ./tmp/build/build-linux-arm64/dist
+      - run: sentry-cli sourcemaps upload --release="ndb-core@${{ env.BUILD_NAME }}" ./dist
 
   merge:
     runs-on: ubuntu-latest
     needs:
-      - build
+      - build-image
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -286,21 +186,14 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - merge
+      - build-webapp
       - upload-sourcemaps
-      - test-e2e
+      - qa
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
     steps:
-      - name: Extract tag (release)
-        if: ${{ github.event.ref != '' }}
-        run: echo "TAG=${GITHUB_REF#refs/*/}" >> "$GITHUB_ENV"
-
-      - name: Extract tag (pull request)
-        if: ${{ github.event.ref == '' }}
-        run: echo "TAG=pr-${{ github.event.number }}" >> "$GITHUB_ENV"
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -312,7 +205,7 @@ jobs:
       - name: Create Release
         if: ${{ github.event.ref != '' }} # only send "official" releases to Sentry
         run: |
-          sentry-cli releases new "ndb-core@${{ env.TAG }}"
+          sentry-cli releases new "ndb-core@${{ env.BUILD_NAME }}"
 
   deploy:
     runs-on: ubuntu-latest

@@ -64,7 +64,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return matchingConfigs;
   }
 
-  private applyMigrations(config: Config): Config {
+  public applyMigrations<E>(doc: E): E {
     const migrations: ConfigMigration[] = [
       migrateEntityDetailsInputEntityType,
       migrateEntityArrayDatatype,
@@ -79,15 +79,15 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateDefaultValue,
     ];
 
-    const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
-      let configPart = rawValue;
+    const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
+      let docPart = rawValue;
       for (const migration of migrations) {
-        configPart = migration(_that, configPart);
+        docPart = migration(_that, docPart);
       }
-      return configPart;
+      return docPart;
     });
 
-    return newConfig;
+    return Object.assign(new (doc.constructor as new () => E)(), newDoc);
   }
 }
 
