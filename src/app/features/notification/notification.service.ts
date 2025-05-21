@@ -2,6 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakAuthService } from "app/core/session/auth/keycloak/keycloak-auth.service";
+import { AngularFireMessaging } from "@angular/fire/compat/messaging";
 import { firstValueFrom, mergeMap, of, Subscription } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { AlertService } from "../../core/alerts/alert.service";
