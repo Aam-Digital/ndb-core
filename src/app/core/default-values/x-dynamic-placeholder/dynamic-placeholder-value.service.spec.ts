@@ -1,7 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
-<<<<<<< HEAD:src/app/core/default-values/dynamic-placeholder-value.service.spec.ts
 import { Entity } from "../entity/model/entity";
 import { CurrentUserSubject } from "../session/current-user-subject";
 import { testDefaultValueCase } from "./default-value.service.spec";
@@ -12,13 +11,6 @@ import { createTestingConfigurableEnumService } from "../basic-datatypes/configu
 import { PrebuiltFilterConfig } from "../entity-list/EntityListConfig";
 import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
 import { Note } from "app/child-dev-project/notes/model/note";
-=======
-import { Entity } from "../../entity/model/entity";
-import { CurrentUserSubject } from "../../session/current-user-subject";
-import { testDefaultValueCase } from "../default-value-service/default-value.service.spec";
-import { DefaultValueService } from "../default-value-service/default-value.service";
-import { DefaultValueStrategy } from "../default-value-strategy.interface";
->>>>>>> upstream/master:src/app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service.spec.ts
 
 describe("DynamicPlaceholderValueService", () => {
   let service: DynamicPlaceholderValueService;
