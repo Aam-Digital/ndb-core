@@ -2,6 +2,12 @@ name: QA
 
 on:
   workflow_call:
+    inputs:
+      upload-e2e-screenshots:
+        type: boolean
+        required: false
+        default: false
+        description: If true, upload screenshots to Argos CI for comparison
 
 permissions:
   contents: read
@@ -78,7 +84,15 @@ jobs:
       - run: npm exec ng build --configuration=development
 
       # See playwright.config.ts for more CI-specific configuration
-      - run: npx playwright test --browser chromium
+      - run: npx playwright test
+
+      - run: npx argos upload test-results --files '**/argos/*.png'
+        if: ${{ inputs.upload-e2e-screenshots }}
+        # We may run into quotas
+        continue-on-error: true
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+
 
       - name: Upload test artifacts
         if: always()
@@ -87,4 +101,3 @@ jobs:
           name: playwright-test-results
           path: |
             test-results/**/trace.zip
-
