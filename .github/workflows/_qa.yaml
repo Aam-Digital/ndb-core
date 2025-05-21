@@ -47,7 +47,14 @@ jobs:
           ./cc-test-reporter before-build
 
       - run: npm ci --no-progress
+
+      - name: Cache angular
+        uses: actions/cache@v4
+        with:
+          path: .angular/cache
+          key: angular-v1-test-unit-${{ hashFiles('package-lock.json') }}
       - run: npm run test-ci
+
       - run: ./cc-test-reporter format-coverage coverage/lcov.info -t lcov
       - run: ./cc-test-reporter upload-coverage
 
@@ -74,6 +81,12 @@ jobs:
 
       - if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: npm exec playwright install chromium
+
+      - name: Cache angular
+        uses: actions/cache@v4
+        with:
+          path: .angular/cache
+          key: angular-v1-devel-${{ hashFiles('package-lock.json') }}
 
       - run: npm exec ng build --configuration=development
 

@@ -38,6 +38,12 @@ jobs:
           sed -i 's/appVersion: ".*"/appVersion: "${{ env.BUILD_NAME }}"/g' \
             src/environments/environment*.ts
 
+      - name: Cache angular
+        uses: actions/cache@v4
+        with:
+          path: .angular/cache
+          key: angular-v1-prod-${{ hashFiles('package-lock.json') }}
+
       - run: npx ng build --configuration production
       - run: npx ngsw-config dist ngsw-config.json
       - run: npx sentry-cli sourcemaps inject ./dist
