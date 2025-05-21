@@ -3,11 +3,11 @@ import { TestBed } from "@angular/core/testing";
 import { GeoService } from "./geo.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { ConfigService } from "../../core/config/config.service";
-import { of, Subject, throwError } from "rxjs";
+import { of, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
 
-fdescribe("GeoService", () => {
+describe("GeoService", () => {
   let service: GeoService;
   let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
