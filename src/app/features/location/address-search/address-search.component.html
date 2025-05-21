@@ -28,17 +28,17 @@
         Network unavailable right now - Enter address manually
       </mat-option>
     }
-    @if (serviceUnavailable) {
+    @if (otherTypeError) {
       <mat-option disabled i18n>
         Address service unavailable - Enter address manually
       </mat-option>
     }
-    @if (nothingFound && !networkError && !serviceUnavailable) {
+    @if (nothingFound && !networkError && !otherTypeError) {
       <mat-option disabled i18n>Location not found</mat-option>
     }
 
     @if (
-      (networkError || serviceUnavailable || nothingFound) &&
+      (networkError || otherTypeError || nothingFound) &&
       inputElement.value?.length > 2
     ) {
       <mat-option [value]="inputElement.value" i18n

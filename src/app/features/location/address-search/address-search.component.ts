@@ -79,7 +79,7 @@ export class AddressSearchComponent implements OnInit {
   loading = false;
   nothingFound = false;
   networkError = false;
-  serviceUnavailable = false;
+  otherTypeError = false;
   @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
   private inputStream = new Subject<string>();
   private searchClickStream = new Subject<string>();
@@ -142,7 +142,7 @@ export class AddressSearchComponent implements OnInit {
     return this.location.lookup(searchTerm).pipe(
       tap((res) => {
         this.networkError = false;
-        this.serviceUnavailable = false;
+        this.otherTypeError = false;
         this.lastSearch = searchTerm;
         this.loading = false;
         this.nothingFound = res.length === 0;
@@ -153,8 +153,8 @@ export class AddressSearchComponent implements OnInit {
 
         if (error.status === 0) {
           this.networkError = true;
-        } else if (error.status >= 500 && error.status < 600) {
-          this.serviceUnavailable = true;
+        } else {
+          this.otherTypeError = true;
         }
 
         return of([]);
