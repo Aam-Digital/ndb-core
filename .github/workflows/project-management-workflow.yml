@@ -24,7 +24,7 @@ jobs:
       - name: add-issues-with-current-milestone-to-project
         # todo: not maintained anymore, replace this
         uses: docker://takanabe/github-actions-automate-projects:v0.0.1
-        if: github.event.action == 'milestoned' && github.issue.milestone.html_url == 'https://github.com/Aam-Digital/ndb-core/milestone/19'
+        if: github.event.action == 'milestoned' && github.event.issue.milestone.html_url == 'https://github.com/Aam-Digital/ndb-core/milestone/19'
         env:
           GITHUB_PROJECT_URL: https://github.com/Aam-Digital/ndb-core/projects/6
           GITHUB_PROJECT_COLUMN_NAME: To do

@@ -69,7 +69,12 @@ describe("DiscreteImportConfigComponent", () => {
 
     expect(component.form.getRawValue()).toEqual({
       male: genders.find((e) => e.id === "M"),
-      female: null,
+      // unmapped values will be imported as "invalid option" to not lose data:
+      female: {
+        id: "female",
+        isInvalidOption: true,
+        label: "[invalid option] female",
+      },
     });
   });
 

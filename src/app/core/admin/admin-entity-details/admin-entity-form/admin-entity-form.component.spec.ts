@@ -21,7 +21,7 @@ import { AdminModule } from "../../admin.module";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
-import { DefaultValueService } from "../../../default-values/default-value.service";
+import { DefaultValueService } from "../../../default-values/default-value-service/default-value.service";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;

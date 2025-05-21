@@ -50,7 +50,12 @@ describe("EditPrefilledValuesComponent", () => {
     component.prefilledValues.push(
       new FormBuilder().group({
         field: "name",
-        defaultValue: { mode: "static", value: "default name" },
+        defaultValue: {
+          mode: "static",
+          config: {
+            value: "Default name",
+          },
+        },
         hideFromForm: true,
       }),
     );

@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { ImportComponent } from "./import.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -63,10 +68,11 @@ describe("ImportComponent", () => {
     expect(navigateSpy).toHaveBeenCalledWith(["/import"], jasmine.anything());
   });
 
-  it("should update an empty column mapping upon loading rawData", () => {
+  it("should update an empty column mapping upon loading rawData", fakeAsync(() => {
     component.mappedColumnsCount = 5; // simulating previous count
 
     component.onDataLoaded(testDataRaw);
+    tick();
 
     expect(component.rawData).toEqual(testDataRaw.data);
     expect(component.importSettings.columnMapping).toEqual([
@@ -74,7 +80,7 @@ describe("ImportComponent", () => {
       { column: "y", propertyName: undefined },
     ] as ColumnMapping[]);
     expect(component.mappedColumnsCount).toBe(0);
-  });
+  }));
 
   function testApplyColumnMapping(
     appliedMapping: ColumnMapping[],
@@ -91,12 +97,13 @@ describe("ImportComponent", () => {
         createdEntities: [],
       }),
     );
+    tick();
 
     expect(component.importSettings.columnMapping).toEqual(expectedMapping);
     expect(component.mappedColumnsCount).toBe(expectedMappingCount);
   }
 
-  it("should apply historic column mapping", () => {
+  it("should apply historic column mapping", fakeAsync(() => {
     component.mappedColumnsCount = 5; // simulating previous count
     component.importSettings.columnMapping = [{ column: "x" }, { column: "y" }];
 
@@ -106,9 +113,9 @@ describe("ImportComponent", () => {
     ];
 
     testApplyColumnMapping(loadedMapping, loadedMapping, 2);
-  });
+  }));
 
-  it("should apply historic column mapping - overwriting existing mappings", () => {
+  it("should apply historic column mapping - overwriting existing mappings", fakeAsync(() => {
     component.importSettings.columnMapping = [
       { column: "x", propertyName: "projectNumber" },
       { column: "y" },
@@ -120,9 +127,9 @@ describe("ImportComponent", () => {
     ];
 
     testApplyColumnMapping(loadedMapping, loadedMapping, 2);
-  });
+  }));
 
-  it("should apply historic column mapping - keeping rawData columns not included in applied mapping but resetting them", () => {
+  it("should apply historic column mapping - keeping rawData columns not included in applied mapping but resetting them", fakeAsync(() => {
     component.importSettings.columnMapping = [
       { column: "x" },
       { column: "y", propertyName: "projectNumber" },
@@ -137,9 +144,9 @@ describe("ImportComponent", () => {
       [{ column: "x", propertyName: "name" }, { column: "y" }],
       1,
     );
-  });
+  }));
 
-  it("should apply historic column mapping - removing columns not part of current raw data", () => {
+  it("should apply historic column mapping - removing columns not part of current raw data", fakeAsync(() => {
     component.rawData = testDataRaw.data;
     component.importSettings.columnMapping = [{ column: "x" }, { column: "y" }];
 
@@ -154,5 +161,5 @@ describe("ImportComponent", () => {
       [{ column: "x", propertyName: "name" }, { column: "y" }],
       1,
     );
-  });
+  }));
 });

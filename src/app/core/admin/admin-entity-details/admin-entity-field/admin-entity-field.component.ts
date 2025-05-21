@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -40,7 +40,7 @@ import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
 import { MatCheckbox } from "@angular/material/checkbox";
-import { DefaultValueOptionsComponent } from "./default-value-options/default-value-options.component";
+import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 
 /**
@@ -69,11 +69,11 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
     ConfigureEntityFieldValidatorComponent,
     AnonymizeOptionsComponent,
     MatCheckbox,
-    DefaultValueOptionsComponent,
+    AdminDefaultValueComponent,
     EntityTypeSelectComponent,
   ],
 })
-export class AdminEntityFieldComponent {
+export class AdminEntityFieldComponent implements OnInit {
   fieldId: string;
   entityType: EntityConstructor;
 
@@ -98,7 +98,7 @@ export class AdminEntityFieldComponent {
     },
     private dialogRef: MatDialogRef<any>,
     private fb: FormBuilder,
-    @Inject(DefaultDatatype) allDataTypes: DefaultDatatype[],
+    @Inject(DefaultDatatype) private allDataTypes: DefaultDatatype[],
     private configurableEnumService: ConfigurableEnumService,
     private entityRegistry: EntityRegistry,
     private adminEntityService: AdminEntityService,
@@ -106,12 +106,15 @@ export class AdminEntityFieldComponent {
   ) {
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
+  }
+
+  ngOnInit() {
     this.entitySchemaField = {
       ...(this.entityType.schema.get(this.fieldId) ?? {}),
     };
 
     this.initSettings();
-    this.initAvailableDatatypes(allDataTypes);
+    this.initAvailableDatatypes(this.allDataTypes);
   }
 
   private initSettings() {
@@ -135,10 +138,10 @@ export class AdminEntityFieldComponent {
       defaultValue: [this.entitySchemaField.defaultValue],
       searchable: [this.entitySchemaField.searchable],
       anonymize: [this.entitySchemaField.anonymize],
-      //viewComponent: [],
-      //editComponent: [],
-      //showInDetailsView: [],
-      //generateIndex: [],
+      viewComponent: [this.entitySchemaField.viewComponent],
+      editComponent: [this.entitySchemaField.editComponent],
+      showInDetailsView: [this.entitySchemaField.showInDetailsView],
+      generateIndex: [this.entitySchemaField.generateIndex],
       validators: [this.entitySchemaField.validators],
     });
     this.form = this.fb.group({
@@ -209,13 +212,16 @@ export class AdminEntityFieldComponent {
   createNewAdditionalOptionAsync = async (input) =>
     this.createNewAdditionalOption(input);
 
-  private updateDataTypeAdditional(dataType: string) {
+  private updateDataTypeAdditional(
+    dataType: string,
+    newAdditional: string = this.entitySchemaField.additional,
+  ) {
     this.resetAdditional();
 
     if (dataType === ConfigurableEnumDatatype.dataType) {
-      this.initAdditionalForEnum();
+      this.initAdditionalForEnum(newAdditional);
     } else if (dataType === EntityDatatype.dataType) {
-      this.initAdditionalForEntityRef();
+      this.initAdditionalForEntityRef(newAdditional);
     }
 
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
@@ -223,7 +229,7 @@ export class AdminEntityFieldComponent {
     // TODO: this mapping of having an "additional" schema should probably become part of Datatype classes
   }
 
-  private initAdditionalForEnum() {
+  private initAdditionalForEnum(newAdditional?: string) {
     this.typeAdditionalOptions = this.configurableEnumService
       .listEnums()
       .map((x) => ({
@@ -237,8 +243,8 @@ export class AdminEntityFieldComponent {
       label: text,
     });
 
-    if (this.entitySchemaField.additional) {
-      this.additionalForm.setValue(this.entitySchemaField.additional);
+    if (newAdditional) {
+      this.additionalForm.setValue(newAdditional);
     } else if (this.schemaFieldsForm.get("label").value) {
       // when switching to enum datatype in the form, if unset generate a suggested enum-id immediately
       const newOption = this.createNewAdditionalOption(
@@ -249,18 +255,14 @@ export class AdminEntityFieldComponent {
     }
   }
 
-  private initAdditionalForEntityRef() {
+  private initAdditionalForEntityRef(newAdditional?: string) {
     this.typeAdditionalOptions = this.entityRegistry
       .getEntityTypes(true)
       .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
 
     this.additionalForm.addValidators(Validators.required);
-    if (
-      this.typeAdditionalOptions.some(
-        (x) => x.value === this.entitySchemaField.additional,
-      )
-    ) {
-      this.additionalForm.setValue(this.entitySchemaField.additional);
+    if (this.typeAdditionalOptions.some((x) => x.value === newAdditional)) {
+      this.additionalForm.setValue(newAdditional);
     }
   }
 
@@ -289,16 +291,12 @@ export class AdminEntityFieldComponent {
   }
 
   private getUpdatedSchemaField(formValues): EntitySchemaField {
+    const updatedEntitySchema = {};
     for (const key of Object.keys(formValues)) {
-      if (formValues[key] === null) {
-        delete formValues[key];
+      if (formValues[key] !== null) {
+        updatedEntitySchema[key] = formValues[key];
       }
     }
-    const updatedEntitySchema = Object.assign(
-      {},
-      this.entitySchemaField, // TODO: remove this merge once all schema fields are in the form (then only form values should apply)
-      formValues,
-    );
     return updatedEntitySchema;
   }
 

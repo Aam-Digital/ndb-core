@@ -2,7 +2,7 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { Entity } from "../model/entity";
 import { Directive, Input, OnChanges, OnInit } from "@angular/core";
-import { DefaultValueConfig } from "../schema/default-value-config";
+import { DefaultValueConfig } from "../../default-values/default-value-config";
 import { EntityForm } from "app/core/common-components/entity-form/entity-form.service";
 
 /**
@@ -40,6 +40,11 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
    * Describes the defaultValue behaviour for this field
    */
   @Input() defaultValueConfig: DefaultValueConfig | undefined;
+
+  /**
+   * Whether the field should be displayed or not.
+   */
+  @Input() hideLabel?: boolean;
 
   /**
    * A label for this component.

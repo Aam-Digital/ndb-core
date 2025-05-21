@@ -1,7 +1,10 @@
 <mat-form-field>
-  <mat-label>
-    <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
-  </mat-label>
+  @if (!hideLabel) {
+    <mat-label>
+      <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
+    </mat-label>
+  }
+
   <div class="autocomplete-container">
     <app-basic-autocomplete
       #autocomplete

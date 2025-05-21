@@ -12,7 +12,6 @@ import {
   DoCheck,
   ElementRef,
   EventEmitter,
-  HostBinding,
   Input,
   OnDestroy,
   Optional,
@@ -26,6 +25,9 @@ import { ErrorStateMatcher } from "@angular/material/core";
 /**
  * Extend this base class to implement custom input controls to be used as form fields.
  *
+ * To use in mat-form-field, add a provider to your component:
+ *   `providers: [{ provide: MatFormFieldControl, useExisting: MyCustomComponent }]`
+ *
  * also refer to available public resources on Custom Form Controls:
  * - https://material.angular.io/guide/creating-a-custom-form-field-control
  * - https://www.youtube.com/watch?v=CD_t3m2WMM8
@@ -35,7 +37,6 @@ export abstract class CustomFormControlDirective<T>
   implements ControlValueAccessor, MatFormFieldControl<T>, OnDestroy, DoCheck
 {
   static nextId = 0;
-  @HostBinding()
   id = `custom-form-control-${CustomFormControlDirective.nextId++}`;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("aria-describedby") userAriaDescribedBy: string;
@@ -142,6 +143,7 @@ export abstract class CustomFormControlDirective<T>
 
   onContainerClick(event: MouseEvent) {}
 
+  /** @deprecated the this.value setter seems to already do the same? */
   writeValue(val: T): void {
     this.value = val;
     this.valueChange.emit(val);

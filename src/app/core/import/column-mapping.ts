@@ -14,4 +14,9 @@ export interface ColumnMapping {
    * e.g. date format to be parsed or key-value transformation map
    */
   additional?: any;
+
+  /**
+   * This is used to track if the coloumns are manually updated or not.
+   */
+  manuallyUpdated?: boolean;
 }
