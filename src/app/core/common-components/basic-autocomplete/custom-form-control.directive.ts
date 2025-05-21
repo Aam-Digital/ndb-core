@@ -12,7 +12,6 @@ import {
   DoCheck,
   ElementRef,
   EventEmitter,
-  HostBinding,
   Input,
   OnDestroy,
   Optional,
@@ -38,7 +37,6 @@ export abstract class CustomFormControlDirective<T>
   implements ControlValueAccessor, MatFormFieldControl<T>, OnDestroy, DoCheck
 {
   static nextId = 0;
-  @HostBinding()
   id = `custom-form-control-${CustomFormControlDirective.nextId++}`;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("aria-describedby") userAriaDescribedBy: string;

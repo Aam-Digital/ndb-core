@@ -42,6 +42,11 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
   @Input() defaultValueConfig: DefaultValueConfig | undefined;
 
   /**
+   * Whether the field should be displayed or not.
+   */
+  @Input() hideLabel?: boolean;
+
+  /**
    * A label for this component.
    */
   label: string;

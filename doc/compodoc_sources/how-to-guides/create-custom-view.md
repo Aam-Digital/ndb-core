@@ -9,7 +9,7 @@ The following architecture allows you to implement components that only have `@I
 and do not access either Route or Dialog data directly.
 Instead, the platform always uses `RoutedViewComponent` or `DialogViewComponent` to parse such context and pass it into your component as simple Angular @Inputs.
 
-![](../../images/routed-views.png)
+![](../../images/routed-views.drawio.png)
 
 If you implement a special view to display a single entities' details, you should also extend `AbstractEntityDetailsComponent` with your component.
 This takes care of loading the entity from the database, in case it is passed in as an id from the URL.
@@ -27,6 +27,7 @@ This takes care of loading the entity from the database, in case it is passed in
 Example template for a custom view component:
 
 ```html
+
 <app-view-title>
   <!-- the title is specially fixed and receives a back button or dialog close -->
   My Entity {{ entity.name }}
@@ -46,7 +47,9 @@ An example config for the above:
 ```json
 {
   "component": "MyView",
-  "config": { "showDescription": true }
+  "config": {
+    "showDescription": true
+  }
 }
 ```
 
