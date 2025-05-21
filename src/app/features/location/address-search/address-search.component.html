@@ -22,16 +22,30 @@
     @if (loading) {
       <mat-option disabled i18n>Loading results...</mat-option>
     }
-    @if (nothingFound) {
-      <mat-option disabled i18n>Location not found</mat-option>
 
-      @if (inputElement.value?.length > 2) {
-        <mat-option [value]="inputElement.value" i18n
-          >Set address without map location as "{{
-            inputElement.value
-          }}"</mat-option
-        >
-      }
+    @if (networkError) {
+      <mat-option disabled i18n>
+        Network unavailable right now - Enter address manually
+      </mat-option>
+    }
+    @if (serviceUnavailable) {
+      <mat-option disabled i18n>
+        Address service unavailable - Enter address manually
+      </mat-option>
+    }
+    @if (nothingFound && !networkError && !serviceUnavailable) {
+      <mat-option disabled i18n>Location not found</mat-option>
+    }
+
+    @if (
+      (networkError || serviceUnavailable || nothingFound) &&
+      inputElement.value?.length > 2
+    ) {
+      <mat-option [value]="inputElement.value" i18n
+        >Set address without map location as "{{
+          inputElement.value
+        }}"</mat-option
+      >
     }
 
     @for (option of filteredOptions | async; track option) {

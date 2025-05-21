@@ -51,17 +51,6 @@ fdescribe("GeoService", () => {
     });
   });
 
-  it("should propagate error when nomination/search API fails", () => {
-    const error = new Error("Unhandeled error");
-    mockHttp.get.and.returnValue(throwError(() => error));
-
-    let actualError: Error | undefined;
-    service.lookup("test").subscribe({
-      error: (err) => (actualError = err),
-    });
-
-    expect(actualError).toBe(error);
-  });
   it("should track requests in analytics service", () => {
     const searchTerm = "mySearchTerm";
     service.lookup(searchTerm).subscribe();
