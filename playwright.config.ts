@@ -5,9 +5,18 @@ import { defineConfig } from "@playwright/test";
  */
 export default defineConfig({
   testDir: "./e2e/tests",
-  fullyParallel: true,
 
-  reporter: process.env.CI ? [["github"], ["list"]] : [["list"]],
+  reporter: [
+    ["list"],
+    [
+      "@argos-ci/playwright/reporter",
+      {
+        // Upload in a separate step in CI
+        uploadToArgos: false,
+      },
+    ],
+    [process.env.CI ? "github" : "null"],
+  ],
   retries: process.env.CI ? 2 : undefined,
   workers: process.env.CI ? 1 : undefined,
   forbidOnly: process.env.CI ? true : undefined,
@@ -16,6 +25,7 @@ export default defineConfig({
     baseURL: "http://localhost:4200",
     trace: "on",
     actionTimeout: 5_000,
+    browserName: "chromium",
   },
 
   timeout: 60_000,
