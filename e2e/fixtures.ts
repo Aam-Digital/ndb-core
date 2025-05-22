@@ -1,5 +1,12 @@
-import { test as base } from "@playwright/test";
+// eslint-disable-next-line no-restricted-imports
+import { test as base, Page } from "@playwright/test";
+// eslint-disable-next-line no-restricted-imports
+import {
+  argosScreenshot as argosScreenshotBase,
+  ArgosScreenshotOptions,
+} from "@argos-ci/playwright";
 
+// eslint-disable-next-line no-restricted-imports
 export { expect } from "@playwright/test";
 
 /** The mocked "now" date to which e2e tests are fixed. */
@@ -23,3 +30,16 @@ export const test = base.extend<{ forEachTest: void }>({
     { auto: true },
   ],
 });
+
+export async function argosScreenshot(
+  page: Page,
+  name: string,
+  options?: ArgosScreenshotOptions,
+): Promise<void> {
+  if (process.env.CI || process.env.SCREENSHOT) {
+    return argosScreenshotBase(page, name, {
+      fullPage: true,
+      ...(options || {}),
+    });
+  }
+}
