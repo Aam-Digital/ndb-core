@@ -25,12 +25,12 @@
 
     @if (networkError) {
       <mat-option disabled i18n>
-        Network unavailable right now - Enter address manually
+        Network unavailable right now. Enter address manually
       </mat-option>
     }
     @if (otherTypeError) {
       <mat-option disabled i18n>
-        Address service unavailable - Enter address manually
+        Service temporarily unavailable. Enter address manually
       </mat-option>
     }
     @if (nothingFound && !networkError && !otherTypeError) {
