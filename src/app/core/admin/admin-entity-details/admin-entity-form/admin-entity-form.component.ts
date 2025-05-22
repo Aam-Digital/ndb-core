@@ -170,14 +170,11 @@ export class AdminEntityFormComponent implements OnChanges {
    * @private
    */
   private initAvailableFields() {
-    const usedFields = this.getUsedFields(this.config);
+    const usedFields = this.getUsedFields(this.config).map((x) =>
+      toFormFieldConfig(x),
+    );
     const unusedFields = Array.from(this.entityType.schema.entries())
-      .filter(
-        ([key]) =>
-          !usedFields.some(
-            (x) => x === key || (x as FormFieldConfig).id === key,
-          ),
-      )
+      .filter(([key]) => !usedFields.some((x) => x.id === key))
       .filter(([key, value]) => value.label) // no technical, internal fields
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
