@@ -1,4 +1,5 @@
 name: pull-request-update-or-push-tag
+# central CI flow to test and build the app
 
 on:
   pull_request:
@@ -141,7 +142,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  upload-sourcemaps:
+  sentry-upload-sourcemaps:
     runs-on: ubuntu-latest
     needs:
       - build-webapp
@@ -156,12 +157,12 @@ jobs:
           name: webapp-files
           path: dist
 
-      - name: Install Sentry CLI
-        run: npm install -g @sentry/cli
+      - name: Upload Sourcemaps
+        # skipped for pre-releases (e.g. .master, pr-*)
+        if: ${{ !contains(env.BUILD_NAME, 'master') && !contains(env.BUILD_NAME, 'pr-') }}
+        run: npx sentry-cli sourcemaps upload --release="ndb-core@${{ env.BUILD_NAME }}" ./dist
 
-      - run: sentry-cli sourcemaps upload --release="ndb-core@${{ env.BUILD_NAME }}" ./dist
-
-  merge:
+  docker-merge:
     runs-on: ubuntu-latest
     needs:
       - build-image
@@ -199,12 +200,12 @@ jobs:
         run: |
           docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
 
-  release:
+  sentry-release:
     runs-on: ubuntu-latest
     needs:
-      - merge
+      - docker-merge
       - build-webapp
-      - upload-sourcemaps
+      - sentry-upload-sourcemaps
       - qa
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_TOKEN }}
@@ -215,19 +216,16 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Sentry CLI
-        run: |
-          npm install -g @sentry/cli
-
       - name: Create Release
-        if: ${{ github.event.ref != '' }} # only send "official" releases to Sentry
+        # skipped for pre-releases (e.g. .master, pr-*)
+        if: ${{ !contains(env.BUILD_NAME, 'master') && !contains(env.BUILD_NAME, 'pr-') }}
         run: |
-          sentry-cli releases new "ndb-core@${{ env.BUILD_NAME }}"
+          npx sentry-cli releases new "ndb-core@${{ env.BUILD_NAME }}"
 
   deploy:
     runs-on: ubuntu-latest
     needs:
-      - release
+      - docker-merge
     steps:
       - name: Deploy updated image
         if: ${{ github.event.ref == '' }}

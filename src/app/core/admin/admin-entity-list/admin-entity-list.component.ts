@@ -21,6 +21,7 @@ import { MatSelect } from "@angular/material/select";
 import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
+import { Logging } from "../../logging/logging.service";
 
 @Component({
   selector: "app-admin-entity-list",
@@ -94,6 +95,13 @@ export class AdminEntityListComponent implements OnChanges {
   }
 
   updateFilters(filters: string[]) {
+    if (!Array.isArray(filters)) {
+      Logging.warn(
+        "AdminEntityListComponent: updateFilters: filters is not an array",
+      );
+      filters = [];
+    }
+
     this.filters = [...filters];
     this.config.filters = this.filters.map(
       (f) =>
