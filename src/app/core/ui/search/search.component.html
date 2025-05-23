@@ -28,7 +28,7 @@
     >
       <fa-icon icon="search"></fa-icon>
     </button>
-    <mat-menu class="mobile-search-wrapper" #searchMenu>
+    <mat-menu class="mobile-search-wrapper" #searchMenu mat-menu-autosize>
       <div class="flex-column" (click)="$event.stopPropagation()">
         <mat-form-field class="searchbar">
           <input
