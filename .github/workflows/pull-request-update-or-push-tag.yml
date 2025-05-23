@@ -17,7 +17,7 @@ env:
   # Either the tag name for tag builds or 'pr-XXX' for pull request builds,
   # where XXX is the number of the PR.
   # Doubles as release name and app version
-  BUILD_NAME: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || github.event.ref_name }}
+  BUILD_NAME: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || github.ref_name }}
 
 jobs:
   qa:
