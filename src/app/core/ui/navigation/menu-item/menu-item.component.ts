@@ -22,6 +22,7 @@ import { MatMenuModule } from "@angular/material/menu";
     NgForOf,
     MatMenuModule,
   ],
+  standalone: true,
 })
 export class MenuItemComponent {
   /**
@@ -36,11 +37,9 @@ export class MenuItemComponent {
   @Input() activeLink: string;
 
   isExpanded: boolean = false;
-
   toggleSubMenu(): void {
     this.isExpanded = !this.isExpanded;
   }
-
   hasSubMenu(item: MenuItem): boolean {
     return !!item.subMenu && item.subMenu.length > 0;
   }
