@@ -170,18 +170,16 @@ export class KeycloakAdminService extends UserAdminService {
           map((roles) => ({ ...account, roles })),
         ),
       ),
-      catchError((originalError) =>
-        throwError(() => {
-          if (
-            originalError instanceof UserAdminApiError &&
-            originalError.status === 404
-          ) {
-            // user not found is a valid use case and not throwing an error
-            return of(null);
-          }
-          return this.transformStandardError(originalError);
-        }),
-      ),
+      catchError((originalError) => {
+        if (
+          originalError instanceof UserAdminApiError &&
+          originalError.status === 404
+        ) {
+          // user not found is a valid use case and not throwing an error
+          return of(null);
+        }
+        return throwError(() => this.transformStandardError(originalError));
+      }),
     );
   }
 
