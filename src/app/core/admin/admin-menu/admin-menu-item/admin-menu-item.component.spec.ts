@@ -1,16 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AdminMenuItemComponent } from './admin-menu-item.component';
-import { ConfigService } from 'app/core/config/config.service';
-import { ViewConfig } from 'app/core/config/dynamic-routing/view-config.interface';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { NEVER } from 'rxjs';
-import { MenuItem } from 'app/core/ui/navigation/menu-item';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { FontAwesomeTestingModule } from '@fortawesome/angular-fontawesome/testing';
-import { EntityRegistry } from 'app/core/entity/database-entity.decorator';
+import { AdminMenuItemComponent } from "./admin-menu-item.component";
+import { ConfigService } from "app/core/config/config.service";
+import { ViewConfig } from "app/core/config/dynamic-routing/view-config.interface";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { NEVER } from "rxjs";
+import { MenuItem } from "app/core/ui/navigation/menu-item";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 
-describe('AdminMenuItemComponent', () => {
+describe("AdminMenuItemComponent", () => {
   let component: AdminMenuItemComponent;
   let fixture: ComponentFixture<AdminMenuItemComponent>;
 
@@ -22,28 +22,31 @@ describe('AdminMenuItemComponent', () => {
       label: "Test",
       icon: "user",
       link: "",
-    }
+    };
 
     mockConfigService = jasmine.createSpyObj(["getAllConfigs"]);
     mockConfigService.getAllConfigs.and.returnValue([]);
 
     await TestBed.configureTestingModule({
-      imports: [AdminMenuItemComponent, NoopAnimationsModule, FontAwesomeTestingModule],
+      imports: [
+        AdminMenuItemComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: { item: menuItem } },
         { provide: MatDialogRef, useValue: { afterClosed: () => NEVER } },
         { provide: ConfigService, useValue: mockConfigService },
         EntityRegistry,
       ],
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AdminMenuItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 
@@ -95,5 +98,5 @@ describe('AdminMenuItemComponent', () => {
       { value: "/school", label: "School" },
       { value: "/", label: "Dashboard" }, // Fallback label from component name
     ]);
-  });  
+  });
 });

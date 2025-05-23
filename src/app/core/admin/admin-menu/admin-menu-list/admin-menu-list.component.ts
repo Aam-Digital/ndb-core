@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
@@ -16,8 +22,7 @@ import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MenuService } from "app/core/ui/navigation/menu.service";
 import { firstValueFrom } from "rxjs";
-import { AdminMenuItemComponent} from "../admin-menu-item/admin-menu-item.component";
-
+import { AdminMenuItemComponent } from "../admin-menu-item/admin-menu-item.component";
 
 /** UI to edit Menu Items (display content only and not interacting with the database) */
 @Component({
@@ -34,7 +39,6 @@ import { AdminMenuItemComponent} from "../admin-menu-item/admin-menu-item.compon
     MatInputModule,
     FaIconComponent,
     MatButton,
-   
   ],
   templateUrl: "./admin-menu-list.component.html",
   styleUrls: [
@@ -53,7 +57,7 @@ export class AdminMenuListComponent {
       return {
         originalItem: { ...item },
         itemToDisplay: displayItem,
-      }
+      };
     });
   }
 
@@ -67,7 +71,10 @@ export class AdminMenuListComponent {
   /**
    * Menu items parsed to standard MenuItem format for the preview UI.
    */
-  menuItemsToDisplay: { originalItem: (MenuItem | EntityMenuItem), itemToDisplay: MenuItem }[] = [];
+  menuItemsToDisplay: {
+    originalItem: MenuItem | EntityMenuItem;
+    itemToDisplay: MenuItem;
+  }[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -116,7 +123,11 @@ export class AdminMenuListComponent {
 
   // Handle drag-and-drop sorting
   drop(event: CdkDragDrop<any[]>): void {
-    moveItemInArray(this.menuItemsToDisplay, event.previousIndex, event.currentIndex);
+    moveItemInArray(
+      this.menuItemsToDisplay,
+      event.previousIndex,
+      event.currentIndex,
+    );
     this.emitChange();
   }
 
@@ -126,7 +137,8 @@ export class AdminMenuListComponent {
   }
 
   private emitChange() {
-    this.menuItemsChange.emit(this.menuItemsToDisplay.map(x => x.originalItem));
+    this.menuItemsChange.emit(
+      this.menuItemsToDisplay.map((x) => x.originalItem),
+    );
   }
 }
-

@@ -56,7 +56,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
   /**
    * Return all config items of the given "type"
    * (determined by the given prefix of their id).
-   * 
+   *
    * @param prefix The prefix of config items to return (e.g. "view:" or "entity:")
    */
   public getAllConfigs<T>(prefix: string): T[] {

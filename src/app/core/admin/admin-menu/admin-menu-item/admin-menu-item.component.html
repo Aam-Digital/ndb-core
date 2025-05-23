@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-  @if(isNew) {
+  @if (isNew) {
     <ng-container i18n>Add New Menu Item</ng-container>
   } @else {
     <ng-container i18n>Edit Menu Item</ng-container>
@@ -9,23 +9,36 @@
 <mat-dialog-content class="menu-item-form">
   <form class="form-grid">
     <p i18n>
-      Optionally select a record type to automatically use its name, icon and list view (as link) for this menu item.
-      Otherwise, you can select a custom name and icon below.
+      Optionally select a record type to automatically use its name, icon and
+      list view (as link) for this menu item. Otherwise, you can select a custom
+      name and icon below.
     </p>
 
     <!-- EntityType -->
     <mat-form-field appearance="fill" class="margin-bottom-large">
       <mat-label i18n>Entity Type</mat-label>
-      <app-entity-type-select [value]="item?.['entityType']" (valueChange)="onEntityTypeSelected($event)" [multi]="false"></app-entity-type-select>
+      <app-entity-type-select
+        [value]="item?.['entityType']"
+        (valueChange)="onEntityTypeSelected($event)"
+        [multi]="false"
+      ></app-entity-type-select>
     </mat-form-field>
 
-    @if(item?.['entityType']) {
-      <p i18n>To manually define a label and link, clear the entity type field above.</p>
+    @if (item?.["entityType"]) {
+      <p i18n>
+        To manually define a label and link, clear the entity type field above.
+      </p>
     } @else {
       <!-- Label -->
       <mat-form-field appearance="fill">
         <mat-label i18n>Label</mat-label>
-        <input matInput [(ngModel)]="item.label" name="label" placeholder="Enter label" i18n-placeholder/>
+        <input
+          matInput
+          [(ngModel)]="item.label"
+          name="label"
+          placeholder="Enter label"
+          i18n-placeholder
+        />
       </mat-form-field>
 
       <!-- Icon -->
@@ -35,13 +48,12 @@
       <mat-form-field appearance="fill">
         <mat-label i18n>Link Target</mat-label>
         <mat-select [(ngModel)]="item.link" name="link">
-          @for(option of availableRoutes; track option.value) {
+          @for (option of availableRoutes; track option.value) {
             <mat-option [value]="option.value">{{ option.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
     }
-
   </form>
 </mat-dialog-content>
 
@@ -49,4 +61,3 @@
   <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
   <button mat-button (click)="cancel()" cdkFocusInitial i18n>Cancel</button>
 </mat-dialog-actions>
-

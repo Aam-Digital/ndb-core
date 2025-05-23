@@ -1,5 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AdminIconComponent } from './admin-icon-input.component';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { AdminIconComponent } from "./admin-icon-input.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AdminIconInputComponent", () => {

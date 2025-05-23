@@ -1,25 +1,27 @@
-@if(showAddNew) {
+@if (showAddNew) {
   <div class="top-action-bar">
     <div class="right-button">
-      <button mat-stroked-button color="accent" (click)="addNewMenuItem()">  
-        <fa-icon aria-label="add" icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+      <button mat-stroked-button color="accent" (click)="addNewMenuItem()">
+        <fa-icon
+          aria-label="add"
+          icon="plus-circle"
+          class="standard-icon-with-text"
+        ></fa-icon>
         <span i18n>Add New</span>
       </button>
     </div>
   </div>
 }
 
-<mat-nav-list 
-  cdkDropList 
+<mat-nav-list
+  cdkDropList
   cdkDropListOrientation="vertical"
   cdkDropListLockAxis="y"
   (cdkDropListDropped)="drop($event)"
   class="drop-list flex-column gap-regular limit-width"
 >
   <ng-container *ngFor="let item of menuItemsToDisplay; let i = index">
-    
     <div class="flex-row menu-item-container drop-item" cdkDrag>
-      
       <!-- Drag handle -->
       <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
 
@@ -40,16 +42,15 @@
       ></fa-icon>
     </div>
 
-   
-
     <!-- Render submenus if they exist and are expanded -->
-    @if(item.originalItem.subMenu) {
+    @if (item.originalItem.subMenu) {
       <div class="submenu">
-        <app-admin-menu-list [menuItems]="item.originalItem.subMenu" (menuItemsChange)="submenuChanged(item.originalItem, $event)" [showAddNew]="false"></app-admin-menu-list>
+        <app-admin-menu-list
+          [menuItems]="item.originalItem.subMenu"
+          (menuItemsChange)="submenuChanged(item.originalItem, $event)"
+          [showAddNew]="false"
+        ></app-admin-menu-list>
       </div>
     }
-
-
   </ng-container>
 </mat-nav-list>
-

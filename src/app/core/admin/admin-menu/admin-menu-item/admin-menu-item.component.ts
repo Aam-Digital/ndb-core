@@ -1,10 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, Inject, OnInit } from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { CommonModule } from "@angular/common";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { MatButtonModule } from "@angular/material/button";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
@@ -86,5 +86,3 @@ export class AdminMenuItemComponent implements OnInit {
     this.dialogRef.close();
   }
 }
-
-
