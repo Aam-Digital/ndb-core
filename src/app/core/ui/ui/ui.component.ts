@@ -20,7 +20,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { NgIf } from "@angular/common";
+import { NgClass, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { RouterLink, RouterOutlet } from "@angular/router";
@@ -69,6 +69,7 @@ import { NotificationComponent } from "../../../features/notification/notificati
     DisplayImgComponent,
     SetupWizardButtonComponent,
     NotificationComponent,
+    NgClass,
   ],
 })
 export class UiComponent {
@@ -78,6 +79,7 @@ export class UiComponent {
   @ViewChild("sideNav") sideNav;
   /** latest version of the site settings*/
   siteSettings = new SiteSettings();
+  isDeskotp = false;
 
   constructor(
     private screenWidthObserver: ScreenWidthObserver,
@@ -89,7 +91,10 @@ export class UiComponent {
       .platform()
       .pipe(untilDestroyed(this))
       .subscribe(
-        (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over"),
+        (isDesktop) => (
+          (this.sideNavMode = isDesktop ? "side" : "over"),
+          (this.isDeskotp = isDesktop)
+        ),
       );
     this.siteSettingsService.siteSettings.subscribe(
       (s) => (this.siteSettings = s),

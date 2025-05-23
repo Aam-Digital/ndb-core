@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
@@ -13,10 +14,19 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
+import {
+  AsyncPipe,
+  NgForOf,
+  NgIf,
+  NgSwitch,
+  NgSwitchCase,
+} from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SearchService } from "./search.service";
+import { ScreenWidthObserver } from "app/utils/media/screen-size-observer.service";
+import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
+import { MatButtonModule } from "@angular/material/button";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -41,6 +51,8 @@ import { SearchService } from "./search.service";
     NgForOf,
     EntityBlockComponent,
     AsyncPipe,
+    MatMenuModule,
+    MatButtonModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,15 +69,24 @@ export class SearchComponent {
 
   state = this.NOTHING_ENTERED;
 
+  mobile = false;
+
   formControl = new FormControl("");
 
   results: Observable<Entity[]>;
+  @ViewChild("searchMenuTrigger") searchMenuTrigger: MatMenuTrigger;
 
   constructor(
     private router: Router,
     private userRoleGuard: UserRoleGuard,
     private searchService: SearchService,
+    screenWithObserver: ScreenWidthObserver,
   ) {
+    screenWithObserver
+      .platform()
+      .pipe(untilDestroyed(this))
+      .subscribe((isDesktop) => (this.mobile = !isDesktop));
+
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
       tap((next) => (this.state = this.updateState(next))),
@@ -73,7 +94,6 @@ export class SearchComponent {
       untilDestroyed(this),
     );
   }
-
   private updateState(next: any): number {
     if (typeof next !== "string") {
       return this.ILLEGAL_INPUT;
@@ -105,6 +125,10 @@ export class SearchComponent {
       optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
+    // Close mobile menu if applicable
+    if (this.mobile && this.searchMenuTrigger) {
+      this.searchMenuTrigger.closeMenu();
+    }
   }
 
   /**
