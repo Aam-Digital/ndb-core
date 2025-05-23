@@ -154,8 +154,7 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
+              "**"
             ]
           }
         }
@@ -179,7 +178,8 @@
   },
   "cli": {
     "cache": {
-      "enabled": true
+      "enabled": true,
+      "environment": "all"
     },
     "schematicCollections": [
       "@angular-eslint/schematics"

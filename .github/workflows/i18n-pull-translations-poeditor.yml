@@ -29,10 +29,10 @@ jobs:
           # Check if branch exists on remote
           if git ls-remote --exit-code origin $branch_name; then
             echo "Branch $branch_name already exists. Fetching it..."
-            git fetch origin $branch_name:$branch_name
+            git fetch origin "$branch_name:$branch_name"
 
-            git checkout $branch_name
-            git pull origin $branch_name
+            git checkout "$branch_name"
+            git pull origin "$branch_name"
           else
             echo "Creating new branch $branch_name..."
             git checkout -b $branch_name
@@ -50,12 +50,12 @@ jobs:
           -F "language=$lang" \
           -F "fallback_language=en" \
           -F "type=xlf")
-          status=$(echo $response | jq -r '.response.status')
+          status=$(echo "$response" | jq -r '.response.status')
           if [ "$status" == "success" ]; then
-          url=$(echo $response | jq -r '.result.url')
+          url=$(echo "$response" | jq -r '.result.url')
           if [ -n "$url" ]; then
           echo "Downloading translations for $lang from $url"
-          curl -s -o src/assets/locale/messages.$lang.xlf $url
+          curl -s -o "src/assets/locale/messages.$lang.xlf" "$url"
           else
           echo "No URL found for downloading translations for $lang"
           exit 1
@@ -76,7 +76,7 @@ jobs:
           git push origin HEAD
 
       - name: Create Pull Request
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const { repo, owner } = context.repo;

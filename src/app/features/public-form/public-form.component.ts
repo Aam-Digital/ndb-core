@@ -92,7 +92,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private async loadFormConfig() {
     const id = this.route.snapshot.paramMap.get("id");
 
-    const publicForms = await this.entityMapper.loadType(PublicFormConfig);
+    const publicForms = (await this.entityMapper.loadType(PublicFormConfig))
+      .map((formConfig) => this.configService.applyMigrations(formConfig))
+      .map((formConfig) => migratePublicFormConfig(formConfig));
 
     this.formConfig = publicForms.find(
       (form: PublicFormConfig) => form.route === id || form.getId(true) === id,
@@ -109,7 +111,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.error = "no_permissions";
       return;
     }
-    this.formConfig = migratePublicFormConfig(this.formConfig);
     this.fieldGroups = this.formConfig.columns;
     this.handlePrefilledFields();
 

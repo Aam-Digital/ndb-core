@@ -68,7 +68,9 @@
           [notification]="notification"
           (deleteClick)="deleteNotification(notification)"
           (readStatusChange)="updateReadStatus([notification], $event)"
-          (notificationClick)="notificationClicked(notification)"
+          (notificationClick)="
+            notificationClicked(notification, notificationListTrigger, $event)
+          "
         ></app-notification-item>
       } @empty {
         <div class="flex-column no-notification-message">
@@ -92,8 +94,14 @@
     (click)="closeOnlySubmenu(settingsMenuTrigger, $event)"
   >
     <button mat-menu-item (click)="markAllRead()">
-      <fa-icon icon="check"></fa-icon>
-      <span class="menu-option" i18n>Mark all as read</span>
+      <fa-icon icon="check" class="standard-icon-with-text"></fa-icon>
+      <span
+        matTooltip="Mark all as read"
+        i18n-matTooltip="Tooltip for notification settings button"
+        matTooltipPosition="above"
+        i18n
+        >Mark all as read</span
+      >
     </button>
 
     <button
@@ -102,8 +110,14 @@
       [queryParams]="{ tabIndex: 1 }"
       (click)="closeOnlySubmenu(notificationListTrigger, $event)"
     >
-      <fa-icon icon="gear"></fa-icon>
-      <span class="menu-option" i18n>Notification settings</span>
+      <fa-icon icon="gear" class="standard-icon-with-text"></fa-icon>
+      <span
+        matTooltip="Notification settings"
+        i18n-matTooltip="Tooltip for notification settings button"
+        matTooltipPosition="above"
+        i18n
+        >Notification settings</span
+      >
     </button>
   </div>
 </mat-menu>

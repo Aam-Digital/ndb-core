@@ -19,13 +19,21 @@ import {
 } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { AsyncPipe } from "@angular/common";
-import { merge, Subject } from "rxjs";
+import { merge, of, Subject } from "rxjs";
 import { GeoResult, GeoService } from "../geo.service";
-import { concatMap, debounceTime, filter, map, tap } from "rxjs/operators";
+import {
+  catchError,
+  concatMap,
+  debounceTime,
+  filter,
+  map,
+  tap,
+} from "rxjs/operators";
 import { Logging } from "../../../core/logging/logging.service";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";
+import { HttpErrorResponse } from "@angular/common/http";
 
 /**
  * A search box integrated with OpenStreetMaps lookup of the entered address,
@@ -70,7 +78,8 @@ export class AddressSearchComponent implements OnInit {
   filteredOptions = new Subject<GeoResult[]>();
   loading = false;
   nothingFound = false;
-
+  networkError = false;
+  otherTypeError = false;
   @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
   private inputStream = new Subject<string>();
   private searchClickStream = new Subject<string>();
@@ -132,9 +141,24 @@ export class AddressSearchComponent implements OnInit {
   private getGeoLookupResult(searchTerm: string) {
     return this.location.lookup(searchTerm).pipe(
       tap((res) => {
+        this.networkError = false;
+        this.otherTypeError = false;
         this.lastSearch = searchTerm;
         this.loading = false;
         this.nothingFound = res.length === 0;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        this.loading = false;
+        this.nothingFound = true;
+
+        if (error.status === 0) {
+          this.networkError = true;
+        } else {
+          Logging.warn("Address Lookup API error", error);
+          this.otherTypeError = true;
+        }
+
+        return of([]);
       }),
     );
   }

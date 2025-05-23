@@ -97,6 +97,7 @@ describe("TemplateTooltipDirective", () => {
     </div>
     <ng-template #tooltip><h2>Custom Tooltip</h2></ng-template>
   `,
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 class MockComponent {}

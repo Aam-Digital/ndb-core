@@ -109,9 +109,12 @@ export class ImportComponent {
 
   onColumnMappingUpdate(newColumnMapping: ColumnMapping[]) {
     this.importSettings.columnMapping = newColumnMapping;
-    this.mappedColumnsCount = newColumnMapping.filter(
-      (m) => !!m.propertyName,
-    ).length;
+    // to avoid ExpressionChangedAfterItHasBeenCheckedError
+    setTimeout(() => {
+      this.mappedColumnsCount = newColumnMapping.filter(
+        (m) => !!m.propertyName,
+      ).length;
+    });
   }
 
   applyPreviousMapping(importMetadata: ImportMetadata) {
