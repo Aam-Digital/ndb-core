@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import moment from "moment";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
@@ -12,6 +12,7 @@ import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { TimePeriod } from "./time-period";
+import { Sort } from "@angular/material/sort";
 
 /**
  * Display a list of entity subrecords (entities related to the current entity details view)
@@ -41,7 +42,7 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   implements OnInit
 {
   // also see super class for Inputs
-
+  @Input() sortBy?: Sort;
   @Input() single = true;
   @Input() override showInactive = false;
 
@@ -57,6 +58,8 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
     { id: "end", visibleFrom: "md" },
     isActiveIndicator,
   ];
+
+  @Output() sortChange = new EventEmitter<Sort>();
 
   backgroundColorFn = (r: E) => r.getColor();
   hasCurrentlyActiveEntry: boolean;
