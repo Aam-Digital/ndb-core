@@ -1,47 +1,50 @@
-<div
-  *ngIf="!mobile"
-  class="white mat-subtitle-2 remove-margin-bottom full-width"
->
-  <mat-form-field class="full-width searchbar">
-    <fa-icon matIconPrefix class="padding-right-small" icon="search"></fa-icon>
-    <input
-      class="full-width search-input"
-      matInput
-      title="Search"
-      i18n-placeholder="Search label"
-      placeholder="Search"
-      [formControl]="formControl"
-      [matAutocomplete]="autoResults"
-    />
-  </mat-form-field>
-</div>
-
-<div *ngIf="mobile" class="remove-margin-bottom">
-  <button
-    mat-icon-button
-    matTooltip="Search"
-    i18n-matTooltip="search toolbar icon tooltip"
-    [matMenuTriggerFor]="searchMenu"
-    #searchMenuTrigger="matMenuTrigger"
-  >
-    <fa-icon icon="search"></fa-icon>
-  </button>
-  <mat-menu class="mobile-search-wrapper" #searchMenu>
-    <div class="flex-column" (click)="$event.stopPropagation()">
-      <mat-form-field class="searchbar">
-        <input
-          class="search-input"
-          matInput
-          title="Search"
-          i18n-placeholder="Search label"
-          placeholder="Search"
-          [formControl]="formControl"
-          [matAutocomplete]="autoResults"
-        />
-      </mat-form-field>
-    </div>
-  </mat-menu>
-</div>
+@if (!mobile) {
+  <div class="white mat-subtitle-2 remove-margin-bottom full-width">
+    <mat-form-field class="full-width searchbar">
+      <fa-icon
+        matIconPrefix
+        class="padding-right-small"
+        icon="search"
+      ></fa-icon>
+      <input
+        class="full-width search-input"
+        matInput
+        title="Search"
+        i18n-placeholder="Search label"
+        placeholder="Search"
+        [formControl]="formControl"
+        [matAutocomplete]="autoResults"
+      />
+    </mat-form-field>
+  </div>
+} @else {
+  <div class="remove-margin-bottom white mat-subtitle-2">
+    <button
+      mat-icon-button
+      matTooltip="Search"
+      i18n-matTooltip="search toolbar icon tooltip"
+      [matMenuTriggerFor]="searchMenu"
+      #searchMenuTrigger="matMenuTrigger"
+    >
+      <fa-icon icon="search"></fa-icon>
+    </button>
+    <mat-menu class="mobile-search-wrapper" #searchMenu>
+      <div class="flex-column" (click)="$event.stopPropagation()">
+        <mat-form-field class="searchbar">
+          <input
+            class="search-input"
+            matInput
+            title="Search"
+            i18n-placeholder="Search label"
+            placeholder="Search"
+            [formControl]="formControl"
+            [matAutocomplete]="autoResults"
+          />
+        </mat-form-field>
+      </div>
+    </mat-menu>
+  </div>
+}
 
 <!-- Shared Autocomplete Template -->
 

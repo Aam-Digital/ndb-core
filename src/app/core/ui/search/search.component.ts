@@ -51,7 +51,6 @@ import { MatButtonModule } from "@angular/material/button";
     NgForOf,
     EntityBlockComponent,
     AsyncPipe,
-    NgIf,
     MatMenuModule,
     MatButtonModule,
   ],
@@ -67,9 +66,10 @@ export class SearchComponent {
   readonly NO_RESULTS = 3;
   readonly SHOW_RESULTS = 4;
   readonly ILLEGAL_INPUT = 5;
-  mobile = false;
 
   state = this.NOTHING_ENTERED;
+
+  mobile = false;
 
   formControl = new FormControl("");
 
@@ -86,6 +86,7 @@ export class SearchComponent {
       .platform()
       .pipe(untilDestroyed(this))
       .subscribe((isDesktop) => (this.mobile = !isDesktop));
+
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
       tap((next) => (this.state = this.updateState(next))),
