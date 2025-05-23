@@ -8,12 +8,13 @@ import {
 import { AddressSearchComponent } from "./address-search.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { HarnessLoader, TestElement } from "@angular/cdk/testing";
-import { of } from "rxjs";
+import { of, throwError } from "rxjs";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { GeoLocation } from "../geo-location";
+import { HttpErrorResponse } from "@angular/common/http";
 
 describe("AddressSearchComponent", () => {
   let component: AddressSearchComponent;
@@ -107,6 +108,34 @@ describe("AddressSearchComponent", () => {
     } as GeoLocation);
     await expectAsync(input.getValue()).toBeResolvedTo("");
   });
+
+  it("should handle network errors", fakeAsync(async () => {
+    const error = new HttpErrorResponse({ status: 0 });
+    mockGeoService.lookup.and.returnValue(throwError(() => error));
+    const inputElement = await loader.getHarness(MatInputHarness);
+
+    await inputElement.setValue("test");
+    tick(3000);
+
+    expect(component.networkError).toBeTrue();
+    expect(component.otherTypeError).toBeFalse();
+    expect(component.nothingFound).toBeTrue();
+  }));
+
+  it("should handle service other types errors", fakeAsync(async () => {
+    const error = new HttpErrorResponse({
+      status: 504,
+    });
+    mockGeoService.lookup.and.returnValue(throwError(() => error));
+    const inputElement = await loader.getHarness(MatInputHarness);
+
+    await inputElement.setValue("test");
+    tick(3000);
+
+    expect(component.otherTypeError).toBeTrue();
+    expect(component.networkError).toBeFalse();
+    expect(component.nothingFound).toBeTrue();
+  }));
 
   async function expectLookup(
     searchTerm: string,
