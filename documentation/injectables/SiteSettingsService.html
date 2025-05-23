@@ -1,0 +1,938 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SiteSettingsService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/site-settings/site-settings.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Access to site settings stored in the database, like styling, site name and logo.</p>
+
+            </p>
+
+            <p class="comment">
+                <h3>Extends</h3>
+            </p>
+            <p class="comment">
+                            <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+            </p>
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#DEFAULT_FAVICON" >DEFAULT_FAVICON</a>
+                            </li>
+                            <li>
+                                <a href="#defaultLanguage" >defaultLanguage</a>
+                            </li>
+                            <li>
+                                <a href="#displayLanguageSelect" >displayLanguageSelect</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#SITE_SETTINGS_LOCAL_STORAGE_KEY" >SITE_SETTINGS_LOCAL_STORAGE_KEY</a>
+                            </li>
+                            <li>
+                                <a href="#siteName" >siteName</a>
+                            </li>
+                            <li>
+                                <a href="#siteSettings" >siteSettings</a>
+                            </li>
+                            <li>
+                                <a href="#entityUpdated" >entityUpdated</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#getPropertyObservable" >getPropertyObservable</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#loadOnce" >loadOnce</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#startLoading" >startLoading</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(title: Title, fileService: <a href="../classes/FileService.html" target="_self">FileService</a>, schemaService: <a href="../injectables/EntitySchemaService.html" target="_self">EntitySchemaService</a>, enumService: <a href="../injectables/ConfigurableEnumService.html" target="_self">ConfigurableEnumService</a>, entityMapper: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:33</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>title</td>
+                                                  
+                                                        <td>
+                                                                    <code>Title</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>fileService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/FileService.html" target="_self" >FileService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>schemaService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntitySchemaService.html" target="_self" >EntitySchemaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>enumService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ConfigurableEnumService.html" target="_self" >ConfigurableEnumService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityMapper</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPropertyObservable"></a>
+                    <span class="name">
+                        <span ><b>getPropertyObservable</b></span>
+                        <a href="#getPropertyObservable"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getPropertyObservable(property: P)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="150"
+                                    class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:150</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>P</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>property</td>
+                                            <td>
+                                                        <code>P</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadOnce"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>loadOnce</b></span>
+                        <a href="#loadOnce"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>loadOnce()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:40</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Do an initial load of the entity to be available through the <code>entityUpdated</code> property
+(without watching for continuous updates).</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;T | undefined&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="startLoading"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>startLoading</b></span>
+                        <a href="#startLoading"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>startLoading()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Inherited from         <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:27</a></code>
+</div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Initialize the loader to make the entity available and emit continuous updates
+through the <code>entityUpdated</code> property</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DEFAULT_FAVICON"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>DEFAULT_FAVICON</b></span>
+                        <a href="#DEFAULT_FAVICON"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&quot;favicon.ico&quot;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:23</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="defaultLanguage"></a>
+                    <span class="name">
+                        <span ><b>defaultLanguage</b></span>
+                        <a href="#defaultLanguage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.getPropertyObservable(&quot;defaultLanguage&quot;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:32</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="displayLanguageSelect"></a>
+                    <span class="name">
+                        <span ><b>displayLanguageSelect</b></span>
+                        <a href="#displayLanguageSelect"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.getPropertyObservable(&quot;displayLanguageSelect&quot;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:33</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SITE_SETTINGS_LOCAL_STORAGE_KEY"></a>
+                    <span class="name">
+                            <span class="modifier">Readonly</span>
+                        <span ><b>SITE_SETTINGS_LOCAL_STORAGE_KEY</b></span>
+                        <a href="#SITE_SETTINGS_LOCAL_STORAGE_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>Entity.createPrefixedId(
+    SiteSettings.ENTITY_TYPE,
+    SiteSettings.ENTITY_ID,
+  )</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="siteName"></a>
+                    <span class="name">
+                        <span ><b>siteName</b></span>
+                        <a href="#siteName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.getPropertyObservable(&quot;siteName&quot;)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:31</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="siteSettings"></a>
+                    <span class="name">
+                        <span ><b>siteSettings</b></span>
+                        <a href="#siteSettings"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>this.entityUpdated.pipe(shareReplay(1))</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">src/app/core/site-settings/site-settings.service.ts:29</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="entityUpdated"></a>
+                    <span class="name">
+                        <span ><b>entityUpdated</b></span>
+                        <a href="#entityUpdated"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Subject&lt;T&gt;()</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Inherited from         <code><a href="../classes/LatestEntityLoader.html" target="_self" >LatestEntityLoader</a></code>
+</div>
+                            </td>
+                        </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in         <code><a href="../classes/LatestEntityLoader.html#source" target="_self" >LatestEntityLoader:15</a></code>
+</div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>subscribe to this and execute any actions required when the entity changes</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { SiteSettings } from &quot;./site-settings&quot;;
+import { delay, firstValueFrom, Observable, skipWhile } from &quot;rxjs&quot;;
+import { distinctUntilChanged, map, shareReplay } from &quot;rxjs/operators&quot;;
+import { Title } from &quot;@angular/platform-browser&quot;;
+import { FileService } from &quot;../../features/file/file.service&quot;;
+import materialColours from &quot;@aytek/material-color-picker&quot;;
+import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
+import { LatestEntityLoader } from &quot;../entity/latest-entity-loader&quot;;
+import { Logging } from &quot;../logging/logging.service&quot;;
+import { Entity } from &quot;../entity/model/entity&quot;;
+import { EntitySchemaService } from &quot;../entity/schema/entity-schema.service&quot;;
+import { availableLocales } from &quot;../language/languages&quot;;
+import { ConfigurableEnumService } from &quot;../basic-datatypes/configurable-enum/configurable-enum.service&quot;;
+
+/**
+ * Access to site settings stored in the database, like styling, site name and logo.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class SiteSettingsService extends LatestEntityLoader&lt;SiteSettings&gt; {
+  readonly DEFAULT_FAVICON &#x3D; &quot;favicon.ico&quot;;
+  readonly SITE_SETTINGS_LOCAL_STORAGE_KEY &#x3D; Entity.createPrefixedId(
+    SiteSettings.ENTITY_TYPE,
+    SiteSettings.ENTITY_ID,
+  );
+
+  siteSettings &#x3D; this.entityUpdated.pipe(shareReplay(1));
+
+  siteName &#x3D; this.getPropertyObservable(&quot;siteName&quot;);
+  defaultLanguage &#x3D; this.getPropertyObservable(&quot;defaultLanguage&quot;);
+  displayLanguageSelect &#x3D; this.getPropertyObservable(&quot;displayLanguageSelect&quot;);
+
+  constructor(
+    private title: Title,
+    private fileService: FileService,
+    private schemaService: EntitySchemaService,
+    private enumService: ConfigurableEnumService,
+    entityMapper: EntityMapperService,
+  ) {
+    super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper);
+
+    this.initAvailableLocales();
+
+    this.siteName.subscribe((name) &#x3D;&gt; this.title.setTitle(name));
+    this.subscribeFontChanges();
+    this.subscribeFaviconChanges();
+    this.subscribeColorChanges(&quot;primary&quot;);
+    this.subscribeColorChanges(&quot;secondary&quot;);
+    this.subscribeColorChanges(&quot;error&quot;);
+
+    this.initFromLocalStorage();
+    this.cacheInLocalStorage();
+
+    super.startLoading();
+  }
+
+  /**
+   * Making locales enum available at runtime
+   * so that UI can show dropdown options
+   * @private
+   */
+  private initAvailableLocales() {
+    this.enumService[&quot;cacheEnum&quot;](availableLocales);
+  }
+
+  /**
+   * Do an initial loading of settings from localStorage, if available.
+   * @private
+   */
+  private initFromLocalStorage() {
+    let localStorageSettings: SiteSettings;
+
+    try {
+      const stored &#x3D; localStorage.getItem(this.SITE_SETTINGS_LOCAL_STORAGE_KEY);
+      if (stored) {
+        localStorageSettings &#x3D; this.schemaService.loadDataIntoEntity(
+          new SiteSettings(),
+          JSON.parse(stored),
+        );
+      }
+    } catch (e) {
+      Logging.debug(
+        &quot;SiteSettingsService: could not parse settings from localStorage: &quot; + e,
+      );
+    }
+
+    if (localStorageSettings) {
+      this.entityUpdated.next(localStorageSettings);
+    }
+  }
+
+  /**
+   * Store the latest SiteSettings in localStorage to be available before login also.
+   * @private
+   */
+  private cacheInLocalStorage() {
+    this.entityUpdated.subscribe((settings) &#x3D;&gt; {
+      const dbFormat &#x3D;
+        this.schemaService.transformEntityToDatabaseFormat(settings);
+      localStorage.setItem(
+        this.SITE_SETTINGS_LOCAL_STORAGE_KEY,
+        JSON.stringify(dbFormat),
+      );
+    });
+  }
+
+  private subscribeFontChanges() {
+    this.getPropertyObservable(&quot;font&quot;).subscribe((font) &#x3D;&gt;
+      document.documentElement.style.setProperty(&quot;--font-family&quot;, font),
+    );
+  }
+
+  private subscribeFaviconChanges() {
+    this.getPropertyObservable(&quot;favicon&quot;)
+      .pipe(delay(0))
+      .subscribe(async (icon) &#x3D;&gt; {
+        const favIcon: HTMLLinkElement &#x3D; document.querySelector(&quot;#appIcon&quot;);
+        if (icon) {
+          const entity &#x3D; await firstValueFrom(this.siteSettings);
+          const imgUrl &#x3D; await firstValueFrom(
+            this.fileService.loadFile(entity, &quot;favicon&quot;),
+          );
+          favIcon.href &#x3D; Object.values(imgUrl)[0];
+        } else {
+          favIcon.href &#x3D; this.DEFAULT_FAVICON;
+        }
+      });
+  }
+
+  private subscribeColorChanges(property: &quot;primary&quot; | &quot;secondary&quot; | &quot;error&quot;) {
+    this.getPropertyObservable(property).subscribe((color) &#x3D;&gt; {
+      if (color) {
+        const palette &#x3D; materialColours(color);
+        palette[&quot;A100&quot;] &#x3D; palette[&quot;200&quot;];
+        palette[&quot;A200&quot;] &#x3D; palette[&quot;300&quot;];
+        palette[&quot;A400&quot;] &#x3D; palette[&quot;500&quot;];
+        palette[&quot;A700&quot;] &#x3D; palette[&quot;800&quot;];
+        Object.entries(palette).forEach(([key, value]) &#x3D;&gt;
+          document.documentElement.style.setProperty(
+            &#x60;--${property}-${key}&#x60;,
+            &#x60;#${value}&#x60;,
+          ),
+        );
+      }
+    });
+  }
+
+  getPropertyObservable&lt;P extends keyof SiteSettings&gt;(
+    property: P,
+  ): Observable&lt;SiteSettings[P]&gt; {
+    return this.siteSettings.pipe(
+      skipWhile((v) &#x3D;&gt; !v[property]),
+      map((s) &#x3D;&gt; s[property]),
+      distinctUntilChanged(),
+    );
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SiteSettingsService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

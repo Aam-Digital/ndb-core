@@ -1,0 +1,1234 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AttendanceService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/child-dev-project/attendance/attendance.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createEventForActivity" >createEventForActivity</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getActivitiesForChild" >getActivitiesForChild</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getActivityAttendances" >getActivityAttendances</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllActivityAttendancesForPeriod" >getAllActivityAttendancesForPeriod</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getEventsForActivity" >getEventsForActivity</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getEventsOnDate" >getEventsOnDate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getEventsWithUpdatedParticipants" >getEventsWithUpdatedParticipants</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(entityMapper: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>, dbIndexing: <a href="../injectables/DatabaseIndexingService.html" target="_self">DatabaseIndexingService</a>, childrenService: <a href="../injectables/ChildrenService.html" target="_self">ChildrenService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/app/child-dev-project/attendance/attendance.service.ts:14</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>entityMapper</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dbIndexing</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/DatabaseIndexingService.html" target="_self" >DatabaseIndexingService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>childrenService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChildrenService.html" target="_self" >ChildrenService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createEventForActivity"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createEventForActivity</b></span>
+                        <a href="#createEventForActivity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createEventForActivity(activity: <a href="../classess/RecurringActivity.html" target="_self">RecurringActivity</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="252"
+                                    class="link-to-prism">src/app/child-dev-project/attendance/attendance.service.ts:252</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activity</td>
+                                            <td>
+                                                            <code><a href="../classess/RecurringActivity.html" target="_self" >RecurringActivity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;EventNote&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getActivitiesForChild"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getActivitiesForChild</b></span>
+                        <a href="#getActivitiesForChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getActivitiesForChild(childId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="225"
+                                    class="link-to-prism">src/app/child-dev-project/attendance/attendance.service.ts:225</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>childId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classess/RecurringActivity.html" target="_self" >Promise&lt;RecurringActivity[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getActivityAttendances"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getActivityAttendances</b></span>
+                        <a href="#getActivityAttendances"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getActivityAttendances(activity: <a href="../classess/RecurringActivity.html" target="_self">RecurringActivity</a>, sinceDate?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="172"
+                                    class="link-to-prism">src/app/child-dev-project/attendance/attendance.service.ts:172</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load and calculate activity attendance records.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activity</td>
+                                            <td>
+                                                            <code><a href="../classess/RecurringActivity.html" target="_self" >RecurringActivity</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>To activity for which records are loaded.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sinceDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>(Optional) date starting from which events should be considered. Events before this are ignored to improve performance.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ActivityAttendance.html" target="_self" >Promise&lt;ActivityAttendance[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllActivityAttendancesForPeriod"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllActivityAttendancesForPeriod</b></span>
+                        <a href="#getAllActivityAttendancesForPeriod"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllActivityAttendancesForPeriod(from: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, until: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="202"
+                                    class="link-to-prism">src/app/child-dev-project/attendance/attendance.service.ts:202</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>from</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>until</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ActivityAttendance.html" target="_self" >Promise&lt;ActivityAttendance[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEventsForActivity"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getEventsForActivity</b></span>
+                        <a href="#getEventsForActivity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getEventsForActivity(activityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, sinceDate?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="140"
+                                    class="link-to-prism">src/app/child-dev-project/attendance/attendance.service.ts:140</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Load events related to the given recurring activity.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>activityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>The reference activity the events should relate to.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>sinceDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                            <td>
+                                                    <p>(Optional) date starting from which events should be considered. Events before this are ignored to improve performance.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;EventNote[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEventsOnDate"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getEventsOnDate</b></span>
+                        <a href="#getEventsOnDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getEventsOnDate(startDate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>, endDate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/app/child-dev-project/attendance/attendance.service.ts:99</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Return all events on the given date or date range.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>startDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>The date (or start date of a range)</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>endDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>startDate</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>(Optional) end date of the period to be queried; if not given, defaults to the start date</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;EventNote[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEventsWithUpdatedParticipants"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getEventsWithUpdatedParticipants</b></span>
+                        <a href="#getEventsWithUpdatedParticipants"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getEventsWithUpdatedParticipants(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank">Date</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/app/child-dev-project/attendance/attendance.service.ts:121</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import moment from &quot;moment&quot;;
+import { RecurringActivity } from &quot;./model/recurring-activity&quot;;
+import { ActivityAttendance } from &quot;./model/activity-attendance&quot;;
+import { groupBy } from &quot;../../utils/utils&quot;;
+import { DatabaseIndexingService } from &quot;../../core/entity/database-indexing/database-indexing.service&quot;;
+import { EventNote } from &quot;./model/event-note&quot;;
+import { ChildrenService } from &quot;../children/children.service&quot;;
+
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class AttendanceService {
+  constructor(
+    private entityMapper: EntityMapperService,
+    private dbIndexing: DatabaseIndexingService,
+    private childrenService: ChildrenService,
+  ) {
+    this.createIndices();
+  }
+
+  private createIndices() {
+    this.createEventsIndex();
+    this.createRecurringActivitiesIndex();
+  }
+
+  private createEventsIndex(): Promise&lt;void&gt; {
+    const designDoc &#x3D; {
+      _id: &quot;_design/events_index&quot;,
+      views: {
+        by_date: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (doc._id.startsWith(&quot;${EventNote.ENTITY_TYPE}&quot;)) {
+              if (doc.date &amp;&amp; doc.date.length &#x3D;&#x3D;&#x3D; 10) {
+                emit(doc.date);
+              } else {
+                var d &#x3D; new Date(doc.date || null);
+                var dString &#x3D; d.getFullYear() + &quot;-&quot; + String(d.getMonth()+1).padStart(2, &quot;0&quot;) + &quot;-&quot; + String(d.getDate()).padStart(2, &quot;0&quot;);
+                emit(dString);
+              }
+            }
+          }&#x60;,
+        },
+        // TODO: remove this and use general Note&#x27;s relatedEntities index?
+        by_activity: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (doc._id.startsWith(&quot;${EventNote.ENTITY_TYPE}&quot;) &amp;&amp; doc.relatesTo) {
+              var dString;
+              if (doc.date &amp;&amp; doc.date.length &#x3D;&#x3D;&#x3D; 10) {
+                dString &#x3D; doc.date;
+              } else {            
+                var d &#x3D; new Date(doc.date || null);
+                dString &#x3D; d.getFullYear() + &quot;-&quot; + String(d.getMonth()+1).padStart(2, &quot;0&quot;) + &quot;-&quot; + String(d.getDate()).padStart(2, &quot;0&quot;);
+              }
+              emit(doc.relatesTo + &quot;_&quot; + dString);
+            }
+          }&#x60;,
+        },
+      },
+    };
+
+    return this.dbIndexing.createIndex(designDoc);
+  }
+
+  private createRecurringActivitiesIndex(): Promise&lt;void&gt; {
+    const designDoc &#x3D; {
+      _id: &quot;_design/activities_index&quot;,
+      views: {
+        by_participant: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (doc._id.startsWith(&quot;${RecurringActivity.ENTITY_TYPE}&quot;)) {
+              for (var p of (doc.participants || [])) {
+                emit(p);
+              }
+            }
+          }&#x60;,
+        },
+        by_school: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (doc._id.startsWith(&quot;${RecurringActivity.ENTITY_TYPE}&quot;)) {
+              for (var g of (doc.linkedGroups || [])) {
+                emit(g);
+              }
+            }
+          }&#x60;,
+        },
+      },
+    };
+
+    return this.dbIndexing.createIndex(designDoc);
+  }
+
+  /**
+   * Return all events on the given date or date range.
+   * @param startDate The date (or start date of a range)
+   * @param endDate (Optional) end date of the period to be queried; if not given, defaults to the start date
+   */
+  async getEventsOnDate(
+    startDate: Date,
+    endDate: Date &#x3D; startDate,
+  ): Promise&lt;EventNote[]&gt; {
+    const start &#x3D; moment(startDate);
+    const end &#x3D; moment(endDate);
+
+    const eventNotes &#x3D; this.dbIndexing.queryIndexDocsRange(
+      EventNote,
+      &quot;events_index/by_date&quot;,
+      start.format(&quot;YYYY-MM-DD&quot;),
+      end.format(&quot;YYYY-MM-DD&quot;),
+    );
+
+    const relevantNormalNotes &#x3D; this.childrenService
+      .getNotesInTimespan(start, end)
+      .then((notes) &#x3D;&gt; notes.filter((n) &#x3D;&gt; n.category?.isMeeting));
+
+    const allResults &#x3D; await Promise.all([eventNotes, relevantNormalNotes]);
+    return allResults[0].concat(allResults[1]);
+  }
+
+  async getEventsWithUpdatedParticipants(date: Date) {
+    const events &#x3D; await this.getEventsOnDate(date, date);
+    for (const event of events) {
+      const participants &#x3D; await this.loadParticipantsOfGroups(
+        event.schools,
+        date,
+      );
+      for (const newParticipant of participants) {
+        event.addChild(newParticipant);
+      }
+    }
+    return events;
+  }
+
+  /**
+   * Load events related to the given recurring activity.
+   * @param activityId The reference activity the events should relate to.
+   * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
+   */
+  async getEventsForActivity(
+    activityId: string,
+    sinceDate?: Date,
+  ): Promise&lt;EventNote[]&gt; {
+    if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
+      activityId &#x3D; RecurringActivity.ENTITY_TYPE + &quot;:&quot; + activityId;
+    }
+
+    let dateLimit &#x3D; &quot;&quot;;
+    if (sinceDate) {
+      dateLimit &#x3D;
+        &quot;_&quot; +
+        sinceDate.getFullYear() +
+        &quot;-&quot; +
+        String(sinceDate.getMonth() + 1).padStart(2, &quot;0&quot;) +
+        &quot;-&quot; +
+        String(sinceDate.getDate()).padStart(2, &quot;0&quot;);
+    }
+
+    return this.dbIndexing.queryIndexDocsRange(
+      EventNote,
+      &quot;events_index/by_activity&quot;,
+      activityId + dateLimit,
+      activityId,
+    );
+  }
+
+  /**
+   * Load and calculate activity attendance records.
+   * @param activity To activity for which records are loaded.
+   * @param sinceDate (Optional) date starting from which events should be considered. Events before this are ignored to improve performance.
+   */
+  async getActivityAttendances(
+    activity: RecurringActivity,
+    sinceDate?: Date,
+  ): Promise&lt;ActivityAttendance[]&gt; {
+    const periods &#x3D; new Map&lt;number, ActivityAttendance&gt;();
+
+    function getOrCreateAttendancePeriod(event) {
+      const month &#x3D; new Date(event.date.getFullYear(), event.date.getMonth());
+      let attMonth &#x3D; periods.get(month.getTime());
+      if (!attMonth) {
+        attMonth &#x3D; ActivityAttendance.create(month);
+        attMonth.periodTo &#x3D; moment(month).endOf(&quot;month&quot;).toDate();
+        attMonth.activity &#x3D; activity;
+        periods.set(month.getTime(), attMonth);
+      }
+      return attMonth;
+    }
+
+    const events &#x3D; await this.getEventsForActivity(activity.getId(), sinceDate);
+
+    for (const event of events) {
+      const record &#x3D; getOrCreateAttendancePeriod(event);
+      record.events.push(event);
+    }
+
+    return Array.from(periods.values()).sort(
+      (a, b) &#x3D;&gt; a.periodFrom.getTime() - b.periodFrom.getTime(),
+    );
+  }
+
+  async getAllActivityAttendancesForPeriod(
+    from: Date,
+    until: Date,
+  ): Promise&lt;ActivityAttendance[]&gt; {
+    const matchingEvents &#x3D; await this.getEventsOnDate(from, until);
+    const groupedEvents &#x3D; groupBy(matchingEvents, &quot;relatesTo&quot;);
+
+    const records &#x3D; [];
+    for (const [activityId, activityEvents] of groupedEvents) {
+      const activityRecord &#x3D; ActivityAttendance.create(from, activityEvents);
+      activityRecord.periodTo &#x3D; until;
+      if (activityId) {
+        activityRecord.activity &#x3D; await this.entityMapper
+          .load&lt;RecurringActivity&gt;(RecurringActivity, activityId)
+          .catch(() &#x3D;&gt; undefined);
+      }
+
+      records.push(activityRecord);
+    }
+
+    return records;
+  }
+
+  async getActivitiesForChild(childId: string): Promise&lt;RecurringActivity[]&gt; {
+    const activities &#x3D; await this.dbIndexing.queryIndexDocs(
+      RecurringActivity,
+      &quot;activities_index/by_participant&quot;,
+      childId,
+    );
+
+    const visitedSchools &#x3D;
+      await this.childrenService.queryActiveRelationsOf(childId);
+    for (const currentRelation of visitedSchools) {
+      const activitiesThroughRelation &#x3D; await this.dbIndexing.queryIndexDocs(
+        RecurringActivity,
+        &quot;activities_index/by_school&quot;,
+        currentRelation.schoolId,
+      );
+      for (const activityThroughRelation of activitiesThroughRelation) {
+        if (
+          !activities.some((a) &#x3D;&gt; a.getId() &#x3D;&#x3D;&#x3D; activityThroughRelation.getId())
+        ) {
+          activities.push(activityThroughRelation);
+        }
+      }
+    }
+
+    return activities;
+  }
+
+  async createEventForActivity(
+    activity: RecurringActivity,
+    date: Date,
+  ): Promise&lt;EventNote&gt; {
+    const instance &#x3D; new EventNote();
+    instance.date &#x3D; date;
+    instance.subject &#x3D; activity.title;
+    instance.children &#x3D; await this.getActiveParticipantsOfActivity(
+      activity,
+      date,
+    );
+    instance.schools &#x3D; activity.linkedGroups;
+    instance.relatesTo &#x3D; activity.getId();
+    instance.category &#x3D; activity.type;
+    return instance;
+  }
+
+  private async getActiveParticipantsOfActivity(
+    activity: RecurringActivity,
+    date: Date,
+  ): Promise&lt;string[]&gt; {
+    const schoolParticipants &#x3D; await this.loadParticipantsOfGroups(
+      activity.linkedGroups,
+      date,
+    );
+
+    return [
+      ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
+    ].filter((p) &#x3D;&gt; !activity.excludedParticipants.includes(p));
+  }
+
+  /**
+   * Load all participants&#x27; ids for the given list of groups
+   * @param linkedGroups
+   * @param date on which the participants should be part of the group
+   */
+  private async loadParticipantsOfGroups(
+    linkedGroups: string[],
+    date: Date,
+  ): Promise&lt;string[]&gt; {
+    const childIdPromises &#x3D; linkedGroups.map((groupId) &#x3D;&gt;
+      this.childrenService
+        .queryActiveRelationsOf(groupId, date)
+        .then((relations) &#x3D;&gt;
+          relations.map((r) &#x3D;&gt; r.childId).filter((id) &#x3D;&gt; !!id),
+        ),
+    );
+    const allParticipants &#x3D; await Promise.all(childIdPromises);
+    // flatten and remove duplicates
+    return Array.from(new Set([].concat(...allParticipants)));
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AttendanceService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
