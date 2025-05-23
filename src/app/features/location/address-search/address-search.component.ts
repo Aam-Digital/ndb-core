@@ -154,6 +154,7 @@ export class AddressSearchComponent implements OnInit {
         if (error.status === 0) {
           this.networkError = true;
         } else {
+          Logging.warn("Address Lookup API error", error);
           this.otherTypeError = true;
         }
 
