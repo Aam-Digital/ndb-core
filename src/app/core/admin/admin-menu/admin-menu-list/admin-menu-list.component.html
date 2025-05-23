@@ -1,11 +1,13 @@
-<div class="top-action-bar">
-  <div class="right-button">
-    <button mat-stroked-button color="accent" (click)="addNewMenuItem()">  
-      <fa-icon aria-label="add" icon="plus-circle" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Add New</span>
-    </button>
+@if(showAddNew) {
+  <div class="top-action-bar">
+    <div class="right-button">
+      <button mat-stroked-button color="accent" (click)="addNewMenuItem()">  
+        <fa-icon aria-label="add" icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+        <span i18n>Add New</span>
+      </button>
+    </div>
   </div>
-</div>
+}
 
 <mat-nav-list 
   cdkDropList 
@@ -15,27 +17,39 @@
   class="drop-list flex-column gap-regular limit-width"
 >
   <ng-container *ngFor="let item of menuItemsToDisplay; let i = index">
-    <div class="menu-item-container drop-item" cdkDrag>
+    
+    <div class="flex-row menu-item-container drop-item" cdkDrag>
       
       <!-- Drag handle -->
       <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
 
-      <app-menu-item [item]="item" ></app-menu-item>
+      <app-menu-item [item]="item.itemToDisplay"></app-menu-item>
 
       <fa-icon
         icon="edit"
         class="edit-icon"
-        (click)="editMenuItem(i)"
+        (click)="editMenuItem(item.originalItem)"
+        aria-label="Edit menu item"
       ></fa-icon>
 
-      <!-- Remove icon on the right -->
       <fa-icon
         icon="times"
         class="remove-icon"
         (click)="removeMenuItem(i)"
+        aria-label="Remove menu item"
       ></fa-icon>
-      
     </div>
+
+   
+
+    <!-- Render submenus if they exist and are expanded -->
+    @if(item.originalItem.subMenu) {
+      <div class="submenu">
+        <app-admin-menu-list [menuItems]="item.originalItem.subMenu" (menuItemsChange)="submenuChanged(item.originalItem, $event)" [showAddNew]="false"></app-admin-menu-list>
+      </div>
+    }
+
+
   </ng-container>
 </mat-nav-list>
 

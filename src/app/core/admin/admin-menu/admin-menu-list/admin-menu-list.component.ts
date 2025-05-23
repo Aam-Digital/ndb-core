@@ -14,9 +14,10 @@ import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
-import { AdminMenuItemComponent } from "app/core/admin/admin-menu/admin-menu-item/admin-menu-item.component";
 import { MenuService } from "app/core/ui/navigation/menu.service";
 import { firstValueFrom } from "rxjs";
+import { AdminMenuItemComponent} from "../admin-menu-item/admin-menu-item.component";
+
 
 /** UI to edit Menu Items (display content only and not interacting with the database) */
 @Component({
@@ -33,32 +34,40 @@ import { firstValueFrom } from "rxjs";
     MatInputModule,
     FaIconComponent,
     MatButton,
+   
   ],
   templateUrl: "./admin-menu-list.component.html",
-  styleUrls: ["./admin-menu-list.component.scss"],
+  styleUrls: [
+    "./admin-menu-list.component.scss",
+    "../../../ui/navigation/menu-item/menu-item.component.scss",
+  ],
 })
 export class AdminMenuListComponent {
   /**
    * Menu items (as stored in the config) to edit.
    */
   @Input() set menuItems(value: (MenuItem | EntityMenuItem)[]) {
-    this._menuItems = JSON.parse(JSON.stringify(value ?? [])); // deep clone to avoid direct mutation
-
-    this.menuItemsToDisplay = (this._menuItems ?? []).map((item) =>
-      this.menuService.generateMenuItemForEntityType(item),
-    );
+    this.menuItemsToDisplay = (value ?? []).map((item) => {
+      const displayItem = this.menuService.generateMenuItemForEntityType(item);
+      delete displayItem.subMenu;
+      return {
+        originalItem: { ...item },
+        itemToDisplay: displayItem,
+      }
+    });
   }
-  get menuItems(): (MenuItem | EntityMenuItem)[] {
-    return this._menuItems;
-  }
-  private _menuItems: (MenuItem | EntityMenuItem)[] = [];
 
   @Output() menuItemsChange = new EventEmitter<MenuItem[]>();
 
   /**
+   * Whether a button to add new menu items should be displayed to users.
+   */
+  @Input() showAddNew: boolean = true;
+
+  /**
    * Menu items parsed to standard MenuItem format for the preview UI.
    */
-  menuItemsToDisplay: MenuItem[] = [];
+  menuItemsToDisplay: { originalItem: (MenuItem | EntityMenuItem), itemToDisplay: MenuItem }[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -68,19 +77,19 @@ export class AdminMenuListComponent {
   // Remove an item from the menu
   removeMenuItem(index: number): void {
     if (index > -1) {
-      this.menuItems.splice(index, 1);
+      this.menuItemsToDisplay.splice(index, 1);
     }
 
-    this.menuItemsChange.emit(this.menuItems);
+    this.emitChange();
   }
 
   // Open dialog to edit a menu item
-  async editMenuItem(index: number) {
-    const updatedItem = await this.openEditDialog(this.menuItems[index]);
+  async editMenuItem(item: MenuItem) {
+    const updatedItem = await this.openEditDialog(item);
 
     if (updatedItem) {
-      this.menuItems[index] = updatedItem;
-      this.menuItemsChange.emit(this.menuItems);
+      Object.assign(item, updatedItem);
+      this.emitChange();
     }
   }
 
@@ -89,7 +98,7 @@ export class AdminMenuListComponent {
     const newItem = await this.openEditDialog(undefined);
     if (newItem) {
       this.menuItems.push(newItem); // Add the new item to the list
-      this.menuItemsChange.emit(this.menuItems);
+      this.emitChange();
     }
   }
 
@@ -106,9 +115,18 @@ export class AdminMenuListComponent {
   }
 
   // Handle drag-and-drop sorting
-  drop(event: CdkDragDrop<MenuItem[]>): void {
-    moveItemInArray(this.menuItems, event.previousIndex, event.currentIndex);
-    this.menuItemsChange.emit(this.menuItems);
+  drop(event: CdkDragDrop<any[]>): void {
+    moveItemInArray(this.menuItemsToDisplay, event.previousIndex, event.currentIndex);
+    this.emitChange();
+  }
+
+  submenuChanged(item: MenuItem, newSubmenu: MenuItem[]) {
+    item.subMenu = newSubmenu;
+    this.emitChange();
+  }
+
+  private emitChange() {
+    this.menuItemsChange.emit(this.menuItemsToDisplay.map(x => x.originalItem));
   }
 }
 

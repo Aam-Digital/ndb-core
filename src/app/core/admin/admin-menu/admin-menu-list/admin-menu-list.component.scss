@@ -1,5 +1,6 @@
 @use "variables/colors";
 @use "variables/sizes";
+
 .menu-item-container {
   display: flex;
   align-items: center; /* Vertically center everything */
@@ -8,7 +9,6 @@
   margin: auto;
   gap: 8px; /* Add a bit of spacing between elements */
 }
-
   
 /* Menu content (middle) */
 .menu-content {
