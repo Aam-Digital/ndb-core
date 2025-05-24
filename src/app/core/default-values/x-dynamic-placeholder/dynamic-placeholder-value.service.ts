@@ -42,23 +42,7 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
   ) {
     const config: DefaultValueConfigDynamic = fieldConfig.defaultValue.config;
 
-    let value;
-    switch (config.value) {
-      case PLACEHOLDERS.NOW:
-        value = new Date();
-        break;
-
-      case PLACEHOLDERS.CURRENT_USER:
-        value = this.currentUser.value?.getId();
-        break;
-
-      default:
-        Logging.warn(
-          "Unknown PLACEHOLDERS value used in fieldValueConfig: " +
-            fieldConfig.defaultValue,
-        );
-        break;
-    }
+    let value = this.getPlaceholderValue(config.value);
 
     if (!value) {
       return;
@@ -70,4 +54,27 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
       targetFormControl.setValue(value);
     }
   }
+
+  /**
+   * Get the current value for a given placeholder.
+   * @param placeholder The placeholder string to resolve.
+   * @returns The value for the given placeholder or `undefined` if not found.
+   */
+  getPlaceholderValue(placeholder: string): string | Date | undefined {
+    switch (placeholder) {
+      case PLACEHOLDERS.CURRENT_USER:
+        let userId = this.currentUser.value?.getId();
+        return userId;
+      case PLACEHOLDERS.NOW:
+        let date = new Date();
+        return date;
+      default:
+        Logging.warn(
+          "Unknown PLACEHOLDERS value used in fieldValueConfig: " +
+            placeholder,
+        );
+        return;
+    }
+  }
 }
+
