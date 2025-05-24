@@ -1,15 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
-import { Entity } from "../entity/model/entity";
-import { CurrentUserSubject } from "../session/current-user-subject";
-import { testDefaultValueCase } from "./default-value.service.spec";
-import { DefaultValueService } from "./default-value.service";
-import { InheritedValueService } from "./inherited-value.service";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
-import { PrebuiltFilterConfig } from "../entity-list/EntityListConfig";
-import { PLACEHOLDERS } from "../entity/schema/entity-schema-field";
+import { Entity } from "app/core/entity/model/entity";
+import { CurrentUserSubject } from "app/core/session/current-user-subject";
+import { testDefaultValueCase } from "../default-value-service/default-value.service.spec";
+import { DefaultValueService } from "../default-value-service/default-value.service";
+import { DefaultValueStrategy } from "../default-value-strategy.interface";
+import { PrebuiltFilterConfig } from "app/core/entity-list/EntityListConfig";
+import { PLACEHOLDERS } from "app/core/entity/schema/entity-schema-field";
 import { Note } from "app/child-dev-project/notes/model/note";
 
 describe("DynamicPlaceholderValueService", () => {
@@ -94,17 +92,7 @@ describe("DynamicPlaceholderValueService", () => {
       options: [{}, {}],
     } as PrebuiltFilterConfig<Note>;
 
-    const emptyDefaultFilter = {
-      id: "userID",
-      type: "prebuilt",
-      label: "Current User",
-      default: "",
-      options: [{}, {}],
-    } as PrebuiltFilterConfig<Note>;
-
-    let defaultValString = service.getDefaultValueString(placeholderUserFilter);
-    let emptyDefaultString = service.getDefaultValueString(emptyDefaultFilter);
+    let defaultValString = service.getPlaceholderValue(placeholderUserFilter.default);
     expect(defaultValString).toEqual(user.getId());
-    expect(emptyDefaultString).toEqual("");
   });
 });
