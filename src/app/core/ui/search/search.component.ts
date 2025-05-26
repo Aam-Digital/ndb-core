@@ -14,7 +14,10 @@ import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guar
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatInputModule } from "@angular/material/input";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import {
+  MatAutocomplete,
+  MatAutocompleteModule,
+} from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -69,6 +72,7 @@ export class SearchComponent {
 
   results: Observable<Entity[]>;
   @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
+  @ViewChild("autoResults") autocomplete: MatAutocomplete;
 
   constructor(
     private router: Router,
@@ -119,6 +123,9 @@ export class SearchComponent {
       optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
+    if (this.mobile) {
+      this.searchActive = false;
+    }
   }
 
   /**
@@ -142,6 +149,12 @@ export class SearchComponent {
       this.formControl.setValue("");
     } else {
       setTimeout(() => this.searchInput?.nativeElement.focus());
+    }
+  }
+
+  onFocusOut() {
+    if (this.mobile && !this.autocomplete.isOpen) {
+      this.searchActive = false;
     }
   }
 }

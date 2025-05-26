@@ -28,6 +28,7 @@
         placeholder="Search"
         [formControl]="formControl"
         [matAutocomplete]="autoResults"
+        (blur)="onFocusOut()"
       />
 
       @if (mobile) {
