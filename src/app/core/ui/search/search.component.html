@@ -17,6 +17,7 @@
     <fa-icon matIconPrefix class="padding-right-small" icon="search"></fa-icon>
 
     <input
+      #searchInput
       matInput
       class="full-width search-input"
       title="Search"
@@ -24,7 +25,6 @@
       placeholder="Search"
       [formControl]="formControl"
       [matAutocomplete]="autoResults"
-      autofocus
     />
 
     <button *ngIf="mobile" mat-icon-button matSuffix (click)="toggleSearch()">

@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
@@ -78,7 +79,7 @@ export class SearchComponent {
   formControl = new FormControl("");
 
   results: Observable<Entity[]>;
-  @ViewChild("searchMenuTrigger") searchMenuTrigger: MatMenuTrigger;
+  @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
 
   constructor(
     private router: Router,
@@ -129,10 +130,6 @@ export class SearchComponent {
       optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
-    // Close mobile menu if applicable
-    if (this.mobile && this.searchMenuTrigger) {
-      this.searchMenuTrigger.closeMenu();
-    }
   }
 
   /**
@@ -154,6 +151,8 @@ export class SearchComponent {
     this.searchActive = !this.searchActive;
     if (!this.searchActive) {
       this.formControl.setValue("");
+    } else {
+      setTimeout(() => this.searchInput?.nativeElement.focus());
     }
   }
 }
