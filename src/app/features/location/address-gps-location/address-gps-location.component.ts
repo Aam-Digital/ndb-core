@@ -48,9 +48,17 @@ export class AddressGpsLocationComponent {
         );
       }
     } catch (error) {
-      Logging.debug("failed to access device location", error);
+      if (
+        error instanceof Error &&
+        error.message === "USER_DENIED_PERMISSION"
+      ) {
+        Logging.debug("User denied location permission");
+      } else {
+        Logging.debug("Failed to access device location", error);
+      }
+
       this.alertService.addInfo(
-        $localize`Failed to access device location. Please check if location permission is enabled in your device settings`,
+        $localize`Failed to access device location. Please check if location permission is enabled in your device settings.`,
       );
     } finally {
       this.gpsLoading = false;

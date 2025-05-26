@@ -32,7 +32,13 @@ export class GpsService {
       (resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
           (position) => resolve(position),
-          (error) => reject(error),
+          (error) => {
+            if (error.code === error.PERMISSION_DENIED) {
+              reject(new Error("USER_DENIED_PERMISSION"));
+            } else {
+              reject(error);
+            }
+          },
         );
       },
     );
