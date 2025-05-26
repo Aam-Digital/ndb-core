@@ -16,6 +16,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import {
   AsyncPipe,
+  NgClass,
   NgForOf,
   NgIf,
   NgSwitch,
@@ -53,6 +54,8 @@ import { MatButtonModule } from "@angular/material/button";
     AsyncPipe,
     MatMenuModule,
     MatButtonModule,
+    NgIf,
+    NgClass,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -70,6 +73,7 @@ export class SearchComponent {
   state = this.NOTHING_ENTERED;
 
   mobile = false;
+  searchActive = false;
 
   formControl = new FormControl("");
 
@@ -144,5 +148,12 @@ export class SearchComponent {
     return entities.filter((entity) =>
       this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route),
     );
+  }
+
+  toggleSearch() {
+    this.searchActive = !this.searchActive;
+    if (!this.searchActive) {
+      this.formControl.setValue("");
+    }
   }
 }

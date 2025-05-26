@@ -1,52 +1,37 @@
-@if (!mobile) {
-  <div class="white mat-subtitle-2 remove-margin-bottom full-width">
-    <mat-form-field class="full-width searchbar">
-      <fa-icon
-        matIconPrefix
-        class="padding-right-small"
-        icon="search"
-      ></fa-icon>
-      <input
-        class="full-width search-input"
-        matInput
-        title="Search"
-        i18n-placeholder="Search label"
-        placeholder="Search"
-        [formControl]="formControl"
-        [matAutocomplete]="autoResults"
-      />
-    </mat-form-field>
-  </div>
-} @else {
-  <div class="remove-margin-bottom white mat-subtitle-2">
-    <button
-      mat-icon-button
-      matTooltip="Search"
-      i18n-matTooltip="search toolbar icon tooltip"
-      [matMenuTriggerFor]="searchMenu"
-      #searchMenuTrigger="matMenuTrigger"
-    >
-      <fa-icon icon="search"></fa-icon>
-    </button>
-    <mat-menu class="mobile-search-wrapper" #searchMenu mat-menu-autosize>
-      <div class="flex-column" (click)="$event.stopPropagation()">
-        <mat-form-field class="searchbar">
-          <input
-            class="search-input"
-            matInput
-            title="Search"
-            i18n-placeholder="Search label"
-            placeholder="Search"
-            [formControl]="formControl"
-            [matAutocomplete]="autoResults"
-          />
-        </mat-form-field>
-      </div>
-    </mat-menu>
-  </div>
-}
+<div class="white mat-subtitle-2 remove-margin-bottom">
+  <button
+    *ngIf="mobile && !searchActive"
+    mat-icon-button
+    matTooltip="Search"
+    i18n-matTooltip="search toolbar icon tooltip"
+    (click)="toggleSearch()"
+  >
+    <fa-icon icon="search"></fa-icon>
+  </button>
 
-<!-- Shared Autocomplete Template -->
+  <mat-form-field
+    *ngIf="!mobile || searchActive"
+    class="full-width searchbar"
+    [ngClass]="mobile ? 'mobile-search-wrapper' : ''"
+  >
+    <fa-icon matIconPrefix class="padding-right-small" icon="search"></fa-icon>
+
+    <input
+      matInput
+      class="full-width search-input"
+      title="Search"
+      i18n-placeholder="Search label"
+      placeholder="Search"
+      [formControl]="formControl"
+      [matAutocomplete]="autoResults"
+      autofocus
+    />
+
+    <button *ngIf="mobile" mat-icon-button matSuffix (click)="toggleSearch()">
+      <fa-icon icon="times"></fa-icon>
+    </button>
+  </mat-form-field>
+</div>
 
 <mat-autocomplete
   #autoResults="matAutocomplete"
