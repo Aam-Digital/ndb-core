@@ -12,7 +12,7 @@
   <mat-form-field
     *ngIf="!mobile || searchActive"
     class="full-width searchbar"
-    [ngClass]="mobile ? 'mobile-search-wrapper' : ''"
+    [class.mobile-search-wrapper]="mobile"
   >
     <fa-icon matIconPrefix class="padding-right-small" icon="search"></fa-icon>
 

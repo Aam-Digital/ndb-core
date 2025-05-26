@@ -17,7 +17,6 @@ import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import {
   AsyncPipe,
-  NgClass,
   NgForOf,
   NgIf,
   NgSwitch,
@@ -54,7 +53,6 @@ import { MatButtonModule } from "@angular/material/button";
     AsyncPipe,
     MatButtonModule,
     NgIf,
-    NgClass,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
