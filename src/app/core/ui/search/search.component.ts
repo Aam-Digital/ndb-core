@@ -27,7 +27,6 @@ import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SearchService } from "./search.service";
 import { ScreenWidthObserver } from "app/utils/media/screen-size-observer.service";
-import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 import { MatButtonModule } from "@angular/material/button";
 
 /**
@@ -53,7 +52,6 @@ import { MatButtonModule } from "@angular/material/button";
     NgForOf,
     EntityBlockComponent,
     AsyncPipe,
-    MatMenuModule,
     MatButtonModule,
     NgIf,
     NgClass,
