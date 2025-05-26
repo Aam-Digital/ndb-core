@@ -54,7 +54,7 @@ export class AddressGpsLocationComponent {
       ) {
         Logging.debug("User denied location permission");
       } else {
-        Logging.debug("Failed to access device location", error);
+        Logging.warn("Failed to access device location", error);
       }
 
       this.alertService.addInfo(
