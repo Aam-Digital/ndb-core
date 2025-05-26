@@ -32,11 +32,11 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: -webkit-fill-available;
   z-index: 1000;
   background-color: colors.$primary !important;
   margin-top: 0;
-  padding-left: 4px;
+  padding-left: 10px;
 
   .mat-mdc-form-field-subscript-wrapper {
     display: none !important;
