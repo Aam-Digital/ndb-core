@@ -15,13 +15,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import {
-  AsyncPipe,
-  NgForOf,
-  NgIf,
-  NgSwitch,
-  NgSwitchCase,
-} from "@angular/common";
+import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SearchService } from "./search.service";
@@ -52,7 +46,6 @@ import { MatButtonModule } from "@angular/material/button";
     EntityBlockComponent,
     AsyncPipe,
     MatButtonModule,
-    NgIf,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
