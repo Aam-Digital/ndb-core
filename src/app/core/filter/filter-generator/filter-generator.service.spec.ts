@@ -1,5 +1,4 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
-
 import { FilterGeneratorService } from "./filter-generator.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
@@ -20,7 +19,11 @@ import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import {
+  EntitySchemaField,
+  PLACEHOLDERS,
+} from "../../entity/schema/entity-schema-field";
+import { CurrentUserSubject } from "app/core/session/current-user-subject";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -250,6 +253,22 @@ describe("FilterGeneratorService", () => {
   it("should create a date range filter", async () => {
     let generatedFilter = await service.generate([{ id: "date" }], Note, []);
     expect(generatedFilter[0]).toBeInstanceOf(DateFilter);
+  });
+
+  it("should set current User if PLACEHOLDER is selected", async () => {
+    let user = new Entity();
+    TestBed.inject(CurrentUserSubject).next(user);
+    const placeholderUserFilter = {
+      id: "userID",
+      type: "prebuilt",
+      label: "Current User",
+      default: PLACEHOLDERS.CURRENT_USER,
+      options: [{}, {}],
+    } as PrebuiltFilterConfig<Note>;
+    const filterData = (
+      await service.generate([placeholderUserFilter], Note, [])
+    )[0] as SelectableFilter<Note>;
+    expect(filterData.selectedOptionValues).toEqual([user.getId()]);
   });
 
   function filter<T extends Entity>(
