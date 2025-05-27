@@ -27,3 +27,22 @@
     border-bottom-color: white !important;
   }
 }
+
+.mobile-search-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: -webkit-fill-available;
+  z-index: 1000;
+  background-color: colors.$primary !important;
+  margin-top: 0;
+  padding-left: 10px;
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none !important;
+  }
+
+  .mdc-line-ripple {
+    display: none !important;
+  }
+}
