@@ -2,18 +2,30 @@ import { TestBed } from "@angular/core/testing";
 
 import { SetupService } from "./setup.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { provideHttpClient } from "@angular/common/http";
 import { Config } from "../config/config";
+import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.service";
+import { CoreTestingModule } from "../../utils/core-testing.module";
 
 describe("SetupService", () => {
   let service: SetupService;
 
+  let mockDemoDataInitializer: jasmine.SpyObj<DemoDataInitializerService>;
+
   beforeEach(() => {
+    mockDemoDataInitializer = jasmine.createSpyObj(
+      "DemoDataInitializerService",
+      ["logInDemoUser"],
+    );
+
     TestBed.configureTestingModule({
+      imports: [CoreTestingModule],
       providers: [
         provideHttpClient(),
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        {
+          provide: DemoDataInitializerService,
+          useValue: mockDemoDataInitializer,
+        },
       ],
     });
     service = TestBed.inject(SetupService);
@@ -29,6 +41,7 @@ describe("SetupService", () => {
       name: "Basic Setup",
       description:
         "A basic setup with minimal configuration to get started quickly.",
+      entitiesToImport: ["Config_CONFIG_ENTITY.json"],
     });
 
     const actualConfig = await TestBed.inject(EntityMapperService).load(

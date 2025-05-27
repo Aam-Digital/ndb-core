@@ -21,7 +21,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
-import { DemoConfigGeneratorService } from "../config/demo-config-generator.service";
 import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoSchoolGenerator } from "../../child-dev-project/children/demo-data-generators/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
@@ -43,7 +42,6 @@ import { DemoReportConfigGeneratorService } from "../../features/reporting/demo-
 
 const demoDataGeneratorProviders = [
   ...DemoPermissionGeneratorService.provider(),
-  ...DemoConfigGeneratorService.provider(),
   ...DemoSiteSettingsGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
@@ -108,10 +106,4 @@ const demoDataGeneratorProviders = [
   declarations: [DemoDataGeneratingProgressDialogComponent],
   exports: [DemoDataGeneratingProgressDialogComponent],
 })
-export class DemoDataModule {
-  constructor(private demoDataInitializer: DemoDataInitializerService) {}
-
-  publishDemoData() {
-    return this.demoDataInitializer.run();
-  }
-}
+export class DemoDataModule {}

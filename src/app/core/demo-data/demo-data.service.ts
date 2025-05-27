@@ -73,9 +73,14 @@ export class DemoDataService {
   /**
    * Trigger all registered DemoDataGenerator implementations to generate demo entities
    * and add all the generated entities to the Database.
+   * @param skipIfDatabaseNotEmpty - if true, the data generation is skipped if the database is not empty
    */
-  async publishDemoData() {
-    if (!(await this.dbResolver.getDatabase().isEmpty())) {
+  async publishDemoData(skipIfDatabaseNotEmpty: boolean = true) {
+    // TODO: need better check if demo data is already present (regardless of whether some Config entities are present)
+    if (
+      skipIfDatabaseNotEmpty &&
+      !(await this.dbResolver.getDatabase().isEmpty())
+    ) {
       return;
     }
     this.registerAllProvidedDemoDataGenerators();
