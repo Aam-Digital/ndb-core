@@ -102,7 +102,7 @@ export class FilterGeneratorService {
 
       if (filterConfig.hasOwnProperty("default")) {
         let defaultVal = this.placeholderService.getPlaceholderValue(
-          filterConfig.default
+          filterConfig.default,
         );
         if (defaultVal) {
           let defaultString = defaultVal.toString();

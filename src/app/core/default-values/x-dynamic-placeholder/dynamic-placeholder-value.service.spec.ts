@@ -94,7 +94,7 @@ describe("DynamicPlaceholderValueService", () => {
     } as PrebuiltFilterConfig<Note>;
 
     let defaultValString = service.getPlaceholderValue(
-      placeholderUserFilter.default
+      placeholderUserFilter.default,
     );
     expect(defaultValString).toEqual(user.getId());
   });
