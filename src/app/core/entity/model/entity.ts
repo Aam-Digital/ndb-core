@@ -93,7 +93,11 @@ export class Entity {
    */
   static label: string;
 
-  /** true if this entity type is an internal entity, i.e. not visible to the user */
+  /**
+   * if this entity type is an internal entity,
+   * i.e. only defined in the code base to store internal system data
+   * and not visible to the user for customization.
+   */
   static isInternalEntity?: boolean;
 
   /**
