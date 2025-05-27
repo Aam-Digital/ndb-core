@@ -69,7 +69,7 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
         let date = new Date();
         return date;
       default:
-        Logging.warn(
+        Logging.debug(
           "Unknown PLACEHOLDERS value used in fieldValueConfig: " +
             placeholder,
         );
