@@ -101,8 +101,9 @@ export class FilterGeneratorService {
       }
 
       if (filterConfig.hasOwnProperty("default")) {
-        let defaultVal =
-            this.placeholderService.getPlaceholderValue(filterConfig.default);
+        let defaultVal = this.placeholderService.getPlaceholderValue(
+          filterConfig.default
+        );
         if (defaultVal) {
           let defaultString = defaultVal.toString();
           filter.selectedOptionValues = [defaultString];

@@ -80,6 +80,7 @@ describe("DynamicPlaceholderValueService", () => {
 
     jasmine.clock().uninstall();
   });
+
   it("should return current USER string, if PLACEHOLDER.CURRENT_USER is selected", () => {
     let user = new Entity();
     TestBed.inject(CurrentUserSubject).next(user);
@@ -92,7 +93,9 @@ describe("DynamicPlaceholderValueService", () => {
       options: [{}, {}],
     } as PrebuiltFilterConfig<Note>;
 
-    let defaultValString = service.getPlaceholderValue(placeholderUserFilter.default);
+    let defaultValString = service.getPlaceholderValue(
+      placeholderUserFilter.default
+    );
     expect(defaultValString).toEqual(user.getId());
   });
 });

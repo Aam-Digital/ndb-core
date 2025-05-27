@@ -70,11 +70,9 @@ export class DynamicPlaceholderValueService extends DefaultValueStrategy {
         return date;
       default:
         Logging.debug(
-          "Unknown PLACEHOLDERS value used in fieldValueConfig: " +
-            placeholder,
+          "Unknown PLACEHOLDERS value used in fieldValueConfig: " + placeholder
         );
         return;
     }
   }
 }
-
