@@ -16,6 +16,19 @@ To debug test runs you can use Playwright’s [Trace Viewer]. On CI traces for
 all test runs are uploaded as artifacts. On the page of a workflow run you can
 find them in “Artifacts” section.
 
+## Accessibility
+
+The tests benefit from an [accessible][] application. An accesible app make
+tests easier to write, easier to understand, and less flaky.
+
+When implementing custom components, ensure they are accessible. The simplest
+approach is to use Angular Material components and standard HTML elements, which
+provide good accessibility by default. For custom needs, incorporate [ARIA][]
+markup.
+
+[accessible]: https://developer.mozilla.org/en-US/docs/Web/Accessibility
+[ARIA]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA
+
 ## Writing tests
 
 * Review [Best Practices](https://playwright.dev/docs/best-practices) from the
@@ -56,6 +69,32 @@ find them in “Artifacts” section.
 * Avoid navigation with `page.goto()`. Instead, click on the links that lead you
   to the desired page. This avoid reloading the app which is slow.
 
+## Visual regression screenshots
+
+Screenshots are captured only when either the CI or SCREENSHOT environment
+variables are set.
+
+Take screenshots after completing actions and verifying expectations:
+
+```typescript
+await someButton.click()
+await expect(page.getByText("Content created")).toBeVisible()
+await argosScreenshot(page, "content-created")
+```
+
+This approach captures the app in a stable state rather than during transitions.
+
+The `argosScreenshot()` function waits for page stabilization before capturing.
+Use [`aria-busy=true`][aria-busy] on loading elements to help ensure screenshots
+are taken only when the UI is ready.
+
+Visual differences between test runs may occur even when no actual changes
+exist. Adjust sensitivity to minor variations using the [`threshold`
+option](https://argos-ci.com/docs/playwright#argosscreenshotpage-name-options)
+in `argosScreenshot()`. Set a default threshold with `argos upload
+--threshold=...`
+
+[aria-busy]: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy
 [Playwright]: https://playwright.dev/
 [Playwright UI]: https://playwright.dev/docs/test-ui-mode
 [Trace Viewer]: https://playwright.dev/docs/trace-viewer

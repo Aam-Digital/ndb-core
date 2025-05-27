@@ -22,6 +22,7 @@ export class TemplateExport extends Entity {
     fields: ["description"],
   };
   static override route = "admin/template-export";
+  static override isInternalEntity = true;
 
   /**
    * human-readable label

@@ -9,6 +9,8 @@ jobs:
   qa:
     uses: ./.github/workflows/_qa.yaml
     secrets: inherit
+    with:
+      upload-e2e-screenshots: true
 
   create-and-deploy-compodoc:
     runs-on: ubuntu-latest

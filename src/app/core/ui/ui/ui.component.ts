@@ -80,6 +80,7 @@ export class UiComponent {
   @ViewChild("sideNav") sideNav;
   /** latest version of the site settings*/
   siteSettings = new SiteSettings();
+  isDesktop = false;
 
   constructor(
     private screenWidthObserver: ScreenWidthObserver,
@@ -91,7 +92,10 @@ export class UiComponent {
       .platform()
       .pipe(untilDestroyed(this))
       .subscribe(
-        (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over"),
+        (isDesktop) => (
+          (this.sideNavMode = isDesktop ? "side" : "over"),
+          (this.isDesktop = isDesktop)
+        ),
       );
     this.siteSettingsService.siteSettings.subscribe(
       (s) => (this.siteSettings = s),

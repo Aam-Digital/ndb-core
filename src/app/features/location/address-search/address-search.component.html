@@ -22,16 +22,32 @@
     @if (loading) {
       <mat-option disabled i18n>Loading results...</mat-option>
     }
-    @if (nothingFound) {
-      <mat-option disabled i18n>Location not found</mat-option>
 
-      @if (inputElement.value?.length > 2) {
-        <mat-option [value]="inputElement.value" i18n
-          >Set address without map location as "{{
-            inputElement.value
-          }}"</mat-option
-        >
-      }
+    @if (networkError) {
+      <mat-option disabled i18n>
+        Internet connection required for map location lookup. Enter address
+        manually
+      </mat-option>
+    }
+    @if (otherTypeError) {
+      <mat-option disabled i18n>
+        Service for map location lookup temporarily unavailable. Enter address
+        manually
+      </mat-option>
+    }
+    @if (nothingFound && !networkError && !otherTypeError) {
+      <mat-option disabled i18n>Location not found</mat-option>
+    }
+
+    @if (
+      (networkError || otherTypeError || nothingFound) &&
+      inputElement.value?.length > 2
+    ) {
+      <mat-option [value]="inputElement.value" i18n
+        >Set address without map location as "{{
+          inputElement.value
+        }}"</mat-option
+      >
     }
 
     @for (option of filteredOptions | async; track option) {

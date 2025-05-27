@@ -21,6 +21,8 @@ import { DatabaseField } from "../../../../core/entity/database-field.decorator"
 
 @DatabaseEntity("ProgressDashboardConfig")
 export class ProgressDashboardConfig extends Entity {
+  static override isInternalEntity = true;
+
   @DatabaseField() title: string = $localize`Progress Widget`;
   @DatabaseField({ isArray: true }) parts: Array<ProgressDashboardPart> = [];
 
