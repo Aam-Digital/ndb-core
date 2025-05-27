@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
@@ -12,11 +14,16 @@ import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guar
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatInputModule } from "@angular/material/input";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import {
+  MatAutocomplete,
+  MatAutocompleteModule,
+} from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SearchService } from "./search.service";
+import { ScreenWidthObserver } from "app/utils/media/screen-size-observer.service";
+import { MatButtonModule } from "@angular/material/button";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -41,6 +48,7 @@ import { SearchService } from "./search.service";
     NgForOf,
     EntityBlockComponent,
     AsyncPipe,
+    MatButtonModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,15 +65,26 @@ export class SearchComponent {
 
   state = this.NOTHING_ENTERED;
 
+  mobile = false;
+  searchActive = false;
+
   formControl = new FormControl("");
 
   results: Observable<Entity[]>;
+  @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
+  @ViewChild("autoResults") autocomplete: MatAutocomplete;
 
   constructor(
     private router: Router,
     private userRoleGuard: UserRoleGuard,
     private searchService: SearchService,
+    screenWithObserver: ScreenWidthObserver,
   ) {
+    screenWithObserver
+      .platform()
+      .pipe(untilDestroyed(this))
+      .subscribe((isDesktop) => (this.mobile = !isDesktop));
+
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
       tap((next) => (this.state = this.updateState(next))),
@@ -73,7 +92,6 @@ export class SearchComponent {
       untilDestroyed(this),
     );
   }
-
   private updateState(next: any): number {
     if (typeof next !== "string") {
       return this.ILLEGAL_INPUT;
@@ -105,6 +123,9 @@ export class SearchComponent {
       optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
+    if (this.mobile) {
+      this.searchActive = false;
+    }
   }
 
   /**
@@ -120,5 +141,20 @@ export class SearchComponent {
     return entities.filter((entity) =>
       this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route),
     );
+  }
+
+  toggleSearch() {
+    this.searchActive = !this.searchActive;
+    if (!this.searchActive) {
+      this.formControl.setValue("");
+    } else {
+      setTimeout(() => this.searchInput?.nativeElement.focus());
+    }
+  }
+
+  onFocusOut() {
+    if (this.mobile && !this.autocomplete.isOpen) {
+      this.searchActive = false;
+    }
   }
 }
