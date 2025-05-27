@@ -10,6 +10,8 @@ import { EntityNotificationContext } from "./entity-notification-context";
  */
 @DatabaseEntity("NotificationEvent")
 export class NotificationEvent extends Entity {
+  static override isInternalEntity = true;
+
   // notification events are stored in a separate, user-specific database
   static override readonly DATABASE = "notifications";
 

@@ -9,6 +9,8 @@ import { AdditionalImportAction } from "./additional-actions/additional-import-a
  */
 @DatabaseEntity("ImportMetadata")
 export class ImportMetadata extends Entity {
+  static override isInternalEntity = true;
+
   static create(contents: Partial<ImportMetadata>) {
     return Object.assign(new ImportMetadata(), contents);
   }

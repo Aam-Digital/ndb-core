@@ -8,6 +8,8 @@ import { DataFilter } from "app/core/filter/filters/filters";
  */
 @DatabaseEntity("NotificationConfig")
 export class NotificationConfig extends Entity {
+  static override isInternalEntity = true;
+
   /**
    * The entityId under which the database may contain a template file
    * to use as default config for new users.

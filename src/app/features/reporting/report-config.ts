@@ -13,6 +13,8 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
  */
 @DatabaseEntity("ReportConfig")
 class ReportConfig extends Entity {
+  static override isInternalEntity = true;
+
   /** human-readable title of the report */
   @DatabaseField() title: string;
 
