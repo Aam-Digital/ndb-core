@@ -93,6 +93,9 @@ export class Entity {
    */
   static label: string;
 
+  /** true if this entity type is an internal entity, i.e. not visible to the user */
+  static isInternalEntity?: boolean;
+
   /**
    * human-readable label for uses of plural of the entity in the UI
    */
