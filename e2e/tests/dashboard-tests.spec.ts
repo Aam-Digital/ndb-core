@@ -1,4 +1,4 @@
-import { expect, test, argosScreenshot } from "#e2e/fixtures.ts";
+import { expect, test, argosScreenshot } from "#e2e/fixtures.js";
 
 test("Dashboard widgets and actions", async ({ page }) => {
   await expect(page.getByText("Quick Actions")).toBeVisible();
