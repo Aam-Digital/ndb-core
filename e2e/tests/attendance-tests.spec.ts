@@ -1,4 +1,4 @@
-import { expect, test } from "#e2e/fixtures.ts";
+import { expect, test } from "#e2e/fixtures.js";
 
 test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("navigation").getByText("Attendance").click();
