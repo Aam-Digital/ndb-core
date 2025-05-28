@@ -1,0 +1,20 @@
+.demo-dialog-content {
+  gap: 10%;
+  display: grid;
+
+  .footer-note {
+    margin-top: 16px;
+  }
+
+  .dialog-actions {
+    width: 100%;
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .initialization-field {
+    display: flex;
+    justify-content: center;
+  }
+}

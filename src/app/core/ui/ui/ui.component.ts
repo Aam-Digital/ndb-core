@@ -41,6 +41,8 @@ import { SessionManagerService } from "../../session/session-service/session-man
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 import { NotificationComponent } from "../../../features/notification/notification.component";
 import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
+import { MatDialog } from "@angular/material/dialog";
+import { DemoAssistanceDialogComponent } from "app/core/setup/demo-assistance-dialog/demo-assistance-dialog.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -87,6 +89,7 @@ export class UiComponent {
     private siteSettingsService: SiteSettingsService,
     private loginState: LoginStateSubject,
     private sessionManager: SessionManagerService,
+    private dialog: MatDialog,
   ) {
     this.screenWidthObserver
       .platform()
@@ -120,5 +123,12 @@ export class UiComponent {
     if (this.sideNavMode === "over") {
       this.sideNav.close();
     }
+  }
+
+  openDemoAssistance(): void {
+    this.dialog.open(DemoAssistanceDialogComponent, {
+      height: "90vh",
+      position: { top: "65px", right: "0px" },
+    });
   }
 }

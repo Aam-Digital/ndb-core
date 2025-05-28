@@ -1,0 +1,30 @@
+<mat-dialog-content class="demo-dialog-content">
+  <h1>Welcome to the Aam Digital demo!</h1>
+  <span>
+    You can easily customize your case management system on Aam Digital. We want
+    to let you explore some example system as a first step. For this we have
+    prepared a few different demo use cases here.
+  </span>
+
+  <div class="demo-layout">
+    <app-choose-use-case
+      [demoAssistanceItems]="demoAssistanceItems"
+      (selectionChanged)="onUseCaseSelected($event)"
+    >
+    </app-choose-use-case>
+  </div>
+
+  <p class="footer-note">
+    Aam Digital is not limited to this layout or sector. The app can be quickly
+    adapted to your needs, changing what fields and types of things are relevant
+    in your project. For example, the app could just as well help you manage a
+    vocational training or livelihoods project, tracking beneficiaries, their
+    participation in workshops and course and interactions of your team with
+    them.
+  </p>
+  <div class="initialization-field">
+    <button mat-raised-button class="full-width" color="accent" i18n-matTooltip>
+      <span i18n>Initialize System</span>
+    </button>
+  </div>
+</mat-dialog-content>
