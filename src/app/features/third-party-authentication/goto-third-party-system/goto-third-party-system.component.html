@@ -1,0 +1,17 @@
+@if (sessionId) {
+  <button
+    mat-flat-button
+    class="nav-button"
+    color="accent"
+    angulartics2On="click"
+    angularticsCategory="UserAction"
+    angularticsAction="open_third_party_system"
+    (click)="goToExternalRedirect()"
+  >
+    <fa-icon
+      icon="up-right-from-square"
+      class="standard-icon-with-text"
+    ></fa-icon>
+    <span i18n>Open M&E Module</span>
+  </button>
+}

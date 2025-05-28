@@ -40,6 +40,9 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 import { NotificationComponent } from "../../../features/notification/notification.component";
+import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
+import { MatDialog } from "@angular/material/dialog";
+import { DemoAssistanceDialogComponent } from "app/core/setup/demo-assistance-dialog/demo-assistance-dialog.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -69,6 +72,7 @@ import { NotificationComponent } from "../../../features/notification/notificati
     DisplayImgComponent,
     SetupWizardButtonComponent,
     NotificationComponent,
+    GotoThirdPartySystemComponent,
   ],
 })
 export class UiComponent {
@@ -85,6 +89,7 @@ export class UiComponent {
     private siteSettingsService: SiteSettingsService,
     private loginState: LoginStateSubject,
     private sessionManager: SessionManagerService,
+    private dialog: MatDialog,
   ) {
     this.screenWidthObserver
       .platform()
@@ -118,5 +123,15 @@ export class UiComponent {
     if (this.sideNavMode === "over") {
       this.sideNav.close();
     }
+  }
+
+  openDemoAssistance(): void {
+    this.dialog.open(DemoAssistanceDialogComponent, {
+      height: "calc(100% - 90px)",
+      width: "calc(100% - 100px)",
+      maxWidth: "100%",
+      maxHeight: "100%",
+      position: { top: "65px", right: "0px" },
+    });
   }
 }

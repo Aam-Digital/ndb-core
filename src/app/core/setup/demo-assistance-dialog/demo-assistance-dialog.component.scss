@@ -1,0 +1,31 @@
+.dialog-header-bar {
+  //todo- need to use global colors
+  border-top: 18px solid #448aff;
+}
+
+.header-title {
+  margin-top: 3%;
+}
+
+.demo-dialog-content {
+  display: flex;
+  gap: 10%;
+  flex-direction: column;
+  overflow: auto;
+
+  .dialog-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .initialization-field {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+mat-dialog-content {
+  max-height: unset !important;
+  flex: 1 0 0;
+}

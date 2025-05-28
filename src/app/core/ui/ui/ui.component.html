@@ -52,6 +52,14 @@
     <app-language-select
       *ngIf="siteSettings.displayLanguageSelect"
     ></app-language-select>
+    <button
+      mat-raised-button
+      color="accent"
+      class="demo-assistant-btn"
+      (click)="openDemoAssistance()"
+    >
+      <span class="demo-assistant-text" i18n> Demo Assistant </span>
+    </button>
   </div>
 </mat-toolbar>
 
@@ -83,6 +91,8 @@
       <div class="flex-grow"></div>
 
       <div class="flex-column">
+        <app-goto-third-party-system></app-goto-third-party-system>
+
         <app-setup-wizard-button></app-setup-wizard-button>
 
         <app-pwa-install></app-pwa-install>
