@@ -1,0 +1,1588 @@
+{
+  "_id": "Config:CONFIG_ENTITY",
+  "data": {
+    "appConfig:usage-analytics": {
+      "url": "https://matomo.aam-digital.org",
+      "site_id": "8"
+    },
+    "navigationMenu": {
+      "items": [
+        {
+          "label": "##i18n##:Menu item:Dashboard",
+          "icon": "home",
+          "link": "/"
+        },
+        {
+          "entityType": "Child"
+        },
+        {
+          "entityType": "School"
+        },
+        {
+          "label": "##i18n##:Menu item:Attendance",
+          "icon": "calendar-check",
+          "link": "/attendance"
+        },
+        {
+          "entityType": "Note"
+        },
+        {
+          "entityType": "Todo"
+        },
+        {
+          "label": "##i18n##:Menu item:Import",
+          "icon": "file-import",
+          "link": "/import"
+        },
+        {
+          "label": "##i18n##:Menu item:Reports",
+          "icon": "line-chart",
+          "link": "/report"
+        },
+        {
+          "label": "##i18n##:Menu item:Help",
+          "icon": "question",
+          "link": "/help"
+        },
+        {
+          "label": "##i18n##:Menu item:Admin",
+          "icon": "wrench",
+          "subMenu": [
+            {
+              "label": "##i18n##:Menu item:Admin Overview",
+              "icon": "wrench",
+              "link": "/admin"
+            },
+            {
+              "label": "##i18n##:Menu item:Users",
+              "icon": "users",
+              "link": "/user"
+            }
+          ]
+        }
+      ]
+    },
+    "view:": {
+      "component": "Dashboard",
+      "config": {
+        "widgets": [
+          {
+            "component": "ShortcutDashboard",
+            "config": {
+              "shortcuts": [
+                {
+                  "label": "##i18n##:Dashboard shortcut widget|record attendance shortcut:Record Attendance",
+                  "icon": "calendar-check",
+                  "link": "/attendance/add-day"
+                },
+                {
+                  "label": "##i18n##:Dashboard shortcut widget|record attendance shortcut:Add Child",
+                  "icon": "plus",
+                  "link": "/child/new"
+                },
+                {
+                  "label": "##i18n##:Dashboard shortcut widget|open public form:Public Registration Form",
+                  "icon": "file-circle-check",
+                  "link": "/public-form/form/test"
+                }
+              ]
+            }
+          },
+          {
+            "component": "EntityCountDashboard"
+          },
+          {
+            "component": "ImportantNotesDashboard",
+            "config": {
+              "warningLevels": [
+                "WARNING",
+                "URGENT"
+              ]
+            }
+          },
+          {
+            "component": "TodosDashboard"
+          },
+          {
+            "component": "NotesDashboard",
+            "config": {
+              "sinceDays": 28,
+              "fromBeginningOfWeek": false,
+              "mode": "with-recent-notes"
+            }
+          },
+          {
+            "component": "NotesDashboard",
+            "config": {
+              "sinceDays": 28,
+              "fromBeginningOfWeek": false,
+              "mode": "without-recent-notes"
+            }
+          },
+          {
+            "component": "AttendanceWeekDashboard",
+            "config": {
+              "daysOffset": 7,
+              "periodLabel": "##i18n##:Attendance week dashboard widget label:this week"
+            }
+          },
+          {
+            "component": "AttendanceWeekDashboard",
+            "config": {
+              "daysOffset": 0,
+              "periodLabel": "##i18n##:Attendance week dashboard widget label:last week"
+            }
+          },
+          {
+            "component": "AttendanceWeekDashboard",
+            "config": {
+              "daysOffset": 0,
+              "label": "##i18n##:Attendance week dashboard widget label:Late last week",
+              "attendanceStatusType": "LATE"
+            }
+          },
+          {
+            "component": "ProgressDashboard",
+            "config": {
+              "dashboardConfigId": "1"
+            }
+          },
+          {
+            "component": "BirthdayDashboard"
+          }
+        ]
+      }
+    },
+    "entity:Note": {
+      "toStringAttributes": [
+        "subject"
+      ],
+      "label": "##i18n##:label for entity:Note",
+      "labelPlural": "##i18n##:label (plural) for entity:Notes",
+      "hasPII": true,
+      "attributes": {
+        "children": {
+          "label": "##i18n##:Label for the children of a note:Children",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "Child",
+          "entityReferenceRole": "composite",
+          "editComponent": "EditAttendance",
+          "anonymize": "retain"
+        },
+        "childrenAttendance": {
+          "dataType": "EventAttendanceMap.DATA_TYPE",
+          "anonymize": "retain"
+        },
+        "date": {
+          "label": "##i18n##:Label for the date of a note:Date",
+          "dataType": "date-only",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "PLACEHOLDERS.NOW"
+            }
+          },
+          "anonymize": "retain"
+        },
+        "subject": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the subject of a note:Subject"
+        },
+        "text": {
+          "dataType": "LongTextDatatype.dataType",
+          "label": "##i18n##:Label for the actual notes of a note:Notes"
+        },
+        "authors": {
+          "label": "##i18n##:Label for the social worker(s) who created the note:Team involved",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "User",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "PLACEHOLDERS.CURRENT_USER"
+            }
+          },
+          "anonymize": "retain"
+        },
+        "category": {
+          "label": "##i18n##:Label for the category of a note:Category",
+          "dataType": "configurable-enum",
+          "additional": "INTERACTION_TYPE_CONFIG_ID",
+          "anonymize": "retain"
+        },
+        "attachment": {
+          "label": "##i18n##Attachment",
+          "dataType": "file"
+        },
+        "relatesTo": {
+          "dataType": "entity",
+          "additional": "RecurringActivity.ENTITY_TYPE",
+          "anonymize": "retain"
+        },
+        "relatedEntities": {
+          "label": "##i18n##:label for the related Entities:Related Records",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "undefined",
+          "anonymize": "retain"
+        },
+        "schools": {
+          "label": "##i18n##:label for the linked schools:Groups",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "School",
+          "entityReferenceRole": "composite",
+          "anonymize": "retain"
+        },
+        "warningLevel": {
+          "label": "##i18n##:Status of a note:Status",
+          "dataType": "configurable-enum",
+          "additional": "warning-levels",
+          "anonymize": "retain"
+        }
+      }
+    },
+    "view:note": {
+      "component": "NotesManager",
+      "config": {
+        "title": "##i18n##:Title for notes overview:Notes & Reports",
+        "includeEventNotes": false,
+        "showEventNotesToggle": true,
+        "columnGroups": {
+          "default": "##i18n##:Translated name of default column group:Standard",
+          "mobile": "##i18n##:Translated name of mobile column group:Mobile",
+          "groups": [
+            {
+              "name": "##i18n##:Column group name:Standard",
+              "columns": [
+                "date",
+                "subject",
+                "category",
+                "authors",
+                "children"
+              ]
+            },
+            {
+              "name": "##i18n##:Column group name:Mobile",
+              "columns": [
+                "date",
+                "subject",
+                "children"
+              ]
+            }
+          ]
+        },
+        "filters": [
+          {
+            "id": "warningLevel"
+          },
+          {
+            "id": "date",
+            "default": 1
+          },
+          {
+            "id": "category"
+          },
+          {
+            "id": "authors"
+          }
+        ],
+        "exportConfig": [
+          {
+            "label": "event_id",
+            "query": "_id"
+          },
+          {
+            "label": "date",
+            "query": "date"
+          },
+          {
+            "label": "event title",
+            "query": "subject"
+          },
+          {
+            "label": "event type",
+            "query": "category"
+          },
+          {
+            "label": "event description",
+            "query": "text"
+          },
+          {
+            "query": ":getAttendanceArray(true)",
+            "subQueries": [
+              {
+                "query": ".participant:toEntities(Child)",
+                "subQueries": [
+                  {
+                    "label": "participant_id",
+                    "query": "_id"
+                  },
+                  {
+                    "label": "participant",
+                    "query": "name"
+                  },
+                  {
+                    "label": "gender",
+                    "query": "gender"
+                  },
+                  {
+                    "label": "religion",
+                    "query": "religion"
+                  }
+                ]
+              },
+              {
+                "label": "status",
+                "query": ".status._status.id"
+              },
+              {
+                "query": ".school:toEntities(School)",
+                "subQueries": [
+                  {
+                    "label": "school_name",
+                    "query": "name"
+                  },
+                  {
+                    "label": "school_id",
+                    "query": "entityId"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "view:note/:id": {
+      "component": "NoteDetails",
+      "config": {
+        "topForm": [
+          "date",
+          "warningLevel",
+          "category",
+          "authors",
+          "attachment"
+        ]
+      }
+    },
+    "view:import": {
+      "component": "Import"
+    },
+    "view:user": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "User",
+        "columns": [
+          "name",
+          "phone"
+        ]
+      },
+      "permittedUserRoles": [
+        "admin_app"
+      ]
+    },
+    "view:user/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "User",
+        "panels": [
+          {
+            "title": "##i18n##:Panel title:User Information",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "name"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "phone"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Security",
+            "components": [
+              {
+                "component": "UserSecurity"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "view:help": {
+      "component": "MarkdownPage",
+      "config": {
+        "markdownEntityId": "help"
+      }
+    },
+    "view:attendance": {
+      "component": "AttendanceManager"
+    },
+    "view:attendance/add-day": {
+      "component": "AddDayAttendance"
+    },
+    "view:school": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "School",
+        "columns": [
+          "name",
+          {
+            "id": "DisplayParticipantsCount",
+            "viewComponent": "DisplayParticipantsCount",
+            "label": "##i18n##Children"
+          },
+          "privateSchool",
+          "language",
+          "website"
+        ],
+        "filters": [
+          {
+            "id": "privateSchool"
+          }
+        ]
+      }
+    },
+    "view:school/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "School",
+        "panels": [
+          {
+            "title": "##i18n##:Panel title:Basic Information",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "name",
+                        "privateSchool"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "address",
+                        "phone",
+                        "website"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "language",
+                        "timing"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "remarks"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Students",
+            "components": [
+              {
+                "title": "",
+                "component": "ChildSchoolOverview"
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Activities",
+            "components": [
+              {
+                "title": "",
+                "component": "ActivitiesOverview"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "view:child": {
+      "component": "ChildrenList",
+      "config": {
+        "entityType": "Child",
+        "columns": [
+          {
+            "viewComponent": "ChildBlock",
+            "label": "##i18n##:Column title for ChildBlockComponents:Name",
+            "id": "name"
+          },
+          {
+            "viewComponent": "DisplayAge",
+            "label": "##i18n##:Column label for age of child:Age",
+            "id": "age",
+            "additional": "dateOfBirth"
+          },
+          {
+            "viewComponent": "DisplayText",
+            "label": "##i18n##:Column label for class which child attends:Class",
+            "id": "schoolClass"
+          },
+          {
+            "viewComponent": "DisplayEntity",
+            "label": "##i18n##:Column label for school which child attends:School",
+            "id": "schoolId",
+            "additional": "School",
+            "noSorting": true
+          },
+          {
+            "viewComponent": "RecentAttendanceBlocks",
+            "label": "##i18n##:Column label for school attendance of child:Attendance (School)",
+            "id": "schoolAttendance",
+            "additional": {
+              "filterByActivityType": "SCHOOL_CLASS"
+            },
+            "noSorting": true
+          },
+          {
+            "viewComponent": "RecentAttendanceBlocks",
+            "label": "##i18n##:Column label for coaching attendance of child:Attendance (Coaching)",
+            "id": "coachingAttendance",
+            "additional": {
+              "filterByActivityType": "COACHING_CLASS"
+            },
+            "noSorting": true
+          }
+        ],
+        "columnGroups": {
+          "default": "##i18n##:Translated name of default column group:Basic Info",
+          "mobile": "##i18n##:Translated name of mobile column group:Mobile",
+          "groups": [
+            {
+              "name": "##i18n##:Column group name:Basic Info",
+              "columns": [
+                "projectNumber",
+                "name",
+                "age",
+                "gender",
+                "schoolClass",
+                "schoolId",
+                "center",
+                "status"
+              ]
+            },
+            {
+              "name": "##i18n##:Column group name:School Info",
+              "columns": [
+                "projectNumber",
+                "name",
+                "age",
+                "schoolClass",
+                "schoolId",
+                "schoolAttendance",
+                "coachingAttendance",
+                "motherTongue"
+              ]
+            },
+            {
+              "name": "##i18n##:Column group name:Status",
+              "columns": [
+                "projectNumber",
+                "name",
+                "center",
+                "status",
+                "admissionDate"
+              ]
+            },
+            {
+              "name": "##i18n##:Column group name:Health",
+              "columns": [
+                "projectNumber",
+                "name",
+                "center",
+                "health_bloodGroup",
+                "health_lastDentalCheckup",
+                "gender",
+                "age",
+                "dateOfBirth",
+                "birth_certificate"
+              ]
+            },
+            {
+              "name": "##i18n##:Column group name:Mobile",
+              "columns": [
+                "projectNumber",
+                "name",
+                "age"
+              ]
+            }
+          ]
+        },
+        "filters": [
+          {
+            "id": "center"
+          },
+          {
+            "id": "schoolId",
+            "type": "School",
+            "label": "##i18n##:Label of schools filter:School"
+          }
+        ],
+        "exportConfig": [
+          {
+            "label": "Name",
+            "query": "name"
+          },
+          {
+            "label": "Gender",
+            "query": "gender"
+          },
+          {
+            "label": "Date of Birth",
+            "query": "dateOfBirth"
+          },
+          {
+            "label": "School",
+            "query": ".schoolId:toEntities(School).name"
+          },
+          {
+            "label": "more fields can be configured - or all data exported",
+            "query": "projectNumber"
+          }
+        ]
+      }
+    },
+    "view:child/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "Child",
+        "panels": [
+          {
+            "title": "##i18n##:Panel title:Basic Information",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "photo"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "name",
+                        "projectNumber",
+                        "admissionDate"
+                      ],
+                      "header": "##i18n##:Header for form section:Personal Information"
+                    },
+                    {
+                      "fields": [
+                        "dateOfBirth",
+                        "birth_certificate",
+                        "gender",
+                        "motherTongue"
+                      ],
+                      "header": "##i18n##:Header for form section:Additional"
+                    },
+                    {
+                      "fields": [
+                        "center",
+                        "status",
+                        "address",
+                        "phone"
+                      ],
+                      "header": "##i18n##:Header for form section:Scholar activities"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Education",
+            "components": [
+              {
+                "title": "##i18n##:Title inside a panel:School History",
+                "component": "ChildSchoolOverview",
+                "config": {
+                  "single": true,
+                  "columns": [
+                    {
+                      "id": "start",
+                      "visibleFrom": "sm"
+                    },
+                    {
+                      "id": "end",
+                      "visibleFrom": "sm"
+                    },
+                    "schoolId",
+                    "schoolClass",
+                    "result"
+                  ]
+                }
+              },
+              {
+                "title": "##i18n##:Title inside a panel:ASER Results",
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "Aser",
+                  "property": "child",
+                  "columns": [
+                    {
+                      "id": "date",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "math",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "english",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "hindi",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "bengali",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "remarks",
+                      "visibleFrom": "md"
+                    }
+                  ]
+                }
+              },
+              {
+                "title": "##i18n##:Child details section title:Find a suitable new school",
+                "component": "MatchingEntities",
+                "config": {
+                  "rightSide": {
+                    "entityType": "School",
+                    "availableFilters": [
+                      {
+                        "id": "language"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Attendance",
+            "components": [
+              {
+                "title": "",
+                "component": "GroupedChildAttendance"
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Notes & Tasks",
+            "components": [
+              {
+                "title": "",
+                "component": "NotesRelatedToEntity"
+              },
+              {
+                "title": "Tasks",
+                "component": "TodosRelatedToEntity"
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Health",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "health_bloodGroup"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        {
+                          "id": "_description_health",
+                          "editComponent": "EditDescriptionOnly",
+                          "label": "##i18n##:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines. Make sure to visit the  [Health Guidelines](https://example.com/guidelines) for detailed recommendations and procedures."
+                        },
+                        "health_lastDentalCheckup"
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "title": "##i18n##:Title inside a panel:Height & Weight Tracking",
+                "component": "RelatedEntities",
+                "config": {
+                  "entityType": "HealthCheck",
+                  "property": "child",
+                  "columns": [
+                    {
+                      "id": "date"
+                    },
+                    {
+                      "id": "height"
+                    },
+                    {
+                      "id": "weight"
+                    },
+                    {
+                      "id": "bmi",
+                      "label": "##i18n##:Table header, Short for Body Mass Index:BMI",
+                      "description": "##i18n##:Tooltip for BMI info:This is calculated using the height and the weight measure",
+                      "viewComponent": "DisplayCalculatedValue",
+                      "additional": {
+                        "calculation": "bmi",
+                        "valueFields": [
+                          "weight",
+                          "height"
+                        ],
+                        "decimalPlaces": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Educational Materials",
+            "components": [
+              {
+                "title": "",
+                "component": "RelatedEntitiesWithSummary",
+                "config": {
+                  "entityType": "EducationalMaterial",
+                  "property": "child",
+                  "columns": [
+                    {
+                      "id": "date",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "materialType",
+                      "visibleFrom": "xs"
+                    },
+                    {
+                      "id": "materialAmount",
+                      "visibleFrom": "md"
+                    },
+                    {
+                      "id": "description",
+                      "visibleFrom": "md"
+                    }
+                  ],
+                  "summaries": {
+                    "countProperty": "materialAmount",
+                    "groupBy": "materialType",
+                    "total": true,
+                    "average": false
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Observations",
+            "components": [
+              {
+                "title": "",
+                "component": "HistoricalDataComponent",
+                "config": {
+                  "columns": [
+                    "date",
+                    {
+                      "id": "isMotivatedDuringClass",
+                      "visibleFrom": "lg"
+                    },
+                    {
+                      "id": "isParticipatingInClass",
+                      "visibleFrom": "lg"
+                    },
+                    {
+                      "id": "isInteractingWithOthers",
+                      "visibleFrom": "lg"
+                    },
+                    {
+                      "id": "doesHomework",
+                      "visibleFrom": "lg"
+                    },
+                    {
+                      "id": "asksQuestions",
+                      "visibleFrom": "lg"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Dropout",
+            "components": [
+              {
+                "title": "",
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "dropoutDate"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "dropoutType"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "dropoutRemarks"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "entity:EducationalMaterial": {
+      "attributes": {
+        "child": {
+          "dataType": "EntityDatatype.dataType",
+          "additional": "Child",
+          "entityReferenceRole": "composite"
+        },
+        "date": {
+          "dataType": "date",
+          "label": "##i18n##:Date on which the material has been borrowed:Date",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "PLACEHOLDERS.NOW"
+            }
+          }
+        },
+        "materialType": {
+          "label": "##i18n##:The material which has been borrowed:Material",
+          "dataType": "configurable-enum",
+          "additional": "materials",
+          "validators": {
+            "required": true
+          }
+        },
+        "materialAmount": {
+          "dataType": "number",
+          "label": "##i18n##:The amount of the material which has been borrowed:Amount",
+          "defaultValue": {
+            "mode": "static",
+            "config": {
+              "value": 1
+            }
+          },
+          "validators": {
+            "required": true
+          }
+        },
+        "description": {
+          "dataType": "string",
+          "label": "##i18n##:An additional description for the borrowed material:Description"
+        }
+      }
+    },
+    "entity:RecurringActivity": {
+      "toStringAttributes": [
+        "title"
+      ],
+      "label": "##i18n##:label for entity:Recurring Activity",
+      "labelPlural": "##i18n##:label (plural) for entity:Recurring Activities",
+      "color": "#00838F",
+      "route": "attendance/recurring-activity",
+      "attributes": {
+        "title": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the title of a recurring activity:Title",
+          "validators": {
+            "required": true
+          }
+        },
+        "type": {
+          "label": "##i18n##:Label for the interaction type of a recurring activity:Type",
+          "dataType": "configurable-enum",
+          "additional": "INTERACTION_TYPE_CONFIG_ID"
+        },
+        "participants": {
+          "label": "##i18n##:Label for the participants of a recurring activity:Participants",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "Child"
+        },
+        "linkedGroups": {
+          "label": "##i18n##:Label for the linked schools of a recurring activity:Groups",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "School"
+        },
+        "excludedParticipants": {
+          "label": "##i18n##:Label for excluded participants of a recurring activity:Excluded Participants",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "Child"
+        },
+        "assignedTo": {
+          "label": "##i18n##:Label for the assigned user(s) of a recurring activity:Assigned user(s)",
+          "dataType": "entity",
+          "isArray": true,
+          "additional": "User"
+        }
+      }
+    },
+    "view:attendance/recurring-activity": {
+      "component": "EntityList",
+      "config": {
+        "entityType": "RecurringActivity",
+        "columns": [
+          "title",
+          "type",
+          "assignedTo"
+        ],
+        "exportConfig": [
+          {
+            "label": "Title",
+            "query": "title"
+          },
+          {
+            "label": "Type",
+            "query": "type"
+          },
+          {
+            "label": "Assigned users",
+            "query": "assignedTo"
+          }
+        ]
+      }
+    },
+    "view:attendance/recurring-activity/:id": {
+      "component": "EntityDetails",
+      "config": {
+        "entityType": "RecurringActivity",
+        "panels": [
+          {
+            "title": "##i18n##:Panel title:Basic Information",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "title"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "type"
+                      ]
+                    },
+                    {
+                      "fields": [
+                        "assignedTo"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Participants",
+            "components": [
+              {
+                "component": "Form",
+                "config": {
+                  "fieldGroups": [
+                    {
+                      "fields": [
+                        "linkedGroups",
+                        "participants",
+                        "excludedParticipants"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "title": "##i18n##:Panel title:Events & Attendance",
+            "components": [
+              {
+                "component": "ActivityAttendanceSection"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "view:report": {
+      "component": "Reporting"
+    },
+    "entity:Child": {
+      "label": "##i18n##:Label for child:Child",
+      "labelPlural": "##i18n##:Plural label for child:Children",
+      "toStringAttributes": [
+        "name"
+      ],
+      "toBlockDetailsAttributes": {
+        "title": "name",
+        "image": "photo",
+        "fields": [
+          "phone",
+          "schoolId",
+          "schoolClass"
+        ]
+      },
+      "icon": "child",
+      "color": "#1565C0",
+      "hasPII": true,
+      "attributes": {
+        "name": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the name of a child:Name",
+          "validators": {
+            "required": true
+          }
+        },
+        "projectNumber": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the project number of a child:Project Number",
+          "labelShort": "##i18n##:Short label for the project number:PN",
+          "searchable": true,
+          "anonymize": "retain"
+        },
+        "dateOfBirth": {
+          "dataType": "date-with-age",
+          "label": "##i18n##:Label for the date of birth of a child:Date of birth",
+          "labelShort": "##i18n##:Short label for the date of birth:DoB",
+          "anonymize": "retain-anonymized"
+        },
+        "center": {
+          "dataType": "configurable-enum",
+          "additional": "center",
+          "label": "##i18n##:Label for the center of a child:Center",
+          "anonymize": "retain"
+        },
+        "gender": {
+          "dataType": "configurable-enum",
+          "label": "##i18n##:Label for the gender of a child:Gender",
+          "additional": "genders",
+          "anonymize": "retain"
+        },
+        "admissionDate": {
+          "dataType": "date-only",
+          "label": "##i18n##:Label for the admission date of a child:Admission",
+          "anonymize": "retain-anonymized"
+        },
+        "status": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the status of a child:Status"
+        },
+        "dropoutDate": {
+          "dataType": "date-only",
+          "label": "##i18n##:Label for the dropout date of a child:Dropout Date",
+          "anonymize": "retain-anonymized"
+        },
+        "dropoutType": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the type of dropout of a child:Dropout Type",
+          "anonymize": "retain"
+        },
+        "dropoutRemarks": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the remarks about a dropout of a child:Dropout remarks"
+        },
+        "photo": {
+          "dataType": "photo",
+          "label": "##i18n##:Label for the file field of a photo of a child:Photo"
+        },
+        "phone": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the phone number of a child:Phone Number"
+        },
+        "address": {
+          "dataType": "location",
+          "label": "##i18n##:Label for the address of a child:Address"
+        },
+        "health_bloodGroup": {
+          "dataType": "string",
+          "label": "##i18n##:Label for a child attribute:Blood Group"
+        },
+        "religion": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the religion of a child:Religion"
+        },
+        "motherTongue": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the mother tongue of a child:Mother Tongue",
+          "description": "##i18n##:Tooltip description for the mother tongue of a child:The primary language spoken at home"
+        },
+        "health_lastDentalCheckup": {
+          "dataType": "date",
+          "label": "##i18n##:Label for a child attribute:Last Dental Check-Up"
+        },
+        "birth_certificate": {
+          "dataType": "file",
+          "label": "##i18n##:Label for a child attribute:Birth certificate",
+          "additional": {
+            "acceptedFileTypes": ".pdf"
+          }
+        }
+      }
+    },
+    "entity:School": {
+      "toStringAttributes": [
+        "name"
+      ],
+      "icon": "university",
+      "label": "##i18n##:label for entity:School",
+      "labelPlural": "##i18n##:label (plural) for entity:Schools",
+      "color": "#9E9D24",
+      "attributes": {
+        "name": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the name of a school:Name",
+          "validators": {
+            "required": true
+          }
+        },
+        "privateSchool": {
+          "dataType": "boolean",
+          "label": "##i18n##:Label for if a school is a private school:Private School"
+        },
+        "language": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the language of a school:Language"
+        },
+        "address": {
+          "dataType": "location",
+          "label": "##i18n##:Label for the address of a school:Address"
+        },
+        "phone": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the phone number of a school:Phone Number"
+        },
+        "timing": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the timing of a school:School Timing"
+        },
+        "remarks": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the remarks for a school:Remarks"
+        },
+        "website": {
+          "dataType": "url",
+          "label": "##i18n##:Label for the website of a school:Website"
+        }
+      }
+    },
+    "entity:HistoricalEntityData": {
+      "hasPII": true,
+      "attributes": {
+        "date": {
+          "dataType": "date",
+          "label": "##i18n##:Label for date of historical data:Date",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "PLACEHOLDERS.NOW"
+            }
+          },
+          "anonymize": "retain-anonymized"
+        },
+        "relatedEntity": {
+          "dataType": "entity",
+          "additional": "Child",
+          "entityReferenceRole": "composite",
+          "anonymize": "retain"
+        },
+        "isMotivatedDuringClass": {
+          "dataType": "configurable-enum",
+          "additional": "rating-answer",
+          "label": "##i18n##:Label for a child attribute:Motivated",
+          "description": "##i18n##:Description for a child attribute:The child is motivated during the class."
+        },
+        "isParticipatingInClass": {
+          "dataType": "configurable-enum",
+          "additional": "rating-answer",
+          "label": "##i18n##:Label for a child attribute:Participating",
+          "description": "##i18n##:Description for a child attribute:The child is actively participating in the class."
+        },
+        "isInteractingWithOthers": {
+          "dataType": "configurable-enum",
+          "additional": "rating-answer",
+          "label": "##i18n##:Label for a child attribute:Interacting",
+          "description": "##i18n##:Description for a child attribute:The child interacts with other students during the class."
+        },
+        "doesHomework": {
+          "dataType": "configurable-enum",
+          "additional": "rating-answer",
+          "label": "##i18n##:Label for a child attribute:Homework",
+          "description": "##i18n##:Description for a child attribute:The child does its homework."
+        },
+        "asksQuestions": {
+          "dataType": "configurable-enum",
+          "additional": "rating-answer",
+          "label": "##i18n##:Label for a child attribute:Asking Questions",
+          "description": "##i18n##:Description for a child attribute:The child is asking questions during the class."
+        }
+      }
+    },
+    "entity:User": {
+      "toStringAttributes": [
+        "name"
+      ],
+      "icon": "user",
+      "label": "##i18n##:label for entity:User",
+      "labelPlural": "##i18n##:label (plural) for entity:Users",
+      "hasPII": true,
+      "attributes": {
+        "name": {
+          "dataType": "string",
+          "label": "##i18n##:Label of user field:Name"
+        },
+        "phone": {
+          "dataType": "string",
+          "label": "##i18n##:Label of user field:Contact"
+        }
+      }
+    },
+    "view:matching": {
+      "component": "MatchingEntities",
+      "config": {
+        "rightSide": {
+          "entityType": "School",
+          "prefilter": {
+            "privateSchool": true
+          },
+          "availableFilters": [
+            {
+              "id": "language"
+            }
+          ]
+        },
+        "leftSide": {
+          "entityType": "Child"
+        }
+      }
+    },
+    "appConfig:matching-entities": {
+      "columns": [
+        [
+          "name",
+          "name"
+        ],
+        [
+          "motherTongue",
+          "language"
+        ],
+        [
+          "address",
+          "address"
+        ],
+        [
+          "distance",
+          "privateSchool"
+        ]
+      ],
+      "onMatch": {
+        "newEntityType": "ChildSchoolRelation.ENTITY_TYPE",
+        "newEntityMatchPropertyLeft": "childId",
+        "newEntityMatchPropertyRight": "schoolId",
+        "columnsToReview": [
+          "start",
+          "end",
+          "result",
+          "childId",
+          "schoolId"
+        ]
+      }
+    },
+    "entity:Aser": {
+      "hasPII": true,
+      "attributes": {
+        "child": {
+          "dataType": "entity",
+          "additional": "Child",
+          "entityReferenceRole": "composite"
+        },
+        "date": {
+          "dataType": "date",
+          "label": "##i18n##:Label for date of the ASER results:Date",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "PLACEHOLDERS.NOW"
+            }
+          },
+          "anonymize": "retain-anonymized"
+        },
+        "hindi": {
+          "label": "##i18n##:Label of the Hindi ASER result:Hindi",
+          "dataType": "configurable-enum",
+          "additional": "reading-levels"
+        },
+        "bengali": {
+          "label": "##i18n##:Label of the Bengali ASER result:Bengali",
+          "dataType": "configurable-enum",
+          "additional": "reading-levels"
+        },
+        "english": {
+          "label": "##i18n##:Label of the English ASER result:English",
+          "dataType": "configurable-enum",
+          "additional": "reading-levels"
+        },
+        "math": {
+          "label": "##i18n##:Label of the Math ASER result:Math",
+          "dataType": "configurable-enum",
+          "additional": "math-levels"
+        },
+        "remarks": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the remarks of a ASER result:Remarks"
+        }
+      }
+    },
+    "entity:HealthCheck": {
+      "hasPII": true,
+      "attributes": {
+        "child": {
+          "dataType": "entity",
+          "additional": "Child",
+          "entityReferenceRole": "composite",
+          "anonymize": "retain"
+        },
+        "date": {
+          "dataType": "date",
+          "label": "##i18n##:Label for date of a health check:Date",
+          "anonymize": "retain-anonymized",
+          "defaultValue": {
+            "mode": "dynamic",
+            "config": {
+              "value": "PLACEHOLDERS.NOW"
+            }
+          }
+        },
+        "height": {
+          "dataType": "number",
+          "label": "##i18n##:Label for height in cm of a health check:Height [cm]",
+          "viewComponent": "DisplayUnit",
+          "additional": "cm"
+        },
+        "weight": {
+          "dataType": "number",
+          "label": "##i18n##:Label for weight in kg of a health check:Weight [kg]",
+          "viewComponent": "DisplayUnit",
+          "additional": "kg"
+        }
+      }
+    },
+    "entity:ChildSchoolRelation": {
+      "hasPII": true,
+      "attributes": {
+        "childId": {
+          "dataType": "entity",
+          "additional": "Child",
+          "entityReferenceRole": "composite",
+          "validators": {
+            "required": true
+          },
+          "anonymize": "retain",
+          "label": "##i18n##:Label for the child of a relation:Child"
+        },
+        "schoolId": {
+          "dataType": "entity",
+          "additional": "School",
+          "entityReferenceRole": "aggregate",
+          "validators": {
+            "required": true
+          },
+          "anonymize": "retain",
+          "label": "##i18n##:Label for the school of a relation:School"
+        },
+        "schoolClass": {
+          "dataType": "string",
+          "label": "##i18n##:Label for the class of a relation:Class",
+          "anonymize": "retain"
+        },
+        "start": {
+          "dataType": "date-only",
+          "label": "##i18n##:Label for the start date of a relation:Start date",
+          "description": "##i18n##:Description of the start date of a relation:The date a child joins a school",
+          "anonymize": "retain"
+        },
+        "end": {
+          "dataType": "date-only",
+          "label": "##i18n##:Label for the end date of a relation:End date",
+          "description": "##i18n##:Description of the end date of a relation:The date of a child leaving the school",
+          "anonymize": "retain"
+        },
+        "result": {
+          "dataType": "percentage",
+          "label": "##i18n##:Label for the percentage result of a relation:Result",
+          "validators": {
+            "min": 0,
+            "max": 100
+          }
+        }
+      }
+    },
+    "view:todo": {
+      "component": "TodoList",
+      "config": {
+        "entityType": "Todo",
+        "columns": [
+          "deadline",
+          "subject",
+          "assignedTo",
+          "startDate",
+          "relatedEntities"
+        ],
+        "filters": [
+          {
+            "id": "assignedTo"
+          },
+          {
+            "id": "due-status",
+            "type": "prebuilt"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -13,6 +13,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { DemoAssistanceDialogComponent } from "./demo-assistance-dialog/demo-assistance-dialog.component";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject } from "../session/session-type";
+import { map } from "rxjs/operators";
 
 /**
  * Loads available "scenarios" of base configs
@@ -55,14 +56,22 @@ export class SetupService {
 
   async getAvailableBaseConfig(): Promise<BaseConfig[]> {
     // TODO: implement dynamic loading of base configs from assets/base-configs/
-    const mockConfig: BaseConfig = {
-      id: "basic",
-      name: "Basic Setup",
-      description:
-        "A basic setup with minimal configuration to get started quickly.",
-      entitiesToImport: ["Config_CONFIG_ENTITY.json"],
-    };
-    return [mockConfig];
+
+    return [
+      {
+        id: "basic",
+        name: "Basic Setup",
+        description:
+          "A basic setup with minimal configuration to get started quickly.",
+        entitiesToImport: ["Config_CONFIG_ENTITY.json"],
+      },
+      {
+        id: "education",
+        name: "Education Project",
+        description: "School or after-school example.",
+        entitiesToImport: ["Config_CONFIG_ENTITY.json"],
+      },
+    ];
   }
 
   async initSystemWithBaseConfig(baseConfig: BaseConfig): Promise<void> {
@@ -83,7 +92,9 @@ export class SetupService {
     filePath: string,
   ): Promise<Entity | undefined> {
     const doc = await lastValueFrom(
-      this.httpClient.get(filePath, { responseType: "json" }),
+      this.httpClient
+        .get(filePath, { responseType: "json" })
+        .pipe(map((data) => this.localizeJson(data))),
     );
 
     if (!doc || !doc["_id"]) {
@@ -125,5 +136,25 @@ export class SetupService {
       position: { top: "64px", right: "0px" },
     });
     return await lastValueFrom(dialogRef.afterClosed());
+  }
+
+  private localizeJson(jsonText) {
+    // TODO: work in progress. Replacing i18n markers with this doesn't work yet ...
+
+    // 1. Full format: ##i18##:meaning|description@@id:Text
+    // 2. Simple format: ##i18##Text
+    const localizedJson = JSON.stringify(jsonText).replace(
+      /##i18##(?::([^:]*?)@@([^:]*?):)?(.+)/g,
+      (match, meaning, id, text) => {
+        if (meaning && id) {
+          // Full format with metadata
+          return $localize`:${meaning}@@${id}:${text}`;
+        } else {
+          // Simple format without metadata
+          return $localize`${text}`;
+        }
+      },
+    );
+    return JSON.parse(localizedJson);
   }
 }
