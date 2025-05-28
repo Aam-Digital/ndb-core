@@ -116,11 +116,13 @@ export class SetupService {
   public async openDemoSetupDialog() {
     const dialogRef = this.dialog.open(DemoAssistanceDialogComponent, {
       disableClose: true,
+      hasBackdrop: false,
+      autoFocus: false,
       height: "calc(100% - 90px)",
       width: "calc(100% - 100px)",
       maxWidth: "100%",
       maxHeight: "100%",
-      position: { top: "65px", right: "0px" },
+      position: { top: "64px", right: "0px" },
     });
     return await lastValueFrom(dialogRef.afterClosed());
   }

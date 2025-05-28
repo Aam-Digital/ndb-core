@@ -25,6 +25,11 @@
   }
 }
 
+::ng-deep .mdc-dialog--open .mat-mdc-dialog-surface,
+.mdc-dialog--closing .mat-mdc-dialog-surface {
+  border-radius: 0px !important;
+}
+
 mat-dialog-content {
   max-height: unset !important;
   flex: 1 0 0;
