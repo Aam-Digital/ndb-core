@@ -1,10 +1,11 @@
-<mat-dialog-content class="demo-dialog-content">
-  <h1>Welcome to the Aam Digital demo!</h1>
-  <span>
+<h1 mat-dialog-title class="header-title">Welcome to the Aam Digital demo!</h1>
+
+<mat-dialog-content class="demo-dialog-content" autosize>
+  <p>
     You can easily customize your case management system on Aam Digital. We want
     to let you explore some example system as a first step. For this we have
     prepared a few different demo use cases here.
-  </span>
+  </p>
 
   <div class="demo-layout">
     <app-choose-use-case
@@ -23,7 +24,13 @@
     them.
   </p>
   <div class="initialization-field">
-    <button mat-raised-button class="full-width" color="accent" i18n-matTooltip>
+    <button
+      mat-raised-button
+      class="full-width"
+      color="accent"
+      i18n-matTooltip
+      (click)="initializeSystem()"
+    >
       <span i18n>Initialize System</span>
     </button>
   </div>

@@ -1,15 +1,16 @@
 <div class="demo-layout">
   <div class="left-column">
-    <h3>Select your Use Case:</h3>
-    <mat-select
-      class="demo-select"
-      [(value)]="selectedItem"
-      (selectionChange)="onSelectionChange()"
-    >
-      @for (item of demoAssistanceItems; track item) {
-        <mat-option [value]="item">{{ item.name }}</mat-option>
-      }
-    </mat-select>
+    <h3><b>Select your Use Case:</b></h3>
+    <mat-form-field appearance="fill" class="demo-select">
+      <mat-select
+        [(value)]="selectedItem"
+        (selectionChange)="onSelectionChange()"
+      >
+        @for (item of demoAssistanceItems; track item) {
+          <mat-option [value]="item">{{ item.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <div class="right-column">

@@ -127,7 +127,10 @@ export class UiComponent {
 
   openDemoAssistance(): void {
     this.dialog.open(DemoAssistanceDialogComponent, {
-      height: "90vh",
+      height: "calc(100% - 90px)",
+      width: "calc(100% - 100px)",
+      maxWidth: "100%",
+      maxHeight: "100%",
       position: { top: "65px", right: "0px" },
     });
   }

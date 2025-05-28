@@ -22,6 +22,7 @@ import { ChooseUseCaseComponent } from "../choose-use-case/choose-use-case.compo
 export class DemoAssistanceDialogComponent implements OnInit {
   // List of demo assistance items
   demoAssistanceItems: BaseConfig[] = [];
+  selectedUseCase: BaseConfig | null = null;
 
   constructor(private setupService: SetupService) {}
 
@@ -32,5 +33,13 @@ export class DemoAssistanceDialogComponent implements OnInit {
   }
   onUseCaseSelected(selected: BaseConfig) {
     console.log("Selected use case:", selected);
+    this.selectedUseCase = selected;
+  }
+
+  initializeSystem() {
+    if (this.selectedUseCase) {
+      console.log("Selected use case with dialog:", this.selectedUseCase);
+      this.setupService.initSystemWithBaseConfig(this.selectedUseCase);
+    }
   }
 }

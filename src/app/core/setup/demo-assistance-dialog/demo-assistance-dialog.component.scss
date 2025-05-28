@@ -1,13 +1,14 @@
-.demo-dialog-content {
-  gap: 10%;
-  display: grid;
+.header-title {
+  margin-top: 3%;
+}
 
-  .footer-note {
-    margin-top: 16px;
-  }
+.demo-dialog-content {
+  display: flex;
+  gap: 10%;
+  flex-direction: column;
+  overflow: auto;
 
   .dialog-actions {
-    width: 100%;
     margin-top: 24px;
     display: flex;
     justify-content: center;
@@ -17,4 +18,9 @@
     display: flex;
     justify-content: center;
   }
+}
+
+mat-dialog-content {
+  max-height: unset !important;
+  flex: 1 0 0;
 }
