@@ -18,7 +18,14 @@ export interface BaseConfig {
 
   /**
    * Description of the scenario of this base configuration
-   * (can contain markdown formatting).
+   * (can contain Markdown formatting).
    */
   description: string;
+
+  /**
+   * Names of json files that should be imported during the setup process.
+   * Files have to be located in the `assets/base-configs/${id}/` folder
+   * and match
+   */
+  entitiesToImport: string[];
 }

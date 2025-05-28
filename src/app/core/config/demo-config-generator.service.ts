@@ -7,6 +7,9 @@ import {
   defaultSetupWizardConfig,
 } from "../admin/setup-wizard/setup-wizard-config";
 
+/**
+ * @deprecated use SetupService base-configs instead.
+ */
 @Injectable()
 export class DemoConfigGeneratorService extends DemoDataGenerator<Config> {
   static provider() {

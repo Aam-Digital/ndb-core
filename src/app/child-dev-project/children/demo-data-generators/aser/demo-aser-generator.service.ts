@@ -7,6 +7,8 @@ import { WarningLevel } from "../../../warning-level";
 import { Entity } from "../../../../core/entity/model/entity";
 import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { Logging } from "../../../../core/logging/logging.service";
 
 /**
  * Generate ASER results every 12 months for each Child until passing.
@@ -24,11 +26,22 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
     ];
   }
 
-  constructor(private demoChildren: DemoChildGenerator) {
+  constructor(
+    private demoChildren: DemoChildGenerator,
+    private entityRegistry: EntityRegistry,
+  ) {
     super();
   }
 
   public generateEntities(): Entity[] {
+    if (!this.entityRegistry.has("Aser")) {
+      Logging.debug(
+        "Skipping demo data generation because entity type is not configured",
+        "Aser",
+      );
+      return [];
+    }
+
     const data = [];
 
     for (const child of this.demoChildren.entities) {
