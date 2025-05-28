@@ -13,7 +13,9 @@
     </mat-form-field>
   </div>
 
-  <div class="right-column">
-    <p>{{ selectedItem?.description }}</p>
+  <div class="right-column" [class.hidden]="!selectedItem">
+    @if (selectedItem) {
+      <p>{{ selectedItem.description }}</p>
+    }
   </div>
 </div>

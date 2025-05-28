@@ -11,6 +11,8 @@ import { Entity } from "../entity/model/entity";
 import { Logging } from "../logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoAssistanceDialogComponent } from "./demo-assistance-dialog/demo-assistance-dialog.component";
+import { LoginState } from "../session/session-states/login-state.enum";
+import { LoginStateSubject } from "../session/session-type";
 
 /**
  * Loads available "scenarios" of base configs
@@ -26,6 +28,7 @@ export class SetupService {
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   private readonly dialog = inject(MatDialog);
+  private readonly loginState = inject(LoginStateSubject);
 
   /**
    * Bridge to old DemoDataModule flow of generating demo data.
@@ -34,6 +37,12 @@ export class SetupService {
    * @private
    */
   async initDemoData(baseConfig: BaseConfig): Promise<void> {
+    // todo: remove this method once the new base config system is fully implemented
+    // This is to prevent re-initialization if the user is already logged in.
+    const isLoggedIn = this.loginState.value === LoginState.LOGGED_IN;
+    if (isLoggedIn) {
+      return;
+    }
     // log in as demo user to initialize the database
     await this.demoDataInitializer.logInDemoUser();
 
