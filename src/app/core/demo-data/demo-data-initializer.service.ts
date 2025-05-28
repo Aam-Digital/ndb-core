@@ -56,7 +56,13 @@ export class DemoDataInitializerService {
     this.localAuthService.saveUser(this.normalUser);
     this.localAuthService.saveUser(this.adminUser);
     await this.sessionManager.offlineLogin(this.normalUser);
-    await this.demoDataService.publishDemoData();
+
+    if (window["ndbDemoData"]) {
+      const db = this.dbResolver.getDatabase();
+      await db.putAll(window["ndbDemoData"]);
+    } else {
+      await this.demoDataService.publishDemoData();
+    }
 
     dialogRef.close();
     this.syncDatabaseOnUserChange();
