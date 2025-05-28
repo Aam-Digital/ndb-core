@@ -40,6 +40,7 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 import { NotificationComponent } from "../../../features/notification/notification.component";
+import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -69,6 +70,7 @@ import { NotificationComponent } from "../../../features/notification/notificati
     DisplayImgComponent,
     SetupWizardButtonComponent,
     NotificationComponent,
+    GotoThirdPartySystemComponent,
   ],
 })
 export class UiComponent {
