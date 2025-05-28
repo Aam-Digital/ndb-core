@@ -49,13 +49,11 @@ export class AppComponent {
     private router: Router,
     private configService: ConfigService,
     protected loginState: LoginStateSubject,
-    setupService: SetupService,
+    private setupService: SetupService,
   ) {
-    // TODO: move this into the new setup component
-    setupService.initDemoData();
+    this.setupService.openDemoSetupDialog();
 
     this.detectConfigReadyState();
-
     this.detectConfigMode();
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))

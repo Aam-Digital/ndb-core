@@ -41,8 +41,7 @@ import { SessionManagerService } from "../../session/session-service/session-man
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 import { NotificationComponent } from "../../../features/notification/notification.component";
 import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
-import { MatDialog } from "@angular/material/dialog";
-import { DemoAssistanceDialogComponent } from "app/core/setup/demo-assistance-dialog/demo-assistance-dialog.component";
+import { SetupService } from "app/core/setup/setup.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -89,7 +88,7 @@ export class UiComponent {
     private siteSettingsService: SiteSettingsService,
     private loginState: LoginStateSubject,
     private sessionManager: SessionManagerService,
-    private dialog: MatDialog,
+    private setupService: SetupService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -126,12 +125,6 @@ export class UiComponent {
   }
 
   openDemoAssistance(): void {
-    this.dialog.open(DemoAssistanceDialogComponent, {
-      height: "calc(100% - 90px)",
-      width: "calc(100% - 100px)",
-      maxWidth: "100%",
-      maxHeight: "100%",
-      position: { top: "65px", right: "0px" },
-    });
+    this.setupService.openDemoSetupDialog();
   }
 }

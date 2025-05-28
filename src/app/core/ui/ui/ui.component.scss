@@ -19,6 +19,7 @@ body {
  * Both of these directives are required to make the shadow show
  */
 .ui-toolbar {
+  padding-right: 0px;
   position: relative;
   z-index: 2;
   justify-content: space-between;
@@ -130,8 +131,19 @@ mat-sidenav-container {
 }
 
 .demo-assistant-btn {
-  height: auto;
+  @media screen and (max-width: breakpoints.$sm) {
+    min-height: 56px;
+  }
+  min-height: 64px;
+  min-width: 120px;
+  border-radius: 0%;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 30px 100%);
+
   ::ng-deep .mdc-button__label {
-    padding: inherit;
+    width: 100%;
+    line-height: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
   }
 }

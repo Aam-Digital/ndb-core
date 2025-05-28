@@ -9,6 +9,8 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { Logging } from "../logging/logging.service";
+import { MatDialog } from "@angular/material/dialog";
+import { DemoAssistanceDialogComponent } from "./demo-assistance-dialog/demo-assistance-dialog.component";
 
 /**
  * Loads available "scenarios" of base configs
@@ -23,6 +25,7 @@ export class SetupService {
   private readonly schemaService = inject(EntitySchemaService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
+  private readonly dialog = inject(MatDialog);
 
   /**
    * Bridge to old DemoDataModule flow of generating demo data.
@@ -30,13 +33,11 @@ export class SetupService {
    * @deprecated will be replaced by calls to initSystemWithBaseConfig()
    * @private
    */
-  async initDemoData() {
+  async initDemoData(baseConfig: BaseConfig): Promise<void> {
     // log in as demo user to initialize the database
     await this.demoDataInitializer.logInDemoUser();
 
-    await this.initSystemWithBaseConfig(
-      (await this.getAvailableBaseConfig())[0],
-    );
+    await this.initSystemWithBaseConfig(baseConfig);
 
     if (environment.demo_mode) {
       await this.demoDataInitializer.generateDemoData();
@@ -95,5 +96,23 @@ export class SetupService {
     const entity = this.schemaService.loadDataIntoEntity(new entityType(), doc);
     Logging.debug("Importing baseConfig entity", entity);
     return entity;
+  }
+
+  /**
+   * Opens a dialog to assist the user in setting up a demo environment.
+   * This dialog will guide the user through the process of selecting a use case
+   * and initializing the system with the corresponding demo data.
+   * @return A promise that resolves when the dialog is closed.
+   * */
+  public async openDemoSetupDialog() {
+    const dialogRef = this.dialog.open(DemoAssistanceDialogComponent, {
+      disableClose: true,
+      height: "calc(100% - 90px)",
+      width: "calc(100% - 100px)",
+      maxWidth: "100%",
+      maxHeight: "100%",
+      position: { top: "65px", right: "0px" },
+    });
+    return await lastValueFrom(dialogRef.afterClosed());
   }
 }
