@@ -41,7 +41,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
   }
 }
 
-function generateChildren(params: { count: number }): Entity[] {
+export function generateChildren(params: { count: number }): Entity[] {
   return range(params.count).map((i) => generateChild(String(i + 1)));
 }
 
