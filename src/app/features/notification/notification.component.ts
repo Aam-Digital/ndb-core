@@ -17,6 +17,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../core/entity/model/entity-update";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { NotificationConfig } from "./model/notification-config";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 /**
  * Display Notification indicator for toolbar
@@ -56,6 +57,7 @@ export class NotificationComponent implements OnInit {
   private readonly sessionInfo = inject(SessionSubject);
   private readonly router = inject(Router);
   private readonly entityRegistry = inject(EntityRegistry);
+  private readonly dbResolver = inject(DatabaseResolverService);
 
   ngOnInit() {
     this.notificationsSubject.subscribe((notifications) => {
@@ -69,15 +71,26 @@ export class NotificationComponent implements OnInit {
   }
 
   private async checkNotificationConfigStatus() {
-    this.hasNotificationConfig = await this.entityMapper
+    const initial = await this.entityMapper
       .load<NotificationConfig>(NotificationConfig, this.userId)
       .then((doc) => !!doc)
       .catch(() => false);
+    this.setNotificationConfigStatus(initial);
 
     this.entityMapper
       .receiveUpdates(NotificationConfig)
       .pipe(untilDestroyed(this))
-      .subscribe((next) => (this.hasNotificationConfig = !!next.entity));
+      .subscribe((next) => this.setNotificationConfigStatus(!!next.entity));
+  }
+
+  private setNotificationConfigStatus(hasNotificationConfig: boolean) {
+    this.hasNotificationConfig = hasNotificationConfig;
+    if (hasNotificationConfig) {
+      // initialize DB (only now, as we know the user has notifications configured)
+      this.dbResolver.initializeNotificationsDatabaseForCurrentUser(
+        this.userId,
+      );
+    }
   }
 
   /**

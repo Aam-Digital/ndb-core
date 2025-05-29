@@ -65,7 +65,6 @@ export class DatabaseResolverService {
    */
   async initDatabasesForSession(session: SessionInfo) {
     this.initializeAppDatabaseForCurrentUser(session);
-    this.initializeNotificationsDatabaseForCurrentUser(session);
   }
 
   private initializeAppDatabaseForCurrentUser(user: SessionInfo) {
@@ -73,9 +72,19 @@ export class DatabaseResolverService {
     this.getDatabase(Entity.DATABASE).init(userDBName);
   }
 
-  private initializeNotificationsDatabaseForCurrentUser(user: SessionInfo) {
+  /**
+   * Initialize db sync for current user's notifications-... DB.
+   * Only call this if the user has notifications enabled and the CouchDB actually exists,
+   * to avoid flooding to console with errors.
+   * @param userId
+   */
+  public initializeNotificationsDatabaseForCurrentUser(userId: string) {
     const db = this.getDatabase(NotificationEvent.DATABASE);
-    const serverDbName = `${NotificationEvent.DATABASE}_${user.id}`;
+    if (db.isInitialized()) {
+      return;
+    }
+
+    const serverDbName = `${NotificationEvent.DATABASE}_${userId}`;
     const browserDbName = serverDbName;
     if (db instanceof SyncedPouchDatabase) {
       db.init(browserDbName, serverDbName);

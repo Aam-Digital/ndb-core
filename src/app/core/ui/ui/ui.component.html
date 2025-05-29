@@ -42,7 +42,7 @@
     class="flex-row align-center flex-grow-1-3 justify-content-end gap-small"
   >
     @if (isLoggedIn()) {
-      <app-search class="hide-mobile full-width"></app-search>
+      <app-search [class.full-width]="isDesktop"></app-search>
 
       <app-sync-status></app-sync-status>
 
@@ -83,6 +83,8 @@
       <div class="flex-grow"></div>
 
       <div class="flex-column">
+        <app-goto-third-party-system></app-goto-third-party-system>
+
         <app-setup-wizard-button></app-setup-wizard-button>
 
         <app-pwa-install></app-pwa-install>

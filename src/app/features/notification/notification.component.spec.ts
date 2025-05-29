@@ -11,6 +11,7 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
+import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
 describe("NotificationComponent", () => {
   let component: NotificationComponent;
@@ -28,6 +29,12 @@ describe("NotificationComponent", () => {
         { provide: SessionSubject, useValue: of(null) },
         { provide: ActivatedRoute, useValue: {} },
         { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: DatabaseResolverService,
+          useValue: jasmine.createSpyObj([
+            "initializeNotificationsDatabaseForCurrentUser",
+          ]),
+        },
       ],
     }).compileComponents();
 
