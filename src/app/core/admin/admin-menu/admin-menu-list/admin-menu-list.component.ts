@@ -116,6 +116,7 @@ export class AdminMenuListComponent {
     if (event.previousContainer === event.container) {
       moveItemInArray(currentList, event.previousIndex, event.currentIndex);
     } else {
+      const itemToMove = event.previousContainer.data[event.previousIndex];
       transferArrayItem(
         previousList,
         currentList,
@@ -123,7 +124,7 @@ export class AdminMenuListComponent {
         event.currentIndex,
       );
       this.removeFromSubmenu(
-        event.previousContainer.data[event.previousIndex],
+        itemToMove.originalItem,
         this.menuItemsToDisplay.map((x) => x.originalItem),
       );
     }
