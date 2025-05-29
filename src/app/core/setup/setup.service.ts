@@ -97,6 +97,12 @@ export class SetupService {
         .pipe(map((data) => this.localizeJson(data))),
     );
 
+    // extract ##i18n## tags from all string values in the loaded JSON
+    // This is necessary to ensure that the i18n tags are not stored in the database.
+    // todo: this is a temporary solution, as the i18n tags should be handled by the i18n service.
+    // This will be removed once we found a package that supports i18n tags in JSON files.(for example, ngx-translate)
+    this.extractI18nTags(doc);
+
     if (!doc || !doc["_id"]) {
       Logging.warn(
         "Invalid entity file. SetupService is skipping to import this.",
@@ -116,6 +122,31 @@ export class SetupService {
     const entity = this.schemaService.loadDataIntoEntity(new entityType(), doc);
     Logging.debug("Importing baseConfig entity", entity);
     return entity;
+  }
+
+  /**
+   * Remove ##i18n## tags from all string values in an object.
+   */
+  private extractI18nTags(obj: any): any {
+    if (typeof obj === "string") {
+      if (obj.startsWith("##i18n##:")) {
+        // Remove everything up to and including the last colon
+        return obj.replace(/^##i18n##:.*:/, "");
+      }
+      if (obj.startsWith("##i18n##")) {
+        return obj.replace(/^##i18n##/, "");
+      }
+      return obj;
+    } else if (Array.isArray(obj)) {
+      for (let i = 0; i < obj.length; i++) {
+        obj[i] = this.extractI18nTags(obj[i]);
+      }
+    } else if (typeof obj === "object" && obj !== null) {
+      for (const key of Object.keys(obj)) {
+        obj[key] = this.extractI18nTags(obj[key]);
+      }
+    }
+    return obj;
   }
 
   /**
