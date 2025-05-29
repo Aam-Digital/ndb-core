@@ -1,9 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output
-} from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
@@ -55,21 +50,18 @@ export class AdminMenuListComponent {
     this.menuItemsToDisplay = (value ?? []).map((item) => {
       const displayItem = this.menuService.generateMenuItemForEntityType(item);
       delete displayItem.subMenu;
-      return {
-        originalItem: { ...item },
-        itemToDisplay: displayItem,
-      };
+      return { originalItem: item, itemToDisplay: displayItem };
     });
   }
 
-  @Output() menuItemsChange = new EventEmitter<MenuItem[]>();
+  @Output() readonly menuItemsChange = new EventEmitter<MenuItem[]>();
 
   menuItemsToDisplay: {
     originalItem: MenuItem | EntityMenuItem;
     itemToDisplay: MenuItem;
   }[] = [];
 
-  listId = `list-${Math.random().toString(36).substr(2, 9)}`; // Unique ID
+  readonly listId = `list-${Math.random().toString(36).substr(2, 9)}`;
 
   constructor(
     private dialog: MatDialog,
@@ -83,8 +75,8 @@ export class AdminMenuListComponent {
   removeMenuItem(index: number): void {
     if (index > -1) {
       this.menuItemsToDisplay.splice(index, 1);
+      this.emitChange();
     }
-    this.emitChange();
   }
 
   async editMenuItem(item: MenuItem) {
@@ -96,10 +88,10 @@ export class AdminMenuListComponent {
   }
 
   async addNewMenuItem() {
-    const newItem = await this.openEditDialog(undefined);
+    const newItem = await this.openEditDialog();
     if (newItem) {
       this.menuItemsToDisplay.push({
-        originalItem: { ...newItem },
+        originalItem: newItem,
         itemToDisplay: this.menuService.generateMenuItemForEntityType(newItem),
       });
       this.emitChange();
@@ -110,76 +102,90 @@ export class AdminMenuListComponent {
     const dialogRef = this.dialog.open(AdminMenuItemComponent, {
       width: "600px",
       data: {
-        item: { ...(item ?? {}) },
+        item: item ? { ...item } : {},
         isNew: !item,
       },
     });
     return firstValueFrom(dialogRef.afterClosed());
   }
 
-  /**
-   * Handles drop event for the main list (for promotion or reordering).
-   * If dropped into the root, it's promoted to top-level.
-   */
   drop(event: CdkDragDrop<any[]>, parentItem: MenuItem | null) {
     const previousList = event.previousContainer.data;
     const currentList = event.container.data;
 
     if (event.previousContainer === event.container) {
-      // Reorder within the same list
       moveItemInArray(currentList, event.previousIndex, event.currentIndex);
     } else {
-      // Transfer between lists (promotion/demotion)
-      transferArrayItem(previousList, currentList, event.previousIndex, event.currentIndex);
+      transferArrayItem(
+        previousList,
+        currentList,
+        event.previousIndex,
+        event.currentIndex,
+      );
+      this.removeFromSubmenu(
+        event.previousContainer.data[event.previousIndex],
+        this.menuItemsToDisplay.map((x) => x.originalItem),
+      );
     }
 
-    // If dropping into a submenu, update subMenu property of parent
     if (parentItem) {
       parentItem.subMenu = currentList.map((x: any) => x.originalItem || x);
       this.emitChange();
     } else {
-      // Dropping to root: update top-level
-      this.menuItemsChange.emit(this.menuItemsToDisplay.map(x => x.originalItem));
+      this.emitChange();
     }
   }
 
   /**
-   * Handles drop event ON a menu item (to make it a child/submenu item).
-   * Used to demote a main menu item to a submenu.
+   * Removes an item from its parent sub-menu structure.
    */
+  private removeFromSubmenu(item: MenuItem, tree: MenuItem[]): boolean {
+    for (let i = 0; i < tree.length; i++) {
+      const current = tree[i];
+      if (current.subMenu) {
+        const index = current.subMenu.indexOf(item);
+        if (index !== -1) {
+          current.subMenu.splice(index, 1);
+          return true;
+        }
+        if (this.removeFromSubmenu(item, current.subMenu)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Handles dropping an item onto another item in the list.
+   * This allows for nesting items within each other.
+   */
+  // todo: right now this is not getting called when dropping an item on another item
   dropOnItem(event: CdkDragDrop<any[]>, targetIndex: number) {
-    // Only handle if dragging from another list
     if (event.previousContainer === event.container) return;
 
     const draggedItem = event.previousContainer.data[event.previousIndex];
     const targetItem = this.menuItemsToDisplay[targetIndex].originalItem;
 
-    // Prevent making an item a child of itself or its descendants
-    if (this.isDescendant(draggedItem.originalItem, targetItem) || draggedItem.originalItem === targetItem) {
+    if (
+      this.isDescendant(draggedItem.originalItem, targetItem) ||
+      draggedItem.originalItem === targetItem
+    ) {
       return;
     }
 
-    // Remove item from previous list
     event.previousContainer.data.splice(event.previousIndex, 1);
 
-    // Create subMenu if missing
     if (!targetItem.subMenu) targetItem.subMenu = [];
-
-    // Add as child
     targetItem.subMenu.push(draggedItem.originalItem);
 
     this.emitChange();
   }
 
-  /**
-   * Helper to prevent circular nesting.
-   * Returns true if 'item' is a descendant of 'potentialAncestor'.
-   */
   private isDescendant(item: MenuItem, potentialAncestor: MenuItem): boolean {
     if (!potentialAncestor.subMenu) return false;
     for (const child of potentialAncestor.subMenu) {
-      if (child === item) return true;
-      if (this.isDescendant(item, child)) return true;
+      if (child === item || this.isDescendant(item, child)) return true;
     }
     return false;
   }
@@ -190,6 +196,8 @@ export class AdminMenuListComponent {
   }
 
   private emitChange() {
-    this.menuItemsChange.emit(this.menuItemsToDisplay.map(x => x.originalItem));
+    this.menuItemsChange.emit(
+      this.menuItemsToDisplay.map((x) => x.originalItem),
+    );
   }
 }
