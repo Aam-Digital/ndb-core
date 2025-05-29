@@ -34,3 +34,14 @@ mat-dialog-content {
   max-height: unset !important;
   flex: 1 0 0;
 }
+
+@media (max-width: 600px) {
+  ::ng-deep .cdk-overlay-pane.mat-mdc-dialog-panel {
+    width: 100vh !important;
+    margin-top: 56px !important;
+    height: 100vh !important;
+  }
+  .demo-dialog-content {
+    gap: 0;
+  }
+}

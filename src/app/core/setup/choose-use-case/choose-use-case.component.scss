@@ -26,3 +26,22 @@
     height: 0;
   }
 }
+
+@media (max-width: 600px) {
+  .demo-layout {
+    flex-direction: column;
+    gap: 16px;
+
+    .left-column,
+    .right-column {
+      flex: unset;
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .right-column {
+      padding: 16px;
+    }
+  }
+}
