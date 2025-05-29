@@ -7,6 +7,8 @@ import { ConfigurableEnumValue } from "./configurable-enum.types";
 
 @DatabaseEntity("ConfigurableEnum")
 export class ConfigurableEnum extends Entity {
+  static override isInternalEntity = true;
+
   @DatabaseField() values: ConfigurableEnumValue[] = [];
 
   constructor(id?: string, values: ConfigurableEnumValue[] = []) {
