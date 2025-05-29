@@ -2,11 +2,7 @@
   <div class="top-action-bar">
     <div class="right-button">
       <button mat-stroked-button color="accent" (click)="addNewMenuItem()">
-        <fa-icon
-          aria-label="add"
-          icon="plus-circle"
-          class="standard-icon-with-text"
-        ></fa-icon>
+        <fa-icon aria-label="add" icon="plus-circle" class="standard-icon-with-text"></fa-icon>
         <span i18n>Add New</span>
       </button>
     </div>
@@ -15,40 +11,39 @@
 
 <mat-nav-list
   cdkDropList
+  [id]="listId"
+  [cdkDropListData]="menuItemsToDisplay"
+  [cdkDropListConnectedTo]="connectedDropLists"
   cdkDropListOrientation="vertical"
   cdkDropListLockAxis="y"
-  (cdkDropListDropped)="drop($event)"
+  (cdkDropListDropped)="drop($event, null)"
   class="drop-list flex-column gap-regular limit-width"
 >
   <ng-container *ngFor="let item of menuItemsToDisplay; let i = index">
-    <div class="flex-row menu-item-container drop-item" cdkDrag>
-      <!-- Drag handle -->
+    <div
+      class="flex-row menu-item-container drop-item"
+      cdkDrag
+      [cdkDragData]="item"
+      [cdkDropListConnectedTo]="getConnectedDropLists()"
+      cdkDropList
+      [cdkDropListData]="item.originalItem.subMenu ? item.originalItem.subMenu : []"
+      (cdkDropListDropped)="dropOnItem($event, i)"
+    >
       <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
-
-      <app-menu-item [item]="item.itemToDisplay"></app-menu-item>
-
-      <fa-icon
-        icon="edit"
-        class="edit-icon"
-        (click)="editMenuItem(item.originalItem)"
-        aria-label="Edit menu item"
-      ></fa-icon>
-
-      <fa-icon
-        icon="times"
-        class="remove-icon"
-        (click)="removeMenuItem(i)"
-        aria-label="Remove menu item"
-      ></fa-icon>
+      <app-menu-item [item]="item.itemToDisplay" [adminMode]="true" (editRequest)="editMenuItem(item.originalItem)"></app-menu-item>
+      <button mat-icon-button color="accent" (click)="editMenuItem(item.originalItem)" aria-label="Edit menu item">
+        <mat-icon class="edit-icon">edit</mat-icon>
+      </button>
+      <fa-icon icon="times" class="remove-icon" (click)="removeMenuItem(i)" aria-label="Remove menu item"></fa-icon>
     </div>
 
-    <!-- Render submenus if they exist and are expanded -->
     @if (item.originalItem.subMenu) {
       <div class="submenu">
         <app-admin-menu-list
           [menuItems]="item.originalItem.subMenu"
           (menuItemsChange)="submenuChanged(item.originalItem, $event)"
           [showAddNew]="false"
+          [connectedDropLists]="getConnectedDropLists()"
         ></app-admin-menu-list>
       </div>
     }
