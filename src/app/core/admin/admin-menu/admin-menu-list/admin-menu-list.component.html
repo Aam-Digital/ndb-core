@@ -13,7 +13,7 @@
   cdkDropList
   [id]="listId"
   [cdkDropListData]="menuItemsToDisplay"
-  [cdkDropListConnectedTo]="connectedDropLists"
+  [cdkDropListConnectedTo]="getConnectedDropLists()"
   cdkDropListOrientation="vertical"
   cdkDropListLockAxis="y"
   (cdkDropListDropped)="drop($event, null)"
@@ -24,10 +24,6 @@
       class="flex-row menu-item-container drop-item"
       cdkDrag
       [cdkDragData]="item"
-      [cdkDropListConnectedTo]="getConnectedDropLists()"
-      cdkDropList
-      [cdkDropListData]="item.originalItem.subMenu ? item.originalItem.subMenu : []"
-      (cdkDropListDropped)="dropOnItem($event, i)"
     >
       <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
       <app-menu-item [item]="item.itemToDisplay" [adminMode]="true" (editRequest)="editMenuItem(item.originalItem)"></app-menu-item>
@@ -37,15 +33,21 @@
       <fa-icon icon="times" class="remove-icon" (click)="removeMenuItem(i)" aria-label="Remove menu item"></fa-icon>
     </div>
 
-    @if (item.originalItem.subMenu) {
-      <div class="submenu">
-        <app-admin-menu-list
-          [menuItems]="item.originalItem.subMenu"
-          (menuItemsChange)="submenuChanged(item.originalItem, $event)"
-          [showAddNew]="false"
-          [connectedDropLists]="getConnectedDropLists()"
-        ></app-admin-menu-list>
-      </div>
-    }
+    <!-- Inner drop list for nested children -->
+    <div
+      class="submenu drop-list"
+      *ngIf="item.originalItem.subMenu"
+      cdkDropList
+      [cdkDropListData]="item.originalItem.subMenu"
+      [cdkDropListConnectedTo]="getConnectedDropLists()"
+      (cdkDropListDropped)="drop($event, item.originalItem)"
+    >
+      <app-admin-menu-list
+        [menuItems]="item.originalItem.subMenu"
+        (menuItemsChange)="submenuChanged(item.originalItem, $event)"
+        [showAddNew]="false"
+        [connectedDropLists]="getConnectedDropLists()"
+      ></app-admin-menu-list>
+    </div>
   </ng-container>
 </mat-nav-list>

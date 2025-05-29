@@ -44,7 +44,7 @@ import { MatIconModule } from "@angular/material/icon";
 })
 export class AdminMenuListComponent {
   @Input() showAddNew: boolean = true;
-  @Input() connectedDropLists: string[] = []; // For nested connections
+  @Input() connectedDropLists: string[] = [];
 
   @Input() set menuItems(value: (MenuItem | EntityMenuItem)[]) {
     this.menuItemsToDisplay = (value ?? []).map((item) => {
@@ -131,15 +131,34 @@ export class AdminMenuListComponent {
 
     if (parentItem) {
       parentItem.subMenu = currentList.map((x: any) => x.originalItem || x);
-      this.emitChange();
-    } else {
-      this.emitChange();
     }
+
+    this.emitChange();
   }
 
-  /**
-   * Removes an item from its parent sub-menu structure.
-   */
+  onItemDragEnter(targetItem: MenuItem, event: any) {
+    const draggedItem = event.item.data.originalItem;
+
+    if (
+      this.isDescendant(draggedItem, targetItem) ||
+      draggedItem === targetItem
+    ) {
+      return; // Prevent circular nesting
+    }
+
+    // Remove from original position
+    this.removeFromSubmenu(
+      draggedItem,
+      this.menuItemsToDisplay.map((x) => x.originalItem),
+    );
+
+    // Add to new parent's submenu
+    if (!targetItem.subMenu) targetItem.subMenu = [];
+    targetItem.subMenu.push(draggedItem);
+
+    this.emitChange();
+  }
+
   private removeFromSubmenu(item: MenuItem, tree: MenuItem[]): boolean {
     for (let i = 0; i < tree.length; i++) {
       const current = tree[i];
@@ -155,32 +174,6 @@ export class AdminMenuListComponent {
       }
     }
     return false;
-  }
-
-  /**
-   * Handles dropping an item onto another item in the list.
-   * This allows for nesting items within each other.
-   */
-  // todo: right now this is not getting called when dropping an item on another item
-  dropOnItem(event: CdkDragDrop<any[]>, targetIndex: number) {
-    if (event.previousContainer === event.container) return;
-
-    const draggedItem = event.previousContainer.data[event.previousIndex];
-    const targetItem = this.menuItemsToDisplay[targetIndex].originalItem;
-
-    if (
-      this.isDescendant(draggedItem.originalItem, targetItem) ||
-      draggedItem.originalItem === targetItem
-    ) {
-      return;
-    }
-
-    event.previousContainer.data.splice(event.previousIndex, 1);
-
-    if (!targetItem.subMenu) targetItem.subMenu = [];
-    targetItem.subMenu.push(draggedItem.originalItem);
-
-    this.emitChange();
   }
 
   private isDescendant(item: MenuItem, potentialAncestor: MenuItem): boolean {
