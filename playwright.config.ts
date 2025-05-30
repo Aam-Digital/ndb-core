@@ -1,10 +1,13 @@
 import { defineConfig } from "@playwright/test";
+import "tsx/esm";
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
   testDir: "./e2e/tests",
+  // Let `tsx` take care of transforming code
+  build: { external: ["*"] },
 
   reporter: [
     ["list"],

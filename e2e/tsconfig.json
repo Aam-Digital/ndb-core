@@ -1,14 +1,11 @@
 {
+  "extends": ["../tsconfig.json"],
+  "exclude": [],
   "compilerOptions": {
     "noEmit": true,
     "rootDir": "..",
-    "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
     "strict": true,
-    "allowImportingTsExtensions": true,
     "isolatedModules": true,
-    "skipLibCheck": true,
     "types": [
       "node"
     ]
