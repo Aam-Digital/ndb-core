@@ -5,26 +5,12 @@ import { GeoResult } from "../../features/location/geo.service";
  */
 class CustomFaker extends Faker {
   /**
-   * Generate a date that works as a date of birth in the given age range.
-   * @param minAge The minimum age (today) of a person with the generated random birthdate.
-   * @param maxAge The maximum age (today) of a person with the generated random birthdate.
-   */
-  public dateOfBirth(minAge: number, maxAge: number): Date {
-    const currentYear = new Date().getFullYear();
-    const latest = new Date();
-    latest.setFullYear(currentYear - minAge);
-    const earliest = new Date();
-    earliest.setFullYear(currentYear - maxAge);
-    return this.baseFaker.date.between({ from: earliest, to: latest });
-  }
-
-  /**
    * Return the given date if it is defined and earlier than today's date
    * otherwise return a Date representing today.
    * @param date The date to be compared
    */
   getEarlierDateOrToday(date: Date): Date {
-    const today = new Date();
+    const today = this.defaultRefDate();
 
     if (!date || date > today) {
       return today;
@@ -49,3 +35,6 @@ class CustomFaker extends Faker {
  * (Extended) faker module
  */
 export const faker = new CustomFaker({ locale: [en_IN, en], seed: 1 });
+if ("NDB_E2E_REF_DATE" in globalThis) {
+  faker.setDefaultRefDate(globalThis.NDB_E2E_REF_DATE);
+}
