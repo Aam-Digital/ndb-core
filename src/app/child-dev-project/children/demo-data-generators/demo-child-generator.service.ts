@@ -37,7 +37,9 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
     child.projectNumber = id;
     child.religion = faker.helpers.arrayElement(religions);
     child.gender = faker.helpers.arrayElement(genders.slice(1));
-    child.dateOfBirth = new DateWithAge(faker.dateOfBirth(5, 20));
+    child.dateOfBirth = new DateWithAge(
+      faker.date.birthdate({ mode: "age", min: 5, max: 20 }),
+    );
     child.motherTongue = faker.helpers.arrayElement(languages);
     child.center = faker.helpers.arrayElement(centersWithProbability);
     child.phone =
@@ -61,7 +63,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
   private static makeChildDropout(child: Entity & { [key: string]: any }) {
     child.dropoutDate = faker.date.between({
       from: child.admissionDate,
-      to: new Date(),
+      to: faker.defaultRefDate(),
     });
     child.dropoutRemarks = faker.lorem.sentence();
     child.dropoutType = faker.helpers.arrayElement(dropoutTypes);

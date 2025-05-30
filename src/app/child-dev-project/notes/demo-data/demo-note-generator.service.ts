@@ -7,7 +7,6 @@ import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
 import { absenceRemarks } from "./remarks";
-import moment from "moment";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
@@ -67,13 +66,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       // generate a recent note for the last week for some children to have data for dashboard
       if (numberOfNotes > 0 && faker.number.int(100) < 40) {
         data.push(
-          this.generateNoteForChild(
-            child,
-            faker.date.between({
-              from: moment().subtract(6, "days").toDate(),
-              to: moment().toDate(),
-            }),
-          ),
+          this.generateNoteForChild(child, faker.date.recent({ days: 6 })),
         );
         numberOfNotes--;
       }
