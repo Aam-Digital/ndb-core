@@ -21,6 +21,7 @@ import { filter, take } from "rxjs/operators";
 import { ConfigService } from "./core/config/config.service";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
+import { SetupService } from "./core/setup/setup.service";
 
 /**
  * Component as the main entry point for the app.
@@ -48,9 +49,11 @@ export class AppComponent {
     private router: Router,
     private configService: ConfigService,
     protected loginState: LoginStateSubject,
+    private setupService: SetupService,
   ) {
-    this.detectConfigReadyState();
+    this.setupService.openDemoSetupDialog();
 
+    this.detectConfigReadyState();
     this.detectConfigMode();
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))

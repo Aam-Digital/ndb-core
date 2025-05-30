@@ -1,0 +1,47 @@
+.dialog-header-bar {
+  //todo- need to use global colors
+  border-top: 18px solid #448aff;
+}
+
+.header-title {
+  margin-top: 3%;
+}
+
+.demo-dialog-content {
+  display: flex;
+  gap: 10%;
+  flex-direction: column;
+  overflow: auto;
+
+  .dialog-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .initialization-field {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+::ng-deep .mdc-dialog--open .mat-mdc-dialog-surface,
+.mdc-dialog--closing .mat-mdc-dialog-surface {
+  border-radius: 0px !important;
+}
+
+mat-dialog-content {
+  max-height: unset !important;
+  flex: 1 0 0;
+}
+
+@media (max-width: 600px) {
+  ::ng-deep .cdk-overlay-pane.mat-mdc-dialog-panel {
+    width: 100vh !important;
+    margin-top: 56px !important;
+    height: 100vh !important;
+  }
+  .demo-dialog-content {
+    gap: 0;
+  }
+}

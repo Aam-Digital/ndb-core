@@ -1,0 +1,34 @@
+<div class="dialog-header-bar"></div>
+<h1 mat-dialog-title class="header-title" i18n>Welcome to Aam Digital!</h1>
+
+<mat-dialog-content class="demo-dialog-content" autosize>
+  <p i18n>
+    Your path to customizing your case management needs. You can explore some of
+    our pre-set up scenarios below.
+  </p>
+
+  <div class="demo-layout">
+    <app-choose-use-case
+      [demoAssistanceItems]="demoAssistanceItems"
+      (selectionChanged)="onUseCaseSelected($event)"
+    >
+    </app-choose-use-case>
+  </div>
+
+  <p class="footer-note" i18n>
+    Aam Digital is fully customizable and can be quickly adapted to your needs
+    and data structures. It is not limited to these scenarios. Through Aam
+    Digital, you can track, measure, and manage your project.
+  </p>
+  <div class="initialization-field">
+    <button
+      mat-raised-button
+      class="full-width"
+      color="accent"
+      i18n-matTooltip
+      (click)="initializeSystem()"
+    >
+      <span i18n>Initialize System</span>
+    </button>
+  </div>
+</mat-dialog-content>

@@ -5,6 +5,8 @@ import { faker } from "../../../../core/demo-data/faker";
 import { heightRangeForAge, weightRangeForAge } from "./height-weight";
 import { Entity } from "../../../../core/entity/model/entity";
 import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
+import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { Logging } from "../../../../core/logging/logging.service";
 
 /**
  * Generate HealthCheck records every 6 months for children up to the age of 12.
@@ -25,11 +27,22 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
     ];
   }
 
-  constructor(private demoChildren: DemoChildGenerator) {
+  constructor(
+    private demoChildren: DemoChildGenerator,
+    private entityRegistry: EntityRegistry,
+  ) {
     super();
   }
 
   public generateEntities(): Entity[] {
+    if (!this.entityRegistry.has("HealthCheck")) {
+      Logging.debug(
+        "Skipping demo data generation because entity type is not configured",
+        "HealthCheck",
+      );
+      return [];
+    }
+
     const data = [];
 
     for (const child of this.demoChildren.entities) {

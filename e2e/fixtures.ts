@@ -25,11 +25,27 @@ export const test = base.extend<{ forEachTest: void }>({
       await page.goto("/");
       // Give the app time to load
       await page.getByText("Aam Digital - Demo").waitFor({ timeout: 10_000 });
+
+      // Ensure the system is initialized before running tests.
+      await initSystemWithBaseConfig(page);
+
       await use();
     },
     { auto: true },
   ],
 });
+
+async function initSystemWithBaseConfig(page: Page) {
+  page.getByRole("heading", { name: "Welcome to Aam Digital!" });
+  await page.locator("app-choose-use-case mat-select").click();
+
+  await page.locator("mat-option").nth(0).click();
+
+  const initButton = page.locator('button:has-text("Initialize System")');
+  await initButton.click();
+
+  await page.locator("h1.mat-dialog-title").waitFor({ state: "detached" });
+}
 
 export async function argosScreenshot(
   page: Page,
