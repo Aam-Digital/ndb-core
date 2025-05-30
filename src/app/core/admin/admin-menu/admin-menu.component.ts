@@ -14,6 +14,7 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import { NgFor } from "@angular/common";
+import { Logging } from "app/core/logging/logging.service";
 
 /** Load and Store Menu Items for Administration */
 @Component({
@@ -25,6 +26,7 @@ import { NgFor } from "@angular/common";
 })
 export class AdminMenuComponent {
   menuItems: MenuItem[];
+  readonly navigationContainer = "navigation-container";
 
   constructor(private entityMapper: EntityMapperService) {
     this.loadNavigationConfig();
@@ -53,29 +55,57 @@ export class AdminMenuComponent {
   }
 
   public get connectedDropLists(): string[] {
-    return this.getIdsRecursive(this.menuItems).reverse();
+    return [
+      this.navigationContainer,
+      ...this.getIdsRecursive(this.menuItems),
+    ].reverse();
   }
+
   onDragDrop(event: CdkDragDrop<MenuItem[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+    try {
+      if (event.previousContainer === event.container) {
+        moveItemInArray(
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex,
+        );
+      } else {
+        const itemToTransfer = {
+          ...event.previousContainer.data[event.previousIndex],
+        };
+
+        if (!itemToTransfer.subMenu) {
+          itemToTransfer.subMenu = [];
+        }
+
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex,
+        );
+
+        if (event.container.id === this.navigationContainer) {
+          this.menuItems = [...this.menuItems];
+        }
+      }
+    } catch (error) {
+      Logging.debug("Drag drop error:", error);
     }
+  }
+
+  private normalizeMenuItems(items: MenuItem[]): MenuItem[] {
+    return items.map((item) => ({
+      ...item,
+      uniqueId: item.uniqueId || this.generateUniqueId(),
+      subMenu: item.subMenu ? this.normalizeMenuItems(item.subMenu) : [],
+    }));
   }
 
   // Recursively get all IDs for connected drop lists
   private getIdsRecursive(items: MenuItem[]): string[] {
     let ids: string[] = [];
-    items.forEach((item) => {
+    items?.forEach((item) => {
       ids.push(item.uniqueId);
       if (item.subMenu) {
         ids = ids.concat(this.getIdsRecursive(item.subMenu));

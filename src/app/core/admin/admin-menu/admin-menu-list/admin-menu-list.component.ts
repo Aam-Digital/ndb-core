@@ -49,8 +49,19 @@ export class AdminMenuListComponent {
       return { originalItem: item, itemToDisplay: displayItem };
     });
   }
-  @Input() item: MenuItem;
   @Input() connectedTo: string[];
+  @Input() set item(value: MenuItem) {
+    this._item = value;
+    // Ensure subMenu exists as an array if undefined
+    if (this._item && !this._item.subMenu) {
+      this._item.subMenu = [];
+    }
+  }
+
+  get item(): MenuItem {
+    return this._item;
+  }
+  private _item: MenuItem;
 
   @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItem[]>>();
 

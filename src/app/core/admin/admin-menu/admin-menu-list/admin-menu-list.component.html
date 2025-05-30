@@ -19,13 +19,14 @@
     <div
       class="flex-row menu-item-container drop-item"
       cdkDrag
+      [cdkDragData]="item"
       cdkDropList
       [id]="item.uniqueId"
-      [cdkDropListData]="item.subMenu || []"
+      [cdkDropListData]="item.subMenu"
       [cdkDropListConnectedTo]="connectedTo"
       (cdkDropListDropped)="onDragDrop($event)"
     >
-      <div class="flex-row">
+      <div class="flex-row" cdkDragHandle>
         <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
         <app-menu-item [item]="item" [adminMode]="true"></app-menu-item>
         <button
@@ -43,15 +44,14 @@
         ></fa-icon>
       </div>
 
-      <div *ngIf="item.subMenu" class="submenu drop-list">
-        <ng-container *ngFor="let childItem of item.subMenu">
-          <app-admin-menu-list
-            [item]="childItem"
-            [connectedTo]="connectedTo"
-            (itemDrop)="onDragDrop($event)"
-          >
-          </app-admin-menu-list>
-        </ng-container>
+      <div class="submenu" *ngIf="item.subMenu && item.subMenu.length > 0">
+        <app-admin-menu-list
+          *ngFor="let childItem of item.subMenu"
+          [item]="childItem"
+          [connectedTo]="connectedTo"
+          (itemDrop)="onDragDrop($event)"
+        >
+        </app-admin-menu-list>
       </div>
     </div>
   </ng-container>
