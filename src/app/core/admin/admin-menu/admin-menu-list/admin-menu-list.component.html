@@ -28,7 +28,10 @@
     >
       <div class="flex-row" cdkDragHandle>
         <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
-        <app-menu-item [item]="item" [adminMode]="true"></app-menu-item>
+        <app-menu-item
+          [item]="itemToDisplay"
+          [adminMode]="true"
+        ></app-menu-item>
         <button
           mat-icon-button
           color="accent"

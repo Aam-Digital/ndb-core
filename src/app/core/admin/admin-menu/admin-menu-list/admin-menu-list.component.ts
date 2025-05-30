@@ -39,6 +39,8 @@ import { MatIconModule } from "@angular/material/icon";
   ],
 })
 export class AdminMenuListComponent {
+  itemToDisplay: MenuItem;
+
   @Input() showAddNew: boolean = true;
   @Input() connectedDropLists: string[] = [];
 
@@ -55,6 +57,11 @@ export class AdminMenuListComponent {
     // Ensure subMenu exists as an array if undefined
     if (this._item && !this._item.subMenu) {
       this._item.subMenu = [];
+    }
+    if (!this.itemToDisplay) {
+      this.itemToDisplay = this.menuService.generateMenuItemForEntityType(
+        this.item,
+      );
     }
   }
 
