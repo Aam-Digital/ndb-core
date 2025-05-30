@@ -1,21 +1,9 @@
-import { fakerEN_IN as originalFaker } from "@faker-js/faker";
+import { en, en_IN, Faker } from "@faker-js/faker";
 import { GeoResult } from "../../features/location/geo.service";
 /**
  * Extension of faker.js implementing additional data generation methods.
  */
-class CustomFaker {
-  /**
-   * Merge the created CustomFaker's implementation with a given faker's standard methods.
-   * @param baseFaker A standard faker.js
-   */
-  constructor(
-    // @ts-ignore
-    private baseFaker: Faker.FakerStatic,
-  ) {
-    // make baseFaker methods available from instances of this class
-    Object.assign(this, baseFaker);
-  }
-
+class CustomFaker extends Faker {
   /**
    * Generate a date that works as a date of birth in the given age range.
    * @param minAge The minimum age (today) of a person with the generated random birthdate.
@@ -58,13 +46,6 @@ class CustomFaker {
 }
 
 /**
- * Typing for faker including extended functionality.
- */
-export type Faker = typeof originalFaker & CustomFaker;
-
-originalFaker.seed(1);
-
-/**
  * (Extended) faker module
  */
-export const faker = new CustomFaker(originalFaker) as Faker;
+export const faker = new CustomFaker({ locale: [en_IN, en], seed: 1 });
