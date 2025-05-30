@@ -1,15 +1,10 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, NgFor } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import {
-  DragDropModule,
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-} from "@angular/cdk/drag-drop";
+import { DragDropModule, CdkDragDrop } from "@angular/cdk/drag-drop";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
@@ -35,6 +30,7 @@ import { MatIconModule } from "@angular/material/icon";
     MatIconButton,
     MatButton,
     MatIconModule,
+    NgFor,
   ],
   templateUrl: "./admin-menu-list.component.html",
   styleUrls: [
@@ -53,6 +49,10 @@ export class AdminMenuListComponent {
       return { originalItem: item, itemToDisplay: displayItem };
     });
   }
+  @Input() item: MenuItem;
+  @Input() connectedTo: string[];
+
+  @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItem[]>>();
 
   @Output() readonly menuItemsChange = new EventEmitter<MenuItem[]>();
 
@@ -61,16 +61,10 @@ export class AdminMenuListComponent {
     itemToDisplay: MenuItem;
   }[] = [];
 
-  readonly listId = `list-${Math.random().toString(36).substr(2, 9)}`;
-
   constructor(
     private dialog: MatDialog,
     private menuService: MenuService,
   ) {}
-
-  getConnectedDropLists(): string[] {
-    return [this.listId, ...(this.connectedDropLists ?? [])];
-  }
 
   removeMenuItem(index: number): void {
     if (index > -1) {
@@ -85,6 +79,10 @@ export class AdminMenuListComponent {
       Object.assign(item, updatedItem);
       this.emitChange();
     }
+  }
+
+  onDragDrop(event: CdkDragDrop<MenuItem[]>) {
+    this.itemDrop.emit(event);
   }
 
   async addNewMenuItem() {
@@ -107,81 +105,6 @@ export class AdminMenuListComponent {
       },
     });
     return firstValueFrom(dialogRef.afterClosed());
-  }
-
-  drop(event: CdkDragDrop<any[]>, parentItem: MenuItem | null) {
-    const previousList = event.previousContainer.data;
-    const currentList = event.container.data;
-
-    if (event.previousContainer === event.container) {
-      moveItemInArray(currentList, event.previousIndex, event.currentIndex);
-    } else {
-      const itemToMove = event.previousContainer.data[event.previousIndex];
-      transferArrayItem(
-        previousList,
-        currentList,
-        event.previousIndex,
-        event.currentIndex,
-      );
-      this.removeFromSubmenu(
-        itemToMove.originalItem,
-        this.menuItemsToDisplay.map((x) => x.originalItem),
-      );
-    }
-
-    if (parentItem) {
-      parentItem.subMenu = currentList.map((x: any) => x.originalItem || x);
-    }
-
-    this.emitChange();
-  }
-
-  onItemDragEnter(targetItem: MenuItem, event: any) {
-    const draggedItem = event.item.data.originalItem;
-
-    if (
-      this.isDescendant(draggedItem, targetItem) ||
-      draggedItem === targetItem
-    ) {
-      return; // Prevent circular nesting
-    }
-
-    // Remove from original position
-    this.removeFromSubmenu(
-      draggedItem,
-      this.menuItemsToDisplay.map((x) => x.originalItem),
-    );
-
-    // Add to new parent's submenu
-    if (!targetItem.subMenu) targetItem.subMenu = [];
-    targetItem.subMenu.push(draggedItem);
-
-    this.emitChange();
-  }
-
-  private removeFromSubmenu(item: MenuItem, tree: MenuItem[]): boolean {
-    for (let i = 0; i < tree.length; i++) {
-      const current = tree[i];
-      if (current.subMenu) {
-        const index = current.subMenu.indexOf(item);
-        if (index !== -1) {
-          current.subMenu.splice(index, 1);
-          return true;
-        }
-        if (this.removeFromSubmenu(item, current.subMenu)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  private isDescendant(item: MenuItem, potentialAncestor: MenuItem): boolean {
-    if (!potentialAncestor.subMenu) return false;
-    for (const child of potentialAncestor.subMenu) {
-      if (child === item || this.isDescendant(item, child)) return true;
-    }
-    return false;
   }
 
   submenuChanged(item: MenuItem, newSubmenu: MenuItem[]) {

@@ -16,6 +16,11 @@ export interface MenuItem {
   link?: string;
 
   subMenu?: MenuItem[];
+
+  /**
+   * Unique identifier for the menu item, used for drag-and-drop operations.
+   */
+  uniqueId?: string;
 }
 
 /**
