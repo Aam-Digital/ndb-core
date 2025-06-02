@@ -5,3 +5,10 @@
 .readonlyAfterSet {
   opacity: 0.5;
 }
+
+// On large screens, prevent flex items from growing
+@media screen and (min-width: 1440px) {
+  .flex-grow {
+    flex-grow: 0;
+  }
+}
