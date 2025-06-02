@@ -14,6 +14,7 @@ import { DemoAssistanceDialogComponent } from "./demo-assistance-dialog/demo-ass
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject } from "../session/session-type";
 import { map } from "rxjs/operators";
+import { ContextAwareDialogComponent } from "./context-aware-dialog/context-aware-dialog.component";
 
 /**
  * Loads available "scenarios" of base configs
@@ -151,21 +152,36 @@ export class SetupService {
 
   /**
    * Opens a dialog to assist the user in setting up a demo environment.
-   * This dialog will guide the user through the process of selecting a use case
-   * and initializing the system with the corresponding demo data.
-   * @return A promise that resolves when the dialog is closed.
-   * */
+   * Depending on the user's login state, it opens either a context-aware dialog (if logged in)
+   * or a demo assistance dialog (if not logged in). The dialog guides the user through selecting
+   * a use case and initializing the system with the corresponding demo data.
+   * @returns A promise that resolves with the dialog result when the dialog is closed.
+   */
   public async openDemoSetupDialog() {
-    const dialogRef = this.dialog.open(DemoAssistanceDialogComponent, {
-      disableClose: true,
-      hasBackdrop: false,
+    const isLoggedIn = this.loginState.value === LoginState.LOGGED_IN;
+    const commonOptions = {
       autoFocus: false,
-      height: "calc(100% - 90px)",
-      width: "calc(100% - 100px)",
+      height: "calc(100% - 20px)",
       maxWidth: "100%",
       maxHeight: "100%",
       position: { top: "64px", right: "0px" },
-    });
+    };
+    let dialogRef;
+    if (isLoggedIn) {
+      dialogRef = this.dialog.open(ContextAwareDialogComponent, {
+        ...commonOptions,
+        width: "40vh",
+        disableClose: false,
+        hasBackdrop: true,
+      });
+    } else {
+      dialogRef = this.dialog.open(DemoAssistanceDialogComponent, {
+        ...commonOptions,
+        width: "calc(100% - 100px)",
+        disableClose: true,
+        hasBackdrop: false,
+      });
+    }
     return await lastValueFrom(dialogRef.afterClosed());
   }
 
