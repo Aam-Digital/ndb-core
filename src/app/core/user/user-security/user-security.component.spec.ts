@@ -99,6 +99,17 @@ describe("UserSecurityComponent", () => {
     });
   }));
 
+  it("should not run into errors if no existing user account", fakeAsync(() => {
+    initComponent(of(null));
+
+    expect(component.user).toBe(null);
+    expect(component.form.getRawValue()).toEqual({
+      userEntityId: user.getId(),
+      email: undefined,
+      roles: [],
+    });
+  }));
+
   it("should only send modified values to keycloak when updating", fakeAsync(() => {
     initComponent();
 
