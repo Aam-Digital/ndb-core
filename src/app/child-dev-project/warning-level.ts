@@ -1,3 +1,4 @@
+import { $localize } from "@angular/localize/init";
 import { Ordering } from "../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 
 export enum WarningLevel {
