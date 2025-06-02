@@ -5,6 +5,11 @@
   </div>
 </div>
 
+<button mat-stroked-button color="accent" (click)="addNewMenuItem()">
+      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Add New</span>
+    </button>
+
 <div
   cdkDropList
   [id]="navigationContainer"

@@ -8,7 +8,7 @@ import { DragDropModule, CdkDragDrop } from "@angular/cdk/drag-drop";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
-import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MenuService } from "app/core/ui/navigation/menu.service";
 import { firstValueFrom } from "rxjs";
@@ -28,7 +28,6 @@ import { MatIconModule } from "@angular/material/icon";
     FormsModule,
     MatInputModule,
     MatIconButton,
-    MatButton,
     MatIconModule,
     NgFor,
   ],
@@ -103,16 +102,6 @@ export class AdminMenuListComponent {
     this.itemDrop.emit(event);
   }
 
-  async addNewMenuItem() {
-    const newItem = await this.openEditDialog();
-    if (newItem) {
-      this.menuItemsToDisplay.push({
-        originalItem: newItem,
-        itemToDisplay: this.menuService.generateMenuItemForEntityType(newItem),
-      });
-      this.emitChange();
-    }
-  }
 
   private async openEditDialog(item?: MenuItem): Promise<MenuItem | undefined> {
     const dialogRef = this.dialog.open(AdminMenuItemComponent, {

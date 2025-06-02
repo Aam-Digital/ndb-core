@@ -15,12 +15,16 @@ import {
 } from "@angular/cdk/drag-drop";
 import { NgFor } from "@angular/common";
 import { Logging } from "app/core/logging/logging.service";
+import { MatDialog } from "@angular/material/dialog"; // Added
+import { firstValueFrom } from "rxjs"; // Added
+import { AdminMenuItemComponent } from "app/core/admin/admin-menu/admin-menu-item/admin-menu-item.component"; // Added
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 /** Load and Store Menu Items for Administration */
 @Component({
   selector: "app-admin-menu",
   standalone: true,
-  imports: [AdminMenuListComponent, MatButton, DragDropModule, NgFor],
+  imports: [AdminMenuListComponent, MatButton, DragDropModule, NgFor, FaIconComponent],
   templateUrl: "./admin-menu.component.html",
   styleUrl: "./admin-menu.component.scss",
 })
@@ -28,7 +32,10 @@ export class AdminMenuComponent {
   menuItems: MenuItem[];
   readonly navigationContainer = "navigation-container";
 
-  constructor(private entityMapper: EntityMapperService) {
+  constructor(
+    private entityMapper: EntityMapperService,
+    private dialog: MatDialog // Added
+  ) {
     this.loadNavigationConfig();
   }
 
@@ -93,16 +100,7 @@ export class AdminMenuComponent {
       Logging.debug("Drag drop error:", error);
     }
   }
-
-  private normalizeMenuItems(items: MenuItem[]): MenuItem[] {
-    return items.map((item) => ({
-      ...item,
-      uniqueId: item.uniqueId || this.generateUniqueId(),
-      subMenu: item.subMenu ? this.normalizeMenuItems(item.subMenu) : [],
-    }));
-  }
-
-  // Recursively get all IDs for connected drop lists
+   // Recursively get all IDs for connected drop lists
   private getIdsRecursive(items: MenuItem[]): string[] {
     let ids: string[] = [];
     items?.forEach((item) => {
@@ -125,5 +123,21 @@ export class AdminMenuComponent {
 
   async cancel() {
     await this.loadNavigationConfig();
+  }
+
+  // New method: Add New Menu Item
+  async addNewMenuItem() {
+    const dialogRef = this.dialog.open(AdminMenuItemComponent, {
+      width: "600px",
+      data: { item: {}, isNew: true },
+    });
+    const newItem = await firstValueFrom(dialogRef.afterClosed());
+    if (newItem) {
+      newItem.uniqueId = this.generateUniqueId();
+      newItem.subMenu = [];
+      this.menuItems.push(newItem);
+      // Optional: Force change detection if needed
+      // this.menuItems = [...this.menuItems];
+    }
   }
 }
