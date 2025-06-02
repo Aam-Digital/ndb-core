@@ -15,10 +15,11 @@ import {
 } from "@angular/cdk/drag-drop";
 import { NgFor } from "@angular/common";
 import { Logging } from "app/core/logging/logging.service";
-import { MatDialog } from "@angular/material/dialog"; // Added
-import { firstValueFrom } from "rxjs"; // Added
-import { AdminMenuItemComponent } from "app/core/admin/admin-menu/admin-menu-item/admin-menu-item.component"; // Added
+import { MatDialog } from "@angular/material/dialog";
+import { firstValueFrom } from "rxjs"; 
+import { AdminMenuItemComponent } from "app/core/admin/admin-menu/admin-menu-item/admin-menu-item.component"; 
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MenuService } from "app/core/ui/navigation/menu.service";
 
 /** Load and Store Menu Items for Administration */
 @Component({
@@ -40,7 +41,8 @@ export class AdminMenuComponent {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private dialog: MatDialog, // Added
+    private dialog: MatDialog, 
+    private menuService: MenuService
   ) {
     this.loadNavigationConfig();
   }
@@ -119,13 +121,27 @@ export class AdminMenuComponent {
   }
 
   async save() {
-    const currentConfig = await this.entityMapper.load(
-      Config<{ navigationMenu: NavigationMenuConfig }>,
-      Config.CONFIG_KEY,
-    );
-    currentConfig.data.navigationMenu.items = this.menuItems;
-    await this.entityMapper.save(currentConfig);
-  }
+  const currentConfig = await this.entityMapper.load(
+    Config<{ navigationMenu: NavigationMenuConfig }>,
+    Config.CONFIG_KEY,
+  );
+  // Convert all items (including submenus) to plain MenuItem before saving
+  currentConfig.data.navigationMenu.items = this.menuItems.map(item => this.toPlainMenuItem(item));
+  await this.entityMapper.save(currentConfig);
+}
+
+// Recursively convert to plain MenuItem using menuService mapping
+private toPlainMenuItem(item: MenuItem): MenuItem {
+  // Use menuService mapping function to ensure entity items are converted
+  const plainItem = (this.menuService && this.menuService.generateMenuItemForEntityType)
+    ? this.menuService.generateMenuItemForEntityType(item)
+    : item;
+  return {
+    ...plainItem,
+    subMenu: item.subMenu ? item.subMenu.map(sub => this.toPlainMenuItem(sub)) : [],
+    uniqueId: item.uniqueId,
+  };
+}
 
   async cancel() {
     await this.loadNavigationConfig();
