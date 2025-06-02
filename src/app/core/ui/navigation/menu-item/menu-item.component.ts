@@ -56,7 +56,7 @@ export class MenuItemComponent {
     return true;
   }
 
-   onListItemClick(event: MouseEvent) {
+  onListItemClick(event: MouseEvent) {
     if (this.adminMode) {
       event.preventDefault();
       event.stopPropagation();

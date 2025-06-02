@@ -24,7 +24,13 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 @Component({
   selector: "app-admin-menu",
   standalone: true,
-  imports: [AdminMenuListComponent, MatButton, DragDropModule, NgFor, FaIconComponent],
+  imports: [
+    AdminMenuListComponent,
+    MatButton,
+    DragDropModule,
+    NgFor,
+    FaIconComponent,
+  ],
   templateUrl: "./admin-menu.component.html",
   styleUrl: "./admin-menu.component.scss",
 })
@@ -34,7 +40,7 @@ export class AdminMenuComponent {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private dialog: MatDialog // Added
+    private dialog: MatDialog, // Added
   ) {
     this.loadNavigationConfig();
   }
@@ -100,7 +106,7 @@ export class AdminMenuComponent {
       Logging.debug("Drag drop error:", error);
     }
   }
-   // Recursively get all IDs for connected drop lists
+  // Recursively get all IDs for connected drop lists
   private getIdsRecursive(items: MenuItem[]): string[] {
     let ids: string[] = [];
     items?.forEach((item) => {
@@ -139,9 +145,9 @@ export class AdminMenuComponent {
     }
   }
 
-removeTopLevelItem(index: number): void {
-  if (index > -1) {
-    this.menuItems.splice(index, 1);
+  removeTopLevelItem(index: number): void {
+    if (index > -1) {
+      this.menuItems.splice(index, 1);
+    }
   }
-}
 }

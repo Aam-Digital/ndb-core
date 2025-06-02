@@ -83,16 +83,16 @@ export class AdminMenuListComponent {
     private menuService: MenuService,
   ) {}
 
- removeSubItem(index: number): void {
-  if (index > -1 && this.item?.subMenu) {
-    this.item.subMenu.splice(index, 1);
-    this.emitChange();
+  removeSubItem(index: number): void {
+    if (index > -1 && this.item?.subMenu) {
+      this.item.subMenu.splice(index, 1);
+      this.emitChange();
+    }
   }
-}
 
-onDelete(item: MenuItem): void {
-  this.deleteItem.emit(item);
-}
+  onDelete(item: MenuItem): void {
+    this.deleteItem.emit(item);
+  }
 
   async editMenuItem(item: MenuItem) {
     const updatedItem = await this.openEditDialog(item);

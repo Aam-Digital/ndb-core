@@ -9,7 +9,10 @@
   (click)="onListItemClick($event)"
 >
   <span class="flex-row gap-small">
-    <app-fa-dynamic-icon class="nav-icon" [icon]="item.icon"></app-fa-dynamic-icon>
+    <app-fa-dynamic-icon
+      class="nav-icon"
+      [icon]="item.icon"
+    ></app-fa-dynamic-icon>
     <span class="menu-label">{{ item.label }}</span>
     <fa-icon
       *ngIf="hasSubMenu(item)"
