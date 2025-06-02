@@ -16,6 +16,8 @@ export class DemoAssistanceDialogComponent implements OnInit {
   // List of demo assistance items
   demoAssistanceItems: BaseConfig[] = [];
   selectedUseCase: BaseConfig | null = null;
+  demoInitialized: boolean = false;
+  generatingData: boolean = false;
 
   constructor(
     private setupService: SetupService,
@@ -23,7 +25,6 @@ export class DemoAssistanceDialogComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    // Initialization logic if needed
     this.demoAssistanceItems = await this.setupService.getAvailableBaseConfig();
     console.log("Demo Assistance Items:", this.demoAssistanceItems);
   }
@@ -34,9 +35,26 @@ export class DemoAssistanceDialogComponent implements OnInit {
 
   initializeSystem() {
     if (this.selectedUseCase) {
-      console.log("Selected use case with dialog:", this.selectedUseCase);
-      this.setupService.initDemoData(this.selectedUseCase);
-      this.dialogRef.close();
+      const result = this.setupService.initDemoData(this.selectedUseCase);
+      if (result instanceof Promise) {
+        this.generatingData = true;
+
+        result
+          .then(() => {
+            this.demoInitialized = true;
+            this.generatingData = false;
+          })
+          .catch((error) => {
+            console.error("Error initializing demo data:", error);
+            this.generatingData = true;
+          });
+      } else {
+        this.generatingData = false;
+      }
     }
+  }
+
+  startExploring() {
+    this.dialogRef.close();
   }
 }
