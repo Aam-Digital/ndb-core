@@ -53,8 +53,11 @@ jobs:
           key: angular-v1-prod-${{ hashFiles('package-lock.json') }}
 
       - run: npx ng build --configuration production
-      - run: npx ngsw-config dist ngsw-config.json
-      - run: npx sentry-cli sourcemaps inject ./dist
+
+      - name: Inject sentry token in sourcemaps
+        run: |
+          npx sentry-cli sourcemaps inject ./dist
+          npx ngsw-config dist ngsw-config.json
 
       - name: Upload webapp files
         uses: actions/upload-artifact@v4
