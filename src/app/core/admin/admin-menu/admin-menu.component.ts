@@ -136,8 +136,12 @@ export class AdminMenuComponent {
       newItem.uniqueId = this.generateUniqueId();
       newItem.subMenu = [];
       this.menuItems.push(newItem);
-      // Optional: Force change detection if needed
-      // this.menuItems = [...this.menuItems];
     }
   }
+
+removeTopLevelItem(index: number): void {
+  if (index > -1) {
+    this.menuItems.splice(index, 1);
+  }
+}
 }

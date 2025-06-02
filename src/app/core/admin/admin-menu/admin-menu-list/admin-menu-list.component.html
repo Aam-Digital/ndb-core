@@ -1,4 +1,3 @@
-
 <mat-nav-list class="drop-list flex-column gap-regular limit-width">
   <ng-container *ngIf="item">
     <div
@@ -29,17 +28,18 @@
           icon="times"
           class="remove-icon"
           aria-label="Remove menu item"
+          (click)="onDelete(item)"
         ></fa-icon>
       </div>
 
       <div class="submenu" *ngIf="item.subMenu && item.subMenu.length > 0">
         <app-admin-menu-list
-          *ngFor="let childItem of item.subMenu"
+          *ngFor="let childItem of item.subMenu; let i = index"
           [item]="childItem"
           [connectedTo]="connectedTo"
           (itemDrop)="onDragDrop($event)"
-        >
-        </app-admin-menu-list>
+          (deleteItem)="removeSubItem(i)"
+        ></app-admin-menu-list>
       </div>
     </div>
   </ng-container>

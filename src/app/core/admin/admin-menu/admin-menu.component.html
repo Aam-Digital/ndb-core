@@ -6,9 +6,9 @@
 </div>
 
 <button mat-stroked-button color="accent" (click)="addNewMenuItem()">
-      <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
-      <span i18n>Add New</span>
-    </button>
+  <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+  <span i18n>Add New</span>
+</button>
 
 <div
   cdkDropList
@@ -18,10 +18,11 @@
   (cdkDropListDropped)="onDragDrop($event)"
 >
   <app-admin-menu-list
-    *ngFor="let item of menuItems"
+    *ngFor="let item of menuItems; let i = index"
     [item]="item"
     [connectedTo]="connectedDropLists"
     (itemDrop)="onDragDrop($event)"
-  >
-  </app-admin-menu-list>
+    (deleteItem)="removeTopLevelItem(i)"
+  ></app-admin-menu-list>
 </div>
+

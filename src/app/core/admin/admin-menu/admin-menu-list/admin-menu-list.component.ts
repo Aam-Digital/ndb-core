@@ -70,8 +70,8 @@ export class AdminMenuListComponent {
   private _item: MenuItem;
 
   @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItem[]>>();
-
   @Output() readonly menuItemsChange = new EventEmitter<MenuItem[]>();
+  @Output() deleteItem = new EventEmitter<MenuItem>();
 
   menuItemsToDisplay: {
     originalItem: MenuItem | EntityMenuItem;
@@ -83,12 +83,16 @@ export class AdminMenuListComponent {
     private menuService: MenuService,
   ) {}
 
-  removeMenuItem(index: number): void {
-    if (index > -1) {
-      this.menuItemsToDisplay.splice(index, 1);
-      this.emitChange();
-    }
+ removeSubItem(index: number): void {
+  if (index > -1 && this.item?.subMenu) {
+    this.item.subMenu.splice(index, 1);
+    this.emitChange();
   }
+}
+
+onDelete(item: MenuItem): void {
+  this.deleteItem.emit(item);
+}
 
   async editMenuItem(item: MenuItem) {
     const updatedItem = await this.openEditDialog(item);
@@ -101,7 +105,6 @@ export class AdminMenuListComponent {
   onDragDrop(event: CdkDragDrop<MenuItem[]>) {
     this.itemDrop.emit(event);
   }
-
 
   private async openEditDialog(item?: MenuItem): Promise<MenuItem | undefined> {
     const dialogRef = this.dialog.open(AdminMenuItemComponent, {
