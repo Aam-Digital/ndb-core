@@ -95,14 +95,14 @@ export class SetupService {
     const doc = await lastValueFrom(
       this.httpClient
         .get(filePath, { responseType: "json" })
-        .pipe(map((data) => this.localizeJson(data))),
+        .pipe(map((data) => data)),
     );
 
     // extract ##i18n## tags from all string values in the loaded JSON
     // This is necessary to ensure that the i18n tags are not stored in the database.
     // todo: this is a temporary solution, as the i18n tags should be handled by the i18n service.
     // This will be removed once we found a package that supports i18n tags in JSON files.(for example, ngx-translate)
-    this.extractI18nTags(doc);
+    // this.extractI18nTags(doc);
 
     if (!doc || !doc["_id"]) {
       Logging.warn(
@@ -128,27 +128,27 @@ export class SetupService {
   /**
    * Remove ##i18n## tags from all string values in an object.
    */
-  private extractI18nTags(obj: any): any {
-    if (typeof obj === "string") {
-      if (obj.startsWith("##i18n##:")) {
-        // Remove everything up to and including the last colon
-        return obj.replace(/^##i18n##:.*:/, "");
-      }
-      if (obj.startsWith("##i18n##")) {
-        return obj.replace(/^##i18n##/, "");
-      }
-      return obj;
-    } else if (Array.isArray(obj)) {
-      for (let i = 0; i < obj.length; i++) {
-        obj[i] = this.extractI18nTags(obj[i]);
-      }
-    } else if (typeof obj === "object" && obj !== null) {
-      for (const key of Object.keys(obj)) {
-        obj[key] = this.extractI18nTags(obj[key]);
-      }
-    }
-    return obj;
-  }
+  // private extractI18nTags(obj: any): any {
+  //   if (typeof obj === "string") {
+  //     if (obj.startsWith("##i18n##:")) {
+  //       // Remove everything up to and including the last colon
+  //       return obj.replace(/^##i18n##:.*:/, "");
+  //     }
+  //     if (obj.startsWith("##i18n##")) {
+  //       return obj.replace(/^##i18n##/, "");
+  //     }
+  //     return obj;
+  //   } else if (Array.isArray(obj)) {
+  //     for (let i = 0; i < obj.length; i++) {
+  //       obj[i] = this.extractI18nTags(obj[i]);
+  //     }
+  //   } else if (typeof obj === "object" && obj !== null) {
+  //     for (const key of Object.keys(obj)) {
+  //       obj[key] = this.extractI18nTags(obj[key]);
+  //     }
+  //   }
+  //   return obj;
+  // }
 
   /**
    * Opens a dialog to assist the user in setting up a demo environment.
@@ -185,23 +185,23 @@ export class SetupService {
     return await lastValueFrom(dialogRef.afterClosed());
   }
 
-  private localizeJson(jsonText) {
-    // TODO: work in progress. Replacing i18n markers with this doesn't work yet ...
+  // private localizeJson(jsonText) {
+  //   // TODO: work in progress. Replacing i18n markers with this doesn't work yet ...
 
-    // 1. Full format: ##i18##:meaning|description@@id:Text
-    // 2. Simple format: ##i18##Text
-    const localizedJson = JSON.stringify(jsonText).replace(
-      /##i18##(?::([^:]*?)@@([^:]*?):)?(.+)/g,
-      (match, meaning, id, text) => {
-        if (meaning && id) {
-          // Full format with metadata
-          return $localize`:${meaning}@@${id}:${text}`;
-        } else {
-          // Simple format without metadata
-          return $localize`${text}`;
-        }
-      },
-    );
-    return JSON.parse(localizedJson);
-  }
+  //   // 1. Full format: ##i18##:meaning|description@@id:Text
+  //   // 2. Simple format: ##i18##Text
+  //   const localizedJson = JSON.stringify(jsonText).replace(
+  //     /##i18##(?::([^:]*?)@@([^:]*?):)?(.+)/g,
+  //     (match, meaning, id, text) => {
+  //       if (meaning && id) {
+  //         // Full format with metadata
+  //         return $localize`:${meaning}@@${id}:${text}`;
+  //       } else {
+  //         // Simple format without metadata
+  //         return $localize`${text}`;
+  //       }
+  //     },
+  //   );
+  //   return JSON.parse(localizedJson);
+  // }
 }
