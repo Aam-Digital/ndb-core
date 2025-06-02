@@ -42,6 +42,7 @@ import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizar
 import { NotificationComponent } from "../../../features/notification/notification.component";
 import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
 import { SetupService } from "app/core/setup/setup.service";
+import { environment } from "environments/environment";
 
 /**
  * The main user interface component as root element for the app structure
@@ -82,6 +83,7 @@ export class UiComponent {
   /** latest version of the site settings*/
   siteSettings = new SiteSettings();
   isDesktop = false;
+  demoMode: boolean = false;
 
   constructor(
     private screenWidthObserver: ScreenWidthObserver,
@@ -102,6 +104,7 @@ export class UiComponent {
     this.siteSettingsService.siteSettings.subscribe(
       (s) => (this.siteSettings = s),
     );
+    this.demoMode = environment.demo_mode;
   }
 
   /**
