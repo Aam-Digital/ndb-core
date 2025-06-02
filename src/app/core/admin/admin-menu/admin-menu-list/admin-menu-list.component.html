@@ -15,6 +15,7 @@
         <app-menu-item
           [item]="itemToDisplay"
           [adminMode]="true"
+          (editRequest)="editMenuItem(item)"
         ></app-menu-item>
         <button
           mat-icon-button
