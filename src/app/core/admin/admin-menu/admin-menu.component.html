@@ -5,4 +5,23 @@
   </div>
 </div>
 
-<app-admin-menu-list [(menuItems)]="menuItems"></app-admin-menu-list>
+<button mat-stroked-button color="accent" (click)="addNewMenuItem()">
+  <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+  <span i18n>Add New</span>
+</button>
+
+<div
+  cdkDropList
+  [id]="navigationContainer"
+  [cdkDropListData]="menuItems"
+  [cdkDropListConnectedTo]="connectedDropLists"
+  (cdkDropListDropped)="onDragDrop($event)"
+>
+  <app-admin-menu-list
+    *ngFor="let item of menuItems; let i = index"
+    [item]="item"
+    [connectedTo]="connectedDropLists"
+    (itemDrop)="onDragDrop($event)"
+    (deleteItem)="removeTopLevelItem(i)"
+  ></app-admin-menu-list>
+</div>
