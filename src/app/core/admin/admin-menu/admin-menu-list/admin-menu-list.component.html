@@ -10,29 +10,30 @@
       [cdkDropListConnectedTo]="connectedTo"
       (cdkDropListDropped)="onDragDrop($event)"
     >
-      <div class="flex-row" cdkDragHandle>
+      <div class="flex-row menu-content" cdkDragHandle>
         <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
         <app-menu-item
           [item]="itemToDisplay"
           [adminMode]="true"
           (editRequest)="editMenuItem(item)"
         ></app-menu-item>
-        <button
-          mat-icon-button
-          color="accent"
-          (click)="editMenuItem(item)"
-          aria-label="Edit menu item"
-        >
-          <mat-icon class="edit-icon">edit</mat-icon>
-        </button>
-        <fa-icon
-          icon="times"
-          class="remove-icon"
-          aria-label="Remove menu item"
-          (click)="onDelete(item)"
-        ></fa-icon>
+        <div class="menu-actions">
+          <button
+            mat-icon-button
+            color="accent"
+            (click)="editMenuItem(item)"
+            aria-label="Edit menu item"
+          >
+            <mat-icon class="edit-icon">edit</mat-icon>
+          </button>
+          <fa-icon
+            icon="times"
+            class="remove-icon"
+            aria-label="Remove menu item"
+            (click)="onDelete(item)"
+          ></fa-icon>
+        </div>
       </div>
-
       <div class="submenu" *ngIf="item.subMenu && item.subMenu.length > 0">
         <app-admin-menu-list
           *ngFor="let childItem of item.subMenu; let i = index"
@@ -40,6 +41,7 @@
           [connectedTo]="connectedTo"
           (itemDrop)="onDragDrop($event)"
           (deleteItem)="removeSubItem(i)"
+          class="submenu-list"
         ></app-admin-menu-list>
       </div>
     </div>
