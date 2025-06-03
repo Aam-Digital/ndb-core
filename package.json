@@ -2,6 +2,7 @@
   "name": "ndb-core",
   "version": "0.0.0",
   "license": "GPL-3.0",
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
@@ -25,6 +26,7 @@
     "stream": "./node_modules/stream-browserify"
   },
   "imports": {
+    "#src/*": "./src/*",
     "#e2e/*": "./e2e/*"
   },
   "dependencies": {
@@ -126,6 +128,7 @@
     "mockdate": "^3.0.5",
     "prettier": "^3.5.3",
     "storybook": "^8.6.12",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.4",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.32.1",

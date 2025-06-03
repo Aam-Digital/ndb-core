@@ -1,3 +1,5 @@
+import { $localize } from "@angular/localize/init";
+
 export const religions = [
   // multiple entries for the same value increase its probability
   $localize`:religion:Hindu`,
