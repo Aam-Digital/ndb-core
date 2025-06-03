@@ -17,22 +17,15 @@ test("Record attendance for one activity", async ({ page }) => {
     page.getByRole("heading", { name: "Coaching Class 8E" }),
   ).toBeVisible();
 
+  await page.addStyleTag({ content: "* { transition: none !important }" });
+
   await expect(page.getByText("1 / 3")).toBeVisible();
   await page.getByRole("button", { name: "Present" }).click();
 
   await expect(page.getByText("2 / 3")).toBeVisible();
-  // FIXME: After choosing the attendance option there is a transition to the
-  // tab with the next child. During this transition the roll-call-tab component
-  // briefly shows both tabs. This means we have to explicitly wait for the
-  // transition to start and to finish, otherwise there may be two buttons with
-  // the name "Absent".
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
   await page.getByRole("button", { name: "Absent" }).click();
 
   await expect(page.getByText("3 / 3")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
   await page.getByRole("button", { name: "Late" }).click();
 
   await page.getByRole("button", { name: "Review Details" }).click();
