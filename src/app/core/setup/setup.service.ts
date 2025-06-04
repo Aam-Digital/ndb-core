@@ -10,7 +10,6 @@ import { EntityRegistry } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { Logging } from "../logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
-import { DemoAssistanceDialogComponent } from "./demo-assistance-dialog/demo-assistance-dialog.component";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject } from "../session/session-type";
 import { map } from "rxjs/operators";
@@ -175,6 +174,10 @@ export class SetupService {
         hasBackdrop: true,
       });
     } else {
+      // Lazy-load to avoid circular dependency: SetupService is also used/injected in this component
+      const { DemoAssistanceDialogComponent } = await import(
+        "./demo-assistance-dialog/demo-assistance-dialog.component"
+      );
       dialogRef = this.dialog.open(DemoAssistanceDialogComponent, {
         ...commonOptions,
         width: "calc(100% - 100px)",
@@ -182,6 +185,7 @@ export class SetupService {
         hasBackdrop: false,
       });
     }
+
     return await lastValueFrom(dialogRef.afterClosed());
   }
 
