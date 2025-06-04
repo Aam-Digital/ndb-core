@@ -9,7 +9,7 @@ import { MatSelectModule } from "@angular/material/select";
   styleUrls: ["./choose-use-case.component.scss"],
 })
 export class ChooseUseCaseComponent {
-  @Input() demoAssistanceItems: BaseConfig[] = [];
+  @Input() demoUseCases: BaseConfig[] = [];
   @Output() selectionChanged = new EventEmitter<BaseConfig>();
 
   selectedUseCase: BaseConfig;

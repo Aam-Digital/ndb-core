@@ -6,8 +6,8 @@
         [(value)]="selectedUseCase"
         (selectionChange)="onSelectionChange()"
       >
-        @for (item of demoAssistanceItems; track item) {
-          <mat-option [value]="item">{{ item.name }}</mat-option>
+        @for (useCase of demoUseCases; track useCase) {
+          <mat-option [value]="useCase">{{ useCase.name }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

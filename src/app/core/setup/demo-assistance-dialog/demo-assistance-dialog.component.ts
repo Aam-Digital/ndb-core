@@ -13,7 +13,7 @@ import { Logging } from "../../logging/logging.service";
   styleUrl: "./demo-assistance-dialog.component.scss",
 })
 export class DemoAssistanceDialogComponent implements OnInit {
-  demoAssistanceItems: BaseConfig[] = [];
+  demoUseCases: BaseConfig[] = [];
   selectedUseCase: BaseConfig | null = null;
   demoInitialized: boolean = false;
   generatingData: boolean = false;
@@ -24,7 +24,7 @@ export class DemoAssistanceDialogComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.demoAssistanceItems = await this.setupService.getAvailableBaseConfig();
+    this.demoUseCases = await this.setupService.getAvailableBaseConfig();
   }
 
   async initializeSystem() {
