@@ -56,7 +56,7 @@ export class SetupService {
   }
 
   async getAvailableBaseConfig(): Promise<BaseConfig[]> {
-    // TODO: implement dynamic loading of base configs from assets/base-configs/
+    // TODO: load dynamically from assets ... is there any way we can detect files or folders? Or do we need to add another central config file that lists all available baseConfigs?
 
     return [
       {

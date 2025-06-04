@@ -4,6 +4,7 @@ import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
 import { ChooseUseCaseComponent } from "../choose-use-case/choose-use-case.component";
+import { Logging } from "../../logging/logging.service";
 
 @Component({
   selector: "app-demo-assistance-dialog",
@@ -33,7 +34,7 @@ export class DemoAssistanceDialogComponent implements OnInit {
         await this.setupService.initDemoData(this.selectedUseCase);
         this.demoInitialized = true;
       } catch (error) {
-        console.error("Error initializing demo data:", error);
+        Logging.error("Error initializing demo data:", error);
       } finally {
         this.generatingData = false;
       }

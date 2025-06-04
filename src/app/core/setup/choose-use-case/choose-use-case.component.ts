@@ -10,11 +10,11 @@ import { MatSelectModule } from "@angular/material/select";
 })
 export class ChooseUseCaseComponent {
   @Input() demoAssistanceItems: BaseConfig[] = [];
-  @Output() selectionChanged = new EventEmitter<any>();
+  @Output() selectionChanged = new EventEmitter<BaseConfig>();
 
-  selectedItem: any;
+  selectedUseCase: BaseConfig;
 
   onSelectionChange() {
-    this.selectionChanged.emit(this.selectedItem);
+    this.selectionChanged.emit(this.selectedUseCase);
   }
 }

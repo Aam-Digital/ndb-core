@@ -3,7 +3,7 @@
     <h3 i18n>Select your Use Case:</h3>
     <mat-form-field appearance="fill" class="demo-select">
       <mat-select
-        [(value)]="selectedItem"
+        [(value)]="selectedUseCase"
         (selectionChange)="onSelectionChange()"
       >
         @for (item of demoAssistanceItems; track item) {
@@ -13,9 +13,9 @@
     </mat-form-field>
   </div>
 
-  <div class="right-column" [class.hidden]="!selectedItem">
-    @if (selectedItem) {
-      <p>{{ selectedItem.description }}</p>
+  <div class="right-column" [class.hidden]="!selectedUseCase">
+    @if (selectedUseCase) {
+      <p>{{ selectedUseCase.description }}</p>
     }
   </div>
 </div>
