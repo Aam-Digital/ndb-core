@@ -43,6 +43,7 @@ import { NotificationComponent } from "../../../features/notification/notificati
 import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
 import { SetupService } from "app/core/setup/setup.service";
 import { environment } from "environments/environment";
+import { DemoAssistantButtonComponent } from "../../setup/demo-assistant-button/demo-assistant-button.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -73,6 +74,7 @@ import { environment } from "environments/environment";
     SetupWizardButtonComponent,
     NotificationComponent,
     GotoThirdPartySystemComponent,
+    DemoAssistantButtonComponent,
   ],
 })
 export class UiComponent {

@@ -54,15 +54,9 @@
       *ngIf="siteSettings.displayLanguageSelect"
     ></app-language-select>
     @if (demoMode) {
-      <button
-        mat-raised-button
-        color="accent"
-        class="demo-assistant-btn"
-        (click)="openDemoAssistance()"
-      >
-        <span i18n>Demo</span>
-        <span i18n>Assistant</span>
-      </button>
+      <app-demo-assistant-button
+        (openDemoAssistance)="openDemoAssistance()"
+      ></app-demo-assistant-button>
     }
   </div>
 </mat-toolbar>

@@ -129,21 +129,3 @@ mat-sidenav-container {
 .justify-content-end {
   justify-content: end;
 }
-
-.demo-assistant-btn {
-  @media screen and (max-width: breakpoints.$sm) {
-    min-height: 56px;
-  }
-  min-height: 65px;
-  min-width: 120px;
-  border-radius: 0%;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 30px 100%);
-
-  ::ng-deep .mdc-button__label {
-    width: 100%;
-    line-height: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: end;
-  }
-}
