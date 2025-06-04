@@ -4,14 +4,6 @@
  */
 export interface BaseConfig {
   /**
-   * ID of the base configuration.
-   *
-   * This also has to match the name of the subfolder under `assets/base-configs/`
-   * which contains the configuration files.
-   */
-  id: string;
-
-  /**
    * Human-readable name
    */
   name: string;
@@ -28,4 +20,9 @@ export interface BaseConfig {
    * and match
    */
   entitiesToImport: string[];
+
+  /**
+   * The locale (language) of this configuration.
+   */
+  locale?: string;
 }

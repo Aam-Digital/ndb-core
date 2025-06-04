@@ -12,8 +12,8 @@ import { Logging } from "../logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject } from "../session/session-type";
-import { map } from "rxjs/operators";
 import { ContextAwareDialogComponent } from "./context-aware-dialog/context-aware-dialog.component";
+import { asArray } from "../../utils/asArray";
 
 /**
  * Loads available "scenarios" of base configs
@@ -23,6 +23,8 @@ import { ContextAwareDialogComponent } from "./context-aware-dialog/context-awar
   providedIn: "root",
 })
 export class SetupService {
+  private readonly BASE_CONFIGS_FOLDER = "assets/base-configs/";
+
   private readonly httpClient = inject(HttpClient);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly schemaService = inject(EntitySchemaService);
@@ -55,60 +57,48 @@ export class SetupService {
   }
 
   async getAvailableBaseConfig(): Promise<BaseConfig[]> {
-    // TODO: load dynamically from assets ... is there any way we can detect files or folders? Or do we need to add another central config file that lists all available baseConfigs?
+    const doc = await lastValueFrom(
+      this.httpClient.get<BaseConfig[]>(
+        this.BASE_CONFIGS_FOLDER + "/available-configs.json",
+        { responseType: "json" },
+      ),
+    );
 
-    return [
-      {
-        id: "basic",
-        name: "Basic Setup",
-        description:
-          "A basic setup with minimal configuration to get started quickly.",
-        entitiesToImport: ["Config_CONFIG_ENTITY.json"],
-      },
-      {
-        id: "education",
-        name: "Education Project",
-        description: "School or after-school example.",
-        entitiesToImport: ["Config_CONFIG_ENTITY.json"],
-      },
-    ];
+    return doc;
   }
 
   async initSystemWithBaseConfig(baseConfig: BaseConfig): Promise<void> {
-    const folder = `assets/base-configs/${baseConfig.id}/`;
     for (const file of baseConfig.entitiesToImport) {
-      const entity = await this.loadEntityFromFile(folder + file);
-      await this.entityMapper.save(entity);
+      const fileName = `${this.BASE_CONFIGS_FOLDER}/${file}`;
+
+      const docs = asArray(
+        await lastValueFrom(
+          this.httpClient.get<Object | Object[]>(fileName, {
+            responseType: "json",
+          }),
+        ),
+      );
+
+      for (const doc of docs) {
+        const entity = this.parseObjectToEntity(doc);
+        if (entity) {
+          await this.entityMapper.save(entity);
+        } else {
+          Logging.warn(
+            "Invalid entity file. SetupService is skipping to import this.",
+            fileName,
+            doc,
+          );
+        }
+      }
     }
   }
 
   /**
-   * (Try to) load the given file and convert it to an Entity instance
-   * to be saved to the database.
-   * @param filePath
-   * @private
+   * (Try to) convert the given doc to an Entity instance to be saved to the database.
    */
-  private async loadEntityFromFile(
-    filePath: string,
-  ): Promise<Entity | undefined> {
-    const doc = await lastValueFrom(
-      this.httpClient
-        .get(filePath, { responseType: "json" })
-        .pipe(map((data) => this.localizeJson(data))),
-    );
-
-    // extract ##i18n## tags from all string values in the loaded JSON
-    // This is necessary to ensure that the i18n tags are not stored in the database.
-    // todo: this is a temporary solution, as the i18n tags should be handled by the i18n service.
-    // This will be removed once we found a package that supports i18n tags in JSON files.(for example, ngx-translate)
-    this.extractI18nTags(doc);
-
+  private parseObjectToEntity(doc: any): Entity | undefined {
     if (!doc || !doc["_id"]) {
-      Logging.warn(
-        "Invalid entity file. SetupService is skipping to import this.",
-        filePath,
-        doc,
-      );
       return;
     }
 
@@ -121,32 +111,8 @@ export class SetupService {
 
     const entity = this.schemaService.loadDataIntoEntity(new entityType(), doc);
     Logging.debug("Importing baseConfig entity", entity);
-    return entity;
-  }
 
-  /**
-   * Remove ##i18n## tags from all string values in an object.
-   */
-  private extractI18nTags(obj: any): any {
-    if (typeof obj === "string") {
-      if (obj.startsWith("##i18n##:")) {
-        // Remove everything up to and including the last colon
-        return obj.replace(/^##i18n##:.*:/, "");
-      }
-      if (obj.startsWith("##i18n##")) {
-        return obj.replace(/^##i18n##/, "");
-      }
-      return obj;
-    } else if (Array.isArray(obj)) {
-      for (let i = 0; i < obj.length; i++) {
-        obj[i] = this.extractI18nTags(obj[i]);
-      }
-    } else if (typeof obj === "object" && obj !== null) {
-      for (const key of Object.keys(obj)) {
-        obj[key] = this.extractI18nTags(obj[key]);
-      }
-    }
-    return obj;
+    return entity;
   }
 
   /**
@@ -187,25 +153,5 @@ export class SetupService {
     }
 
     return await lastValueFrom(dialogRef.afterClosed());
-  }
-
-  private localizeJson(jsonText) {
-    // TODO: work in progress. Replacing i18n markers with this doesn't work yet ...
-
-    // 1. Full format: ##i18##:meaning|description@@id:Text
-    // 2. Simple format: ##i18##Text
-    const localizedJson = JSON.stringify(jsonText).replace(
-      /##i18##(?::([^:]*?)@@([^:]*?):)?(.+)/g,
-      (match, meaning, id, text) => {
-        if (meaning && id) {
-          // Full format with metadata
-          return $localize`:${meaning}@@${id}:${text}`;
-        } else {
-          // Simple format without metadata
-          return $localize`${text}`;
-        }
-      },
-    );
-    return JSON.parse(localizedJson);
   }
 }

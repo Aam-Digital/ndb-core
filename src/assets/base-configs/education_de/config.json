@@ -8,7 +8,7 @@
     "navigationMenu": {
       "items": [
         {
-          "label": "##i18n##:Menu item:Dashboard",
+          "label": "Dashboard",
           "icon": "home",
           "link": "/"
         },
@@ -19,7 +19,7 @@
           "entityType": "School"
         },
         {
-          "label": "##i18n##:Menu item:Attendance",
+          "label": "Anwesenheit",
           "icon": "calendar-check",
           "link": "/attendance"
         },
@@ -30,31 +30,31 @@
           "entityType": "Todo"
         },
         {
-          "label": "##i18n##:Menu item:Import",
+          "label": "Import",
           "icon": "file-import",
           "link": "/import"
         },
         {
-          "label": "##i18n##:Menu item:Reports",
+          "label": "Berichte",
           "icon": "line-chart",
           "link": "/report"
         },
         {
-          "label": "##i18n##:Menu item:Help",
+          "label": "Hilfe",
           "icon": "question",
           "link": "/help"
         },
         {
-          "label": "##i18n##:Menu item:Admin",
+          "label": "Admin",
           "icon": "wrench",
           "subMenu": [
             {
-              "label": "##i18n##:Menu item:Admin Overview",
+              "label": "Admin Übersicht",
               "icon": "wrench",
               "link": "/admin"
             },
             {
-              "label": "##i18n##:Menu item:Users",
+              "label": "Nutzer:innen",
               "icon": "users",
               "link": "/user"
             }
@@ -71,17 +71,17 @@
             "config": {
               "shortcuts": [
                 {
-                  "label": "##i18n##:Dashboard shortcut widget|record attendance shortcut:Record Attendance",
+                  "label": "Anwesenheiten aufnehmen",
                   "icon": "calendar-check",
                   "link": "/attendance/add-day"
                 },
                 {
-                  "label": "##i18n##:Dashboard shortcut widget|record attendance shortcut:Add Child",
+                  "label": "Kind hinzufügen",
                   "icon": "plus",
                   "link": "/child/new"
                 },
                 {
-                  "label": "##i18n##:Dashboard shortcut widget|open public form:Public Registration Form",
+                  "label": "Öffentliches Regstrierungsformular",
                   "icon": "file-circle-check",
                   "link": "/public-form/form/test"
                 }
@@ -123,21 +123,21 @@
             "component": "AttendanceWeekDashboard",
             "config": {
               "daysOffset": 7,
-              "periodLabel": "##i18n##:Attendance week dashboard widget label:this week"
+              "periodLabel": "diese Woche"
             }
           },
           {
             "component": "AttendanceWeekDashboard",
             "config": {
               "daysOffset": 0,
-              "periodLabel": "##i18n##:Attendance week dashboard widget label:last week"
+              "periodLabel": "letzte Woche"
             }
           },
           {
             "component": "AttendanceWeekDashboard",
             "config": {
               "daysOffset": 0,
-              "label": "##i18n##:Attendance week dashboard widget label:Late last week",
+              "label": "Zu spät letzte Woche",
               "attendanceStatusType": "LATE"
             }
           },
@@ -151,18 +151,19 @@
             "component": "BirthdayDashboard"
           }
         ]
-      }
+      },
+      "_id": "view:"
     },
     "entity:Note": {
       "toStringAttributes": [
         "subject"
       ],
-      "label": "##i18n##:label for entity:Note",
-      "labelPlural": "##i18n##:label (plural) for entity:Notes",
+      "label": "Notiz",
+      "labelPlural": "Notizen",
       "hasPII": true,
       "attributes": {
         "children": {
-          "label": "##i18n##:Label for the children of a note:Children",
+          "label": "Schüler:innen",
           "dataType": "entity",
           "isArray": true,
           "additional": "Child",
@@ -171,65 +172,64 @@
           "anonymize": "retain"
         },
         "childrenAttendance": {
-          "dataType": "EventAttendanceMap.DATA_TYPE",
+          "dataType": "event-attendance-map",
           "anonymize": "retain"
         },
         "date": {
-          "label": "##i18n##:Label for the date of a note:Date",
+          "label": "Datum",
           "dataType": "date-only",
           "defaultValue": {
             "mode": "dynamic",
             "config": {
-              "value": "PLACEHOLDERS.NOW"
+              "value": "$now"
             }
           },
           "anonymize": "retain"
         },
         "subject": {
           "dataType": "string",
-          "label": "##i18n##:Label for the subject of a note:Subject"
+          "label": "Betreff"
         },
         "text": {
-          "dataType": "LongTextDatatype.dataType",
-          "label": "##i18n##:Label for the actual notes of a note:Notes"
+          "dataType": "long-text",
+          "label": "Notizen"
         },
         "authors": {
-          "label": "##i18n##:Label for the social worker(s) who created the note:Team involved",
+          "label": "Team involved",
           "dataType": "entity",
           "isArray": true,
           "additional": "User",
           "defaultValue": {
             "mode": "dynamic",
             "config": {
-              "value": "PLACEHOLDERS.CURRENT_USER"
+              "value": "$current_user"
             }
           },
           "anonymize": "retain"
         },
         "category": {
-          "label": "##i18n##:Label for the category of a note:Category",
+          "label": "Kategorie",
           "dataType": "configurable-enum",
-          "additional": "INTERACTION_TYPE_CONFIG_ID",
+          "additional": "interaction-type",
           "anonymize": "retain"
         },
         "attachment": {
-          "label": "##i18n##Attachment",
+          "label": "Anhang",
           "dataType": "file"
         },
         "relatesTo": {
           "dataType": "entity",
-          "additional": "RecurringActivity.ENTITY_TYPE",
+          "additional": "RecurringActivity",
           "anonymize": "retain"
         },
         "relatedEntities": {
-          "label": "##i18n##:label for the related Entities:Related Records",
+          "label": "Verknüpfte Datensätze",
           "dataType": "entity",
           "isArray": true,
-          "additional": "undefined",
           "anonymize": "retain"
         },
         "schools": {
-          "label": "##i18n##:label for the linked schools:Groups",
+          "label": "Gruppen",
           "dataType": "entity",
           "isArray": true,
           "additional": "School",
@@ -237,25 +237,26 @@
           "anonymize": "retain"
         },
         "warningLevel": {
-          "label": "##i18n##:Status of a note:Status",
+          "label": "Status im Projekt",
           "dataType": "configurable-enum",
           "additional": "warning-levels",
           "anonymize": "retain"
         }
-      }
+      },
+      "_id": "entity:Note"
     },
     "view:note": {
       "component": "NotesManager",
       "config": {
-        "title": "##i18n##:Title for notes overview:Notes & Reports",
+        "title": "Notizen",
         "includeEventNotes": false,
         "showEventNotesToggle": true,
         "columnGroups": {
-          "default": "##i18n##:Translated name of default column group:Standard",
-          "mobile": "##i18n##:Translated name of mobile column group:Mobile",
+          "default": "Standard",
+          "mobile": "Mobil",
           "groups": [
             {
-              "name": "##i18n##:Column group name:Standard",
+              "name": "Standard",
               "columns": [
                 "date",
                 "subject",
@@ -265,7 +266,7 @@
               ]
             },
             {
-              "name": "##i18n##:Column group name:Mobile",
+              "name": "Mobil",
               "columns": [
                 "date",
                 "subject",
@@ -280,7 +281,66 @@
           },
           {
             "id": "date",
-            "default": 1
+            "default": 1,
+            "options": [
+              {
+                "label": "Heute"
+              },
+              {
+                "startOffsets": [
+                  {
+                    "amount": 0,
+                    "unit": "weeks"
+                  }
+                ],
+                "endOffsets": [
+                  {
+                    "amount": 0,
+                    "unit": "weeks"
+                  }
+                ],
+                "label": "Diese Woche"
+              },
+              {
+                "startOffsets": [
+                  {
+                    "amount": -1,
+                    "unit": "weeks"
+                  }
+                ],
+                "label": "Seit letzter Woche"
+              },
+              {
+                "startOffsets": [
+                  {
+                    "amount": 0,
+                    "unit": "months"
+                  }
+                ],
+                "endOffsets": [
+                  {
+                    "amount": 0,
+                    "unit": "months"
+                  }
+                ],
+                "label": "Diesen Monat"
+              },
+              {
+                "startOffsets": [
+                  {
+                    "amount": -1,
+                    "unit": "months"
+                  }
+                ],
+                "endOffsets": [
+                  {
+                    "amount": -1,
+                    "unit": "months"
+                  }
+                ],
+                "label": "Letzten Monat"
+              }
+            ]
           },
           {
             "id": "category"
@@ -354,7 +414,8 @@
             ]
           }
         ]
-      }
+      },
+      "_id": "view:note"
     },
     "view:note/:id": {
       "component": "NoteDetails",
@@ -366,10 +427,12 @@
           "authors",
           "attachment"
         ]
-      }
+      },
+      "_id": "view:note/:id"
     },
     "view:import": {
-      "component": "Import"
+      "component": "Import",
+      "_id": "view:import"
     },
     "view:user": {
       "component": "EntityList",
@@ -382,7 +445,8 @@
       },
       "permittedUserRoles": [
         "admin_app"
-      ]
+      ],
+      "_id": "view:user"
     },
     "view:user/:id": {
       "component": "EntityDetails",
@@ -390,7 +454,7 @@
         "entityType": "User",
         "panels": [
           {
-            "title": "##i18n##:Panel title:User Information",
+            "title": "Übersicht",
             "components": [
               {
                 "title": "",
@@ -413,7 +477,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Security",
+            "title": "Zugangsberechtigung",
             "components": [
               {
                 "component": "UserSecurity"
@@ -421,19 +485,23 @@
             ]
           }
         ]
-      }
+      },
+      "_id": "view:user/:id"
     },
     "view:help": {
       "component": "MarkdownPage",
       "config": {
         "markdownEntityId": "help"
-      }
+      },
+      "_id": "view:help"
     },
     "view:attendance": {
-      "component": "AttendanceManager"
+      "component": "AttendanceManager",
+      "_id": "view:attendance"
     },
     "view:attendance/add-day": {
-      "component": "AddDayAttendance"
+      "component": "AddDayAttendance",
+      "_id": "view:attendance/add-day"
     },
     "view:school": {
       "component": "EntityList",
@@ -444,7 +512,7 @@
           {
             "id": "DisplayParticipantsCount",
             "viewComponent": "DisplayParticipantsCount",
-            "label": "##i18n##Children"
+            "label": "Schüler:innen"
           },
           "privateSchool",
           "language",
@@ -455,7 +523,8 @@
             "id": "privateSchool"
           }
         ]
-      }
+      },
+      "_id": "view:school"
     },
     "view:school/:id": {
       "component": "EntityDetails",
@@ -463,7 +532,7 @@
         "entityType": "School",
         "panels": [
           {
-            "title": "##i18n##:Panel title:Basic Information",
+            "title": "Übersicht",
             "components": [
               {
                 "title": "",
@@ -500,7 +569,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Students",
+            "title": "Schüler:innen",
             "components": [
               {
                 "title": "",
@@ -509,7 +578,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Activities",
+            "title": "Aktivitäten",
             "components": [
               {
                 "title": "",
@@ -518,39 +587,40 @@
             ]
           }
         ]
-      }
+      },
+      "_id": "view:school/:id"
     },
     "view:child": {
-      "component": "ChildrenList",
+      "component": "EntityList",
       "config": {
         "entityType": "Child",
         "columns": [
           {
-            "viewComponent": "ChildBlock",
-            "label": "##i18n##:Column title for ChildBlockComponents:Name",
+            "viewComponent": "EntityBlock",
+            "label": "Name",
             "id": "name"
           },
           {
             "viewComponent": "DisplayAge",
-            "label": "##i18n##:Column label for age of child:Age",
+            "label": "Alter",
             "id": "age",
             "additional": "dateOfBirth"
           },
           {
             "viewComponent": "DisplayText",
-            "label": "##i18n##:Column label for class which child attends:Class",
+            "label": "Klasse",
             "id": "schoolClass"
           },
           {
             "viewComponent": "DisplayEntity",
-            "label": "##i18n##:Column label for school which child attends:School",
+            "label": "Schule",
             "id": "schoolId",
             "additional": "School",
             "noSorting": true
           },
           {
             "viewComponent": "RecentAttendanceBlocks",
-            "label": "##i18n##:Column label for school attendance of child:Attendance (School)",
+            "label": "Anwesenheit (Schule)",
             "id": "schoolAttendance",
             "additional": {
               "filterByActivityType": "SCHOOL_CLASS"
@@ -559,7 +629,7 @@
           },
           {
             "viewComponent": "RecentAttendanceBlocks",
-            "label": "##i18n##:Column label for coaching attendance of child:Attendance (Coaching)",
+            "label": "Anwesenheit (Coaching)",
             "id": "coachingAttendance",
             "additional": {
               "filterByActivityType": "COACHING_CLASS"
@@ -568,11 +638,11 @@
           }
         ],
         "columnGroups": {
-          "default": "##i18n##:Translated name of default column group:Basic Info",
-          "mobile": "##i18n##:Translated name of mobile column group:Mobile",
+          "default": "Übersicht",
+          "mobile": "Mobil",
           "groups": [
             {
-              "name": "##i18n##:Column group name:Basic Info",
+              "name": "Übersicht",
               "columns": [
                 "projectNumber",
                 "name",
@@ -585,7 +655,7 @@
               ]
             },
             {
-              "name": "##i18n##:Column group name:School Info",
+              "name": "Schule",
               "columns": [
                 "projectNumber",
                 "name",
@@ -598,7 +668,7 @@
               ]
             },
             {
-              "name": "##i18n##:Column group name:Status",
+              "name": "Status im Projekt",
               "columns": [
                 "projectNumber",
                 "name",
@@ -608,7 +678,7 @@
               ]
             },
             {
-              "name": "##i18n##:Column group name:Health",
+              "name": "Gesundheit",
               "columns": [
                 "projectNumber",
                 "name",
@@ -622,7 +692,7 @@
               ]
             },
             {
-              "name": "##i18n##:Column group name:Mobile",
+              "name": "Mobil",
               "columns": [
                 "projectNumber",
                 "name",
@@ -638,7 +708,7 @@
           {
             "id": "schoolId",
             "type": "School",
-            "label": "##i18n##:Label of schools filter:School"
+            "label": "Schule"
           }
         ],
         "exportConfig": [
@@ -662,8 +732,10 @@
             "label": "more fields can be configured - or all data exported",
             "query": "projectNumber"
           }
-        ]
-      }
+        ],
+        "loaderMethod": "ChildrenService"
+      },
+      "_id": "view:child"
     },
     "view:child/:id": {
       "component": "EntityDetails",
@@ -671,7 +743,7 @@
         "entityType": "Child",
         "panels": [
           {
-            "title": "##i18n##:Panel title:Basic Information",
+            "title": "Übersicht",
             "components": [
               {
                 "title": "",
@@ -689,7 +761,7 @@
                         "projectNumber",
                         "admissionDate"
                       ],
-                      "header": "##i18n##:Header for form section:Personal Information"
+                      "header": "Persönlich"
                     },
                     {
                       "fields": [
@@ -698,7 +770,7 @@
                         "gender",
                         "motherTongue"
                       ],
-                      "header": "##i18n##:Header for form section:Additional"
+                      "header": "Zusätzlich"
                     },
                     {
                       "fields": [
@@ -707,7 +779,7 @@
                         "address",
                         "phone"
                       ],
-                      "header": "##i18n##:Header for form section:Scholar activities"
+                      "header": "Schulisch"
                     }
                   ]
                 }
@@ -715,10 +787,10 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Education",
+            "title": "Bildung",
             "components": [
               {
-                "title": "##i18n##:Title inside a panel:School History",
+                "title": "Schullaufbahn",
                 "component": "ChildSchoolOverview",
                 "config": {
                   "single": true,
@@ -738,7 +810,7 @@
                 }
               },
               {
-                "title": "##i18n##:Title inside a panel:ASER Results",
+                "title": "Abschneiden beim \"ASER\"-Test",
                 "component": "RelatedEntities",
                 "config": {
                   "entityType": "Aser",
@@ -772,7 +844,7 @@
                 }
               },
               {
-                "title": "##i18n##:Child details section title:Find a suitable new school",
+                "title": "Geeignete Schule finden",
                 "component": "MatchingEntities",
                 "config": {
                   "rightSide": {
@@ -788,7 +860,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Attendance",
+            "title": "Anwesenheit",
             "components": [
               {
                 "title": "",
@@ -797,7 +869,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Notes & Tasks",
+            "title": "Notizen & Aufgaben",
             "components": [
               {
                 "title": "",
@@ -810,7 +882,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Health",
+            "title": "Gesundheit",
             "components": [
               {
                 "title": "",
@@ -827,7 +899,7 @@
                         {
                           "id": "_description_health",
                           "editComponent": "EditDescriptionOnly",
-                          "label": "##i18n##:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines. Make sure to visit the  [Health Guidelines](https://example.com/guidelines) for detailed recommendations and procedures."
+                          "label": "Gesundheitschecks müssen gemäß den Programmrichtlinien regelmäßig, mindestens alle 6 Monate, durchgeführt werden.\n\nLesen Sie die [Gesundheitsrichtlinien](https://example.com/guidelines), um detaillierte Empfehlungen zu erhalten."
                         },
                         "health_lastDentalCheckup"
                       ]
@@ -836,7 +908,7 @@
                 }
               },
               {
-                "title": "##i18n##:Title inside a panel:Height & Weight Tracking",
+                "title": "Größe & Gewicht",
                 "component": "RelatedEntities",
                 "config": {
                   "entityType": "HealthCheck",
@@ -853,8 +925,8 @@
                     },
                     {
                       "id": "bmi",
-                      "label": "##i18n##:Table header, Short for Body Mass Index:BMI",
-                      "description": "##i18n##:Tooltip for BMI info:This is calculated using the height and the weight measure",
+                      "label": "BMI",
+                      "description": "Dieser wert wird aus den Größen- und Gewicht-Messungen berechnet",
                       "viewComponent": "DisplayCalculatedValue",
                       "additional": {
                         "calculation": "bmi",
@@ -871,7 +943,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Educational Materials",
+            "title": "Schulmaterialien",
             "components": [
               {
                 "title": "",
@@ -908,11 +980,11 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Observations",
+            "title": "Beurteilungen",
             "components": [
               {
                 "title": "",
-                "component": "HistoricalDataComponent",
+                "component": "RelatedEntities",
                 "config": {
                   "columns": [
                     "date",
@@ -936,13 +1008,15 @@
                       "id": "asksQuestions",
                       "visibleFrom": "lg"
                     }
-                  ]
+                  ],
+                  "entityType": "HistoricalEntityData",
+                  "loaderMethod": "HistoricalDataService"
                 }
               }
             ]
           },
           {
-            "title": "##i18n##:Panel title:Dropout",
+            "title": "Ausscheiden aus dem Projekt",
             "components": [
               {
                 "title": "",
@@ -970,27 +1044,28 @@
             ]
           }
         ]
-      }
+      },
+      "_id": "view:child/:id"
     },
     "entity:EducationalMaterial": {
       "attributes": {
         "child": {
-          "dataType": "EntityDatatype.dataType",
+          "dataType": "entity",
           "additional": "Child",
           "entityReferenceRole": "composite"
         },
         "date": {
           "dataType": "date",
-          "label": "##i18n##:Date on which the material has been borrowed:Date",
+          "label": "Datum",
           "defaultValue": {
             "mode": "dynamic",
             "config": {
-              "value": "PLACEHOLDERS.NOW"
+              "value": "$now"
             }
           }
         },
         "materialType": {
-          "label": "##i18n##:The material which has been borrowed:Material",
+          "label": "Material",
           "dataType": "configurable-enum",
           "additional": "materials",
           "validators": {
@@ -999,7 +1074,7 @@
         },
         "materialAmount": {
           "dataType": "number",
-          "label": "##i18n##:The amount of the material which has been borrowed:Amount",
+          "label": "Anzahl",
           "defaultValue": {
             "mode": "static",
             "config": {
@@ -1012,56 +1087,64 @@
         },
         "description": {
           "dataType": "string",
-          "label": "##i18n##:An additional description for the borrowed material:Description"
+          "label": "Beschreibung"
         }
-      }
+      },
+      "_id": "entity:EducationalMaterial"
     },
     "entity:RecurringActivity": {
       "toStringAttributes": [
         "title"
       ],
-      "label": "##i18n##:label for entity:Recurring Activity",
-      "labelPlural": "##i18n##:label (plural) for entity:Recurring Activities",
+      "label": "Wiederkehrende Aktivität",
+      "labelPlural": "Wiederkehrende Aktivitäten",
       "color": "#00838F",
       "route": "attendance/recurring-activity",
       "attributes": {
         "title": {
           "dataType": "string",
-          "label": "##i18n##:Label for the title of a recurring activity:Title",
+          "label": "Titel",
           "validators": {
             "required": true
           }
         },
         "type": {
-          "label": "##i18n##:Label for the interaction type of a recurring activity:Type",
+          "label": "Typ",
           "dataType": "configurable-enum",
-          "additional": "INTERACTION_TYPE_CONFIG_ID"
+          "additional": "interaction-type"
+        },
+        "status": {
+          "label": "Status der Aktivität",
+          "description": "Dieser Status kann genutzt werden, um automatisch den Status der Teilnehmer:innen mit zu aktualisieren.",
+          "dataType": "configurable-enum",
+          "additional": "activity-status"
         },
         "participants": {
-          "label": "##i18n##:Label for the participants of a recurring activity:Participants",
+          "label": "Teilnehmer:innen",
           "dataType": "entity",
           "isArray": true,
           "additional": "Child"
         },
         "linkedGroups": {
-          "label": "##i18n##:Label for the linked schools of a recurring activity:Groups",
+          "label": "Gruppen",
           "dataType": "entity",
           "isArray": true,
           "additional": "School"
         },
         "excludedParticipants": {
-          "label": "##i18n##:Label for excluded participants of a recurring activity:Excluded Participants",
+          "label": "Ausgenommene Teilnehmer:innen",
           "dataType": "entity",
           "isArray": true,
           "additional": "Child"
         },
         "assignedTo": {
-          "label": "##i18n##:Label for the assigned user(s) of a recurring activity:Assigned user(s)",
+          "label": "Verantwortliche:r",
           "dataType": "entity",
           "isArray": true,
           "additional": "User"
         }
-      }
+      },
+      "_id": "entity:RecurringActivity"
     },
     "view:attendance/recurring-activity": {
       "component": "EntityList",
@@ -1070,6 +1153,7 @@
         "columns": [
           "title",
           "type",
+          "status",
           "assignedTo"
         ],
         "exportConfig": [
@@ -1086,7 +1170,8 @@
             "query": "assignedTo"
           }
         ]
-      }
+      },
+      "_id": "view:attendance/recurring-activity"
     },
     "view:attendance/recurring-activity/:id": {
       "component": "EntityDetails",
@@ -1094,7 +1179,7 @@
         "entityType": "RecurringActivity",
         "panels": [
           {
-            "title": "##i18n##:Panel title:Basic Information",
+            "title": "Übersicht",
             "components": [
               {
                 "component": "Form",
@@ -1107,7 +1192,8 @@
                     },
                     {
                       "fields": [
-                        "type"
+                        "type",
+                        "status"
                       ]
                     },
                     {
@@ -1121,7 +1207,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Participants",
+            "title": "Teilnehmer:innen",
             "components": [
               {
                 "component": "Form",
@@ -1140,7 +1226,7 @@
             ]
           },
           {
-            "title": "##i18n##:Panel title:Events & Attendance",
+            "title": "Aktivitäten & Anwesenheit",
             "components": [
               {
                 "component": "ActivityAttendanceSection"
@@ -1148,14 +1234,16 @@
             ]
           }
         ]
-      }
+      },
+      "_id": "view:attendance/recurring-activity/:id"
     },
     "view:report": {
-      "component": "Reporting"
+      "component": "Reporting",
+      "_id": "view:report"
     },
     "entity:Child": {
-      "label": "##i18n##:Label for child:Child",
-      "labelPlural": "##i18n##:Plural label for child:Children",
+      "label": "Kind",
+      "labelPlural": "Schüler:innen",
       "toStringAttributes": [
         "name"
       ],
@@ -1174,153 +1262,168 @@
       "attributes": {
         "name": {
           "dataType": "string",
-          "label": "##i18n##:Label for the name of a child:Name",
+          "label": "Name",
           "validators": {
             "required": true
           }
         },
         "projectNumber": {
           "dataType": "string",
-          "label": "##i18n##:Label for the project number of a child:Project Number",
-          "labelShort": "##i18n##:Short label for the project number:PN",
+          "label": "Projektnummer",
+          "labelShort": "PN",
           "searchable": true,
           "anonymize": "retain"
         },
         "dateOfBirth": {
           "dataType": "date-with-age",
-          "label": "##i18n##:Label for the date of birth of a child:Date of birth",
-          "labelShort": "##i18n##:Short label for the date of birth:DoB",
+          "label": "Geburtsdatum",
+          "labelShort": "Geburtsdatum",
           "anonymize": "retain-anonymized"
         },
         "center": {
           "dataType": "configurable-enum",
           "additional": "center",
-          "label": "##i18n##:Label for the center of a child:Center",
+          "label": "Schulzentrum",
           "anonymize": "retain"
         },
         "gender": {
           "dataType": "configurable-enum",
-          "label": "##i18n##:Label for the gender of a child:Gender",
+          "label": "Geschlecht",
           "additional": "genders",
           "anonymize": "retain"
         },
         "admissionDate": {
           "dataType": "date-only",
-          "label": "##i18n##:Label for the admission date of a child:Admission",
+          "label": "Aufnahmedatum",
           "anonymize": "retain-anonymized"
         },
         "status": {
           "dataType": "string",
-          "label": "##i18n##:Label for the status of a child:Status"
+          "label": "Status im Projekt",
+          "defaultValue": {
+            "mode": "updated-from-referencing-entity",
+            "config": {
+              "relatedReferenceField": "participants",
+              "relatedEntityType": "RecurringActivity",
+              "relatedTriggerField": "status",
+              "automatedMapping": {
+                "PLANNED": "coaching requested",
+                "ONGOING": "in coaching",
+                "COMPLETED": "coaching completed"
+              }
+            }
+          }
         },
         "dropoutDate": {
           "dataType": "date-only",
-          "label": "##i18n##:Label for the dropout date of a child:Dropout Date",
+          "label": "Datum des Ausscheidens",
           "anonymize": "retain-anonymized"
         },
         "dropoutType": {
           "dataType": "string",
-          "label": "##i18n##:Label for the type of dropout of a child:Dropout Type",
+          "label": "Grund des Ausscheidens",
           "anonymize": "retain"
         },
         "dropoutRemarks": {
           "dataType": "string",
-          "label": "##i18n##:Label for the remarks about a dropout of a child:Dropout remarks"
+          "label": "Bermekungen zum Ausscheiden"
         },
         "photo": {
           "dataType": "photo",
-          "label": "##i18n##:Label for the file field of a photo of a child:Photo"
+          "label": "Foto"
         },
         "phone": {
           "dataType": "string",
-          "label": "##i18n##:Label for the phone number of a child:Phone Number"
+          "label": "Telefonnummer"
         },
         "address": {
           "dataType": "location",
-          "label": "##i18n##:Label for the address of a child:Address"
+          "label": "Adresse"
         },
         "health_bloodGroup": {
           "dataType": "string",
-          "label": "##i18n##:Label for a child attribute:Blood Group"
+          "label": "Blutgruppe"
         },
         "religion": {
           "dataType": "string",
-          "label": "##i18n##:Label for the religion of a child:Religion"
+          "label": "Religion"
         },
         "motherTongue": {
           "dataType": "string",
-          "label": "##i18n##:Label for the mother tongue of a child:Mother Tongue",
-          "description": "##i18n##:Tooltip description for the mother tongue of a child:The primary language spoken at home"
+          "label": "Muttersprache",
+          "description": "Die hauptsächlich zu Hause gesprochene Sprache"
         },
         "health_lastDentalCheckup": {
           "dataType": "date",
-          "label": "##i18n##:Label for a child attribute:Last Dental Check-Up"
+          "label": "Letzte Zahnuntersuchung"
         },
         "birth_certificate": {
           "dataType": "file",
-          "label": "##i18n##:Label for a child attribute:Birth certificate",
+          "label": "Geburtsurkunde",
           "additional": {
             "acceptedFileTypes": ".pdf"
           }
         }
-      }
+      },
+      "_id": "entity:Child"
     },
     "entity:School": {
       "toStringAttributes": [
         "name"
       ],
       "icon": "university",
-      "label": "##i18n##:label for entity:School",
-      "labelPlural": "##i18n##:label (plural) for entity:Schools",
+      "label": "Schule",
+      "labelPlural": "Schulen",
       "color": "#9E9D24",
       "attributes": {
         "name": {
           "dataType": "string",
-          "label": "##i18n##:Label for the name of a school:Name",
+          "label": "Name",
           "validators": {
             "required": true
           }
         },
         "privateSchool": {
           "dataType": "boolean",
-          "label": "##i18n##:Label for if a school is a private school:Private School"
+          "label": "Privatschule"
         },
         "language": {
           "dataType": "string",
-          "label": "##i18n##:Label for the language of a school:Language"
+          "label": "Sprache"
         },
         "address": {
           "dataType": "location",
-          "label": "##i18n##:Label for the address of a school:Address"
+          "label": "Adresse"
         },
         "phone": {
           "dataType": "string",
-          "label": "##i18n##:Label for the phone number of a school:Phone Number"
+          "label": "Telefonnummer"
         },
         "timing": {
           "dataType": "string",
-          "label": "##i18n##:Label for the timing of a school:School Timing"
+          "label": "Unterrichtszeiten"
         },
         "remarks": {
           "dataType": "string",
-          "label": "##i18n##:Label for the remarks for a school:Remarks"
+          "label": "Vermerk"
         },
         "website": {
           "dataType": "url",
-          "label": "##i18n##:Label for the website of a school:Website"
+          "label": "Webseite"
         }
-      }
+      },
+      "_id": "entity:School"
     },
     "entity:HistoricalEntityData": {
       "hasPII": true,
       "attributes": {
         "date": {
           "dataType": "date",
-          "label": "##i18n##:Label for date of historical data:Date",
+          "label": "Datum",
           "defaultValue": {
             "mode": "dynamic",
             "config": {
-              "value": "PLACEHOLDERS.NOW"
+              "value": "$now"
             }
           },
           "anonymize": "retain-anonymized"
@@ -1334,53 +1437,55 @@
         "isMotivatedDuringClass": {
           "dataType": "configurable-enum",
           "additional": "rating-answer",
-          "label": "##i18n##:Label for a child attribute:Motivated",
-          "description": "##i18n##:Description for a child attribute:The child is motivated during the class."
+          "label": "Motiviert",
+          "description": "Das Kind ist während des Unterrichts motiviert."
         },
         "isParticipatingInClass": {
           "dataType": "configurable-enum",
           "additional": "rating-answer",
-          "label": "##i18n##:Label for a child attribute:Participating",
-          "description": "##i18n##:Description for a child attribute:The child is actively participating in the class."
+          "label": "Aktive Teilnahme",
+          "description": "Das Kind nimmt aktiv am Unterricht teil."
         },
         "isInteractingWithOthers": {
           "dataType": "configurable-enum",
           "additional": "rating-answer",
-          "label": "##i18n##:Label for a child attribute:Interacting",
-          "description": "##i18n##:Description for a child attribute:The child interacts with other students during the class."
+          "label": "Interagierend",
+          "description": "Das Kind interagiert mit anderen Kindern wärend des Unterrichts."
         },
         "doesHomework": {
           "dataType": "configurable-enum",
           "additional": "rating-answer",
-          "label": "##i18n##:Label for a child attribute:Homework",
-          "description": "##i18n##:Description for a child attribute:The child does its homework."
+          "label": "Hausaufgaben",
+          "description": "Das Kind macht die Hausaufgaben."
         },
         "asksQuestions": {
           "dataType": "configurable-enum",
           "additional": "rating-answer",
-          "label": "##i18n##:Label for a child attribute:Asking Questions",
-          "description": "##i18n##:Description for a child attribute:The child is asking questions during the class."
+          "label": "Stellt Fragen",
+          "description": "Das Kind stellt Fragen während des Unterrichts."
         }
-      }
+      },
+      "_id": "entity:HistoricalEntityData"
     },
     "entity:User": {
       "toStringAttributes": [
         "name"
       ],
       "icon": "user",
-      "label": "##i18n##:label for entity:User",
-      "labelPlural": "##i18n##:label (plural) for entity:Users",
+      "label": "Nutzer:in",
+      "labelPlural": "Nutzer:innen",
       "hasPII": true,
       "attributes": {
         "name": {
           "dataType": "string",
-          "label": "##i18n##:Label of user field:Name"
+          "label": "Name"
         },
         "phone": {
           "dataType": "string",
-          "label": "##i18n##:Label of user field:Contact"
+          "label": "Tel."
         }
-      }
+      },
+      "_id": "entity:User"
     },
     "view:matching": {
       "component": "MatchingEntities",
@@ -1399,7 +1504,8 @@
         "leftSide": {
           "entityType": "Child"
         }
-      }
+      },
+      "_id": "view:matching"
     },
     "appConfig:matching-entities": {
       "columns": [
@@ -1421,7 +1527,7 @@
         ]
       ],
       "onMatch": {
-        "newEntityType": "ChildSchoolRelation.ENTITY_TYPE",
+        "newEntityType": "ChildSchoolRelation",
         "newEntityMatchPropertyLeft": "childId",
         "newEntityMatchPropertyRight": "schoolId",
         "columnsToReview": [
@@ -1443,40 +1549,41 @@
         },
         "date": {
           "dataType": "date",
-          "label": "##i18n##:Label for date of the ASER results:Date",
+          "label": "Datum",
           "defaultValue": {
             "mode": "dynamic",
             "config": {
-              "value": "PLACEHOLDERS.NOW"
+              "value": "$now"
             }
           },
           "anonymize": "retain-anonymized"
         },
         "hindi": {
-          "label": "##i18n##:Label of the Hindi ASER result:Hindi",
+          "label": "Hindi",
           "dataType": "configurable-enum",
           "additional": "reading-levels"
         },
         "bengali": {
-          "label": "##i18n##:Label of the Bengali ASER result:Bengali",
+          "label": "Bengali",
           "dataType": "configurable-enum",
           "additional": "reading-levels"
         },
         "english": {
-          "label": "##i18n##:Label of the English ASER result:English",
+          "label": "Englisch",
           "dataType": "configurable-enum",
           "additional": "reading-levels"
         },
         "math": {
-          "label": "##i18n##:Label of the Math ASER result:Math",
+          "label": "Mathe",
           "dataType": "configurable-enum",
           "additional": "math-levels"
         },
         "remarks": {
           "dataType": "string",
-          "label": "##i18n##:Label for the remarks of a ASER result:Remarks"
+          "label": "Vermerk"
         }
-      }
+      },
+      "_id": "entity:Aser"
     },
     "entity:HealthCheck": {
       "hasPII": true,
@@ -1489,28 +1596,29 @@
         },
         "date": {
           "dataType": "date",
-          "label": "##i18n##:Label for date of a health check:Date",
+          "label": "Datum",
           "anonymize": "retain-anonymized",
           "defaultValue": {
             "mode": "dynamic",
             "config": {
-              "value": "PLACEHOLDERS.NOW"
+              "value": "$now"
             }
           }
         },
         "height": {
           "dataType": "number",
-          "label": "##i18n##:Label for height in cm of a health check:Height [cm]",
+          "label": "Größe [cm]",
           "viewComponent": "DisplayUnit",
           "additional": "cm"
         },
         "weight": {
           "dataType": "number",
-          "label": "##i18n##:Label for weight in kg of a health check:Weight [kg]",
+          "label": "Gewicht [kg]",
           "viewComponent": "DisplayUnit",
           "additional": "kg"
         }
-      }
+      },
+      "_id": "entity:HealthCheck"
     },
     "entity:ChildSchoolRelation": {
       "hasPII": true,
@@ -1523,7 +1631,7 @@
             "required": true
           },
           "anonymize": "retain",
-          "label": "##i18n##:Label for the child of a relation:Child"
+          "label": "Kind"
         },
         "schoolId": {
           "dataType": "entity",
@@ -1533,34 +1641,35 @@
             "required": true
           },
           "anonymize": "retain",
-          "label": "##i18n##:Label for the school of a relation:School"
+          "label": "Schule"
         },
         "schoolClass": {
           "dataType": "string",
-          "label": "##i18n##:Label for the class of a relation:Class",
+          "label": "Klasse",
           "anonymize": "retain"
         },
         "start": {
           "dataType": "date-only",
-          "label": "##i18n##:Label for the start date of a relation:Start date",
-          "description": "##i18n##:Description of the start date of a relation:The date a child joins a school",
+          "label": "Anfang",
+          "description": "Das Datum, an dem das Kind der Schule beigetreten ist",
           "anonymize": "retain"
         },
         "end": {
           "dataType": "date-only",
-          "label": "##i18n##:Label for the end date of a relation:End date",
-          "description": "##i18n##:Description of the end date of a relation:The date of a child leaving the school",
+          "label": "Ende",
+          "description": "Das Datum, an dem das Kind die Schule verlassen hat",
           "anonymize": "retain"
         },
         "result": {
           "dataType": "percentage",
-          "label": "##i18n##:Label for the percentage result of a relation:Result",
+          "label": "Ergebnis",
           "validators": {
             "min": 0,
             "max": 100
           }
         }
-      }
+      },
+      "_id": "entity:ChildSchoolRelation"
     },
     "view:todo": {
       "component": "TodoList",
@@ -1582,7 +1691,8 @@
             "type": "prebuilt"
           }
         ]
-      }
+      },
+      "_id": "view:todo"
     }
   }
 }

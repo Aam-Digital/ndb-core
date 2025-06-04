@@ -43,7 +43,7 @@ describe("SetupService", () => {
       name: "Basic Setup",
       description:
         "A basic setup with minimal configuration to get started quickly.",
-      entitiesToImport: ["Config_CONFIG_ENTITY.json"],
+      entitiesToImport: ["config.json"],
     });
 
     const actualConfig = await TestBed.inject(EntityMapperService).load(

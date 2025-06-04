@@ -18,7 +18,6 @@
     "storybook": "ng run ndb-core:storybook",
     "build-storybook": "ng run ndb-core:build-storybook",
     "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/",
-    "extract-i18n-json": "tsx src/app/utils/extract-i18n-from-json.ts",
     "check-circular-deps": "madge --circular --extensions ts ./"
   },
   "private": true,
