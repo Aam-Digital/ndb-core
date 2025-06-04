@@ -1,22 +1,30 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
+import { environment } from "../../../../environments/environment";
+import { SetupService } from "../setup.service";
 
 @Component({
   selector: "app-demo-assistant-button",
   imports: [MatButtonModule],
-  template: `
-    <button
-      mat-raised-button
-      color="accent"
-      class="demo-assistant-btn"
-      (click)="openDemoAssistance.emit()"
-    >
-      <span i18n>Demo</span>
-      <span i18n>Assistant</span>
-    </button>
-  `,
+  templateUrl: "./demo-assistant-button.component.html",
   styleUrl: "./demo-assistant-button.component.scss",
 })
-export class DemoAssistantButtonComponent {
-  @Output() openDemoAssistance = new EventEmitter<void>();
+export class DemoAssistantButtonComponent implements OnInit {
+  private readonly setupService = inject(SetupService);
+
+  demoMode: boolean;
+
+  ngOnInit(): void {
+    this.demoMode = environment.demo_mode;
+
+    if (this.demoMode) {
+      // If we are in demo mode, we open the setup dialog immediately
+      // to allow the user to select a base config.
+      this.setupService.openDemoSetupDialog();
+    }
+  }
+
+  openDemoAssistance(): void {
+    this.setupService.openDemoSetupDialog();
+  }
 }
