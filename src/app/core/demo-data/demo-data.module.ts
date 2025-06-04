@@ -33,16 +33,12 @@ import { DemoHealthCheckGeneratorService } from "../../child-dev-project/childre
 import { DemoProgressDashboardWidgetGeneratorService } from "../../features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/demo-data-generators/observations/demo-historical-data-generator";
-import { DemoPermissionGeneratorService } from "../permissions/demo-permission-generator.service";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
 import { DemoConfigurableEnumGeneratorService } from "../basic-datatypes/configurable-enum/demo-configurable-enum-generator.service";
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
-import { DemoSiteSettingsGeneratorService } from "../site-settings/demo-site-settings-generator.service";
 import { DemoReportConfigGeneratorService } from "../../features/reporting/demo-report-config-generator.service";
 
 const demoDataGeneratorProviders = [
-  ...DemoPermissionGeneratorService.provider(),
-  ...DemoSiteSettingsGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
   ...DemoConfigurableEnumGeneratorService.provider(),

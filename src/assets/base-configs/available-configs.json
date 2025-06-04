@@ -4,7 +4,10 @@
     "description": "A basic setup with minimal configuration to get started quickly.",
     "entitiesToImport": [
       "basic/config.json",
-      "basic/entities.json"
+      "basic/Config_Permissions.json",
+      "basic/Config_SetupWizard.json",
+      "basic/MarkdownContent_help.json",
+      "basic/SiteSettings_global.json"
     ],
     "locale": "en"
   },
@@ -12,7 +15,11 @@
     "name": "Education Project",
     "description": "School or after-school example.",
     "entitiesToImport": [
-      "education/config.json"
+      "education/config.json",
+      "basic/Config_Permissions.json",
+      "basic/Config_SetupWizard.json",
+      "basic/MarkdownContent_help.json",
+      "basic/SiteSettings_global.json"
     ],
     "locale": "en"
   },

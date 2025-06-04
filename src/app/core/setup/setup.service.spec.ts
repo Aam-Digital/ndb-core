@@ -39,7 +39,6 @@ describe("SetupService", () => {
 
   it("should init config entity with json from assets folder", async () => {
     await service.initSystemWithBaseConfig({
-      id: "basic",
       name: "Basic Setup",
       description:
         "A basic setup with minimal configuration to get started quickly.",

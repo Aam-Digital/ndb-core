@@ -13,7 +13,6 @@ import {
 } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import {
   CONFIG_SETUP_WIZARD_ID,
-  defaultSetupWizardConfig,
   SetupWizardConfig,
 } from "./setup-wizard-config";
 import { Config } from "../../config/config";
@@ -44,9 +43,25 @@ describe("SetupWizardComponent", () => {
   });
 
   it("should load config on init and save if finished in last step", fakeAsync(() => {
-    const testConfig: SetupWizardConfig = JSON.parse(
-      JSON.stringify(defaultSetupWizardConfig),
-    );
+    const testConfig: SetupWizardConfig = {
+      openOnStart: true,
+      steps: [
+        {
+          title: "Welcome",
+          text: "# Welcome to Aam Digital!\nWe are here ...",
+        },
+        {
+          title: "Import Data",
+          text: "...",
+          actions: [
+            {
+              label: "Import Data",
+              link: "/import",
+            },
+          ],
+        },
+      ],
+    };
 
     const entityMapper: MockEntityMapperService = TestBed.inject(
       EntityMapperService,

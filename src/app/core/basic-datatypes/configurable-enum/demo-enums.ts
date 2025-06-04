@@ -16,6 +16,7 @@ import {
 import { ConfigurableEnum } from "./configurable-enum";
 import { INTERACTION_TYPE_CONFIG_ID } from "../../../child-dev-project/notes/model/interaction-type.interface";
 
+// TODO: turn into assets/base-configs
 export const demoEnums = Object.entries({
   genders: genders,
   materials: materials,
