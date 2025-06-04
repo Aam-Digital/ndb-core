@@ -20,8 +20,3 @@ export class ContextAwareDialogComponent {
     window.location.href = "/";
   }
 }
-
-// Define a shared interface for dialog components
-export interface DemoDialogComponentBase {
-  // Add any shared methods/properties here
-}
