@@ -1,7 +1,12 @@
-.dialog-header-bar {
-  //todo- need to use global colors
-  border-top: 18px solid #448aff;
+mat-dialog-content,
+mat-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
+
 .action-button {
-  margin-bottom: 20%;
+  margin-bottom: 30%;
 }
