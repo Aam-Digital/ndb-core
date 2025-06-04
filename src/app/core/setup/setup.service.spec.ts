@@ -6,6 +6,7 @@ import { provideHttpClient } from "@angular/common/http";
 import { Config } from "../config/config";
 import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
+import { LoginStateSubject } from "../session/session-type";
 
 describe("SetupService", () => {
   let service: SetupService;
@@ -21,6 +22,7 @@ describe("SetupService", () => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
+        LoginStateSubject,
         provideHttpClient(),
         {
           provide: DemoDataInitializerService,
