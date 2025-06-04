@@ -10,18 +10,21 @@ import {
 export { expect } from "@playwright/test";
 
 /** The mocked "now" date to which e2e tests are fixed. */
-export const E2E_DATE_TODAY = "2025-01-23";
+export const E2E_REF_DATE = "2025-01-23";
 
 export const test = base.extend<{ forEachTest: void }>({
   forEachTest: [
     async ({ page }, use) => {
-      await page.clock.install({ time: E2E_DATE_TODAY });
-      await page.addInitScript(() => {
+      await page.clock.install();
+      await page.clock.setFixedTime(E2E_REF_DATE);
+      await page.addInitScript((E2E_REF_DATE) => {
         // @ts-expect-error Because we install a mock clock, `Data.name` is
         // `ClockDate` and not `Date`. This would break the Entity Schema
         // service.
         Date.DATA_TYPE = "date";
-      });
+        // @ts-expect-error global state
+        globalThis.NDB_E2E_REF_DATE = new Date(E2E_REF_DATE);
+      }, E2E_REF_DATE);
       await page.goto("/");
       // Give the app time to load
       await page.getByText("Aam Digital - Demo").waitFor({ timeout: 10_000 });
