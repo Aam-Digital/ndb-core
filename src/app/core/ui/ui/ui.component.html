@@ -68,6 +68,7 @@
     *ngIf="isLoggedIn()"
     [autoFocus]="false"
     [mode]="sideNavMode"
+    [fixedInViewport]="true"
     [opened]="sideNavMode === 'side'"
     class="sidenav-menu"
     disableClose
@@ -75,6 +76,7 @@
     <div
       class="flex-column justify-space-between full-height overflow-y-hidden"
     >
+      <div class="toolbar-spacer"></div>
       <app-display-img
         *ngIf="siteSettings.logo"
         [entity]="siteSettings"
