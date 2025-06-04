@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
-
 import { MatButtonModule } from "@angular/material/button";
 import { ChooseUseCaseComponent } from "../choose-use-case/choose-use-case.component";
 
@@ -13,7 +12,6 @@ import { ChooseUseCaseComponent } from "../choose-use-case/choose-use-case.compo
   styleUrl: "./demo-assistance-dialog.component.scss",
 })
 export class DemoAssistanceDialogComponent implements OnInit {
-  // List of demo assistance items
   demoAssistanceItems: BaseConfig[] = [];
   selectedUseCase: BaseConfig | null = null;
   demoInitialized: boolean = false;
@@ -26,32 +24,24 @@ export class DemoAssistanceDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.demoAssistanceItems = await this.setupService.getAvailableBaseConfig();
-    console.log("Demo Assistance Items:", this.demoAssistanceItems);
-  }
-  onUseCaseSelected(selected: BaseConfig) {
-    console.log("Selected use case:", selected);
-    this.selectedUseCase = selected;
   }
 
-  initializeSystem() {
+  async initializeSystem() {
     if (this.selectedUseCase) {
-      const result = this.setupService.initDemoData(this.selectedUseCase);
-      if (result instanceof Promise) {
-        this.generatingData = true;
-
-        result
-          .then(() => {
-            this.demoInitialized = true;
-            this.generatingData = false;
-          })
-          .catch((error) => {
-            console.error("Error initializing demo data:", error);
-            this.generatingData = true;
-          });
-      } else {
+      this.generatingData = true;
+      try {
+        await this.setupService.initDemoData(this.selectedUseCase);
+        this.demoInitialized = true;
+      } catch (error) {
+        console.error("Error initializing demo data:", error);
+      } finally {
         this.generatingData = false;
       }
     }
+  }
+
+  onUseCaseSelected(selected: BaseConfig) {
+    this.selectedUseCase = selected;
   }
 
   startExploring() {
