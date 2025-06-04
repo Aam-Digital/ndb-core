@@ -19,9 +19,9 @@ body {
  * Both of these directives are required to make the shadow show
  */
 .ui-toolbar {
-  padding-right: 0px;
-  position: relative;
+  position: sticky;
   top: 0;
+  padding-right: 0px;
   z-index: 2;
   justify-content: space-between;
   @include mat-elevation.elevation(2);
