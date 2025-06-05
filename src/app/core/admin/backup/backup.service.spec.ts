@@ -6,13 +6,15 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { DataTransformationService } from "../../export/data-transformation-service/data-transformation.service";
 import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { SyncStateSubject } from "app/core/session/session-type";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
   let service: BackupService;
+  let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
-    db = new MemoryPouchDatabase();
+    db = new MemoryPouchDatabase("Test-DB", syncStateSubject);
     db.init();
 
     TestBed.configureTestingModule({

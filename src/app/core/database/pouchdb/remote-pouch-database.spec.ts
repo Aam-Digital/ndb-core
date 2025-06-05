@@ -3,15 +3,21 @@ import { fakeAsync, tick } from "@angular/core/testing";
 import PouchDB from "pouchdb-browser";
 import { HttpStatusCode } from "@angular/common/http";
 import { RemotePouchDatabase } from "./remote-pouch-database";
+import { SyncStateSubject } from "app/core/session/session-type";
 
 describe("RemotePouchDatabase tests", () => {
   let database: PouchDatabase;
 
   let mockAuthService: jasmine.SpyObj<any>;
+  let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
     mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
-    database = new RemotePouchDatabase("unit-test-db", mockAuthService);
+    database = new RemotePouchDatabase(
+      "unit-test-db",
+      syncStateSubject,
+      mockAuthService,
+    );
   });
 
   afterEach(() => database.destroy());

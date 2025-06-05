@@ -17,12 +17,14 @@
 
 import { PouchDatabase } from "./pouch-database";
 import { MemoryPouchDatabase } from "./memory-pouch-database";
+import { SyncStateSubject } from "app/core/session/session-type";
 
 describe("PouchDatabase tests", () => {
   let database: PouchDatabase;
+  let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
-    database = new MemoryPouchDatabase();
+    database = new MemoryPouchDatabase("Test-DB", syncStateSubject);
     database.init();
   });
 
