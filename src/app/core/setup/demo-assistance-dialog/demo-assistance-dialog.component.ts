@@ -31,7 +31,7 @@ export class DemoAssistanceDialogComponent implements OnInit {
     if (this.selectedUseCase) {
       this.generatingData = true;
       try {
-        await this.setupService.initDemoData(this.selectedUseCase);
+        await this.setupService.initSystem(this.selectedUseCase);
         this.demoInitialized = true;
       } catch (error) {
         Logging.error("Error initializing demo data:", error);

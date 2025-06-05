@@ -38,14 +38,18 @@ export class DatabaseFactoryService {
         this.loginStateSubject,
       );
     } else if (environment.session_type === SessionType.local) {
-      return new PouchDatabase(dbName);
+      return new PouchDatabase(dbName, this.syncState);
     } else {
-      return new MemoryPouchDatabase(dbName);
+      return new MemoryPouchDatabase(dbName, this.syncState);
     }
   }
 
   createRemoteDatabase(dbName: string): Database {
-    const db = new RemotePouchDatabase(dbName, this.authService);
+    const db = new RemotePouchDatabase(
+      dbName,
+      this.syncState,
+      this.authService,
+    );
     db.init(dbName);
     return db;
   }

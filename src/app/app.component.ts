@@ -16,11 +16,16 @@
  */
 
 import { Component } from "@angular/core";
-import { NavigationEnd, Router } from "@angular/router";
-import { filter, take } from "rxjs/operators";
-import { ConfigService } from "./core/config/config.service";
+import { NavigationEnd, Router, RouterOutlet } from "@angular/router";
+import { filter } from "rxjs/operators";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
+import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
+import { environment } from "environments/environment";
+import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
+import { UiComponent } from "./core/ui/ui/ui.component";
+import { AsyncPipe } from "@angular/common";
+import { SetupService } from "./core/setup/setup.service";
 
 /**
  * Component as the main entry point for the app.
@@ -28,47 +33,39 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
  */
 @Component({
   selector: "app-root",
-  template: `@if (
-      !configReady && (loginState | async) === LoginState.LOGGED_IN
+  template: `
+    @if (
+      !(configReady | async) && (loginState | async) !== LoginState.LOGGED_IN
     ) {
       <app-application-loading></app-application-loading>
     } @else if (configFullscreen) {
       <router-outlet></router-outlet>
     } @else {
       <app-ui></app-ui>
-    }`,
-  // eslint-disable-next-line @angular-eslint/prefer-standalone
-  standalone: false,
+    }
+  `,
+  imports: [ApplicationLoadingComponent, UiComponent, RouterOutlet, AsyncPipe],
 })
 export class AppComponent {
   configFullscreen: boolean = false;
-  configReady: boolean = false;
+  configReady: Promise<boolean>;
 
   constructor(
     private router: Router,
-    private configService: ConfigService,
     protected loginState: LoginStateSubject,
+    private demoDataInitializer: DemoDataInitializerService,
+    private setupService: SetupService,
   ) {
-    this.detectConfigReadyState();
+    this.configReady = this.setupService.detectConfigReadyState();
+
+    if (environment.demo_mode) {
+      this.demoDataInitializer.logInDemoUser();
+    }
 
     this.detectConfigMode();
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.detectConfigMode());
-  }
-
-  /**
-   * Check if we are currently still waiting for config to be initialized or downloaded
-   * and keep the app on the loading screen until that is done.
-   * @private
-   */
-  private detectConfigReadyState() {
-    this.configService.configUpdates
-      .pipe(
-        filter((c) => c !== undefined),
-        take(1),
-      )
-      .subscribe(() => (this.configReady = true));
   }
 
   /**

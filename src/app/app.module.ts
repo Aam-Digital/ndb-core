@@ -104,7 +104,6 @@ import { DemoDataModule } from "./core/demo-data/demo-data.module";
  * Real functionality should be implemented in separate modules and imported here rather than being part of this module.
  */
 @NgModule({
-  declarations: [AppComponent],
   bootstrap: [AppComponent],
   imports: [
     // Global Angular modules

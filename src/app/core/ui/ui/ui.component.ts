@@ -20,7 +20,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { NgIf } from "@angular/common";
+import { AsyncPipe, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { RouterLink, RouterOutlet } from "@angular/router";
@@ -35,13 +35,12 @@ import { PrimaryActionComponent } from "../primary-action/primary-action.compone
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { DisplayImgComponent } from "../../../features/file/display-img/display-img.component";
 import { SiteSettings } from "../../site-settings/site-settings";
-import { LoginStateSubject } from "../../session/session-type";
-import { LoginState } from "../../session/session-states/login-state.enum";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 import { NotificationComponent } from "../../../features/notification/notification.component";
 import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
 import { DemoAssistantButtonComponent } from "../../setup/demo-assistant-button/demo-assistant-button.component";
+import { SetupService } from "app/core/setup/setup.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -73,6 +72,7 @@ import { DemoAssistantButtonComponent } from "../../setup/demo-assistant-button/
     NotificationComponent,
     GotoThirdPartySystemComponent,
     DemoAssistantButtonComponent,
+    AsyncPipe,
   ],
 })
 export class UiComponent {
@@ -84,11 +84,13 @@ export class UiComponent {
   siteSettings = new SiteSettings();
   isDesktop = false;
 
+  isLoggedIn: Promise<boolean>;
+
   constructor(
     private screenWidthObserver: ScreenWidthObserver,
     private siteSettingsService: SiteSettingsService,
-    private loginState: LoginStateSubject,
     private sessionManager: SessionManagerService,
+    private setupService: SetupService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -102,13 +104,8 @@ export class UiComponent {
     this.siteSettingsService.siteSettings.subscribe(
       (s) => (this.siteSettings = s),
     );
-  }
 
-  /**
-   * Check if user is logged in.
-   */
-  isLoggedIn(): boolean {
-    return this.loginState.value === LoginState.LOGGED_IN;
+    this.isLoggedIn = this.setupService.detectConfigReadyState();
   }
 
   /**
