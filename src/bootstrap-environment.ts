@@ -7,6 +7,23 @@ import { FirebaseConfiguration } from "./app/features/notification/notification-
  * If no file is found, the environment settings are kept.
  **/
 export async function initEnvironmentConfig() {
+  await initConfigJsonToEnvironment();
+
+  // Initialize remote logging (after the environment is set up)
+  Logging.initRemoteLogging({
+    dsn: environment.remoteLoggingDsn,
+    environment: environment.production ? "production" : "development",
+  });
+
+  await initKeycloakConfigToEnvironment();
+
+  await initFirebaseConfigToEnvironment();
+}
+
+/**
+ * Load basic config values from assets/keycloak.json into environment
+ */
+async function initConfigJsonToEnvironment() {
   const CONFIG_FILE = "assets/config.json";
 
   let config: Object;
@@ -39,10 +56,6 @@ export async function initEnvironmentConfig() {
   }
 
   Object.assign(environment, config);
-
-  await initKeycloakConfigToEnvironment();
-
-  await initFirebaseConfigToEnvironment();
 }
 
 /**
