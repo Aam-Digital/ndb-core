@@ -45,7 +45,8 @@ import { SetupService } from "./core/setup/setup.service";
       <app-ui></app-ui>
     }
   `,
-  imports: [ApplicationLoadingComponent, UiComponent, RouterOutlet, AsyncPipe],
+  // eslint-disable-next-line @angular-eslint/prefer-standalone
+  standalone: false,
 })
 export class AppComponent {
   configFullscreen: boolean = false;

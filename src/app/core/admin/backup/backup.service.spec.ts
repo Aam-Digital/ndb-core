@@ -14,7 +14,8 @@ describe("BackupService", () => {
   let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
-    db = new MemoryPouchDatabase("Test-DB", syncStateSubject);
+    syncStateSubject = new SyncStateSubject();
+    db = new MemoryPouchDatabase("unit-test-db", syncStateSubject);
     db.init();
 
     TestBed.configureTestingModule({

@@ -12,6 +12,7 @@ describe("RemotePouchDatabase tests", () => {
   let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
+    syncStateSubject = new SyncStateSubject();
     mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
     database = new RemotePouchDatabase(
       "unit-test-db",

@@ -43,6 +43,7 @@ describe("EntityMapperService", () => {
   };
 
   beforeEach(waitForAsync(() => {
+    syncStateSubject = new SyncStateSubject();
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [

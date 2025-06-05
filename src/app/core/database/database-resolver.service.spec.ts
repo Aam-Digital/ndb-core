@@ -12,13 +12,15 @@ describe("DatabaseResolverService", () => {
   let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
+    syncStateSubject = new SyncStateSubject();
+
     TestBed.configureTestingModule({
       providers: [
         {
           provide: DatabaseFactoryService,
           useValue: {
             createDatabase: () =>
-              new MemoryPouchDatabase("Test-DB", syncStateSubject),
+              new MemoryPouchDatabase("unit-test-db", syncStateSubject),
           },
         },
       ],

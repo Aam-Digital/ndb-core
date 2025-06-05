@@ -24,7 +24,8 @@ describe("PouchDatabase tests", () => {
   let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
-    database = new MemoryPouchDatabase("Test-DB", syncStateSubject);
+    syncStateSubject = new SyncStateSubject();
+    database = new MemoryPouchDatabase("unit-test-db", syncStateSubject);
     database.init();
   });
 

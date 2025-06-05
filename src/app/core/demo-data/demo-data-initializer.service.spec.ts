@@ -45,6 +45,7 @@ describe("DemoDataInitializerService", () => {
   let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
+    syncStateSubject = new SyncStateSubject();
     environment.session_type = SessionType.mock;
     demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${Entity.DATABASE}`;
     adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${Entity.DATABASE}`;
