@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { BaseConfig } from "./base-config";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { HttpClient } from "@angular/common/http";
-import { filter, firstValueFrom, lastValueFrom } from "rxjs";
+import { filter, firstValueFrom, lastValueFrom, merge } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
@@ -13,7 +13,6 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import { asArray } from "../../utils/asArray";
 import { ConfigService } from "../config/config.service";
-import { merge } from "hammerjs";
 import { SyncState } from "../session/session-states/sync-state.enum";
 
 /**
