@@ -25,7 +25,7 @@ export class DemoAssistantButtonComponent implements OnInit {
   ngOnInit(): void {
     this.assistantEnabled = environment.demo_mode;
 
-    if (this.configService.hasConfig()) {
+    if (!this.configService.hasConfig()) {
       // If we do not have a config yet, we open the setup dialog immediately
       // to allow the user to select a base config.
       this.openDemoSetupDialog();

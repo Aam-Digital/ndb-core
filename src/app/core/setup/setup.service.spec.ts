@@ -38,7 +38,7 @@ describe("SetupService", () => {
   });
 
   it("should init config entity with json from assets folder", async () => {
-    await service.initSystemWithBaseConfig({
+    await service.initSystem({
       name: "Basic Setup",
       description:
         "A basic setup with minimal configuration to get started quickly.",
@@ -50,6 +50,5 @@ describe("SetupService", () => {
       Config.CONFIG_KEY,
     );
     expect(actualConfig).toBeTruthy();
-    console.log(actualConfig);
   });
 });
