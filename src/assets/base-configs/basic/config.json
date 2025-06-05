@@ -8,7 +8,7 @@
     "navigationMenu": {
       "items": [
         {
-          "label": "Dashboard (NEW)",
+          "label": "Dashboard",
           "icon": "home",
           "link": "/"
         },

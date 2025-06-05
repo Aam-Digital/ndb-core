@@ -4,6 +4,11 @@
     "description": "A basic setup with minimal configuration to get started quickly.",
     "entitiesToImport": [
       "basic/config.json",
+      "basic/configurable-enums.json",
+      "basic/ConfigurableEnum_attendance-status.json",
+      "basic/ConfigurableEnum_warning-levels.json",
+      "basic/ConfigurableEnum_genders.json",
+      "basic/ConfigurableEnum_rating-answers.json",
       "basic/Config_Permissions.json",
       "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",
@@ -16,6 +21,11 @@
     "description": "School or after-school example.",
     "entitiesToImport": [
       "education/config.json",
+      "education/configurable-enums.json",
+      "basic/ConfigurableEnum_attendance-status.json",
+      "basic/ConfigurableEnum_warning-levels.json",
+      "basic/ConfigurableEnum_genders.json",
+      "basic/ConfigurableEnum_rating-answers.json",
       "basic/Config_Permissions.json",
       "basic/Config_SetupWizard.json",
       "basic/MarkdownContent_help.json",

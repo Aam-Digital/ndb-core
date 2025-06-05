@@ -1,78 +1,7 @@
 [
   {
-    "_id": "ConfigurableEnum:attendance-status",
-    "values": [
-      {
-        "id": "PRESENT",
-        "shortName": "P",
-        "label": "Present",
-        "style": "attendance-P",
-        "countAs": "PRESENT"
-      },
-      {
-        "id": "ABSENT",
-        "shortName": "A",
-        "label": "Absent",
-        "style": "attendance-A",
-        "countAs": "ABSENT"
-      },
-      {
-        "id": "LATE",
-        "shortName": "L",
-        "label": "Late",
-        "style": "attendance-L",
-        "countAs": "PRESENT"
-      },
-      {
-        "id": "EXCUSED",
-        "shortName": "E",
-        "label": "Excused",
-        "style": "attendance-E",
-        "countAs": "IGNORE"
-      }
-    ]
-  },
-  {
-    "_id": "ConfigurableEnum:center",
-    "values": [
-    ]
-  },
-  {
-    "_id": "ConfigurableEnum:genders",
-    "values": [
-      {
-        "id": "",
-        "label": ""
-      },
-      {
-        "id": "M",
-        "label": "male"
-      },
-      {
-        "id": "F",
-        "label": "female"
-      },
-      {
-        "id": "X",
-        "label": "Non-binary/third gender"
-      }
-    ]
-  },
-  {
     "_id": "ConfigurableEnum:interaction-type",
     "values": [
-      {
-        "id": "",
-        "label": ""
-      },
-      {
-        "id": "VISIT",
-        "label": "Home Visit"
-      },
-      {
-        "id": "GUARDIAN_TALK",
-        "label": "Talk with Guardians"
-      },
       {
         "id": "INCIDENT",
         "label": "Incident"
@@ -80,12 +9,6 @@
       {
         "id": "NOTE",
         "label": "General Note"
-      },
-      {
-        "id": "GUARDIAN_MEETING",
-        "label": "Guardians' Meeting",
-        "color": "#E1F5FE",
-        "isMeeting": true
       },
       {
         "id": "COACHING_CLASS",
@@ -98,31 +21,6 @@
         "label": "School Class",
         "color": "#EEEEEE",
         "isMeeting": true
-      }
-    ]
-  },
-  {
-    "_id": "ConfigurableEnum:warning-levels",
-    "values": [
-      {
-        "_ordinal": 0,
-        "id": "",
-        "label": ""
-      },
-      {
-        "_ordinal": 1,
-        "id": "OK",
-        "label": "Solved"
-      },
-      {
-        "_ordinal": 2,
-        "id": "WARNING",
-        "label": "Needs Follow-Up"
-      },
-      {
-        "_ordinal": 3,
-        "id": "URGENT",
-        "label": "Urgent Follow-Up"
       }
     ]
   }
