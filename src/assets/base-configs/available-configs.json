@@ -9,7 +9,7 @@
       "basic/MarkdownContent_help.json",
       "basic/SiteSettings_global.json"
     ],
-    "locale": "en"
+    "locale": "en-US"
   },
   {
     "name": "Education Project",
@@ -21,7 +21,7 @@
       "basic/MarkdownContent_help.json",
       "basic/SiteSettings_global.json"
     ],
-    "locale": "en"
+    "locale": "en-US"
   },
   {
     "name": "Bildungsprojekt",
