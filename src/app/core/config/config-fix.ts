@@ -674,7 +674,9 @@ export const defaultJsonConfig = {
               title: "",
               component: "GroupedChildAttendance"
             }
-          ]
+          ],
+          //May be need to remove after testing
+          permittedUserRoles: ["admin_app"]
         },
         {
           title: $localize`:Panel title:Notes & Tasks`,
