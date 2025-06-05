@@ -35,7 +35,8 @@ import { SetupService } from "./core/setup/setup.service";
   selector: "app-root",
   template: `
     @if (
-      !(configReady | async) && (loginState | async) !== LoginState.LOGGED_IN
+      (configReady | async) !== true &&
+      (loginState | async) !== LoginState.LOGGED_IN
     ) {
       <app-application-loading></app-application-loading>
     } @else if (configFullscreen) {
