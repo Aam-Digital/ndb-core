@@ -10,6 +10,8 @@ import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/conf
  */
 @DatabaseEntity("SiteSettings")
 export class SiteSettings extends Entity {
+  static override isInternalEntity = true;
+
   static ENTITY_ID = "global";
 
   static create(value: Partial<SiteSettings>): SiteSettings {

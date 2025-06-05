@@ -20,7 +20,7 @@ import {
   FormFieldConfig,
   toFormFieldConfig,
 } from "app/core/common-components/entity-form/FormConfig";
-import { DefaultValueConfig } from "../../core/entity/schema/default-value-config";
+import { DefaultValueConfig } from "../../core/default-values/default-value-config";
 import { DisplayImgComponent } from "../file/display-img/display-img.component";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -92,7 +92,9 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private async loadFormConfig() {
     const id = this.route.snapshot.paramMap.get("id");
 
-    const publicForms = await this.entityMapper.loadType(PublicFormConfig);
+    const publicForms = (await this.entityMapper.loadType(PublicFormConfig))
+      .map((formConfig) => this.configService.applyMigrations(formConfig))
+      .map((formConfig) => migratePublicFormConfig(formConfig));
 
     this.formConfig = publicForms.find(
       (form: PublicFormConfig) => form.route === id || form.getId(true) === id,
@@ -109,7 +111,6 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.error = "no_permissions";
       return;
     }
-    this.formConfig = migratePublicFormConfig(this.formConfig);
     this.fieldGroups = this.formConfig.columns;
     this.handlePrefilledFields();
 
@@ -176,7 +177,10 @@ export function migratePublicFormConfig(
   }
 
   for (let [id, value] of Object.entries(formConfig["prefilled"] ?? [])) {
-    const defaultValue: DefaultValueConfig = { mode: "static", value };
+    const defaultValue: DefaultValueConfig = {
+      mode: "static",
+      config: { value },
+    };
 
     const field: FormFieldConfig = findFieldInFieldGroups(formConfig, id);
     if (!field) {

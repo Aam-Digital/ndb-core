@@ -141,16 +141,11 @@ describe("AdminEntityFieldComponent", () => {
   }));
 
   it("should init 'additional' value from schema field for configurable-enum", fakeAsync(() => {
-    component.entitySchemaField.additional = "test-enum";
-    component.schemaFieldsForm
-      .get("label")
-      .setValue("label ignored for enum id");
-    expect(component.additionalForm.value).toBeNull();
+    component.entityType = TestEntity;
+    component.fieldId = "category";
+    component.ngOnInit();
 
-    const dataTypeForm = component.schemaFieldsForm.get("dataType");
-    dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
-    tick();
-    expect(component.additionalForm.value).toBe("test-enum");
+    expect(component.additionalForm.value).toBe("genders");
   }));
   it("should generate 'additional' value from label for configurable-enum", fakeAsync(() => {
     component.schemaFieldsForm.get("label").setValue("test label");
@@ -187,7 +182,9 @@ describe("AdminEntityFieldComponent", () => {
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
-    component.entitySchemaField.additional = RecurringActivity.ENTITY_TYPE;
+    component.entityType = TestEntity;
+    component.fieldId = "ref";
+    component.ngOnInit();
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     dataTypeForm.setValue(EntityDatatype.dataType);
@@ -197,7 +194,7 @@ describe("AdminEntityFieldComponent", () => {
       { value: TestEntity.ENTITY_TYPE, label: TestEntity.label },
       { value: RecurringActivity.ENTITY_TYPE, label: RecurringActivity.label },
     ]);
-    expect(component.additionalForm.value).toBe(RecurringActivity.ENTITY_TYPE);
+    expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
   }));
 
   it("should update entityConstructor schema upon save", fakeAsync(() => {

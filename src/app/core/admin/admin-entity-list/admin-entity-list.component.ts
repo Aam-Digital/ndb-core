@@ -21,6 +21,7 @@ import { MatSelect } from "@angular/material/select";
 import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
+import { Logging } from "../../logging/logging.service";
 
 @Component({
   selector: "app-admin-entity-list",
@@ -94,8 +95,15 @@ export class AdminEntityListComponent implements OnChanges {
   }
 
   updateFilters(filters: string[]) {
-    this.filters = filters;
-    this.config.filters = filters.map(
+    if (!Array.isArray(filters)) {
+      Logging.warn(
+        "AdminEntityListComponent: updateFilters: filters is not an array",
+      );
+      filters = [];
+    }
+
+    this.filters = [...filters];
+    this.config.filters = this.filters.map(
       (f) =>
         this.config.filters.find(
           (existingFilter) => existingFilter.id === f,
@@ -107,8 +115,8 @@ export class AdminEntityListComponent implements OnChanges {
     return { name: "", columns: [] };
   }
 
-  removeItem<E>(array: E[], item: E) {
-    array.splice(array.indexOf(item), 1);
+  removeItem<E>(array: E[], item: E): E[] {
+    return array.filter((currentItem) => currentItem !== item);
   }
 
   drop<E>(event: CdkDragDrop<E[], any>, columnsArray: E[]) {

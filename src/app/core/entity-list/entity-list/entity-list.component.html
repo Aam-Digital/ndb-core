@@ -30,6 +30,8 @@
       [entities]="allEntities"
       [useUrlQueryParams]="true"
       [(filterObj)]="filterObj"
+      [filterString]="filterString"
+      (filterStringChange)="filterString = $event; applyFilter($event)"
     ></app-filter>
   </div>
 
@@ -235,7 +237,10 @@
     [routerLink]="['/admin/entity', entityConstructor.ENTITY_TYPE]"
     [queryParams]="{ mode: 'list' }"
     queryParamsHandling="merge"
-    *ngIf="'update' | ablePure: 'Config' | async"
+    *ngIf="
+      ('update' | ablePure: 'Config' | async) &&
+      !entityConstructor.isInternalEntity
+    "
   >
     <fa-icon
       class="standard-icon-with-text color-accent"

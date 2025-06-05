@@ -7,22 +7,22 @@ import {
 } from "@angular/core/testing";
 
 import { UserSecurityComponent } from "./user-security.component";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import {
-  KeycloakAuthService,
-  KeycloakUserDto,
-  Role,
-} from "../../session/auth/keycloak/keycloak-auth.service";
 import { BehaviorSubject, of, throwError } from "rxjs";
 import { SessionSubject } from "../../session/auth/session-info";
 import { environment } from "../../../../environments/environment";
 import { Entity } from "../../entity/model/entity";
+import { Role, UserAccount } from "../user-admin-service/user-account";
+import { UserAdminService } from "../user-admin-service/user-admin.service";
 
 describe("UserSecurityComponent", () => {
   let component: UserSecurityComponent;
   let fixture: ComponentFixture<UserSecurityComponent>;
+
+  let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
   let mockHttp: jasmine.SpyObj<HttpClient>;
+
+  const USER_ID = "test-id";
   const assignedRole: Role = {
     id: "assigned-role",
     name: "Assigned Role",
@@ -34,31 +34,44 @@ describe("UserSecurityComponent", () => {
     description: "this role is not assigned to the user",
   };
   const user = Object.assign(new Entity(), { username: "test-user" });
-  let keycloakUser: KeycloakUserDto;
+  let keycloakUser: UserAccount;
 
   beforeEach(async () => {
     keycloakUser = {
-      id: "userId",
+      id: USER_ID,
       email: "my@email.de",
       roles: [assignedRole],
       enabled: true,
-      username: "test-user",
     };
-    mockHttp = jasmine.createSpyObj(["get", "put", "post"]);
-    mockHttp.get.and.returnValue(of([assignedRole, notAssignedRole]));
-    mockHttp.put.and.returnValue(of({}));
+
+    mockUserAdminService = jasmine.createSpyObj([
+      "getUser",
+      "getAllRoles",
+      "updateUser",
+      "createUser",
+      "deleteUser",
+    ]);
+    mockUserAdminService.getUser.and.returnValue(of(keycloakUser));
+    mockUserAdminService.updateUser.and.returnValue(of({ userUpdated: true }));
+    mockUserAdminService.deleteUser.and.returnValue(of({ userDeleted: true }));
+    mockUserAdminService.createUser.and.returnValue(of(keycloakUser));
+    mockUserAdminService.getAllRoles.and.returnValue(
+      of([assignedRole, notAssignedRole]),
+    );
+
+    mockHttp = jasmine.createSpyObj(["post"]);
     mockHttp.post.and.returnValue(of({}));
 
     await TestBed.configureTestingModule({
-      imports: [UserSecurityComponent, MockedTestingModule],
+      imports: [UserSecurityComponent],
       providers: [
-        { provide: KeycloakAuthService, useClass: KeycloakAuthService },
+        { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: HttpClient, useValue: mockHttp },
         {
           provide: SessionSubject,
           useValue: new BehaviorSubject({
             name: user.getId(true),
-            roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
+            roles: [UserAdminService.ACCOUNT_MANAGER_ROLE],
           }),
         },
       ],
@@ -80,9 +93,20 @@ describe("UserSecurityComponent", () => {
 
     expect(component.user).toBe(keycloakUser);
     expect(component.form).toHaveValue({
-      username: user.getId(),
+      userEntityId: user.getId(),
       email: "my@email.de",
       roles: [assignedRole],
+    });
+  }));
+
+  it("should not run into errors if no existing user account", fakeAsync(() => {
+    initComponent(of(null));
+
+    expect(component.user).toBe(null);
+    expect(component.form.getRawValue()).toEqual({
+      userEntityId: user.getId(),
+      email: undefined,
+      roles: [],
     });
   }));
 
@@ -95,10 +119,9 @@ describe("UserSecurityComponent", () => {
     component.updateAccount();
     tick();
 
-    expect(mockHttp.put).toHaveBeenCalledWith(
-      jasmine.stringMatching(/\/account\/userId$/),
-      { email: "other@email.com" },
-    );
+    expect(mockUserAdminService.updateUser).toHaveBeenCalledWith(USER_ID, {
+      email: "other@email.com",
+    });
     flush();
   }));
 
@@ -113,20 +136,16 @@ describe("UserSecurityComponent", () => {
     component.createAccount();
     tick();
 
-    expect(mockHttp.post).toHaveBeenCalledWith(
-      jasmine.stringMatching(/\/account$/),
-      {
-        username: user.getId(),
-        email: "new@email.com",
-        roles: [assignedRole],
-        enabled: true,
-      },
+    expect(mockUserAdminService.createUser).toHaveBeenCalledWith(
+      user.getId(),
+      "new@email.com",
+      [assignedRole],
     );
     flush();
   }));
 
   it("should assign error message when http call fails", fakeAsync(() => {
-    mockHttp.post.and.returnValue(
+    mockUserAdminService.createUser.and.returnValue(
       throwError(
         () =>
           new HttpErrorResponse({ error: { message: "user unauthorized" } }),
@@ -197,7 +216,7 @@ describe("UserSecurityComponent", () => {
   }));
 
   function initComponent(keycloakResult = of(keycloakUser)) {
-    mockHttp.get.and.returnValue(keycloakResult);
+    mockUserAdminService.getUser.and.returnValue(keycloakResult);
     component.ngOnInit();
     tick();
   }

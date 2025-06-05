@@ -136,14 +136,9 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-
-              <app-basic-autocomplete
+              <app-entity-type-select
                 formControlName="additional"
-                [options]="typeAdditionalOptions"
-                [optionToString]="objectToLabel"
-                [valueMapper]="objectToValue"
-                [createOption]="createNewAdditionalOptionAsync"
-              ></app-basic-autocomplete>
+              ></app-entity-type-select>
             </mat-form-field>
           </div>
         </div>
@@ -155,14 +150,12 @@
       <mat-tab label="Advanced Options & Validation" i18n-label>
         <div class="grid-layout-wide margin-top-regular">
           <div class="entity-form-cell">
-            <app-default-value-options
-              [value]="entitySchemaField.defaultValue"
-              (valueChange)="
-                schemaFieldsForm.get('defaultValue').setValue($event)
-              "
+            <app-admin-default-value
+              formControlName="defaultValue"
               [entityType]="entityType"
+              [entitySchemaField]="entitySchemaField"
             >
-            </app-default-value-options>
+            </app-admin-default-value>
 
             <app-anonymize-options
               [value]="entitySchemaField.anonymize"

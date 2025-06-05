@@ -1,6 +1,7 @@
 <!--Display-->
 <input
   *ngIf="display === 'text' || display === 'none'; else chipsDisplay"
+  [id]="id"
   [hidden]="isInSearchMode() || display === 'none'"
   [disabled]="_disabled"
   matInput
@@ -32,7 +33,13 @@
   (optionSelected)="select($event.option.value)"
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="true"
+  [class.custom-panel]="true"
+  [style.max-height.px]="maxPanelHeight"
 >
+  <!-- Select All and Clear Buttons on top of options via content projection-->
+  <div>
+    <ng-content select="[autocompleteHeader]"></ng-content>
+  </div>
   <div
     cdkDropList
     (cdkDropListDropped)="drop($event)"
@@ -40,9 +47,8 @@
     [cdkDropListDisabled]="!reorder"
   >
     <cdk-virtual-scroll-viewport
-      [style.height]="(autocompleteOptions?.length ?? 0) * 48 + 'px'"
-      [style.max-height]="3 * 48 + 'px'"
-      itemSize="48"
+      [style.height.px]="(autocompleteOptions?.length ?? 0) * 48"
+      [itemSize]="48"
       minBufferPx="200"
     >
       <mat-option
@@ -63,7 +69,13 @@
           </div>
           <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
           <ng-container *ngIf="!templateRef; else itemTemplate">
-            {{ item.asString }}
+            <span
+              class="text-truncate"
+              matTooltip="{{ item.asString }}"
+              matTooltipPosition="above"
+            >
+              {{ item.asString }}
+            </span>
           </ng-container>
           <ng-template
             class="item-option"

@@ -113,7 +113,7 @@ export class EntityDetailsComponent
   private getPanelConfig(c: PanelComponent): PanelConfig {
     let panelConfig: PanelConfig = {
       entity: this.entity,
-      creatingNew: this.entity.isNew,
+      creatingNew: this.entity?.isNew,
     };
     if (typeof c.config === "object" && !Array.isArray(c.config)) {
       panelConfig = { ...c.config, ...panelConfig };

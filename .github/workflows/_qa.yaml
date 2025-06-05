@@ -1,0 +1,117 @@
+name: QA
+
+on:
+  workflow_call:
+    inputs:
+      upload-e2e-screenshots:
+        type: boolean
+        required: false
+        default: false
+        description: If true, upload screenshots to Argos CI for comparison
+
+permissions:
+  contents: read
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm install --ci
+      - run: npx eslint --max-warnings=0
+      - run: npx tsc -p .
+      - run: npx tsc -p e2e
+      - name: actionlint
+        run: |
+          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
+
+  test-unit:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Berlin
+      FORCE_COLOR: 1
+      CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+      - name: Install Code Climate Test Reporter
+        run: |
+          curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+          chmod +x ./cc-test-reporter
+      - name: cc-test-reporter before-build
+        run: >
+          GIT_COMMITTED_AT="$(git log -1 --pretty=format:%ct)"
+          ./cc-test-reporter before-build
+
+      - run: npm ci --no-progress
+
+      - name: Cache angular
+        uses: actions/cache@v4
+        with:
+          path: .angular/cache
+          key: angular-v1-test-unit-${{ hashFiles('package-lock.json') }}
+      - run: npm run test-ci
+
+      - run: ./cc-test-reporter format-coverage coverage/lcov.info -t lcov
+      - run: ./cc-test-reporter upload-coverage
+
+  test-e2e:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Berlin
+      FORCE_COLOR: 1
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm install --ci
+      - name: Cache playwright
+        id: cache-playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-v1-${{ hashFiles('package-lock.json') }}
+
+      - if: steps.cache-playwright.outputs.cache-hit != 'true'
+        run: npm exec playwright install chromium
+
+      - name: Cache angular
+        uses: actions/cache@v4
+        with:
+          path: .angular/cache
+          key: angular-v1-devel-${{ hashFiles('package-lock.json') }}
+
+      - run: npm exec ng build --configuration=development
+
+      # See playwright.config.ts for more CI-specific configuration
+      - run: npx playwright test
+
+      - run: npx argos upload test-results --files '**/argos/*.png'
+        if: ${{ inputs.upload-e2e-screenshots }}
+        # We may run into quotas
+        continue-on-error: true
+        env:
+          ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
+
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: |
+            test-results/**/trace.zip

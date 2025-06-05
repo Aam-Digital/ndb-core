@@ -8,6 +8,7 @@ import { EventAttendanceMap } from "../../child-dev-project/attendance/model/eve
 import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EntityConfig } from "../entity/entity-config";
+import { ACTIVITY_STATUS_ENUM } from "./default-config/default-activity-status";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -184,7 +185,7 @@ export const defaultJsonConfig = {
         dataType: "date-only",
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         },
         anonymize: "retain"
       },
@@ -203,7 +204,7 @@ export const defaultJsonConfig = {
         additional: "User",
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.CURRENT_USER
+          config: { value: PLACEHOLDERS.CURRENT_USER }
         },
         anonymize: "retain"
       },
@@ -402,7 +403,7 @@ export const defaultJsonConfig = {
               component: "Form",
               config: {
                 fieldGroups: [
-                  { fields: ["name", "privateSchool", "parentSchool"] },
+                  { fields: ["name", "privateSchool"] },
                   { fields: ["address", "phone", "website"] },
                   { fields: ["language", "timing"] },
                   { fields: ["remarks"] }
@@ -812,7 +813,7 @@ export const defaultJsonConfig = {
         label: $localize`:Date on which the material has been borrowed:Date`,
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         }
       },
       materialType: {
@@ -828,7 +829,7 @@ export const defaultJsonConfig = {
         label: $localize`:The amount of the material which has been borrowed:Amount`,
         defaultValue: {
           mode: "static",
-          value: 1
+          config: { value: 1 }
         },
         validators: {
           required: true
@@ -858,6 +859,12 @@ export const defaultJsonConfig = {
         label: $localize`:Label for the interaction type of a recurring activity:Type`,
         dataType: "configurable-enum",
         additional: INTERACTION_TYPE_CONFIG_ID
+      },
+      status: {
+        label: $localize`:RecurringActivity field:Status of activity`,
+        description: $localize`:RecurringActivity field description:This status can be used to automatically update participants' status also.`,
+        dataType: "configurable-enum",
+        additional: ACTIVITY_STATUS_ENUM
       },
       participants: {
         label: $localize`:Label for the participants of a recurring activity:Participants`,
@@ -889,7 +896,7 @@ export const defaultJsonConfig = {
     component: "EntityList",
     config: {
       entityType: "RecurringActivity",
-      columns: ["title", "type", "assignedTo"],
+      columns: ["title", "type", "status", "assignedTo"],
       exportConfig: [
         { label: "Title", query: "title" },
         { label: "Type", query: "type" },
@@ -910,7 +917,7 @@ export const defaultJsonConfig = {
               config: {
                 fieldGroups: [
                   { fields: ["title"] },
-                  { fields: ["type"] },
+                  { fields: ["type", "status"] },
                   { fields: ["assignedTo"] }
                 ]
               }
@@ -1004,7 +1011,20 @@ export const defaultJsonConfig = {
       },
       status: {
         dataType: "string",
-        label: $localize`:Label for the status of a child:Status`
+        label: $localize`:Label for the status of a child:Status`,
+        defaultValue: {
+          "mode": "updated-from-referencing-entity",
+          "config": {
+            "relatedReferenceField": "participants",
+            "relatedEntityType": "RecurringActivity",
+            "relatedTriggerField": "status",
+            "automatedMapping": {
+              "PLANNED": "coaching requested",
+              "ONGOING": "in coaching",
+              "COMPLETED": "coaching completed"
+            }
+          }
+        }
       },
       dropoutDate: {
         dataType: "date-only",
@@ -1110,7 +1130,7 @@ export const defaultJsonConfig = {
         label: $localize`:Label for date of historical data:Date`,
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         },
         anonymize: "retain-anonymized"
       },
@@ -1209,7 +1229,7 @@ export const defaultJsonConfig = {
         label: $localize`:Label for date of the ASER results:Date`,
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         },
         anonymize: "retain-anonymized"
       },
@@ -1256,7 +1276,7 @@ export const defaultJsonConfig = {
         anonymize: "retain-anonymized",
         defaultValue: {
           mode: "dynamic",
-          value: PLACEHOLDERS.NOW
+          config: { value: PLACEHOLDERS.NOW }
         }
       },
       height: {

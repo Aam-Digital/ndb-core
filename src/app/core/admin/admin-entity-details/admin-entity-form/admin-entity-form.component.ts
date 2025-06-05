@@ -65,6 +65,12 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
+  /**
+   * Unique identifier for the drag-and-drop area to ensure correct drag&drop behavior.
+   * (e.g. a combination of tabindex and section index)
+   */
+  @Input() uniqueAreaId: string;
+
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
       // may be caused by two-way binding re-inputting the recently emitted change
@@ -145,10 +151,16 @@ export class AdminEntityFormComponent implements OnChanges {
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
   }
 
+  /**
+   * Returns a list of group IDs that are connected to the drag&drop area.
+   * This is used to determine which groups are connected to the drag&drop area.
+   */
   getConnectedGroups(): string[] {
     return [
-      ...this.config.fieldGroups.map((_, index) => `group-${index}`),
-      "newGroupDropArea",
+      ...this.config.fieldGroups.map(
+        (_, groupIndex) => `${this.uniqueAreaId}-group${groupIndex}`,
+      ),
+      `newGroupDropArea-${this.uniqueAreaId}`,
     ];
   }
 
@@ -158,14 +170,11 @@ export class AdminEntityFormComponent implements OnChanges {
    * @private
    */
   private initAvailableFields() {
-    const usedFields = this.getUsedFields(this.config);
+    const usedFields = this.getUsedFields(this.config).map((x) =>
+      toFormFieldConfig(x),
+    );
     const unusedFields = Array.from(this.entityType.schema.entries())
-      .filter(
-        ([key]) =>
-          !usedFields.some(
-            (x) => x === key || (x as FormFieldConfig).id === key,
-          ),
-      )
+      .filter(([key]) => !usedFields.some((x) => x.id === key))
       .filter(([key, value]) => value.label) // no technical, internal fields
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
@@ -259,6 +268,8 @@ export class AdminEntityFormComponent implements OnChanges {
 
   dropfieldGroups<E>(event: CdkDragDrop<E[], any>, fieldGroupsArray: E[]) {
     moveItemInArray(fieldGroupsArray, event.previousIndex, event.currentIndex);
+
+    this.emitUpdatedConfig();
   }
 
   /**

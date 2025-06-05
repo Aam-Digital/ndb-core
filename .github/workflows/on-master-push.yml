@@ -6,6 +6,12 @@ on:
       - master
 
 jobs:
+  qa:
+    uses: ./.github/workflows/_qa.yaml
+    secrets: inherit
+    with:
+      upload-e2e-screenshots: true
+
   create-and-deploy-compodoc:
     runs-on: ubuntu-latest
     steps:
@@ -26,57 +32,10 @@ jobs:
           destination_dir: documentation
           force_orphan: true
 
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
-        os:
-          - ubuntu-latest
-          - [self-hosted, Linux, ARM64]
-        exclude:
-          - platform: linux/arm64
-            os: ubuntu-latest
-          - platform: linux/amd64
-            os: [self-hosted, Linux, ARM64]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout repository files
-        uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Run tests in Docker image
-        uses: docker/build-push-action@v6
-        with:
-          platforms: ${{ matrix.platform }}
-          context: ./
-          file: ./build/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          target: test
-
-      - name: Run tests with timezone
-        if: ${{ matrix.platform == 'linux/amd64' }}
-        uses: docker/build-push-action@v6
-        with:
-          platforms: ${{ matrix.platform }}
-          context: ./
-          file: ./build/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          target: test
-          build-args: |
-            TZ=America/Detroit
-
   pre-release:
     runs-on: ubuntu-latest
     needs:
-      - test
+      - qa
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v4

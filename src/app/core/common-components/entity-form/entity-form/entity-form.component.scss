@@ -16,6 +16,7 @@
      of the columns-wrapper class */
   mat-form-field {
     width: 100%;
+    max-width: 864px;
   }
 
   /* We align the photo (and only tht photo) to the center of the cell if there is one.
