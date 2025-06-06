@@ -44,13 +44,6 @@ export class ChooseUseCaseComponent {
   }
 
   onSelectionChange() {
-    if (this.selectedUseCase?.locale) {
-      this.window.localStorage.setItem(
-        LANGUAGE_LOCAL_STORAGE_KEY,
-        this.selectedUseCase.locale,
-      );
-    }
-
     this.selectionChanged.emit(this.selectedUseCase);
   }
 }
