@@ -42,10 +42,15 @@ async function initSystemWithBaseConfig(page: Page) {
   page.getByRole("heading", { name: "Welcome to Aam Digital!" });
   await page.locator("app-choose-use-case mat-select").click();
 
-  await page.locator("mat-option").nth(1).click();
+  await page.locator("mat-option").nth(0).click();
 
   const initButton = page.locator('button:has-text("Initialize System")');
   await initButton.click();
+
+  await page.waitForTimeout(1000); // wait for 1 second before clicking on explore
+
+  const exploreButton = page.locator('button:has-text("Start Exploring")');
+  await exploreButton.click();
 
   await page.locator("h1.mat-dialog-title").waitFor({ state: "detached" });
 }
