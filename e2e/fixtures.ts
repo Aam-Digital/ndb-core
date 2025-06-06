@@ -42,7 +42,7 @@ async function initSystemWithBaseConfig(page: Page) {
   page.getByRole("heading", { name: "Welcome to Aam Digital!" });
   await page.locator("app-choose-use-case mat-select").click();
 
-  await page.locator("mat-option").nth(0).click();
+  await page.locator("mat-option").nth(1).click();
 
   const initButton = page.locator('button:has-text("Initialize System")');
   await initButton.click();
