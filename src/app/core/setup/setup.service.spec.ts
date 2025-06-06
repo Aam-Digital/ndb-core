@@ -6,7 +6,7 @@ import { provideHttpClient } from "@angular/common/http";
 import { Config } from "../config/config";
 import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
-import { LoginStateSubject } from "../session/session-type";
+import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 
 describe("SetupService", () => {
   let service: SetupService;
@@ -28,6 +28,7 @@ describe("SetupService", () => {
           provide: DemoDataInitializerService,
           useValue: mockDemoDataInitializer,
         },
+        SyncStateSubject,
       ],
     });
     service = TestBed.inject(SetupService);
@@ -42,7 +43,7 @@ describe("SetupService", () => {
       name: "Basic Setup",
       description:
         "A basic setup with minimal configuration to get started quickly.",
-      entitiesToImport: ["config.json"],
+      entitiesToImport: ["basic/config.json"],
     });
 
     const actualConfig = await TestBed.inject(EntityMapperService).load(
