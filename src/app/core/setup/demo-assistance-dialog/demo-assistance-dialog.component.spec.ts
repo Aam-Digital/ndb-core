@@ -6,7 +6,7 @@ import {
   LoginStateSubject,
   SyncStateSubject,
 } from "../../session/session-type";
-import { NAVIGATOR_TOKEN } from "app/utils/di-tokens";
+import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "app/utils/di-tokens";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import {
   entityRegistry,
@@ -26,6 +26,9 @@ describe("DemoAssistanceDialogComponent", () => {
   let fixture: ComponentFixture<DemoAssistanceDialogComponent>;
 
   beforeEach(async () => {
+    const mockWindow: Partial<Window> = {
+      localStorage: window.localStorage,
+    };
     await TestBed.configureTestingModule({
       imports: [DemoAssistanceDialogComponent, HttpClientTestingModule],
       providers: [
@@ -38,6 +41,8 @@ describe("DemoAssistanceDialogComponent", () => {
         { provide: KeycloakAuthService, useValue: {} },
         { provide: MatDialogRef, useValue: {} },
         { provide: NAVIGATOR_TOKEN, useValue: {} },
+        { provide: WINDOW_TOKEN, useValue: mockWindow },
+
         SyncStateSubject,
         SessionManagerService,
         SessionSubject,
