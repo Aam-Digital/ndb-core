@@ -63,8 +63,8 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
     todo.description = selectedStory.description;
 
     todo.deadline = faker.date.between({
-      from: moment().subtract(5, "days").toDate(),
-      to: moment().add(90, "days").toDate(),
+      from: moment(faker.defaultRefDate()).subtract(5, "days").toDate(),
+      to: moment(faker.defaultRefDate()).add(90, "days").toDate(),
     });
     faker.helpers.maybe(
       () =>

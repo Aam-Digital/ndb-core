@@ -1,6 +1,7 @@
-import { expect, test } from "#e2e/fixtures.js";
+import { expect, loadApp, test } from "#e2e/fixtures.js";
 
 test("Record attendance for one activity", async ({ page }) => {
+  await loadApp(page);
   await page.getByRole("navigation").getByText("Attendance").click();
   await page.getByRole("button", { name: "Record" }).click();
 
@@ -53,6 +54,7 @@ test("Record attendance for one activity", async ({ page }) => {
 });
 
 test("View and download attendance report", async ({ page }) => {
+  await loadApp(page);
   await page.getByRole("navigation").getByText("Reports").click();
   await page.getByRole("combobox", { name: "Select Report" }).click();
   await page.getByRole("option", { name: "Attendance Report" }).click();
@@ -80,6 +82,7 @@ test("View and download attendance report", async ({ page }) => {
 });
 
 test("View attendance percentage color in children list", async ({ page }) => {
+  await loadApp(page);
   await page.getByRole("navigation").getByText("Children").click();
 
   await page.getByRole("tab", { name: "School Info" }).click();
@@ -118,6 +121,7 @@ test("View attendance percentage color in children list", async ({ page }) => {
 });
 
 test("Attendance Dashboard View", async ({ page }) => {
+  await loadApp(page);
   // Wait for the element containing "Absences this week" text to appear
   await page.waitForSelector("text=Absences this week");
 
@@ -208,6 +212,7 @@ test("Attendance Dashboard View", async ({ page }) => {
 test("Managing Attendance view and Recurring Activities list", async ({
   page,
 }) => {
+  await loadApp(page);
   await page.getByRole("navigation").getByText("Attendance").click();
   await page.locator("mat-list-item").filter({ hasText: "Attendance" }).click();
   await expect(page).toHaveURL(/.*attendance/);

@@ -1,10 +1,13 @@
 import { defineConfig } from "@playwright/test";
+import { platformBrowserDynamicTesting } from "@angular/platform-browser-dynamic/testing";
 import "tsx/esm";
 
 // Prevent the `scource-map-support` package used by playwright from taking care
 // of remapping stack traces. Instead we want Node’s native source map support
 // used by `tsx` to work.
 delete Error.prepareStackTrace;
+
+platformBrowserDynamicTesting();
 
 /**
  * See https://playwright.dev/docs/test-configuration.
