@@ -113,6 +113,9 @@ export class UiComponent {
    */
   async logout() {
     this.sessionManager.logout();
+
+    // Re-evaluate config state to update UI layout (e.g., hide toolbar and sidebar after logout)
+    this.isConfigReady = this.setupService.detectConfigReadyState();
   }
 
   closeSidenavOnMobile() {
