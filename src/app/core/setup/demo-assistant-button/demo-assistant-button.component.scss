@@ -13,8 +13,14 @@
     flex-direction: column;
     align-items: end;
   }
-  
+
   @media screen and (max-width: breakpoints.$sm) {
     min-height: 56px;
+  }
+}
+
+.disable-backdrop {
+  .cdk-overlay-backdrop-showing {
+    opacity: 0 !important;
   }
 }

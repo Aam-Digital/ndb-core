@@ -59,21 +59,19 @@ export class DemoAssistantButtonComponent implements OnInit {
       maxWidth: "100%",
       maxHeight: "100%",
       position: { top: "64px", right: "0px" },
+      backdropClass: "disable-backdrop",
     };
     let dialogRef;
     if (hasConfig) {
       dialogRef = this.dialog.open(ContextAwareDialogComponent, {
         ...commonOptions,
         width: "40vh",
-        disableClose: false,
-        hasBackdrop: false,
       });
     } else {
       dialogRef = this.dialog.open(DemoAssistanceDialogComponent, {
         ...commonOptions,
         width: "calc(100% - 100px)",
         disableClose: true,
-        hasBackdrop: false,
       });
     }
 
