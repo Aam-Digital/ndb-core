@@ -32,7 +32,6 @@ export class DemoAssistanceDialogComponent implements OnInit {
     this.demoUseCases = await this.setupService.getAvailableBaseConfig();
 
     const preSelectedUseCase = this.route.snapshot.queryParamMap.get("useCase");
-    // for testing we can use ?useCase=Education%20Project
     if (preSelectedUseCase) {
       this.selectedUseCase =
         this.demoUseCases.find(
@@ -44,14 +43,14 @@ export class DemoAssistanceDialogComponent implements OnInit {
 
   async initializeSystem() {
     if (this.selectedUseCase) {
+      this.generatingData = true;
+
       if (this.selectedUseCase?.locale) {
         this.window.localStorage.setItem(
           LANGUAGE_LOCAL_STORAGE_KEY,
           this.selectedUseCase.locale,
         );
-        // this.window.location.reload();
       }
-      this.generatingData = true;
       try {
         await this.setupService.initSystem(this.selectedUseCase);
         this.demoInitialized = true;
