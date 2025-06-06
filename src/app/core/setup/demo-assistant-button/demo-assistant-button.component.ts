@@ -20,6 +20,8 @@ export class DemoAssistantButtonComponent implements OnInit {
   private readonly configService = inject(ConfigService);
   private readonly dialog = inject(MatDialog);
 
+  private isDialogOpen: boolean = false;
+
   assistantEnabled: boolean;
 
   ngOnInit(): void {
@@ -44,10 +46,11 @@ export class DemoAssistantButtonComponent implements OnInit {
    * @returns A promise that resolves with the dialog result when the dialog is closed.
    */
   async openDemoSetupDialog() {
-    if (this.loginState.value !== LoginState.LOGGED_IN) {
+    if (this.isDialogOpen || this.loginState.value !== LoginState.LOGGED_IN) {
       return;
     }
 
+    this.isDialogOpen = true;
     const hasConfig = this.configService.hasConfig();
 
     const commonOptions = {
@@ -74,6 +77,9 @@ export class DemoAssistantButtonComponent implements OnInit {
       });
     }
 
-    return await lastValueFrom(dialogRef.afterClosed());
+    const result = await lastValueFrom(dialogRef.afterClosed());
+    this.isDialogOpen = false;
+
+    return result;
   }
 }
