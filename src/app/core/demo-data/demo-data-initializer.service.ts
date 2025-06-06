@@ -53,13 +53,33 @@ export class DemoDataInitializerService {
       DemoDataGeneratingProgressDialogComponent,
     );
 
-    this.localAuthService.saveUser(this.normalUser);
-    this.localAuthService.saveUser(this.adminUser);
-    await this.sessionManager.offlineLogin(this.normalUser);
+    await this.logInDemoUser();
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();
     this.syncDatabaseOnUserChange();
+  }
+
+  async logInDemoUser() {
+    this.localAuthService.saveUser(this.normalUser);
+    this.localAuthService.saveUser(this.adminUser);
+    await this.sessionManager.offlineLogin(this.normalUser);
+  }
+
+  /**
+   * Generates additional demo data (regardless of whether the demo data is already present).
+   * Make sure a user is logged in before calling this method so that a valid database is available.
+   *
+   * Alternatively, use `DemoDataInitializerService.run()` to do a complete initialization including user setup.
+   */
+  async generateDemoData() {
+    const dialogRef = this.dialog.open(
+      DemoDataGeneratingProgressDialogComponent,
+    );
+
+    await this.demoDataService.publishDemoData(false);
+
+    dialogRef.close();
   }
 
   private syncDatabaseOnUserChange() {

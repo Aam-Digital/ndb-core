@@ -44,13 +44,17 @@ export class SyncedPouchDatabase extends PouchDatabase {
   constructor(
     dbName: string,
     authService: KeycloakAuthService,
-    private globalSyncState: SyncStateSubject,
+    globalSyncState: SyncStateSubject,
     private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
   ) {
-    super(dbName);
+    super(dbName, globalSyncState);
 
-    this.remoteDatabase = new RemotePouchDatabase(dbName, authService);
+    this.remoteDatabase = new RemotePouchDatabase(
+      dbName,
+      globalSyncState,
+      authService,
+    );
 
     this.logSyncContext();
     this.syncState

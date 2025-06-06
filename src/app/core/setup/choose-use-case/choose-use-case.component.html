@@ -1,0 +1,32 @@
+<div class="flex-row flex-wrap gap-regular flex-grow-1-3">
+  <div class="flex-row gap-regular flex-column demo-select">
+    <h3 i18n>Select your Use Case:</h3>
+    <mat-form-field appearance="fill">
+      <mat-select
+        [(value)]="selectedUseCase"
+        (selectionChange)="onSelectionChange()"
+      >
+        @for (useCase of demoUseCases; track useCase) {
+          <mat-option
+            [value]="useCase"
+            [class.greyed-out]="useCase.locale !== locale"
+          >
+            {{ useCase.name }} ({{ useCase.locale }})
+          </mat-option>
+        }
+        <mat-hint class="hint">
+          <span i18n>
+            Use cases in gray are in other languages — you can still select
+            them. The app will be initialized in that language.
+          </span>
+        </mat-hint>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="description demo-select" [class.hidden]="!selectedUseCase">
+    @if (selectedUseCase) {
+      <p>{{ selectedUseCase.description }}</p>
+    }
+  </div>
+</div>

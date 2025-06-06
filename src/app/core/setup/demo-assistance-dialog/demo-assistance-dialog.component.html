@@ -1,0 +1,67 @@
+<div class="dialog-header-bar"></div>
+@if (!demoInitialized && !generatingData) {
+  <h1 mat-dialog-title class="header-title" i18n>Welcome to Aam Digital!</h1>
+}
+<mat-dialog-content class="demo-dialog-content" autosize>
+  @if (generatingData) {
+    <h2 i18n>Generating sample data for this demo ...</h2>
+  } @else if (!demoInitialized) {
+    <p i18n>
+      Your path to digitize information and case files, making it easy to
+      collaborate with your team, track individual progress of beneficiaries,
+      and be alerted about critical cases. With Aam Digital, you can access your
+      data across all devices, even when offline.
+    </p>
+
+    <div class="demo-layout">
+      <app-choose-use-case
+        [demoUseCases]="demoUseCases"
+        (selectionChanged)="onUseCaseSelected($event)"
+      >
+      </app-choose-use-case>
+    </div>
+
+    <p class="footer-note" i18n>
+      Aam Digital is fully customizable and can be quickly adapted to your needs
+      and data structures. It is not limited to these scenarios. Through Aam
+      Digital, you can track, measure, and manage your project.
+    </p>
+  } @else {
+    <p i18n>
+      We have loaded some sample data into this demo system. Explore and play
+      around – you can’t break anything!<br />
+      Changes you make in this demo will <em>not</em> be saved anywhere. The
+      system is reset after you close or reload the page.
+    </p>
+    <p i18n>
+      You can get assistance clicking the “Demo” button on the top right of the
+      toolbar.<br />
+      There you can also sign up for a full trial system, if you are ready for
+      the next step.
+    </p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="demo-actions">
+  @if (!demoInitialized && !generatingData) {
+    <button
+      mat-raised-button
+      class="full-width"
+      color="accent"
+      (click)="initializeSystem()"
+      [disabled]="generatingData"
+    >
+      <span i18n>Initialize System</span>
+    </button>
+  } @else {
+    <button
+      mat-raised-button
+      class="full-width"
+      color="accent"
+      (click)="startExploring()"
+      [disabled]="generatingData"
+    >
+      <span i18n>Start Exploring</span>
+    </button>
+  }
+</mat-dialog-actions>

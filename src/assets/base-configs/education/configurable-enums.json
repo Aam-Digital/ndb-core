@@ -1,0 +1,186 @@
+[
+  {
+    "_id": "ConfigurableEnum:center",
+    "values": [
+      {
+        "id": "alipore",
+        "label": "Alipore"
+      },
+      {
+        "id": "tollygunge",
+        "label": "Tollygunge"
+      },
+      {
+        "id": "barabazar",
+        "label": "Barabazar"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:interaction-type",
+    "values": [
+      {
+        "id": "VISIT",
+        "label": "Home Visit"
+      },
+      {
+        "id": "GUARDIAN_TALK",
+        "label": "Talk with Guardians"
+      },
+      {
+        "id": "INCIDENT",
+        "label": "Incident"
+      },
+      {
+        "id": "NOTE",
+        "label": "General Note"
+      },
+      {
+        "id": "GUARDIAN_MEETING",
+        "label": "Guardians' Meeting",
+        "color": "#E1F5FE",
+        "isMeeting": true
+      },
+      {
+        "id": "COACHING_CLASS",
+        "label": "Coaching Class",
+        "color": "#EEEEEE",
+        "isMeeting": true
+      },
+      {
+        "id": "SCHOOL_CLASS",
+        "label": "School Class",
+        "color": "#EEEEEE",
+        "isMeeting": true
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:materials",
+    "values": [
+      {
+        "id": "OTHER",
+        "label": ""
+      },
+      {
+        "id": "pencil",
+        "label": "pencil"
+      },
+      {
+        "id": "eraser",
+        "label": "eraser"
+      },
+      {
+        "id": "pen (black)",
+        "label": "pen (black)"
+      },
+      {
+        "id": "crayons",
+        "label": "crayons"
+      },
+      {
+        "id": "copy (plain)",
+        "label": "copy (plain)"
+      },
+      {
+        "id": "School Uniform",
+        "label": "School Uniform",
+        "color": "#B3E5FC"
+      },
+      {
+        "id": "School Shoes",
+        "label": "School Shoes",
+        "color": "#B3E5FC"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:math-levels",
+    "values": [
+      {
+        "id": "Nothing",
+        "label": "Nothing",
+        "_ordinal": 0,
+        "color": "#fd7272"
+      },
+      {
+        "id": "Numbers 1-9",
+        "label": "Numbers 1-9",
+        "_ordinal": 1,
+        "color": "#ff8153"
+      },
+      {
+        "id": "Numbers 10-99",
+        "label": "Numbers 10-99",
+        "_ordinal": 2,
+        "color": "#ff982a"
+      },
+      {
+        "id": "Subtraction",
+        "label": "Subtraction",
+        "_ordinal": 3,
+        "color": "#d2c92e"
+      },
+      {
+        "id": "Division",
+        "label": "Division",
+        "_ordinal": 4,
+        "passed": true,
+        "color": "#c8e6c9"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:reading-levels",
+    "values": [
+      {
+        "id": "Nothing",
+        "label": "Nothing",
+        "_ordinal": 0,
+        "color": "#fd7272"
+      },
+      {
+        "id": "Read Letters",
+        "label": "Read Letters",
+        "_ordinal": 1,
+        "color": "#ff8153"
+      },
+      {
+        "id": "Read Words",
+        "label": "Read Words",
+        "_ordinal": 2,
+        "color": "#ff982a"
+      },
+      {
+        "id": "Read Sentence",
+        "label": "Read Sentence",
+        "_ordinal": 3,
+        "color": "#d2c92e"
+      },
+      {
+        "id": "Read Paragraph",
+        "label": "Read Paragraph",
+        "_ordinal": 4,
+        "passed": true,
+        "color": "#c8e6c9"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:activity-status",
+    "values": [
+      {
+        "id": "PLANNED",
+        "label": "Planned"
+      },
+      {
+        "id": "ONGOING",
+        "label": "Ongoing"
+      },
+      {
+        "id": "COMPLETED",
+        "label": "Completed"
+      }
+    ]
+  }
+]

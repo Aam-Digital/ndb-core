@@ -1,3 +1,4 @@
+// TODO: should we add this programmatically to the database if it is not part of existing config?
 export const todoDefaultConfigs = {
   // for "entity:Todo" see todo.ts DatabaseField annotations
   "view:todo": {

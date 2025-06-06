@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Basic Setup",
+    "description": "A basic setup with minimal configuration to get started quickly.",
+    "entitiesToImport": [
+      "basic/config.json",
+      "basic/configurable-enums.json",
+      "basic/ConfigurableEnum_attendance-status.json",
+      "basic/ConfigurableEnum_warning-levels.json",
+      "basic/ConfigurableEnum_genders.json",
+      "basic/ConfigurableEnum_rating-answers.json",
+      "basic/Config_Permissions.json",
+      "basic/Config_SetupWizard.json",
+      "basic/MarkdownContent_help.json",
+      "basic/SiteSettings_global.json"
+    ],
+    "locale": "en-US"
+  },
+  {
+    "name": "Education Project",
+    "description": "School or after-school example.",
+    "entitiesToImport": [
+      "education/config.json",
+      "education/configurable-enums.json",
+      "basic/ConfigurableEnum_attendance-status.json",
+      "basic/ConfigurableEnum_warning-levels.json",
+      "basic/ConfigurableEnum_genders.json",
+      "basic/ConfigurableEnum_rating-answers.json",
+      "basic/Config_Permissions.json",
+      "basic/Config_SetupWizard.json",
+      "basic/MarkdownContent_help.json",
+      "basic/SiteSettings_global.json"
+    ],
+    "locale": "en-US"
+  },
+  {
+    "name": "Bildungsprojekt",
+    "description": "Ein Projekt im Bildungsbereich, z.B. Schule oder außerschulische Unterstützung.",
+    "entitiesToImport": [
+      "education_de/config.json"
+    ],
+    "locale": "de"
+  },
+  {
+    "name": "Projet d'éducation",
+    "description": "Un projet dans le secteur éducatif, par exemple un soutien scolaire ou parascolaire.",
+    "entitiesToImport": [
+      "education_fr/config.json"
+    ],
+    "locale": "fr"
+  }
+]

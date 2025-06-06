@@ -5,6 +5,8 @@ import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { HttpStatusCode } from "@angular/common/http";
 import { environment } from "environments/environment";
+import { SyncState } from "app/core/session/session-states/sync-state.enum";
+import { SyncStateSubject } from "app/core/session/session-type";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -35,6 +37,13 @@ export class PouchDatabase extends Database {
 
   protected databaseInitialized = new Subject<void>();
 
+  constructor(
+    dbName: string,
+    protected globalSyncState: SyncStateSubject,
+  ) {
+    super(dbName);
+  }
+
   /**
    * Initialize the PouchDB with the IndexedDB/in-browser adapter (default).
    * See {link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-browser}
@@ -47,6 +56,7 @@ export class PouchDatabase extends Database {
   ) {
     this.pouchDB = new PouchDB(dbName ?? this.dbName, options);
     this.databaseInitialized.complete();
+    this.globalSyncState.next(SyncState.COMPLETED);
   }
 
   override isInitialized(): boolean {

@@ -11,7 +11,6 @@ import {
 import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 import { ConfigFieldRaw } from "./config-field.raw";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
-import { defaultJsonConfig } from "../../core/config/config-fix";
 import { EntityConfig } from "../../core/entity/entity-config";
 import { EntityConfigService } from "../../core/entity/entity-config.service";
 import { generateIdFromLabel } from "../../utils/generate-id-from-label/generate-id-from-label";
@@ -79,7 +78,7 @@ export class ConfigImportParserService {
     const generatedConfig: GeneratedConfig = {};
 
     if (includingDefaultConfigs) {
-      this.initializeDefaultValues(generatedConfig);
+      throw "Not supported anymore";
     }
 
     generatedConfig[EntityConfigService.PREFIX_ENTITY_CONFIG + entityName] =
@@ -318,18 +317,6 @@ export class ConfigImportParserService {
     };
     detailsView.panels.push(newPanel);
     return newPanel.components[0];
-  }
-
-  private initializeDefaultValues(generatedConfig: GeneratedConfig) {
-    generatedConfig["enum:" + ConfigImportParserService.NOT_CONFIGURED_KEY] = [
-      {
-        id: ConfigImportParserService.NOT_CONFIGURED_KEY,
-        label: "NOT CONFIGURED",
-      },
-    ];
-    for (const key of ConfigImportParserService.DEFAULT_CONFIG_KEYS) {
-      generatedConfig[key] = defaultJsonConfig[key];
-    }
   }
 }
 

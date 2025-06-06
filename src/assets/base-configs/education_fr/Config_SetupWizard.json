@@ -1,0 +1,27 @@
+{
+    "_id": "Config:SetupWizard",
+    "fr": {
+        "steps": [
+            {
+                "title": "Bienvenue",
+                "text": "# Bienvenue sur Aam Digital !\nNous sommes là pour vous aider à gérer les informations de vos bénéficiaires et les interactions de votre équipe avec eux.\n\nLa plateforme Aam Digital est très flexible et peut être adaptée à vos besoins spécifiques de projet.\nLes étapes suivantes vous guideront à travers les options de configuration les plus importantes.\nVous pourrez commencer à utiliser vos données en quelques minutes seulement.\n\nNous avons aussi des tutoriels, des guides et des vidéos pour vous : [Aam Digital Support Center](https://chatwoot.help/hc/aam-digital/en)\n\nN'hésitez pas à quitter cet assistant de configuration à tout moment pour explorer le système.\nVous pouvez toujours revenir via le bouton \"Assistant de configuration\" dans le menu principal à gauche.\nPour désactiver définitivement cet assistant, terminez le processus avec \"Terminer\" à la dernière étape."
+            },
+            {
+                "title": "Profils & Champs",
+                "text": "Le système contient déjà des structures de base pour votre gestion de cas.\nVous pouvez adapter les champs et la manière dont les détails sont affichés.\n\nSi vous avez d'autres besoins, n'hésitez pas à nous contacter à [support@aam-digital.com](mailto:support@aam-digital.com).\n\n_Veuillez noter que l'assistant de configuration et le constructeur de formulaires sont encore en cours de développement actif (version \"bêta\").\nCertaines options de configuration avancées ne sont pas encore disponibles ici et peuvent nécessiter l'assistance de notre équipe technique._"
+            },
+            {
+                "title": "Comptes Utilisateur",
+                "text": "Vous pouvez collaborer sur Aam Digital en équipe.\nLes données sont synchronisées et tous les utilisateurs ont accès aux dernières informations."
+            },
+            {
+                "title": "Importer des Données",
+                "text": "Si vous avez déjà des données provenant d’un ancien système, vous pouvez les importer facilement.\nEnregistrez les données au format \".csv\" (par exemple depuis MS Excel).\nIl n’est pas nécessaire d’avoir des noms de colonnes spécifiques dans votre fichier.\nLe module d’importation vous aide à faire correspondre les données du tableau aux champs pertinents de vos profils Aam Digital."
+            },
+            {
+                "title": "Terminé !",
+                "text": "C’est tout. Vous êtes prêt à explorer votre système et commencer le travail !\n\nVous pouvez toujours ajuster votre configuration plus tard.\nNous recommandons de garder une configuration simple au début,\ncommencer avec quelques tâches,\npuis ajouter des champs supplémentaires selon vos besoins.\n\nN'hésitez pas à nous contacter pour toute question ou remarque : [support@aam-digital.com](mailto:support@aam-digital.com)"
+            }
+        ]
+    }
+}
