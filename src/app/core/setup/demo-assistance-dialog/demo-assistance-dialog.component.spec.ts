@@ -20,6 +20,7 @@ import {
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { SessionSubject } from "../../session/auth/session-info";
 import { MatDialogRef } from "@angular/material/dialog";
+import { ActivatedRoute } from "@angular/router";
 
 describe("DemoAssistanceDialogComponent", () => {
   let component: DemoAssistanceDialogComponent;
@@ -42,7 +43,7 @@ describe("DemoAssistanceDialogComponent", () => {
         { provide: MatDialogRef, useValue: {} },
         { provide: NAVIGATOR_TOKEN, useValue: {} },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
-
+        { provide: ActivatedRoute, useValue: {} },
         SyncStateSubject,
         SessionManagerService,
         SessionSubject,
