@@ -5,6 +5,7 @@ import { BaseConfig } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
 import { ChooseUseCaseComponent } from "../choose-use-case/choose-use-case.component";
 import { Logging } from "../../logging/logging.service";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-demo-assistance-dialog",
@@ -21,10 +22,21 @@ export class DemoAssistanceDialogComponent implements OnInit {
   constructor(
     private setupService: SetupService,
     private dialogRef: MatDialogRef<DemoAssistanceDialogComponent>,
+    private route: ActivatedRoute,
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.demoUseCases = await this.setupService.getAvailableBaseConfig();
+
+    const preSelectedUseCase = this.route.snapshot.queryParamMap.get("useCase");
+    // for testing we can use ?useCase=Education%20Project
+    if (preSelectedUseCase) {
+      this.selectedUseCase =
+        this.demoUseCases.find(
+          (config) => config.name === preSelectedUseCase,
+        ) || null;
+      this.initializeSystem();
+    }
   }
 
   async initializeSystem() {
