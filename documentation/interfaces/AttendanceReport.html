@@ -1,0 +1,944 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  AttendanceReport</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/export/query.service.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                            <span class="modifier">Optional</span>
+                                        <a href="#detailedStatus" 
+>
+                                            detailedStatus
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#participant" 
+>
+                                            participant
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#percentage" 
+>
+                                            percentage
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#present" 
+>
+                                            present
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#total" 
+>
+                                            total
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="detailedStatus"></a>
+                                        <span class="name "><b>detailedStatus</b>
+                                            <a href="#detailedStatus">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>detailedStatus:     <code>literal type</code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>    <code>literal type</code>
+
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Optional</i>
+                                        </td>
+                                    </tr>
+
+
+
+
+                            <tr>
+                                <td class="col-md-4">
+                                    <div class="io-description"><p>counts by all custom configured status</p>
+</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="participant"></a>
+                                        <span class="name "><b>participant</b>
+                                            <a href="#participant">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>participant:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="percentage"></a>
+                                        <span class="name "><b>percentage</b>
+                                            <a href="#percentage">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>percentage:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="present"></a>
+                                        <span class="name "><b>present</b>
+                                            <a href="#present">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>present:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="total"></a>
+                                        <span class="name "><b>total</b>
+                                            <a href="#total">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>total:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { Entity, EntityConstructor } from &quot;../entity/model/entity&quot;;
+import { Note } from &quot;../../child-dev-project/notes/model/note&quot;;
+import { EventNote } from &quot;../../child-dev-project/attendance/model/event-note&quot;;
+import { EntityMapperService } from &quot;../entity/entity-mapper/entity-mapper.service&quot;;
+import { ChildSchoolRelation } from &quot;../../child-dev-project/children/model/childSchoolRelation&quot;;
+import { ChildrenService } from &quot;../../child-dev-project/children/children.service&quot;;
+import { AttendanceService } from &quot;../../child-dev-project/attendance/attendance.service&quot;;
+import { EventAttendance } from &quot;../../child-dev-project/attendance/model/event-attendance&quot;;
+import jsonQuery from &quot;json-query&quot;;
+import { EntityRegistry } from &quot;../entity/database-entity.decorator&quot;;
+
+/**
+ * A query service which uses the json-query library (https://github.com/auditassistant/json-query).
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class QueryService {
+  private entities: { [type: string]: { [id: string]: Entity } } &#x3D; {};
+
+  /**
+   * A map of information about the loading state of the different entity types
+   * @private
+   */
+  private entityInfo: {
+    [type: string]: {
+      /**
+       * A optional function which can be used to load this entity that might use a start and end date
+       * @param form
+       * @param to
+       */
+      dataFunction?: (form, to) &#x3D;&gt; Promise&lt;Entity[]&gt;;
+      /**
+       * Whether already all entities of this type have been loaded
+       */
+      allLoaded?: boolean;
+      /**
+       * A certain range in which entities of this type have been loaded
+       */
+      rangeLoaded?: { from: Date; to: Date };
+      /**
+       * Whether updates of this entity are listened to
+       */
+      updating?: boolean;
+    };
+  } &#x3D; {
+    Note: {
+      dataFunction: (from, to) &#x3D;&gt;
+        this.childrenService.getNotesInTimespan(from, to),
+    },
+    EventNote: {
+      dataFunction: (from, to) &#x3D;&gt;
+        this.attendanceService.getEventsOnDate(from, to),
+    },
+  };
+
+  /**
+   * A list of further aliases for which a certain entity needs to be loaded.
+   * This can be necessary if a function requires a certain entity to be present.
+   * @private
+   */
+  private queryStringMap: [string, EntityConstructor][] &#x3D; [
+    [&quot;getAttendanceArray\\(true\\)&quot;, ChildSchoolRelation],
+  ];
+
+  constructor(
+    private entityMapper: EntityMapperService,
+    private childrenService: ChildrenService,
+    private attendanceService: AttendanceService,
+    entityRegistry: EntityRegistry,
+  ) {
+    entityRegistry.forEach((entity, name) &#x3D;&gt;
+      this.queryStringMap.push([name, entity]),
+    );
+  }
+
+  /**
+   * Runs the query on the passed data object
+   * @param query a string or array according to the json-query language (https://github.com/auditassistant/json-query)
+   * @param from a date which can be accessed in the query using a ?.
+   * @param to a date which can be accessed in the query using another ?
+   * @param data the data on which the query should run, default is all entities
+   * @returns the results of the query on the data
+   */
+  public queryData(query: string, from?: Date, to?: Date, data?: any): any {
+    from &#x3D; from ?? new Date(0);
+    to &#x3D; to ?? new Date();
+
+    if (!data) {
+      data &#x3D; this.entities;
+    }
+
+    return jsonQuery([query, from, to], {
+      data: data,
+      locals: {
+        toArray: this.toArray,
+        unique: this.unique,
+        count: this.count,
+        sum: this.sum,
+        avg: this.avg,
+        toEntities: this.toEntities.bind(this),
+        getRelated: this.getRelated.bind(this),
+        filterByObjectAttribute: this.filterByObjectAttribute,
+        getIds: this.getIds,
+        getParticipantsWithAttendance: this.getParticipantsWithAttendance,
+        getAttendanceArray: this.getAttendanceArray.bind(this),
+        getAttendanceReport: this.getAttendanceReport,
+        addEntities: this.addEntities.bind(this),
+        setString: this.setString,
+      },
+    }).value;
+  }
+
+  /**
+   * Call this function to prefetch required data
+   * @param query single query or concatenation of all query strings that will be executed soon
+   * @param from date from which data should be available
+   * @param to date to which data should be available
+   */
+  async cacheRequiredData(query: string, from: Date, to: Date) {
+    from &#x3D; from ?? new Date(0);
+    to &#x3D; to ?? new Date();
+    const uncachedEntities &#x3D; this.getUncachedEntities(query, from, to);
+    const dataPromises &#x3D; uncachedEntities.map((entity) &#x3D;&gt; {
+      const info &#x3D; this.entityInfo[entity.ENTITY_TYPE];
+      if (info?.dataFunction) {
+        return info.dataFunction(from, to).then((loadedEntities) &#x3D;&gt; {
+          this.setEntities(entity, loadedEntities);
+          info.rangeLoaded &#x3D; { from, to };
+        });
+      } else {
+        return this.entityMapper.loadType(entity).then((loadedEntities) &#x3D;&gt; {
+          this.setEntities(entity, loadedEntities);
+          this.entityInfo[entity.ENTITY_TYPE] &#x3D; { allLoaded: true };
+        });
+      }
+    });
+    await Promise.all(dataPromises);
+    this.applyEntityUpdates(uncachedEntities);
+  }
+
+  private applyEntityUpdates(uncachedEntities: EntityConstructor[]) {
+    uncachedEntities
+      .filter(({ ENTITY_TYPE }) &#x3D;&gt; !this.entityInfo[ENTITY_TYPE].updating)
+      .forEach(({ ENTITY_TYPE }) &#x3D;&gt; {
+        this.entityInfo[ENTITY_TYPE].updating &#x3D; true;
+        this.entityMapper
+          .receiveUpdates(ENTITY_TYPE)
+          .subscribe(({ entity, type }) &#x3D;&gt; {
+            if (type &#x3D;&#x3D;&#x3D; &quot;remove&quot;) {
+              delete this.entities[ENTITY_TYPE][entity.getId()];
+            } else {
+              this.entities[ENTITY_TYPE][entity.getId()] &#x3D; entity;
+            }
+          });
+      });
+  }
+
+  /**
+   * Get entities that are referenced in the query string and are not sufficiently cached.
+   * @param query
+   * @param from
+   * @param to
+   * @private
+   */
+  private getUncachedEntities(query: string, from: Date, to: Date) {
+    return this.queryStringMap
+      .filter(([matcher]) &#x3D;&gt;
+        // matches query string without any alphanumeric characters before or after (e.g. so Child does not match ChildSchoolRelation)
+        query?.match(new RegExp(&#x60;(^|\\W)${matcher}(\\W|$)&#x60;)),
+      )
+      .map(([_, entity]) &#x3D;&gt; entity)
+      .filter((entity) &#x3D;&gt; {
+        const info &#x3D; this.entityInfo[entity.ENTITY_TYPE];
+        return (
+          info &#x3D;&#x3D;&#x3D; undefined ||
+          !(
+            info.allLoaded ||
+            (info.rangeLoaded?.from &lt;&#x3D; from &amp;&amp; info.rangeLoaded?.to &gt;&#x3D; to)
+          )
+        );
+      });
+  }
+
+  private setEntities&lt;T extends Entity&gt;(
+    entityClass: EntityConstructor&lt;T&gt;,
+    entities: T[],
+  ) {
+    this.entities[entityClass.ENTITY_TYPE] &#x3D; {};
+    entities.forEach(
+      (entity) &#x3D;&gt;
+        (this.entities[entityClass.ENTITY_TYPE][entity.getId()] &#x3D; entity),
+    );
+  }
+
+  /**
+   * Creates an array containing the value of each key of the object.
+   * e.g. &#x60;{a: 1, b: 2} &#x3D;&gt; [1,2]&#x60;
+   * This should be used when iterating over all documents of a given entity type because they are stored as
+   * &#x60;&quot;{entity._id}&quot;: {entity}&#x60;
+   * @param obj the object which should be transformed to an array
+   * @returns the values of the input object as a list
+   */
+  private toArray(obj): any[] {
+    return Object.values(obj);
+  }
+
+  /**
+   * Returns a copy of the input array without duplicates
+   * @param data the array where duplicates should be removed
+   * @returns a list without duplicates
+   */
+  private unique(data: any[]): any[] {
+    return new Array(...new Set(data));
+  }
+
+  /**
+   * Get the size of an array
+   * @param data the data for which the length should be returned
+   * @returns the length of the input array or 0 if no array is provided
+   */
+  private count(data: any[]): number {
+    return data ? data.length : 0;
+  }
+
+  /**
+   * Returns the (integer) sum of the provided array.
+   * It can also handle integers in strings, e.g. &quot;3&quot;
+   * @param data an integer array
+   * @private
+   */
+  private sum(data: any[]): number {
+    return data.reduce((res, cur) &#x3D;&gt; {
+      const parsed &#x3D; Number.parseInt(cur);
+      return Number.isNaN(parsed) ? res : res + parsed;
+    }, 0);
+  }
+
+  /**
+   * Returns the avg of the provided array as string.
+   * It can also handle integers in strings, e.g. &quot;3&quot;.
+   * The average is only calculated if the value exists and is a valid number.
+   * @param data an integer array
+   * @param decimals the amount of decimals for the result, default 0
+   * @private
+   */
+  private avg(data: any[], decimals &#x3D; 0): string {
+    const numbers &#x3D; data
+      .map((d) &#x3D;&gt; Number.parseInt(d))
+      .filter((i) &#x3D;&gt; !Number.isNaN(i));
+    const result &#x3D;
+      numbers.length &#x3D;&#x3D;&#x3D; 0
+        ? 0
+        : numbers.reduce((i, sum) &#x3D;&gt; sum + i, 0) / numbers.length;
+    return result.toFixed(decimals);
+  }
+
+  /**
+   * Turns a list of ids (with the entity prefix) into a list of entities
+   * @param ids the array of ids with entity prefix
+   * @param entityPrefix indicate the type of entity that should be loaded. This is required for pre-loading the required entities.
+   * @returns a list of entity objects
+   */
+  private toEntities(ids: string[], entityPrefix: string): Entity[] {
+    if (!entityPrefix) {
+      throw new Error(&quot;Entity type not defined&quot;);
+    }
+    if (!ids) {
+      return [];
+    }
+
+    return ids
+      .filter((id) &#x3D;&gt; {
+        if (typeof id !&#x3D;&#x3D; &quot;string&quot;) {
+          console.debug(&quot;invalid entity id in Query :toEntities&quot;, id);
+          return false;
+        }
+        return true;
+      })
+      .map((id) &#x3D;&gt; {
+        const prefix &#x3D; id.split(&quot;:&quot;)[0];
+        return this.entities[prefix][id];
+      })
+      .filter((entity) &#x3D;&gt; !!entity);
+  }
+
+  /**
+   * Returns all entities which reference a entity from the passed list of entities (by their id)
+   * @param srcEntities the entities for which relations should be found
+   * @param entityType the type of entities where relations should be looked for
+   * @param relationKey the name of the attribute that holds the reference.
+   *                    The attribute can be a string or a list of strings
+   * @returns a list of the related unique entities
+   */
+  private getRelated(
+    srcEntities: Entity[],
+    entityType: string,
+    relationKey: string,
+  ): Entity[] {
+    const targetEntities &#x3D; this.toArray(this.entities[entityType]);
+    const srcIds &#x3D; srcEntities
+      .filter((entity) &#x3D;&gt; typeof entity.getId &#x3D;&#x3D;&#x3D; &quot;function&quot;) // skip empty placeholder objects
+      .map((entity) &#x3D;&gt; entity.getId());
+    if (
+      targetEntities.length &gt; 0 &amp;&amp;
+      Array.isArray(targetEntities[0][relationKey])
+    ) {
+      return targetEntities.filter((entity) &#x3D;&gt;
+        (entity[relationKey] as string[]).some((id) &#x3D;&gt; srcIds.includes(id)),
+      );
+    } else {
+      return targetEntities.filter((entity) &#x3D;&gt;
+        entity[relationKey] ? srcIds.includes(entity[relationKey]) : false,
+      );
+    }
+  }
+
+  /**
+   * Filters the data when the filter value is a object (e.g. configurable enum) rather than a simple value
+   * @param objs the objects to be filtered
+   * @param attr the attribute of the objects which is a object itself
+   * @param key the key of the attribute-object which should be compared
+   * @param value the value which will be compared with &#x60;obj[attr][key]&#x60; for each obj in objs.
+   *              The value can be a simple value or list of values separated by &#x60;|&#x60; (e.g. SCHOOL_CLASS|LIFE_SKILLS).
+   *              If it is a list of values, then the object is returned if its value matches any of the given values.
+   * @returns the filtered objects
+   */
+  private filterByObjectAttribute(
+    objs: any[],
+    attr: string,
+    key: string,
+    value: string,
+  ): any[] {
+    // splits at &quot;|&quot; and removes optional whitespace before or after the symbol
+    const values &#x3D; value.trim().split(/\s*\|\s*/);
+    return objs.filter((obj) &#x3D;&gt; {
+      if (obj?.hasOwnProperty(attr)) {
+        return values.includes(obj[attr][key]?.toString());
+      }
+      return false;
+    });
+  }
+
+  /**
+   * Returns a list of IDs held by each object (e.g. the children-IDs held by an array of notes)
+   * @param objs the objects which each holds a list of IDs
+   * @param key the key on which each object holds a list of IDs
+   * @returns a one dimensional string array holding all IDs which are held by the objects.
+   *            This list may contain duplicate IDs. If this is not desired, use &#x60;:unique&#x60; afterwards.
+   */
+  private getIds(objs: any[], key: string): string[] {
+    const ids: string[] &#x3D; [];
+    objs.forEach((obj) &#x3D;&gt; {
+      if (obj.hasOwnProperty(key)) {
+        ids.push(...obj[key]);
+      }
+    });
+    return ids;
+  }
+
+  /**
+   * Return the ids of all the participants of the passed events with the defined attendance status using the &#x60;countAs&#x60;
+   * attribute. The list may contain duplicates and the id does not necessarily have the entity prefix.
+   * @param events the array of events
+   * @param attendanceStatus the status for which should be looked for
+   * @returns the ids of children which have the specified attendance in an event
+   */
+  private getParticipantsWithAttendance(
+    events: EventNote[],
+    attendanceStatus: string,
+  ): string[] {
+    const attendedChildren: string[] &#x3D; [];
+    events.forEach((e) &#x3D;&gt;
+      e.children.forEach((childId) &#x3D;&gt; {
+        if (e.getAttendance(childId).status.countAs &#x3D;&#x3D;&#x3D; attendanceStatus) {
+          attendedChildren.push(childId);
+        }
+      }),
+    );
+    return attendedChildren;
+  }
+
+  /**
+   * Transforms a list of notes or event-notes into a flattened list of participants and their attendance for each event.
+   * @param events the input list of type Note or EventNote
+   * @param includeSchool (optional) also include the school to which a participant belongs
+   * @returns AttendanceInfo[] a list holding information about the attendance of a single participant
+   */
+  private getAttendanceArray(
+    events: Note[],
+    includeSchool &#x3D; false,
+  ): AttendanceInfo[] {
+    const attendances: AttendanceInfo[] &#x3D; [];
+    for (const event of events) {
+      const linkedRelations &#x3D; includeSchool
+        ? this.getMembersOfGroupsForEvent(event)
+        : [];
+
+      for (const child of event.children) {
+        const attendance: AttendanceInfo &#x3D; {
+          participant: child,
+          status: event.getAttendance(child),
+        };
+
+        const relation &#x3D; linkedRelations.find((rel) &#x3D;&gt; rel.childId &#x3D;&#x3D;&#x3D; child);
+        if (relation) {
+          attendance.school &#x3D; relation.schoolId;
+        }
+
+        attendances.push(attendance);
+      }
+    }
+    return attendances;
+  }
+
+  private getMembersOfGroupsForEvent(event: Note) {
+    return this.toArray(this.entities[ChildSchoolRelation.ENTITY_TYPE]).filter(
+      (relation) &#x3D;&gt;
+        event.schools.includes(relation.schoolId) &amp;&amp;
+        relation.isActiveAt(event.date),
+    );
+  }
+
+  /**
+   * Transforms a list of attendances infos into an aggregated report for each participant
+   * @param attendances an array of AttendanceInfo objects
+   * @returns AttendanceReport[] for each participant the ID, the number of present and total absences as well as the attendance percentage.
+   */
+  private getAttendanceReport(
+    attendances: AttendanceInfo[],
+  ): AttendanceReport[] {
+    const participantMap: { [key in string]: AttendanceReport } &#x3D; {};
+    attendances.forEach((attendance) &#x3D;&gt; {
+      if (!participantMap.hasOwnProperty(attendance.participant)) {
+        participantMap[attendance.participant] &#x3D; {
+          participant: attendance.participant,
+          total: 0,
+          present: 0,
+          percentage: &quot;&quot;,
+          detailedStatus: {},
+        };
+      }
+      const report &#x3D; participantMap[attendance.participant];
+      report.detailedStatus[attendance.status.status.id] &#x3D; report
+        .detailedStatus[attendance.status.status.id]
+        ? report.detailedStatus[attendance.status.status.id] + 1
+        : 1;
+      if (attendance.status.status.countAs &#x3D;&#x3D;&#x3D; &quot;PRESENT&quot;) {
+        report.present++;
+      }
+      if (attendance.status.status.countAs !&#x3D;&#x3D; &quot;IGNORE&quot;) {
+        report.total++;
+      }
+      if (report.total &gt; 0) {
+        report.percentage &#x3D; (report.present / report.total).toFixed(2);
+      }
+    });
+    return Object.values(participantMap);
+  }
+
+  /**
+   * Adds all entities of the given type to the input array
+   * @param entities the array before
+   * @param entityType the type of entities which should be added
+   * @returns the input array concatenated with all entities of the entityType
+   */
+  private addEntities(entities: Entity[], entityType: string): Entity[] {
+    return entities.concat(...this.toArray(this.entities[entityType]));
+  }
+
+  /**
+   * Replaces all input values by the string provided
+   * @param data the data which will be replaced
+   * @param value the string which should replace initial data
+   * @returns array of same length as data where every input is value
+   */
+  private setString(data: any[], value: string): string[] | string {
+    return Array.isArray(data) ? data.map(() &#x3D;&gt; value) : value;
+  }
+}
+
+export interface AttendanceInfo {
+  participant: string;
+  status: EventAttendance;
+  school?: string;
+}
+
+export interface AttendanceReport {
+  participant: string;
+  total: number;
+  present: number;
+  percentage: string;
+
+  /** counts by all custom configured status **/
+  detailedStatus?: { [key: string]: number };
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'AttendanceReport.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
