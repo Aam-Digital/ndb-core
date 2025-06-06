@@ -29,6 +29,11 @@ export interface Panel {
    * The configurations for the components in this panel.
    */
   components: PanelComponent[];
+
+  /**
+   * Roles permitted to view this panel.
+   */
+  permittedUserRoles?: string[];
 }
 
 /**

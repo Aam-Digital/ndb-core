@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 import { MatButtonModule } from "@angular/material/button";
@@ -19,6 +25,7 @@ import { RouteTarget } from "../../../route-target";
 import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
 import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 import { AblePurePipe } from "@casl/angular";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -62,6 +69,8 @@ export class EntityDetailsComponent
    */
   @Input() panels: Panel[] = [];
 
+  private session = inject(SessionSubject);
+
   override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
@@ -71,14 +80,33 @@ export class EntityDetailsComponent
   }
 
   private initPanels() {
-    this.panels = this.panels.map((p) => ({
-      title: p.title,
-      components: p.components.map((c) => ({
-        title: c.title,
-        component: c.component,
-        config: this.getPanelConfig(c),
-      })),
-    }));
+    this.panels = this.panels
+      .filter((p) =>
+        this.hasRequiredRole({ permittedUserRoles: p?.permittedUserRoles }),
+      )
+      .map((p) => ({
+        title: p.title,
+        components: p.components.map((c) => ({
+          title: c.title,
+          component: c.component,
+          config: this.getPanelConfig(c),
+        })),
+      }));
+  }
+
+  /**
+   * Checks if the current user has access based on permitted user roles.
+   * Accepts a config object containing an optional `permittedUserRoles` array.
+   * Returns true if roles are not specified or if the user matches any role.
+   */
+  private hasRequiredRole({
+    permittedUserRoles,
+  }: {
+    permittedUserRoles?: string[];
+  }): boolean {
+    if (!permittedUserRoles || permittedUserRoles.length === 0) return true;
+    const userRoles = this.session.value.roles;
+    return permittedUserRoles.some((role) => userRoles.includes(role));
   }
 
   private getPanelConfig(c: PanelComponent): PanelConfig {
