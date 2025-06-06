@@ -84,7 +84,7 @@ export class UiComponent {
   siteSettings = new SiteSettings();
   isDesktop = false;
 
-  isLoggedIn: Promise<boolean>;
+  isConfigReady: Promise<boolean>;
 
   constructor(
     private screenWidthObserver: ScreenWidthObserver,
@@ -105,7 +105,7 @@ export class UiComponent {
       (s) => (this.siteSettings = s),
     );
 
-    this.isLoggedIn = this.setupService.detectConfigReadyState();
+    this.isConfigReady = this.setupService.detectConfigReadyState(true);
   }
 
   /**

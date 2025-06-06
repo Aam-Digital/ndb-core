@@ -19,7 +19,7 @@
 <mat-toolbar color="primary" class="ui-toolbar">
   <!-- Left items -->
   <div class="flex-row align-center">
-    <span *ngIf="(isLoggedIn | async) && sideNavMode === 'over'">
+    <span *ngIf="(isConfigReady | async) && sideNavMode === 'over'">
       <button mat-icon-button (click)="sideNav.toggle()">
         <fa-icon class="header-icon" icon="bars"></fa-icon>
       </button>
@@ -42,7 +42,7 @@
     class="flex-row align-center flex-grow-1-3 justify-content-end"
     [class.gap-small]="isDesktop"
   >
-    @if (isLoggedIn | async) {
+    @if (isConfigReady | async) {
       <app-search [class.full-width]="isDesktop"></app-search>
 
       <app-sync-status></app-sync-status>
@@ -62,7 +62,7 @@
 <mat-sidenav-container (backdropClick)="closeSidenavOnMobile()" autosize>
   <mat-sidenav
     #sideNav
-    *ngIf="isLoggedIn | async"
+    *ngIf="isConfigReady | async"
     [autoFocus]="false"
     [mode]="sideNavMode"
     [fixedInViewport]="true"
@@ -141,4 +141,4 @@
   </mat-sidenav-content>
 </mat-sidenav-container>
 
-<app-primary-action *ngIf="isLoggedIn | async"></app-primary-action>
+<app-primary-action *ngIf="isConfigReady | async"></app-primary-action>

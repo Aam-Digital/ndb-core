@@ -2,7 +2,13 @@ import { inject, Injectable } from "@angular/core";
 import { BaseConfig } from "./base-config";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { HttpClient } from "@angular/common/http";
-import { filter, firstValueFrom, lastValueFrom, merge } from "rxjs";
+import {
+  combineLatest,
+  filter,
+  firstValueFrom,
+  lastValueFrom,
+  merge,
+} from "rxjs";
 import { environment } from "../../../environments/environment";
 import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
@@ -116,19 +122,27 @@ export class SetupService {
    * and keep the app on the loading screen until that is done.
    * @private
    */
-  public async detectConfigReadyState() {
+  public async detectConfigReadyState(
+    mustHaveConfigAndSync: boolean = false,
+  ): Promise<boolean> {
     // 1. user has to be logged in
     await firstValueFrom(
       this.loginState.pipe(filter((state) => state === LoginState.LOGGED_IN)),
     );
 
-    // 2. either a config is there OR the sync is complete (so we now there is no existing config on the server)
-    await firstValueFrom(
-      merge(
-        this.configService.configUpdates.pipe(filter((c) => c !== undefined)),
-        this.syncState.pipe(filter((state) => state === SyncState.COMPLETED)),
-      ),
+    // 2. Wait for config and/or sync state depending on flag
+    const configReady$ = this.configService.configUpdates.pipe(
+      filter((c) => c !== undefined),
     );
+    const sync$ = this.syncState.pipe(
+      filter((state) => state === SyncState.COMPLETED),
+    );
+
+    if (mustHaveConfigAndSync) {
+      await firstValueFrom(combineLatest([configReady$, sync$]));
+    } else {
+      await firstValueFrom(merge(configReady$, sync$));
+    }
     return true;
   }
 }
