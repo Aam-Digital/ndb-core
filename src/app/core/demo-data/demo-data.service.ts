@@ -92,7 +92,7 @@ export class DemoDataService {
 
     // save the generated data
     for (const generator of this.dataGenerators) {
-      await this.entityMapper.saveAll(generator.entities);
+      await this.entityMapper.saveAll(generator.entities, true);
       // Wait for other async tasks in the queue e.g. ConfigService setting up config after it has been saved
       await new Promise((resolve) => setTimeout(resolve));
     }
