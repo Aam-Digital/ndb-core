@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { environment } from "../../../../environments/environment";
-import { LoginState } from "app/core/session/session-states/login-state.enum";
 import { LoginStateSubject } from "app/core/session/session-type";
 import { ConfigService } from "app/core/config/config.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -46,13 +45,12 @@ export class DemoAssistantButtonComponent implements OnInit {
    * @returns A promise that resolves with the dialog result when the dialog is closed.
    */
   async openDemoSetupDialog() {
-    if (this.isDialogOpen || this.loginState.value !== LoginState.LOGGED_IN) {
+    if (this.isDialogOpen || !this.assistantEnabled) {
       return;
     }
 
     this.isDialogOpen = true;
     const hasConfig = this.configService.hasConfig();
-
     const commonOptions = {
       autoFocus: false,
       height: "calc(100% - 20px)",

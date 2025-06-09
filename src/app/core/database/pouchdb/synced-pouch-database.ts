@@ -50,11 +50,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
   ) {
     super(dbName, globalSyncState);
 
-    this.remoteDatabase = new RemotePouchDatabase(
-      dbName,
-      globalSyncState,
-      authService,
-    );
+    this.remoteDatabase = new RemotePouchDatabase(dbName, authService);
 
     this.logSyncContext();
     this.syncState

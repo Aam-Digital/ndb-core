@@ -16,14 +16,12 @@
  */
 
 import { Component } from "@angular/core";
-import { NavigationEnd, Router, RouterOutlet } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
 import { environment } from "environments/environment";
-import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
-import { UiComponent } from "./core/ui/ui/ui.component";
 import { AsyncPipe } from "@angular/common";
 import { SetupService } from "./core/setup/setup.service";
 
@@ -36,7 +34,7 @@ import { SetupService } from "./core/setup/setup.service";
   template: `
     @if (
       (configReady | async) !== true &&
-      (loginState | async) !== LoginState.LOGGED_IN
+      (loginState | async) == LoginState.LOGGED_IN
     ) {
       <app-application-loading></app-application-loading>
     } @else if (configFullscreen) {

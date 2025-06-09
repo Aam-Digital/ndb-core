@@ -39,7 +39,7 @@ export class PouchDatabase extends Database {
 
   constructor(
     dbName: string,
-    protected globalSyncState: SyncStateSubject,
+    protected globalSyncState?: SyncStateSubject,
   ) {
     super(dbName);
   }
@@ -56,7 +56,7 @@ export class PouchDatabase extends Database {
   ) {
     this.pouchDB = new PouchDB(dbName ?? this.dbName, options);
     this.databaseInitialized.complete();
-    this.globalSyncState.next(SyncState.COMPLETED);
+    this.globalSyncState?.next(SyncState.COMPLETED);
   }
 
   override isInitialized(): boolean {

@@ -47,8 +47,8 @@ export class DatabaseFactoryService {
   createRemoteDatabase(dbName: string): Database {
     const db = new RemotePouchDatabase(
       dbName,
-      this.syncState,
       this.authService,
+      this.syncState,
     );
     db.init(dbName);
     return db;

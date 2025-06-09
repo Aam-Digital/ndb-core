@@ -12,8 +12,8 @@ import { SyncStateSubject } from "app/core/session/session-type";
 export class RemotePouchDatabase extends PouchDatabase {
   constructor(
     dbName: string,
-    globalSyncState: SyncStateSubject,
     private authService: KeycloakAuthService,
+    globalSyncState?: SyncStateSubject,
   ) {
     super(dbName, globalSyncState);
   }
