@@ -7,7 +7,7 @@ import { asArray } from "app/utils/asArray";
   selector: "app-display-entity-type",
   standalone: true,
   providers: [EntityTypeLabelPipe],
-  templateUrl: "./display-entity-type.component.html",
+  template: `<span class="display-entity-type-label">{{ entityLabel }}</span>`,
   styleUrls: ["./display-entity-type.component.scss"],
 })
 export class DisplayEntityTypeComponent
