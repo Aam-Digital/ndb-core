@@ -1,8 +1,1 @@
-@for (entityId of entityIds; track entityId; let i = $index) {
-  <span class="display-entity-type">
-    {{ (entityId | entityTypeLabel) || entityId }}
-  </span>
-  @if (i !== entityIds.length - 1) {
-    <span>,&nbsp;</span>
-  }
-}
+<span class="display-entity-type-label">{{ entityLabel }}</span>
