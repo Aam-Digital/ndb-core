@@ -22,7 +22,6 @@ import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
 import { environment } from "environments/environment";
-import { AsyncPipe } from "@angular/common";
 import { SetupService } from "./core/setup/setup.service";
 
 /**
@@ -34,7 +33,7 @@ import { SetupService } from "./core/setup/setup.service";
   template: `
     @if (
       (configReady | async) !== true &&
-      (loginState | async) == LoginState.LOGGED_IN
+      (loginState | async) === LoginState.LOGGED_IN
     ) {
       <app-application-loading></app-application-loading>
     } @else if (configFullscreen) {
