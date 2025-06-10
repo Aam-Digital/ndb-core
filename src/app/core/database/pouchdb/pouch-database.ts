@@ -49,14 +49,19 @@ export class PouchDatabase extends Database {
    * See {link https://github.com/pouchdb/pouchdb/tree/master/packages/node_modules/pouchdb-browser}
    * @param dbName the name for the database under which the IndexedDB entries will be created
    * @param options PouchDB options which are directly passed to the constructor
+   * @param suppressSyncCompleted whether to skip emitting a SyncState.COMPLETED event to the globalSyncState (because other logic for sync is building on top of this)
    */
   init(
     dbName?: string,
     options?: PouchDB.Configuration.DatabaseConfiguration | any,
+    suppressSyncCompleted?: boolean,
   ) {
     this.pouchDB = new PouchDB(dbName ?? this.dbName, options);
     this.databaseInitialized.complete();
-    this.globalSyncState?.next(SyncState.COMPLETED);
+
+    if (!suppressSyncCompleted) {
+      this.globalSyncState?.next(SyncState.COMPLETED);
+    }
   }
 
   override isInitialized(): boolean {

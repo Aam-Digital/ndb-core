@@ -90,7 +90,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       this.pouchDB = this.remoteDatabase.getPouchDB();
       this.databaseInitialized.complete();
     } else {
-      super.init(dbName ?? this.dbName);
+      super.init(dbName ?? this.dbName, undefined, true);
 
       // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
       this.remoteDatabase.init(remoteDbName);

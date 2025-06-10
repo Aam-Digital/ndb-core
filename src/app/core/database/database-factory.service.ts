@@ -12,6 +12,7 @@ import { MemoryPouchDatabase } from "./pouchdb/memory-pouch-database";
 import { RemotePouchDatabase } from "./pouchdb/remote-pouch-database";
 import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
+import { Entity } from "../entity/model/entity";
 
 /**
  * Provides a method to generate Database instances
@@ -29,27 +30,31 @@ export class DatabaseFactoryService {
   ) {}
 
   createDatabase(dbName: string): Database {
+    // only the "primary" (app) database should manage the global login state
+    const syncState =
+      dbName === Entity.DATABASE ? this.syncState : new SyncStateSubject();
+
     if (environment.session_type === SessionType.synced) {
       return new SyncedPouchDatabase(
         dbName,
         this.authService,
-        this.syncState,
+        syncState,
         this.navigator,
         this.loginStateSubject,
       );
     } else if (environment.session_type === SessionType.local) {
-      return new PouchDatabase(dbName, this.syncState);
+      return new PouchDatabase(dbName, syncState);
     } else {
-      return new MemoryPouchDatabase(dbName, this.syncState);
+      return new MemoryPouchDatabase(dbName, syncState);
     }
   }
 
   createRemoteDatabase(dbName: string): Database {
-    const db = new RemotePouchDatabase(
-      dbName,
-      this.authService,
-      this.syncState,
-    );
+    // only the "primary" (app) database should manage the global login state
+    const syncState =
+      dbName === Entity.DATABASE ? this.syncState : new SyncStateSubject();
+
+    const db = new RemotePouchDatabase(dbName, this.authService, syncState);
     db.init(dbName);
     return db;
   }
