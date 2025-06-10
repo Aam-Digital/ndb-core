@@ -24,7 +24,6 @@ import {
 } from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { DatabaseResolverService } from "../database/database-resolver.service";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -58,7 +57,6 @@ export class DemoDataService {
     private entityMapper: EntityMapperService,
     private injector: Injector,
     private config: DemoDataServiceConfig,
-    private dbResolver: DatabaseResolverService,
   ) {}
 
   private registerAllProvidedDemoDataGenerators() {
@@ -73,16 +71,8 @@ export class DemoDataService {
   /**
    * Trigger all registered DemoDataGenerator implementations to generate demo entities
    * and add all the generated entities to the Database.
-   * @param skipIfDatabaseNotEmpty - if true, the data generation is skipped if the database is not empty
    */
-  async publishDemoData(skipIfDatabaseNotEmpty: boolean = true) {
-    // TODO: need better check if demo data is already present (regardless of whether some Config entities are present)
-    if (
-      skipIfDatabaseNotEmpty &&
-      !(await this.dbResolver.getDatabase().isEmpty())
-    ) {
-      return;
-    }
+  async publishDemoData() {
     this.registerAllProvidedDemoDataGenerators();
 
     // completely generate all data (i.e. call every generator) before starting to save the data

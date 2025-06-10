@@ -48,15 +48,17 @@ export class DemoDataInitializerService {
     private sessionInfo: SessionSubject,
   ) {}
 
+  /**
+   * @deprecated use generateDemoData() instead and handle login and user setup separately.
+   */
   async run() {
-    const dialogRef = this.dialog.open(
-      DemoDataGeneratingProgressDialogComponent,
-    );
-
     await this.logInDemoUser();
-    await this.demoDataService.publishDemoData();
 
-    dialogRef.close();
+    if (await this.dbResolver.getDatabase().isEmpty()) {
+      // only do demo data generation if the database is empty
+      await this.generateDemoData();
+    }
+
     this.syncDatabaseOnUserChange();
   }
 
@@ -77,7 +79,7 @@ export class DemoDataInitializerService {
       DemoDataGeneratingProgressDialogComponent,
     );
 
-    await this.demoDataService.publishDemoData(false);
+    await this.demoDataService.publishDemoData();
 
     dialogRef.close();
   }
