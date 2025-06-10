@@ -4,6 +4,11 @@
  */
 export interface BaseConfig {
   /**
+   * ID of the base configuration.
+   */
+  id: string;
+
+  /**
    * Human-readable name
    */
   name: string;

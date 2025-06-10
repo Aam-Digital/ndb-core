@@ -35,7 +35,9 @@ export class DemoAssistanceDialogComponent implements OnInit {
     if (preSelectedUseCase) {
       this.selectedUseCase =
         this.demoUseCases.find(
-          (config) => config.name === preSelectedUseCase,
+          (config) =>
+            // Using lowercase comparison to avoid mismatches due to URL parameter casing or caching issues
+            config.id.toLowerCase() === preSelectedUseCase.toLowerCase(),
         ) || null;
       this.initializeSystem();
     }

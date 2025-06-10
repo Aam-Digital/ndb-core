@@ -58,4 +58,21 @@ describe("DemoAssistanceDialogComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should preselect use case from route param and initialize system", async () => {
+    const mockConfigs = [{ id: "basic_setup" }] as any;
+    spyOn(component["setupService"], "getAvailableBaseConfig").and.resolveTo(
+      mockConfigs,
+    );
+    spyOn(component, "initializeSystem");
+
+    (TestBed.inject(ActivatedRoute) as any).snapshot = {
+      queryParamMap: new Map([["useCase", "basic_setup"]]),
+    };
+
+    await component.ngOnInit();
+
+    expect(component.selectedUseCase).toEqual(mockConfigs[0]);
+    expect((component as any).initializeSystem).toHaveBeenCalled();
+  });
 });

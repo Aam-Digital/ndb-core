@@ -1,5 +1,6 @@
 [
   {
+    "id": "basic_setup",
     "name": "Basic Setup",
     "description": "A basic setup with minimal configuration to get started quickly.",
     "entitiesToImport": [
@@ -17,6 +18,7 @@
     "locale": "en-US"
   },
   {
+    "id": "education_project",
     "name": "Education Project",
     "description": "School or after-school example.",
     "entitiesToImport": [
@@ -34,6 +36,7 @@
     "locale": "en-US"
   },
   {
+    "id": "bildungsprojekt",
     "name": "Bildungsprojekt",
     "description": "Ein Projekt im Bildungsbereich, z.B. Schule oder außerschulische Unterstützung.",
     "entitiesToImport": [
@@ -42,6 +45,7 @@
     "locale": "de"
   },
   {
+    "id": "projet_deducation",
     "name": "Projet d'éducation",
     "description": "Un projet dans le secteur éducatif, par exemple un soutien scolaire ou parascolaire.",
     "entitiesToImport": [
