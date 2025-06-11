@@ -15,7 +15,6 @@ import { ConfigurableEnumDirective } from "../../basic-datatypes/configurable-en
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
-import { NgIf } from "@angular/common";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -32,7 +31,6 @@ import { NgIf } from "@angular/common";
     FontAwesomeModule,
     MatTooltipModule,
     MatSelectModule,
-    NgIf,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

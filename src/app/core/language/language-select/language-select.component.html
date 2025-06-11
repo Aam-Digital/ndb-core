@@ -1,4 +1,4 @@
-<ng-container *ngIf="displayMode === 'icon'; else dropdownTemplate">
+@if (displayMode === "icon") {
   <button
     mat-icon-button
     [matMenuTriggerFor]="menu"
@@ -7,9 +7,7 @@
   >
     <fa-icon icon="globe" class="toolbar-icon"></fa-icon>
   </button>
-</ng-container>
-
-<ng-template #dropdownTemplate>
+} @else {
   <mat-form-field appearance="fill" class="language-select-dropdown">
     <mat-select
       [value]="siteRegionCode"
@@ -23,7 +21,7 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-</ng-template>
+}
 
 <mat-menu #menu>
   <a
