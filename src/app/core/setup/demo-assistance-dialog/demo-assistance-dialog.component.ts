@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
@@ -6,6 +6,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { ChooseUseCaseComponent } from "../choose-use-case/choose-use-case.component";
 import { Logging } from "../../logging/logging.service";
 import { ActivatedRoute } from "@angular/router";
+import { DemoDataInitializerService } from "../../demo-data/demo-data-initializer.service";
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
 
 @Component({
@@ -20,13 +21,15 @@ import { LanguageSelectComponent } from "app/core/language/language-select/langu
   styleUrl: "./demo-assistance-dialog.component.scss",
 })
 export class DemoAssistanceDialogComponent implements OnInit {
+  private readonly demoDataInitializer = inject(DemoDataInitializerService);
+  private readonly setupService = inject(SetupService);
+
   demoUseCases: BaseConfig[] = [];
   selectedUseCase: BaseConfig | null = null;
   demoInitialized: boolean = false;
   generatingData: boolean = false;
 
   constructor(
-    private setupService: SetupService,
     private dialogRef: MatDialogRef<DemoAssistanceDialogComponent>,
     private route: ActivatedRoute,
   ) {}
@@ -51,7 +54,10 @@ export class DemoAssistanceDialogComponent implements OnInit {
       this.generatingData = true;
 
       try {
-        await this.setupService.initSystem(this.selectedUseCase);
+        await this.setupService.initSystemWithBaseConfig(this.selectedUseCase);
+
+        await this.demoDataInitializer.generateDemoData();
+
         this.demoInitialized = true;
       } catch (error) {
         Logging.error("Error initializing demo data:", error);

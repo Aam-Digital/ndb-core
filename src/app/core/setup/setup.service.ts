@@ -2,24 +2,17 @@ import { inject, Injectable } from "@angular/core";
 import { BaseConfig } from "./base-config";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { HttpClient } from "@angular/common/http";
-import {
-  combineLatest,
-  filter,
-  firstValueFrom,
-  lastValueFrom,
-  merge,
-} from "rxjs";
-import { environment } from "../../../environments/environment";
-import { DemoDataInitializerService } from "../demo-data/demo-data-initializer.service";
+import { combineLatest, filter, firstValueFrom, merge, of } from "rxjs";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { Logging } from "../logging/logging.service";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
-import { asArray } from "../../utils/asArray";
 import { ConfigService } from "../config/config.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
+import { catchError } from "rxjs/operators";
+import { asArray } from "../../utils/asArray";
 
 /**
  * Loads available "scenarios" of base configs
@@ -29,59 +22,55 @@ import { SyncState } from "../session/session-states/sync-state.enum";
   providedIn: "root",
 })
 export class SetupService {
-  private readonly BASE_CONFIGS_FOLDER = "assets/base-configs/";
+  private readonly BASE_CONFIGS_FOLDER = "assets/base-configs";
 
   private readonly httpClient = inject(HttpClient);
   private readonly entityMapper = inject(EntityMapperService);
   private readonly schemaService = inject(EntitySchemaService);
   private readonly entityRegistry = inject(EntityRegistry);
-  private readonly demoDataInitializer = inject(DemoDataInitializerService);
   private readonly loginState = inject(LoginStateSubject);
   private readonly configService = inject(ConfigService);
   private readonly syncState = inject(SyncStateSubject);
 
   async getAvailableBaseConfig(): Promise<BaseConfig[]> {
-    const doc = await lastValueFrom(
-      this.httpClient.get<BaseConfig[]>(
-        this.BASE_CONFIGS_FOLDER + "/available-configs.json",
-        { responseType: "json" },
-      ),
+    const doc = await firstValueFrom(
+      this.httpClient
+        .get<
+          BaseConfig[]
+        >(this.BASE_CONFIGS_FOLDER + "/available-configs.json", { responseType: "json" })
+        .pipe(
+          catchError((e) => {
+            if (e.status === 404) {
+              Logging.warn("No available-configs.json found.");
+              return of([]);
+            } else {
+              throw e;
+            }
+          }),
+        ),
     );
 
     return doc;
   }
 
   /**
-   * Bridge to old DemoDataModule flow of generating demo data.
-   * TODO: remove or refactor to match with new assets configs.
-   * @deprecated will be replaced by calls to initSystemWithBaseConfig()
-   * @private
+   * Initialize the system with the given base config,
+   * saving all given base-config entities to the database.
+   * @param baseConfig
    */
-  async initSystem(baseConfig: BaseConfig): Promise<void> {
-    await this.initSystemWithBaseConfig(baseConfig);
-
-    if (environment.demo_mode) {
-      await this.demoDataInitializer.generateDemoData();
-    }
-  }
-
-  private async initSystemWithBaseConfig(
-    baseConfig: BaseConfig,
-  ): Promise<void> {
+  async initSystemWithBaseConfig(baseConfig: BaseConfig): Promise<void> {
     Logging.debug("Initializing system with new base config", baseConfig);
 
     for (const file of baseConfig.entitiesToImport) {
       const fileName = `${this.BASE_CONFIGS_FOLDER}/${file}`;
 
-      const docs = asArray(
-        await lastValueFrom(
-          this.httpClient.get<Object | Object[]>(fileName, {
-            responseType: "json",
-          }),
-        ),
+      const docs = await firstValueFrom(
+        this.httpClient.get<Object | Object[]>(fileName, {
+          responseType: "json",
+        }),
       );
 
-      for (const doc of docs) {
+      for (const doc of asArray(docs)) {
         const entity = this.parseObjectToEntity(doc);
         if (entity) {
           await this.entityMapper.save(entity);
@@ -120,7 +109,6 @@ export class SetupService {
   /**
    * Check if we are currently still waiting for config to be initialized or downloaded
    * and keep the app on the loading screen until that is done.
-   * @private
    */
   public async detectConfigReadyState(
     mustHaveConfigAndSync: boolean = false,
@@ -143,6 +131,7 @@ export class SetupService {
     } else {
       await firstValueFrom(merge(configReady$, sync$));
     }
+
     return true;
   }
 }
