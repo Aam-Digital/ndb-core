@@ -42,6 +42,9 @@
       ></fa-icon>
     </div>
   </div>
+  <mat-hint *ngIf="hiddenEntities.size > 0" class="hint" i18n>
+    Some records could not be found, accessed, or appear to be corrupted.
+  </mat-hint>
   <mat-error *ngIf="form.errors">
     <app-error-hint [form]="form"></app-error-hint>
   </mat-error>

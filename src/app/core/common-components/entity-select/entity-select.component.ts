@@ -114,6 +114,13 @@ export class EntitySelectComponent<
   allEntities: E[] = [];
   availableOptions = new BehaviorSubject<E[]>([]);
 
+  /**
+   * IDs of entities that the user can’t see in the UI
+   * but which must stay in the FormControl value so
+   * they aren’t lost on save/update.
+   */
+  hiddenEntities = new Set<string>();
+
   @Input() includeInactive: boolean = false;
   currentlyMatchingInactive: number = 0;
 
@@ -171,6 +178,20 @@ export class EntitySelectComponent<
     await this.alignAvailableAndSelectedEntities(newAvailableEntities);
 
     this.availableOptions.next(newAvailableEntities);
+
+    // ensure any inaccessible IDs still in the form’s value
+    const selectedEntities = asArray(this.form.value);
+    const combinedEntities = this.combineWithHiddenEntities(selectedEntities);
+    if (
+      combinedEntities.length !== selectedEntities.length ||
+      !combinedEntities.every((id, i) => id === selectedEntities[i])
+    ) {
+      this.form.setValue(
+        this.multi ? (combinedEntities as any) : (combinedEntities[0] as any),
+        { emitEvent: false },
+      );
+    }
+
     this.recalculateMatchingInactive();
   }
 
@@ -197,9 +218,7 @@ export class EntitySelectComponent<
       if (additionalEntity) {
         availableEntities.push(additionalEntity);
       } else {
-        updatedValue = isMulti(this)
-          ? ((updatedValue as string[]).filter((v) => v !== id) as T)
-          : undefined;
+        this.hiddenEntities.add(id);
       }
     }
 
@@ -265,6 +284,15 @@ export class EntitySelectComponent<
     const dialogRef = this.formDialog.openFormPopup(newEntity);
     return lastValueFrom<E | undefined>(dialogRef.afterClosed());
   };
+
+  /**
+   * Combine the user’s selected IDs with any hidden ones we’re preserving.
+   */
+  private combineWithHiddenEntities(selected: string[]): string[] {
+    return Array.from(
+      new Set([...selected, ...Array.from(this.hiddenEntities)]),
+    );
+  }
 }
 
 function isMulti(
