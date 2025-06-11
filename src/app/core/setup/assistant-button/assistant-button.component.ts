@@ -8,13 +8,17 @@ import { lastValueFrom } from "rxjs";
 import { DemoAssistanceDialogComponent } from "../demo-assistance-dialog/demo-assistance-dialog.component";
 import { SetupService } from "../setup.service";
 
+/**
+ * Button for the toolbar to access a context-aware assistant dialog
+ * for demo, setup and other user guidance.
+ */
 @Component({
-  selector: "app-demo-assistant-button",
+  selector: "app-assistant-button",
   imports: [MatButtonModule],
-  templateUrl: "./demo-assistant-button.component.html",
-  styleUrl: "./demo-assistant-button.component.scss",
+  templateUrl: "./assistant-button.component.html",
+  styleUrl: "./assistant-button.component.scss",
 })
-export class DemoAssistantButtonComponent implements OnInit {
+export class AssistantButtonComponent implements OnInit {
   private readonly configService = inject(ConfigService);
   private readonly setupService = inject(SetupService);
   private readonly dialog = inject(MatDialog);
@@ -30,12 +34,8 @@ export class DemoAssistantButtonComponent implements OnInit {
     if (!this.configService.hasConfig()) {
       // If we do not have a config yet, we open the setup dialog immediately
       // to allow the user to select a base config.
-      this.openDemoSetupDialog();
+      this.openAssistant();
     }
-  }
-
-  openDemoAssistance(): void {
-    this.openDemoSetupDialog();
   }
 
   /**
@@ -45,7 +45,7 @@ export class DemoAssistantButtonComponent implements OnInit {
    * a use case and initializing the system with the corresponding demo data.
    * @returns A promise that resolves with the dialog result when the dialog is closed.
    */
-  async openDemoSetupDialog() {
+  async openAssistant() {
     if (this.isDialogOpen || !this.assistantEnabled) {
       return;
     }

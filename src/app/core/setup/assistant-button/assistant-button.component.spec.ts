@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { DemoAssistantButtonComponent } from "./demo-assistant-button.component";
+import { AssistantButtonComponent } from "./assistant-button.component";
 import {
   LoginStateSubject,
   SyncStateSubject,
@@ -15,12 +15,12 @@ import {
 import { SetupService } from "../setup.service";
 
 describe("DemoAssistantButtonComponent", () => {
-  let component: DemoAssistantButtonComponent;
-  let fixture: ComponentFixture<DemoAssistantButtonComponent>;
+  let component: AssistantButtonComponent;
+  let fixture: ComponentFixture<AssistantButtonComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DemoAssistantButtonComponent],
+      imports: [AssistantButtonComponent],
       providers: [
         CurrentUserSubject,
         LoginStateSubject,
@@ -36,7 +36,7 @@ describe("DemoAssistantButtonComponent", () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DemoAssistantButtonComponent);
+    fixture = TestBed.createComponent(AssistantButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

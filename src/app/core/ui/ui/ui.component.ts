@@ -38,8 +38,8 @@ import { SessionManagerService } from "../../session/session-service/session-man
 import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 import { NotificationComponent } from "../../../features/notification/notification.component";
 import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
-import { DemoAssistantButtonComponent } from "../../setup/demo-assistant-button/demo-assistant-button.component";
 import { SetupService } from "app/core/setup/setup.service";
+import { AssistantButtonComponent } from "../../setup/assistant-button/assistant-button.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -69,7 +69,7 @@ import { SetupService } from "app/core/setup/setup.service";
     SetupWizardButtonComponent,
     NotificationComponent,
     GotoThirdPartySystemComponent,
-    DemoAssistantButtonComponent,
+    AssistantButtonComponent,
     AsyncPipe,
   ],
 })
