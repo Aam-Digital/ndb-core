@@ -125,11 +125,11 @@ export class UserSecurityComponent implements OnInit {
   }
 
   private initializeForm() {
-    this.form.get("email").setValue(this.user.email);
+    this.form.get("email").setValue(this.user?.email);
     this.form
       .get("roles")
       .setValue(
-        this.user.roles.map((role) =>
+        (this.user?.roles ?? []).map((role) =>
           this.availableRoles.find((r) => r.id === role.id),
         ),
       );

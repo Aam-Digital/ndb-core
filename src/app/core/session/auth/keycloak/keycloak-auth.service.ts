@@ -1,5 +1,4 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { inject, Injectable } from "@angular/core";
 import { SessionInfo } from "../session-info";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Logging } from "../../../logging/logging.service";
@@ -7,6 +6,8 @@ import { Entity } from "../../../entity/model/entity";
 import { ParsedJWT, parseJwt } from "../../session-utils";
 import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 import { KeycloakUserDto } from "../../../user/user-admin-service/keycloak-user-dto";
+import { ActivatedRoute } from "@angular/router";
+import { ThirdPartyAuthenticationService } from "../../../../features/third-party-authentication/third-party-authentication.service";
 
 /**
  * Handles the remote session with keycloak
@@ -17,10 +18,9 @@ export class KeycloakAuthService {
   private keycloakInitialised = false;
   accessToken: string;
 
-  constructor(
-    private httpClient: HttpClient,
-    private keycloak: KeycloakService,
-  ) {}
+  private keycloak = inject(KeycloakService);
+  private activatedRoute = inject(ActivatedRoute);
+  private thirdPartyAuthService = inject(ThirdPartyAuthenticationService);
 
   /**
    * Check for an existing session or forward to the login page.
@@ -34,7 +34,10 @@ export class KeycloakAuthService {
     let token = await this.keycloak.getToken();
     if (!token) {
       // Forward to the keycloak login page.
-      await this.keycloak.login({ redirectUri: location.href });
+      await this.keycloak.login({
+        redirectUri: location.href,
+        ...this.thirdPartyAuthService.initSessionParams(this.activatedRoute),
+      });
       token = await this.keycloak.getToken();
     }
 

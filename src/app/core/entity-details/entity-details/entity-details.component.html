@@ -20,7 +20,10 @@
       [routerLink]="['/admin/entity', entity?.getType()]"
       [queryParams]="{ mode: 'details' }"
       queryParamsHandling="merge"
-      *ngIf="'update' | ablePure: 'Config' | async"
+      *ngIf="
+        ('update' | ablePure: 'Config' | async) &&
+        !entityConstructor.isInternalEntity
+      "
     >
       <fa-icon
         class="standard-icon-with-text color-accent"
