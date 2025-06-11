@@ -6,7 +6,11 @@ import {
   LoginStateSubject,
   SyncStateSubject,
 } from "../../session/session-type";
-import { NAVIGATOR_TOKEN, WINDOW_TOKEN } from "app/utils/di-tokens";
+import {
+  LOCATION_TOKEN,
+  NAVIGATOR_TOKEN,
+  WINDOW_TOKEN,
+} from "app/utils/di-tokens";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import {
   entityRegistry,
@@ -21,10 +25,13 @@ import { SessionManagerService } from "../../session/session-service/session-man
 import { SessionSubject } from "../../session/auth/session-info";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ActivatedRoute } from "@angular/router";
+import { LanguageService } from "app/core/language/language.service";
+import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 
 describe("DemoAssistanceDialogComponent", () => {
   let component: DemoAssistanceDialogComponent;
   let fixture: ComponentFixture<DemoAssistanceDialogComponent>;
+  const mockLocation = {} as Location;
 
   beforeEach(async () => {
     const mockWindow: Partial<Window> = {
@@ -44,6 +51,9 @@ describe("DemoAssistanceDialogComponent", () => {
         { provide: NAVIGATOR_TOKEN, useValue: {} },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: ActivatedRoute, useValue: {} },
+        { provide: LanguageService, useValue: {} },
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
+        { provide: EntityAbility, useValue: { can: () => true } },
         SyncStateSubject,
         SessionManagerService,
         SessionSubject,

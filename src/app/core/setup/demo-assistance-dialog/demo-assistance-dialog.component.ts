@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
@@ -6,8 +6,6 @@ import { MatButtonModule } from "@angular/material/button";
 import { ChooseUseCaseComponent } from "../choose-use-case/choose-use-case.component";
 import { Logging } from "../../logging/logging.service";
 import { ActivatedRoute } from "@angular/router";
-import { WINDOW_TOKEN } from "app/utils/di-tokens";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "app/core/language/language-statics";
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
 
 @Component({
@@ -31,7 +29,6 @@ export class DemoAssistanceDialogComponent implements OnInit {
     private setupService: SetupService,
     private dialogRef: MatDialogRef<DemoAssistanceDialogComponent>,
     private route: ActivatedRoute,
-    @Inject(WINDOW_TOKEN) private window: Window,
   ) {}
 
   async ngOnInit(): Promise<void> {

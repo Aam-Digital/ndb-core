@@ -4,7 +4,6 @@ import {
   Inject,
   Input,
 } from "@angular/core";
-import { LanguageService } from "../language.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
 import { MatButtonModule } from "@angular/material/button";
@@ -36,21 +35,11 @@ import { MatSelectModule } from "@angular/material/select";
 })
 export class LanguageSelectComponent {
   localeEnumId = LOCALE_ENUM_ID;
-  /**
-   * The region code of the currently selected language/region
-   */
-  siteRegionCode: string;
-
   currentLocale: string;
+
   @Input() displayMode: "icon" | "dropdown" = "icon";
 
-  constructor(
-    private translationService: LanguageService,
-    @Inject(LOCATION_TOKEN) private location: Location,
-  ) {
-    // this is currently not using anywhere so may be we can remove this?
-    this.siteRegionCode = this.translationService.currentRegionCode();
-
+  constructor(@Inject(LOCATION_TOKEN) private location: Location) {
     this.currentLocale = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
   }
 
