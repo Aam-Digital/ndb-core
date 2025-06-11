@@ -7,19 +7,10 @@
         (selectionChange)="onSelectionChange()"
       >
         @for (useCase of demoUseCases; track useCase) {
-          <mat-option
-            [value]="useCase"
-            [class.greyed-out]="useCase.locale !== locale"
-          >
-            {{ useCase.name }} ({{ useCase.locale }})
+          <mat-option [value]="useCase">
+            {{ useCase.name }}
           </mat-option>
         }
-        <mat-hint class="hint">
-          <span i18n>
-            Use cases in gray are in other languages — you can still select
-            them. The app will be initialized in that language.
-          </span>
-        </mat-hint>
       </mat-select>
     </mat-form-field>
   </div>

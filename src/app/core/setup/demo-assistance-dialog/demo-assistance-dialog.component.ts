@@ -53,12 +53,6 @@ export class DemoAssistanceDialogComponent implements OnInit {
     if (this.selectedUseCase) {
       this.generatingData = true;
 
-      if (this.selectedUseCase?.locale) {
-        this.window.localStorage.setItem(
-          LANGUAGE_LOCAL_STORAGE_KEY,
-          this.selectedUseCase.locale,
-        );
-      }
       try {
         await this.setupService.initSystem(this.selectedUseCase);
         this.demoInitialized = true;

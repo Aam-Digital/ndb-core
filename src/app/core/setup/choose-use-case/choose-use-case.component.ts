@@ -18,19 +18,14 @@ export class ChooseUseCaseComponent {
 
   @Input()
   set demoUseCases(useCases: BaseConfig[]) {
-    this._demoUseCases = useCases || [];
-    this.sortedUseCases = this._demoUseCases.sort((a, b) => {
-      if (a.locale === this.locale && b.locale !== this.locale) return -1;
-      if (a.locale !== this.locale && b.locale === this.locale) return 1;
-      return 0;
-    });
+    this._demoUseCases = useCases?.filter(
+      (useCase) => useCase.locale === this.locale,
+    );
   }
 
   get demoUseCases(): BaseConfig[] {
     return this._demoUseCases;
   }
-
-  sortedUseCases: BaseConfig[] = [];
 
   @Output() selectionChanged = new EventEmitter<BaseConfig>();
 
