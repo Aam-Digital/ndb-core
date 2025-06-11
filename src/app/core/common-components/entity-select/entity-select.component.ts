@@ -106,10 +106,6 @@ export class EntitySelectComponent<
   @Input() showEntities: boolean = true;
 
   /**
-   * IDs of entities that are inaccessible but should remain in the form value
-   */
-  inaccessibleEntities: string[] = [];
-  /**
    * true when this is loading and false when it's ready.
    * This subject's state reflects the actual loading resp. the 'readiness'-
    * state of this component. Will trigger once loading is done
@@ -189,30 +185,27 @@ export class EntitySelectComponent<
       return;
     }
 
-    const inaccessibleIds: string[] = [];
-    const currentValue = asArray(this.form.value);
+    let updatedValue: T = this.form.value;
 
-    const availableEntityIds = new Set(availableEntities.map((e) => e.getId()));
+    for (const id of asArray(this.form.value)) {
+      if (availableEntities.find((e) => id === e.getId())) {
+        // already available, nothing to do
+        continue;
+      }
 
-    for (const id of currentValue) {
-      // Skip if already available
-      if (availableEntityIds.has(id)) continue;
-
-      const entity = await this.getEntity(id);
-
-      if (entity) {
-        // Add to available entities if successfully loaded
-        availableEntities.push(entity);
-        this.allEntities.push(entity);
+      const additionalEntity = await this.getEntity(id);
+      if (additionalEntity) {
+        availableEntities.push(additionalEntity);
       } else {
-        inaccessibleIds.push(id);
+        updatedValue = isMulti(this)
+          ? ((updatedValue as string[]).filter((v) => v !== id) as T)
+          : undefined;
       }
     }
 
-    // Sort after potential additions
-    availableEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
-
-    this.inaccessibleEntities = inaccessibleIds;
+    if (this.form.value !== updatedValue) {
+      this.form.setValue(updatedValue);
+    }
   }
 
   private async getEntity(selectedId: string): Promise<E | undefined> {
