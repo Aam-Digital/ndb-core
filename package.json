@@ -25,7 +25,6 @@
     "stream": "./node_modules/stream-browserify"
   },
   "imports": {
-    "#src/*": "./src/*",
     "#e2e/*": "./e2e/*"
   },
   "dependencies": {
