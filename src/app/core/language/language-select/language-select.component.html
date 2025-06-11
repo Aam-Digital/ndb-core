@@ -1,34 +1,13 @@
-@if (displayMode === "icon") {
-  <button
-    mat-icon-button
-    [matMenuTriggerFor]="menu"
-    matTooltip="Change language"
-    i18n-matTooltip
+<mat-form-field appearance="fill" class="language-select-dropdown">
+  <mat-select
+    [value]="currentLocale"
+    (selectionChange)="changeLocale($event.value)"
   >
-    <fa-icon icon="globe" class="toolbar-icon"></fa-icon>
-  </button>
-} @else {
-  <mat-form-field appearance="fill" class="language-select-dropdown">
-    <mat-select
-      [value]="currentLocale"
-      (selectionChange)="changeLocale($event.value)"
+    <mat-option
+      *appConfigurableEnum="let lang of localeEnumId"
+      [value]="lang.id"
     >
-      <mat-option
-        *appConfigurableEnum="let lang of localeEnumId"
-        [value]="lang.id"
-      >
-        {{ lang.label }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-}
-
-<mat-menu #menu>
-  <a
-    *appConfigurableEnum="let lang of localeEnumId"
-    (click)="changeLocale(lang.id)"
-    mat-menu-item
-  >
-    <span>{{ lang.label }}</span>
-  </a>
-</mat-menu>
+      {{ lang.label }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

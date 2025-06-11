@@ -1,18 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  Input,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, Inject } from "@angular/core";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-import { MatMenuModule } from "@angular/material/menu";
 import { LOCALE_ENUM_ID } from "../languages";
 import { ConfigurableEnumDirective } from "../../basic-datatypes/configurable-enum/configurable-enum-directive/configurable-enum.directive";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatSelectModule } from "@angular/material/select";
 
 /**
@@ -22,22 +12,12 @@ import { MatSelectModule } from "@angular/material/select";
   selector: "app-language-select",
   templateUrl: "./language-select.component.html",
   styleUrls: ["./language-select.component.scss"],
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    ConfigurableEnumDirective,
-    FontAwesomeModule,
-    MatTooltipModule,
-    MatSelectModule,
-  ],
+  imports: [ConfigurableEnumDirective, MatSelectModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSelectComponent {
   localeEnumId = LOCALE_ENUM_ID;
   currentLocale: string;
-
-  @Input() displayMode: "icon" | "dropdown" = "icon";
 
   constructor(@Inject(LOCATION_TOKEN) private location: Location) {
     this.currentLocale = localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY);
