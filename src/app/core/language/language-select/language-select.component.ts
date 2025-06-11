@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  Input,
+} from "@angular/core";
 import { LanguageService } from "../language.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
@@ -9,6 +14,8 @@ import { LOCALE_ENUM_ID } from "../languages";
 import { ConfigurableEnumDirective } from "../../basic-datatypes/configurable-enum/configurable-enum-directive/configurable-enum.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatSelectModule } from "@angular/material/select";
+import { NgIf } from "@angular/common";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -24,6 +31,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     ConfigurableEnumDirective,
     FontAwesomeModule,
     MatTooltipModule,
+    MatSelectModule,
+    NgIf,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -33,6 +42,8 @@ export class LanguageSelectComponent {
    * The region code of the currently selected language/region
    */
   siteRegionCode: string;
+
+  @Input() displayMode: "icon" | "dropdown" = "icon";
 
   constructor(
     private translationService: LanguageService,

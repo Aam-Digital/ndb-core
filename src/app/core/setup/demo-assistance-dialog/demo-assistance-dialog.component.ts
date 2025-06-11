@@ -8,10 +8,16 @@ import { Logging } from "../../logging/logging.service";
 import { ActivatedRoute } from "@angular/router";
 import { WINDOW_TOKEN } from "app/utils/di-tokens";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "app/core/language/language-statics";
+import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
 
 @Component({
   selector: "app-demo-assistance-dialog",
-  imports: [MatDialogModule, MatButtonModule, ChooseUseCaseComponent],
+  imports: [
+    MatDialogModule,
+    MatButtonModule,
+    ChooseUseCaseComponent,
+    LanguageSelectComponent,
+  ],
   templateUrl: "./demo-assistance-dialog.component.html",
   styleUrl: "./demo-assistance-dialog.component.scss",
 })

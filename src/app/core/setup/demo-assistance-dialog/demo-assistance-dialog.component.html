@@ -14,6 +14,10 @@
     </p>
 
     <div class="demo-layout">
+      <div class="language-select-container">
+        <h3 i18n>Select Your Language</h3>
+        <app-language-select displayMode="dropdown"></app-language-select>
+      </div>
       <app-choose-use-case
         [demoUseCases]="demoUseCases"
         (selectionChanged)="onUseCaseSelected($event)"

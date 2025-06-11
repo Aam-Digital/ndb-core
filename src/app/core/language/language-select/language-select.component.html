@@ -1,11 +1,29 @@
-<button
-  mat-icon-button
-  [matMenuTriggerFor]="menu"
-  matTooltip="Change language"
-  i18n-matTooltip
->
-  <fa-icon icon="globe" class="toolbar-icon"></fa-icon>
-</button>
+<ng-container *ngIf="displayMode === 'icon'; else dropdownTemplate">
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    matTooltip="Change language"
+    i18n-matTooltip
+  >
+    <fa-icon icon="globe" class="toolbar-icon"></fa-icon>
+  </button>
+</ng-container>
+
+<ng-template #dropdownTemplate>
+  <mat-form-field appearance="fill" class="language-select-dropdown">
+    <mat-select
+      [value]="siteRegionCode"
+      (selectionChange)="changeLocale($event.value)"
+    >
+      <mat-option
+        *appConfigurableEnum="let lang of localeEnumId"
+        [value]="lang.id"
+      >
+        {{ lang.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-template>
 
 <mat-menu #menu>
   <a
