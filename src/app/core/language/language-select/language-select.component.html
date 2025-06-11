@@ -10,7 +10,7 @@
 } @else {
   <mat-form-field appearance="fill" class="language-select-dropdown">
     <mat-select
-      [value]="siteRegionCode"
+      [value]="currentLocale"
       (selectionChange)="changeLocale($event.value)"
     >
       <mat-option
