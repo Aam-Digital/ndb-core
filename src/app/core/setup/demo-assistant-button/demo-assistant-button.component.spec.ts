@@ -12,6 +12,7 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
+import { SetupService } from "../setup.service";
 
 describe("DemoAssistantButtonComponent", () => {
   let component: DemoAssistantButtonComponent;
@@ -27,6 +28,10 @@ describe("DemoAssistantButtonComponent", () => {
         { provide: KeycloakAuthService, useValue: {} },
         { provide: MatDialogRef, useValue: {} },
         { provide: NAVIGATOR_TOKEN, useValue: {} },
+        {
+          provide: SetupService,
+          useValue: { detectConfigReadyState: Promise.resolve(true) },
+        },
         SyncStateSubject,
       ],
     }).compileComponents();

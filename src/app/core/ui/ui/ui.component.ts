@@ -103,7 +103,7 @@ export class UiComponent {
       (s) => (this.siteSettings = s),
     );
 
-    this.isConfigReady = this.setupService.detectConfigReadyState(true);
+    this.isConfigReady = this.setupService.waitForConfigReady(true);
   }
 
   /**
@@ -113,7 +113,7 @@ export class UiComponent {
     this.sessionManager.logout();
 
     // Re-evaluate config state to update UI layout (e.g., hide toolbar and sidebar after logout)
-    this.isConfigReady = this.setupService.detectConfigReadyState();
+    this.isConfigReady = this.setupService.waitForConfigReady();
   }
 
   closeSidenavOnMobile() {

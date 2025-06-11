@@ -7,11 +7,10 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { Logging } from "../logging/logging.service";
-import { LoginState } from "../session/session-states/login-state.enum";
 import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import { ConfigService } from "../config/config.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
-import { catchError } from "rxjs/operators";
+import { catchError, switchMap } from "rxjs/operators";
 import { asArray } from "../../utils/asArray";
 
 /**
@@ -110,20 +109,16 @@ export class SetupService {
    * Check if we are currently still waiting for config to be initialized or downloaded
    * and keep the app on the loading screen until that is done.
    */
-  public async detectConfigReadyState(
+  public async waitForConfigReady(
     mustHaveConfigAndSync: boolean = false,
   ): Promise<boolean> {
-    // 1. user has to be logged in
-    await firstValueFrom(
-      this.loginState.pipe(filter((state) => state === LoginState.LOGGED_IN)),
-    );
-
-    // 2. Wait for config and/or sync state depending on flag
     const configReady$ = this.configService.configUpdates.pipe(
       filter((c) => c !== undefined),
     );
     const sync$ = this.syncState.pipe(
       filter((state) => state === SyncState.COMPLETED),
+      // make sure config update is already done after the sync:
+      switchMap(() => this.configService.loadOnce()),
     );
 
     if (mustHaveConfigAndSync) {

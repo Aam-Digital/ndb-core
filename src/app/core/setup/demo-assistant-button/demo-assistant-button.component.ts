@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { environment } from "../../../../environments/environment";
-import { LoginStateSubject } from "app/core/session/session-type";
 import { ConfigService } from "app/core/config/config.service";
 import { MatDialog } from "@angular/material/dialog";
 import { ContextAwareDialogComponent } from "../context-aware-dialog/context-aware-dialog.component";
 import { lastValueFrom } from "rxjs";
 import { DemoAssistanceDialogComponent } from "../demo-assistance-dialog/demo-assistance-dialog.component";
+import { SetupService } from "../setup.service";
 
 @Component({
   selector: "app-demo-assistant-button",
@@ -15,17 +15,18 @@ import { DemoAssistanceDialogComponent } from "../demo-assistance-dialog/demo-as
   styleUrl: "./demo-assistant-button.component.scss",
 })
 export class DemoAssistantButtonComponent implements OnInit {
-  private readonly loginState = inject(LoginStateSubject);
   private readonly configService = inject(ConfigService);
+  private readonly setupService = inject(SetupService);
   private readonly dialog = inject(MatDialog);
 
   private isDialogOpen: boolean = false;
 
   assistantEnabled: boolean;
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.assistantEnabled = environment.demo_mode;
 
+    await this.setupService.waitForConfigReady();
     if (!this.configService.hasConfig()) {
       // If we do not have a config yet, we open the setup dialog immediately
       // to allow the user to select a base config.

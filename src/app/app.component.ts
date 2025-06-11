@@ -55,7 +55,7 @@ export class AppComponent {
     private demoDataInitializer: DemoDataInitializerService,
     private setupService: SetupService,
   ) {
-    this.configReady = this.setupService.detectConfigReadyState();
+    this.configReady = this.setupService.waitForConfigReady();
 
     if (environment.demo_mode) {
       this.demoDataInitializer.logInDemoUser();
