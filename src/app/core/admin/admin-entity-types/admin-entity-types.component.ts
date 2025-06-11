@@ -69,7 +69,10 @@ export class AdminEntityTypesComponent implements OnInit {
   protected loadEntityTypes(onlyUserFacing = true) {
     this.entityTypes = this.entities
       .getEntityTypes(onlyUserFacing)
-      .map((e) => e.value);
+      .map((e) => e.value)
+      .filter(
+        (e) => !e.isInternalEntity, // Exclude internal entities
+      );
   }
 
   async create() {

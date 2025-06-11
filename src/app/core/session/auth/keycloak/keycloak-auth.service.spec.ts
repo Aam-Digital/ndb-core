@@ -4,6 +4,7 @@ import { KeycloakAuthService } from "./keycloak-auth.service";
 import { HttpClient } from "@angular/common/http";
 import { KeycloakEventTypeLegacy, KeycloakService } from "keycloak-angular";
 import { Subject } from "rxjs";
+import { ActivatedRoute } from "@angular/router";
 
 /**
  * Check {@link https://jwt.io} to decode the token.
@@ -36,11 +37,13 @@ describe("KeycloakAuthService", () => {
     );
     mockKeycloak.getToken.and.resolveTo(keycloakToken);
     mockKeycloak.updateToken.and.resolveTo(true);
+    let mockActivatedRoute = { snapshot: { queryParams: {} } };
 
     TestBed.configureTestingModule({
       providers: [
         { provide: HttpClient, useValue: mockHttpClient },
         { provide: KeycloakService, useValue: mockKeycloak },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         KeycloakAuthService,
       ],
     });

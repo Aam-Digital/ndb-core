@@ -8,6 +8,7 @@ import { EventAttendanceMap } from "../../child-dev-project/attendance/model/eve
 import { LongTextDatatype } from "../basic-datatypes/string/long-text.datatype";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EntityConfig } from "../entity/entity-config";
+import { ACTIVITY_STATUS_ENUM } from "./default-config/default-activity-status";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -859,6 +860,12 @@ export const defaultJsonConfig = {
         dataType: "configurable-enum",
         additional: INTERACTION_TYPE_CONFIG_ID
       },
+      status: {
+        label: $localize`:RecurringActivity field:Status of activity`,
+        description: $localize`:RecurringActivity field description:This status can be used to automatically update participants' status also.`,
+        dataType: "configurable-enum",
+        additional: ACTIVITY_STATUS_ENUM
+      },
       participants: {
         label: $localize`:Label for the participants of a recurring activity:Participants`,
         dataType: "entity",
@@ -889,7 +896,7 @@ export const defaultJsonConfig = {
     component: "EntityList",
     config: {
       entityType: "RecurringActivity",
-      columns: ["title", "type", "assignedTo"],
+      columns: ["title", "type", "status", "assignedTo"],
       exportConfig: [
         { label: "Title", query: "title" },
         { label: "Type", query: "type" },
@@ -910,7 +917,7 @@ export const defaultJsonConfig = {
               config: {
                 fieldGroups: [
                   { fields: ["title"] },
-                  { fields: ["type"] },
+                  { fields: ["type", "status"] },
                   { fields: ["assignedTo"] }
                 ]
               }
@@ -1004,7 +1011,20 @@ export const defaultJsonConfig = {
       },
       status: {
         dataType: "string",
-        label: $localize`:Label for the status of a child:Status`
+        label: $localize`:Label for the status of a child:Status`,
+        defaultValue: {
+          "mode": "updated-from-referencing-entity",
+          "config": {
+            "relatedReferenceField": "participants",
+            "relatedEntityType": "RecurringActivity",
+            "relatedTriggerField": "status",
+            "automatedMapping": {
+              "PLANNED": "coaching requested",
+              "ONGOING": "in coaching",
+              "COMPLETED": "coaching completed"
+            }
+          }
+        }
       },
       dropoutDate: {
         dataType: "date-only",

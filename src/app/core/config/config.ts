@@ -7,6 +7,8 @@ import { DatabaseEntity } from "../entity/database-entity.decorator";
  */
 @DatabaseEntity("Config")
 export class Config<T = any> extends Entity {
+  static override isInternalEntity = true;
+
   /**
    * The ID for the UI and data-model config
    */

@@ -31,7 +31,7 @@ export default {
         {
           provide: SessionSubject,
           useValue: new BehaviorSubject<SessionInfo>({
-            roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
+            roles: [],
             name: "tester",
             id: "tester",
           }),

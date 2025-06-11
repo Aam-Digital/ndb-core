@@ -1,4 +1,4 @@
-import { expect, test } from "#e2e/fixtures.ts";
+import { expect, test } from "#e2e/fixtures.js";
 
 test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("navigation").getByText("Attendance").click();
@@ -7,53 +7,31 @@ test("Record attendance for one activity", async ({ page }) => {
   const dateField = page.getByLabel("Date");
   await expect(dateField).toHaveValue("1/23/2025");
 
-  await dateField.fill("12/15/2024");
+  await dateField.fill("12/25/2024");
   await dateField.blur();
 
   // FIXME: A simple .click() does not trigger the action and we don’t know why.
-  await page.getByText("School Class 2B").dispatchEvent("click");
+  await page.getByText("Coaching Class 8E").dispatchEvent("click");
 
   await expect(
-    page.getByRole("heading", { name: "School Class 2B" }),
+    page.getByRole("heading", { name: "Coaching Class 8E" }),
   ).toBeVisible();
 
-  await expect(page.getByText("1 / 6")).toBeVisible();
+  await page.addStyleTag({ content: "* { transition: none !important }" });
+
+  await expect(page.getByText("1 / 3")).toBeVisible();
   await page.getByRole("button", { name: "Present" }).click();
 
-  await expect(page.getByText("2 / 6")).toBeVisible();
-  // FIXME: After choosing the attendance option there is a transition to the
-  // tab with the next child. During this transition the roll-call-tab component
-  // briefly shows both tabs. This means we have to explicitly wait for the
-  // transition to start and to finish, otherwise there may be two buttons with
-  // the name "Absent".
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
+  await expect(page.getByText("2 / 3")).toBeVisible();
   await page.getByRole("button", { name: "Absent" }).click();
 
-  await expect(page.getByText("3 / 6")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
+  await expect(page.getByText("3 / 3")).toBeVisible();
   await page.getByRole("button", { name: "Late" }).click();
-
-  await expect(page.getByText("4 / 6")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
-  await page.getByRole("button", { name: "Excused" }).click();
-
-  await expect(page.getByText("5 / 6")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
-  await page.getByRole("button", { name: "Present" }).click();
-
-  await expect(page.getByText("6 / 6")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Present" })).toHaveCount(1);
-  await page.getByRole("button", { name: "Present" }).click();
 
   await page.getByRole("button", { name: "Review Details" }).click();
   await page.getByLabel("status").fill("Status");
 
-  const row = page.getByRole("row").filter({ hasText: "Jitendra Rana" });
+  const row = page.getByRole("row").filter({ hasText: "Atreyee Talwar" });
   await row.getByLabel("Present").click();
   await page.getByRole("option", { name: "Absent" }).click();
   await row.getByPlaceholder("Remarks").fill("CUSTOM REMARK");
@@ -61,13 +39,13 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
 
   await page.getByRole("navigation").getByText("Children").click();
-  await page.getByRole("textbox", { name: "Filter" }).fill("Jitendra");
-  await page.getByRole("cell", { name: "Jitendra Rana" }).click();
+  await page.getByRole("textbox", { name: "Filter" }).fill("Atreyee");
+  await page.getByRole("cell", { name: "Atreyee Talwar" }).click();
   await page.getByRole("tab", { name: "Attendance" }).click();
   await page.getByRole("button", { name: "Choose month and year" }).click();
   await page.getByRole("button", { name: "2024" }).click();
   await page.getByRole("button", { name: "December" }).click();
-  await page.getByRole("button", { name: "December 15," }).click();
+  await page.getByRole("button", { name: "December 25," }).click();
   await expect(page.getByRole("textbox", { name: "Remarks" })).toHaveValue(
     "CUSTOM REMARK",
   );

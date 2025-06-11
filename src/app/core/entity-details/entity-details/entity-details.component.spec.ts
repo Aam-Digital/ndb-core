@@ -97,6 +97,41 @@ describe("EntityDetailsComponent", () => {
       }),
     );
   }));
+
+  it("filters out panels not permitted for the current user role", fakeAsync(() => {
+    const testChild = new TestEntity("Role-Test");
+    TestBed.inject(EntityMapperService).save(testChild);
+    tick();
+    component.id = testChild.getId(true);
+
+    component.panels = [
+      {
+        title: "Visible Panel",
+        components: [
+          { title: "Component A", component: "TestComponent", config: {} },
+        ],
+        permittedUserRoles: ["user_app"],
+      },
+      {
+        title: "Hidden Panel",
+        components: [
+          { title: "Component B", component: "TestComponent", config: {} },
+        ],
+        permittedUserRoles: ["admin_app"],
+      },
+      {
+        title: "Default Panel (without stating permitted roles)",
+        components: [
+          { title: "Component C", component: "TestComponent", config: {} },
+        ],
+      },
+    ];
+    component.ngOnChanges(simpleChangesFor(component, "id", "panels"));
+    tick();
+
+    expect(component.panels.length).toBe(2);
+    expect(component.panels[0].title).toBe("Visible Panel");
+  }));
 });
 
 function simpleChangesFor(component, ...properties: string[]) {
