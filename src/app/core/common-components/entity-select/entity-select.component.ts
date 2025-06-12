@@ -272,12 +272,6 @@ export class EntitySelectComponent<
   };
 }
 
-function isMulti(
-  cmp: EntitySelectComponent<any, string | string[]>,
-): cmp is EntitySelectComponent<any, string[]> {
-  return cmp.multi;
-}
-
 /**
  * Update the given entity by applying the text entered by a user
  * to the most likely appropriate entity field, inferred from the toString representation.
