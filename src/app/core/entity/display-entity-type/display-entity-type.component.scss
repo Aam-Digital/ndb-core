@@ -1,6 +1,4 @@
-@use "variables/sizes";
-
-.display-entity-type {
-  display: inline-block;
-  vertical-align: middle;
+.display-entity-type-label {
+  white-space: normal;
+  word-break: break-word;
 }
