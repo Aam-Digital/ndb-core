@@ -3,11 +3,10 @@
     [value]="currentLocale"
     (selectionChange)="changeLocale($event.value)"
   >
-    <mat-option
-      *appConfigurableEnum="let lang of localeEnumId"
-      [value]="lang.id"
-    >
-      {{ lang.label }}
-    </mat-option>
+    @for (locale of availableLocales; track locale.id) {
+      <mat-option [value]="locale.id">
+        {{ locale.label }}
+      </mat-option>
+    }
   </mat-select>
 </mat-form-field>

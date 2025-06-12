@@ -8,6 +8,8 @@ import { Logging } from "../../logging/logging.service";
 import { ActivatedRoute } from "@angular/router";
 import { DemoDataInitializerService } from "../../demo-data/demo-data-initializer.service";
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
+import { availableLocales } from "app/core/language/languages";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 @Component({
   selector: "app-demo-assistance-dialog",
@@ -28,6 +30,7 @@ export class DemoAssistanceDialogComponent implements OnInit {
   selectedUseCase: BaseConfig | null = null;
   demoInitialized: boolean = false;
   generatingData: boolean = false;
+  availableLocales: ConfigurableEnumValue[];
 
   constructor(
     private dialogRef: MatDialogRef<DemoAssistanceDialogComponent>,
@@ -36,7 +39,12 @@ export class DemoAssistanceDialogComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.demoUseCases = await this.setupService.getAvailableBaseConfig();
-
+    const avilableDemoLocale = new Set(
+      this.demoUseCases.map((useCase) => useCase.locale).filter(Boolean),
+    );
+    this.availableLocales = availableLocales.values.filter((locale) =>
+      avilableDemoLocale.has(locale.id),
+    );
     const preSelectedUseCase = this.route.snapshot.queryParamMap.get("useCase");
     if (preSelectedUseCase) {
       this.selectedUseCase =
