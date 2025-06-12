@@ -119,7 +119,10 @@ export class EntitySelectComponent<
    * but which must stay in the FormControl value so
    * they aren’t lost on save/update.
    */
-  hiddenEntities = new Set<string>();
+  inaccessibleEntityIds: Set<string> = new Set();
+
+  hideOptionFn = (entity: Entity): boolean =>
+    this.inaccessibleEntityIds.has(entity?.getId?.());
 
   @Input() includeInactive: boolean = false;
   currentlyMatchingInactive: number = 0;
@@ -179,19 +182,6 @@ export class EntitySelectComponent<
 
     this.availableOptions.next(newAvailableEntities);
 
-    // ensure any inaccessible IDs still in the form’s value
-    const selectedEntities = asArray(this.form.value);
-    const combinedEntities = this.combineWithHiddenEntities(selectedEntities);
-    if (
-      combinedEntities.length !== selectedEntities.length ||
-      !combinedEntities.every((id, i) => id === selectedEntities[i])
-    ) {
-      this.form.setValue(
-        this.multi ? (combinedEntities as any) : (combinedEntities[0] as any),
-        { emitEvent: false },
-      );
-    }
-
     this.recalculateMatchingInactive();
   }
 
@@ -218,7 +208,11 @@ export class EntitySelectComponent<
       if (additionalEntity) {
         availableEntities.push(additionalEntity);
       } else {
-        this.hiddenEntities.add(id);
+        this.inaccessibleEntityIds.add(id);
+        availableEntities.push({
+          getId: () => id,
+          isHidden: true,
+        } as any);
       }
     }
 
@@ -286,12 +280,10 @@ export class EntitySelectComponent<
   };
 
   /**
-   * Combine the user’s selected IDs with any hidden ones we’re preserving.
+   * Used to hide inaccessible (placeholder) entities in the dropdown.
    */
-  private combineWithHiddenEntities(selected: string[]): string[] {
-    return Array.from(
-      new Set([...selected, ...Array.from(this.hiddenEntities)]),
-    );
+  hideInaccessibleEntity(entity: any): boolean {
+    return !!entity?.isHidden;
   }
 }
 

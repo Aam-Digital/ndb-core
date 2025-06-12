@@ -126,6 +126,7 @@
     <ng-container>
       <mat-chip-row
         *ngFor="let item of _selectedOptions"
+        [hidden]="item.isHidden"
         [editable]="!_disabled"
         class="chip"
       >

@@ -59,6 +59,7 @@ interface SelectableOption<O, V> {
   asString: string;
   asValue: V;
   selected: boolean;
+  isHidden: boolean;
 }
 
 export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
@@ -356,7 +357,9 @@ export class BasicAutocompleteComponent<O, V = O>
           ? this.value?.includes(o.asValue)
           : this.value === o.asValue),
     );
-    this._selectedOptions = this._options.filter((o) => o.selected);
+    this._selectedOptions = this._options.filter(
+      (o) => o.selected && !o.isHidden,
+    );
   }
 
   select(selected: string | SelectableOption<O, V>) {
@@ -420,6 +423,7 @@ export class BasicAutocompleteComponent<O, V = O>
       asValue: this.valueMapper(opt),
       asString: this.optionToString(opt),
       selected: false,
+      isHidden: (opt as any)?.isHidden ?? false,
     };
   }
 
