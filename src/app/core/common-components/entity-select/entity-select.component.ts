@@ -173,7 +173,6 @@ export class EntitySelectComponent<
     await this.alignAvailableAndSelectedEntities(newAvailableEntities);
 
     this.availableOptions.next(newAvailableEntities);
-
     this.recalculateMatchingInactive();
   }
 
