@@ -76,6 +76,7 @@ export class AddressSearchComponent implements OnInit {
   @Output() locationSelected = new EventEmitter<GeoLocation>();
 
   filteredOptions = new Subject<GeoResult[]>();
+  filteredOptionsArray: GeoResult[] = [];
   loading = false;
   nothingFound = false;
   networkError = false;
@@ -92,6 +93,10 @@ export class AddressSearchComponent implements OnInit {
 
   ngOnInit() {
     this.initSearchPipeline();
+    // Keep a local array for isInputInOptions
+    this.filteredOptions.subscribe(options => {
+      this.filteredOptionsArray = options;
+    });
   }
 
   private initSearchPipeline() {
@@ -160,6 +165,13 @@ export class AddressSearchComponent implements OnInit {
 
         return of([]);
       }),
+    );
+  }
+  isInputInOptions(input: string): boolean {
+    if (!input || !this.filteredOptionsArray) return false;
+    const normalizedInput = input.trim().toLowerCase();
+    return this.filteredOptionsArray.some(
+      option => option.display_name.trim().toLowerCase() === normalizedInput
     );
   }
 }
