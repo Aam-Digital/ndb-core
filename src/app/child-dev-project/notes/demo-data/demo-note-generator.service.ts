@@ -89,7 +89,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateNoteForChild(child: Entity, date?: Date): Note {
-    const note = new Note();
+    const note = new Note(faker.string.uuid());
 
     const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
@@ -116,7 +116,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
    * Set all older notes to be "resolved" in order to keep the list of notes needing follow-up limited in the demo.
    */
   private removeFollowUpMarkerForOldNotes(note: Note) {
-    const lastMonths = new Date();
+    const lastMonths = faker.defaultRefDate();
     lastMonths.setMonth(lastMonths.getMonth() - 1);
     if (note.date < lastMonths) {
       note.warningLevel = warningLevels.find((level) => level.id === "OK");
