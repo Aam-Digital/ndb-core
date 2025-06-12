@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnDestroy, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { environment } from "../../../../environments/environment";
 import { ConfigService } from "app/core/config/config.service";
@@ -18,7 +18,9 @@ import { SetupService } from "../setup.service";
   templateUrl: "./assistant-button.component.html",
   styleUrl: "./assistant-button.component.scss",
 })
-export class AssistantButtonComponent implements OnInit {
+export class AssistantButtonComponent implements OnInit, OnDestroy {
+  //todo - need to remove this workaround
+  private static initialized = false;
   private readonly configService = inject(ConfigService);
   private readonly setupService = inject(SetupService);
   private readonly dialog = inject(MatDialog);
@@ -28,7 +30,10 @@ export class AssistantButtonComponent implements OnInit {
   assistantEnabled: boolean;
 
   async ngOnInit() {
+    // if (AssistantButtonComponent.initialized) return;
+    // AssistantButtonComponent.initialized = true;
     this.assistantEnabled = environment.demo_mode;
+    console.log("AssistantButtonComponent init");
 
     await this.setupService.waitForConfigReady();
     if (!this.configService.hasConfig()) {
@@ -36,6 +41,10 @@ export class AssistantButtonComponent implements OnInit {
       // to allow the user to select a base config.
       this.openAssistant();
     }
+  }
+
+  ngOnDestroy() {
+    console.log("AssistantButtonComponent destroyed");
   }
 
   /**
