@@ -102,9 +102,12 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
   filterOptionSelected(filter: Filter<T>, selectedOptions: string[]) {
     filter.selectedOptionValues = selectedOptions;
-    this.hasActiveFilters = this.filterSelections.some(
-      (f) => f.selectedOptionValues?.length > 0,
-    );
+    setTimeout(() => {
+      this.hasActiveFilters = this.filterSelections.some(
+        (f) => f.selectedOptionValues?.length > 0,
+      );
+    });
+
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
       this.updateUrl(filter.name, selectedOptions.toString());

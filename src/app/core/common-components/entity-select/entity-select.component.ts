@@ -204,7 +204,7 @@ export class EntitySelectComponent<
         availableEntities.push({
           getId: () => id,
           isHidden: true,
-        } as any);
+        } as unknown as E);
       }
     }
 
