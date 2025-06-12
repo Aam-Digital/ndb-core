@@ -114,15 +114,7 @@ export class EntitySelectComponent<
   allEntities: E[] = [];
   availableOptions = new BehaviorSubject<E[]>([]);
 
-  /**
-   * IDs of entities that the user can’t see in the UI
-   * but which must stay in the FormControl value so
-   * they aren’t lost on save/update.
-   */
-  inaccessibleEntityIds: Set<string> = new Set();
-
-  hideOptionFn = (entity: Entity): boolean =>
-    this.inaccessibleEntityIds.has(entity?.getId?.());
+  hasInaccessibleEntities: Boolean = false;
 
   @Input() includeInactive: boolean = false;
   currentlyMatchingInactive: number = 0;
@@ -208,7 +200,7 @@ export class EntitySelectComponent<
       if (additionalEntity) {
         availableEntities.push(additionalEntity);
       } else {
-        this.inaccessibleEntityIds.add(id);
+        this.hasInaccessibleEntities = true;
         availableEntities.push({
           getId: () => id,
           isHidden: true,
@@ -278,13 +270,6 @@ export class EntitySelectComponent<
     const dialogRef = this.formDialog.openFormPopup(newEntity);
     return lastValueFrom<E | undefined>(dialogRef.afterClosed());
   };
-
-  /**
-   * Used to hide inaccessible (placeholder) entities in the dropdown.
-   */
-  hideInaccessibleEntity(entity: any): boolean {
-    return !!entity?.isHidden;
-  }
 }
 
 function isMulti(
