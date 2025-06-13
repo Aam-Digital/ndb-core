@@ -1,0 +1,46 @@
+{
+  "_id": "Config:Permissions",
+  "data": {
+    "public": [
+      {
+        "subject": [
+          "Config",
+          "SiteSettings",
+          "PublicFormConfig",
+          "ConfigurableEnum"
+        ],
+        "action": "read"
+      }
+    ],
+    "default": [
+      {
+        "subject": [
+          "Config",
+          "SiteSettings",
+          "PublicFormConfig",
+          "ConfigurableEnum"
+        ],
+        "action": "read"
+      },
+      {
+        "subject": [
+          "NotificationConfig",
+          "NotificationEvent"
+        ],
+        "action": "manage"
+      }
+    ],
+    "user_app": [
+      {
+        "subject": "all",
+        "action": "manage"
+      }
+    ],
+    "admin_app": [
+      {
+        "subject": "all",
+        "action": "manage"
+      }
+    ]
+  }
+}

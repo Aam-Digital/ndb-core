@@ -48,18 +48,40 @@ export class DemoDataInitializerService {
     private sessionInfo: SessionSubject,
   ) {}
 
+  /**
+   * @deprecated use generateDemoData() instead and handle login and user setup separately.
+   */
   async run() {
+    await this.logInDemoUser();
+
+    if (await this.dbResolver.getDatabase().isEmpty()) {
+      // only do demo data generation if the database is empty
+      await this.generateDemoData();
+    }
+
+    this.syncDatabaseOnUserChange();
+  }
+
+  async logInDemoUser() {
+    this.localAuthService.saveUser(this.normalUser);
+    this.localAuthService.saveUser(this.adminUser);
+    await this.sessionManager.offlineLogin(this.normalUser);
+  }
+
+  /**
+   * Generates additional demo data (regardless of whether the demo data is already present).
+   * Make sure a user is logged in before calling this method so that a valid database is available.
+   *
+   * Alternatively, use `DemoDataInitializerService.run()` to do a complete initialization including user setup.
+   */
+  async generateDemoData() {
     const dialogRef = this.dialog.open(
       DemoDataGeneratingProgressDialogComponent,
     );
 
-    this.localAuthService.saveUser(this.normalUser);
-    this.localAuthService.saveUser(this.adminUser);
-    await this.sessionManager.offlineLogin(this.normalUser);
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();
-    this.syncDatabaseOnUserChange();
   }
 
   private syncDatabaseOnUserChange() {

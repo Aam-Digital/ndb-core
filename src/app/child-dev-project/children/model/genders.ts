@@ -1,20 +1,4 @@
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import enumJson from "../../../../assets/base-configs/basic/ConfigurableEnum_genders.json";
 
-export const genders: ConfigurableEnumValue[] = [
-  {
-    id: "",
-    label: "",
-  },
-  {
-    id: "M",
-    label: $localize`:Label gender:male`,
-  },
-  {
-    id: "F",
-    label: $localize`:Label gender:female`,
-  },
-  {
-    id: "X",
-    label: $localize`:Label gender:Non-binary/third gender`,
-  },
-];
+export const genders: ConfigurableEnumValue[] = enumJson.values;
