@@ -1,4 +1,10 @@
+@use "variables/colors";
+
 .chip {
   padding-top: 2px;
   padding-bottom: 2px;
+}
+
+.warning-icon {
+  color: colors.$error;
 }
