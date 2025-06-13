@@ -5,7 +5,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
-import { NgIf } from "@angular/common";
+
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 @DynamicComponent("EditUrl")
@@ -18,9 +18,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     ReactiveFormsModule,
     MatInputModule,
     ErrorHintComponent,
-    NgIf,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
   standalone: true,
 })
 export class EditUrlComponent extends EditComponent<string> implements OnInit {

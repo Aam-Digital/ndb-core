@@ -3,7 +3,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityConstructor } from "../../entity/model/entity";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-import { NgIf } from "@angular/common";
+
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
@@ -13,7 +13,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 @Component({
   selector: "app-entity-field-label",
   templateUrl: "./entity-field-label.component.html",
-  imports: [MatTooltipModule, NgIf],
+  imports: [MatTooltipModule],
 })
 export class EntityFieldLabelComponent implements OnChanges {
   /** field id or full config */

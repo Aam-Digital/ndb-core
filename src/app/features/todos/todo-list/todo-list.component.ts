@@ -17,8 +17,6 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { Logging } from "../../../core/logging/logging.service";
 import {
   AsyncPipe,
-  NgForOf,
-  NgIf,
   NgStyle,
   NgTemplateOutlet,
 } from "@angular/common";
@@ -41,6 +39,7 @@ import { EntityCreateButtonComponent } from "../../../core/common-components/ent
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 import { AblePurePipe } from "@casl/angular";
 
+
 @UntilDestroy()
 @RouteTarget("TodoList")
 @Component({
@@ -49,7 +48,6 @@ import { AblePurePipe } from "@casl/angular";
     "../../../core/entity-list/entity-list/entity-list.component.html",
   imports: [
     AblePurePipe,
-    NgIf,
     NgStyle,
     MatButtonModule,
     Angulartics2OnModule,
@@ -57,7 +55,6 @@ import { AblePurePipe } from "@casl/angular";
     MatMenuModule,
     NgTemplateOutlet,
     MatTabsModule,
-    NgForOf,
     MatFormFieldModule,
     MatInputModule,
     EntitiesTableComponent,

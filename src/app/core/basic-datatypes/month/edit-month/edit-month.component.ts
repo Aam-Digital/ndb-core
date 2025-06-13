@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { EditComponent } from "../../../entity/default-datatype/edit-component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -37,15 +37,14 @@ export const MY_FORMATS = {
 @Component({
   selector: "app-edit-month",
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
     ReactiveFormsModule,
     ErrorHintComponent,
     FontAwesomeModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
   templateUrl: "./edit-month.component.html",
   styleUrls: ["./edit-month.component.scss"],
   providers: [

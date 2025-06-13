@@ -1,6 +1,11 @@
-<img *ngIf="imgSrc" [src]="imgSrc" />
-<img *ngIf="!imgSrc && defaultImage" [src]="defaultImage" />
-<app-fa-dynamic-icon
-  *ngIf="!imgSrc && !defaultImage && defaultIcon"
-  [icon]="defaultIcon"
-></app-fa-dynamic-icon>
+@if (imgSrc) {
+  <img [src]="imgSrc" />
+}
+@if (!imgSrc && defaultImage) {
+  <img [src]="defaultImage" />
+}
+@if (!imgSrc && !defaultImage && defaultIcon) {
+  <app-fa-dynamic-icon
+    [icon]="defaultIcon"
+  ></app-fa-dynamic-icon>
+}

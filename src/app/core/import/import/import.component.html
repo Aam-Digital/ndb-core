@@ -8,13 +8,14 @@
     <ng-template matStepLabel>
       <div i18n="Import Step - upload">Select File</div>
 
-      <div
-        *ngIf="step1.completed"
-        class="step-label-extra"
-        i18n="Import Step - upload - sub-label"
-      >
+      @if (step1.completed) {
+        <div
+          class="step-label-extra"
+          i18n="Import Step - upload - sub-label"
+          >
         {{ rawData?.length }} rows to import
       </div>
+      }
     </ng-template>
 
     <ng-template matStepContent>
@@ -24,7 +25,7 @@
           [disabled]="!step1.completed"
           i18n="import next step button"
           matStepperNext
-        >
+          >
           Continue
         </button>
       </div>
@@ -53,13 +54,14 @@
     <ng-template matStepLabel>
       <div i18n="Import Step - import types">Select Import Type(s)</div>
 
-      <div
-        *ngIf="step2.completed"
-        class="step-label-extra"
-        i18n="Import Step - type - sub-label"
-      >
+      @if (step2.completed) {
+        <div
+          class="step-label-extra"
+          i18n="Import Step - type - sub-label"
+          >
         as {{ importSettings.entityType | entityTypeLabel }}
       </div>
+      }
     </ng-template>
 
     <ng-template matStepContent>
@@ -72,7 +74,7 @@
           [disabled]="!step2.completed"
           i18n="import next step button"
           matStepperNext
-        >
+          >
           Continue
         </button>
       </div>
@@ -98,13 +100,14 @@
     <ng-template matStepLabel>
       <div i18n="Import Step - map columns">Map Columns</div>
 
-      <div
-        *ngIf="step3.completed"
-        class="step-label-extra"
-        i18n="Import Step - map columns - sub-label"
-      >
+      @if (step3.completed) {
+        <div
+          class="step-label-extra"
+          i18n="Import Step - map columns - sub-label"
+          >
         {{ mappedColumnsCount }} columns selected
       </div>
+      }
     </ng-template>
 
     <ng-template matStepContent>
@@ -117,7 +120,7 @@
           [disabled]="!step3.completed"
           i18n="import next step button"
           matStepperNext
-        >
+          >
           Continue
         </button>
       </div>
@@ -147,7 +150,7 @@
           color="warn"
           (click)="reset()"
           i18n="import cancel/reset button"
-        >
+          >
           Cancel
         </button>
       </div>

@@ -18,7 +18,7 @@ import {
   EntityForm,
   EntityFormService,
 } from "../../../core/common-components/entity-form/entity-form.service";
-import { NgIf } from "@angular/common";
+
 import { TodoCompletionComponent } from "../todo-completion/todo-completion/todo-completion.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
@@ -30,13 +30,12 @@ import { FieldGroup } from "../../../core/entity-details/form/field-group";
   templateUrl: "./todo-details.component.html",
   styleUrls: ["./todo-details.component.scss"],
   imports: [
-    NgIf,
     MatDialogModule,
     DialogCloseComponent,
     EntityFormComponent,
     TodoCompletionComponent,
-    DialogButtonsComponent,
-  ],
+    DialogButtonsComponent
+],
 })
 export class TodoDetailsComponent implements OnInit {
   @Input() entity: Todo;

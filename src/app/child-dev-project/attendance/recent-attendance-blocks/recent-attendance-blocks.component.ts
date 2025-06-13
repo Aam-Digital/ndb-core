@@ -9,7 +9,7 @@ import {
   ScreenSize,
   ScreenWidthObserver,
 } from "../../../utils/media/screen-size-observer.service";
-import { NgForOf, SlicePipe } from "@angular/common";
+import { SlicePipe } from "@angular/common";
 import { AttendanceBlockComponent } from "../attendance-block/attendance-block.component";
 
 /**
@@ -22,13 +22,14 @@ import { AttendanceBlockComponent } from "../attendance-block/attendance-block.c
 @Component({
   selector: "app-recent-attendance-blocks",
   template: `
-    <app-attendance-block
-      *ngFor="let att of attendanceList | slice: 0 : maxAttendanceBlocks"
-      [attendanceData]="att"
-      [forChild]="entity.getId()"
-    ></app-attendance-block>
-  `,
-  imports: [NgForOf, SlicePipe, AttendanceBlockComponent],
+    @for (att of attendanceList | slice: 0 : maxAttendanceBlocks; track att) {
+      <app-attendance-block
+        [attendanceData]="att"
+        [forChild]="entity.getId()"
+      ></app-attendance-block>
+    }
+    `,
+  imports: [SlicePipe, AttendanceBlockComponent],
 })
 export class RecentAttendanceBlocksComponent implements OnInit {
   attendanceList: ActivityAttendance[] = [];

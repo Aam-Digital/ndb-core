@@ -8,18 +8,20 @@
           You can also omit some columns. If you do not select anything for a column, that column will be ignored during the import.
           For advanced types, use the button next to the field to configure how values are transformed."
     i18n-text="import - column mapping - help text"
-  >
+    >
   </app-help-button>
 </div>
 
 <div>
-  <div *ngFor="let col of columnMapping">
-    <app-edit-import-column-mapping
-      [columnMapping]="col"
-      [entityCtor]="entityCtor"
-      [usedPropertyNames]="usedPropertyNames"
-      [rawData]="rawData"
-      (columnMappingChange)="updateColumnMapping(col, $event)"
-    />
-  </div>
+  @for (col of columnMapping; track col) {
+    <div>
+      <app-edit-import-column-mapping
+        [columnMapping]="col"
+        [entityCtor]="entityCtor"
+        [usedPropertyNames]="usedPropertyNames"
+        [rawData]="rawData"
+        (columnMappingChange)="updateColumnMapping(col, $event)"
+        />
+    </div>
+  }
 </div>

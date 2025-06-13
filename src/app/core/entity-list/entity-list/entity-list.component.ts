@@ -22,13 +22,7 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  AsyncPipe,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgTemplateOutlet,
-} from "@angular/common";
+import { AsyncPipe, NgStyle, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -82,7 +76,6 @@ import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service
   styleUrls: ["./entity-list.component.scss"],
   providers: [DuplicateRecordService],
   imports: [
-    NgIf,
     NgStyle,
     MatButtonModule,
     Angulartics2OnModule,
@@ -90,7 +83,6 @@ import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service
     MatMenuModule,
     NgTemplateOutlet,
     MatTabsModule,
-    NgForOf,
     MatFormFieldModule,
     MatInputModule,
     EntitiesTableComponent,
@@ -105,9 +97,8 @@ import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service
     EntityCreateButtonComponent,
     AsyncPipe,
     AblePurePipe,
-    ViewActionsComponent,
-    // WARNING: all imports here also need to be set for components extending EntityList, like ChildrenListComponent
-  ],
+    ViewActionsComponent
+],
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>

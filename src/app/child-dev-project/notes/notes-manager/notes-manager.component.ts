@@ -12,7 +12,7 @@ import {
 import { EventNote } from "../../attendance/model/event-note";
 import { merge } from "rxjs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { NgIf } from "@angular/common";
+
 import { FormsModule } from "@angular/forms";
 import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
@@ -40,12 +40,11 @@ export interface NotesManagerConfig {
   imports: [
     EntityListComponent,
     MatSlideToggleModule,
-    NgIf,
     FormsModule,
     Angulartics2Module,
     MatMenuModule,
-    FaDynamicIconComponent,
-  ],
+    FaDynamicIconComponent
+],
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {

@@ -6,7 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
-import { NgForOf } from "@angular/common";
+
 
 @Component({
   selector: "app-custom-interval",
@@ -18,9 +18,8 @@ import { NgForOf } from "@angular/common";
     MatFormFieldModule,
     MatSelectModule,
     MatButtonModule,
-    MatInputModule,
-    NgForOf,
-  ],
+    MatInputModule
+],
 })
 export class CustomIntervalComponent {
   availableUnits: { label: string; unit: string }[] = timeUnitsPrimary;

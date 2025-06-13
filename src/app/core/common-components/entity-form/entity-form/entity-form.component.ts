@@ -11,7 +11,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { NgClass } from "@angular/common";
 import { Subscription } from "rxjs";
 import moment from "moment";
 import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
@@ -37,12 +37,10 @@ import { FormsModule } from "@angular/forms";
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
   imports: [
-    FormsModule, // importing FormsModule ensures that buttons anywhere inside do not trigger form submission / page reload
-    NgForOf,
-    NgIf,
+    FormsModule,
     NgClass,
-    EntityFieldEditComponent,
-  ],
+    EntityFieldEditComponent
+],
 })
 export class EntityFormComponent<T extends Entity = Entity>
   implements OnChanges

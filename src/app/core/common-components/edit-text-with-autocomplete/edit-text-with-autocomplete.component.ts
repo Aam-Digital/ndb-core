@@ -9,7 +9,7 @@ import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-d
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -48,12 +48,10 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
     MatAutocompleteModule,
     AsyncPipe,
     EntityBlockComponent,
-    NgForOf,
-    NgIf,
     FontAwesomeModule,
     MatTooltipModule,
-    ErrorHintComponent,
-  ],
+    ErrorHintComponent
+],
 })
 export class EditTextWithAutocompleteComponent
   extends EditComponent<string>

@@ -6,7 +6,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { NgIf } from "@angular/common";
+
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
@@ -32,9 +32,8 @@ import { TimePeriod } from "./time-period";
     MatSlideToggleModule,
     FormsModule,
     MatTooltipModule,
-    NgIf,
-    PillComponent,
-  ],
+    PillComponent
+],
 })
 export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   extends RelatedEntitiesComponent<E>

@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { NgForOf, NgIf } from "@angular/common";
+
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -24,19 +24,17 @@ import { ReportEntity } from "../../report-config";
   templateUrl: "./select-report.component.html",
   styleUrls: ["./select-report.component.scss"],
   imports: [
-    NgIf,
     MatButtonModule,
     MatFormFieldModule,
     MatSelectModule,
-    NgForOf,
     FormsModule,
     MatDatepickerModule,
     Angulartics2Module,
     ExportDataDirective,
     FontAwesomeModule,
     MatProgressBarModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
 })
 export class SelectReportComponent implements OnChanges {
   @Input() reports: ReportEntity[];

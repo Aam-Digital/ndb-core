@@ -7,7 +7,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -22,11 +22,10 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
 @Component({
   selector: "app-entity-fields-menu",
   imports: [
-    CommonModule,
     MatFormFieldModule,
     ReactiveFormsModule,
-    EntityFieldSelectComponent,
-  ],
+    EntityFieldSelectComponent
+],
   templateUrl: "./entity-fields-menu.component.html",
   styleUrl: "./entity-fields-menu.component.scss",
 })

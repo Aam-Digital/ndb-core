@@ -22,7 +22,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
 import { LoginStateSubject } from "../session-type";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { SessionInfo } from "../auth/session-info";
@@ -44,14 +44,12 @@ import { race, timer } from "rxjs";
   imports: [
     MatCardModule,
     MatButtonModule,
-    NgIf,
     MatProgressBarModule,
     AsyncPipe,
     MatTooltipModule,
     MatListModule,
-    NgForOf,
-    FontAwesomeModule,
-  ],
+    FontAwesomeModule
+],
 })
 export class LoginComponent implements OnInit {
   offlineUsers: SessionInfo[] = [];

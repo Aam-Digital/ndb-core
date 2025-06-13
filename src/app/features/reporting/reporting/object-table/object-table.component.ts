@@ -1,14 +1,14 @@
 import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSort, MatSortModule } from "@angular/material/sort";
-import { NgForOf } from "@angular/common";
+
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 
 @Component({
   selector: "app-object-table",
   templateUrl: "./object-table.component.html",
   styleUrls: ["./object-table.component.scss"],
-  imports: [MatTableModule, NgForOf, MatSortModule, MatPaginatorModule],
+  imports: [MatTableModule, MatSortModule, MatPaginatorModule],
 })
 export class ObjectTableComponent implements OnInit {
   @Input() objects: any[];

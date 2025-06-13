@@ -2,7 +2,7 @@
   appBorderHighlight
   [borderClass]="'border-' + warningLevel"
   class="main-card"
->
+  >
   <mat-card-header>
     <mat-card-title>{{ event?.subject }}</mat-card-title>
   </mat-card-header>
@@ -10,11 +10,11 @@
     <fa-icon icon="child"></fa-icon>
     {{ event.children.length }}
     {event.children.length, plural, one {participant} other {participants}}
-    <ng-container *ngIf="!recurring">
+    @if (!recurring) {
       <span class="sep">/</span>
       <fa-icon icon="calendar"></fa-icon>
       {{ event.date | date: "shortDate" }}
-    </ng-container>
+    }
     <span class="sep">/</span>{{ event.category?.label }}
   </mat-card-content>
 </mat-card>

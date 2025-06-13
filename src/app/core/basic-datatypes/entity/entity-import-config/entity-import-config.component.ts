@@ -10,7 +10,7 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { NgForOf } from "@angular/common";
+
 import { MatButtonModule } from "@angular/material/button";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
@@ -27,12 +27,11 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   imports: [
     MatFormFieldModule,
     MatSelectModule,
-    NgForOf,
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    HelpButtonComponent,
-  ],
+    HelpButtonComponent
+],
 })
 export class EntityImportConfigComponent {
   entity: EntityConstructor;

@@ -3,7 +3,7 @@ import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { QueryDataSource } from "../../../core/database/query-data-source";
 import { Entity } from "../../../core/entity/model/entity";
 import { Database } from "../../../core/database/database";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
@@ -19,15 +19,13 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
   selector: "app-conflict-resolution-list",
   templateUrl: "./conflict-resolution-list.component.html",
   imports: [
-    NgIf,
     MatProgressBarModule,
     AsyncPipe,
     MatTableModule,
     MatSortModule,
     CompareRevComponent,
-    NgForOf,
-    MatPaginatorModule,
-  ],
+    MatPaginatorModule
+],
 })
 export class ConflictResolutionListComponent implements AfterViewInit {
   /** visible table columns in the template */

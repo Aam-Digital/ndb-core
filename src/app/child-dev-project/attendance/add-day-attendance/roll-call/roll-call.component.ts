@@ -19,7 +19,7 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { Logging } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { NgClass } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -61,17 +61,15 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     ]),
   ],
   imports: [
-    NgIf,
     MatProgressBarModule,
     MatButtonModule,
     FontAwesomeModule,
     EntityBlockComponent,
-    NgForOf,
     NgClass,
     RollCallTabComponent,
     HammerModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
   providers: [
     {
       provide: HAMMER_GESTURE_CONFIG,

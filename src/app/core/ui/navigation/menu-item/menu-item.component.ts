@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule, NgForOf } from "@angular/common";
+
 import { MatListModule } from "@angular/material/list";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -13,15 +13,13 @@ import { MatMenuModule } from "@angular/material/menu";
   templateUrl: "./menu-item.component.html",
   styleUrls: ["./menu-item.component.scss"],
   imports: [
-    CommonModule,
     MatListModule,
     FaIconComponent,
     FaDynamicIconComponent,
     RouterLink,
     Angulartics2Module,
-    NgForOf,
-    MatMenuModule,
-  ],
+    MatMenuModule
+],
 })
 export class MenuItemComponent {
   /**

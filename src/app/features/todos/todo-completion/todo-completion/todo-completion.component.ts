@@ -4,7 +4,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisplayTodoCompletionComponent } from "../display-todo-completion/display-todo-completion.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { NgIf } from "@angular/common";
+
 
 @Component({
   selector: "app-todo-completion",
@@ -14,9 +14,8 @@ import { NgIf } from "@angular/common";
     MatButtonModule,
     FontAwesomeModule,
     DisplayTodoCompletionComponent,
-    MatTooltipModule,
-    NgIf,
-  ],
+    MatTooltipModule
+],
 })
 export class TodoCompletionComponent {
   @Input() entity: Todo;

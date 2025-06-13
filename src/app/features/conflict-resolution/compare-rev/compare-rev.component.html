@@ -1,84 +1,85 @@
-<mat-expansion-panel (opened)="loadRev()" *ngIf="!resolution">
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <span [matTooltip]="docString" (mouseover)="docString = stringify(doc)">{{
-        rev
-      }}</span>
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-
-  <div class="flex-row gap-small">
-    <div>
-      <label
-        for="conflictingDiff"
-        i18n="Signals that there are conflicting database-entities"
-      >
+@if (!resolution) {
+  <mat-expansion-panel (opened)="loadRev()">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <span [matTooltip]="docString" (mouseover)="docString = stringify(doc)">{{
+          rev
+        }}</span>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="flex-row gap-small">
+      <div>
+        <label
+          for="conflictingDiff"
+          i18n="Signals that there are conflicting database-entities"
+          >
         Conflicting Entity:
       </label>
-      <textarea
-        id="conflictingDiff"
-        cdkTextareaAutosize
-        class="diffText conflicting"
-        disabled
-      >
-        {{ diffs }}
-      </textarea>
-      <button
-        mat-raised-button
-        class="full-width"
-        (click)="resolveByManualEdit(diffs)"
-        i18n
-      >
+        <textarea
+          id="conflictingDiff"
+          cdkTextareaAutosize
+          class="diffText conflicting"
+          disabled
+          >
+          {{ diffs }}
+        </textarea>
+        <button
+          mat-raised-button
+          class="full-width"
+          (click)="resolveByManualEdit(diffs)"
+          i18n
+          >
         Choose conflicting version
       </button>
-    </div>
-
-    <div>
-      <label for="customDiff">Custom Resolution:</label>
-      <textarea
-        id="customDiff"
-        cdkTextareaAutosize
-        class="diffText custom"
-        [(ngModel)]="diffsCustom"
-      >
-      </textarea>
-      <button
-        mat-raised-button
-        class="full-width"
-        (click)="resolveByManualEdit(diffsCustom)"
-        i18n
-      >
+      </div>
+      <div>
+        <label for="customDiff">Custom Resolution:</label>
+        <textarea
+          id="customDiff"
+          cdkTextareaAutosize
+          class="diffText custom"
+          [(ngModel)]="diffsCustom"
+          >
+        </textarea>
+        <button
+          mat-raised-button
+          class="full-width"
+          (click)="resolveByManualEdit(diffsCustom)"
+          i18n
+          >
         Save manually resolved record
       </button>
-    </div>
-
-    <div>
-      <label for="currentDiff" i18n="A currently selected entity">
+      </div>
+      <div>
+        <label for="currentDiff" i18n="A currently selected entity">
         Current Entity:
       </label>
-      <textarea
-        id="currentDiff"
-        cdkTextareaAutosize
-        class="diffText current"
-        disabled
-      >
-        {{ diffsReverse }}
-      </textarea>
-      <button
-        mat-raised-button
-        class="full-width"
-        (click)="resolveByDelete(revDoc)"
+        <textarea
+          id="currentDiff"
+          cdkTextareaAutosize
+          class="diffText current"
+          disabled
+          >
+          {{ diffsReverse }}
+        </textarea>
+        <button
+          mat-raised-button
+          class="full-width"
+          (click)="resolveByDelete(revDoc)"
         i18n="
           Choose a current version between several conflicting versions of
           database entries
         "
-      >
+          >
         Choose current version
       </button>
+      </div>
     </div>
-  </div>
-</mat-expansion-panel>
+  </mat-expansion-panel>
+}
 
-<div *ngIf="resolution">
-  <em>Resolved ({{ resolution }})</em>
-</div>
+@if (resolution) {
+  <div>
+    <em>Resolved ({{ resolution }})</em>
+  </div>
+}

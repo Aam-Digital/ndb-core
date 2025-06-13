@@ -32,7 +32,6 @@ import { FilterService } from "../../../core/filter/filter.service";
     MatSlideToggleModule,
     FormsModule,
     MatTooltipModule,
-    NgIf,
     PillComponent,
   ],
 })

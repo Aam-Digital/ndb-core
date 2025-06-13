@@ -1,26 +1,28 @@
 <div
   class="form-buttons-wrapper padding-bottom-small flex-row gap-small align-self-end"
->
-  <button
-    *ngIf="form?.formGroup.enabled"
-    mat-raised-button
-    color="accent"
-    (click)="saveClicked()"
-    i18n="Save button for forms"
   >
+  @if (form?.formGroup.enabled) {
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="saveClicked()"
+      i18n="Save button for forms"
+      >
     Save
   </button>
+  }
 
-  <button
-    *ngIf="form?.formGroup.enabled"
-    mat-stroked-button
-    (click)="cancelClicked()"
-    i18n="Cancel button for forms"
-  >
+  @if (form?.formGroup.enabled) {
+    <button
+      mat-stroked-button
+      (click)="cancelClicked()"
+      i18n="Cancel button for forms"
+      >
     Cancel
   </button>
+  }
 
-  <ng-container *ngIf="form?.formGroup.disabled && !entity?.anonymized">
+  @if (form?.formGroup.disabled && !entity?.anonymized) {
     <button
       mat-raised-button
       (click)="form?.formGroup.enable()"
@@ -29,15 +31,16 @@
         operation: 'update',
       }"
       i18n="Edit button for forms"
-    >
+      >
       Edit
     </button>
-  </ng-container>
+  }
 </div>
 
-<app-entity-form
-  *ngIf="form"
-  [entity]="entity"
-  [fieldGroups]="fieldGroups"
-  [form]="form"
-></app-entity-form>
+@if (form) {
+  <app-entity-form
+    [entity]="entity"
+    [fieldGroups]="fieldGroups"
+    [form]="form"
+  ></app-entity-form>
+}

@@ -5,7 +5,7 @@ import {
 } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { NgForOf, NgIf } from "@angular/common";
+
 import { MatTabsModule } from "@angular/material/tabs";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
@@ -34,11 +34,9 @@ import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admi
     AdminEntityFormComponent,
     AdminEntityPanelComponentComponent,
     MatTooltipModule,
-    NgForOf,
-    NgIf,
     AdminTabsComponent,
-    AdminTabTemplateDirective,
-  ],
+    AdminTabTemplateDirective
+],
 })
 export class AdminEntityDetailsComponent {
   @Input() entityConstructor: EntityConstructor;

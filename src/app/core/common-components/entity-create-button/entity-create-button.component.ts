@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
@@ -11,14 +11,13 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 @Component({
   selector: "app-entity-create-button",
   imports: [
-    CommonModule,
     DisableEntityOperationDirective,
     FaIconComponent,
     MatButtonModule,
     MatTableModule,
     Angulartics2OnModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
   templateUrl: "./entity-create-button.component.html",
   styleUrl: "./entity-create-button.component.scss",
 })

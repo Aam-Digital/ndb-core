@@ -1,21 +1,25 @@
-<div *ngIf="loading">
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-</div>
+@if (loading) {
+  <div>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+}
 
-<div class="flex-row flex-wrap gap-large" *ngIf="!loading">
-  <app-attendance-calendar
-    class="flex-grow"
-    [records]="combinedAttendance?.events || []"
-    [highlightForChild]="forChild"
-    [activity]="entity"
-  ></app-attendance-calendar>
-  <app-attendance-summary
-    [attendance]="combinedAttendance"
-    [forChild]="forChild"
-    [columns]="columns"
-    class="margin-top-regular flex-grow"
-  ></app-attendance-summary>
-</div>
+@if (!loading) {
+  <div class="flex-row flex-wrap gap-large">
+    <app-attendance-calendar
+      class="flex-grow"
+      [records]="combinedAttendance?.events || []"
+      [highlightForChild]="forChild"
+      [activity]="entity"
+    ></app-attendance-calendar>
+    <app-attendance-summary
+      [attendance]="combinedAttendance"
+      [forChild]="forChild"
+      [columns]="columns"
+      class="margin-top-regular flex-grow"
+    ></app-attendance-summary>
+  </div>
+}
 
 <app-entities-table
   [entityType]="entityCtr"
@@ -25,7 +29,7 @@
   (entityClick)="showDetails($event)"
   [getBackgroundColor]="getBackgroundColor"
   [editable]="false"
->
+  >
 </app-entities-table>
 
 <div class="margin-top-regular">
@@ -40,7 +44,7 @@
       show-unrelated button
     "
     matTooltip="Activate to also show entries for the activity that do not have any events with actual participation of this person"
-  >
+    >
     Also show unrelated
   </mat-slide-toggle>
   &nbsp;
@@ -50,7 +54,7 @@
     "
     mat-stroked-button
     (click)="init(true)"
-  >
+    >
     Load all records
   </button>
 </div>

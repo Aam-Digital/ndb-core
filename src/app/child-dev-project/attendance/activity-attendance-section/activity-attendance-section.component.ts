@@ -10,7 +10,7 @@ import {
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";
-import { formatPercent, NgIf } from "@angular/common";
+import { formatPercent } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import moment from "moment";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
@@ -29,15 +29,14 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
   selector: "app-activity-attendance-section",
   templateUrl: "./activity-attendance-section.component.html",
   imports: [
-    NgIf,
     MatProgressBarModule,
     EntitiesTableComponent,
     MatSlideToggleModule,
     MatTooltipModule,
     MatButtonModule,
     AttendanceCalendarComponent,
-    AttendanceSummaryComponent,
-  ],
+    AttendanceSummaryComponent
+],
 })
 export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   @Input() entity: RecurringActivity;

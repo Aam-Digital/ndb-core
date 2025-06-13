@@ -9,7 +9,7 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { MatInputModule } from "@angular/material/input";
-import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
+import { DatePipe, NgClass } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
@@ -27,14 +27,12 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
     MatDialogModule,
     MatInputModule,
     ReactiveFormsModule,
-    NgIf,
     MatListModule,
-    NgForOf,
     NgClass,
     DatePipe,
     MatButtonModule,
-    HelpButtonComponent,
-  ],
+    HelpButtonComponent
+],
 })
 export class DateImportConfigComponent {
   format = new FormControl("");

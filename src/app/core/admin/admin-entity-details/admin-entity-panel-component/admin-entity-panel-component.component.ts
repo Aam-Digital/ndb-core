@@ -1,11 +1,11 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 
 @Component({
   selector: "app-admin-entity-panel-component",
-  imports: [CommonModule],
+  imports: [],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
 })

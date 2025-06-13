@@ -8,7 +8,7 @@ import {
 import { Entity } from "../../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { NgIf } from "@angular/common";
+
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 
@@ -27,7 +27,7 @@ export interface ImportDialogData {
   selector: "app-import-confirm-summary",
   templateUrl: "./import-confirm-summary.component.html",
   styleUrls: ["./import-confirm-summary.component.scss"],
-  imports: [MatDialogModule, NgIf, MatProgressBarModule, MatButtonModule],
+  imports: [MatDialogModule, MatProgressBarModule, MatButtonModule],
 })
 export class ImportConfirmSummaryComponent {
   importInProgress: boolean;

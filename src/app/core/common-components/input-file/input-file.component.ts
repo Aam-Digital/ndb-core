@@ -6,7 +6,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NgIf } from "@angular/common";
+
 
 /**
  * Form Field to select and parse a file.
@@ -21,9 +21,8 @@ import { NgIf } from "@angular/common";
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
-    FontAwesomeModule,
-    NgIf,
-  ],
+    FontAwesomeModule
+],
 })
 export class InputFileComponent<T = any> {
   /** returns parsed data as an object on completing load after user selects a file */

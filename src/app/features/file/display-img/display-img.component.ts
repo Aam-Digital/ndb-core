@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
-import { NgIf } from "@angular/common";
+
 import { FileService } from "../file.service";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
@@ -8,7 +8,7 @@ import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynam
   selector: "app-display-img",
   templateUrl: "./display-img.component.html",
   styleUrls: ["./display-img.component.scss"],
-  imports: [FaDynamicIconComponent, NgIf],
+  imports: [FaDynamicIconComponent],
 })
 export class DisplayImgComponent implements OnChanges {
   @Input() defaultImage: string;

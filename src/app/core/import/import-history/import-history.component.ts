@@ -6,7 +6,7 @@ import { ConfirmationDialogService } from "../../common-components/confirmation-
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -23,10 +23,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     EntityTypeLabelPipe,
     EntityBlockComponent,
     MatButtonModule,
-    NgIf,
-    NgForOf,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
 })
 export class ImportHistoryComponent implements OnInit {
   @Input() data: any[];
