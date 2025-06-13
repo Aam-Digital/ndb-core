@@ -423,7 +423,7 @@ export class BasicAutocompleteComponent<O, V = O>
       asValue: this.valueMapper(opt),
       asString: this.optionToString(opt),
       selected: false,
-      isHidden: (opt as any)?.isHidden ?? false,
+      isHidden: (opt as SelectableOption<O, V>)?.isHidden ?? false,
     };
   }
 
