@@ -230,7 +230,7 @@ export class Entity {
   }
 
   /** actual id without prefix */
-  get entityId(): string {
+  private get entityId(): string {
     return Entity.extractEntityIdFromId(this._id);
   }
 
@@ -238,7 +238,7 @@ export class Entity {
    * Set id without prefix.
    * @param newEntityId The new id without prefix.
    */
-  set entityId(newEntityId: string) {
+  private set entityId(newEntityId: string) {
     this._id = Entity.createPrefixedId(this.getType(), newEntityId);
   }
 
