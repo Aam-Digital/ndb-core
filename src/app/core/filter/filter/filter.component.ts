@@ -102,6 +102,8 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
   filterOptionSelected(filter: Filter<T>, selectedOptions: string[]) {
     filter.selectedOptionValues = selectedOptions;
+    // It is only safe to update `hasActiveFilters` after the view is rendered.
+    // Using setTimeout ensures the change happens after Angular’s check cycle.
     setTimeout(() => {
       this.hasActiveFilters = this.filterSelections.some(
         (f) => f.selectedOptionValues?.length > 0,
