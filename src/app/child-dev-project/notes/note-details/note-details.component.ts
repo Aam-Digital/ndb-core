@@ -107,6 +107,12 @@ export class NoteDetailsComponent
   override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
+    await this.initForm();
+  }
+
+  private async initForm() {
+    if (!this.entity) return;
+
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 
