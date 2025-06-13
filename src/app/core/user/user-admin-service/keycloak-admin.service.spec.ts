@@ -7,8 +7,9 @@ import { KeycloakAdminService } from "./keycloak-admin.service";
 import { environment } from "../../../../environments/environment.spec";
 import { Role } from "./user-account";
 import { UserAdminApiError } from "./user-admin.service";
+import { Logging } from "app/core/logging/logging.service";
 
-describe("KeycloakAdminService", () => {
+fdescribe("KeycloakAdminService", () => {
   let service: KeycloakAdminService;
   let httpTestingController: HttpTestingController;
 
@@ -98,6 +99,27 @@ describe("KeycloakAdminService", () => {
           req.method === "PUT",
       )
       .flush({});
+  }));
+
+  it("should return false and log warning if user does not exist in Keycloak during deletion", fakeAsync(() => {
+    const warnSpy = spyOn(Logging, "warn");
+
+    service.deleteUser("test-id").subscribe((response) => {
+      expect(response.userDeleted).toBeFalse();
+    });
+
+    const reqGet = httpTestingController.expectOne(
+      `${BASE_URL}/users?q=exact_username:test-id&exact=true`,
+    );
+    expect(reqGet.request.method).toBe("GET");
+
+    reqGet.flush([], { status: 200, statusText: "OK" });
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      "failed to delete user account",
+      jasmine.anything(),
+      jasmine.anything(),
+    );
   }));
 
   it("should throw well-defined error when created user's email already exists", fakeAsync(() => {
