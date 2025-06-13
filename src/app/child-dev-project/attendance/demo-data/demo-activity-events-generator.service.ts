@@ -26,7 +26,9 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
     activity: RecurringActivity,
     date: Date,
   ): EventNote {
-    const eventNote = EventNote.create(date, activity.title);
+    const eventNote = new EventNote(faker.string.uuid());
+    eventNote.date = date;
+    eventNote.subject = activity.title;
     eventNote.authors = activity.assignedTo;
     eventNote.category = activity.type;
     eventNote.relatesTo = activity.getId();
@@ -84,7 +86,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
         dayOffset < this.config.forNLastYears * 365;
         dayOffset++
       ) {
-        const date = moment().subtract(dayOffset, "days");
+        const date = moment(faker.defaultRefDate()).subtract(dayOffset, "days");
         if (date.isoWeekday() === 6 || date.isoWeekday() === 7) {
           // skip Saturday, Sunday
           continue;

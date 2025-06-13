@@ -113,6 +113,8 @@ export class EntitySelectComponent<
   allEntities: E[] = [];
   availableOptions = new BehaviorSubject<E[]>([]);
 
+  hasInaccessibleEntities: Boolean = false;
+
   @Input() includeInactive: boolean = false;
   currentlyMatchingInactive: number = 0;
 
@@ -196,9 +198,11 @@ export class EntitySelectComponent<
       if (additionalEntity) {
         availableEntities.push(additionalEntity);
       } else {
-        updatedValue = isMulti(this)
-          ? ((updatedValue as string[]).filter((v) => v !== id) as T)
-          : undefined;
+        this.hasInaccessibleEntities = true;
+        availableEntities.push({
+          getId: () => id,
+          isHidden: true,
+        } as unknown as E);
       }
     }
 
@@ -264,12 +268,6 @@ export class EntitySelectComponent<
     const dialogRef = this.formDialog.openFormPopup(newEntity);
     return lastValueFrom<E | undefined>(dialogRef.afterClosed());
   };
-}
-
-function isMulti(
-  cmp: EntitySelectComponent<any, string | string[]>,
-): cmp is EntitySelectComponent<any, string[]> {
-  return cmp.multi;
 }
 
 /**
