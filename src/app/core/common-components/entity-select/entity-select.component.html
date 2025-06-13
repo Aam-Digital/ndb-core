@@ -49,18 +49,22 @@
     </div>
   </div>
 
-  <mat-hint *ngIf="hasInaccessibleEntities" class="hint">
-    <fa-icon
-      icon="warning"
-      class="standard-icon-with-text warning-icon"
-    ></fa-icon>
-    <span i18n
-      >Some records are hidden because you do not have permission to access them
+  @if (hasInaccessibleEntities) {
+    <mat-hint class="hint">
+      <fa-icon
+        icon="warning"
+        class="standard-icon-with-text warning-icon"
+      ></fa-icon>
+      <span i18n
+        >Some records are hidden because you do not have permission to access them
       (or they could not be found for other reasons).</span
-    >
-  </mat-hint>
+        >
+      </mat-hint>
+    }
 
-  <mat-error *ngIf="form.errors">
-    <app-error-hint [form]="form"></app-error-hint>
-  </mat-error>
-</mat-form-field>
+    @if (form.errors) {
+      <mat-error>
+        <app-error-hint [form]="form"></app-error-hint>
+      </mat-error>
+    }
+  </mat-form-field>
