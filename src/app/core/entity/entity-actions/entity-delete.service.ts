@@ -43,7 +43,9 @@ export class EntityDeleteService extends CascadingEntityAction {
     entity: Entity,
     showKeycloakWarning = false,
   ): Promise<CascadingActionResult> {
-    if ("User" === entity.getType()) {
+    const entityType = entity.getConstructor();
+    console.log(entityType.enableUserAccounts, "enable?");
+    if (entityType?.enableUserAccounts) {
       this.userAdminService.deleteUser(entity.getId()).subscribe({
         next: () => {},
         error: () => {

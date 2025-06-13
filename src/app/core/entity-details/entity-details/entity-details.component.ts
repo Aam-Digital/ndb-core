@@ -80,7 +80,7 @@ export class EntityDetailsComponent
   }
 
   private initPanels() {
-    this.panels = this.panels
+    let filteredPanels = this.panels
       .filter((p) =>
         this.hasRequiredRole({ permittedUserRoles: p?.permittedUserRoles }),
       )
@@ -92,8 +92,23 @@ export class EntityDetailsComponent
           config: this.getPanelConfig(c),
         })),
       }));
-  }
 
+    const canHaveUserAccount = this.entityConstructor?.enableUserAccounts;
+    console.log(this.entityConstructor.enableUserAccounts, "cejhhev");
+    if (canHaveUserAccount) {
+      filteredPanels.push({
+        title: $localize`:Panel title:Security`,
+        components: [
+          {
+            title: "",
+            component: "UserSecurity",
+            config: this.getPanelConfig({ component: "UserSecurity" }),
+          },
+        ],
+      });
+    }
+    this.panels = filteredPanels;
+  }
   /**
    * Checks if the current user has access based on permitted user roles.
    * Accepts a config object containing an optional `permittedUserRoles` array.
