@@ -80,7 +80,7 @@ export class EntityDetailsComponent
   }
 
   private initPanels() {
-    this.panels = this.panels
+    let filteredPanels = this.panels
       .filter((p) =>
         this.hasRequiredRole({ permittedUserRoles: p?.permittedUserRoles }),
       )
@@ -92,6 +92,22 @@ export class EntityDetailsComponent
           config: this.getPanelConfig(c),
         })),
       }));
+
+    const canHaveUserAccount = this.entityConstructor?.enableUserAccounts;
+    if (canHaveUserAccount) {
+      filteredPanels.push({
+        title: $localize`:Panel title:User Account`,
+        components: [
+          {
+            title: "",
+            component: "UserSecurity",
+            config: this.getPanelConfig({ component: "UserSecurity" }),
+          },
+        ],
+      });
+    }
+
+    this.panels = filteredPanels;
   }
 
   /**
