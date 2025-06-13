@@ -96,7 +96,7 @@ export class EntityDetailsComponent
     const canHaveUserAccount = this.entityConstructor?.enableUserAccounts;
     if (canHaveUserAccount) {
       filteredPanels.push({
-        title: $localize`:Panel title:Security`,
+        title: $localize`:Panel title:User Account`,
         components: [
           {
             title: "",
@@ -106,6 +106,7 @@ export class EntityDetailsComponent
         ],
       });
     }
+
     this.panels = filteredPanels;
   }
 
