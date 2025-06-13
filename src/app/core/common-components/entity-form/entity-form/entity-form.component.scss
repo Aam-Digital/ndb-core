@@ -17,6 +17,10 @@
   mat-form-field {
     width: 100%;
     max-width: 864px;
+
+    // Adding this because with `subscriptSizing="dynamic"`, Angular Material no longer applies the default bottom margin.
+    // This ensures consistent spacing between form fields.
+    margin-bottom: 22px;
   }
 
   /* We align the photo (and only tht photo) to the center of the cell if there is one.
