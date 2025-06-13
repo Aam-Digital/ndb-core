@@ -93,39 +93,20 @@ export class EntityDetailsComponent
         })),
       }));
 
-    const userAccountPanel = this.getUserAccountPanel();
-    if (userAccountPanel) {
-      filteredPanels.push(userAccountPanel);
+    const canHaveUserAccount = this.entityConstructor?.enableUserAccounts;
+    if (canHaveUserAccount) {
+      filteredPanels.push({
+        title: $localize`:Panel title:Security`,
+        components: [
+          {
+            title: "",
+            component: "UserSecurity",
+            config: this.getPanelConfig({ component: "UserSecurity" }),
+          },
+        ],
+      });
     }
     this.panels = filteredPanels;
-  }
-
-  /**
-   * Returns an additional panel for managing user account security settings
-   * if the current entity type has user accounts enabled.
-   * This panel is dynamically added to the list of entity detail panels.
-   */
-  private getUserAccountPanel(): {
-    title: string;
-    components: {
-      title: string;
-      component: string;
-      config: PanelConfig<any>;
-    }[];
-  } | null {
-    const canHaveUserAccount = this.entityConstructor?.enableUserAccounts;
-    if (!canHaveUserAccount) return null;
-
-    return {
-      title: $localize`:Panel title:Security`,
-      components: [
-        {
-          title: "",
-          component: "UserSecurity",
-          config: this.getPanelConfig({ component: "UserSecurity" }),
-        },
-      ],
-    };
   }
 
   /**
