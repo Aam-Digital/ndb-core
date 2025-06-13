@@ -5,7 +5,7 @@ import {
   GroupByDescription,
 } from "../report-row";
 import moment from "moment";
-import { DatePipe, JsonPipe, NgIf } from "@angular/common";
+import { DatePipe, JsonPipe } from "@angular/common";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
 import { ReportRowComponent } from "./report-row/report-row.component";
@@ -27,15 +27,14 @@ import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],
   imports: [
-    NgIf,
     ViewTitleComponent,
     SelectReportComponent,
     ReportRowComponent,
     ObjectTableComponent,
     DatePipe,
     JsonPipe,
-    SqlV2TableComponent,
-  ],
+    SqlV2TableComponent
+],
 })
 export class ReportingComponent {
   reports: ReportEntity[];

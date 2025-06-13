@@ -27,7 +27,7 @@ import {
 } from "../../../common-components/entity-form/FormConfig";
 import { AdminEntityService } from "../../admin-entity.service";
 import { lastValueFrom } from "rxjs";
-import { NgForOf, NgIf } from "@angular/common";
+
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -51,16 +51,14 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
   ],
   imports: [
     DragDropModule,
-    NgForOf,
     FaIconComponent,
     MatButtonModule,
     MatTooltipModule,
     MatCardModule,
     EntityFieldLabelComponent,
     EntityFieldEditComponent,
-    AdminSectionHeaderComponent,
-    NgIf,
-  ],
+    AdminSectionHeaderComponent
+],
 })
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -20,13 +20,12 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 @Component({
   selector: "app-admin-section-header",
   imports: [
-    CommonModule,
     FaIconComponent,
     FormsModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule,
-  ],
+    MatInputModule
+],
   templateUrl: "./admin-section-header.component.html",
   styleUrl: "./admin-section-header.component.scss",
 })

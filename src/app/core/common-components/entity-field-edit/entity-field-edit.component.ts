@@ -11,7 +11,7 @@ import {
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
-import { NgClass, NgIf } from "@angular/common";
+import { NgClass } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { InheritedValueButtonComponent } from "../../../features/default-value-inherited/inherited-value-button/inherited-value-button.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -34,14 +34,13 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
   imports: [
     DynamicComponentDirective,
     HelpButtonComponent,
-    NgIf,
     EntityFieldViewComponent,
     InheritedValueButtonComponent,
     NgClass,
     FontAwesomeModule,
     MatButtonModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>
   implements OnChanges

@@ -6,7 +6,7 @@ import { map, startWith } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -25,12 +25,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatBadgeModule,
     MatMenuModule,
     AsyncPipe,
-    NgForOf,
     MatProgressSpinnerModule,
-    NgIf,
     FontAwesomeModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
 })
 export class BackgroundProcessingIndicatorComponent implements OnInit {
   /** details on current background processes to be displayed to user */

@@ -6,7 +6,7 @@
   [explanation]="explanation"
   [entries]="entityGroupCounts[groupBy[currentGroupIndex]]"
   [paginationPageSize]="4"
->
+  >
   <div
     class="flex-row"
     style="
@@ -15,7 +15,7 @@
       justify-content: space-between;
       padding: 0 10px;
     "
-  >
+    >
     <button
       mat-icon-button
       matTooltip="Previous Grouping"
@@ -25,14 +25,14 @@
       (click)="getPrev()"
       [style.visibility]="groupBy?.length > 1 ? 'visible' : 'hidden'"
       [style.transform]="'scale(0.75)'"
-    >
+      >
       <fa-icon icon="circle-chevron-left" size="xs"></fa-icon>
     </button>
 
     <span
       class="flex-grow groupby-label"
       i18n="category of disagregation in EntityCountDashboard"
-    >
+      >
       by
       <app-entity-field-label
         [entityType]="_entity"
@@ -51,7 +51,7 @@
       (click)="getNext()"
       [style.visibility]="groupBy?.length > 1 ? 'visible' : 'hidden'"
       [style.transform]="'scale(0.75)'"
-    >
+      >
       <fa-icon icon="circle-chevron-right"></fa-icon>
     </button>
   </div>
@@ -63,14 +63,17 @@
       mat-table
       i18n-aria-label="Label for children count dashboard"
       aria-label="Table showing disaggregation of the beneficiaries"
-    >
+      >
       <ng-container matColumnDef="label">
         <td *matCellDef="let group">
-          <span *ngIf="!group.groupedByEntity">{{ group.label }}</span>
-          <app-entity-block
-            *ngIf="group.groupedByEntity"
-            [entityId]="group.id"
-          ></app-entity-block>
+          @if (!group.groupedByEntity) {
+            <span>{{ group.label }}</span>
+          }
+          @if (group.groupedByEntity) {
+            <app-entity-block
+              [entityId]="group.id"
+            ></app-entity-block>
+          }
         </td>
       </ng-container>
       <ng-container matColumnDef="value">
@@ -88,7 +91,7 @@
         <th
           scope="col"
           i18n="The center that a partiipant belongs to, e.g. a city"
-        >
+          >
           Center
         </th>
         <th scope="col" i18n="The amount of children that study at one school">

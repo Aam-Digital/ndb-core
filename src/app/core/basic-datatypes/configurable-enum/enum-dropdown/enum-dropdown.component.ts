@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { MatSelectModule } from "@angular/material/select";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { NgIf } from "@angular/common";
+
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -27,13 +27,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   imports: [
     MatSelectModule,
     ReactiveFormsModule,
-    NgIf,
     BasicAutocompleteComponent,
     FontAwesomeModule,
     ErrorHintComponent,
     MatButtonModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
 })
 export class EnumDropdownComponent implements OnChanges {
   @Input() form: FormControl; // cannot be named "formControl" - otherwise the angular directive grabs this

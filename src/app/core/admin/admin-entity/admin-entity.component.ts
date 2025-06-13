@@ -5,7 +5,7 @@ import {
   OnInit,
   TemplateRef,
 } from "@angular/core";
-import { CommonModule, Location } from "@angular/common";
+import { Location } from "@angular/common";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
@@ -31,7 +31,6 @@ import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/ad
 @Component({
   selector: "app-admin-entity",
   imports: [
-    CommonModule,
     EntityTypeLabelPipe,
     MatButton,
     ViewTitleComponent,
@@ -41,8 +40,8 @@ import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/ad
     AdminEntityDetailsComponent,
     AdminEntityGeneralSettingsComponent,
     BetaFeatureComponent,
-    AdminEntityPublicFormsComponent,
-  ],
+    AdminEntityPublicFormsComponent
+],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
 })

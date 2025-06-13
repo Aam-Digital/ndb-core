@@ -3,11 +3,15 @@
     attendanceData.getWarningLevel(forChild)
   }}"
   [appTemplateTooltip]="tooltip"
->
-  <span *ngIf="attendanceData.getAttendancePercentage(forChild)">
-    {{ attendanceData.getAttendancePercentage(forChild) | percent: "1.0-0" }}
-  </span>
-  <span *ngIf="!attendanceData.getAttendancePercentage(forChild)"> - </span>
+  >
+  @if (attendanceData.getAttendancePercentage(forChild)) {
+    <span>
+      {{ attendanceData.getAttendancePercentage(forChild) | percent: "1.0-0" }}
+    </span>
+  }
+  @if (!attendanceData.getAttendancePercentage(forChild)) {
+    <span> - </span>
+  }
 </span>
 
 <ng-template #tooltip>
@@ -23,21 +27,22 @@
         Attended Tooltip|How many attendees were present / how many attendees
         were absent
       "
-    >
+      >
       attended {{ attendanceDescription }} events
     </div>
 
-    <em
-      *ngIf="logicalCount[LStatus.IGNORE] > 0"
-      i18n="Attended Tooltip|How many events were excluded"
-    >
+    @if (logicalCount[LStatus.IGNORE] > 0) {
+      <em
+        i18n="Attended Tooltip|How many events were excluded"
+        >
       (excluding {{ logicalCount[LStatus.IGNORE] }} events excused or unknown)
     </em>
+    }
     <app-attendance-calendar
       [records]="attendanceData.events"
       [highlightForChild]="forChild"
       [activity]="attendanceData.activity"
-    >
+      >
     </app-attendance-calendar>
   </div>
 </ng-template>

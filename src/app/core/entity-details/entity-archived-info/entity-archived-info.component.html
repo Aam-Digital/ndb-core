@@ -1,34 +1,41 @@
-<mat-card appearance="outlined" class="card" *ngIf="entity && !entity.isActive">
-  <mat-card-header class="card-header">
-    <div mat-card-avatar class="card-icon">
-      <fa-icon icon="info-circle" size="lg"></fa-icon>
-    </div>
-    <mat-card-title *ngIf="!entity.anonymized" i18n>Archived</mat-card-title>
-    <mat-card-title *ngIf="entity.anonymized" i18n
-      >Anonymized & Archived</mat-card-title
-    >
-  </mat-card-header>
-
-  <mat-card-content>
-    <p *ngIf="entity.anonymized" i18n>
+@if (entity && !entity.isActive) {
+  <mat-card appearance="outlined" class="card">
+    <mat-card-header class="card-header">
+      <div mat-card-avatar class="card-icon">
+        <fa-icon icon="info-circle" size="lg"></fa-icon>
+      </div>
+      @if (!entity.anonymized) {
+        <mat-card-title i18n>Archived</mat-card-title>
+      }
+      @if (entity.anonymized) {
+        <mat-card-title i18n
+          >Anonymized & Archived</mat-card-title
+          >
+        }
+      </mat-card-header>
+      <mat-card-content>
+        @if (entity.anonymized) {
+          <p i18n>
       This record has been anonymized. Details containing personal information
       have been deleted and cannot be restored. For statistical reporting, this
       basic record has been kept.
     </p>
-
-    <p i18n>
+        }
+        <p i18n>
       This record is archived and will be hidden from lists and select options
       by default.
     </p>
-  </mat-card-content>
-
-  <mat-card-actions *ngIf="!entity.anonymized">
-    <button
-      mat-stroked-button
-      color="accent"
-      (click)="entityActionsService.undoArchive(entity)"
-    >
-      Reactivate
-    </button>
-  </mat-card-actions>
-</mat-card>
+      </mat-card-content>
+      @if (!entity.anonymized) {
+        <mat-card-actions>
+          <button
+            mat-stroked-button
+            color="accent"
+            (click)="entityActionsService.undoArchive(entity)"
+            >
+            Reactivate
+          </button>
+        </mat-card-actions>
+      }
+    </mat-card>
+  }

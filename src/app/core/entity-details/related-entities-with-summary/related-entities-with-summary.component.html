@@ -7,10 +7,10 @@
 ></app-entities-table>
 
 <div class="margin-top-large">
-  <ng-container *ngIf="summarySum">
+  @if (summarySum) {
     <strong i18n>Total:</strong> {{ summarySum }} <br />
-  </ng-container>
-  <ng-container *ngIf="summaryAvg">
+  }
+  @if (summaryAvg) {
     <strong i18n>Average:</strong> {{ summaryAvg }} <br />
-  </ng-container>
+  }
 </div>

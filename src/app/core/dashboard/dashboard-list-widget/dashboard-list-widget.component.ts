@@ -20,7 +20,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { filter, map } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
-import { NgIf } from "@angular/common";
+
 import { WidgetContentComponent } from "../dashboard-widget/widget-content/widget-content.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
@@ -48,9 +48,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   imports: [
     DashboardWidgetComponent,
     WidgetContentComponent,
-    NgIf,
-    MatPaginatorModule,
-  ],
+    MatPaginatorModule
+],
 })
 export class DashboardListWidgetComponent<E>
   implements OnInit, OnChanges, AfterViewInit

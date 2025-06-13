@@ -9,7 +9,7 @@ import {
 } from "@angular/forms";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
-import { NgForOf, NgIf } from "@angular/common";
+
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -35,15 +35,13 @@ import { of } from "rxjs";
   templateUrl: "./user-security.component.html",
   styleUrls: ["./user-security.component.scss"],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
-    NgForOf,
-  ],
+    MatSelectModule
+],
 })
 export class UserSecurityComponent implements OnInit {
   @Input() entity: Entity;

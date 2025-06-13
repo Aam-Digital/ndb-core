@@ -8,14 +8,16 @@
       [(ngModel)]="selectedValue"
       min="1"
       (keyup)="validateValue()"
-    />
+      />
   </mat-form-field>
   &nbsp;
   <mat-form-field class="field-select">
     <mat-select [(ngModel)]="selectedUnit">
-      <mat-option *ngFor="let o of availableUnits" [value]="o.unit">
-        {{ o.label }}
-      </mat-option>
+      @for (o of availableUnits; track o) {
+        <mat-option [value]="o.unit">
+          {{ o.label }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
 </mat-dialog-content>
@@ -25,14 +27,14 @@
     mat-stroked-button
     i18n="custom time interval dialog action"
     [mat-dialog-close]="{ amount: selectedValue, unit: selectedUnit }"
-  >
+    >
     Set
   </button>
   <button
     mat-stroked-button
     i18n="custom time interval dialog action"
     [mat-dialog-close]="undefined"
-  >
+    >
     Cancel
   </button>
 </mat-dialog-actions>

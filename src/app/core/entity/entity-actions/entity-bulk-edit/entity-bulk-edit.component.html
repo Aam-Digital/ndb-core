@@ -19,21 +19,25 @@
         <mat-select
           [formControl]="selectedFieldFormControl"
           (selectionChange)="onChangeProperty($event.value)"
-        >
-          <mat-option *ngFor="let field of entityFields" [value]="field.key">
-            {{ field.label }}
-          </mat-option>
+          >
+          @for (field of entityFields; track field) {
+            <mat-option [value]="field.key">
+              {{ field.label }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
     </div>
 
-    <div *ngIf="showValueForm" class="entity-form-cell">
-      <app-entity-field-edit
-        [field]="selectedField"
-        [entity]="entityData"
-        [form]="fieldValueForm"
-      ></app-entity-field-edit>
-    </div>
+    @if (showValueForm) {
+      <div class="entity-form-cell">
+        <app-entity-field-edit
+          [field]="selectedField"
+          [entity]="entityData"
+          [form]="fieldValueForm"
+        ></app-entity-field-edit>
+      </div>
+    }
   </form>
 </mat-dialog-content>
 

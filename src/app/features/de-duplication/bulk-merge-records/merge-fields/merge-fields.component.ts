@@ -4,18 +4,17 @@ import { Entity } from "app/core/entity/model/entity";
 import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
-import { CommonModule } from "@angular/common";
+
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-merge-fields",
   standalone: true,
   imports: [
-    CommonModule,
     MatCheckboxModule,
     MatRadioModule,
-    EntityFieldViewComponent,
-  ],
+    EntityFieldViewComponent
+],
   templateUrl: "./merge-fields.component.html",
   styleUrls: ["./merge-fields.component.scss"],
 })

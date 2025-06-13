@@ -4,30 +4,35 @@
   <div class="flex-column gap-regular">
     <app-entity-archived-info [entity]="data.entity"></app-entity-archived-info>
 
-    <app-entity-form
-      *ngIf="form"
-      [fieldGroups]="fieldGroups"
-      [entity]="data.entity"
-      [form]="form"
-    >
-    </app-entity-form>
+    @if (form) {
+      <app-entity-form
+        [fieldGroups]="fieldGroups"
+        [entity]="data.entity"
+        [form]="form"
+        >
+      </app-entity-form>
+    }
 
-    <div *ngFor="let col of viewOnlyColumns">
-      <app-pill
-        [matTooltip]="col.description"
-        [style.background-color]="tempEntity.getColor()"
-        class="mat-body-strong"
-      >
-        <app-entity-field-view
-          [field]="col"
-          [entity]="tempEntity"
-          showLabel="inline"
-        ></app-entity-field-view>
-      </app-pill>
-    </div>
+    @for (col of viewOnlyColumns; track col) {
+      <div>
+        <app-pill
+          [matTooltip]="col.description"
+          [style.background-color]="tempEntity.getColor()"
+          class="mat-body-strong"
+          >
+          <app-entity-field-view
+            [field]="col"
+            [entity]="tempEntity"
+            showLabel="inline"
+          ></app-entity-field-view>
+        </app-pill>
+      </div>
+    }
   </div>
 </mat-dialog-content>
 
-<mat-dialog-actions *ngIf="form">
-  <app-dialog-buttons [form]="form" [entity]="data.entity" />
-</mat-dialog-actions>
+@if (form) {
+  <mat-dialog-actions>
+    <app-dialog-buttons [form]="form" [entity]="data.entity" />
+  </mat-dialog-actions>
+}

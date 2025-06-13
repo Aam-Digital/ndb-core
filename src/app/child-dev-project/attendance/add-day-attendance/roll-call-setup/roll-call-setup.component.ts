@@ -20,7 +20,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { Angulartics2OnModule } from "angulartics2";
 import { FilterComponent } from "../../../../core/filter/filter/filter.component";
-import { NgForOf, NgIf } from "@angular/common";
+
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -38,12 +38,10 @@ import { DataFilter } from "../../../../core/filter/filters/filters";
     MatDatepickerModule,
     Angulartics2OnModule,
     FilterComponent,
-    NgIf,
     MatProgressBarModule,
     ActivityCardComponent,
-    NgForOf,
-    MatButtonModule,
-  ],
+    MatButtonModule
+],
 })
 export class RollCallSetupComponent implements OnInit {
   date = new Date();

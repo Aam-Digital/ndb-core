@@ -2,7 +2,7 @@ import { Component, Input, OnInit, Optional } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
 import { Router } from "@angular/router";
-import { Location, NgIf } from "@angular/common";
+import { Location } from "@angular/common";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
 import {
@@ -28,10 +28,9 @@ import { AutomatedStatusUpdateConfigService } from "app/features/automated-statu
   styleUrls: ["./form.component.scss"],
   imports: [
     MatButtonModule,
-    NgIf,
     EntityFormComponent,
-    DisableEntityOperationDirective,
-  ],
+    DisableEntityOperationDirective
+],
 })
 export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() entity: E;

@@ -5,7 +5,7 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { ConfigurableEnum } from "../configurable-enum";
-import { NgForOf } from "@angular/common";
+
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
@@ -32,7 +32,6 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
   styleUrls: ["./configure-enum-popup.component.scss"],
   imports: [
     MatDialogModule,
-    NgForOf,
     MatFormFieldModule,
     MatInputModule,
     DialogCloseComponent,
@@ -40,8 +39,8 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
     CdkDropList,
     CdkDrag,
     FontAwesomeModule,
-    MatButtonModule,
-  ],
+    MatButtonModule
+],
 })
 export class ConfigureEnumPopupComponent {
   newOptionInput: string;

@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   EntityListConfig,
@@ -26,7 +26,6 @@ import { Logging } from "../../logging/logging.service";
 @Component({
   selector: "app-admin-entity-list",
   imports: [
-    CommonModule,
     EntityFieldsMenuComponent,
     MatTableModule,
     EntityFieldLabelComponent,
@@ -38,8 +37,8 @@ import { Logging } from "../../logging/logging.service";
     MatSelect,
     AdminTabsComponent,
     AdminTabTemplateDirective,
-    ViewTitleComponent,
-  ],
+    ViewTitleComponent
+],
   templateUrl: "./admin-entity-list.component.html",
   styleUrls: [
     "./admin-entity-list.component.scss",

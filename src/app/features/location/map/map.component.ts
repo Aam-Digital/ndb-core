@@ -17,7 +17,7 @@ import { ConfigService } from "../../../core/config/config.service";
 import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NgIf } from "@angular/common";
+
 import { MatButtonModule } from "@angular/material/button";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import {
@@ -30,7 +30,7 @@ import { GeoResult } from "../geo.service";
   selector: "app-map",
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],
-  imports: [FontAwesomeModule, NgIf, MatButtonModule],
+  imports: [FontAwesomeModule, MatButtonModule],
 })
 export class MapComponent implements AfterViewInit {
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];

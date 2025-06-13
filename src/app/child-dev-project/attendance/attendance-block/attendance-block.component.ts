@@ -1,7 +1,7 @@
 import { Component, Inject, Input, LOCALE_ID, OnChanges } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { DatePipe, formatPercent, NgIf, PercentPipe } from "@angular/common";
+import { DatePipe, formatPercent, PercentPipe } from "@angular/common";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 
@@ -13,12 +13,11 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
   templateUrl: "./attendance-block.component.html",
   styleUrls: ["./attendance-block.component.scss"],
   imports: [
-    NgIf,
     PercentPipe,
     DatePipe,
     TemplateTooltipDirective,
-    AttendanceCalendarComponent,
-  ],
+    AttendanceCalendarComponent
+],
 })
 export class AttendanceBlockComponent implements OnChanges {
   @Input() attendanceData: ActivityAttendance;

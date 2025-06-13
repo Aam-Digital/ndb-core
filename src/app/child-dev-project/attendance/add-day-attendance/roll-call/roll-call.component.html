@@ -1,143 +1,149 @@
 <!-- Individual Student's Page -->
-<div *ngIf="children?.length > 0" class="flex-column gap-regular">
-  <mat-progress-bar
-    mode="determinate"
-    [value]="(currentIndex / children.length) * 100"
-  ></mat-progress-bar>
-
-  <div class="progress-nav flex-row">
-    <div style="margin-left: -10px">
-      <button
-        mat-icon-button
-        (click)="goToFirst()"
-        [disabled]="isFirst"
-        class="button-skip"
-      >
-        <fa-icon icon="angle-double-left"></fa-icon>
-      </button>
-      <button
-        mat-icon-button
-        (click)="goToPrevious()"
-        [disabled]="isFirst"
-        class="button-skip"
-      >
-        <fa-icon icon="angle-left"></fa-icon>
-      </button>
-    </div>
-    <div
-      class="progress-label flex-grow"
-      [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'"
-    >
-      {{ currentIndex + 1 }} / {{ children.length }}
-    </div>
-    <div>
-      <button
-        mat-icon-button
-        (click)="goToNext()"
-        [disabled]="isFinished"
-        class="button-skip"
-      >
-        <fa-icon icon="angle-right"></fa-icon>
-      </button>
-      <button
-        mat-icon-button
-        (click)="goToLast()"
-        [disabled]="isFinished"
-        class="button-skip"
-      >
-        <fa-icon icon="angle-double-right"></fa-icon>
-      </button>
-    </div>
-
-    <div *ngIf="inactiveParticipants?.length > 0" style="margin-right: -10px">
-      <button
-        mat-icon-button
-        (click)="includeInactive()"
-        [disabled]="isFinished"
-        color="warn"
-        matTooltip="Excluded some archived participants. Click to include."
-        i18n-matTooltip
-      >
-        <fa-icon icon="warning"></fa-icon>
-      </button>
-    </div>
-  </div>
-
-  <app-entity-block
-    class="margin-small"
-    *ngIf="!isFinished"
-    [entity]="currentChild"
-    [linkDisabled]="true"
-  >
-  </app-entity-block>
-
-  <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
-    <app-roll-call-tab
-      (swiperight)="goToPrevious()"
-      (swipeleft)="goToNext()"
-      *ngFor="let child of children; let i = index"
-      class="tab-body"
-      [class.tab-body-active]="currentIndex === i"
-      [position]="i - currentIndex"
-    >
+@if (children?.length > 0) {
+  <div class="flex-column gap-regular">
+    <mat-progress-bar
+      mode="determinate"
+      [value]="(currentIndex / children.length) * 100"
+    ></mat-progress-bar>
+    <div class="progress-nav flex-row">
+      <div style="margin-left: -10px">
+        <button
+          mat-icon-button
+          (click)="goToFirst()"
+          [disabled]="isFirst"
+          class="button-skip"
+          >
+          <fa-icon icon="angle-double-left"></fa-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="goToPrevious()"
+          [disabled]="isFirst"
+          class="button-skip"
+          >
+          <fa-icon icon="angle-left"></fa-icon>
+        </button>
+      </div>
+      <div
+        class="progress-label flex-grow"
+        [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'"
+        >
+        {{ currentIndex + 1 }} / {{ children.length }}
+      </div>
       <div>
-        <div
-          role="button"
-          class="group-select-option"
-          *ngFor="let option of availableStatus"
-          (click)="markAttendance(option)"
+        <button
+          mat-icon-button
+          (click)="goToNext()"
+          [disabled]="isFinished"
+          class="button-skip"
+          >
+          <fa-icon icon="angle-right"></fa-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="goToLast()"
+          [disabled]="isFinished"
+          class="button-skip"
+          >
+          <fa-icon icon="angle-double-right"></fa-icon>
+        </button>
+      </div>
+      @if (inactiveParticipants?.length > 0) {
+        <div style="margin-right: -10px">
+          <button
+            mat-icon-button
+            (click)="includeInactive()"
+            [disabled]="isFinished"
+            color="warn"
+            matTooltip="Excluded some archived participants. Click to include."
+            i18n-matTooltip
+            >
+            <fa-icon icon="warning"></fa-icon>
+          </button>
+        </div>
+      }
+    </div>
+    @if (!isFinished) {
+      <app-entity-block
+        class="margin-small"
+        [entity]="currentChild"
+        [linkDisabled]="true"
+        >
+      </app-entity-block>
+    }
+    @if (!isFinished && currentAttendance) {
+      <div class="tab-wrapper">
+        @for (child of children; track child; let i = $index) {
+          <app-roll-call-tab
+            (swiperight)="goToPrevious()"
+            (swipeleft)="goToNext()"
+            class="tab-body"
+            [class.tab-body-active]="currentIndex === i"
+            [position]="i - currentIndex"
+            >
+            <div>
+              @for (option of availableStatus; track option) {
+                <div
+                  role="button"
+                  class="group-select-option"
+                  (click)="markAttendance(option)"
           [ngClass]="
             eventEntity.getAttendance(child).status.id === option.id
               ? option.style
               : ''
           "
-        >
-          <div
-            style="display: flex; flex-direction: row; padding: 16px; gap: 16px"
-          >
-            <fa-icon
-              *ngIf="eventEntity.getAttendance(child).status.id === option.id"
-              icon="check"
-            ></fa-icon>
-            <p style="margin: 0">{{ option.label }}</p>
-          </div>
-        </div>
+                  >
+                  <div
+                    style="display: flex; flex-direction: row; padding: 16px; gap: 16px"
+                    >
+                    @if (eventEntity.getAttendance(child).status.id === option.id) {
+                      <fa-icon
+                        icon="check"
+                      ></fa-icon>
+                    }
+                    <p style="margin: 0">{{ option.label }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </app-roll-call-tab>
+        }
       </div>
-    </app-roll-call-tab>
+    }
   </div>
-</div>
+}
 
 <!-- Completion Page -->
-<div *ngIf="isFinished" class="flex-column gap-regular margin-top-regular">
-  <div class="roll-call-complete" @completeRollCall>
-    <fa-icon icon="check-circle" size="3x"></fa-icon>
-    <div
+@if (isFinished) {
+  <div class="flex-column gap-regular margin-top-regular">
+    <div class="roll-call-complete" @completeRollCall>
+      <fa-icon icon="check-circle" size="3x"></fa-icon>
+      <div
       i18n="
         Attendance completed|shows when the user has registered the attendance
         of all children
       "
-      (click)="finish()"
-    >
+        (click)="finish()"
+        >
       Attendance completed.
     </div>
-
-    <button
-      (click)="showDetails()"
-      class="finished-screen-button"
-      mat-raised-button
-      color="accent"
-      i18n="Open details of recorded event for review"
-    >
+      <button
+        (click)="showDetails()"
+        class="finished-screen-button"
+        mat-raised-button
+        color="accent"
+        i18n="Open details of recorded event for review"
+        >
       Review Details
     </button>
-  </div>
-
-  <button
-    (click)="finish()"
-    color="primary"
-    mat-raised-button
-    i18n="Back to overview button after finishing a roll call"
-  >
+    </div>
+    <button
+      (click)="finish()"
+      color="primary"
+      mat-raised-button
+      i18n="Back to overview button after finishing a roll call"
+      >
     Back to Overview
   </button>
-</div>
+  </div>
+}

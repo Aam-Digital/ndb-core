@@ -1,8 +1,10 @@
-<app-pill class="hint-badge" *ngIf="!hasCurrentlyActiveEntry && !!data">
-  Currently there is no active entry. To add a new entry, click on the
-  <fa-icon class="color-accent" aria-label="add" icon="plus-circle"></fa-icon>
-  button.
-</app-pill>
+@if (!hasCurrentlyActiveEntry && !!data) {
+  <app-pill class="hint-badge">
+    Currently there is no active entry. To add a new entry, click on the
+    <fa-icon class="color-accent" aria-label="add" icon="plus-circle"></fa-icon>
+    button.
+  </app-pill>
+}
 
 <app-entities-table
   [entityType]="entityCtr"
@@ -13,5 +15,5 @@
   [getBackgroundColor]="showInactive ? backgroundColorFn : undefined"
   [clickMode]="clickMode"
   [(showInactive)]="showInactive"
->
+  >
 </app-entities-table>

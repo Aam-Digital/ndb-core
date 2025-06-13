@@ -7,7 +7,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -30,7 +30,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   ],
   imports: [
     MatFormFieldModule,
-    NgIf,
     ReactiveFormsModule,
     MatAutocompleteModule,
     MatChipsModule,
@@ -43,8 +42,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
     ErrorHintComponent,
     BasicAutocompleteComponent,
     MatSlideToggle,
-    FormsModule,
-  ],
+    FormsModule
+],
 })
 @UntilDestroy()
 export class EntitySelectComponent<

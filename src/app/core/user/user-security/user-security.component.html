@@ -1,141 +1,159 @@
-<em
-  *ngIf="!userIsPermitted"
-  i18n="Placeholder text when permissions are missing"
->
+@if (!userIsPermitted) {
+  <em
+    i18n="Placeholder text when permissions are missing"
+    >
   You account does not have the required permissions to see this page.
 </em>
+}
 
-<div *ngIf="userIsPermitted" class="flex-column">
-  <div *ngIf="!user" class="buttons-wrapper align-self-start">
-    <p
-      i18n="notice about user without account"
-      class="field-hint field-warning"
-    >
+@if (userIsPermitted) {
+  <div class="flex-column">
+    @if (!user) {
+      <div class="buttons-wrapper align-self-start">
+        <p
+          i18n="notice about user without account"
+          class="field-hint field-warning"
+          >
       There is no user account set up for this user yet. Enable this user to log
       into the app by filling the details below.
     </p>
-    <button
-      *ngIf="editing && !user"
-      mat-raised-button
-      type="submit"
-      (click)="createAccount()"
-      [disabled]="form.disabled"
-      class="invite-button"
-      [color]="form.valid ? 'accent' : ''"
-      [class.invite-button-animate]="form.valid"
-      i18n="button to invite a new user"
-    >
+        @if (editing && !user) {
+          <button
+            mat-raised-button
+            type="submit"
+            (click)="createAccount()"
+            [disabled]="form.disabled"
+            class="invite-button"
+            [color]="form.valid ? 'accent' : ''"
+            [class.invite-button-animate]="form.valid"
+            i18n="button to invite a new user"
+            >
       Create account & send invitation
     </button>
-  </div>
-
-  <div
-    class="padding-bottom-small flex-row gap-small align-self-end flex-wrap"
-    *ngIf="user"
-  >
-    <button
-      *ngIf="editing && user?.enabled"
-      mat-stroked-button
-      color="warn"
-      (click)="toggleAccount(false)"
-      matTooltip="User will not be able to login again, no information will be lost"
-      i18n="button to update disable a user"
-    >
+        }
+      </div>
+    }
+    @if (user) {
+      <div
+        class="padding-bottom-small flex-row gap-small align-self-end flex-wrap"
+        >
+        @if (editing && user?.enabled) {
+          <button
+            mat-stroked-button
+            color="warn"
+            (click)="toggleAccount(false)"
+            matTooltip="User will not be able to login again, no information will be lost"
+            i18n="button to update disable a user"
+            >
       Deactivate user
     </button>
-    <button
-      *ngIf="editing && !user?.enabled"
-      mat-raised-button
-      color="accent"
-      (click)="toggleAccount(true)"
-      matTooltip="User can login again with the previously used credentials"
-      i18n="button to enable a user"
-    >
+        }
+        @if (editing && !user?.enabled) {
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="toggleAccount(true)"
+            matTooltip="User can login again with the previously used credentials"
+            i18n="button to enable a user"
+            >
       Activate user
     </button>
-    <button
-      *ngIf="editing && user?.enabled"
-      mat-raised-button
-      color="accent"
-      class="action-button"
-      (click)="updateAccount()"
-      i18n="Save button for forms"
-    >
+        }
+        @if (editing && user?.enabled) {
+          <button
+            mat-raised-button
+            color="accent"
+            class="action-button"
+            (click)="updateAccount()"
+            i18n="Save button for forms"
+            >
       Save
     </button>
-    <button
-      *ngIf="editing"
-      mat-stroked-button
-      class="action-button"
-      (click)="disableForm()"
-      i18n="Cancel button for forms"
-    >
+        }
+        @if (editing) {
+          <button
+            mat-stroked-button
+            class="action-button"
+            (click)="disableForm()"
+            i18n="Cancel button for forms"
+            >
       Cancel
     </button>
-    <button
-      *ngIf="!editing"
-      mat-raised-button
-      class="action-button"
-      (click)="editForm()"
-      i18n="Edit button for forms"
-    >
+        }
+        @if (!editing) {
+          <button
+            mat-raised-button
+            class="action-button"
+            (click)="editForm()"
+            i18n="Edit button for forms"
+            >
       Edit
     </button>
-  </div>
-
-  <p
-    *ngIf="user && !user.enabled"
-    i18n="Hint in user account page"
-    class="field-hint field-warning"
-  >
+        }
+      </div>
+    }
+    @if (user && !user.enabled) {
+      <p
+        i18n="Hint in user account page"
+        class="field-hint field-warning"
+        >
     User is currently disabled and will not be able to login to the app
   </p>
-  <form [formGroup]="form">
-    <div>
-      <mat-form-field>
-        <mat-label i18n="label of email input">Email</mat-label>
-        <input matInput type="text" formControlName="email" />
-        <mat-error *ngIf="form.hasError('email', 'email')" i18n>
+    }
+    <form [formGroup]="form">
+      <div>
+        <mat-form-field>
+          <mat-label i18n="label of email input">Email</mat-label>
+          <input matInput type="text" formControlName="email" />
+          @if (form.hasError('email', 'email')) {
+            <mat-error i18n>
           Please enter a valid email
         </mat-error>
-        <mat-error *ngIf="form.hasError('required', 'email')" i18n>
+          }
+          @if (form.hasError('required', 'email')) {
+            <mat-error i18n>
           This field is required
         </mat-error>
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field style="width: 100%">
-        <mat-label i18n="label of roles input">Roles</mat-label>
-        <mat-select formControlName="roles" multiple>
-          <mat-select-trigger>
-            <span *ngFor="let role of form.get('roles').value"
-              >{{ role.name }}
-            </span>
-          </mat-select-trigger>
-          <mat-option
-            *ngFor="let role of availableRoles"
-            [value]="role"
-            [matTooltip]="role.description"
-          >
-            {{ role.description }}
-            <em style="font-size: x-small">{{ role.name }}</em>
-          </mat-option>
-        </mat-select>
-
-        <mat-hint i18n="hint about assigning user roles" class="field-hint">
+          }
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field style="width: 100%">
+          <mat-label i18n="label of roles input">Roles</mat-label>
+          <mat-select formControlName="roles" multiple>
+            <mat-select-trigger>
+              @for (role of form.get('roles').value; track role) {
+                <span
+                  >{{ role.name }}
+                </span>
+              }
+            </mat-select-trigger>
+            @for (role of availableRoles; track role) {
+              <mat-option
+                [value]="role"
+                [matTooltip]="role.description"
+                >
+                {{ role.description }}
+                <em style="font-size: x-small">{{ role.name }}</em>
+              </mat-option>
+            }
+          </mat-select>
+          <mat-hint i18n="hint about assigning user roles" class="field-hint">
           You should select at least one user role. Otherwise this user will not
           even be able to access the basic app layout like the menu.
         </mat-hint>
-
-        <mat-error *ngIf="form.hasError('required', 'roles')" i18n>
+          @if (form.hasError('required', 'roles')) {
+            <mat-error i18n>
           This field is required
         </mat-error>
-      </mat-form-field>
-    </div>
-
-    <mat-error *ngIf="form.getError('failed')">{{
-      form.getError("failed")
-    }}</mat-error>
-  </form>
-</div>
+          }
+        </mat-form-field>
+      </div>
+      @if (form.getError('failed')) {
+        <mat-error>{{
+          form.getError("failed")
+        }}</mat-error>
+      }
+    </form>
+  </div>
+}

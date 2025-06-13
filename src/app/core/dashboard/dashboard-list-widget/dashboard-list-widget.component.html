@@ -6,19 +6,21 @@
   [headline]="headline"
   [explanation]="explanation"
   [loading]="isLoading"
->
+  >
   <app-widget-content>
-    <ng-container *ngIf="dataSource.data.length > 0">
+    @if (dataSource.data.length > 0) {
       <ng-content></ng-content>
-    </ng-container>
+    }
 
-    <div *ngIf="dataSource.data.length === 0" class="headline">
-      <span
-        i18n="Description that are no items in generic dashboard list widget"
-      >
+    @if (dataSource.data.length === 0) {
+      <div class="headline">
+        <span
+          i18n="Description that are no items in generic dashboard list widget"
+          >
         no current entries
       </span>
-    </div>
+      </div>
+    }
 
     <mat-paginator
       #paginator
@@ -28,7 +30,7 @@
       [pageSizeOptions]="[paginationPageSize]"
       [hidePageSize]="true"
       [pageSize]="paginationPageSize"
-    >
+      >
     </mat-paginator>
   </app-widget-content>
 </app-dashboard-widget>

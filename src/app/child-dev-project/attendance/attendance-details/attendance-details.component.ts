@@ -8,7 +8,7 @@ import { EventNote } from "../model/event-note";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { DatePipe, NgIf, PercentPipe } from "@angular/common";
+import { DatePipe, PercentPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
@@ -22,14 +22,13 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
     DialogCloseComponent,
     MatDialogModule,
     MatFormFieldModule,
-    NgIf,
     PercentPipe,
     DatePipe,
     FormsModule,
     MatInputModule,
     EntitiesTableComponent,
-    AttendanceCalendarComponent,
-  ],
+    AttendanceCalendarComponent
+],
 })
 export class AttendanceDetailsComponent {
   @Input() entity: ActivityAttendance;

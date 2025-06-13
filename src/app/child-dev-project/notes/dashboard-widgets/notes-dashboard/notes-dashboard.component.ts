@@ -5,7 +5,7 @@ import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
-import { DecimalPipe, NgIf } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { Note } from "../../model/note";
@@ -30,12 +30,11 @@ interface NotesDashboardConfig {
   templateUrl: "./notes-dashboard.component.html",
   styleUrls: ["./notes-dashboard.component.scss"],
   imports: [
-    NgIf,
     MatTableModule,
     EntityBlockComponent,
     DecimalPipe,
-    DashboardListWidgetComponent,
-  ],
+    DashboardListWidgetComponent
+],
 })
 export class NotesDashboardComponent
   extends DashboardWidget

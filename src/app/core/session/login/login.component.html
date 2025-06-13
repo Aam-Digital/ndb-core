@@ -1,19 +1,19 @@
 <!--
-  ~     This file is part of ndb-core.
-  ~
-  ~     ndb-core is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     (at your option) any later version.
-  ~
-  ~     ndb-core is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+~     This file is part of ndb-core.
+~
+~     ndb-core is free software: you can redistribute it and/or modify
+~     it under the terms of the GNU General Public License as published by
+~     the Free Software Foundation, either version 3 of the License, or
+~     (at your option) any later version.
+~
+~     ndb-core is distributed in the hope that it will be useful,
+~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+~     GNU General Public License for more details.
+~
+~     You should have received a copy of the GNU General Public License
+~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+-->
 
 <mat-card appearance="raised" class="full-width border-box-sizing">
   <mat-card-header class="header">
@@ -32,68 +32,73 @@
       <div
         matTooltip="It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection."
         i18n-matTooltip="online login tooltip"
-      >
-        <div *ngIf="loginInProgress">
-          <em i18n="login progess bar title">Checking online login ...</em>
-          <mat-progress-bar
-            mode="indeterminate"
-            class="login-check-progressbar"
-          ></mat-progress-bar>
-        </div>
+        >
+        @if (loginInProgress) {
+          <div>
+            <em i18n="login progess bar title">Checking online login ...</em>
+            <mat-progress-bar
+              mode="indeterminate"
+              class="login-check-progressbar"
+            ></mat-progress-bar>
+          </div>
+        }
 
-        <div *ngIf="!loginInProgress">
-          <div
-            i18n="online login failed text"
-            class="online-error margin-bottom-small"
-          >
+        @if (!loginInProgress) {
+          <div>
+            <div
+              i18n="online login failed text"
+              class="online-error margin-bottom-small"
+              >
             We couldn't connect to the server currently. You can still use the
             application offline, if you have logged in on this device
             previously.
           </div>
-          <button
-            mat-stroked-button
-            type="button"
-            (click)="tryLogin()"
-            i18n="Login button"
-            style="width: 100%"
-          >
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="tryLogin()"
+              i18n="Login button"
+              style="width: 100%"
+              >
             Retry online login
           </button>
-        </div>
+          </div>
+        }
       </div>
 
       <!-- OFFLINE -->
-      <mat-card
-        *ngIf="offlineUsers.length > 0"
-        class="margin-top-large"
-        appearance="outlined"
-      >
-        <mat-card-header
-          matTooltip="You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login."
-          i18n-matTooltip="offline login tooltip"
-        >
-          <h3 mat-card-title class="offline-title" i18n="offline section title">
+      @if (offlineUsers.length > 0) {
+        <mat-card
+          class="margin-top-large"
+          appearance="outlined"
+          >
+          <mat-card-header
+            matTooltip="You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login."
+            i18n-matTooltip="offline login tooltip"
+            >
+            <h3 mat-card-title class="offline-title" i18n="offline section title">
             Offline Login
           </h3>
-          <mat-card-subtitle i18n="Select user for offline login title"
-            >Log in as user ...</mat-card-subtitle
-          >
-        </mat-card-header>
-
-        <mat-card-content>
-          <mat-action-list>
-            <button
-              mat-list-item
-              *ngFor="let user of offlineUsers"
-              (click)="sessionManager.offlineLogin(user)"
-              [disabled]="!enableOfflineLogin"
-            >
-              <fa-icon matListItemIcon icon="user"></fa-icon>
-              {{ user.email ?? user.name }}
-            </button>
-          </mat-action-list>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </mat-card-content>
-</mat-card>
+            <mat-card-subtitle i18n="Select user for offline login title"
+              >Log in as user ...</mat-card-subtitle
+              >
+            </mat-card-header>
+            <mat-card-content>
+              <mat-action-list>
+                @for (user of offlineUsers; track user) {
+                  <button
+                    mat-list-item
+                    (click)="sessionManager.offlineLogin(user)"
+                    [disabled]="!enableOfflineLogin"
+                    >
+                    <fa-icon matListItemIcon icon="user"></fa-icon>
+                    {{ user.email ?? user.name }}
+                  </button>
+                }
+              </mat-action-list>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>

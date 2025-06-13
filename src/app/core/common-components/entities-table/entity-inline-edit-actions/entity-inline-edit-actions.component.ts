@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+
 import { Angulartics2OnModule } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -21,12 +21,11 @@ import { UnsavedChangesService } from "../../../entity-details/form/unsaved-chan
 @Component({
   selector: "app-entity-inline-edit-actions",
   imports: [
-    CommonModule,
     Angulartics2OnModule,
     DisableEntityOperationDirective,
     FaIconComponent,
-    MatButtonModule,
-  ],
+    MatButtonModule
+],
   templateUrl: "./entity-inline-edit-actions.component.html",
   styleUrl: "./entity-inline-edit-actions.component.scss",
 })

@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
-import { Location, NgIf, NgTemplateOutlet } from "@angular/common";
+import { Location, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -24,12 +24,11 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
   templateUrl: "./view-title.component.html",
   styleUrls: ["./view-title.component.scss"],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     FontAwesomeModule,
-    NgTemplateOutlet,
-  ],
+    NgTemplateOutlet
+],
 })
 export class ViewTitleComponent implements AfterViewInit {
   @ViewChild("template") template: TemplateRef<any>;

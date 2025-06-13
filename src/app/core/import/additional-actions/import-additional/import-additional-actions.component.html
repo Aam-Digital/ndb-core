@@ -1,7 +1,7 @@
 <mat-expansion-panel
   [expanded]="importActions?.length > 0"
   [disabled]="!entityType"
->
+  >
   <mat-expansion-panel-header>
     <mat-panel-title>
       <span i18n>Advanced Import Actions [optional]</span>
@@ -13,7 +13,7 @@
                     First select an import type above to enable this section.
                     If uncertain, please refer to the user guides, videos or support contact."
         i18n-text="import - additional actions - help text"
-      >
+        >
       </app-help-button>
     </mat-panel-title>
   </mat-expansion-panel-header>
@@ -21,43 +21,48 @@
   <!-- Existing additional actions -->
   <div>
     <mat-list>
-      <mat-list-item *ngFor="let action of importActions">
-        <fa-icon
-          icon="xmark"
-          matListItemIcon
-          (click)="removeAction(action)"
-          matTooltip="Remove"
-          i18n-matTooltip
-          class="existing-action-remove"
-        ></fa-icon>
-        <div matListItemTitle i18n>
+      @for (action of importActions; track action) {
+        <mat-list-item>
+          <fa-icon
+            icon="xmark"
+            matListItemIcon
+            (click)="removeAction(action)"
+            matTooltip="Remove"
+            i18n-matTooltip
+            class="existing-action-remove"
+          ></fa-icon>
+          <div matListItemTitle i18n>
           Link all imported records to {{ action.targetType | entityTypeLabel }}
         </div>
-        <div matListItemLine>
-          <app-entity-block
-            [entityId]="action.targetId"
-            [linkDisabled]="true"
-          ></app-entity-block>
-        </div>
-      </mat-list-item>
+          <div matListItemLine>
+            <app-entity-block
+              [entityId]="action.targetId"
+              [linkDisabled]="true"
+            ></app-entity-block>
+          </div>
+        </mat-list-item>
+      }
     </mat-list>
 
-    <div
-      *ngIf="!(importActions?.length > 0)"
-      class="no-actions margin-bottom-large"
-      i18n="import additional actions"
-    >
+    @if (!(importActions?.length > 0)) {
+      <div
+        class="no-actions margin-bottom-large"
+        i18n="import additional actions"
+        >
       no additional actions selected
     </div>
+    }
   </div>
 
   <!-- Create new additional action -->
   @if (availableImportActions?.length > 0) {
     <form [formGroup]="linkEntityForm">
       <div>
-        <mat-error *ngIf="linkEntityForm.disabled" i18n>
+        @if (linkEntityForm.disabled) {
+          <mat-error i18n>
           Select an Import Target Type before defining additional actions.
         </mat-error>
+        }
       </div>
 
       <div class="flex-row gap-regular">
@@ -79,7 +84,7 @@
           [multi]="false"
           label="for record"
           i18n-label
-        >
+          >
         </app-entity-select>
 
         <button
@@ -89,7 +94,7 @@
           color="accent"
           class="action-add-button"
           i18n
-        >
+          >
           Add Action
         </button>
       </div>

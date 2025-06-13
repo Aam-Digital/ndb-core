@@ -8,7 +8,7 @@ import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NgIf } from "@angular/common";
+
 import { MatCardModule } from "@angular/material/card";
 import { ImportHistoryComponent } from "../import-history/import-history.component";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
@@ -33,7 +33,6 @@ import { ImportMatchExistingComponent } from "../update-existing/import-match-ex
   imports: [
     MatStepperModule,
     FontAwesomeModule,
-    NgIf,
     ImportFileComponent,
     MatCardModule,
     ImportHistoryComponent,
@@ -44,8 +43,8 @@ import { ImportMatchExistingComponent } from "../update-existing/import-match-ex
     ImportMatchExistingComponent,
     MatButtonModule,
     ImportColumnMappingComponent,
-    ImportReviewDataComponent,
-  ],
+    ImportReviewDataComponent
+],
 })
 export class ImportComponent {
   rawData: any[];

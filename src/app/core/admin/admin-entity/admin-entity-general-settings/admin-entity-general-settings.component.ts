@@ -9,7 +9,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { CommonModule, NgIf } from "@angular/common";
+
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
@@ -41,7 +41,6 @@ import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.d
     MatButtonModule,
     MatInputModule,
     FormsModule,
-    NgIf,
     MatTabsModule,
     ReactiveFormsModule,
     MatTooltipModule,
@@ -50,12 +49,11 @@ import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.d
     MatTableModule,
     MatOptionModule,
     MatSelectModule,
-    CommonModule,
     MatTooltipModule,
     HelpButtonComponent,
     AnonymizeOptionsComponent,
-    FaIconComponent,
-  ],
+    FaIconComponent
+],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;

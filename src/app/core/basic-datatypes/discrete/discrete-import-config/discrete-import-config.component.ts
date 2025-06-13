@@ -9,7 +9,7 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { MappingDialogData } from "app/core/import/import-column-mapping/mapping-dialog-data";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
-import { KeyValuePipe, NgForOf } from "@angular/common";
+import { KeyValuePipe } from "@angular/common";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
@@ -26,12 +26,11 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
   styleUrls: ["./discrete-import-config.component.scss"],
   imports: [
     MatDialogModule,
-    NgForOf,
     KeyValuePipe,
     DynamicComponentDirective,
     MatButtonModule,
-    HelpButtonComponent,
-  ],
+    HelpButtonComponent
+],
 })
 export class DiscreteImportConfigComponent implements OnInit {
   form: FormGroup;
