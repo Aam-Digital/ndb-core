@@ -58,4 +58,10 @@ export interface EntityConfig {
    * whether the type can contain personally identifiable information (PII)
    */
   hasPII?: boolean;
+
+  /**
+   * Indicates if entities of this type can have associated user accounts.
+   * Used to dynamically display user account management panels and features.
+   */
+  enableUserAccounts?: boolean;
 }
