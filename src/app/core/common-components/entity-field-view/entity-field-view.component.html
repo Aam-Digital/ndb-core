@@ -5,7 +5,7 @@
         {{ _field.label }}
       </div>
     }
-    @if (showLabel === "inline") {
+    @else if (showLabel === "inline") {
       <span>{{ _field.label }}:&nbsp;</span>
     }
     @if (_field.viewComponent) {
