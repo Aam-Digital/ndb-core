@@ -13,7 +13,7 @@
     {{ stages[currentStage] }}
   </h2>
 }
-@if (currentStage !== 0) {
+@else {
   <div class="flex-row align-center relative-left margin-bottom-small">
     <button mat-icon-button (click)="exit()" matTooltip="Back" i18n-matTooltip>
       <fa-icon icon="arrow-left"></fa-icon>
