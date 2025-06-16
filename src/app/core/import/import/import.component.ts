@@ -8,7 +8,6 @@ import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
 import { MatCardModule } from "@angular/material/card";
 import { ImportHistoryComponent } from "../import-history/import-history.component";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
