@@ -161,6 +161,7 @@ describe("AdminEntityComponent", () => {
       attributes: jasmine.objectContaining({
         testSaveField: newSchemaField,
       }),
+      enableUserAccounts: undefined,
     };
 
     const actual: Config = entityMapper.get(

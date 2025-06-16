@@ -101,8 +101,8 @@ describe("KeycloakAdminService", () => {
       .flush({});
   }));
 
-  it("should log warning if user does not exist in Keycloak during deletion", fakeAsync(() => {
-    const warnSpy = spyOn(Logging, "warn");
+  it("should log debug if user does not exist in Keycloak during deletion", fakeAsync(() => {
+    const warnSpy = spyOn(Logging, "debug");
 
     service.deleteUser("test-id").subscribe((response) => {
       expect(response.userDeleted).toBeTrue();
