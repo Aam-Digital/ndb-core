@@ -18,7 +18,6 @@ import {
   EntityForm,
   EntityFormService,
 } from "../../../core/common-components/entity-form/entity-form.service";
-
 import { TodoCompletionComponent } from "../todo-completion/todo-completion/todo-completion.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";

@@ -21,7 +21,6 @@ import { Entity, EntityConstructor } from "../../model/entity";
 import { MatOption } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-
 import {
   EntityForm,
   EntityFormService,
