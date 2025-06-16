@@ -4,8 +4,7 @@
       <div class="label">
         {{ _field.label }}
       </div>
-    }
-    @else if (showLabel === "inline") {
+    } @else if (showLabel === "inline") {
       <span>{{ _field.label }}:&nbsp;</span>
     }
     @if (_field.viewComponent) {

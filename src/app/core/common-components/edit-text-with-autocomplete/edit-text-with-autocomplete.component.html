@@ -28,8 +28,7 @@
     <mat-hint>
       @if (!selectedEntity) {
         <span i18n>Creating new record.</span>
-      }
-      @else {
+      } @else {
         <span i18n>Editing existing record.</span>
       }
     </mat-hint>
@@ -48,9 +47,7 @@
     matTooltip="You can create a new or load an existing record. Start to type an existing name and then select it from the dropdown to edit the existing record. Type any new text to create a new record."
     class="tooltip-suffix"
   ></fa-icon>
-}
-
-@else if (!autocompleteDisabled && !!selectedEntity) {
+} @else if (!autocompleteDisabled && !!selectedEntity) {
   <fa-icon
     (click)="resetForm()"
     icon="circle-xmark"
