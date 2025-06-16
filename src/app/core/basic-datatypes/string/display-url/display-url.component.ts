@@ -12,7 +12,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
     @if (value) {
       <a [href]="value" target="_blank" class="clickable">{{ value }}</a>
     }
-    @if (!value) {
+    @else {
       <span>-</span>
     }
   `,
