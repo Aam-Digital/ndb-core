@@ -43,7 +43,7 @@
   </div>
 }
 
-@if (!isLoading) {
+@else {
   <div class="cards-list">
     @for (event of filteredExistingEvents; track event) {
       <app-activity-card
@@ -71,7 +71,7 @@
       Show less
     </span>
     }
-    @if (!showingAll) {
+    @else {
       <span i18n="Show more entries of a list">
       Show more
     </span>
