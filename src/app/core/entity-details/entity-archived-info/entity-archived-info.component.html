@@ -7,7 +7,7 @@
       @if (!entity.anonymized) {
         <mat-card-title i18n>Archived</mat-card-title>
       }
-      @if (entity.anonymized) {
+      @else {
         <mat-card-title i18n>Anonymized & Archived</mat-card-title>
       }
     </mat-card-header>
