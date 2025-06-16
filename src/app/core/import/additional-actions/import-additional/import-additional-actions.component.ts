@@ -17,7 +17,6 @@ import { AdditionalImportAction } from "../additional-import-action";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-
 import { EntityBlockComponent } from "../../../basic-datatypes/entity/entity-block/entity-block.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
