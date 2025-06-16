@@ -1,7 +1,7 @@
 <mat-expansion-panel
   [expanded]="importActions?.length > 0"
   [disabled]="!entityType"
-  >
+>
   <mat-expansion-panel-header>
     <mat-panel-title>
       <span i18n>Advanced Import Actions [optional]</span>
@@ -13,7 +13,7 @@
                     First select an import type above to enable this section.
                     If uncertain, please refer to the user guides, videos or support contact."
         i18n-text="import - additional actions - help text"
-        >
+      >
       </app-help-button>
     </mat-panel-title>
   </mat-expansion-panel-header>
@@ -32,8 +32,9 @@
             class="existing-action-remove"
           ></fa-icon>
           <div matListItemTitle i18n>
-          Link all imported records to {{ action.targetType | entityTypeLabel }}
-        </div>
+            Link all imported records to
+            {{ action.targetType | entityTypeLabel }}
+          </div>
           <div matListItemLine>
             <app-entity-block
               [entityId]="action.targetId"
@@ -48,9 +49,9 @@
       <div
         class="no-actions margin-bottom-large"
         i18n="import additional actions"
-        >
-      no additional actions selected
-    </div>
+      >
+        no additional actions selected
+      </div>
     }
   </div>
 
@@ -60,8 +61,8 @@
       <div>
         @if (linkEntityForm.disabled) {
           <mat-error i18n>
-          Select an Import Target Type before defining additional actions.
-        </mat-error>
+            Select an Import Target Type before defining additional actions.
+          </mat-error>
         }
       </div>
 
@@ -84,7 +85,7 @@
           [multi]="false"
           label="for record"
           i18n-label
-          >
+        >
         </app-entity-select>
 
         <button
@@ -94,7 +95,7 @@
           color="accent"
           class="action-add-button"
           i18n
-          >
+        >
           Add Action
         </button>
       </div>

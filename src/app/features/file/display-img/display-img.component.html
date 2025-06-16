@@ -5,7 +5,5 @@
   <img [src]="defaultImage" />
 }
 @if (!imgSrc && !defaultImage && defaultIcon) {
-  <app-fa-dynamic-icon
-    [icon]="defaultIcon"
-  ></app-fa-dynamic-icon>
+  <app-fa-dynamic-icon [icon]="defaultIcon"></app-fa-dynamic-icon>
 }

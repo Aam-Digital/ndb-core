@@ -11,7 +11,11 @@
           [entityType]="entityConstructor"
           (entityCreate)="addNew()"
         ></app-entity-create-button>
-        <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
+        <button
+          mat-icon-button
+          color="primary"
+          [matMenuTriggerFor]="additional"
+        >
           <fa-icon icon="ellipsis-v"></fa-icon>
         </button>
       </div>
@@ -41,7 +45,7 @@
           <mat-tab-group
             [(selectedIndex)]="selectedColumnGroupIndex"
             appTabStateMemo
-            >
+          >
             @for (item of groups; track item) {
               <mat-tab
                 [label]="item.name"
@@ -68,7 +72,11 @@
     <app-view-actions>
       <div class="flex-row full-width">
         <div *ngTemplateOutlet="filterDialog"></div>
-        <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
+        <button
+          mat-icon-button
+          color="primary"
+          [matMenuTriggerFor]="additional"
+        >
           <fa-icon icon="ellipsis-v"></fa-icon>
         </button>
       </div>
@@ -97,241 +105,241 @@
       placeholder="e.g. name, age"
       (ngModelChange)="applyFilter($event)"
       [(ngModel)]="filterString"
-      />
-      @if (filterString) {
-        <button
-          mat-icon-button
-          matIconSuffix
-          aria-label="Clear"
-          (click)="filterString = ''; applyFilter('')"
-          >
-          <fa-icon icon="times"></fa-icon>
-        </button>
-      }
-    </mat-form-field>
-  </ng-template>
-
-  <ng-template #subrecord>
-    <app-entities-table
-      [entityType]="entityConstructor"
-      [records]="allEntities"
-      [customColumns]="columns"
-      [editable]="false"
-      [clickMode]="clickMode"
-      (entityClick)="onRowClick($event)"
-      [columnsToDisplay]="columnsToDisplay"
-      [filter]="filterObj"
-      [sortBy]="defaultSort"
-      [(selectedRecords)]="selectedRows"
-      [selectable]="!!selectedRows"
-      [showInactive]="showInactive"
-      (filteredRecordsChange)="filteredData = $event"
-      [filterFreetext]="filterFreetext"
-    ></app-entities-table>
-  </ng-template>
-
-  <mat-menu #additional>
-    <div class="hide-desktop">
+    />
+    @if (filterString) {
       <button
-        mat-menu-item
-        (click)="addNew()"
-        angulartics2On="click"
-        angularticsCategory="UserAction"
-        [angularticsAction]="title.toLowerCase().replace(' ', '_') + '_add_new'"
+        mat-icon-button
+        matIconSuffix
+        aria-label="Clear"
+        (click)="filterString = ''; applyFilter('')"
+      >
+        <fa-icon icon="times"></fa-icon>
+      </button>
+    }
+  </mat-form-field>
+</ng-template>
+
+<ng-template #subrecord>
+  <app-entities-table
+    [entityType]="entityConstructor"
+    [records]="allEntities"
+    [customColumns]="columns"
+    [editable]="false"
+    [clickMode]="clickMode"
+    (entityClick)="onRowClick($event)"
+    [columnsToDisplay]="columnsToDisplay"
+    [filter]="filterObj"
+    [sortBy]="defaultSort"
+    [(selectedRecords)]="selectedRows"
+    [selectable]="!!selectedRows"
+    [showInactive]="showInactive"
+    (filteredRecordsChange)="filteredData = $event"
+    [filterFreetext]="filterFreetext"
+  ></app-entities-table>
+</ng-template>
+
+<mat-menu #additional>
+  <div class="hide-desktop">
+    <button
+      mat-menu-item
+      (click)="addNew()"
+      angulartics2On="click"
+      angularticsCategory="UserAction"
+      [angularticsAction]="title.toLowerCase().replace(' ', '_') + '_add_new'"
       *appDisabledEntityOperation="{
         entity: entityConstructor,
         operation: 'create',
       }"
-        >
-        <fa-icon
-          class="color-accent standard-icon-with-text"
-          aria-label="add element"
-          icon="plus-circle"
-        ></fa-icon>
-        <span i18n="Add a new entity to a list of multiple entities">
+    >
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        aria-label="add element"
+        icon="plus-circle"
+      ></fa-icon>
+      <span i18n="Add a new entity to a list of multiple entities">
         Add New
       </span>
-      </button>
-
-      <button mat-menu-item (click)="openFilterOverlay()">
-        <fa-icon
-          aria-label="filter"
-          class="color-accent standard-icon-with-text"
-          icon="filter"
-          >
-        </fa-icon>
-        <span i18n="Show filter options popup for list"> Filter options </span>
-      </button>
-    </div>
-
-    <button
-      mat-menu-item
-      [appExportData]="allEntities"
-      format="csv"
-      [exportConfig]="exportConfig"
-      [filename]="title.replace(' ', '')"
-      angulartics2On="click"
-      [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-      angularticsAction="list_csv_export"
-      >
-      <fa-icon
-        class="color-accent standard-icon-with-text"
-        aria-label="download csv"
-        icon="download"
-      ></fa-icon>
-      <span i18n="Download list contents as CSV"> Download all data (.csv) </span>
     </button>
 
+    <button mat-menu-item (click)="openFilterOverlay()">
+      <fa-icon
+        aria-label="filter"
+        class="color-accent standard-icon-with-text"
+        icon="filter"
+      >
+      </fa-icon>
+      <span i18n="Show filter options popup for list"> Filter options </span>
+    </button>
+  </div>
+
+  <button
+    mat-menu-item
+    [appExportData]="allEntities"
+    format="csv"
+    [exportConfig]="exportConfig"
+    [filename]="title.replace(' ', '')"
+    angulartics2On="click"
+    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    angularticsAction="list_csv_export"
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="download csv"
+      icon="download"
+    ></fa-icon>
+    <span i18n="Download list contents as CSV"> Download all data (.csv) </span>
+  </button>
+
+  <button
+    mat-menu-item
+    [appExportData]="filteredData"
+    format="csv"
+    [exportConfig]="exportConfig"
+    [filename]="title.replace(' ', '')"
+    angulartics2On="click"
+    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    angularticsAction="list_csv_export"
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="download csv"
+      icon="download"
+    ></fa-icon>
+    <span i18n="Download list contents as CSV"> Download current (.csv) </span>
+  </button>
+
+  <button
+    mat-menu-item
+    angulartics2On="click"
+    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    angularticsAction="import_file"
+    [routerLink]="['/import']"
+    [queryParams]="{ entityType: entityConstructor?.ENTITY_TYPE }"
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="import file"
+      icon="file-import"
+    ></fa-icon>
+    <span i18n> Import from file </span>
+  </button>
+
+  <button
+    mat-menu-item
+    (click)="selectedRows = []"
+    matTooltip="Select multiple records for bulk actions like duplicating or deleting"
+    i18n-matTooltip
+    matTooltipPosition="before"
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="bulk actions"
+      icon="list-check"
+    ></fa-icon>
+    <span i18n> Bulk Actions </span>
+  </button>
+
+  @if (
+    ("update" | ablePure: "Config" | async) &&
+    !entityConstructor.isInternalEntity
+  ) {
     <button
       mat-menu-item
-      [appExportData]="filteredData"
-      format="csv"
-      [exportConfig]="exportConfig"
-      [filename]="title.replace(' ', '')"
-      angulartics2On="click"
-      [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-      angularticsAction="list_csv_export"
-      >
+      [routerLink]="['/admin/entity', entityConstructor.ENTITY_TYPE]"
+      [queryParams]="{ mode: 'list' }"
+      queryParamsHandling="merge"
+    >
       <fa-icon
-        class="color-accent standard-icon-with-text"
-        aria-label="download csv"
-        icon="download"
+        class="standard-icon-with-text color-accent"
+        icon="tools"
       ></fa-icon>
-      <span i18n="Download list contents as CSV"> Download current (.csv) </span>
+      <span i18n>Edit Data Structure</span>
     </button>
+  }
 
-    <button
-      mat-menu-item
-      angulartics2On="click"
-      [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-      angularticsAction="import_file"
-      [routerLink]="['/import']"
-      [queryParams]="{ entityType: entityConstructor?.ENTITY_TYPE }"
-      >
-      <fa-icon
-        class="color-accent standard-icon-with-text"
-        aria-label="import file"
-        icon="file-import"
-      ></fa-icon>
-      <span i18n> Import from file </span>
-    </button>
+  <ng-content select="[mat-menu-item]"></ng-content>
+</mat-menu>
 
-    <button
-      mat-menu-item
-      (click)="selectedRows = []"
-      matTooltip="Select multiple records for bulk actions like duplicating or deleting"
-      i18n-matTooltip
-      matTooltipPosition="before"
-      >
-      <fa-icon
-        class="color-accent standard-icon-with-text"
-        aria-label="bulk actions"
-        icon="list-check"
-      ></fa-icon>
-      <span i18n> Bulk Actions </span>
-    </button>
-
-    @if (
-      ('update' | ablePure: 'Config' | async) &&
-      !entityConstructor.isInternalEntity
-      ) {
-      <button
-        mat-menu-item
-        [routerLink]="['/admin/entity', entityConstructor.ENTITY_TYPE]"
-        [queryParams]="{ mode: 'list' }"
-        queryParamsHandling="merge"
-        >
-        <fa-icon
-          class="standard-icon-with-text color-accent"
-          icon="tools"
-        ></fa-icon>
-        <span i18n>Edit Data Structure</span>
-      </button>
-    }
-
-    <ng-content select="[mat-menu-item]"></ng-content>
-  </mat-menu>
-
-  <ng-template #bulkActions>
-    @if (!!selectedRows) {
-      <div class="bulk-action-button">
-        <div i18n>
-      Actions on <b>{{ selectedRows.length }}</b> selected records:
-    </div>
-        <div
-          class="flex-row gap-small bulk-action-button"
-          matTooltip="Select rows for an action on multiple records"
-          i18n-matTooltip
-          >
-          <button
-            mat-raised-button
-            (click)="editRecords()"
-            [disabled]="selectedRows.length === 0"
-            color="accent"
-            i18n="bulk action button"
-            >
-        Bulk Edit
-      </button>
-          <button
-            mat-raised-button
-            (click)="archiveRecords()"
-            [disabled]="selectedRows.length === 0"
-            color="accent"
-            i18n="bulk action button"
-            >
-        Archive
-      </button>
-          @if (entityConstructor.hasPII) {
-            <button
-              mat-raised-button
-              (click)="anonymizeRecords()"
-              [disabled]="selectedRows.length === 0"
-              color="accent"
-              i18n="bulk action button"
-              >
-          Anonymize
-        </button>
-          }
-          <button
-            mat-raised-button
-            (click)="deleteRecords()"
-            [disabled]="selectedRows.length === 0"
-            color="accent"
-            i18n="bulk action button"
-            >
-        Delete
-      </button>
-          <button
-            mat-raised-button
-            (click)="duplicateRecords()"
-            [disabled]="selectedRows.length === 0"
-            color="accent"
-            i18n="bulk action button"
-            >
-        Duplicate
-      </button>
-          <button
-            mat-raised-button
-            (click)="linkExternalProfiles()"
-            [disabled]="selectedRows.length === 0"
-            color="accent"
-            i18n="bulk action button"
-            >
-        Link External Profile
-      </button>
-          <button
-            mat-raised-button
-            (click)="mergeRecords()"
-            [disabled]="selectedRows.length !== 2"
-            color="accent"
-            i18n="bulk action button"
-            >
-        Merge
-      </button>
-          <button mat-raised-button (click)="selectedRows = undefined" i18n>
-        Cancel
-      </button>
-        </div>
+<ng-template #bulkActions>
+  @if (!!selectedRows) {
+    <div class="bulk-action-button">
+      <div i18n>
+        Actions on <b>{{ selectedRows.length }}</b> selected records:
       </div>
-    }
-  </ng-template>
+      <div
+        class="flex-row gap-small bulk-action-button"
+        matTooltip="Select rows for an action on multiple records"
+        i18n-matTooltip
+      >
+        <button
+          mat-raised-button
+          (click)="editRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Bulk Edit
+        </button>
+        <button
+          mat-raised-button
+          (click)="archiveRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Archive
+        </button>
+        @if (entityConstructor.hasPII) {
+          <button
+            mat-raised-button
+            (click)="anonymizeRecords()"
+            [disabled]="selectedRows.length === 0"
+            color="accent"
+            i18n="bulk action button"
+          >
+            Anonymize
+          </button>
+        }
+        <button
+          mat-raised-button
+          (click)="deleteRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Delete
+        </button>
+        <button
+          mat-raised-button
+          (click)="duplicateRecords()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Duplicate
+        </button>
+        <button
+          mat-raised-button
+          (click)="linkExternalProfiles()"
+          [disabled]="selectedRows.length === 0"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Link External Profile
+        </button>
+        <button
+          mat-raised-button
+          (click)="mergeRecords()"
+          [disabled]="selectedRows.length !== 2"
+          color="accent"
+          i18n="bulk action button"
+        >
+          Merge
+        </button>
+        <button mat-raised-button (click)="selectedRows = undefined" i18n>
+          Cancel
+        </button>
+      </div>
+    </div>
+  }
+</ng-template>

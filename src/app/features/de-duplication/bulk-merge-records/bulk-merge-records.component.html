@@ -14,7 +14,7 @@
             [field]="field"
             [entities]="entitiesToMerge"
             [control]="mergeForm.formGroup.get(field.id)"
-            >
+          >
           </app-merge-fields>
           <!-- Merge Preview -->
           <div class="preview-cell">
@@ -38,7 +38,7 @@
     [disabled]="mergeForm?.formGroup.invalid"
     (click)="confirmAndMergeRecords()"
     i18n
-    >
+  >
     Merge
   </button>
   @if (mergeForm?.formGroup.invalid) {

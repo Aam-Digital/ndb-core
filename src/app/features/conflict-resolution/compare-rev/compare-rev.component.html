@@ -2,9 +2,11 @@
   <mat-expansion-panel (opened)="loadRev()">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <span [matTooltip]="docString" (mouseover)="docString = stringify(doc)">{{
-          rev
-        }}</span>
+        <span
+          [matTooltip]="docString"
+          (mouseover)="docString = stringify(doc)"
+          >{{ rev }}</span
+        >
       </mat-panel-title>
     </mat-expansion-panel-header>
     <div class="flex-row gap-small">
@@ -12,15 +14,15 @@
         <label
           for="conflictingDiff"
           i18n="Signals that there are conflicting database-entities"
-          >
-        Conflicting Entity:
-      </label>
+        >
+          Conflicting Entity:
+        </label>
         <textarea
           id="conflictingDiff"
           cdkTextareaAutosize
           class="diffText conflicting"
           disabled
-          >
+        >
           {{ diffs }}
         </textarea>
         <button
@@ -28,9 +30,9 @@
           class="full-width"
           (click)="resolveByManualEdit(diffs)"
           i18n
-          >
-        Choose conflicting version
-      </button>
+        >
+          Choose conflicting version
+        </button>
       </div>
       <div>
         <label for="customDiff">Custom Resolution:</label>
@@ -39,40 +41,40 @@
           cdkTextareaAutosize
           class="diffText custom"
           [(ngModel)]="diffsCustom"
-          >
+        >
         </textarea>
         <button
           mat-raised-button
           class="full-width"
           (click)="resolveByManualEdit(diffsCustom)"
           i18n
-          >
-        Save manually resolved record
-      </button>
+        >
+          Save manually resolved record
+        </button>
       </div>
       <div>
         <label for="currentDiff" i18n="A currently selected entity">
-        Current Entity:
-      </label>
+          Current Entity:
+        </label>
         <textarea
           id="currentDiff"
           cdkTextareaAutosize
           class="diffText current"
           disabled
-          >
+        >
           {{ diffsReverse }}
         </textarea>
         <button
           mat-raised-button
           class="full-width"
           (click)="resolveByDelete(revDoc)"
-        i18n="
-          Choose a current version between several conflicting versions of
-          database entries
-        "
-          >
-        Choose current version
-      </button>
+          i18n="
+            Choose a current version between several conflicting versions of
+            database entries
+          "
+        >
+          Choose current version
+        </button>
       </div>
     </div>
   </mat-expansion-panel>

@@ -15,7 +15,6 @@ import {
 } from "@fortawesome/angular-fontawesome";
 import { Logging } from "../../logging/logging.service";
 
-
 /**
  * A map to prevent old configs to be broken
  */
@@ -35,7 +34,9 @@ const iconAliases = new Map<string, IconDefinition>([
  */
 @Component({
   selector: "app-fa-dynamic-icon",
-  template: ` @if (_icon) {<fa-icon [icon]="_icon"></fa-icon>}`,
+  template: ` @if (_icon) {
+    <fa-icon [icon]="_icon"></fa-icon>
+  }`,
   imports: [FontAwesomeModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

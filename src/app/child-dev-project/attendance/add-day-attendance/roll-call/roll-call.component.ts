@@ -68,8 +68,8 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     NgClass,
     RollCallTabComponent,
     HammerModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
   providers: [
     {
       provide: HAMMER_GESTURE_CONFIG,

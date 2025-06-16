@@ -24,8 +24,8 @@ import { UnsavedChangesService } from "../../../entity-details/form/unsaved-chan
     Angulartics2OnModule,
     DisableEntityOperationDirective,
     FaIconComponent,
-    MatButtonModule
-],
+    MatButtonModule,
+  ],
   templateUrl: "./entity-inline-edit-actions.component.html",
   styleUrl: "./entity-inline-edit-actions.component.scss",
 })

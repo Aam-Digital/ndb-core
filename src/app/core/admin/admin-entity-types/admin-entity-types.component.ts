@@ -47,8 +47,8 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
     MatCellDef,
     MatHeaderCellDef,
     FaIconComponent,
-    RouterLink
-],
+    RouterLink,
+  ],
   templateUrl: "./admin-entity-types.component.html",
   styleUrl: "./admin-entity-types.component.scss",
 })

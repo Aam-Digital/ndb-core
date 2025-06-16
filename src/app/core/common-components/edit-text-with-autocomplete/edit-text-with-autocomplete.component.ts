@@ -50,8 +50,8 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
     EntityBlockComponent,
     FontAwesomeModule,
     MatTooltipModule,
-    ErrorHintComponent
-],
+    ErrorHintComponent,
+  ],
 })
 export class EditTextWithAutocompleteComponent
   extends EditComponent<string>

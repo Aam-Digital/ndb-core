@@ -47,8 +47,8 @@ import { MatExpansionModule } from "@angular/material/expansion";
     MatButtonModule,
     EntitySelectComponent,
     HelpButtonComponent,
-    MatExpansionModule
-],
+    MatExpansionModule,
+  ],
   providers: [EntityTypeLabelPipe],
 })
 export class ImportAdditionalActionsComponent implements OnChanges {

@@ -25,8 +25,8 @@ import { DateWithAge } from "../dateWithAge";
     MatDatepickerModule,
     ErrorHintComponent,
     FontAwesomeModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
 })
 export class EditAgeComponent extends EditComponent<DateWithAge> {
   dateChanged(event: MatDatepickerInputEvent<any>) {

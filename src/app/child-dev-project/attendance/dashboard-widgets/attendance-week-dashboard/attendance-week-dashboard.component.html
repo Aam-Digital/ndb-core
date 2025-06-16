@@ -5,7 +5,7 @@
   explanation="Cases absent multiple times in the given week"
   i18n-explanation="Dashboard attendance component explanation tooltip"
   [entries]="entries"
-  >
+>
   <div class="table-wrapper">
     <table mat-table i18n-aria-label aria-label="cases absent multiple times">
       <!-- Table header only for assistive technologies like screen readers -->
@@ -22,7 +22,7 @@
           *matCellDef="let rowGroup"
           (click)="goToChild(rowGroup[0].childId)"
           class="pointer"
-          >
+        >
           <app-entity-block
             [entityId]="rowGroup[0].childId"
             entityType="Child"
@@ -33,9 +33,7 @@
       <ng-container matColumnDef="attendance">
         <td *matCellDef="let rowGroup">
           @for (activityRecord of rowGroup; track activityRecord) {
-            <div
-              class="activities-record"
-              >
+            <div class="activities-record">
               @for (day of activityRecord.attendanceDays; track day) {
                 <app-attendance-day-block
                   [attendance]="day"
@@ -53,9 +51,9 @@
       <div
         i18n="Placeholder if no absences are visible in dashboar"
         class="headline"
-        >
-      no absences recorded
-    </div>
+      >
+        no absences recorded
+      </div>
     }
   </div>
 </app-dashboard-list-widget>

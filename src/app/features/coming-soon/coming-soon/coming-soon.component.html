@@ -13,7 +13,7 @@
       class="full-width"
       (click)="reportFeatureRequest()"
       [disabled]="requested"
-      >
+    >
       @if (requested) {
         <fa-icon aria-label="requested" icon="check"></fa-icon>
       }
@@ -23,22 +23,22 @@
           a feature-request
         "
         >I need this feature</span
-        >
-      </button>
+      >
+    </button>
 
-      <a
-        i18n
-        mat-stroked-button
-        class="full-width"
-        target="_blank"
-        rel="noopener"
+    <a
+      i18n
+      mat-stroked-button
+      class="full-width"
+      target="_blank"
+      rel="noopener"
       href="mailto:info@aam-digital.com?subject=Feature-Request%20{{
         featureId
       }}"
-        >
+    >
       I can tell you about my use case
     </a>
-    </div>
+  </div>
 
-    <img src="../../../../assets/canvas-stand.png" alt="" class="illustration" />
-  </mat-dialog-content>
+  <img src="../../../../assets/canvas-stand.png" alt="" class="illustration" />
+</mat-dialog-content>

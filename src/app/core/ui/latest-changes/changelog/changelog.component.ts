@@ -47,8 +47,8 @@ import { MarkedRendererCustom } from "./MarkedRendererCustom";
     MatDialogModule,
     FontAwesomeModule,
     DatePipe,
-    MatButtonModule
-],
+    MatButtonModule,
+  ],
 })
 export class ChangelogComponent implements OnInit {
   /** The array of relevant changelog entries to be displayed */

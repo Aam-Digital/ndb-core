@@ -19,7 +19,7 @@
         <mat-select
           [formControl]="selectedFieldFormControl"
           (selectionChange)="onChangeProperty($event.value)"
-          >
+        >
           @for (field of entityFields; track field) {
             <mat-option [value]="field.key">
               {{ field.label }}

@@ -17,8 +17,8 @@ import { firstValueFrom } from "rxjs";
     FaIconComponent,
     MatProgressSpinnerModule,
     MatTooltip,
-    MatIconButton
-],
+    MatIconButton,
+  ],
   templateUrl: "./address-gps-location.component.html",
   styleUrl: "./address-gps-location.component.scss",
 })

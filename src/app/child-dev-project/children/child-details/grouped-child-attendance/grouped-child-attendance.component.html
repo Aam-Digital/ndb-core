@@ -10,7 +10,7 @@
       <app-activity-attendance-section
         [entity]="activity"
         [forChild]="entity.getId()"
-        >
+      >
       </app-activity-attendance-section>
     </mat-tab>
   }
@@ -18,15 +18,16 @@
   @if (archivedActivities.length > 0) {
     <mat-tab label="Previous Activities">
       <p i18n>
-      This section displays historical activities that have been archived.
-    </p>
+        This section displays historical activities that have been archived.
+      </p>
       <mat-form-field>
         <mat-label i18n>Select activity</mat-label>
         <mat-select (selectionChange)="onActivityChange($event.value)">
-          @for (archivedActivity of archivedActivities; track archivedActivity) {
-            <mat-option
-              [value]="archivedActivity"
-              >
+          @for (
+            archivedActivity of archivedActivities;
+            track archivedActivity
+          ) {
+            <mat-option [value]="archivedActivity">
               {{ archivedActivity.title }}
             </mat-option>
           }
@@ -37,7 +38,7 @@
           <app-activity-attendance-section
             [entity]="selectedActivity"
             [forChild]="entity.getId()"
-            >
+          >
           </app-activity-attendance-section>
         </div>
       }

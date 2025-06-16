@@ -57,8 +57,8 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
     MatCardModule,
     EntityFieldLabelComponent,
     EntityFieldEditComponent,
-    AdminSectionHeaderComponent
-],
+    AdminSectionHeaderComponent,
+  ],
 })
 export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;

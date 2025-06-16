@@ -1,4 +1,3 @@
-
 import { Component, inject, OnInit } from "@angular/core";
 import {
   FormArray,
@@ -33,8 +32,8 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
     HelpButtonComponent,
     FontAwesomeModule,
     MatButtonModule,
-    EntityFieldSelectComponent
-],
+    EntityFieldSelectComponent,
+  ],
   templateUrl: "./edit-prefilled-values.component.html",
   styleUrls: ["./edit-prefilled-values.component.scss"],
 })

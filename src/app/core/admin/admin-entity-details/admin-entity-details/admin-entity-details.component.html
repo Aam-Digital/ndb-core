@@ -17,23 +17,25 @@
     [appAdminTabTemplate]="config?.panels"
     let-item
     let-tabIndex="index"
-    >
+  >
     <div class="flex-column gap-large padding-top-large">
-      @for (componentConfig of item.components; track componentConfig; let i = $index) {
-        <div
-          class="section-wrapper"
-          >
+      @for (
+        componentConfig of item.components;
+        track componentConfig;
+        let i = $index
+      ) {
+        <div class="section-wrapper">
           <app-admin-section-header
             [(title)]="componentConfig.title"
             (remove)="item.components.splice(i, 1)"
           ></app-admin-section-header>
-          @if (componentConfig.component === 'Form') {
+          @if (componentConfig.component === "Form") {
             <app-admin-entity-form
               [config]="componentConfig.config"
               (configChange)="componentConfig.config = $event"
               [entityType]="entityConstructor"
               uniqueAreaId="{{ tabIndex }}-{{ i }}"
-              >
+            >
             </app-admin-entity-form>
           } @else {
             <app-admin-entity-panel-component
@@ -50,7 +52,7 @@
         class="section-add-button"
         (click)="addComponent(item)"
         i18n
-        >
+      >
         <fa-icon
           aria-label="add element"
           icon="plus-circle"

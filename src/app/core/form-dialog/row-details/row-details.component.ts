@@ -45,8 +45,8 @@ export interface DetailsComponentData {
     MatTooltipModule,
     DialogButtonsComponent,
     EntityArchivedInfoComponent,
-    EntityFieldViewComponent
-],
+    EntityFieldViewComponent,
+  ],
   viewProviders: [
     { provide: ViewComponentContext, useValue: new ViewComponentContext(true) },
   ],

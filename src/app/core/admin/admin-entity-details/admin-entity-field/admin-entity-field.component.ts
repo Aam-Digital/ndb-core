@@ -69,8 +69,8 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
     AnonymizeOptionsComponent,
     MatCheckbox,
     AdminDefaultValueComponent,
-    EntityTypeSelectComponent
-],
+    EntityTypeSelectComponent,
+  ],
 })
 export class AdminEntityFieldComponent implements OnInit {
   fieldId: string;

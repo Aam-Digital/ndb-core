@@ -32,8 +32,8 @@ import { Logging } from "../../logging/logging.service";
     MatStepperNext,
     MatStepperIcon,
     MarkdownComponent,
-    MatTooltip
-],
+    MatTooltip,
+  ],
   templateUrl: "./setup-wizard.component.html",
   styleUrl: "./setup-wizard.component.scss",
 })

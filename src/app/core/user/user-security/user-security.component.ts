@@ -40,8 +40,8 @@ import { of } from "rxjs";
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
-],
+    MatSelectModule,
+  ],
 })
 export class UserSecurityComponent implements OnInit {
   @Input() entity: Entity;

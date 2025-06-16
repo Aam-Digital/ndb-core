@@ -27,8 +27,8 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
     FormsModule,
     MatInputModule,
     EntitiesTableComponent,
-    AttendanceCalendarComponent
-],
+    AttendanceCalendarComponent,
+  ],
 })
 export class AttendanceDetailsComponent {
   @Input() entity: ActivityAttendance;

@@ -4,12 +4,12 @@
   style="display: none"
   (change)="onFileSelected($event.target['files'][0])"
   #fileUpload
-  />
+/>
 
 <mat-form-field
   [ngClass]="{ clickable: formControl.value }"
   (click)="navigator.onLine ? formClicked() : null"
-  >
+>
   @if (!hideLabel) {
     <mat-label>
       <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
@@ -25,7 +25,7 @@
     i18n-matTooltip="Tooltip show file"
     matTooltip="Show file"
     [matTooltipDisabled]="!(initialValue && formControl.value === initialValue)"
-    />
+  />
 
   @if (formControl.value && formControl.enabled) {
     <button
@@ -36,7 +36,7 @@
       i18n-mattooltip="Tooltip remove file"
       matTooltip="Remove file"
       [disabled]="!navigator.onLine"
-      >
+    >
       <fa-icon icon="xmark"></fa-icon>
     </button>
   }
@@ -49,7 +49,7 @@
       i18n-matTooltip="Tooltip upload file button"
       matTooltip="Upload file"
       [disabled]="!navigator.onLine"
-      >
+    >
       <fa-icon icon="upload"></fa-icon>
     </button>
   }

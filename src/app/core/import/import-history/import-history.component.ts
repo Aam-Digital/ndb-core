@@ -23,8 +23,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     EntityTypeLabelPipe,
     EntityBlockComponent,
     MatButtonModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
 })
 export class ImportHistoryComponent implements OnInit {
   @Input() data: any[];

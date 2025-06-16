@@ -30,8 +30,8 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    HelpButtonComponent
-],
+    HelpButtonComponent,
+  ],
 })
 export class EntityImportConfigComponent {
   entity: EntityConstructor;

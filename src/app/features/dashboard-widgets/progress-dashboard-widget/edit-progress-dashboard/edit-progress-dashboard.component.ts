@@ -40,8 +40,8 @@ export interface EditProgressDashboardComponentData {
     DialogCloseComponent,
     MatButtonModule,
     FontAwesomeModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
 })
 export class EditProgressDashboardComponent implements OnInit {
   /**

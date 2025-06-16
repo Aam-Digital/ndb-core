@@ -16,8 +16,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatButtonModule,
     MatTableModule,
     Angulartics2OnModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
   templateUrl: "./entity-create-button.component.html",
   styleUrl: "./entity-create-button.component.scss",
 })

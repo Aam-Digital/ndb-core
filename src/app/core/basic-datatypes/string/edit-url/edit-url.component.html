@@ -1,7 +1,7 @@
 <mat-form-field
   (click)="openLinkIfDisabled()"
   [class.clickable]="formControl.disabled && formControl.value"
-  >
+>
   @if (!hideLabel) {
     <mat-label>
       <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
@@ -16,7 +16,7 @@
     [readonly]="formControl.disabled"
     placeholder="Enter URL"
     i18n-placeholder
-    />
+  />
 
   @if (formControl.invalid && formControl.touched) {
     <mat-error>

@@ -4,7 +4,7 @@
     Reports concern a group of for example children and include data about these
     children in a certain date range
   "
-  >
+>
   Reports
 </app-view-title>
 
@@ -19,11 +19,11 @@
 
 @if (reportCalculation) {
   <div style="color: gray; padding: 10px" i18n>
-  This report was calculated at:
-  {{ localTime | date: "dd.MM.yyyy HH:mm" }} <br />
-  Click again on "Calculate" to re-calculate the report including any changes of
-  records since then.
-</div>
+    This report was calculated at:
+    {{ localTime | date: "dd.MM.yyyy HH:mm" }} <br />
+    Click again on "Calculate" to re-calculate the report including any changes
+    of records since then.
+  </div>
 }
 
 @if (isError) {
@@ -31,9 +31,9 @@
     <h3 class="header" i18n>Something went wrong calculating the report</h3>
     <div class="content">
       <p i18n>
-      Please try again. If you continue to see this error, contact the technical
-      support team.
-    </p>
+        Please try again. If you continue to see this error, contact the
+        technical support team.
+      </p>
       <p>Error details:</p>
       <code>
         {{ errorDetails | json }}
@@ -42,23 +42,17 @@
   </div>
 }
 
-@if (data?.length > 0 && mode === 'reporting') {
-  <app-report-row
-    [rows]="data"
-  ></app-report-row>
+@if (data?.length > 0 && mode === "reporting") {
+  <app-report-row [rows]="data"></app-report-row>
 }
 
 @if (
   data?.length > 0 &&
-  (mode === 'exporting' || (mode === 'sql' && currentReport?.version !== 2))
-  ) {
-  <app-object-table
-    [objects]="data"
-  ></app-object-table>
+  (mode === "exporting" || (mode === "sql" && currentReport?.version !== 2))
+) {
+  <app-object-table [objects]="data"></app-object-table>
 }
 
-@if (data?.length > 0 && mode === 'sql' && currentReport?.version === 2) {
-  <app-sql-v2-table
-    [reportData]="data"
-  ></app-sql-v2-table>
+@if (data?.length > 0 && mode === "sql" && currentReport?.version === 2) {
+  <app-sql-v2-table [reportData]="data"></app-sql-v2-table>
 }

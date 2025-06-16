@@ -2,57 +2,50 @@
 
 <mat-accordion>
   @for (item of previousImports; track item; let i = $index) {
-    <mat-expansion-panel
-      [expanded]="i === 0"
-      >
+    <mat-expansion-panel [expanded]="i === 0">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ item.date | date }}
         </mat-panel-title>
         <mat-panel-description i18n>
-        {{ item.createdEntities?.length ?? 0 }} new,
-        {{ item.updatedEntities?.length ?? 0 }} updated "{{
-          item.config.entityType | entityTypeLabel
-        }}" records
-      </mat-panel-description>
+          {{ item.createdEntities?.length ?? 0 }} new,
+          {{ item.updatedEntities?.length ?? 0 }} updated "{{
+            item.config.entityType | entityTypeLabel
+          }}" records
+        </mat-panel-description>
       </mat-expansion-panel-header>
       <div i18n>
-      imported by
-      <app-entity-block
-        [entityId]="item.user"
-        [linkDisabled]="true"
-      ></app-entity-block>
-      at {{ item.date | date: "medium" }}
-    </div>
+        imported by
+        <app-entity-block
+          [entityId]="item.user"
+          [linkDisabled]="true"
+        ></app-entity-block>
+        at {{ item.date | date: "medium" }}
+      </div>
       <div class="flex-row gap-regular margin-top-regular">
         <div
           i18n-matTooltip="Tooltip help text for button"
           matTooltip="Please select a file first"
           [matTooltipDisabled]="data?.length > 0"
-          >
+        >
           <button
             [disabled]="!data?.length"
             (click)="itemSelected.emit(item)"
             mat-stroked-button
             color="accent"
             i18n
-            >
-          Re-use configuration
-        </button>
+          >
+            Re-use configuration
+          </button>
         </div>
         <button (click)="undoImport(item)" mat-stroked-button color="warn" i18n>
-        Undo import
-      </button>
+          Undo import
+        </button>
       </div>
     </mat-expansion-panel>
   }
 </mat-accordion>
 
 @if (!(previousImports?.length > 0)) {
-  <div
-    class="no-results"
-    i18n="Placeholder text"
-    >
-  no existing imports
-</div>
+  <div class="no-results" i18n="Placeholder text">no existing imports</div>
 }

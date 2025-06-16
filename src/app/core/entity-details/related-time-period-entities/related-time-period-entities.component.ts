@@ -32,8 +32,8 @@ import { TimePeriod } from "./time-period";
     MatSlideToggleModule,
     FormsModule,
     MatTooltipModule,
-    PillComponent
-],
+    PillComponent,
+  ],
 })
 export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   extends RelatedEntitiesComponent<E>

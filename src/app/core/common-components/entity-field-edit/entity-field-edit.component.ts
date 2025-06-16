@@ -39,8 +39,8 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
     NgClass,
     FontAwesomeModule,
     MatButtonModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>
   implements OnChanges

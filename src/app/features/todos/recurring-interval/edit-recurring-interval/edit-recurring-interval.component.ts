@@ -27,8 +27,8 @@ import { ErrorHintComponent } from "../../../../core/common-components/error-hin
     ReactiveFormsModule,
     FontAwesomeModule,
     MatSelectModule,
-    ErrorHintComponent
-],
+    ErrorHintComponent,
+  ],
 })
 export class EditRecurringIntervalComponent
   extends EditComponent<any>

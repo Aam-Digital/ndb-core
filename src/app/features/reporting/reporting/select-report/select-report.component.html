@@ -5,9 +5,9 @@
       mat-stroked-button
       href="mailto:info@aam-digital.com?subject=Set up reports"
       i18n="Button if no reports are configured yet"
-      >
-    Ask for a setup call
-  </a>
+    >
+      Ask for a setup call
+    </a>
   </div>
 }
 
@@ -20,7 +20,7 @@
           [(ngModel)]="selectedReport"
           [disabled]="loading"
           (ngModelChange)="reportChange()"
-          >
+        >
           @for (report of reports; track report) {
             <mat-option [value]="report">
               {{ report.title }}
@@ -38,14 +38,14 @@
               matStartDate
               i18n-placeholder="Date selection for the reporting"
               placeholder="Start date"
-              />
+            />
             <input
               [(ngModel)]="toDate"
               (ngModelChange)="dateChange()"
               matEndDate
               i18n-placeholder="Date selection for the reporting"
               placeholder="End date"
-              />
+            />
           </mat-date-range-input>
           <mat-datepicker-toggle
             matIconSuffix
@@ -61,11 +61,11 @@
         mat-stroked-button
         color="accent"
         class="primary-button"
-      [disabled]="
-        !selectedReport ||
-        (isDateRangeReport && !fromDate && !toDate) ||
-        loading
-      "
+        [disabled]="
+          !selectedReport ||
+          (isDateRangeReport && !fromDate && !toDate) ||
+          loading
+        "
         (click)="calculate()"
         i18n="Calculate the results for a report"
         angulartics2On="click"
@@ -76,9 +76,9 @@
         i18n-matTooltip
         [matTooltipDisabled]="!calculateButton.disabled"
         style="pointer-events: all"
-        >
-      Calculate
-    </button>
+      >
+        Calculate
+      </button>
       <button
         mat-stroked-button
         color="accent"
@@ -92,7 +92,7 @@
         angularticsCategory="Reporting"
         angularticsAction="export"
         [angularticsLabel]="selectedReport?.title"
-        >
+      >
         <fa-icon
           icon="download"
           class="standard-icon-with-text"

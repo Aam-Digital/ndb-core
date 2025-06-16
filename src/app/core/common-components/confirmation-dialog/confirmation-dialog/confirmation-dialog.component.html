@@ -1,13 +1,11 @@
 <h1 mat-dialog-title>
   {{ data.title }}
   @if (data.closeButton) {
-    <app-dialog-close
-      mat-dialog-close
-    ></app-dialog-close>
+    <app-dialog-close mat-dialog-close></app-dialog-close>
   }
 </h1>
 <div mat-dialog-content>
-  @for (para of data.text?.split('\n'); track para) {
+  @for (para of data.text?.split("\n"); track para) {
     <p>{{ para }}</p>
   }
 </div>
@@ -18,7 +16,7 @@
       mat-stroked-button
       (click)="button.click()"
       [mat-dialog-close]="button.dialogResult"
-      >
+    >
       {{ button.text }}
     </button>
   }

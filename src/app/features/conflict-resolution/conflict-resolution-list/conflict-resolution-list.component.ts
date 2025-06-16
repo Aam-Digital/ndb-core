@@ -24,8 +24,8 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
     MatTableModule,
     MatSortModule,
     CompareRevComponent,
-    MatPaginatorModule
-],
+    MatPaginatorModule,
+  ],
 })
 export class ConflictResolutionListComponent implements AfterViewInit {
   /** visible table columns in the template */

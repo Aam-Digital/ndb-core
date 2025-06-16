@@ -8,11 +8,9 @@
         Title Progress|Edit the progress of one or multiple tasks
       "
       placeholder="Title"
-      />
-    @if (title.hasError('required')) {
-      <mat-error i18n>
-      This field is required
-    </mat-error>
+    />
+    @if (title.hasError("required")) {
+      <mat-error i18n> This field is required </mat-error>
     }
   </mat-form-field>
 
@@ -21,10 +19,7 @@
 
 <mat-dialog-content class="dialog-content">
   @for (control of parts.controls; track control; let index = $index) {
-    <div
-      class="entry-wrapper mat-elevation-z1"
-      [formGroup]="$any(control)"
-      >
+    <div class="entry-wrapper mat-elevation-z1" [formGroup]="$any(control)">
       <mat-form-field class="header-field">
         <input
           formControlName="label"
@@ -32,11 +27,9 @@
           type="text"
           i18n-placeholder="Process Label|The label of a process or task"
           placeholder="Task"
-          />
-        @if (control.hasError('required', 'label')) {
-          <mat-error i18n>
-        This field is required
-      </mat-error>
+        />
+        @if (control.hasError("required", "label")) {
+          <mat-error i18n> This field is required </mat-error>
         }
       </mat-form-field>
       <button mat-icon-button color="accent" (click)="removePart(index)">
@@ -51,31 +44,27 @@
           formControlName="currentValue"
           matInput
           type="number"
-        i18n-placeholder="
-          Current process|The Current value of a process or task
-        "
+          i18n-placeholder="
+            Current process|The Current value of a process or task
+          "
           placeholder="Current"
           [errorStateMatcher]="currentErrorStateMatcher"
-          />
-        @if (control.hasError('required', 'currentValue')) {
-          <mat-error i18n>
-        This field is required
-      </mat-error>
+        />
+        @if (control.hasError("required", "currentValue")) {
+          <mat-error i18n> This field is required </mat-error>
         }
-        @if (control.hasError('min', 'currentValue')) {
-          <mat-error i18n>
-        Must be greater than 0
-      </mat-error>
+        @if (control.hasError("min", "currentValue")) {
+          <mat-error i18n> Must be greater than 0 </mat-error>
         }
-        @if (control.hasError('currentGtTarget')) {
+        @if (control.hasError("currentGtTarget")) {
           <mat-error
-        i18n="
-          The number entered in this form is less than another field but should
-          not be
-        "
-            >
-        Must not be greater than target
-      </mat-error>
+            i18n="
+              The number entered in this form is less than another field but
+              should not be
+            "
+          >
+            Must not be greater than target
+          </mat-error>
         }
       </mat-form-field>
       <mat-form-field class="target-field">
@@ -85,20 +74,18 @@
           type="number"
           i18n-placeholder="Target process|The target amount of a process"
           placeholder="Target"
-          />
-        @if (control.hasError('required', 'targetValue')) {
+        />
+        @if (control.hasError("required", "targetValue")) {
           <mat-error
             i18n="A field entered in a form is required and wasn't provided"
-            >
-        This field is required
-      </mat-error>
+          >
+            This field is required
+          </mat-error>
         }
-        @if (control.hasError('min', 'targetValue')) {
-          <mat-error
-            i18n="A field entered in a form must be greater than 0"
-            >
-        Must be greater than 0
-      </mat-error>
+        @if (control.hasError("min", "targetValue")) {
+          <mat-error i18n="A field entered in a form must be greater than 0">
+            Must be greater than 0
+          </mat-error>
         }
       </mat-form-field>
     </div>
@@ -123,14 +110,14 @@
     color="accent"
     [mat-dialog-close]="outputData.value"
     [disabled]="outputData.invalid"
-    >
+  >
     <span
       matTooltip="Fix the errors to save the form"
       [matTooltipDisabled]="outputData.valid"
       i18n-matTooltip="Shown when there are errors that prevent saving"
       i18n
       >Save</span
-      >
-    </button>
-    <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
-  </mat-dialog-actions>
+    >
+  </button>
+  <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
+</mat-dialog-actions>

@@ -27,8 +27,8 @@ export type LocationProperties = { [key: string]: string[] };
     DialogCloseComponent,
     MatFormFieldModule,
     MatSelectModule,
-    MatButtonModule
-],
+    MatButtonModule,
+  ],
 })
 export class MapPropertiesPopupComponent {
   entityProperties: {

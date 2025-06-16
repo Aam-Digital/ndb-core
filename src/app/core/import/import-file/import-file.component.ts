@@ -4,7 +4,6 @@ import {
   ParsedData,
 } from "../../common-components/input-file/input-file.component";
 
-
 /**
  * Import sub-step: Let user load a file and return parsed data.
  */

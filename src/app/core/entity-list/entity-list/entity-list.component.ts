@@ -97,8 +97,8 @@ import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service
     EntityCreateButtonComponent,
     AsyncPipe,
     AblePurePipe,
-    ViewActionsComponent
-],
+    ViewActionsComponent,
+  ],
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>

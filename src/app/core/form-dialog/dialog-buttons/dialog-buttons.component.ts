@@ -34,8 +34,8 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
     MatMenuModule,
     FontAwesomeModule,
     RouterLink,
-    EntityActionsMenuComponent
-],
+    EntityActionsMenuComponent,
+  ],
   templateUrl: "./dialog-buttons.component.html",
   styleUrls: ["./dialog-buttons.component.scss"],
 })

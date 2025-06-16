@@ -41,8 +41,8 @@ import {
     MatOption,
     MatFormFieldModule,
     MatSelectModule,
-    EntityFieldEditComponent
-],
+    EntityFieldEditComponent,
+  ],
   templateUrl: "./entity-bulk-edit.component.html",
   styleUrl: "./entity-bulk-edit.component.scss",
 })

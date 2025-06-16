@@ -1,9 +1,5 @@
 @if (!entity.completed) {
-  <button
-    mat-raised-button
-    color="accent"
-    (click)="complete.emit()"
-    >
+  <button mat-raised-button color="accent" (click)="complete.emit()">
     <fa-icon icon="check" class="margin-right-small"></fa-icon>
     <span i18n>Complete Task</span>
   </button>
@@ -20,7 +16,7 @@
       (click)="uncomplete.emit()"
       matTooltip="mark as incomplete again"
       i18n-matTooltip="todo uncomplete button tooltip"
-      >
+    >
       <fa-icon icon="undo-alt"></fa-icon>
     </button>
   </div>

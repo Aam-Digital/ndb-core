@@ -32,8 +32,8 @@ import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/e
     MatInputModule,
     FormsModule,
     MatButtonModule,
-    MatBadgeModule
-],
+    MatBadgeModule,
+  ],
 })
 export class ImportColumnMappingComponent implements OnChanges {
   @Input() rawData: any[] = [];

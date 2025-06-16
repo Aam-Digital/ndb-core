@@ -7,7 +7,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 
-
 @Component({
   selector: "app-custom-interval",
   templateUrl: "./custom-interval.component.html",
@@ -18,8 +17,8 @@ import { MatInputModule } from "@angular/material/input";
     MatFormFieldModule,
     MatSelectModule,
     MatButtonModule,
-    MatInputModule
-],
+    MatInputModule,
+  ],
 })
 export class CustomIntervalComponent {
   availableUnits: { label: string; unit: string }[] = timeUnitsPrimary;

@@ -31,8 +31,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     FontAwesomeModule,
     ErrorHintComponent,
     MatButtonModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
 })
 export class EnumDropdownComponent implements OnChanges {
   @Input() form: FormControl; // cannot be named "formControl" - otherwise the angular directive grabs this

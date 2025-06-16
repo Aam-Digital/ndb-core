@@ -24,8 +24,8 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
     FormsModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule
-],
+    MatInputModule,
+  ],
   templateUrl: "./admin-section-header.component.html",
   styleUrl: "./admin-section-header.component.scss",
 })

@@ -4,7 +4,6 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
 import { FileService } from "../file.service";
 import { MatButtonModule } from "@angular/material/button";
 
-
 /**
  * This component should be used as `viewComponent` when a property stores files.
  * If a file is stored, this component allows to view it.

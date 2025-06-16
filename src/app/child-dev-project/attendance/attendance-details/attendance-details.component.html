@@ -27,7 +27,7 @@
       Attendance|Attendance of a child (in percent) or the average of the event
       (in percent)
     "
-    >
+  >
     Attendance:
     {{
       (forChild
@@ -42,98 +42,98 @@
       <mat-form-field>
         <mat-label i18n="days present|How many days a child was present"
           >Days Present</mat-label
-          >
-          <input
-            matInput
-            type="number"
-            [value]="entity.countEventsPresent(forChild)"
-            readonly
-            />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label i18n="days absent|How many days a child was absent"
-              >Days Absent</mat-label
-              >
-              <input
-                matInput
-                type="number"
-                [value]="entity.countEventsAbsent(forChild)"
-                readonly
-                />
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label
-        i18n="
-          unknown status|How many days the presence or absence of a child is
-          unknown
-        "
-                  >Unknown Status</mat-label
-                  >
-                  <input
-                    matInput
-                    type="number"
-                    [value]="entity.countEventsWithUnknownStatus(forChild)"
-                    readonly
-                    />
-                  </mat-form-field>
-                </div>
-              }
+        >
+        <input
+          matInput
+          type="number"
+          [value]="entity.countEventsPresent(forChild)"
+          readonly
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label i18n="days absent|How many days a child was absent"
+          >Days Absent</mat-label
+        >
+        <input
+          matInput
+          type="number"
+          [value]="entity.countEventsAbsent(forChild)"
+          readonly
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label
+          i18n="
+            unknown status|How many days the presence or absence of a child is
+            unknown
+          "
+          >Unknown Status</mat-label
+        >
+        <input
+          matInput
+          type="number"
+          [value]="entity.countEventsWithUnknownStatus(forChild)"
+          readonly
+        />
+      </mat-form-field>
+    </div>
+  }
 
-              @if (!forChild) {
-                <div class="flex-row flex-wrap gap-regular">
-                  <mat-form-field>
-                    <mat-label i18n="Total present|How many children were present"
-                      >Total Present</mat-label
-                      >
-                      <input
-                        matInput
-                        type="number"
-                        [value]="entity.countTotalPresent()"
-                        readonly
-                        />
-                      </mat-form-field>
-                      <mat-form-field>
-                        <mat-label i18n="Total absent|How many children were absent"
-                          >Total Absent</mat-label
-                          >
-                          <input
-                            matInput
-                            type="number"
-                            [value]="entity.countTotalAbsent()"
-                            readonly
-                            />
-                          </mat-form-field>
-                          <mat-form-field>
-                            <mat-label
-        i18n="
-          Total unknown|How many children have an unknown presence or absence
-          status
-        "
-                              >Total Unknown</mat-label
-                              >
-                              <input
-                                matInput
-                                type="number"
-                                [value]="entity.countEventsWithUnknownStatus()"
-                                readonly
-                                />
-                              </mat-form-field>
-                            </div>
-                          }
+  @if (!forChild) {
+    <div class="flex-row flex-wrap gap-regular">
+      <mat-form-field>
+        <mat-label i18n="Total present|How many children were present"
+          >Total Present</mat-label
+        >
+        <input
+          matInput
+          type="number"
+          [value]="entity.countTotalPresent()"
+          readonly
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label i18n="Total absent|How many children were absent"
+          >Total Absent</mat-label
+        >
+        <input
+          matInput
+          type="number"
+          [value]="entity.countTotalAbsent()"
+          readonly
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label
+          i18n="
+            Total unknown|How many children have an unknown presence or absence
+            status
+          "
+          >Total Unknown</mat-label
+        >
+        <input
+          matInput
+          type="number"
+          [value]="entity.countEventsWithUnknownStatus()"
+          readonly
+        />
+      </mat-form-field>
+    </div>
+  }
 
-                          <app-entities-table
-                            [entityType]="EventNote"
-                            [records]="entity.events"
-                            [customColumns]="eventsColumns"
-                            clickMode="none"
-                            (entityClick)="showEventDetails($event)"
-                            [editable]="false"
-                            >
-                          </app-entities-table>
+  <app-entities-table
+    [entityType]="EventNote"
+    [records]="entity.events"
+    [customColumns]="eventsColumns"
+    clickMode="none"
+    (entityClick)="showEventDetails($event)"
+    [editable]="false"
+  >
+  </app-entities-table>
 
-                          <app-attendance-calendar
-                            [records]="entity.events"
-                            [highlightForChild]="forChild"
-                            [activity]="entity.activity"
-                          ></app-attendance-calendar>
-                        </div>
+  <app-attendance-calendar
+    [records]="entity.events"
+    [highlightForChild]="forChild"
+    [activity]="entity.activity"
+  ></app-attendance-calendar>
+</div>

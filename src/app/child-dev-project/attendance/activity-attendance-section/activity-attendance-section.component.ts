@@ -35,8 +35,8 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
     MatTooltipModule,
     MatButtonModule,
     AttendanceCalendarComponent,
-    AttendanceSummaryComponent
-],
+    AttendanceSummaryComponent,
+  ],
 })
 export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
   @Input() entity: RecurringActivity;

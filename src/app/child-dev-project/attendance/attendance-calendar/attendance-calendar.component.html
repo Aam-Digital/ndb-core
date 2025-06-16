@@ -3,7 +3,7 @@
   [dateClass]="highlightDate"
   [minDate]="minDate"
   [maxDate]="maxDate"
-  >
+>
 </mat-calendar>
 
 @if (selectedDate) {
@@ -18,17 +18,17 @@
           <app-attendance-status-select
             [(value)]="selectedEventAttendance.status"
             (valueChange)="save()"
-            >
+          >
           </app-attendance-status-select>
         </div>
         <div>
           <mat-form-field class="full-width">
             <textarea
               matInput
-          i18n-placeholder="
-            Remarks|Placeholder if no remarks for the attendance of a child are
-            given
-          "
+              i18n-placeholder="
+                Remarks|Placeholder if no remarks for the attendance of a child
+                are given
+              "
               placeholder="Remarks"
               [(ngModel)]="selectedEventAttendance.remarks"
               (blur)="save()"
@@ -41,83 +41,84 @@
       <div>
         @if (!hasAverage) {
           <div
-      i18n="
-        Event participants|How many participants attended at an event (in
-        percent)
-      "
-            >
-      All excused (out of
-      {{ selectedEvent.children.length }}
-      {selectedEvent.children.length, plural,
-        one {participant}
-        other {participants}
-      }
-      )
-    </div>
-      }
-      @if (hasAverage) {
-        <div i18n>
-      {{ selectedEventStats.average | percent: "1.0-0" }}
-      attended (of
-      {{ selectedEvent.children.length }}
-      {selectedEvent.children.length, plural,
-        one {participant}
-        other {participants}
-
-      })
-    </div>
-      }
-      @if (selectedEventStats.excludedUnknown > 0) {
-        <div
-          i18n="Unknown status|How many children are without a status"
-          class="unknown-status-notice"
+            i18n="
+              Event participants|How many participants attended at an event (in
+              percent)
+            "
           >
-      {{ selectedEventStats.excludedUnknown }}
-      {selectedEventStats.excludedUnknown, plural,
-        one {participant}
-        other {participants}
-      }
-      without recorded status
-    </div>
+            All excused (out of
+            {{ selectedEvent.children.length }}
+            {selectedEvent.children.length, plural,
+              one {participant}
+              other {participants}
+            }
+            )
+          </div>
+        }
+        @if (hasAverage) {
+          <div i18n>
+            {{ selectedEventStats.average | percent: "1.0-0" }}
+            attended (of
+            {{ selectedEvent.children.length }}
+            {selectedEvent.children.length, plural,
+              one {participant}
+              other {participants}
+
+            })
+          </div>
+        }
+        @if (selectedEventStats.excludedUnknown > 0) {
+          <div
+            i18n="Unknown status|How many children are without a status"
+            class="unknown-status-notice"
+          >
+            {{ selectedEventStats.excludedUnknown }}
+            {selectedEventStats.excludedUnknown, plural,
+              one {participant}
+              other {participants}
+            }
+            without recorded status
+          </div>
+        }
+        <button
+          class="margin-top-regular"
+          i18n="
+            Show Details Button|Allows the user to see details of an event that
+            took place at a particular day
+          "
+          mat-stroked-button
+          (click)="showEventDetails(selectedEvent)"
+          angulartics2On="click"
+          angularticsCategory="Attendance"
+          angularticsAction="calendar_show_event_details"
+        >
+          Details
+        </button>
+      </div>
     }
-    <button
-      class="margin-top-regular"
-      i18n="
-        Show Details Button|Allows the user to see details of an event that took
-        place at a particular day
-      "
-      mat-stroked-button
-      (click)="showEventDetails(selectedEvent)"
-      angulartics2On="click"
-      angularticsCategory="Attendance"
-      angularticsAction="calendar_show_event_details"
+    @if (!selectedEvent) {
+      <em
+        i18n="
+          No Events|Informs the user that there are no events at a particular
+          date
+        "
       >
-      Details
-    </button>
+        no events on this date
+      </em>
+      <button
+        mat-stroked-button
+        (click)="createNewEvent()"
+        i18n="
+          Add New Event Button|Allows the user to create a new event for the
+          selected date
+        "
+        angulartics2On="click"
+        angularticsCategory="Attendance"
+        angularticsAction="calendar_create_event"
+        style="margin-top: 12px; display: block"
+      >
+        Add new event
+      </button>
+    }
   </div>
-}
-@if (!selectedEvent) {
-  <em
-      i18n="
-        No Events|Informs the user that there are no events at a particular date
-      "
-    >
-      no events on this date
-    </em>
-  <button
-    mat-stroked-button
-    (click)="createNewEvent()"
-      i18n="
-        Add New Event Button|Allows the user to create a new event for the
-        selected date
-      "
-    angulartics2On="click"
-    angularticsCategory="Attendance"
-    angularticsAction="calendar_create_event"
-    style="margin-top: 12px; display: block"
-    >
-      Add new event
-    </button>
-}
-</div>
 }

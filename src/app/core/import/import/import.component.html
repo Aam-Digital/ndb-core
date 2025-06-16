@@ -9,12 +9,9 @@
       <div i18n="Import Step - upload">Select File</div>
 
       @if (step1.completed) {
-        <div
-          class="step-label-extra"
-          i18n="Import Step - upload - sub-label"
-          >
-        {{ rawData?.length }} rows to import
-      </div>
+        <div class="step-label-extra" i18n="Import Step - upload - sub-label">
+          {{ rawData?.length }} rows to import
+        </div>
       }
     </ng-template>
 
@@ -25,7 +22,7 @@
           [disabled]="!step1.completed"
           i18n="import next step button"
           matStepperNext
-          >
+        >
           Continue
         </button>
       </div>
@@ -55,12 +52,9 @@
       <div i18n="Import Step - import types">Select Import Type(s)</div>
 
       @if (step2.completed) {
-        <div
-          class="step-label-extra"
-          i18n="Import Step - type - sub-label"
-          >
-        as {{ importSettings.entityType | entityTypeLabel }}
-      </div>
+        <div class="step-label-extra" i18n="Import Step - type - sub-label">
+          as {{ importSettings.entityType | entityTypeLabel }}
+        </div>
       }
     </ng-template>
 
@@ -74,7 +68,7 @@
           [disabled]="!step2.completed"
           i18n="import next step button"
           matStepperNext
-          >
+        >
           Continue
         </button>
       </div>
@@ -104,9 +98,9 @@
         <div
           class="step-label-extra"
           i18n="Import Step - map columns - sub-label"
-          >
-        {{ mappedColumnsCount }} columns selected
-      </div>
+        >
+          {{ mappedColumnsCount }} columns selected
+        </div>
       }
     </ng-template>
 
@@ -120,7 +114,7 @@
           [disabled]="!step3.completed"
           i18n="import next step button"
           matStepperNext
-          >
+        >
           Continue
         </button>
       </div>
@@ -150,7 +144,7 @@
           color="warn"
           (click)="reset()"
           i18n="import cancel/reset button"
-          >
+        >
           Cancel
         </button>
       </div>

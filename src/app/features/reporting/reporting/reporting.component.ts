@@ -33,8 +33,8 @@ import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
     ObjectTableComponent,
     DatePipe,
     JsonPipe,
-    SqlV2TableComponent
-],
+    SqlV2TableComponent,
+  ],
 })
 export class ReportingComponent {
   reports: ReportEntity[];

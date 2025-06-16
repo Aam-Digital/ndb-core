@@ -31,8 +31,8 @@ import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
     ReactiveFormsModule,
     MatError,
     MatDialogClose,
-    MergeFieldsComponent
-],
+    MergeFieldsComponent,
+  ],
   templateUrl: "./bulk-merge-records.component.html",
   styleUrls: ["./bulk-merge-records.component.scss"],
 })

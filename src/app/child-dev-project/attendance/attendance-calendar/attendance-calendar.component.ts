@@ -50,8 +50,8 @@ import { Angulartics2Module } from "angulartics2";
     FormsModule,
     PercentPipe,
     MatButtonModule,
-    Angulartics2Module
-],
+    Angulartics2Module,
+  ],
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {

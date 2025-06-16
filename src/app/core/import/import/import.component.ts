@@ -43,8 +43,8 @@ import { ImportMatchExistingComponent } from "../update-existing/import-match-ex
     ImportMatchExistingComponent,
     MatButtonModule,
     ImportColumnMappingComponent,
-    ImportReviewDataComponent
-],
+    ImportReviewDataComponent,
+  ],
 })
 export class ImportComponent {
   rawData: any[];

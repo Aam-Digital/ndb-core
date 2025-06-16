@@ -12,7 +12,7 @@
           (click)="goToFirst()"
           [disabled]="isFirst"
           class="button-skip"
-          >
+        >
           <fa-icon icon="angle-double-left"></fa-icon>
         </button>
         <button
@@ -20,14 +20,16 @@
           (click)="goToPrevious()"
           [disabled]="isFirst"
           class="button-skip"
-          >
+        >
           <fa-icon icon="angle-left"></fa-icon>
         </button>
       </div>
       <div
         class="progress-label flex-grow"
-        [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'"
-        >
+        [style.visibility]="
+          currentIndex < children.length ? 'visible' : 'hidden'
+        "
+      >
         {{ currentIndex + 1 }} / {{ children.length }}
       </div>
       <div>
@@ -36,7 +38,7 @@
           (click)="goToNext()"
           [disabled]="isFinished"
           class="button-skip"
-          >
+        >
           <fa-icon icon="angle-right"></fa-icon>
         </button>
         <button
@@ -44,7 +46,7 @@
           (click)="goToLast()"
           [disabled]="isFinished"
           class="button-skip"
-          >
+        >
           <fa-icon icon="angle-double-right"></fa-icon>
         </button>
       </div>
@@ -57,7 +59,7 @@
             color="warn"
             matTooltip="Excluded some archived participants. Click to include."
             i18n-matTooltip
-            >
+          >
             <fa-icon icon="warning"></fa-icon>
           </button>
         </div>
@@ -68,7 +70,7 @@
         class="margin-small"
         [entity]="currentChild"
         [linkDisabled]="true"
-        >
+      >
       </app-entity-block>
     }
     @if (!isFinished && currentAttendance) {
@@ -80,26 +82,31 @@
             class="tab-body"
             [class.tab-body-active]="currentIndex === i"
             [position]="i - currentIndex"
-            >
+          >
             <div>
               @for (option of availableStatus; track option) {
                 <div
                   role="button"
                   class="group-select-option"
                   (click)="markAttendance(option)"
-          [ngClass]="
-            eventEntity.getAttendance(child).status.id === option.id
-              ? option.style
-              : ''
-          "
-                  >
+                  [ngClass]="
+                    eventEntity.getAttendance(child).status.id === option.id
+                      ? option.style
+                      : ''
+                  "
+                >
                   <div
-                    style="display: flex; flex-direction: row; padding: 16px; gap: 16px"
-                    >
-                    @if (eventEntity.getAttendance(child).status.id === option.id) {
-                      <fa-icon
-                        icon="check"
-                      ></fa-icon>
+                    style="
+                      display: flex;
+                      flex-direction: row;
+                      padding: 16px;
+                      gap: 16px;
+                    "
+                  >
+                    @if (
+                      eventEntity.getAttendance(child).status.id === option.id
+                    ) {
+                      <fa-icon icon="check"></fa-icon>
                     }
                     <p style="margin: 0">{{ option.label }}</p>
                   </div>
@@ -119,31 +126,31 @@
     <div class="roll-call-complete" @completeRollCall>
       <fa-icon icon="check-circle" size="3x"></fa-icon>
       <div
-      i18n="
-        Attendance completed|shows when the user has registered the attendance
-        of all children
-      "
+        i18n="
+          Attendance completed|shows when the user has registered the attendance
+          of all children
+        "
         (click)="finish()"
-        >
-      Attendance completed.
-    </div>
+      >
+        Attendance completed.
+      </div>
       <button
         (click)="showDetails()"
         class="finished-screen-button"
         mat-raised-button
         color="accent"
         i18n="Open details of recorded event for review"
-        >
-      Review Details
-    </button>
+      >
+        Review Details
+      </button>
     </div>
     <button
       (click)="finish()"
       color="primary"
       mat-raised-button
       i18n="Back to overview button after finishing a roll call"
-      >
-    Back to Overview
-  </button>
+    >
+      Back to Overview
+    </button>
   </div>
 }

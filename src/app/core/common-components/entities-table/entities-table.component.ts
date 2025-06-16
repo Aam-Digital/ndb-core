@@ -69,8 +69,8 @@ import { TableRow } from "./table-row";
     MatSortModule,
     MatTableModule,
     EntityInlineEditActionsComponent,
-    EntityCreateButtonComponent
-],
+    EntityCreateButtonComponent,
+  ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })

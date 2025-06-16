@@ -3,17 +3,15 @@
     mat-table
     [dataSource]="columns"
     class="match-comparison-table mat-elevation-z1"
-    >
+  >
     @for (side of sideDetails; track side; let i = $index) {
-      <ng-container
-        [matColumnDef]="'side-' + i"
-        >
+      <ng-container [matColumnDef]="'side-' + i">
         <th
           mat-header-cell
           *matHeaderCellDef
           class="comparison-header"
           [style.color]="side.entityType?.color ?? 'black'"
-          >
+        >
           <em class="comparison-header-type">{{ side.entityType?.label }}:</em>
           &nbsp;
           @for (s of side.selected; track s; let i = $index) {
@@ -21,7 +19,8 @@
               [class.highlighted-name]="s === side.highlightedSelected"
               (click)="side.highlightedSelected = s"
               >{{ s.toString() }}</span
-              >@if (i < side.selected.length - 1) {
+            >
+            @if (i < side.selected.length - 1) {
               ,
             }
           }
@@ -30,9 +29,9 @@
             <fa-icon
               icon="lock"
               matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
-          i18n-matTooltip="
-            tooltip explaining that this entity in matching is locked
-          "
+              i18n-matTooltip="
+                tooltip explaining that this entity in matching is locked
+              "
               class="icon"
             ></fa-icon>
           }
@@ -68,7 +67,7 @@
         sideDetails?.[1].selected?.length > 0
       ) || lockedMatching
     "
-    >
+  >
     {{ matchActionLabel }}
   </button>
   @if (mapVisible) {
@@ -76,9 +75,9 @@
       class="flex-grow"
       [expandable]="true"
       [entities]="filteredMapEntities"
-    [highlightedEntities]="
-      [sideDetails?.[0].selected, sideDetails?.[1].selected] | flattenArray
-    "
+      [highlightedEntities]="
+        [sideDetails?.[0].selected, sideDetails?.[1].selected] | flattenArray
+      "
       (entityClick)="entityInMapClicked($event)"
       [(displayedProperties)]="displayedLocationProperties"
       (displayedPropertiesChange)="updateMarkersAndDistances()"
@@ -95,9 +94,9 @@
             [style.color]="side.entityType?.color ?? 'black'"
             class="selection-header"
             i18n="header of section with entities available for selection"
-            >
-        Select {{ side.entityType?.label }}
-      </h3>
+          >
+            Select {{ side.entityType?.label }}
+          </h3>
           <app-filter
             class="flex-row gap-regular flex-wrap"
             [filterConfig]="side.availableFilters"

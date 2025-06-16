@@ -2,9 +2,7 @@
   <div>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
-}
-
-@else{
+} @else {
   <div class="flex-row flex-wrap gap-large">
     <app-attendance-calendar
       class="flex-grow"
@@ -29,7 +27,7 @@
   (entityClick)="showDetails($event)"
   [getBackgroundColor]="getBackgroundColor"
   [editable]="false"
-  >
+>
 </app-entities-table>
 
 <div class="margin-top-regular">
@@ -44,7 +42,7 @@
       show-unrelated button
     "
     matTooltip="Activate to also show entries for the activity that do not have any events with actual participation of this person"
-    >
+  >
     Also show unrelated
   </mat-slide-toggle>
   &nbsp;
@@ -54,7 +52,7 @@
     "
     mat-stroked-button
     (click)="init(true)"
-    >
+  >
     Load all records
   </button>
 </div>

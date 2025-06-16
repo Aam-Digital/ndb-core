@@ -37,8 +37,8 @@ import { Logging } from "../../logging/logging.service";
     MatSelect,
     AdminTabsComponent,
     AdminTabTemplateDirective,
-    ViewTitleComponent
-],
+    ViewTitleComponent,
+  ],
   templateUrl: "./admin-entity-list.component.html",
   styleUrls: [
     "./admin-entity-list.component.scss",

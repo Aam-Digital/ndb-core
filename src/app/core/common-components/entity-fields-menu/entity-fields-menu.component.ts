@@ -24,8 +24,8 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
   imports: [
     MatFormFieldModule,
     ReactiveFormsModule,
-    EntityFieldSelectComponent
-],
+    EntityFieldSelectComponent,
+  ],
   templateUrl: "./entity-fields-menu.component.html",
   styleUrl: "./entity-fields-menu.component.scss",
 })

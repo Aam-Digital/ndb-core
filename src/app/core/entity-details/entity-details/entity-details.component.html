@@ -14,17 +14,17 @@
     [entity]="entity"
     [navigateOnDelete]="true"
     [showExpanded]="true"
-    >
+  >
     @if (
-      ('update' | ablePure: 'Config' | async) &&
+      ("update" | ablePure: "Config" | async) &&
       !entityConstructor.isInternalEntity
-      ) {
+    ) {
       <button
         mat-menu-item
         [routerLink]="['/admin/entity', entity?.getType()]"
         [queryParams]="{ mode: 'details' }"
         queryParamsHandling="merge"
-        >
+      >
         <fa-icon
           class="standard-icon-with-text color-accent"
           icon="tools"
@@ -40,17 +40,15 @@
 <!-- Content: tabbed components -->
 <mat-tab-group appTabStateMemo [preserveContent]="true">
   @for (panelConfig of panels; track panelConfig) {
-    <mat-tab
-      [disabled]="entity?.isNew || unsavedChanges.pending"
-      >
+    <mat-tab [disabled]="entity?.isNew || unsavedChanges.pending">
       <ng-template mat-tab-label>
         <span
           [matTooltipDisabled]="!entity?.isNew"
           matTooltip="Save the new record to create it before accessing other details"
-        i18n-matTooltip="
-          Tooltip explaining disabled sections when creating new entity
-        "
-          >
+          i18n-matTooltip="
+            Tooltip explaining disabled sections when creating new entity
+          "
+        >
           {{ panelConfig.title }}
         </span>
       </ng-template>
@@ -60,11 +58,13 @@
             <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         }
-        @for (componentConfig of panelConfig.components; track componentConfig; let j = $index) {
-          <div
-            class="padding-top-large"
-            >
-            @if (componentConfig.title && componentConfig.title !== '') {
+        @for (
+          componentConfig of panelConfig.components;
+          track componentConfig;
+          let j = $index
+        ) {
+          <div class="padding-top-large">
+            @if (componentConfig.title && componentConfig.title !== "") {
               <h3>
                 {{ componentConfig.title }}
               </h3>

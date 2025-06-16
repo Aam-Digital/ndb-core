@@ -1,15 +1,15 @@
 <div
   class="form-buttons-wrapper padding-bottom-small flex-row gap-small align-self-end"
-  >
+>
   @if (form?.formGroup.enabled) {
     <button
       mat-raised-button
       color="accent"
       (click)="saveClicked()"
       i18n="Save button for forms"
-      >
-    Save
-  </button>
+    >
+      Save
+    </button>
   }
 
   @if (form?.formGroup.enabled) {
@@ -17,9 +17,9 @@
       mat-stroked-button
       (click)="cancelClicked()"
       i18n="Cancel button for forms"
-      >
-    Cancel
-  </button>
+    >
+      Cancel
+    </button>
   }
 
   @if (form?.formGroup.disabled && !entity?.anonymized) {
@@ -31,7 +31,7 @@
         operation: 'update',
       }"
       i18n="Edit button for forms"
-      >
+    >
       Edit
     </button>
   }

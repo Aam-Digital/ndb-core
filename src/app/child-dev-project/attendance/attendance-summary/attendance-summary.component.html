@@ -12,14 +12,14 @@
         <td class="padding-small">{{ col.label }}:</td>
         <td class="summary-cell">
           <ng-container
-          [appDynamicComponent]="{
-            component: col.viewComponent,
-            config: {
-              id: col.id,
-              entity: attendance,
-              config: col.additional,
-            },
-          }"
+            [appDynamicComponent]="{
+              component: col.viewComponent,
+              config: {
+                id: col.id,
+                entity: attendance,
+                config: col.additional,
+              },
+            }"
           ></ng-container>
         </td>
       </tr>

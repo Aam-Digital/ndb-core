@@ -5,7 +5,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisplayTodoCompletionComponent } from "../display-todo-completion/display-todo-completion.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
-
 @Component({
   selector: "app-todo-completion",
   templateUrl: "./todo-completion.component.html",
@@ -14,8 +13,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatButtonModule,
     FontAwesomeModule,
     DisplayTodoCompletionComponent,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
 })
 export class TodoCompletionComponent {
   @Input() entity: Todo;

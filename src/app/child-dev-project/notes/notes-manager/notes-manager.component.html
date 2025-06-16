@@ -11,7 +11,7 @@
   [columns]="columns"
   [columnGroups]="columnGroups"
   [filters]="filters"
-  >
+>
   @if (showEventNotesToggle) {
     <button
       mat-menu-item
@@ -20,16 +20,16 @@
       angularticsCategory="Note"
       angularticsAction="include_events_toggle"
       [angularticsLabel]="includeEventNotes ? 'off' : 'on'"
-    i18n="
-      Slider that allows a user to also include events|events are related to a
-      child
-    "
-      >
-    <app-fa-dynamic-icon
-      [icon]="includeEventNotes ? 'toggle-on' : 'toggle-off'"
-      class="standard-icon-with-text color-accent"
-    ></app-fa-dynamic-icon>
-    Include events
-  </button>
+      i18n="
+        Slider that allows a user to also include events|events are related to a
+        child
+      "
+    >
+      <app-fa-dynamic-icon
+        [icon]="includeEventNotes ? 'toggle-on' : 'toggle-off'"
+        class="standard-icon-with-text color-accent"
+      ></app-fa-dynamic-icon>
+      Include events
+    </button>
   }
 </app-entity-list>

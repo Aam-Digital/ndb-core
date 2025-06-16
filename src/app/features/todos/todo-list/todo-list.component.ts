@@ -15,11 +15,7 @@ import { RouterLink } from "@angular/router";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { Logging } from "../../../core/logging/logging.service";
-import {
-  AsyncPipe,
-  NgStyle,
-  NgTemplateOutlet,
-} from "@angular/common";
+import { AsyncPipe, NgStyle, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -38,7 +34,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 import { AblePurePipe } from "@casl/angular";
-
 
 @UntilDestroy()
 @RouteTarget("TodoList")

@@ -30,8 +30,8 @@ import { MatCardModule } from "@angular/material/card";
     AttendanceStatusSelectComponent,
     MatFormFieldModule,
     MatInputModule,
-    MatCardModule
-],
+    MatCardModule,
+  ],
   templateUrl: "./edit-attendance.component.html",
   styleUrls: ["./edit-attendance.component.scss"],
 })

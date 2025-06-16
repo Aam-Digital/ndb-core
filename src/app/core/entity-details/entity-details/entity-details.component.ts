@@ -55,8 +55,8 @@ import { SessionSubject } from "../../session/auth/session-info";
     EntityArchivedInfoComponent,
     RouterLink,
     CommonModule,
-    ViewActionsComponent
-],
+    ViewActionsComponent,
+  ],
 })
 export class EntityDetailsComponent
   extends AbstractEntityDetailsComponent

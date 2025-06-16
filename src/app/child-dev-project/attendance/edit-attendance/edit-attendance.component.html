@@ -3,7 +3,7 @@
   [formFieldConfig]="formFieldConfig"
   [entity]="entity"
   [showEntities]="!showAttendance"
-  />
+/>
 
 @if (showAttendance) {
   <!-- If feasible, this whole setup should be replaced with a more simple setup that
@@ -18,10 +18,7 @@
           <tr>
             <td>
               @if (!formControl.disabled) {
-                <button
-                  mat-icon-button
-                  (click)="removeChild(childId)"
-                  >
+                <button mat-icon-button (click)="removeChild(childId)">
                   <fa-icon icon="trash"></fa-icon>
                 </button>
               }
@@ -34,7 +31,7 @@
                 [value]="getAttendance(childId).status"
                 (valueChange)="updateAttendanceValue(childId, 'status', $event)"
                 [disabled]="formControl.disabled"
-                >
+              >
               </app-attendance-status-select>
             </td>
             <td class="full-width">
@@ -47,11 +44,15 @@
                   name="remarks"
                   type="text"
                   [value]="getAttendance(childId).remarks"
-              (input)="
-                updateAttendanceValue(childId, 'remarks', inputElement.value)
-              "
+                  (input)="
+                    updateAttendanceValue(
+                      childId,
+                      'remarks',
+                      inputElement.value
+                    )
+                  "
                   [disabled]="formControl.disabled"
-                  />
+                />
               </mat-form-field>
             </td>
           </tr>
@@ -63,9 +64,7 @@
     <div class="attendance-blocks">
       <!-- Mobile view / smaller screen: display the information using a flex-layout -->
       @for (childId of formControl.value; track childId) {
-        <mat-card
-          class="attendance-item mat-elevation-z1 margin-bottom-small"
-          >
+        <mat-card class="attendance-item mat-elevation-z1 margin-bottom-small">
           <mat-card-content>
             <div class="attendance-item--header margin-bottom-regular">
               <app-entity-block [entityId]="childId"></app-entity-block>
@@ -74,7 +73,7 @@
                   mat-icon-button
                   (click)="removeChild(childId)"
                   class="mobile-remove-item"
-                  >
+                >
                   <fa-icon icon="trash"></fa-icon>
                 </button>
               }
@@ -84,7 +83,7 @@
                 [value]="getAttendance(childId).status"
                 (valueChange)="updateAttendanceValue(childId, 'status', $event)"
                 [disabled]="formControl.disabled"
-                >
+              >
               </app-attendance-status-select>
               <mat-form-field>
                 <input
@@ -95,11 +94,15 @@
                   name="remarks"
                   type="text"
                   [value]="getAttendance(childId).remarks"
-              (input)="
-                updateAttendanceValue(childId, 'remarks', inputElement.value)
-              "
+                  (input)="
+                    updateAttendanceValue(
+                      childId,
+                      'remarks',
+                      inputElement.value
+                    )
+                  "
                   [disabled]="formControl.disabled"
-                  />
+                />
               </mat-form-field>
             </div>
           </mat-card-content>

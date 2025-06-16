@@ -10,11 +10,7 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
 @Component({
   selector: "app-merge-fields",
   standalone: true,
-  imports: [
-    MatCheckboxModule,
-    MatRadioModule,
-    EntityFieldViewComponent
-],
+  imports: [MatCheckboxModule, MatRadioModule, EntityFieldViewComponent],
   templateUrl: "./merge-fields.component.html",
   styleUrls: ["./merge-fields.component.scss"],
 })

@@ -35,8 +35,8 @@ import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admi
     AdminEntityPanelComponentComponent,
     MatTooltipModule,
     AdminTabsComponent,
-    AdminTabTemplateDirective
-],
+    AdminTabTemplateDirective,
+  ],
 })
 export class AdminEntityDetailsComponent {
   @Input() entityConstructor: EntityConstructor;

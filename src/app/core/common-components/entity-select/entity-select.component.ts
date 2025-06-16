@@ -42,8 +42,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
     ErrorHintComponent,
     BasicAutocompleteComponent,
     MatSlideToggle,
-    FormsModule
-],
+    FormsModule,
+  ],
 })
 @UntilDestroy()
 export class EntitySelectComponent<

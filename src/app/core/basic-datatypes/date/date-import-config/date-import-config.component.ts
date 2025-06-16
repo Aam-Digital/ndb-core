@@ -31,8 +31,8 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
     NgClass,
     DatePipe,
     MatButtonModule,
-    HelpButtonComponent
-],
+    HelpButtonComponent,
+  ],
 })
 export class DateImportConfigComponent {
   format = new FormControl("");

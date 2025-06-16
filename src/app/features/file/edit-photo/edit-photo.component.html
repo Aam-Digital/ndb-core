@@ -6,49 +6,49 @@
     [matTooltipDisabled]="!(formControl.enabled && !navigator.onLine)"
     matTooltip="Changes to files are not possible offline."
     i18n-matTooltip
-    >
+  >
     <label
       class="img-label"
       [ngClass]="{ invalid: formControl.invalid && formControl.touched }"
       >{{ label }}</label
+    >
+
+    @if (formControl.value && formControl.enabled) {
+      <button
+        type="button"
+        mat-icon-button
+        (click)="delete()"
+        i18n-matTooltip="Tooltip remove file"
+        matTooltip="Remove file"
+        [disabled]="!navigator.onLine"
       >
-
-      @if (formControl.value && formControl.enabled) {
-        <button
-          type="button"
-          mat-icon-button
-          (click)="delete()"
-          i18n-matTooltip="Tooltip remove file"
-          matTooltip="Remove file"
-          [disabled]="!navigator.onLine"
-          >
-          <fa-icon icon="xmark"></fa-icon>
-        </button>
-      }
-      @if (formControl.enabled) {
-        <button
-          type="button"
-          mat-icon-button
-          (click)="fileUpload.click()"
-          i18n-matTooltip="Tooltip upload file button"
-          matTooltip="Upload file"
-          [disabled]="!navigator.onLine"
-          >
-          <fa-icon icon="upload"></fa-icon>
-        </button>
-      }
-
-      <input
-        type="file"
-        style="display: none"
-        (change)="onFileSelected($event.target['files'][0])"
-        [accept]="acceptedFileTypes"
-        #fileUpload
-        />
-    </div>
-    @if (formControl.invalid && formControl.touched) {
-      <mat-error>
-        <app-error-hint [form]="formControl"></app-error-hint>
-      </mat-error>
+        <fa-icon icon="xmark"></fa-icon>
+      </button>
     }
+    @if (formControl.enabled) {
+      <button
+        type="button"
+        mat-icon-button
+        (click)="fileUpload.click()"
+        i18n-matTooltip="Tooltip upload file button"
+        matTooltip="Upload file"
+        [disabled]="!navigator.onLine"
+      >
+        <fa-icon icon="upload"></fa-icon>
+      </button>
+    }
+
+    <input
+      type="file"
+      style="display: none"
+      (change)="onFileSelected($event.target['files'][0])"
+      [accept]="acceptedFileTypes"
+      #fileUpload
+    />
   </div>
+  @if (formControl.invalid && formControl.touched) {
+    <mat-error>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
+  }
+</div>

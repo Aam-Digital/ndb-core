@@ -18,8 +18,8 @@ import { MatMenuModule } from "@angular/material/menu";
     FaDynamicIconComponent,
     RouterLink,
     Angulartics2Module,
-    MatMenuModule
-],
+    MatMenuModule,
+  ],
 })
 export class MenuItemComponent {
   /**

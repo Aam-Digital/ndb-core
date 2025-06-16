@@ -34,8 +34,8 @@ import { FieldGroup } from "../../../core/entity-details/form/field-group";
     DialogCloseComponent,
     EntityFormComponent,
     TodoCompletionComponent,
-    DialogButtonsComponent
-],
+    DialogButtonsComponent,
+  ],
 })
 export class TodoDetailsComponent implements OnInit {
   @Input() entity: Todo;

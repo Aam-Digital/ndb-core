@@ -7,7 +7,6 @@ import { DialogCloseComponent } from "../../../core/common-components/dialog-clo
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
-
 import { RouteTarget } from "../../../route-target";
 
 /**
@@ -24,8 +23,8 @@ import { RouteTarget } from "../../../route-target";
     DialogCloseComponent,
     MatDialogModule,
     MatButtonModule,
-    FontAwesomeModule
-],
+    FontAwesomeModule,
+  ],
 })
 export class ComingSoonComponent implements OnInit {
   /**

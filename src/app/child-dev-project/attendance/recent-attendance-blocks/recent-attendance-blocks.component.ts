@@ -28,7 +28,7 @@ import { AttendanceBlockComponent } from "../attendance-block/attendance-block.c
         [forChild]="entity.getId()"
       ></app-attendance-block>
     }
-    `,
+  `,
   imports: [SlicePipe, AttendanceBlockComponent],
 })
 export class RecentAttendanceBlocksComponent implements OnInit {

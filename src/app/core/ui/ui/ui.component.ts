@@ -69,8 +69,8 @@ import { GotoThirdPartySystemComponent } from "../../../features/third-party-aut
     DisplayImgComponent,
     SetupWizardButtonComponent,
     NotificationComponent,
-    GotoThirdPartySystemComponent
-],
+    GotoThirdPartySystemComponent,
+  ],
 })
 export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */

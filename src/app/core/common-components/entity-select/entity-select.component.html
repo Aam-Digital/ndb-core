@@ -15,7 +15,7 @@
       [options]="availableOptions | async"
       [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
       [createOption]="disableCreateNew ? null : createNewEntity"
-      >
+    >
       <ng-template let-item>
         @if (!item.isHidden) {
           <app-entity-block
@@ -33,7 +33,7 @@
             (toggleChange)="toggleIncludeInactive()"
             i18n="Label for checkbox|e.g. include inactive children"
             >Also show {{ currentlyMatchingInactive }} inactive
-        </mat-slide-toggle>
+          </mat-slide-toggle>
         </ng-container>
       }
     </app-basic-autocomplete>
@@ -56,15 +56,15 @@
         class="standard-icon-with-text warning-icon"
       ></fa-icon>
       <span i18n
-        >Some records are hidden because you do not have permission to access them
-      (or they could not be found for other reasons).</span
-        >
-      </mat-hint>
-    }
+        >Some records are hidden because you do not have permission to access
+        them (or they could not be found for other reasons).</span
+      >
+    </mat-hint>
+  }
 
-    @if (form.errors) {
-      <mat-error>
-        <app-error-hint [form]="form"></app-error-hint>
-      </mat-error>
-    }
-  </mat-form-field>
+  @if (form.errors) {
+    <mat-error>
+      <app-error-hint [form]="form"></app-error-hint>
+    </mat-error>
+  }
+</mat-form-field>

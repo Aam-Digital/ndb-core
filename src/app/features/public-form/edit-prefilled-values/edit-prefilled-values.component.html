@@ -10,21 +10,25 @@
 <div
   class="defaultvalue-container padding-regular"
   [class.disabled]="formControl.disabled"
-  >
+>
   <form [formGroup]="prefilledValueSettings">
     <div formArrayName="prefilledValue">
-      @for (fieldGroup of prefilledValues.controls; track fieldGroup; let i = $index) {
+      @for (
+        fieldGroup of prefilledValues.controls;
+        track fieldGroup;
+        let i = $index
+      ) {
         <div
           [formGroupName]="i"
           class="flex-row flex-wrap align-center gap-regular padding-regular margin-top-regular mat-elevation-z2 container"
-          >
+        >
           <div class="flex-row align-center">
             <mat-form-field class="full-width-field">
               <mat-label i18n>Field</mat-label>
               <app-entity-field-select
                 [entityType]="entityConstructor"
                 formControlName="field"
-                />
+              />
             </mat-form-field>
             <app-help-button
               text="Select a field for which you want to set a default value."
@@ -37,9 +41,9 @@
                 <app-admin-default-value
                   formControlName="defaultValue"
                   [entityType]="entityConstructor"
-                [entitySchemaField]="
-                  getSchemaField(fieldGroup.get('field').value)
-                "
+                  [entitySchemaField]="
+                    getSchemaField(fieldGroup.get('field').value)
+                  "
                 ></app-admin-default-value>
               </div>
             </div>
@@ -49,7 +53,7 @@
             (click)="removePrefilledFields(i)"
             matTooltip="Remove default value"
             i18n-matTooltip
-            >
+          >
             <fa-icon icon="trash"></fa-icon>
           </button>
         </div>
@@ -66,7 +70,7 @@
       [disabled]="prefilledValues.invalid"
       matTooltip="Add a fixed value for another field"
       i18n-matTooltip
-      >
+    >
       <fa-icon
         aria-label="add element"
         icon="plus-circle"

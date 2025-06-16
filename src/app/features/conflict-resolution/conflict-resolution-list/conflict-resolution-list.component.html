@@ -13,7 +13,7 @@
     matSort
     class="full-width"
     aria-label="Table showing the conflicts"
-    >
+  >
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>_id</th>
       <td mat-cell *matCellDef="let row">{{ row.id }}</td>
@@ -23,10 +23,7 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
       <td mat-cell *matCellDef="let row">
         @for (rev of row.key; track rev) {
-          <app-compare-rev
-            [rev]="rev"
-            [doc]="row.doc"
-          ></app-compare-rev>
+          <app-compare-rev [rev]="rev" [doc]="row.doc"></app-compare-rev>
         }
       </td>
     </ng-container>

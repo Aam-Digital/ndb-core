@@ -32,8 +32,8 @@ interface AttendanceWeekRow {
     MatTableModule,
     EntityBlockComponent,
     AttendanceDayBlockComponent,
-    DashboardListWidgetComponent
-],
+    DashboardListWidgetComponent,
+  ],
 })
 export class AttendanceWeekDashboardComponent
   extends DashboardWidget

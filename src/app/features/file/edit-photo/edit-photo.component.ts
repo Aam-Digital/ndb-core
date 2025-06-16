@@ -27,8 +27,8 @@ import { ErrorHintComponent } from "app/core/common-components/error-hint/error-
     FontAwesomeModule,
     ErrorHintComponent,
     MatError,
-    NgClass
-],
+    NgClass,
+  ],
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
   private readonly defaultImage = "assets/child.png";

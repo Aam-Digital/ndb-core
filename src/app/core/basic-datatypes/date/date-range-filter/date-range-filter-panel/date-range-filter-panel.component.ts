@@ -52,12 +52,7 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
     MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
   ],
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    FormsModule
-],
+  imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, FormsModule],
 })
 export class DateRangeFilterPanelComponent {
   selectedRangeValue: DateRange<Date>;

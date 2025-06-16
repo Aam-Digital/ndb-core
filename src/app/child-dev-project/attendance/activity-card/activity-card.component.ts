@@ -14,8 +14,8 @@ import { DatePipe } from "@angular/common";
     MatCardModule,
     BorderHighlightDirective,
     FontAwesomeModule,
-    DatePipe
-],
+    DatePipe,
+  ],
 })
 export class ActivityCardComponent {
   /**

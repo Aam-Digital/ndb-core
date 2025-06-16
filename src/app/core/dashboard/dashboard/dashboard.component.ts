@@ -29,10 +29,8 @@ import { SessionSubject } from "../../session/auth/session-info";
 @Component({
   selector: "app-dashboard",
   template: ` @for (widgetConfig of _widgets; track widgetConfig) {
-  <ng-template
-    [appDynamicComponent]="widgetConfig"
-  ></ng-template>
-}`,
+    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+  }`,
   styleUrls: ["./dashboard.component.scss"],
   imports: [DynamicComponentDirective],
 })

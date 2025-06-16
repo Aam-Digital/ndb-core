@@ -9,7 +9,6 @@ import { ErrorHintComponent } from "../../../common-components/error-hint/error-
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
-
 @DynamicComponent("EditDate")
 @Component({
   selector: "app-edit-date",
@@ -21,7 +20,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatDatepickerModule,
     ErrorHintComponent,
     FontAwesomeModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
 })
 export class EditDateComponent extends EditComponent<Date> {}

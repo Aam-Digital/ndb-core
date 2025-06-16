@@ -40,8 +40,8 @@ import { DataFilter } from "../../../../core/filter/filters/filters";
     FilterComponent,
     MatProgressBarModule,
     ActivityCardComponent,
-    MatButtonModule
-],
+    MatButtonModule,
+  ],
 })
 export class RollCallSetupComponent implements OnInit {
   date = new Date();

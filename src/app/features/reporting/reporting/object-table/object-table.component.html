@@ -5,7 +5,7 @@
   class="full-width"
   i18n-aria-label="Label for table showing report result"
   aria-label="Table showing the report results"
-  >
+>
   @for (col of columns; track col) {
     <ng-container [matColumnDef]="col">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col }}</th>
@@ -19,5 +19,5 @@
   [pageSizeOptions]="[10, 50, 100]"
   showFirstLastButtons
   aria-label="Select page of periodic elements"
-  >
+>
 </mat-paginator>

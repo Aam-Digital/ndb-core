@@ -3,8 +3,8 @@
     [style.background-color]="val.color"
     [ngClass]="{ colored: val.color }"
     >{{ val.label }}</span
-    >
-    @if (i !== iterableValue.length - 1) {
-      ,&nbsp;
-    }
+  >
+  @if (i !== iterableValue.length - 1) {
+    ,&nbsp;
   }
+}

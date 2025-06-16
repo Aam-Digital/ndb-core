@@ -33,8 +33,8 @@ import { ReportEntity } from "../../report-config";
     ExportDataDirective,
     FontAwesomeModule,
     MatProgressBarModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
 })
 export class SelectReportComponent implements OnChanges {
   @Input() reports: ReportEntity[];

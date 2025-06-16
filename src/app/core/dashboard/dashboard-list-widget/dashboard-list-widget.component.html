@@ -6,7 +6,7 @@
   [headline]="headline"
   [explanation]="explanation"
   [loading]="isLoading"
-  >
+>
   <app-widget-content>
     @if (dataSource.data.length > 0) {
       <ng-content></ng-content>
@@ -16,9 +16,9 @@
       <div class="headline">
         <span
           i18n="Description that are no items in generic dashboard list widget"
-          >
-        no current entries
-      </span>
+        >
+          no current entries
+        </span>
       </div>
     }
 
@@ -30,7 +30,7 @@
       [pageSizeOptions]="[paginationPageSize]"
       [hidePageSize]="true"
       [pageSize]="paginationPageSize"
-      >
+    >
     </mat-paginator>
   </app-widget-content>
 </app-dashboard-widget>

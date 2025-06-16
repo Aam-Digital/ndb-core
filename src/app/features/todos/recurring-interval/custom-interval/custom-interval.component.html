@@ -8,7 +8,7 @@
       [(ngModel)]="selectedValue"
       min="1"
       (keyup)="validateValue()"
-      />
+    />
   </mat-form-field>
   &nbsp;
   <mat-form-field class="field-select">
@@ -27,14 +27,14 @@
     mat-stroked-button
     i18n="custom time interval dialog action"
     [mat-dialog-close]="{ amount: selectedValue, unit: selectedUnit }"
-    >
+  >
     Set
   </button>
   <button
     mat-stroked-button
     i18n="custom time interval dialog action"
     [mat-dialog-close]="undefined"
-    >
+  >
     Cancel
   </button>
 </mat-dialog-actions>

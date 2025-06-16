@@ -7,8 +7,11 @@
     angularticsCategory="UserAction"
     angularticsAction="install_app"
     (click)="pwaInstallButtonClicked()"
-    >
-    <fa-icon icon="cloud-download-alt" class="standard-icon-with-text"></fa-icon>
+  >
+    <fa-icon
+      icon="cloud-download-alt"
+      class="standard-icon-with-text"
+    ></fa-icon>
     <span i18n="PWA Install Button Label">Install App</span>
   </button>
 }
@@ -21,7 +24,7 @@
     mat-button
     style="position: absolute; right: -10px; top: 0"
     (click)="snackBar.dismiss()"
-    >
+  >
     <fa-icon icon="window-close" class="nav-icon"></fa-icon>
   </button>
   <ol>

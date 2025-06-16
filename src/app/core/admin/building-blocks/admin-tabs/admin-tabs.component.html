@@ -9,20 +9,24 @@
           cdkDropListOrientation="horizontal"
           (cdkDropListDropped)="drop($event)"
           [cdkDropListConnectedTo]="getAllTabs(tabIndex)"
-          >
+        >
           <div
             cdkDrag
             cdkDragLockAxis="x"
             class="flex-row align-center drop-item gap-small"
-            >
-            <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+          >
+            <fa-icon
+              icon="grip-vertical"
+              size="xl"
+              class="drag-handle"
+            ></fa-icon>
             @if (tabIndex === matTabGroup.selectedIndex) {
               <app-admin-section-header
                 [(title)]="tab[tabTitleProperty]"
-              (remove)="
-                tabs.splice(tabIndex, 1);
-                matTabGroup.selectedIndex = tabIndex - 1
-              "
+                (remove)="
+                  tabs.splice(tabIndex, 1);
+                  matTabGroup.selectedIndex = tabIndex - 1
+                "
               ></app-admin-section-header>
             } @else {
               <!-- only current tab can be renamed -->
@@ -33,10 +37,10 @@
       </ng-template>
       <ng-template matTabContent>
         <ng-template
-        *ngTemplateOutlet="
-          tabTemplate;
-          context: { $implicit: tab, index: tabIndex }
-        "
+          *ngTemplateOutlet="
+            tabTemplate;
+            context: { $implicit: tab, index: tabIndex }
+          "
         ></ng-template>
       </ng-template>
     </mat-tab>
@@ -51,7 +55,7 @@
         matTooltip="add a new tab"
         i18n-matTooltip
         (click)="createTab()"
-        >
+      >
         <fa-icon aria-label="add" icon="plus-circle"></fa-icon>
       </button>
     </ng-template>

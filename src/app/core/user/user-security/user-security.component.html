@@ -1,9 +1,7 @@
 @if (!userIsPermitted) {
-  <em
-    i18n="Placeholder text when permissions are missing"
-    >
-  You account does not have the required permissions to see this page.
-</em>
+  <em i18n="Placeholder text when permissions are missing">
+    You account does not have the required permissions to see this page.
+  </em>
 }
 
 @if (userIsPermitted) {
@@ -13,10 +11,10 @@
         <p
           i18n="notice about user without account"
           class="field-hint field-warning"
-          >
-      There is no user account set up for this user yet. Enable this user to log
-      into the app by filling the details below.
-    </p>
+        >
+          There is no user account set up for this user yet. Enable this user to
+          log into the app by filling the details below.
+        </p>
         @if (editing && !user) {
           <button
             mat-raised-button
@@ -27,16 +25,16 @@
             [color]="form.valid ? 'accent' : ''"
             [class.invite-button-animate]="form.valid"
             i18n="button to invite a new user"
-            >
-      Create account & send invitation
-    </button>
+          >
+            Create account & send invitation
+          </button>
         }
       </div>
     }
     @if (user) {
       <div
         class="padding-bottom-small flex-row gap-small align-self-end flex-wrap"
-        >
+      >
         @if (editing && user?.enabled) {
           <button
             mat-stroked-button
@@ -44,9 +42,9 @@
             (click)="toggleAccount(false)"
             matTooltip="User will not be able to login again, no information will be lost"
             i18n="button to update disable a user"
-            >
-      Deactivate user
-    </button>
+          >
+            Deactivate user
+          </button>
         }
         @if (editing && !user?.enabled) {
           <button
@@ -55,9 +53,9 @@
             (click)="toggleAccount(true)"
             matTooltip="User can login again with the previously used credentials"
             i18n="button to enable a user"
-            >
-      Activate user
-    </button>
+          >
+            Activate user
+          </button>
         }
         @if (editing && user?.enabled) {
           <button
@@ -66,9 +64,9 @@
             class="action-button"
             (click)="updateAccount()"
             i18n="Save button for forms"
-            >
-      Save
-    </button>
+          >
+            Save
+          </button>
         }
         @if (editing) {
           <button
@@ -76,9 +74,9 @@
             class="action-button"
             (click)="disableForm()"
             i18n="Cancel button for forms"
-            >
-      Cancel
-    </button>
+          >
+            Cancel
+          </button>
         }
         @if (!editing) {
           <button
@@ -86,34 +84,27 @@
             class="action-button"
             (click)="editForm()"
             i18n="Edit button for forms"
-            >
-      Edit
-    </button>
+          >
+            Edit
+          </button>
         }
       </div>
     }
     @if (user && !user.enabled) {
-      <p
-        i18n="Hint in user account page"
-        class="field-hint field-warning"
-        >
-    User is currently disabled and will not be able to login to the app
-  </p>
+      <p i18n="Hint in user account page" class="field-hint field-warning">
+        User is currently disabled and will not be able to login to the app
+      </p>
     }
     <form [formGroup]="form">
       <div>
         <mat-form-field>
           <mat-label i18n="label of email input">Email</mat-label>
           <input matInput type="text" formControlName="email" />
-          @if (form.hasError('email', 'email')) {
-            <mat-error i18n>
-          Please enter a valid email
-        </mat-error>
+          @if (form.hasError("email", "email")) {
+            <mat-error i18n> Please enter a valid email </mat-error>
           }
-          @if (form.hasError('required', 'email')) {
-            <mat-error i18n>
-          This field is required
-        </mat-error>
+          @if (form.hasError("required", "email")) {
+            <mat-error i18n> This field is required </mat-error>
           }
         </mat-form-field>
       </div>
@@ -122,37 +113,28 @@
           <mat-label i18n="label of roles input">Roles</mat-label>
           <mat-select formControlName="roles" multiple>
             <mat-select-trigger>
-              @for (role of form.get('roles').value; track role) {
-                <span
-                  >{{ role.name }}
-                </span>
+              @for (role of form.get("roles").value; track role) {
+                <span>{{ role.name }} </span>
               }
             </mat-select-trigger>
             @for (role of availableRoles; track role) {
-              <mat-option
-                [value]="role"
-                [matTooltip]="role.description"
-                >
+              <mat-option [value]="role" [matTooltip]="role.description">
                 {{ role.description }}
                 <em style="font-size: x-small">{{ role.name }}</em>
               </mat-option>
             }
           </mat-select>
           <mat-hint i18n="hint about assigning user roles" class="field-hint">
-          You should select at least one user role. Otherwise this user will not
-          even be able to access the basic app layout like the menu.
-        </mat-hint>
-          @if (form.hasError('required', 'roles')) {
-            <mat-error i18n>
-          This field is required
-        </mat-error>
+            You should select at least one user role. Otherwise this user will
+            not even be able to access the basic app layout like the menu.
+          </mat-hint>
+          @if (form.hasError("required", "roles")) {
+            <mat-error i18n> This field is required </mat-error>
           }
         </mat-form-field>
       </div>
-      @if (form.getError('failed')) {
-        <mat-error>{{
-          form.getError("failed")
-        }}</mat-error>
+      @if (form.getError("failed")) {
+        <mat-error>{{ form.getError("failed") }}</mat-error>
       }
     </form>
   </div>

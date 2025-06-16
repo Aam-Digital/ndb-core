@@ -43,8 +43,8 @@ export const MY_FORMATS = {
     ReactiveFormsModule,
     ErrorHintComponent,
     FontAwesomeModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
   templateUrl: "./edit-month.component.html",
   styleUrls: ["./edit-month.component.scss"],
   providers: [

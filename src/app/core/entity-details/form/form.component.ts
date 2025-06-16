@@ -29,8 +29,8 @@ import { AutomatedStatusUpdateConfigService } from "app/features/automated-statu
   imports: [
     MatButtonModule,
     EntityFormComponent,
-    DisableEntityOperationDirective
-],
+    DisableEntityOperationDirective,
+  ],
 })
 export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() entity: E;

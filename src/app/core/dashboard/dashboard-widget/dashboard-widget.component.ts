@@ -17,11 +17,7 @@ export type DashboardTheme =
   selector: "app-dashboard-widget",
   templateUrl: "./dashboard-widget.component.html",
   styleUrls: ["./dashboard-widget.component.scss"],
-  imports: [
-    MatProgressSpinnerModule,
-    FaDynamicIconComponent,
-    MatTooltipModule
-],
+  imports: [MatProgressSpinnerModule, FaDynamicIconComponent, MatTooltipModule],
 })
 export class DashboardWidgetComponent {
   @Input() subtitle: string;

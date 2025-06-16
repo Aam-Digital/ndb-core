@@ -39,8 +39,8 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
     CdkDropList,
     CdkDrag,
     FontAwesomeModule,
-    MatButtonModule
-],
+    MatButtonModule,
+  ],
 })
 export class ConfigureEnumPopupComponent {
   newOptionInput: string;

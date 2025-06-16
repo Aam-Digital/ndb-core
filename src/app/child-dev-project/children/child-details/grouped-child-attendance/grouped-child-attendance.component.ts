@@ -21,8 +21,8 @@ import { MatSelectModule } from "@angular/material/select";
     MatTabsModule,
     TabStateModule,
     ActivityAttendanceSectionComponent,
-    MatSelectModule
-],
+    MatSelectModule,
+  ],
 })
 export class GroupedChildAttendanceComponent implements OnInit {
   @Input() entity: Entity;

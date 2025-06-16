@@ -14,7 +14,7 @@
       required
       [matDatepicker]="datePicker"
       (dateChange)="setNewDate($event.value)"
-      />
+    />
     <mat-datepicker-toggle
       matIconSuffix
       [for]="datePicker"
@@ -41,9 +41,7 @@
   <div class="process-spinner">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
-}
-
-@else {
+} @else {
   <div class="cards-list">
     @for (event of filteredExistingEvents; track event) {
       <app-activity-card
@@ -51,7 +49,7 @@
         [event]="event"
         [recurring]="event.isNewFromActivity"
         (click)="selectEvent(event)"
-        >
+      >
       </app-activity-card>
     }
   </div>
@@ -65,16 +63,11 @@
     angularticsCategory="Record Attendance"
     angularticsAction="show_more"
     class="padding-right-small"
-    >
+  >
     @if (showingAll) {
-      <span i18n="Show less entries of a list">
-      Show less
-    </span>
-    }
-    @else {
-      <span i18n="Show more entries of a list">
-      Show more
-    </span>
+      <span i18n="Show less entries of a list"> Show less </span>
+    } @else {
+      <span i18n="Show more entries of a list"> Show more </span>
     }
   </button>
   <button
@@ -84,7 +77,7 @@
     angulartics2On="click"
     angularticsCategory="Record Attendance"
     angularticsAction="create_onetime_event"
-    >
+  >
     My event is not listed ...
   </button>
 </div>

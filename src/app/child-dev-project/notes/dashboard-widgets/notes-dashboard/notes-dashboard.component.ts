@@ -33,8 +33,8 @@ interface NotesDashboardConfig {
     MatTableModule,
     EntityBlockComponent,
     DecimalPipe,
-    DashboardListWidgetComponent
-],
+    DashboardListWidgetComponent,
+  ],
 })
 export class NotesDashboardComponent
   extends DashboardWidget

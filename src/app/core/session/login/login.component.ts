@@ -48,8 +48,8 @@ import { race, timer } from "rxjs";
     AsyncPipe,
     MatTooltipModule,
     MatListModule,
-    FontAwesomeModule
-],
+    FontAwesomeModule,
+  ],
 })
 export class LoginComponent implements OnInit {
   offlineUsers: SessionInfo[] = [];

@@ -7,7 +7,7 @@
       [selected]="selectedRangeValue"
       [comparisonStart]="comparisonRange.start"
       [comparisonEnd]="comparisonRange.end"
-      >
+    >
     </mat-calendar>
     <div class="panel">
       <div>
@@ -19,15 +19,16 @@
           (mouseleave)="unselectRange()"
           (click)="selectRangeAndClose('all')"
           [class.selected-option]="filter.selectedOptionValues.length === 0"
-          >
+        >
           All
         </button>
       </div>
       @for (
-        item of filter.rangeOptions; track
-        item; let selectedIndexOfDateRanges = $index) {
-        <div
-          >
+        item of filter.rangeOptions;
+        track item;
+        let selectedIndexOfDateRanges = $index
+      ) {
+        <div>
           <button
             class="button"
             mat-button
@@ -36,7 +37,7 @@
             (mouseenter)="preselectRange(item)"
             (mouseleave)="unselectRange()"
             (click)="selectRangeAndClose(selectedIndexOfDateRanges)"
-            >
+          >
             {{ item.label }}
           </button>
         </div>

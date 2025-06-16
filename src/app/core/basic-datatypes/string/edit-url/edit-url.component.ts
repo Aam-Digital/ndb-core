@@ -18,8 +18,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     ReactiveFormsModule,
     MatInputModule,
     ErrorHintComponent,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
   standalone: true,
 })
 export class EditUrlComponent extends EditComponent<string> implements OnInit {

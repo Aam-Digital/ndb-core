@@ -29,8 +29,8 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
     KeyValuePipe,
     DynamicComponentDirective,
     MatButtonModule,
-    HelpButtonComponent
-],
+    HelpButtonComponent,
+  ],
 })
 export class DiscreteImportConfigComponent implements OnInit {
   form: FormGroup;

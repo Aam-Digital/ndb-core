@@ -24,8 +24,8 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
     MatListModule,
     Angulartics2Module,
     MatMenuModule,
-    MenuItemComponent
-],
+    MenuItemComponent,
+  ],
 })
 export class NavigationComponent {
   private entities = inject(EntityRegistry);

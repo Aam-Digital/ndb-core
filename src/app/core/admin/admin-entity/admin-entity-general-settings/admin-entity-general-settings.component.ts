@@ -52,8 +52,8 @@ import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.d
     MatTooltipModule,
     HelpButtonComponent,
     AnonymizeOptionsComponent,
-    FaIconComponent
-],
+    FaIconComponent,
+  ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;

@@ -25,8 +25,8 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
     MatTooltipModule,
     MatInputModule,
     MatButtonModule,
-    FormsModule
-],
+    FormsModule,
+  ],
 })
 export class CompareRevComponent {
   /** revision key (_rev) of the confliction version to be displayed */

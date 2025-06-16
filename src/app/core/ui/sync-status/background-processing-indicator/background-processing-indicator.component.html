@@ -4,12 +4,12 @@
   [hidden]="allTasksFinished | async"
   [matMenuTriggerFor]="taskListDropdown"
   (menuClosed)="wasClosed = true"
-  >
+>
   <span
     [matBadge]="taskCounterObservable | async"
     matBadgeColor="accent"
     [matBadgeHidden]="allTasksFinished | async"
-    >
+  >
     <fa-icon class="white" icon="sync"></fa-icon>
   </span>
 </button>
@@ -22,18 +22,13 @@
     </div>
 
     @for (process of filteredProcesses | async; track process) {
-      <div
-        class="flex-row gap-small align-center mat-subtitle-2 details-line"
-        >
+      <div class="flex-row gap-small align-center mat-subtitle-2 details-line">
         <div>
           @if (process.pending) {
             <mat-spinner [diameter]="20"></mat-spinner>
           }
           @if (!process.pending) {
-            <fa-icon
-              icon="check"
-              class="process-checkmark"
-            ></fa-icon>
+            <fa-icon icon="check" class="process-checkmark"></fa-icon>
           }
         </div>
         <div class="truncate-text" [matTooltip]="process.description">
@@ -50,7 +45,7 @@
       class="full-width"
       (click)="taskListDropdownTrigger.closeMenu()"
       i18n="Hide sync details"
-      >
+    >
       Continue in background
     </button>
   </div>

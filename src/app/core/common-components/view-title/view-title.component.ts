@@ -27,8 +27,8 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
     MatButtonModule,
     MatTooltipModule,
     FontAwesomeModule,
-    NgTemplateOutlet
-],
+    NgTemplateOutlet,
+  ],
 })
 export class ViewTitleComponent implements AfterViewInit {
   @ViewChild("template") template: TemplateRef<any>;

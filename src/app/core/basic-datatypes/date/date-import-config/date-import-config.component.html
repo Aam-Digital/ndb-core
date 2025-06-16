@@ -11,32 +11,28 @@
         >(help)</a
       >
     </mat-hint>
-      @if (format.errors) {
-        <mat-error i18n>
-      Format cannot parse all dates
-    </mat-error>
-      }
-    </mat-form-field>
+    @if (format.errors) {
+      <mat-error i18n> Format cannot parse all dates </mat-error>
+    }
+  </mat-form-field>
 
-    <app-help-button
-      text="Define how date values in your imported data are formatted, so that the system correctly understands them. Values that do not match the given format will be ignored (remain empty) during import."
-      i18n-text="import - value mapping (date) - help text"
-    ></app-help-button>
+  <app-help-button
+    text="Define how date values in your imported data are formatted, so that the system correctly understands them. Values that do not match the given format will be ignored (remain empty) during import."
+    i18n-text="import - value mapping (date) - help text"
+  ></app-help-button>
 
-    <mat-list>
-      @for (val of values; track val) {
-        <mat-list-item
-          [ngClass]="{ invalid: !val.parsed }"
-          >
-          {{ val.value }} -> {{ val.parsed | date }}
-        </mat-list-item>
-      }
-    </mat-list>
-  </mat-dialog-content>
+  <mat-list>
+    @for (val of values; track val) {
+      <mat-list-item [ngClass]="{ invalid: !val.parsed }">
+        {{ val.value }} -> {{ val.parsed | date }}
+      </mat-list-item>
+    }
+  </mat-list>
+</mat-dialog-content>
 
-  <mat-dialog-actions>
-    <button mat-raised-button color="accent" (click)="save()" i18n>
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="save()" i18n>
     Save & Close
   </button>
-    <button mat-stroked-button matDialogClose i18n>Cancel</button>
-  </mat-dialog-actions>
+  <button mat-stroked-button matDialogClose i18n>Cancel</button>
+</mat-dialog-actions>

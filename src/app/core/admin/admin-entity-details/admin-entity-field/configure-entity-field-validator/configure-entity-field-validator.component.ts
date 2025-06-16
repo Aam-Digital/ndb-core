@@ -19,8 +19,8 @@ import { HelpButtonComponent } from "../../../../common-components/help-button/h
     FormsModule,
     MatCheckboxModule,
     ReactiveFormsModule,
-    HelpButtonComponent
-],
+    HelpButtonComponent,
+  ],
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
 })

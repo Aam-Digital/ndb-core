@@ -16,8 +16,8 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
     PercentPipe,
     DatePipe,
     TemplateTooltipDirective,
-    AttendanceCalendarComponent
-],
+    AttendanceCalendarComponent,
+  ],
 })
 export class AttendanceBlockComponent implements OnChanges {
   @Input() attendanceData: ActivityAttendance;

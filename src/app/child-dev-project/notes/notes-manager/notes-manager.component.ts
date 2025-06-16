@@ -43,8 +43,8 @@ export interface NotesManagerConfig {
     FormsModule,
     Angulartics2Module,
     MatMenuModule,
-    FaDynamicIconComponent
-],
+    FaDynamicIconComponent,
+  ],
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {

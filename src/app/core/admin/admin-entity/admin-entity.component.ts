@@ -40,8 +40,8 @@ import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/ad
     AdminEntityDetailsComponent,
     AdminEntityGeneralSettingsComponent,
     BetaFeatureComponent,
-    AdminEntityPublicFormsComponent
-],
+    AdminEntityPublicFormsComponent,
+  ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
 })

@@ -12,7 +12,7 @@
     [matSortActive]="_sortBy?.active"
     [matSortDirection]="_sortBy?.direction"
     class="full-width table"
-    >
+  >
     @for (col of _columns; track col) {
       <ng-container [matColumnDef]="col.id">
         <th
@@ -20,7 +20,7 @@
           mat-sort-header
           *matHeaderCellDef
           [disabled]="col.noSorting"
-          >
+        >
           <app-entity-field-label
             [field]="col"
             [entityType]="_entityType"
@@ -116,7 +116,7 @@
       [checked]="_showInactive"
       (change)="showInactive = $event.checked"
       i18n="slider|also show entries that are archived"
-      >
+    >
       Include archived records
     </mat-slide-toggle>
   </div>

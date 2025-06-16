@@ -1,5 +1,5 @@
 <form class="validator-form-cell flex-column" [formGroup]="validatorForm">
-  @if (entitySchemaField.dataType === 'number') {
+  @if (entitySchemaField.dataType === "number") {
     <mat-form-field class="number-field">
       <mat-label i18n>Minimum Value</mat-label>
       <input formControlName="min" matInput type="number" />
@@ -35,22 +35,22 @@
   <div>
     <mat-checkbox i18n formControlName="uniqueId">
       Unique ID [experimental]</mat-checkbox
-      >
+    >
+    <app-help-button
+      text="Ensures the value is not used as an ID for another existing record already. (Experimental Feature: Does not support advanced edge cases)"
+      i18n-text
+    ></app-help-button>
+  </div>
+
+  @if (entitySchemaField.dataType === "string") {
+    <div>
+      <mat-checkbox i18n formControlName="validEmail">
+        Valid Email Format
+      </mat-checkbox>
       <app-help-button
-        text="Ensures the value is not used as an ID for another existing record already. (Experimental Feature: Does not support advanced edge cases)"
+        text="Users must enter a text that can be used as an email."
         i18n-text
       ></app-help-button>
     </div>
-
-    @if (entitySchemaField.dataType === 'string') {
-      <div>
-        <mat-checkbox i18n formControlName="validEmail">
-      Valid Email Format
-    </mat-checkbox>
-        <app-help-button
-          text="Users must enter a text that can be used as an email."
-          i18n-text
-        ></app-help-button>
-      </div>
-    }
-  </form>
+  }
+</form>

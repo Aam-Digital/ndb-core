@@ -7,7 +7,7 @@
   class="indent-item"
   [class.matched-background]="item.link === activeLink"
   (click)="toggleSubMenu()"
-  >
+>
   <a class="flex-row gap-small">
     <app-fa-dynamic-icon
       class="nav-icon"
@@ -16,9 +16,7 @@
     <div>{{ item.label }}</div>
 
     @if (hasSubMenu(item)) {
-      <fa-icon
-        [icon]="isExpanded ? 'chevron-down' : 'chevron-right'"
-      ></fa-icon>
+      <fa-icon [icon]="isExpanded ? 'chevron-down' : 'chevron-right'"></fa-icon>
     }
   </a>
 </mat-list-item>
