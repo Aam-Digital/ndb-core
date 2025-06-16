@@ -50,7 +50,9 @@
       <app-notification />
     }
 
-    <app-assistant-button></app-assistant-button>
+    @if (isLoggedIn()) {
+      <app-assistant-button></app-assistant-button>
+    }
   </div>
 </mat-toolbar>
 
