@@ -9,7 +9,7 @@
       {{ attendanceData.getAttendancePercentage(forChild) | percent: "1.0-0" }}
     </span>
   }
-  @if (!attendanceData.getAttendancePercentage(forChild)) {
+  @else {
     <span> - </span>
   }
 </span>
