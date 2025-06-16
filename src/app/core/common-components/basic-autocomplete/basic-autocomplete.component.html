@@ -1,16 +1,50 @@
 <!--Display-->
-<input
-  *ngIf="display === 'text' || display === 'none'; else chipsDisplay"
-  [id]="id"
-  [hidden]="isInSearchMode() || display === 'none'"
-  [disabled]="_disabled"
-  matInput
-  style="text-overflow: ellipsis; width: calc(100% - 50px)"
-  (focusin)="showAutocomplete()"
-  (focusout)="showAutocomplete()"
-  [value]="displayText"
-  [placeholder]="placeholder"
-/>
+@if (display === 'text' || display === 'none') {
+  <input
+    [id]="id"
+    [hidden]="isInSearchMode() || display === 'none'"
+    [disabled]="_disabled"
+    matInput
+    style="text-overflow: ellipsis; width: calc(100% - 50px)"
+    (focusin)="showAutocomplete()"
+    (focusout)="showAutocomplete()"
+    [value]="displayText"
+    [placeholder]="placeholder"
+    />
+} @else {
+  <input
+    [hidden]="true"
+    [disabled]="_disabled"
+    matInput
+    (focusin)="showAutocomplete()"
+    (focusout)="showAutocomplete()"
+    [matChipInputFor]="chipList"
+    />
+  <mat-chip-grid #chipList>
+    <ng-container>
+      @for (item of _selectedOptions; track item) {
+        <mat-chip-row
+          [editable]="!_disabled"
+          class="chip"
+          >
+          @if (!templateRef) {
+            {{ item.asString }}
+          } @else {
+          }
+          @if (!_disabled) {
+            <button matChipRemove (click)="unselect(item)">
+              <fa-icon
+                i18n-matTooltip="tooltip for remove icon on chips of dropdown item"
+                matTooltip="remove"
+                icon="xmark"
+              ></fa-icon>
+            </button>
+          }
+        </mat-chip-row>
+      }
+    </ng-container>
+  </mat-chip-grid>
+}
 
 <!--Search-->
 <input
@@ -22,10 +56,10 @@
   [matAutocomplete]="autoSuggestions"
   (focusout)="onFocusOut($event)"
   [placeholder]="placeholder"
-/>
+  />
 
 <!--
-  Autocomplete
+Autocomplete
 -->
 <mat-autocomplete
   [disableRipple]="true"
@@ -35,7 +69,7 @@
   [hideSingleSelectionIndicator]="true"
   [class.custom-panel]="true"
   [style.max-height.px]="maxPanelHeight"
->
+  >
   <!-- Select All and Clear Buttons on top of options via content projection-->
   <div>
     <ng-content select="[autocompleteHeader]"></ng-content>
@@ -45,12 +79,12 @@
     (cdkDropListDropped)="drop($event)"
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
-  >
+    >
     <cdk-virtual-scroll-viewport
       [style.height.px]="(autocompleteOptions?.length ?? 0) * 48"
       [itemSize]="48"
       minBufferPx="200"
-    >
+      >
       <mat-option
         [value]="item"
         cdkDrag
@@ -58,95 +92,57 @@
           let item of autocompleteOptions;
           trackBy: trackByOptionValueFn
         "
-      >
+        >
         <div class="flex-row disable-autocomplete-active-color align-center">
-          <div *ngIf="reorder">
-            <fa-icon
-              icon="grip-vertical"
-              size="sm"
-              class="drag-handle"
-            ></fa-icon>
-          </div>
-          <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-          <ng-container *ngIf="!templateRef; else itemTemplate">
+          @if (reorder) {
+            <div>
+              <fa-icon
+                icon="grip-vertical"
+                size="sm"
+                class="drag-handle"
+              ></fa-icon>
+            </div>
+          }
+          @if (multi) {
+            <mat-checkbox [checked]="item.selected"></mat-checkbox>
+          }
+          @if (!templateRef) {
             <span
               class="text-truncate"
               matTooltip="{{ item.asString }}"
               matTooltipPosition="above"
-            >
+              >
               {{ item.asString }}
             </span>
-          </ng-container>
-          <ng-template
-            class="item-option"
-            #itemTemplate
-            [ngTemplateOutlet]="templateRef"
-            [ngTemplateOutletContext]="{ $implicit: item.initial }"
-          ></ng-template>
+          } @else {
+          }
         </div>
       </mat-option>
     </cdk-virtual-scroll-viewport>
   </div>
 
   <!-- Create new option -->
-  <mat-option
-    *ngIf="createOption && showAddOption && inputElement.value"
-    [value]="inputElement.value"
-  >
-    <em
-      i18n="Label for adding an option in a dropdown|e.g. Add new My new Option"
-      >Add new</em
-    >
-    {{ inputElement.value }}
-  </mat-option>
-
-  <mat-option style="display: none">
-    <!-- This mat-option is never displayed ("display: none") but has to be there,
-     because the footer below will only be displayed with at least one mat-option -->
-  </mat-option>
-  <div class="autocomplete-footer">
-    <ng-content select="[autocompleteFooter]"></ng-content>
-  </div>
-</mat-autocomplete>
-
-<!--
-  Optional displaying as chips
--->
-<ng-template #chipsDisplay>
-  <input
-    [hidden]="true"
-    [disabled]="_disabled"
-    matInput
-    (focusin)="showAutocomplete()"
-    (focusout)="showAutocomplete()"
-    [matChipInputFor]="chipList"
-  />
-
-  <mat-chip-grid #chipList>
-    <ng-container>
-      <mat-chip-row
-        *ngFor="let item of _selectedOptions"
-        [editable]="!_disabled"
-        class="chip"
+  @if (createOption && showAddOption && inputElement.value) {
+    <mat-option
+      [value]="inputElement.value"
       >
-        <ng-container *ngIf="!templateRef; else itemTemplateChips">
-          {{ item.asString }}
-        </ng-container>
+      <em
+        i18n="Label for adding an option in a dropdown|e.g. Add new My new Option"
+        >Add new</em
+        >
+        {{ inputElement.value }}
+      </mat-option>
+    }
 
-        <ng-template
-          #itemTemplateChips
-          [ngTemplateOutlet]="templateRef"
-          [ngTemplateOutletContext]="{ $implicit: item.initial }"
-        ></ng-template>
+    <mat-option style="display: none">
+      <!-- This mat-option is never displayed ("display: none") but has to be there,
+      because the footer below will only be displayed with at least one mat-option -->
+    </mat-option>
+    <div class="autocomplete-footer">
+      <ng-content select="[autocompleteFooter]"></ng-content>
+    </div>
+  </mat-autocomplete>
 
-        <button matChipRemove *ngIf="!_disabled" (click)="unselect(item)">
-          <fa-icon
-            i18n-matTooltip="tooltip for remove icon on chips of dropdown item"
-            matTooltip="remove"
-            icon="xmark"
-          ></fa-icon>
-        </button>
-      </mat-chip-row>
-    </ng-container>
-  </mat-chip-grid>
-</ng-template>
+  <!--
+  Optional displaying as chips
+  -->
