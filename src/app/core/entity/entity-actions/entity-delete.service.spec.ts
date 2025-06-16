@@ -117,7 +117,9 @@ describe("EntityDeleteService", () => {
     mockUserAdminService.deleteUser.and.returnValue(
       throwError(() => new Error()),
     );
-    let userEntity = createEntityOfType("User");
+    const userEntity = createEntityOfType("User");
+    const entityConstructor = userEntity.getConstructor();
+    entityConstructor.enableUserAccounts = true;
 
     // when
     await service.deleteEntity(userEntity, true);

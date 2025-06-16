@@ -100,6 +100,8 @@ describe("EntityDetailsComponent", () => {
 
   it("filters out panels not permitted for the current user role", fakeAsync(() => {
     const testChild = new TestEntity("Role-Test");
+    testChild.getConstructor().enableUserAccounts = false;
+
     TestBed.inject(EntityMapperService).save(testChild);
     tick();
     component.id = testChild.getId(true);
