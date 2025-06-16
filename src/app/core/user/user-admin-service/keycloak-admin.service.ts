@@ -86,7 +86,7 @@ export class KeycloakAdminService extends UserAdminService {
     return this.getUser(userEntityId).pipe(
       switchMap((userAccount) => {
         if (!userAccount) {
-          Logging.warn("User not found in Keycloak", { userEntityId });
+          Logging.debug("User not found in Keycloak", { userEntityId });
           return of(undefined);
         }
         return this.http.delete(`${this.keycloakUrl}/users/${userAccount.id}`);
