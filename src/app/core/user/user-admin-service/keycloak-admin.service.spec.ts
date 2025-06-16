@@ -7,6 +7,7 @@ import { KeycloakAdminService } from "./keycloak-admin.service";
 import { environment } from "../../../../environments/environment.spec";
 import { Role } from "./user-account";
 import { UserAdminApiError } from "./user-admin.service";
+import { Logging } from "app/core/logging/logging.service";
 
 describe("KeycloakAdminService", () => {
   let service: KeycloakAdminService;
@@ -98,6 +99,25 @@ describe("KeycloakAdminService", () => {
           req.method === "PUT",
       )
       .flush({});
+  }));
+
+  it("should log debug if user does not exist in Keycloak during deletion", fakeAsync(() => {
+    const warnSpy = spyOn(Logging, "debug");
+
+    service.deleteUser("test-id").subscribe((response) => {
+      expect(response.userDeleted).toBeTrue();
+    });
+
+    const reqGet = httpTestingController.expectOne(
+      `${BASE_URL}/users?q=exact_username:test-id&exact=true`,
+    );
+    expect(reqGet.request.method).toBe("GET");
+
+    reqGet.flush([]);
+
+    expect(warnSpy).toHaveBeenCalledWith("User not found in Keycloak", {
+      userEntityId: "test-id",
+    });
   }));
 
   it("should throw well-defined error when created user's email already exists", fakeAsync(() => {

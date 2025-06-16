@@ -100,6 +100,7 @@ export class AdminEntityComponent implements OnInit {
       color: entityCtr.color,
       toStringAttributes: [...entityCtr.toStringAttributes],
       hasPII: entityCtr.hasPII,
+      enableUserAccounts: entityCtr.enableUserAccounts,
     };
   }
 
