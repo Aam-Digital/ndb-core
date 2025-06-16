@@ -29,7 +29,7 @@
       @if (!selectedEntity) {
         <span i18n>Creating new record.</span>
       }
-      @if (selectedEntity) {
+      @else {
         <span i18n>Editing existing record.</span>
       }
     </mat-hint>
@@ -50,7 +50,7 @@
   ></fa-icon>
 }
 
-@if (!autocompleteDisabled && !!selectedEntity) {
+@else if (!autocompleteDisabled && !!selectedEntity) {
   <fa-icon
     (click)="resetForm()"
     icon="circle-xmark"
