@@ -66,35 +66,35 @@ export class GeoService {
       );
   }
 
- private reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
-  const addr = result?.address;
-  if (addr) {
-    const city = addr.city ?? addr.town ?? "";
-    let street = addr.road ? addr.road : "";
-    if (street && addr.house_number) {
-      street = `${street} ${addr.house_number}`;
-    } else if (addr.house_number) {
-      street = addr.house_number;
-    }
-    let postcodeCity = "";
-    if (addr.postcode && city) {
-      postcodeCity = `${addr.postcode} ${city}`;
-    } else if (addr.postcode) {
-      postcodeCity = `${addr.postcode}`;
-    } else if (city) {
-      postcodeCity = city;
-    }
+  private reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
+    const addr = result?.address;
+    if (addr) {
+      const city = addr.city ?? addr.town ?? "";
+      let street = addr.road ? addr.road : "";
+      if (street && addr.house_number) {
+        street = `${street} ${addr.house_number}`;
+      } else if (addr.house_number) {
+        street = addr.house_number;
+      }
+      let postcodeCity = "";
+      if (addr.postcode && city) {
+        postcodeCity = `${addr.postcode} ${city}`;
+      } else if (addr.postcode) {
+        postcodeCity = `${addr.postcode}`;
+      } else if (city) {
+        postcodeCity = city;
+      }
 
-    result.display_name = [
-      addr.amenity ?? addr.office,
-      street || undefined,
-      postcodeCity || undefined,
-    ]
-      .filter((x) => !!x && x !== "undefined")
-      .join(", ");
+      result.display_name = [
+        addr.amenity ?? addr.office,
+        street || undefined,
+        postcodeCity || undefined,
+      ]
+        .filter((x) => !!x && x !== "undefined")
+        .join(", ");
+    }
+    return result;
   }
-  return result;
-}
 
   /**
    * Returns the location at the provided coordinates

@@ -90,12 +90,15 @@ export class AddressSearchComponent implements OnInit {
   /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
 
-  constructor(private location: GeoService, private dialog: MatDialog) {}
+  constructor(
+    private location: GeoService,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit() {
     this.initSearchPipeline();
     // Keep a local array for isInputInOptions
-    this.filteredOptions.subscribe(options => {
+    this.filteredOptions.subscribe((options) => {
       this.filteredOptionsArray = options;
     });
   }
@@ -173,7 +176,7 @@ export class AddressSearchComponent implements OnInit {
     if (!input || !this.filteredOptionsArray) return false;
     const normalizedInput = input.trim().toLowerCase();
     return this.filteredOptionsArray.some(
-      option => option.display_name.trim().toLowerCase() === normalizedInput
+      (option) => option.display_name.trim().toLowerCase() === normalizedInput,
     );
   }
 }
