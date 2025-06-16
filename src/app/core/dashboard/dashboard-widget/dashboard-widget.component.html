@@ -2,30 +2,28 @@
 <div class="widget-header theme-background-{{ theme }}">
   @if (headline) {
     <div class="widget-headline">{{ headline }}</div>
-  }
-  @if (!headline) {
+  } @else {
     <div class="widget-title">
-      @if (!loading) {
-        {{ title }}
-      }
       @if (loading) {
         <mat-spinner diameter="40"></mat-spinner>
+      } @else {
+        {{ title }}
       }
     </div>
-  }
-  @if (!headline) {
     <div class="widget-subheadline" [matTooltip]="explanation">
       {{ subtitle }}
     </div>
   }
+
   <app-fa-dynamic-icon class="widget-icon" [icon]="icon"></app-fa-dynamic-icon>
 </div>
 
+<!-- Content -->
 <div class="widget-content">
   @if (loading) {
     <h2 class="headline" i18n>Loading...</h2>
-  }
-  @if (!loading) {
+  } @else {
     <ng-content select="app-widget-content"></ng-content>
   }
 </div>
+
