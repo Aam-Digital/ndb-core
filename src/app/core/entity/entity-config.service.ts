@@ -145,7 +145,7 @@ export class EntityConfigService {
     entityType.route = entityConfig.route ?? entityType.route;
     entityType.hasPII = entityConfig.hasPII ?? entityType.hasPII;
     entityType.enableUserAccounts =
-      entityConfig.enableUserAccounts ?? entityType.enableUserAccounts;
+      entityConfig?.enableUserAccounts ?? entityType?.enableUserAccounts;
 
     entityType._isCustomizedType = true;
   }
