@@ -17,14 +17,13 @@
 
 import { Component } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
-import { filter } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
 import { environment } from "environments/environment";
 import { SetupService } from "./core/setup/setup.service";
 import { combineLatest, from, Observable } from "rxjs";
-import { map } from "rxjs/operators";
 
 /**
  * Component as the main entry point for the app.
@@ -33,13 +32,17 @@ import { map } from "rxjs/operators";
 @Component({
   selector: "app-root",
   template: `
-    <ng-container [ngSwitch]="displayMode$ | async">
-      <app-application-loading
-        *ngSwitchCase="'loading'"
-      ></app-application-loading>
-      <router-outlet *ngSwitchCase="'fullscreen'"></router-outlet>
-      <app-ui *ngSwitchCase="'ui'"></app-ui>
-    </ng-container>
+    @switch (displayMode$ | async) {
+      @case ("loading") {
+        <app-application-loading></app-application-loading>
+      }
+      @case ("fullscreen") {
+        <router-outlet></router-outlet>
+      }
+      @case ("ui") {
+        <app-ui></app-ui>
+      }
+    }
   `,
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
@@ -57,15 +60,20 @@ export class AppComponent {
     const configReady$ = from(this.setupService.waitForConfigReady());
     this.displayMode$ = combineLatest([configReady$, this.loginState]).pipe(
       map(([configReady, loginState]) => {
-        if (!configReady && loginState === LoginState.LOGGED_IN)
+        if (!configReady && loginState === LoginState.LOGGED_IN) {
           return "loading";
-        if (this.configFullscreen) return "fullscreen";
-        return "ui";
+        } else if (this.configFullscreen) {
+          return "fullscreen";
+        } else {
+          return "ui";
+        }
       }),
     );
+
     if (environment.demo_mode) {
       this.demoDataInitializer.logInDemoUser();
     }
+
     this.detectConfigMode();
     router.events
       .pipe(filter((e) => e instanceof NavigationEnd))

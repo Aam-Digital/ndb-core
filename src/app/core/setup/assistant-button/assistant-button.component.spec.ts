@@ -14,7 +14,7 @@ import {
 } from "app/core/entity/database-entity.decorator";
 import { SetupService } from "../setup.service";
 
-describe("DemoAssistantButtonComponent", () => {
+describe("AssistantButtonComponent", () => {
   let component: AssistantButtonComponent;
   let fixture: ComponentFixture<AssistantButtonComponent>;
 
