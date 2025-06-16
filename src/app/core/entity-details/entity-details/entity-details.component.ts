@@ -93,8 +93,11 @@ export class EntityDetailsComponent
         })),
       }));
 
-    const canHaveUserAccount = this.entityConstructor?.enableUserAccounts;
-    if (canHaveUserAccount) {
+    const hasUserSecurityPanel = filteredPanels.some((panel) =>
+      panel.components.some((c) => c.component === "UserSecurity"),
+    );
+
+    if (this.entityConstructor?.enableUserAccounts && !hasUserSecurityPanel) {
       filteredPanels.push({
         title: $localize`:Panel title:User Account`,
         components: [
