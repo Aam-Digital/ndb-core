@@ -16,14 +16,13 @@
  */
 
 import { Component } from "@angular/core";
-import { NavigationEnd, Router } from "@angular/router";
-import { filter, map } from "rxjs/operators";
+import { map, mergeMap } from "rxjs/operators";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
 import { environment } from "environments/environment";
 import { SetupService } from "./core/setup/setup.service";
-import { combineLatest, from, Observable } from "rxjs";
+import { from, merge, Observable, of } from "rxjs";
 
 /**
  * Component as the main entry point for the app.
@@ -32,40 +31,32 @@ import { combineLatest, from, Observable } from "rxjs";
 @Component({
   selector: "app-root",
   template: `
-    @switch (displayMode$ | async) {
-      @case ("loading") {
-        <app-application-loading></app-application-loading>
-      }
-      @case ("fullscreen") {
-        <router-outlet></router-outlet>
-      }
-      @case ("ui") {
-        <app-ui></app-ui>
-      }
+    @if (configReady$ | async) {
+      <app-ui></app-ui>
+    } @else {
+      <app-application-loading></app-application-loading>
     }
   `,
   // eslint-disable-next-line @angular-eslint/prefer-standalone
   standalone: false,
 })
 export class AppComponent {
-  configFullscreen: boolean = false;
-  displayMode$: Observable<"loading" | "fullscreen" | "ui">;
+  configReady$: Observable<boolean>;
 
   constructor(
-    private router: Router,
-    protected loginState: LoginStateSubject,
+    private loginState: LoginStateSubject,
     private demoDataInitializer: DemoDataInitializerService,
     private setupService: SetupService,
   ) {
-    const configReady$ = from(this.setupService.waitForConfigReady());
-    this.displayMode$ = combineLatest([configReady$, this.loginState]).pipe(
-      map(([configReady, loginState]) => {
-        if (!configReady && loginState === LoginState.LOGGED_IN) {
-          return "loading";
-        } else if (this.configFullscreen) {
-          return "fullscreen";
+    this.configReady$ = this.loginState.pipe(
+      // if logged out, we don't wait for config and treat this separately
+      map((loginState) => loginState !== LoginState.LOGGED_IN),
+      // immediately switch the state based on loginState but then take time for config readiness
+      mergeMap((loggedOut) => {
+        if (!loggedOut) {
+          return merge(of(false), from(this.setupService.waitForConfigReady()));
         } else {
-          return "ui";
+          return of(true);
         }
       }),
     );
@@ -73,21 +64,5 @@ export class AppComponent {
     if (environment.demo_mode) {
       this.demoDataInitializer.logInDemoUser();
     }
-
-    this.detectConfigMode();
-    router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe(() => this.detectConfigMode());
   }
-
-  /**
-   * Switch the layout for certain admin routes to display those fullscreen without app menu and toolbar.
-   * @private
-   */
-  private detectConfigMode() {
-    const currentUrl = this.router.url;
-    this.configFullscreen = currentUrl.startsWith("/admin/entity/");
-  }
-
-  protected readonly LoginState = LoginState;
 }

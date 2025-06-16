@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ViewChild } from "@angular/core";
+import { Component, signal, ViewChild } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
@@ -23,7 +23,12 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { RouterLink, RouterOutlet } from "@angular/router";
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterOutlet,
+} from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { SearchComponent } from "../search/search.component";
 import { SyncStatusComponent } from "../sync-status/sync-status/sync-status.component";
@@ -40,6 +45,8 @@ import { NotificationComponent } from "../../../features/notification/notificati
 import { GotoThirdPartySystemComponent } from "../../../features/third-party-authentication/goto-third-party-system/goto-third-party-system.component";
 import { SetupService } from "app/core/setup/setup.service";
 import { AssistantButtonComponent } from "../../setup/assistant-button/assistant-button.component";
+import { filter } from "rxjs/operators";
+import { BehaviorSubject } from "rxjs";
 
 /**
  * The main user interface component as root element for the app structure
@@ -76,34 +83,51 @@ import { AssistantButtonComponent } from "../../setup/assistant-button/assistant
 export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */
   sideNavMode: MatDrawerMode;
+
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
+
   /** latest version of the site settings*/
   siteSettings = new SiteSettings();
   isDesktop = false;
 
-  isConfigReady: Promise<boolean>;
+  configReady$ = new BehaviorSubject<boolean>(false);
+  showPrimaryAction = signal(false);
 
   constructor(
     private screenWidthObserver: ScreenWidthObserver,
     private siteSettingsService: SiteSettingsService,
     private sessionManager: SessionManagerService,
     private setupService: SetupService,
+    private router: Router,
   ) {
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))
-      .subscribe(
-        (isDesktop) => (
-          (this.sideNavMode = isDesktop ? "side" : "over"),
-          (this.isDesktop = isDesktop)
-        ),
-      );
+      .subscribe((isDesktop) => {
+        this.isDesktop = isDesktop;
+        this.updateDisplayMode();
+      });
+    router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe(() => this.updateDisplayMode());
+    this.configReady$.subscribe((ready) => this.updateDisplayMode());
+
     this.siteSettingsService.siteSettings.subscribe(
       (s) => (this.siteSettings = s),
     );
 
-    this.isConfigReady = this.setupService.waitForConfigReady(true);
+    this.setupService
+      .waitForConfigReady(true)
+      .then((ready) => this.configReady$.next(ready));
+  }
+
+  private updateDisplayMode() {
+    const currentUrl = this.router.url;
+    const configFullscreen = currentUrl.startsWith("/admin/entity/");
+
+    this.sideNavMode = configFullscreen || !this.isDesktop ? "over" : "side";
+    this.showPrimaryAction.set(this.configReady$.value && !configFullscreen);
   }
 
   /**
@@ -113,7 +137,9 @@ export class UiComponent {
     this.sessionManager.logout();
 
     // Re-evaluate config state to update UI layout (e.g., hide toolbar and sidebar after logout)
-    this.isConfigReady = this.setupService.waitForConfigReady();
+    this.setupService
+      .waitForConfigReady()
+      .then((ready) => this.configReady$.next(ready));
   }
 
   closeSidenavOnMobile() {
