@@ -8,7 +8,6 @@ import {
 } from "../../common-components/entity-form/entity-form.service";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
-
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
