@@ -6,7 +6,6 @@ import {
   Optional,
   Output,
 } from "@angular/core";
-
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
