@@ -129,12 +129,12 @@
         [editable]="!_disabled"
         class="chip"
       >
-        <ng-container *ngIf="!templateRef; else itemTemplate">
+        <ng-container *ngIf="!templateRef; else itemTemplateChips">
           {{ item.asString }}
         </ng-container>
 
         <ng-template
-          #itemTemplate
+          #itemTemplateChips
           [ngTemplateOutlet]="templateRef"
           [ngTemplateOutletContext]="{ $implicit: item.initial }"
         ></ng-template>

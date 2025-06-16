@@ -44,55 +44,51 @@
   #autoResults="matAutocomplete"
   (optionSelected)="clickOption($event.option)"
 >
-  <ng-container [ngSwitch]="state">
-    <mat-option
-      *ngSwitchCase="TOO_FEW_CHARACTERS"
-      class="result-hint"
-      [disabled]="true"
-    >
-      <p
-        i18n="The user has inserted too few characters to start a search"
-        class="remove-margin-bottom"
-      >
-        Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters
-      </p>
-    </mat-option>
+  @switch (state) {
+    @case (TOO_FEW_CHARACTERS) {
+      <mat-option class="result-hint" [disabled]="true">
+        <p
+          i18n="The user has inserted too few characters to start a search"
+          class="remove-margin-bottom"
+        >
+          Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters
+        </p>
+      </mat-option>
+    }
 
-    <mat-option
-      class="result-hint"
-      *ngSwitchCase="SEARCH_IN_PROGRESS"
-      [disabled]="true"
-    >
-      <p i18n="A search is in progress" class="remove-margin-bottom">
-        Search in progress...
-      </p>
-    </mat-option>
+    @case (SEARCH_IN_PROGRESS) {
+      <mat-option class="result-hint" [disabled]="true">
+        <p i18n="A search is in progress" class="remove-margin-bottom">
+          Search in progress...
+        </p>
+      </mat-option>
+    }
 
-    <mat-option
-      class="result-hint"
-      *ngSwitchCase="NO_RESULTS"
-      [disabled]="true"
-    >
-      <p i18n="No search results are available" class="remove-margin-bottom">
-        There were no results
-      </p>
-    </mat-option>
+    @case (NO_RESULTS) {
+      <mat-option class="result-hint" [disabled]="true">
+        <p i18n="No search results are available" class="remove-margin-bottom">
+          There were no results
+        </p>
+      </mat-option>
+    }
 
-    <mat-option
-      class="result-hint"
-      *ngSwitchCase="ILLEGAL_INPUT"
-      [disabled]="true"
-    >
-      <p
-        i18n="Invalid characters were entered into the search field"
-        class="remove-margin-bottom"
-      >
-        Please only enter numbers or letters
-      </p>
-    </mat-option>
+    @case (ILLEGAL_INPUT) {
+      <mat-option class="result-hint" [disabled]="true">
+        <p
+          i18n="Invalid characters were entered into the search field"
+          class="remove-margin-bottom"
+        >
+          Please only enter numbers or letters
+        </p>
+      </mat-option>
+    }
 
-    <mat-option *ngFor="let res of results | async" [value]="res">
-      <app-entity-block [entity]="res"></app-entity-block>
-    </mat-option>
-  </ng-container>
+    @default {
+      @for (res of results | async; track res) {
+        <mat-option [value]="res">
+          <app-entity-block [entity]="res"></app-entity-block>
+        </mat-option>
+      }
+    }
+  }
 </mat-autocomplete>
