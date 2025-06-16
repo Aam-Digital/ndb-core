@@ -39,7 +39,6 @@ import { EntityCreateButtonComponent } from "../../../core/common-components/ent
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 import { AblePurePipe } from "@casl/angular";
 
-
 @UntilDestroy()
 @RouteTarget("TodoList")
 @Component({
