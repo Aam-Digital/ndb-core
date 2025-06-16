@@ -97,6 +97,7 @@ import { UserAdminService } from "./core/user/user-admin-service/user-admin.serv
 import { KeycloakAdminService } from "./core/user/user-admin-service/keycloak-admin.service";
 import { defaultValueStrategyProviders } from "./core/default-values/standard-default-value-strategies";
 import { DemoDataModule } from "./core/demo-data/demo-data.module";
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 
 /**
  * Main entry point of the application.
@@ -186,6 +187,10 @@ import { DemoDataModule } from "./core/demo-data/demo-data.module";
     provideHttpClient(withInterceptorsFromDi()),
     NotificationService,
     ...defaultValueStrategyProviders,
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { subscriptSizing: "dynamic" },
+    },
   ],
 })
 export class AppModule {
