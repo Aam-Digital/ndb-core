@@ -34,7 +34,8 @@ import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";
 import { HttpErrorResponse } from "@angular/common/http";
-
+import { MatDialog } from "@angular/material/dialog";
+import { NoLocationDailogComponent } from "../no-location-dailog/no-location-dailog.component";
 /**
  * A search box integrated with OpenStreetMaps lookup of the entered address,
  * offering matching locations as an autocomplete-style dropdown.
@@ -89,7 +90,7 @@ export class AddressSearchComponent implements OnInit {
   /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
 
-  constructor(private location: GeoService) {}
+  constructor(private location: GeoService, private dialog: MatDialog) {}
 
   ngOnInit() {
     this.initSearchPipeline();
@@ -136,6 +137,7 @@ export class AddressSearchComponent implements OnInit {
       result = { geoLookup: selected };
     } else if (typeof selected === "string") {
       // special case to set address text from search without mapped location (when no result was found)
+      this.dialog.open(NoLocationDailogComponent);
       result = { locationString: selected };
     }
 
