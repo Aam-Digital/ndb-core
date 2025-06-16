@@ -10,9 +10,7 @@
     >
       Save
     </button>
-  }
 
-  @if (form?.formGroup.enabled) {
     <button
       mat-stroked-button
       (click)="cancelClicked()"
@@ -28,7 +26,7 @@
       (click)="form?.formGroup.enable()"
       *appDisabledEntityOperation="{
         entity: entity,
-        operation: 'update',
+        operation: 'update'
       }"
       i18n="Edit button for forms"
     >
