@@ -574,7 +574,7 @@
         <note priority="1" from="description">Event demo attendance remarks</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
-          <context context-type="linenumber">43</context>
+          <context context-type="linenumber">45</context>
         </context-group>
       </trans-unit>
       <trans-unit id="67705713427853924" datatype="html">
@@ -583,7 +583,7 @@
         <note priority="1" from="description">Event demo attendance remarks</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4294726156492975533" datatype="html">
@@ -592,7 +592,7 @@
         <note priority="1" from="description">Event demo attendance remarks</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/demo-data/demo-activity-events-generator.service.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4146517347625724468" datatype="html">
@@ -722,7 +722,7 @@
         <note priority="1" from="description">Child status</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">70</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts</context>
@@ -1047,54 +1047,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts</context>
           <context context-type="linenumber">6</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1991432124565542842" datatype="html">
-        <source>Hindu</source>
-        <target>Hindou</target>
-        <note priority="1" from="description">religion</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
-          <context context-type="linenumber">4</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
-          <context context-type="linenumber">5</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5048451843330274151" datatype="html">
-        <source>Muslim</source>
-        <target>Musulman</target>
-        <note priority="1" from="description">religion</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="8023565994008055166" datatype="html">
-        <source>Christian</source>
-        <target>Chrétien</target>
-        <note priority="1" from="description">religion</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
-          <context context-type="linenumber">8</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1948629758839313078" datatype="html">
-        <source>Sikh</source>
-        <target>Sikh</target>
-        <note priority="1" from="description">religion</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/religions.ts</context>
-          <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3193639537347911590" datatype="html">
@@ -1718,33 +1670,6 @@
           <context context-type="linenumber">28,33</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6019454386423409201" datatype="html">
-        <source>Solved</source>
-        <target>Résolu</target>
-        <note priority="1" from="description">Label warning level</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/warning-level.ts</context>
-          <context context-type="linenumber">31</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2878121457281177358" datatype="html">
-        <source>Needs Follow-Up</source>
-        <target>Besoin de suivi</target>
-        <note priority="1" from="description">Label warning level</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/warning-level.ts</context>
-          <context context-type="linenumber">35</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="646867864053789697" datatype="html">
-        <source>Urgent Follow-Up</source>
-        <target>Suivi urgent</target>
-        <note priority="1" from="description">Label warning level</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/warning-level.ts</context>
-          <context context-type="linenumber">39</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="5191402552920528867" datatype="html">
         <source> You can edit how users will see the details of a single record of this type. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. The editor below closely resembles how the form will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> We recommend to keep things simple: Only add fields that you really need for your work.
 </source>
@@ -2363,7 +2288,7 @@
         <target>Titre de l&apos;enregistrement généré</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8703736367007810623" datatype="html">
@@ -2371,7 +2296,7 @@
         <target>Sélectionnez les champs à utiliser (dans cet ordre) pour générer un nom/titre simple pour un enregistrement. Ce titre généré est utilisé dans les aperçus, la recherche et pour les champs de formulaire qui permettent de sélectionner un enregistrement de ce type. (Seuls les champs de texte peuvent être utilisés ici)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">88</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5045392956487283965" datatype="html">
@@ -2379,7 +2304,7 @@
         <target>Configurer l&apos;anonymisation</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">110</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7782904061382038164" datatype="html">
@@ -2387,7 +2312,7 @@
         <target>Contient des informations personnelles (RGPD)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">110</context>
+          <context context-type="linenumber">120</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4379176514372959023" datatype="html">
@@ -2395,7 +2320,7 @@
         <target>Si les champs de ce type d&apos;enregistrement contiennent des informations personnelles et sensibles, vous pouvez le marquer ici. Cochez cette case pour activer la fonction d&apos;«anonymisation». Cela permet aux utilisateurs d&apos;anonymiser les enregistrements de ce type au lieu de simplement les archiver ou de les supprimer.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">113</context>
+          <context context-type="linenumber">123</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5591054546376436766" datatype="html">
@@ -2403,7 +2328,7 @@
         <target> Configurez la manière dont les enregistrements de ce type peuvent être anonymisés. Les utilisateurs peuvent «anonymiser» un enregistrement au lieu de simplement l&apos;archiver (en conservant toutes les données personnelles) ou de le supprimer (en perdant toute trace de l&apos;enregistrement, même dans les rapports). Sélectionnez ci-dessous les champs qui peuvent être «conservés» pour conserver certaines données limitées pour les rapports statistiques et les champs qui doivent être supprimés car ils contiennent des données personnelles. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">119,127</context>
+          <context context-type="linenumber">129,137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3826197724850782348" datatype="html">
@@ -2484,7 +2409,7 @@
         <note priority="1" from="description">Save config confirmation message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
-          <context context-type="linenumber">152</context>
+          <context context-type="linenumber">153</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6236690165266443105" datatype="html">
@@ -3526,7 +3451,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="meaning">Label for checkbox</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-select/entity-select.component.html</context>
-          <context context-type="linenumber">29,30</context>
+          <context context-type="linenumber">34,35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2849064100927111571" datatype="html">
@@ -5293,15 +5218,6 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">62</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2296681895307893686" datatype="html">
-        <source>any</source>
-        <target>n&apos;importe lequel</target>
-        <note priority="1" from="description">datatype-label</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity/default-datatype/default.datatype.ts</context>
-          <context context-type="linenumber">49</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="1055686627716339120" datatype="html">
         <source>Archive</source>
         <target>Archiver</target>
@@ -5606,7 +5522,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Entity.toString fallback for anonymized record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/model/entity.ts</context>
-          <context context-type="linenumber">333,335</context>
+          <context context-type="linenumber">339,341</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6116431777503568524" datatype="html">
@@ -6582,6 +6498,10 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>User Account</source>
         <target>Compte d&apos;utilisateur</target>
         <note priority="1" from="description">User-Account label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/entity-details/entity-details/entity-details.component.ts</context>
+          <context context-type="linenumber">102</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
           <context context-type="linenumber">2</context>
@@ -9239,7 +9159,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">Navigate to user profile page</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">102</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2949848596707725099" datatype="html">
@@ -9248,7 +9168,7 @@ Les fichiers modèles peuvent être dans la plupart des formats de documents bur
         <note priority="1" from="description">Sign out of the app</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">110</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8874875360289253570" datatype="html">
@@ -10517,7 +10437,7 @@ _Nous serions ravis de vous aider !_</target>
         <note priority="1" from="description">User API error</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-admin-service/keycloak-admin.service.ts</context>
-          <context context-type="linenumber">299</context>
+          <context context-type="linenumber">303</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5234982986829654425" datatype="html">
@@ -10859,6 +10779,30 @@ _Nous serions ravis de vous aider !_</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/third-party-authentication/goto-third-party-system/goto-third-party-system.component.html</context>
           <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="698198850503289601" datatype="html">
+        <source>Some records are hidden because you do not have permission to access them (or they could not be found for other reasons).</source>
+        <target>Certains enregistrements sont masqués parce que vous n&apos;avez pas l&apos;autorisation d&apos;y accéder (ou ils n&apos;ont pas pu être trouvés pour d&apos;autres raisons).</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/common-components/entity-select/entity-select.component.html</context>
+          <context context-type="linenumber">55,56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1148928411105531311" datatype="html">
+        <source>Enable User Accounts</source>
+        <target>Activer les comptes d&apos;utilisateurs</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2073290378607661874" datatype="html">
+        <source>Check this if entities of this type can have associated user accounts with login credentials. This allows assigning roles and managing access.</source>
+        <target>Cochez cette case si les entités de ce type peuvent être associées à des comptes utilisateurs avec identifiants de connexion. Cela permet d&apos;attribuer des rôles et de gérer les accès.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
     </body>
