@@ -103,7 +103,7 @@ describe("EntitySelectComponent", () => {
     );
   }));
 
-  it("should not fail if selected entity (value) is not found", fakeAsync(() => {
+  it("should retain missing entity and show warning", fakeAsync(() => {
     const warnSpy = spyOn(Logging, "warn");
     component.entityType = TestEntity.ENTITY_TYPE;
     component.label = "test label";
@@ -117,7 +117,11 @@ describe("EntitySelectComponent", () => {
       "missing_user",
       jasmine.anything(),
     );
-    expect(component.form.value).toEqual([test1Entities[0].getId()]);
+    expect(component.form.value).toEqual([
+      test1Entities[0].getId(),
+      "missing_user",
+    ]);
+    expect(component.hasInaccessibleEntities).toBeTrue();
   }));
 
   it("shows inactive entities according to the includeInactive state", fakeAsync(() => {

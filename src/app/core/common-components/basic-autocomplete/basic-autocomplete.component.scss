@@ -20,7 +20,7 @@ em {
 
 ::ng-deep {
   .cdk-virtual-scroll-orientation-vertical .cdk-virtual-scroll-content-wrapper {
-    width: -webkit-fill-available !important;
+    width: 100%;
   }
 }
 

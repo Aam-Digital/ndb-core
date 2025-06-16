@@ -2,6 +2,7 @@
   <mat-label>
     <span [matTooltip]="label" matTooltipPosition="before">{{ label }}</span>
   </mat-label>
+
   <div class="autocomplete-container">
     <app-basic-autocomplete
       #autocomplete
@@ -16,11 +17,13 @@
       [createOption]="disableCreateNew ? null : createNewEntity"
     >
       <ng-template let-item>
-        <app-entity-block
-          style="margin: auto"
-          [entity]="item"
-          [linkDisabled]="form.enabled"
-        ></app-entity-block>
+        @if (!item.isHidden) {
+          <app-entity-block
+            style="margin: auto"
+            [entity]="item"
+            [linkDisabled]="form.enabled"
+          ></app-entity-block>
+        }
       </ng-template>
 
       <ng-container autocompleteFooter *ngIf="currentlyMatchingInactive > 0">
@@ -42,6 +45,18 @@
       ></fa-icon>
     </div>
   </div>
+
+  <mat-hint *ngIf="hasInaccessibleEntities" class="hint">
+    <fa-icon
+      icon="warning"
+      class="standard-icon-with-text warning-icon"
+    ></fa-icon>
+    <span i18n
+      >Some records are hidden because you do not have permission to access them
+      (or they could not be found for other reasons).</span
+    >
+  </mat-hint>
+
   <mat-error *ngIf="form.errors">
     <app-error-hint [form]="form"></app-error-hint>
   </mat-error>
