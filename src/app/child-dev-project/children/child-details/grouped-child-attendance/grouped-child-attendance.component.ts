@@ -3,7 +3,6 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../../utils/tab-state/tab-state.module";
