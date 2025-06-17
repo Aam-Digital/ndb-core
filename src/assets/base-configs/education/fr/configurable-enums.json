@@ -4,15 +4,15 @@
     "values": [
       {
         "id": "C1",
-        "label": "Alipore"
+        "label": "Saint-Germain"
       },
       {
         "id": "C2",
-        "label": "Tollygunge"
+        "label": "Notre-Dame"
       },
       {
         "id": "C3",
-        "label": "Barabazar"
+        "label": "Halles"
       }
     ]
   },
@@ -21,11 +21,11 @@
     "values": [
       {
         "id": "VISIT",
-        "label": "Home Visit"
+        "label": "Visite à domicile"
       },
       {
         "id": "GUARDIAN_TALK",
-        "label": "Talk with Guardians"
+        "label": "Entretien avec les parents"
       },
       {
         "id": "INCIDENT",
@@ -33,23 +33,23 @@
       },
       {
         "id": "NOTE",
-        "label": "General Note"
+        "label": "Remarque générale"
       },
       {
         "id": "GUARDIAN_MEETING",
-        "label": "Guardians' Meeting",
+        "label": "Réunion de parents",
         "color": "#E1F5FE",
         "isMeeting": true
       },
       {
         "id": "COACHING_CLASS",
-        "label": "Coaching Class",
+        "label": "Cours de soutien",
         "color": "#EEEEEE",
         "isMeeting": true
       },
       {
         "id": "SCHOOL_CLASS",
-        "label": "School Class",
+        "label": "Cours scolaire",
         "color": "#EEEEEE",
         "isMeeting": true
       }
@@ -64,32 +64,32 @@
       },
       {
         "id": "pencil",
-        "label": "pencil"
+        "label": "crayon à papier"
       },
       {
         "id": "eraser",
-        "label": "eraser"
+        "label": "gomme"
       },
       {
         "id": "pen (black)",
-        "label": "pen (black)"
+        "label": "stylo (noir)"
       },
       {
         "id": "crayons",
-        "label": "crayons"
+        "label": "crayons de couleur"
       },
       {
         "id": "copy (plain)",
-        "label": "copy (plain)"
+        "label": "cahier"
       },
       {
         "id": "School Uniform",
-        "label": "School Uniform",
+        "label": "Uniforme scolaire",
         "color": "#B3E5FC"
       },
       {
         "id": "School Shoes",
-        "label": "School Shoes",
+        "label": "Chaussures scolaires",
         "color": "#B3E5FC"
       }
     ]
@@ -99,25 +99,25 @@
     "values": [
       {
         "id": "Nothing",
-        "label": "Nothing",
+        "label": "Aucune compétence",
         "_ordinal": 0,
         "color": "#fd7272"
       },
       {
         "id": "Numbers 1-9",
-        "label": "Numbers 1-9",
+        "label": "Chiffres 1-9",
         "_ordinal": 1,
         "color": "#ff8153"
       },
       {
         "id": "Numbers 10-99",
-        "label": "Numbers 10-99",
+        "label": "Chiffres 10-99",
         "_ordinal": 2,
         "color": "#ff982a"
       },
       {
         "id": "Subtraction",
-        "label": "Subtraction",
+        "label": "Soustraction",
         "_ordinal": 3,
         "color": "#d2c92e"
       },
@@ -135,31 +135,31 @@
     "values": [
       {
         "id": "Nothing",
-        "label": "Nothing",
+        "label": "Aucune compétence",
         "_ordinal": 0,
         "color": "#fd7272"
       },
       {
         "id": "Read Letters",
-        "label": "Read Letters",
+        "label": "Lecture de lettres uniques",
         "_ordinal": 1,
         "color": "#ff8153"
       },
       {
         "id": "Read Words",
-        "label": "Read Words",
+        "label": "Lecture de mots",
         "_ordinal": 2,
         "color": "#ff982a"
       },
       {
         "id": "Read Sentence",
-        "label": "Read Sentence",
+        "label": "Lecture de phrases",
         "_ordinal": 3,
         "color": "#d2c92e"
       },
       {
         "id": "Read Paragraph",
-        "label": "Read Paragraph",
+        "label": "Lecture de paragraphes",
         "_ordinal": 4,
         "passed": true,
         "color": "#c8e6c9"
@@ -171,15 +171,15 @@
     "values": [
       {
         "id": "PLANNED",
-        "label": "Planned"
+        "label": "Prévu"
       },
       {
         "id": "ONGOING",
-        "label": "Ongoing"
+        "label": "En cours"
       },
       {
         "id": "COMPLETED",
-        "label": "Completed"
+        "label": "Complété"
       }
     ]
   }

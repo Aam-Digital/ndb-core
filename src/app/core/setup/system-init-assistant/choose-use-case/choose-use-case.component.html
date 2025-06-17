@@ -3,7 +3,7 @@
     <mat-label i18n>Select your use case:</mat-label>
 
     <mat-select
-      [(value)]="selectedUseCase"
+      [(ngModel)]="selectedUseCase"
       (selectionChange)="onSelectionChange()"
     >
       @for (useCase of demoUseCases; track useCase) {
@@ -16,7 +16,7 @@
 
   <div class="flex-1 description-container">
     @if (selectedUseCase) {
-      <p>{{ selectedUseCase.description }}</p>
+      <div markdown [data]="selectedUseCase.description"></div>
     } @else {
       <p class="description-no-use-case" i18n>
         Select a use case as an initial configuration for your system.

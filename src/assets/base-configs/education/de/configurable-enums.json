@@ -4,15 +4,15 @@
     "values": [
       {
         "id": "C1",
-        "label": "Alipore"
+        "label": "Neukölln"
       },
       {
         "id": "C2",
-        "label": "Tollygunge"
+        "label": "Kreuzberg"
       },
       {
         "id": "C3",
-        "label": "Barabazar"
+        "label": "Marzahn"
       }
     ]
   },
@@ -21,35 +21,35 @@
     "values": [
       {
         "id": "VISIT",
-        "label": "Home Visit"
+        "label": "Hausbesuch"
       },
       {
         "id": "GUARDIAN_TALK",
-        "label": "Talk with Guardians"
+        "label": "Elterngespräch"
       },
       {
         "id": "INCIDENT",
-        "label": "Incident"
+        "label": "Vorfall"
       },
       {
         "id": "NOTE",
-        "label": "General Note"
+        "label": "Allgemeine Notiz"
       },
       {
         "id": "GUARDIAN_MEETING",
-        "label": "Guardians' Meeting",
+        "label": "Elternabend",
         "color": "#E1F5FE",
         "isMeeting": true
       },
       {
         "id": "COACHING_CLASS",
-        "label": "Coaching Class",
+        "label": "Nachhilfe-Unterricht",
         "color": "#EEEEEE",
         "isMeeting": true
       },
       {
         "id": "SCHOOL_CLASS",
-        "label": "School Class",
+        "label": "Schul-Unterricht",
         "color": "#EEEEEE",
         "isMeeting": true
       }
@@ -64,32 +64,32 @@
       },
       {
         "id": "pencil",
-        "label": "pencil"
+        "label": "Bleistift"
       },
       {
         "id": "eraser",
-        "label": "eraser"
+        "label": "Radiergummi"
       },
       {
         "id": "pen (black)",
-        "label": "pen (black)"
+        "label": "Stift (schwarz)"
       },
       {
         "id": "crayons",
-        "label": "crayons"
+        "label": "Farbstifte"
       },
       {
         "id": "copy (plain)",
-        "label": "copy (plain)"
+        "label": "Heft"
       },
       {
         "id": "School Uniform",
-        "label": "School Uniform",
+        "label": "Schuluniform",
         "color": "#B3E5FC"
       },
       {
         "id": "School Shoes",
-        "label": "School Shoes",
+        "label": "Sportschuhe",
         "color": "#B3E5FC"
       }
     ]
@@ -99,25 +99,25 @@
     "values": [
       {
         "id": "Nothing",
-        "label": "Nothing",
+        "label": "nichts",
         "_ordinal": 0,
         "color": "#fd7272"
       },
       {
         "id": "Numbers 1-9",
-        "label": "Numbers 1-9",
+        "label": "Zahlen 1-9",
         "_ordinal": 1,
         "color": "#ff8153"
       },
       {
         "id": "Numbers 10-99",
-        "label": "Numbers 10-99",
+        "label": "Zahlen 10-99",
         "_ordinal": 2,
         "color": "#ff982a"
       },
       {
         "id": "Subtraction",
-        "label": "Subtraction",
+        "label": "Subtraktion",
         "_ordinal": 3,
         "color": "#d2c92e"
       },
@@ -135,31 +135,31 @@
     "values": [
       {
         "id": "Nothing",
-        "label": "Nothing",
+        "label": "nichts",
         "_ordinal": 0,
         "color": "#fd7272"
       },
       {
         "id": "Read Letters",
-        "label": "Read Letters",
+        "label": "Buchstaben",
         "_ordinal": 1,
         "color": "#ff8153"
       },
       {
         "id": "Read Words",
-        "label": "Read Words",
+        "label": "Wörter",
         "_ordinal": 2,
         "color": "#ff982a"
       },
       {
         "id": "Read Sentence",
-        "label": "Read Sentence",
+        "label": "Sätze",
         "_ordinal": 3,
         "color": "#d2c92e"
       },
       {
         "id": "Read Paragraph",
-        "label": "Read Paragraph",
+        "label": "Texte",
         "_ordinal": 4,
         "passed": true,
         "color": "#c8e6c9"
@@ -171,15 +171,15 @@
     "values": [
       {
         "id": "PLANNED",
-        "label": "Planned"
+        "label": "geplant"
       },
       {
         "id": "ONGOING",
-        "label": "Ongoing"
+        "label": "läuft"
       },
       {
         "id": "COMPLETED",
-        "label": "Completed"
+        "label": "abgeschlossen"
       }
     ]
   }

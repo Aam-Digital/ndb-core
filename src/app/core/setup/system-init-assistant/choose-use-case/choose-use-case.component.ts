@@ -6,11 +6,13 @@ import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
 } from "../../../language/language-statics";
+import { MarkdownComponent } from "ngx-markdown";
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-choose-use-case",
   templateUrl: "./choose-use-case.component.html",
-  imports: [MatSelectModule],
+  imports: [MatSelectModule, MarkdownComponent, FormsModule],
   styleUrls: ["./choose-use-case.component.scss"],
 })
 export class ChooseUseCaseComponent {

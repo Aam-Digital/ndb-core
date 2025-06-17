@@ -5,7 +5,6 @@ import { faker } from "../../../../core/demo-data/faker";
 import { ratingAnswers } from "./rating-answers";
 import { Entity } from "../../../../core/entity/model/entity";
 import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
-import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 
 export class DemoHistoricalDataConfig {
   minCountAttributes: number;
@@ -27,9 +26,9 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
   constructor(
     private childrenGenerator: DemoChildGenerator,
     private config: DemoHistoricalDataConfig,
-    private entityRegistry: EntityRegistry,
   ) {
     super();
+    this.requiredEntityTypes = ["HistoricalEntityData"];
   }
 
   protected generateEntities(): Entity[] {
