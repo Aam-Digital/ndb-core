@@ -5,7 +5,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
 import { MatListModule } from "@angular/material/list";
-
 import { Angulartics2Module } from "angulartics2";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 import { MatMenuModule } from "@angular/material/menu";
