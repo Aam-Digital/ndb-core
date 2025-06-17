@@ -1,6 +1,5 @@
 import { Component, Input } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
-
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
