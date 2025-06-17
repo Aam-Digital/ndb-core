@@ -9,7 +9,6 @@ import {
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
-
 import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 
 @Component({
