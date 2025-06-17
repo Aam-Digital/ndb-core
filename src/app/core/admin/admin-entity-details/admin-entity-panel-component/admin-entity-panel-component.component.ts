@@ -1,5 +1,4 @@
 import { Component, Input } from "@angular/core";
-
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 
