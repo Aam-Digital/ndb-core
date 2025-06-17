@@ -1,5 +1,4 @@
 import { Component, Input } from "@angular/core";
-
 import { Angulartics2OnModule } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
