@@ -28,3 +28,9 @@ mat-form-field {
   // This ensures consistent spacing between form fields.
   margin-bottom: 22px;
 }
+
+// see AssistantButtonComponent
+.backdrop-below-toolbar {
+  background: -webkit-linear-gradient(180deg, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 64px, rgba(0, 0, 0, .32) 64px, rgba(0, 0, 0, .32) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 64px, rgba(0, 0, 0, .32) 64px, rgba(0, 0, 0, .32) 100%);
+}

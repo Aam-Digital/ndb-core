@@ -18,9 +18,3 @@
     min-height: 56px;
   }
 }
-
-.disable-backdrop {
-  .cdk-overlay-backdrop-showing {
-    opacity: 0 !important;
-  }
-}

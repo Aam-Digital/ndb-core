@@ -62,7 +62,7 @@ export class AssistantButtonComponent implements OnInit {
       maxWidth: "100%",
       maxHeight: "100%",
       position: { top: "64px", right: "0px" },
-      backdropClass: "disable-backdrop",
+      backdropClass: "backdrop-below-toolbar",
       minWidth: "300px",
       width: "40vw",
     });
