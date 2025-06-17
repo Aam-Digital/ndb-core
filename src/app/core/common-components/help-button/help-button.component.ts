@@ -1,7 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
-
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
