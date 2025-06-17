@@ -17,7 +17,6 @@ import { ConfigService } from "../../../core/config/config.service";
 import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
 import { MatButtonModule } from "@angular/material/button";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import {
