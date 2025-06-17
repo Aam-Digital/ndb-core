@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   EntityListConfig,
