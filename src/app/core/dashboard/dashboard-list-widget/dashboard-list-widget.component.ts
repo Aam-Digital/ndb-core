@@ -20,7 +20,6 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { filter, map } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
-
 import { WidgetContentComponent } from "../dashboard-widget/widget-content/widget-content.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
