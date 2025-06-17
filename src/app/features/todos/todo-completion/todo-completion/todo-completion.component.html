@@ -3,9 +3,7 @@
     <fa-icon icon="check" class="margin-right-small"></fa-icon>
     <span i18n>Complete Task</span>
   </button>
-}
-
-@if (entity.completed) {
+} @else {
   <div class="flex-row align-center gap-regular">
     <app-display-todo-completion
       [value]="entity.completed"
