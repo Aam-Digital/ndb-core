@@ -8,7 +8,6 @@ import {
 } from "@angular/material/dialog";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
-
 import { ConfirmationDialogService } from "app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
