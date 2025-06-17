@@ -5,7 +5,6 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../dialog-close/dialog-close.component";
-
 import { MatButtonModule } from "@angular/material/button";
 
 /**
