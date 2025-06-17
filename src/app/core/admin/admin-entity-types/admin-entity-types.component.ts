@@ -14,7 +14,6 @@ import {
 } from "@angular/material/table";
 import { MatButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-
 import { EntityConstructor } from "../../entity/model/entity";
 import { RouterLink } from "@angular/router";
 import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
