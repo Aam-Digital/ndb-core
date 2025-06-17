@@ -4,7 +4,6 @@ import { Entity } from "app/core/entity/model/entity";
 import { EntityFieldViewComponent } from "app/core/common-components/entity-field-view/entity-field-view.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatRadioModule } from "@angular/material/radio";
-
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
 @Component({
