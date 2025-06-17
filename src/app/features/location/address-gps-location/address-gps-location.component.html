@@ -6,8 +6,7 @@
 >
   @if (!gpsLoading) {
     <fa-icon icon="location-crosshairs"></fa-icon>
-  }
-  @if (gpsLoading) {
+  } @else {
     <mat-spinner diameter="24"></mat-spinner>
   }
 </button>
