@@ -61,10 +61,8 @@
       <ng-container *ngTemplateOutlet="subrecord"></ng-container>
     </div>
   </div>
-}
-
-<!-- Mobile Version -->
-@if (!isDesktop) {
+} @else {
+  <!-- Mobile version -->
   <div>
     <app-view-title [disableBackButton]="true">
       <h2>{{ title }}</h2>
