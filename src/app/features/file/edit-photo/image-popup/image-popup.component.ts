@@ -1,5 +1,4 @@
 import { Component, Inject } from "@angular/core";
-
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
 
