@@ -16,7 +16,7 @@
  */
 
 import { Component } from "@angular/core";
-import { map, mergeMap, tap } from "rxjs/operators";
+import { map, mergeMap } from "rxjs/operators";
 import { LoginStateSubject } from "./core/session/session-type";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
@@ -59,7 +59,6 @@ export class AppComponent {
           return of(true);
         }
       }),
-      tap((ready) => console.log("app config ready:", ready)),
     );
 
     if (environment.demo_mode) {

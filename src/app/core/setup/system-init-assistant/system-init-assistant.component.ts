@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import { MatDialogRef } from "@angular/material/dialog";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
@@ -18,12 +18,7 @@ import { AssistantButtonComponent } from "../assistant-button/assistant-button.c
  */
 @Component({
   selector: "app-system-init-assistant",
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    ChooseUseCaseComponent,
-    LanguageSelectComponent,
-  ],
+  imports: [MatButtonModule, ChooseUseCaseComponent, LanguageSelectComponent],
   templateUrl: "./system-init-assistant.component.html",
   styleUrl: "./system-init-assistant.component.scss",
 })
@@ -43,29 +38,46 @@ export class SystemInitAssistantComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    this.adjustAssistantDialogPanel();
+
+    this.demoUseCases = await this.setupService.getAvailableBaseConfig();
+    this.availableLocales = this.getAvailableLocalesForUseCases();
+
+    await this.initFromQueryParamAutomatically();
+  }
+
+  private adjustAssistantDialogPanel() {
     this.dialogRef.updateSize(
       "calc(100% - 100px)",
       AssistantButtonComponent.ASSISTANT_DIALOG_HEIGHT,
     );
     this.dialogRef.disableClose = true;
+  }
 
-    this.demoUseCases = await this.setupService.getAvailableBaseConfig();
-    const avilableDemoLocale = new Set(
+  private getAvailableLocalesForUseCases() {
+    const availableDemoLocale = new Set(
       this.demoUseCases.map((useCase) => useCase.locale).filter(Boolean),
     );
-    this.availableLocales = availableLocales.values.filter((locale) =>
-      avilableDemoLocale.has(locale.id),
+
+    return availableLocales.values.filter((locale) =>
+      availableDemoLocale.has(locale.id),
     );
+  }
+
+  private async initFromQueryParamAutomatically() {
     const preSelectedUseCase = this.route.snapshot.queryParamMap.get("useCase");
-    if (preSelectedUseCase) {
-      this.selectedUseCase =
-        this.demoUseCases.find(
-          (config) =>
-            // Using lowercase comparison to avoid mismatches due to URL parameter casing or caching issues
-            config.id.toLowerCase() === preSelectedUseCase.toLowerCase(),
-        ) || null;
-      this.initializeSystem();
+    if (!preSelectedUseCase) {
+      return;
     }
+
+    this.selectedUseCase =
+      this.demoUseCases.find(
+        (config) =>
+          // Using lowercase comparison to avoid mismatches due to URL parameter casing or caching issues
+          config.id.toLowerCase() === preSelectedUseCase.toLowerCase(),
+      ) || null;
+
+    await this.initializeSystem();
   }
 
   async initializeSystem() {
