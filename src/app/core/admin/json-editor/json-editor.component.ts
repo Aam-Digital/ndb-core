@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
-
 import { Content, createJSONEditor } from "vanilla-jsoneditor/standalone.js";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import { CustomFormControlDirective } from "app/core/common-components/basic-autocomplete/custom-form-control.directive";
