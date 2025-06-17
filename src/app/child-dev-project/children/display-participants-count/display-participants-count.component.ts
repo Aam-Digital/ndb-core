@@ -1,5 +1,4 @@
 import { Component, OnChanges, signal, WritableSignal } from "@angular/core";
-
 import { ChildrenService } from "../children.service";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
