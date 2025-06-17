@@ -10,7 +10,6 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-
 import { MatButtonModule } from "@angular/material/button";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
