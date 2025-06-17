@@ -6,7 +6,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 import { merge } from "lodash-es";
 import { MatExpansionModule } from "@angular/material/expansion";
-
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
