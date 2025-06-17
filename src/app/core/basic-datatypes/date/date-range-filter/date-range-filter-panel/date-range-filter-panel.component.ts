@@ -12,7 +12,6 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
-
 import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
 import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
