@@ -1,9 +1,9 @@
 @if (imgSrc) {
   <img [src]="imgSrc" />
 }
-@ else if (!imgSrc && defaultImage) {
+@else if (!imgSrc && defaultImage) {
   <img [src]="defaultImage" />
 }
-@ else if (!imgSrc && !defaultImage && defaultIcon) {
+@else if (!imgSrc && !defaultImage && defaultIcon) {
   <app-fa-dynamic-icon [icon]="defaultIcon"></app-fa-dynamic-icon>
 }
