@@ -3,6 +3,8 @@ import { Component, inject, OnInit } from "@angular/core";
 import {
   FormArray,
   FormBuilder,
+  FormControl,
+  FormGroup,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
@@ -20,6 +22,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/entity-field-select.component";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
 
 @Component({
   selector: "app-edit-prefilled-values",
@@ -48,16 +51,34 @@ export class EditPrefilledValuesComponent
 
   private entities = inject(EntityRegistry);
   private fb = inject(FormBuilder);
-
+  relatedRefFields: { id: string; label: string }[] = [];
   prefilledValueSettings = this.fb.group({
     prefilledValue: this.fb.array([]),
+    linkedEntity: this.fb.group({
+      id: [null],
+      hideFromForm: [true],
+    }),
   });
 
   override ngOnInit(): void {
     if (!this.entity) return;
 
     this.entityConstructor = this.entities.get(this.entity["entity"]);
+    this.relatedRefFields = Array.from(
+      this.entityConstructor.schema.entries(),
+    )
+      .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
+      .map(([id, schema]) => ({
+        id,
+        label: schema?.label,
+      }));
     this.initializePrefilledValues();
+    if (this.entity["linkedEntity"]) {
+      this.prefilledValueSettings.get("linkedEntity")?.patchValue({
+        id: this.entity["linkedEntity"].id,
+        hideFromForm: this.entity["linkedEntity"].hideFromForm ?? true,
+      });
+    }
     this.prefilledValueSettings.valueChanges.subscribe((value) =>
       this.updateFieldGroups(value as { prefilledValue: PrefilledValue[] }),
     );
@@ -67,6 +88,13 @@ export class EditPrefilledValuesComponent
     return this.prefilledValueSettings.get("prefilledValue") as FormArray;
   }
 
+  get linkEntityFieldGroup(): FormGroup {
+    return this.prefilledValueSettings.get("linkedEntity") as FormGroup;
+  }
+
+  get linkedEntityFieldControl(): FormControl {
+    return this.linkEntityFieldGroup.get("id") as FormControl;
+  }
   private initializePrefilledValues(): void {
     const fields = this.formControl.value as FormFieldConfig[];
     if (!fields || !Array.isArray(fields)) return;
@@ -124,6 +152,9 @@ export class EditPrefilledValuesComponent
         };
       },
     );
+    // const linkedField =
+    //   this.prefilledValueSettings.get("linkedEntity")?.value;
+    // this.entity["linkedEntity"] = linkedField;
 
     this.formControl.setValue(updatedFields);
     this.formControl.markAsDirty();
