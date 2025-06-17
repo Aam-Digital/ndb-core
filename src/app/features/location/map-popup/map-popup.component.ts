@@ -10,9 +10,10 @@ import { BehaviorSubject, firstValueFrom, Observable, Subject } from "rxjs";
 import { MapComponent } from "../map/map.component";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
-import { GeoResult, GeoService } from "../geo.service";
+import { GeoService, GeoResult } from "../geo.service";
 import { AddressEditComponent } from "../address-edit/address-edit.component";
+import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
 import { GeoLocation } from "../geo-location";
 
 export interface MapPopupConfig {
@@ -60,6 +61,7 @@ export class MapPopupComponent {
     @Inject(MAT_DIALOG_DATA) public data: MapPopupConfig,
     private dialogRef: MatDialogRef<MapPopupComponent>,
     private geoService: GeoService,
+    private confirmationDialog: ConfirmationDialogService,
   ) {
     this.markedLocations = new BehaviorSubject<GeoResult[]>(
       (data.marked as GeoResult[]) ?? [],
@@ -67,6 +69,7 @@ export class MapPopupComponent {
     this.selectedLocation = data.selectedLocation;
     if (
       this.selectedLocation &&
+      this.selectedLocation.geoLookup &&
       !this.markedLocations.value
         .filter((x) => !!x)
         .includes(this.selectedLocation.geoLookup)
@@ -82,7 +85,7 @@ export class MapPopupComponent {
     }
 
     if (data.hasOwnProperty("helpText")) {
-      this.helpText = data.helpText;
+      this.helpText = data.helpText!;
     }
   }
 
@@ -93,14 +96,55 @@ export class MapPopupComponent {
     const geoResult: GeoResult = await firstValueFrom(
       this.geoService.reverseLookup(newCoordinates),
     );
+
+    const manualAddress = this.selectedLocation?.locationString ?? "";
+    const lookupAddress = geoResult?.display_name ?? "";
+
+    if (
+      manualAddress &&
+      manualAddress !== lookupAddress
+    ) {
+      // Show confirmation dialog
+      const confirmed = await this.confirmationDialog.getConfirmation(
+        $localize`Address details captured does not match with the location on the map.`,
+        $localize`Do you want to continue or edit the address?`,
+        [
+          {
+            text: $localize`Continue`,
+            click: () => true
+          },
+          {
+            text: $localize`Edit Address`,
+            click: () => false
+          }
+        ]
+      );
+
+      if (confirmed) {
+        // Continue: Save manual address with new geoLookup
+        this.updateLocation({
+          geoLookup: geoResult,
+          locationString: manualAddress,
+        });
+      } else {
+        // Edit Address: Save new geoLookup and update address string to match
+        this.updateLocation({
+          geoLookup: geoResult,
+          locationString: lookupAddress,
+        });
+      }
+      return;
+    }
+
+    // Default: update both
     this.updateLocation({
       geoLookup: geoResult,
-      locationString: geoResult?.display_name,
+      locationString: lookupAddress,
     });
   }
 
   updateLocation(event: GeoLocation) {
     this.selectedLocation = event;
-    this.markedLocations.next(event?.geoLookup ? [event?.geoLookup] : []);
+    this.markedLocations.next(event?.geoLookup ? [event.geoLookup] : []);
   }
 }
