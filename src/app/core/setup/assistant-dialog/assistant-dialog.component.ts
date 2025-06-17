@@ -1,10 +1,14 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
 import { ContextAwareAssistantComponent } from "../context-aware-assistant/context-aware-assistant.component";
 import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { SystemInitAssistantComponent } from "../system-init-assistant/system-init-assistant.component";
 import { ConfigService } from "../../config/config.service";
 
+/**
+ * The Assistant Panel shown by the AssistantButton,
+ * which dynamically displays different assistant views
+ * depending on the current system state.
+ */
 @Component({
   selector: "app-assistant-dialog",
   imports: [
@@ -27,8 +31,6 @@ export class AssistantDialogComponent implements OnInit {
     contextAwareGuide: false,
     setupWizard: false,
   };
-
-  constructor(private dialogRef: MatDialogRef<AssistantDialogComponent>) {}
 
   ngOnInit(): void {
     this.detectAssistantModes();

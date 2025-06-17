@@ -47,7 +47,10 @@ describe("SystemInitAssistantComponent", () => {
         LoginStateSubject,
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: KeycloakAuthService, useValue: {} },
-        { provide: MatDialogRef, useValue: {} },
+        {
+          provide: MatDialogRef,
+          useValue: jasmine.createSpyObj(["updateSize"]),
+        },
         { provide: NAVIGATOR_TOKEN, useValue: {} },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: ActivatedRoute, useValue: {} },
