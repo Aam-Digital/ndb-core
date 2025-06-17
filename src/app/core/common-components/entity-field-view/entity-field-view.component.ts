@@ -1,6 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
