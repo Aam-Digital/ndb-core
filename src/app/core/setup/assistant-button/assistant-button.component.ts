@@ -56,6 +56,8 @@ export class AssistantButtonComponent implements OnInit {
     let dialogRef: MatDialogRef<AssistantDialogComponent>;
     dialogRef = this.dialog.open(AssistantDialogComponent, {
       autoFocus: false,
+      enterAnimationDuration: 0,
+      exitAnimationDuration: 0,
       height: AssistantButtonComponent.ASSISTANT_DIALOG_HEIGHT,
       maxWidth: "100%",
       maxHeight: "100%",

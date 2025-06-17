@@ -1,5 +1,5 @@
 <div class="flex-column gap-regular">
-  @if (!demoInitialized) {
+  @if (!demoInitialized && !generatingData) {
     <app-language-select
       [availableLocales]="availableLocales"
     ></app-language-select>
@@ -9,24 +9,25 @@
 
   @if (!demoInitialized && !generatingData) {
     <p i18n>
-      Your path to digitize information and case files, making it easy to
-      collaborate with your team, track individual progress of beneficiaries,
-      and be alerted about critical cases. With Aam Digital, you can access your
-      data across all devices, even when offline.
+      We have built this platform to help you digitize information and case
+      files of your project, make it easy to collaborate with your team, track
+      individual progress of participants, and be alerted about critical
+      developments. With Aam Digital, you can access your data across all
+      devices, even when offline.
     </p>
-
-    <div class="flex-grow"></div>
 
     <app-choose-use-case
       [demoUseCases]="demoUseCases"
       (selectionChanged)="onUseCaseSelected($event)"
+      class="margin-top-large margin-bottom-large"
     >
     </app-choose-use-case>
 
     <p class="footer-note" i18n>
-      Aam Digital is fully customizable and can be quickly adapted to your needs
-      and data structures. It is not limited to these scenarios. Through Aam
-      Digital, you can track, measure, and manage your project.
+      Aam Digital is very flexible and can be quickly adapted to your needs and
+      data structures. It is not limited to the scenarios above. After
+      initializing your system, you can further customize it to track, measure,
+      and manage your project.
     </p>
 
     <div class="demo-actions">
@@ -52,8 +53,8 @@
     </p>
 
     <p i18n>
-      You can get assistance clicking the "Assistant" button on the top right of
-      the toolbar. From there you can also switch to other demo scenarios.
+      You can get assistance by clicking the "Assistant" button on the top right
+      of the toolbar. From there you can also switch to other demo scenarios.
     </p>
 
     <div class="demo-actions">
