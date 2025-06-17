@@ -8,7 +8,6 @@ import {
   QueryList,
   ViewChild,
 } from "@angular/core";
-
 import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
