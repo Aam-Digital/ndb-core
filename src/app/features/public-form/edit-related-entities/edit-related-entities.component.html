@@ -1,0 +1,16 @@
+<h3 i18n>Collect replies of this form linked to individual records</h3>
+<p i18n>
+  Automatically link form submissions to a specific participant (like a child or
+  school) using a URL parameter.
+</p>
+
+<form [formGroup]="form">
+  <mat-form-field class="full-width-field">
+    <mat-label i18n>Link to entity field</mat-label>
+    <mat-select formControlName="id">
+      <mat-option *ngFor="let field of relatedRefFields" [value]="field.id">
+        {{ field.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>

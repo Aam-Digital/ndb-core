@@ -56,6 +56,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
         "app/features/public-form/edit-publicform-route/edit-publicform-route.component"
       ).then((c) => c.EditPublicformRouteComponent),
   ],
+  [
+    "EditRelatedEntitiesComponent",
+    () =>
+      import(
+        "app/features/public-form/edit-related-entities/edit-related-entities.component"
+      ).then((c) => c.EditRelatedEntitiesComponent),
+  ],
 ];
 
 const viewConfigs: ViewConfig[] = [
@@ -127,7 +134,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["prefilledFields"],
+                    fields: ["prefilledFields", "linkedEntity"],
                   },
                 ],
               },
