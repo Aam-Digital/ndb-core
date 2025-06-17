@@ -2,9 +2,7 @@
   <em i18n="Placeholder text when permissions are missing">
     You account does not have the required permissions to see this page.
   </em>
-}
-
-@if (userIsPermitted) {
+} @ else {
   <div class="flex-column">
     @if (!user) {
       <div class="buttons-wrapper align-self-start">
