@@ -10,7 +10,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { DateWithAge } from "../dateWithAge";
 
