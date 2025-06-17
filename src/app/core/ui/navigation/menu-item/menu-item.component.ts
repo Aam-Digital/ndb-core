@@ -1,5 +1,4 @@
 import { Component, Input } from "@angular/core";
-
 import { MatListModule } from "@angular/material/list";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
