@@ -73,4 +73,10 @@ export class PublicFormConfig extends Entity {
     isArray: true,
   })
   prefilledFields: FormFieldConfig[];
+
+  @DatabaseField({
+    label: $localize`:PublicFormConfig:Linked Entity`,
+    editComponent: "EditRelatedEntitiesComponent",
+  })
+  linkedEntity: FormFieldConfig;
 }
