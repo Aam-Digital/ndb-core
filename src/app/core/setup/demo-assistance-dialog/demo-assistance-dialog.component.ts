@@ -10,6 +10,7 @@ import { DemoDataInitializerService } from "../../demo-data/demo-data-initialize
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
 import { availableLocales } from "app/core/language/languages";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { AssistantButtonComponent } from "../assistant-button/assistant-button.component";
 
 @Component({
   selector: "app-demo-assistance-dialog",
@@ -38,6 +39,12 @@ export class DemoAssistanceDialogComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    this.dialogRef.updateSize(
+      "calc(100% - 100px)",
+      AssistantButtonComponent.ASSISTANT_DIALOG_HEIGHT,
+    );
+    this.dialogRef.disableClose = true;
+
     this.demoUseCases = await this.setupService.getAvailableBaseConfig();
     const avilableDemoLocale = new Set(
       this.demoUseCases.map((useCase) => useCase.locale).filter(Boolean),
@@ -58,20 +65,22 @@ export class DemoAssistanceDialogComponent implements OnInit {
   }
 
   async initializeSystem() {
-    if (this.selectedUseCase) {
-      this.generatingData = true;
+    if (!this.selectedUseCase) {
+      return;
+    }
 
-      try {
-        await this.setupService.initSystemWithBaseConfig(this.selectedUseCase);
+    this.generatingData = true;
 
-        await this.demoDataInitializer.generateDemoData();
+    try {
+      await this.setupService.initSystemWithBaseConfig(this.selectedUseCase);
 
-        this.demoInitialized = true;
-      } catch (error) {
-        Logging.error("Error initializing demo data:", error);
-      } finally {
-        this.generatingData = false;
-      }
+      await this.demoDataInitializer.generateDemoData();
+
+      this.demoInitialized = true;
+    } catch (error) {
+      Logging.error("Error initializing demo data:", error);
+    } finally {
+      this.generatingData = false;
     }
   }
 

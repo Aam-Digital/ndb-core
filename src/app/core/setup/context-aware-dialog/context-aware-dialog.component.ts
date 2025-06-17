@@ -1,9 +1,10 @@
 import { Component } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
-import { MatDialogActions, MatDialogContent } from "@angular/material/dialog";
+import { environment } from "../../../../environments/environment";
+
 @Component({
   selector: "app-context-aware-dialog",
-  imports: [MatDialogContent, MatDialogActions, MatButtonModule],
+  imports: [MatButtonModule],
   templateUrl: "./context-aware-dialog.component.html",
   styleUrls: [
     "./context-aware-dialog.component.scss",
@@ -16,6 +17,8 @@ import { MatDialogActions, MatDialogContent } from "@angular/material/dialog";
  * It can be used to guide users through the setup process or provide help based on the current context.
  */
 export class ContextAwareDialogComponent {
+  isDemoMode: boolean = environment.demo_mode;
+
   public restartDemo() {
     window.location.href = "/";
   }

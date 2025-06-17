@@ -1,11 +1,13 @@
-<div class="dialog-header-bar"></div>
-@if (!demoInitialized && !generatingData) {
-  <h1 mat-dialog-title class="header-title" i18n>Welcome to Aam Digital!</h1>
-}
-<mat-dialog-content class="demo-dialog-content" autosize>
-  @if (generatingData) {
-    <h2 i18n>Generating sample data for this demo ...</h2>
-  } @else if (!demoInitialized) {
+<div class="flex-column gap-regular">
+  @if (!demoInitialized) {
+    <app-language-select
+      [availableLocales]="availableLocales"
+    ></app-language-select>
+  }
+
+  <h1 i18n>Welcome to Aam Digital!</h1>
+
+  @if (!demoInitialized && !generatingData) {
     <p i18n>
       Your path to digitize information and case files, making it easy to
       collaborate with your team, track individual progress of beneficiaries,
@@ -13,25 +15,34 @@
       data across all devices, even when offline.
     </p>
 
-    <div class="demo-layout">
-      <div class="flex-grow">
-        <h3 i18n>Choose your language:</h3>
-        <app-language-select
-          [availableLocales]="availableLocales"
-        ></app-language-select>
-      </div>
-      <app-choose-use-case
-        [demoUseCases]="demoUseCases"
-        (selectionChanged)="onUseCaseSelected($event)"
-      >
-      </app-choose-use-case>
-    </div>
+    <div class="flex-grow"></div>
+
+    <app-choose-use-case
+      [demoUseCases]="demoUseCases"
+      (selectionChanged)="onUseCaseSelected($event)"
+    >
+    </app-choose-use-case>
 
     <p class="footer-note" i18n>
       Aam Digital is fully customizable and can be quickly adapted to your needs
       and data structures. It is not limited to these scenarios. Through Aam
       Digital, you can track, measure, and manage your project.
     </p>
+
+    <div class="demo-actions">
+      <button
+        mat-raised-button
+        class="full-width"
+        color="accent"
+        (click)="initializeSystem()"
+        [disabled]="!selectedUseCase"
+        i18n
+      >
+        Initialize System
+      </button>
+    </div>
+  } @else if (generatingData) {
+    <p i18n>Generating sample data for this demo ...</p>
   } @else {
     <p i18n>
       We have loaded some sample data into this demo system. Explore and play
@@ -39,35 +50,23 @@
       Changes you make in this demo will <em>not</em> be saved anywhere. The
       system is reset after you close or reload the page.
     </p>
-    <p i18n>
-      You can get assistance clicking the “Demo” button on the top right of the
-      toolbar.<br />
-      There you can also sign up for a full trial system, if you are ready for
-      the next step.
-    </p>
-  }
-</mat-dialog-content>
 
-<mat-dialog-actions align="end" class="demo-actions">
-  @if (!demoInitialized && !generatingData) {
-    <button
-      mat-raised-button
-      class="full-width"
-      color="accent"
-      (click)="initializeSystem()"
-      [disabled]="generatingData"
-    >
-      <span i18n>Initialize System</span>
-    </button>
-  } @else {
-    <button
-      mat-raised-button
-      class="full-width"
-      color="accent"
-      (click)="startExploring()"
-      [disabled]="generatingData"
-    >
-      <span i18n>Start Exploring</span>
-    </button>
+    <p i18n>
+      You can get assistance clicking the "Assistant" button on the top right of
+      the toolbar. From there you can also switch to other demo scenarios.
+    </p>
+
+    <div class="demo-actions">
+      <button
+        mat-raised-button
+        class="full-width"
+        color="accent"
+        (click)="startExploring()"
+        [disabled]="generatingData"
+        i18n
+      >
+        Start Exploring
+      </button>
+    </div>
   }
-</mat-dialog-actions>
+</div>

@@ -1,0 +1,21 @@
+<mat-tab-group class="assistant-panel-container dialog-header-bar">
+  @if (assistants.initDemo) {
+    <mat-tab label="Initialize System" i18n-label>
+      <app-demo-assistance-dialog
+        class="full-height"
+      ></app-demo-assistance-dialog>
+    </mat-tab>
+  }
+
+  @if (assistants.contextAwareGuide) {
+    <mat-tab label="Guide" i18n-label>
+      <app-context-aware-dialog class="full-height"></app-context-aware-dialog>
+    </mat-tab>
+  }
+
+  @if (assistants.setupWizard) {
+    <mat-tab label="Setup Wizard" i18n-label> TODO</mat-tab>
+  }
+
+  <!-- ... more modes to be added -->
+</mat-tab-group>

@@ -1,7 +1,8 @@
 <div class="flex-row flex-wrap gap-regular flex-grow-1-3">
   <div class="flex-row gap-regular flex-column demo-select">
-    <h3 i18n>Select your Use Case:</h3>
     <mat-form-field appearance="fill">
+      <mat-label i18n>Select your use case:</mat-label>
+
       <mat-select
         [(value)]="selectedUseCase"
         (selectionChange)="onSelectionChange()"

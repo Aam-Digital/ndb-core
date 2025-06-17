@@ -1,12 +1,11 @@
-import { Component, inject, OnDestroy, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { environment } from "../../../../environments/environment";
 import { ConfigService } from "app/core/config/config.service";
-import { MatDialog } from "@angular/material/dialog";
-import { ContextAwareDialogComponent } from "../context-aware-dialog/context-aware-dialog.component";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
-import { DemoAssistanceDialogComponent } from "../demo-assistance-dialog/demo-assistance-dialog.component";
 import { SetupService } from "../setup.service";
+import { AssistantDialogComponent } from "../assistant-dialog/assistant-dialog.component";
 
 /**
  * Button for the toolbar to access a context-aware assistant dialog
@@ -18,22 +17,19 @@ import { SetupService } from "../setup.service";
   templateUrl: "./assistant-button.component.html",
   styleUrl: "./assistant-button.component.scss",
 })
-export class AssistantButtonComponent implements OnInit, OnDestroy {
-  //todo - need to remove this workaround
-  private static initialized = false;
+export class AssistantButtonComponent implements OnInit {
+  static readonly ASSISTANT_DIALOG_HEIGHT = "calc(100% - 64px)";
+
   private readonly configService = inject(ConfigService);
   private readonly setupService = inject(SetupService);
   private readonly dialog = inject(MatDialog);
 
-  private isDialogOpen: boolean = false;
+  protected isDialogOpen: boolean = false;
 
   assistantEnabled: boolean;
 
   async ngOnInit() {
-    // if (AssistantButtonComponent.initialized) return;
-    // AssistantButtonComponent.initialized = true;
     this.assistantEnabled = environment.demo_mode;
-    console.log("AssistantButtonComponent init");
 
     await this.setupService.waitForConfigReady();
     if (!this.configService.hasConfig()) {
@@ -41,10 +37,6 @@ export class AssistantButtonComponent implements OnInit, OnDestroy {
       // to allow the user to select a base config.
       this.openAssistant();
     }
-  }
-
-  ngOnDestroy() {
-    console.log("AssistantButtonComponent destroyed");
   }
 
   /**
@@ -60,32 +52,22 @@ export class AssistantButtonComponent implements OnInit, OnDestroy {
     }
 
     this.isDialogOpen = true;
-    const hasConfig = this.configService.hasConfig();
-    const commonOptions = {
+
+    let dialogRef: MatDialogRef<AssistantDialogComponent>;
+    dialogRef = this.dialog.open(AssistantDialogComponent, {
       autoFocus: false,
-      height: "calc(100% - 20px)",
+      height: AssistantButtonComponent.ASSISTANT_DIALOG_HEIGHT,
       maxWidth: "100%",
       maxHeight: "100%",
       position: { top: "64px", right: "0px" },
       backdropClass: "disable-backdrop",
-    };
-    let dialogRef;
-    if (hasConfig) {
-      dialogRef = this.dialog.open(ContextAwareDialogComponent, {
-        ...commonOptions,
-        width: "40vh",
-      });
-    } else {
-      dialogRef = this.dialog.open(DemoAssistanceDialogComponent, {
-        ...commonOptions,
-        width: "calc(100% - 100px)",
-        disableClose: true,
-      });
-    }
+      minWidth: "300px",
+      width: "40vw",
+    });
 
     const result = await lastValueFrom(dialogRef.afterClosed());
-    this.isDialogOpen = false;
 
+    this.isDialogOpen = false;
     return result;
   }
 }

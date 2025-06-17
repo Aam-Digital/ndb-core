@@ -1,4 +1,6 @@
 <mat-form-field appearance="fill" class="language-select-dropdown">
+  <mat-label i18n>Choose your language</mat-label>
+
   <mat-select
     [value]="currentLocale"
     (selectionChange)="changeLocale($event.value)"
