@@ -1,5 +1,4 @@
 import { Component, ViewEncapsulation } from "@angular/core";
-
 import { EditComponent } from "../../../entity/default-datatype/edit-component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
