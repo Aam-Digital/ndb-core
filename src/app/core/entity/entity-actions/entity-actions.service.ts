@@ -11,6 +11,8 @@ import { OkButton } from "../../common-components/confirmation-dialog/confirmati
 import { CascadingActionResult } from "./cascading-entity-action";
 import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
+import { PublicFormConfig } from "app/features/public-form/public-form-config";
+import { AlertService } from "app/core/alerts/alert.service";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -29,6 +31,7 @@ export class EntityActionsService {
     private entityAnonymize: EntityAnonymizeService,
     entityActionsMenuService: EntityActionsMenuService,
     private duplicateRecordService: DuplicateRecordService,
+    private alertService: AlertService,
   ) {
     entityActionsMenuService.registerActions([
       {
@@ -65,6 +68,14 @@ export class EntityActionsService {
         label: $localize`:entity context menu:Duplicate`,
         tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
       },
+      {
+        action: "copy-form-link",
+        execute: (entity) => this.copyPublicFormLink(entity),
+        permission: "read",
+        icon: "link",
+        label: $localize`:entity context menu:Copy Custom Form Link`,
+        tooltip: $localize`:entity context menu tooltip:Copy a public form URL that links this entity to the submission.`,
+      },
     ]);
   }
 
@@ -93,6 +104,43 @@ export class EntityActionsService {
         await this.router.navigate([navigateBackToUrl]);
       }
     });
+  }
+
+  /**
+   * Copies the public form link to clipboard if a matching form exists for the given entity.
+   * It checks all PublicFormConfig entries to find the one linked to the current entity type via `linkedEntity.id`.
+   * If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
+   */
+  async copyPublicFormLink(entity: Entity): Promise<boolean> {
+    const entityType = entity.getConstructor().ENTITY_TYPE;
+
+    const allForms = await this.entityMapper.loadType(PublicFormConfig);
+    const matchingForms = allForms.filter(
+      (config) =>
+        config.linkedEntity?.id.toLowerCase() === entityType.toLowerCase(),
+    );
+
+    if (matchingForms.length === 0) {
+      this.snackBar.open(
+        "No matching public form found for this entity",
+        "Close",
+        { duration: 3000 },
+      );
+      return false;
+    }
+
+    if (matchingForms.length === 1) {
+      const config = matchingForms[0];
+      const paramKey = config.linkedEntity.id;
+      const entityId = entity.getId();
+      const fullUrl = `${window.location.origin}/public-form/form/${config.route}?${paramKey}=${encodeURIComponent(entityId)}`;
+
+      await navigator.clipboard.writeText(fullUrl);
+      this.alertService.addInfo("Link copied: " + fullUrl);
+      return true;
+    }
+
+    return false;
   }
 
   /**
