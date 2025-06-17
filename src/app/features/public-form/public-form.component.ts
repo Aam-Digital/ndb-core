@@ -162,7 +162,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
    */
   private handleRelatedEntityFields() {
     const linkedFieldId = this.formConfig.linkedEntity?.id;
-    const hideFromForm = this.formConfig.linkedEntity?.hideFromForm ?? true;
+    const hideFromForm = this.formConfig.linkedEntity?.hideFromForm;
     const paramValue = this.route.snapshot.queryParamMap.get(linkedFieldId);
 
     if (linkedFieldId && paramValue) {
