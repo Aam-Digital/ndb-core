@@ -9,7 +9,6 @@ import { MatInputModule } from "@angular/material/input";
 import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSelectModule } from "@angular/material/select";
-
 import { ErrorHintComponent } from "../../../../core/common-components/error-hint/error-hint.component";
 
 /**
