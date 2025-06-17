@@ -4,7 +4,6 @@ import { Note } from "../../notes/model/note";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { ConfirmationDialogButton } from "../../../core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { RollCallComponent } from "./roll-call/roll-call.component";
-
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
