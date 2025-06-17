@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
-
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
