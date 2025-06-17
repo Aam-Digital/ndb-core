@@ -16,6 +16,5 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
     }
   `,
   standalone: true,
-  imports: [],
 })
 export class DisplayUrlComponent extends ViewDirective<string> {}
