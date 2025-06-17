@@ -100,10 +100,7 @@ export class MapPopupComponent {
     const manualAddress = this.selectedLocation?.locationString ?? "";
     const lookupAddress = geoResult?.display_name ?? "";
 
-    if (
-      manualAddress &&
-      manualAddress !== lookupAddress
-    ) {
+    if (manualAddress && manualAddress !== lookupAddress) {
       // Show confirmation dialog
       const confirmed = await this.confirmationDialog.getConfirmation(
         $localize`Address details captured does not match with the location on the map.`,
@@ -111,13 +108,13 @@ export class MapPopupComponent {
         [
           {
             text: $localize`Continue`,
-            click: () => true
+            click: () => true,
           },
           {
             text: $localize`Edit Address`,
-            click: () => false
-          }
-        ]
+            click: () => false,
+          },
+        ],
       );
 
       if (confirmed) {
