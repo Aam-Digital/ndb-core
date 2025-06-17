@@ -3,7 +3,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityConstructor } from "../../entity/model/entity";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
-
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
