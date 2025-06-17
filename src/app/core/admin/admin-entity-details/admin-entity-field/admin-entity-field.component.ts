@@ -17,7 +17,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
