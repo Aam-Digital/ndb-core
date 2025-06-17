@@ -75,23 +75,4 @@
       <span i18n>Add pre-filled value</span>
     </button>
   </div>
-
-  <div class="margin-top-large">
-    <h3 i18n>Collect replies of this form linked to individual records</h3>
-    <p i18n>
-      You can use this option to automatically link form submissions to a
-      specific participant (like a child or school) using a URL parameter. This
-      is useful for feedback forms, where the participant should not choose
-      themselves.
-    </p>
-
-    <mat-form-field>
-      <mat-label i18n>Linked to</mat-label>
-      <mat-select [formControl]="linkedEntityFieldControl">
-        <mat-option *ngFor="let field of relatedRefFields" [value]="field.id">
-          {{ field.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
 </div>
