@@ -3,7 +3,7 @@ import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
-import { ChooseUseCaseComponent } from "../choose-use-case/choose-use-case.component";
+import { ChooseUseCaseComponent } from "./choose-use-case/choose-use-case.component";
 import { Logging } from "../../logging/logging.service";
 import { ActivatedRoute } from "@angular/router";
 import { DemoDataInitializerService } from "../../demo-data/demo-data-initializer.service";
@@ -12,18 +12,22 @@ import { availableLocales } from "app/core/language/languages";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 import { AssistantButtonComponent } from "../assistant-button/assistant-button.component";
 
+/**
+ * UI for initial system setup and use case selection,
+ * used within the AssistantDialog.
+ */
 @Component({
-  selector: "app-demo-assistance-dialog",
+  selector: "app-system-init-assistant",
   imports: [
     MatDialogModule,
     MatButtonModule,
     ChooseUseCaseComponent,
     LanguageSelectComponent,
   ],
-  templateUrl: "./demo-assistance-dialog.component.html",
-  styleUrl: "./demo-assistance-dialog.component.scss",
+  templateUrl: "./system-init-assistant.component.html",
+  styleUrl: "./system-init-assistant.component.scss",
 })
-export class DemoAssistanceDialogComponent implements OnInit {
+export class SystemInitAssistantComponent implements OnInit {
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   private readonly setupService = inject(SetupService);
 
@@ -34,7 +38,7 @@ export class DemoAssistanceDialogComponent implements OnInit {
   availableLocales: ConfigurableEnumValue[];
 
   constructor(
-    private dialogRef: MatDialogRef<DemoAssistanceDialogComponent>,
+    private dialogRef: MatDialogRef<SystemInitAssistantComponent>,
     private route: ActivatedRoute,
   ) {}
 

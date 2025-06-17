@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { DemoAssistanceDialogComponent } from "./demo-assistance-dialog.component";
+import { SystemInitAssistantComponent } from "./system-init-assistant.component";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import {
   LoginStateSubject,
@@ -28,9 +28,9 @@ import { ActivatedRoute } from "@angular/router";
 import { LanguageService } from "app/core/language/language.service";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 
-describe("DemoAssistanceDialogComponent", () => {
-  let component: DemoAssistanceDialogComponent;
-  let fixture: ComponentFixture<DemoAssistanceDialogComponent>;
+describe("SystemInitAssistantComponent", () => {
+  let component: SystemInitAssistantComponent;
+  let fixture: ComponentFixture<SystemInitAssistantComponent>;
   const mockLocation = {} as Location;
 
   beforeEach(async () => {
@@ -38,7 +38,7 @@ describe("DemoAssistanceDialogComponent", () => {
       localStorage: window.localStorage,
     };
     await TestBed.configureTestingModule({
-      imports: [DemoAssistanceDialogComponent, HttpClientTestingModule],
+      imports: [SystemInitAssistantComponent, HttpClientTestingModule],
       providers: [
         CurrentUserSubject,
         DemoDataInitializerService,
@@ -60,7 +60,7 @@ describe("DemoAssistanceDialogComponent", () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DemoAssistanceDialogComponent);
+    fixture = TestBed.createComponent(SystemInitAssistantComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

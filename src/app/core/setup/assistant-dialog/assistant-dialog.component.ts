@@ -1,17 +1,17 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { MatDialogRef } from "@angular/material/dialog";
-import { ContextAwareDialogComponent } from "../context-aware-dialog/context-aware-dialog.component";
+import { ContextAwareAssistantComponent } from "../context-aware-assistant/context-aware-assistant.component";
 import { MatTab, MatTabGroup } from "@angular/material/tabs";
-import { DemoAssistanceDialogComponent } from "../demo-assistance-dialog/demo-assistance-dialog.component";
+import { SystemInitAssistantComponent } from "../system-init-assistant/system-init-assistant.component";
 import { ConfigService } from "../../config/config.service";
 
 @Component({
   selector: "app-assistant-dialog",
   imports: [
-    ContextAwareDialogComponent,
+    ContextAwareAssistantComponent,
     MatTabGroup,
     MatTab,
-    DemoAssistanceDialogComponent,
+    SystemInitAssistantComponent,
   ],
   templateUrl: "./assistant-dialog.component.html",
   styleUrl: "./assistant-dialog.component.scss",

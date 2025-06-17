@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ChooseUseCaseComponent } from "./choose-use-case.component";
-import { WINDOW_TOKEN } from "app/utils/di-tokens";
+import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 
 describe("ChooseUseCaseComponent", () => {
   let component: ChooseUseCaseComponent;

@@ -1,15 +1,17 @@
 <mat-tab-group class="assistant-panel-container dialog-header-bar">
   @if (assistants.initDemo) {
     <mat-tab label="Initialize System" i18n-label>
-      <app-demo-assistance-dialog
+      <app-system-init-assistant
         class="full-height"
-      ></app-demo-assistance-dialog>
+      ></app-system-init-assistant>
     </mat-tab>
   }
 
   @if (assistants.contextAwareGuide) {
     <mat-tab label="Guide" i18n-label>
-      <app-context-aware-dialog class="full-height"></app-context-aware-dialog>
+      <app-context-aware-assistant
+        class="full-height"
+      ></app-context-aware-assistant>
     </mat-tab>
   }
 

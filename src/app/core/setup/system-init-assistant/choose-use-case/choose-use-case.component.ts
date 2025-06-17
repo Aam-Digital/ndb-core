@@ -1,11 +1,11 @@
-import { Component, Input, Output, EventEmitter, Inject } from "@angular/core";
-import { BaseConfig } from "../base-config";
+import { Component, EventEmitter, Inject, Input, Output } from "@angular/core";
+import { BaseConfig } from "../../base-config";
 import { MatSelectModule } from "@angular/material/select";
-import { WINDOW_TOKEN } from "app/utils/di-tokens";
+import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_LOCAL_STORAGE_KEY,
-} from "app/core/language/language-statics";
+} from "../../../language/language-statics";
 
 @Component({
   selector: "app-choose-use-case",
