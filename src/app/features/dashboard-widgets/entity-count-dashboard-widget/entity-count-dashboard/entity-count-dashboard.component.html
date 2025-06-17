@@ -68,8 +68,7 @@
         <td *matCellDef="let group">
           @if (!group.groupedByEntity) {
             <span>{{ group.label }}</span>
-          }
-          @if (group.groupedByEntity) {
+          } @else {
             <app-entity-block [entityId]="group.id"></app-entity-block>
           }
         </td>
