@@ -8,7 +8,6 @@ import {
 import { Entity } from "../../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { MatSnackBar } from "@angular/material/snack-bar";
-
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 
