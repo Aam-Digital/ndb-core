@@ -39,13 +39,6 @@ export class AssistantButtonComponent implements OnInit {
     }
   }
 
-  /**
-   * Opens a dialog to assist the user in setting up a demo environment.
-   * Depending on the user's login state, it opens either a context-aware dialog (if logged in)
-   * or a demo assistance dialog (if not logged in). The dialog guides the user through selecting
-   * a use case and initializing the system with the corresponding demo data.
-   * @returns A promise that resolves with the dialog result when the dialog is closed.
-   */
   async openAssistant() {
     if (this.isDialogOpen || !this.assistantEnabled) {
       return;
