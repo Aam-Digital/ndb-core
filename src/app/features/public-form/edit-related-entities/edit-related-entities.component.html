@@ -1,16 +1,22 @@
-<h3 i18n>Collect replies of this form linked to individual records</h3>
-<p i18n>
-  Automatically link form submissions to a specific participant (like a child or
-  school) using a URL parameter.
-</p>
+<div class="padding-regular" [class.disabled]="formControl.disabled">
+  <h3 i18n>Collect replies of this form linked to individual records</h3>
+  <p i18n>
+    Here is the extracted text from the image: You can use forms with a special
+    “magic link” to collect responses from participants that are already
+    registered in your system. By sending out an individual link to each person,
+    the form response(s) from that person can be linked into their profile. For
+    example, you can collect feedback or an evaluation survey and relate each
+    submission to the specific participant or organisation that gave it.
+  </p>
 
-<form [formGroup]="form">
-  <mat-form-field class="full-width-field">
-    <mat-label i18n>Link to entity field</mat-label>
-    <mat-select formControlName="id">
-      <mat-option *ngFor="let field of relatedRefFields" [value]="field.id">
-        {{ field.label }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</form>
+  <form [formGroup]="form">
+    <mat-form-field>
+      <mat-label i18n>Link to entity field</mat-label>
+      <mat-select formControlName="id">
+        <mat-option *ngFor="let field of relatedRefFields" [value]="field.id">
+          {{ field.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>

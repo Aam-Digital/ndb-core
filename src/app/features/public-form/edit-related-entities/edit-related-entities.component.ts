@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import {
   FormBuilder,
   FormGroup,
-  FormControl,
   ReactiveFormsModule,
 } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -57,17 +56,13 @@ export class EditRelatedEntitiesComponent
     });
     this.initializeLinkedEntity();
 
-    this.idControl.valueChanges.subscribe((newId: string) => {
+    this.form.get("id").valueChanges.subscribe((newId: string) => {
       this.formControl.setValue({
         id: newId,
         hideFromForm: true,
       });
       this.formControl.markAsDirty();
     });
-  }
-
-  get idControl(): FormControl {
-    return this.form.get("id") as FormControl;
   }
 
   private initializeLinkedEntity(): void {
