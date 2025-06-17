@@ -5,7 +5,6 @@ import {
 } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-
 import { MatTabsModule } from "@angular/material/tabs";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
