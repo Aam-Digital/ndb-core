@@ -59,7 +59,7 @@ export class DemoDataInitializerService {
       await this.generateDemoData();
     }
 
-    this.syncDatabaseOnUserChange();
+    // this.syncDatabaseOnUserChange();
   }
 
   async logInDemoUser() {
