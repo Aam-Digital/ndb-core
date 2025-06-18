@@ -26,9 +26,6 @@ export const test = base.extend<{ forEachTest: void }>({
         globalThis.NDB_E2E_REF_DATE = new Date(E2E_REF_DATE);
       }, E2E_REF_DATE);
       await page.goto("/");
-      // Give the app time to load
-      await page.getByText("Aam Digital - Demo").waitFor({ timeout: 10_000 });
-
       // Ensure the system is initialized before running tests.
       await initSystemWithBaseConfig(page);
 
@@ -39,10 +36,14 @@ export const test = base.extend<{ forEachTest: void }>({
 });
 
 async function initSystemWithBaseConfig(page: Page) {
-  page.getByRole("heading", { name: "Welcome to Aam Digital!" });
+  // Give the app time to load
+  await page
+    .getByRole("heading", { name: "Welcome to Aam Digital!" })
+    .waitFor({ timeout: 10000 });
+
   await page.locator("app-choose-use-case mat-select").click();
 
-  await page.locator("mat-option").nth(0).click();
+  await page.locator("mat-option").nth(1).click();
 
   const initButton = page.locator('button:has-text("Initialize System")');
   await initButton.click();
