@@ -12,7 +12,7 @@
  * to override the padding or display (for example, the dashboard has `display: grid` instead of
  * block).
  */
-.sidenav-content > :where(:not(router-outlet)) {
+.sidenav-content> :where(:not(router-outlet)) {
   padding: sizes.$margin-main-view-top sizes.$margin-main-view-right sizes.$margin-main-view-bottom sizes.$margin-main-view-left;
   display: block;
   box-sizing: border-box;
@@ -32,5 +32,9 @@ mat-form-field {
 // see AssistantButtonComponent
 .backdrop-below-toolbar {
   background: -webkit-linear-gradient(180deg, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 64px, rgba(0, 0, 0, .32) 64px, rgba(0, 0, 0, .32) 100%);
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 64px, rgba(0, 0, 0, .32) 64px, rgba(0, 0, 0, .32) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) var(--toolbar-height), rgba(0, 0, 0, .32) var(--toolbar-height), rgba(0, 0, 0, .32) 100%);
+}
+
+:root {
+  --toolbar-height: #{sizes.$toolbar-height};
 }

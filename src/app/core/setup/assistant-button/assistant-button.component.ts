@@ -54,7 +54,7 @@ export class AssistantButtonComponent implements OnInit {
       height: AssistantButtonComponent.ASSISTANT_DIALOG_HEIGHT,
       maxWidth: "100%",
       maxHeight: "100%",
-      position: { top: "64px", right: "0px" },
+      position: { top: "0px", right: "0px" },
       backdropClass: "backdrop-below-toolbar",
       minWidth: "300px",
       width: "40vw",

@@ -74,6 +74,10 @@ body {
   margin-top: var(--mat-toolbar-standard-height, 64px);
 }
 
+::ng-deep .cdk-overlay-pane.mat-mdc-dialog-panel {
+  margin-top: var(--toolbar-height) !important;
+}
+
 /**  Main content  **/
 
 mat-sidenav-container {

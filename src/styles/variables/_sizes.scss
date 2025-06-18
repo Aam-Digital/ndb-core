@@ -24,3 +24,8 @@ $margin-main-view-top: 16px;
 $margin-main-view-bottom: 64px;
 
 $form-group-min-width: 250px;
+
+$toolbar-height-mobile: 56px;
+$toolbar-height-desktop: 64px;
+
+$toolbar-height: clamp(#{$toolbar-height-mobile}, 10vw, #{$toolbar-height-desktop});
