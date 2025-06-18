@@ -41,8 +41,8 @@ describe("LanguageService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should return the current region code", () => {
-    expect(service.currentRegionCode()).toBe("us");
+  it("should return the current locale", () => {
+    expect(service.getCurrentLocale()).toBe("en-US");
   });
 
   it("should use the default locale if no locale is set", () => {

@@ -1,13 +1,9 @@
-import { Component, EventEmitter, Inject, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { BaseConfig } from "../../base-config";
 import { MatSelectModule } from "@angular/material/select";
-import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
-import {
-  DEFAULT_LANGUAGE,
-  LANGUAGE_LOCAL_STORAGE_KEY,
-} from "../../../language/language-statics";
 import { MarkdownComponent } from "ngx-markdown";
 import { FormsModule } from "@angular/forms";
+import { LanguageService } from "app/core/language/language.service";
 
 @Component({
   selector: "app-choose-use-case",
@@ -34,10 +30,8 @@ export class ChooseUseCaseComponent {
   selectedUseCase: BaseConfig;
   locale: string;
 
-  constructor(@Inject(WINDOW_TOKEN) private window: Window) {
-    this.locale =
-      this.window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ||
-      DEFAULT_LANGUAGE;
+  constructor(private languageService: LanguageService) {
+    this.locale = this.languageService.getCurrentLocale();
   }
 
   onSelectionChange() {
