@@ -172,6 +172,7 @@ export class AddressSearchComponent implements OnInit {
       }),
     );
   }
+
   isInputInOptions(input: string): boolean {
     if (!input || !this.filteredOptionsArray) return false;
     const normalizedInput = input.trim().toLowerCase();
