@@ -111,8 +111,8 @@ export class MapPopupComponent {
     if (manualAddress && manualAddress !== lookupAddress) {
       // Show confirmation dialog
       const confirmed = await this.confirmationDialog.getConfirmation(
-        $localize`Address Mismatch`, 
-        $localize`Address details captured does not match with the location on the map. Do you want to continue or edit the address?`, 
+        $localize`Address Mismatch`,
+        $localize`Address details captured does not match with the location on the map. Do you want to continue or edit the address?`,
         [
           {
             text: $localize`Continue`,
