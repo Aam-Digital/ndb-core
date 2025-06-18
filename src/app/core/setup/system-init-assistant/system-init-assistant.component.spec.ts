@@ -34,9 +34,6 @@ describe("SystemInitAssistantComponent", () => {
   const mockLocation = {} as Location;
 
   beforeEach(async () => {
-    const mockWindow: Partial<Window> = {
-      localStorage: window.localStorage,
-    };
     await TestBed.configureTestingModule({
       imports: [SystemInitAssistantComponent, HttpClientTestingModule],
       providers: [
@@ -52,7 +49,6 @@ describe("SystemInitAssistantComponent", () => {
           useValue: jasmine.createSpyObj(["updateSize"]),
         },
         { provide: NAVIGATOR_TOKEN, useValue: {} },
-        { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: ActivatedRoute, useValue: {} },
         {
           provide: LanguageService,

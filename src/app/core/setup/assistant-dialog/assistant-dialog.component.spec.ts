@@ -6,7 +6,7 @@ import { ConfigService } from "../../config/config.service";
 import { ActivatedRoute } from "@angular/router";
 import { DemoDataInitializerService } from "../../demo-data/demo-data-initializer.service";
 import { SetupService } from "../setup.service";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LanguageService } from "app/core/language/language.service";
 
 describe("AssistantDialogComponent", () => {
@@ -34,13 +34,6 @@ describe("AssistantDialogComponent", () => {
         {
           provide: LanguageService,
           useValue: jasmine.createSpyObj(["getCurrentLocale"]),
-        },
-
-        {
-          provide: WINDOW_TOKEN,
-          useValue: {
-            localStorage: window.localStorage,
-          },
         },
         { provide: LOCATION_TOKEN, useValue: null },
       ],
