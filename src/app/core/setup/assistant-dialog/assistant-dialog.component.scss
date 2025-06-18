@@ -2,7 +2,7 @@
 @use "variables/sizes";
 
 .assistant-panel-container {
-  height: 100%;
+  height: auto;
 }
 
 .dialog-header-bar {
@@ -25,6 +25,6 @@
 .mdc-dialog--closing .mat-mdc-dialog-surface {
   border-radius: 0px !important;
   box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0),
-  0px 24px 38px 3px rgba(0, 0, 0, 0.14),
-  0px 9px 0px 0px rgba(0, 0, 0, 0.12);
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+    0px 9px 0px 0px rgba(0, 0, 0, 0.12);
 }
