@@ -70,7 +70,7 @@ export class GeoService {
     const addr = result?.address;
     if (addr) {
       const city = addr.city ?? addr.town ?? "";
-      let street = addr.road ? addr.road : "";
+      let street = addr.road ?? "";
       if (street && addr.house_number) {
         street = `${street} ${addr.house_number}`;
       } else if (addr.house_number) {
