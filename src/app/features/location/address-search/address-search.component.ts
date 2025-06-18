@@ -19,7 +19,7 @@ import {
 } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { AsyncPipe } from "@angular/common";
-import { merge, of, Subject } from "rxjs";
+import { merge, of, BehaviorSubject, Subject } from "rxjs";
 import { GeoResult, GeoService } from "../geo.service";
 import {
   catchError,
@@ -75,8 +75,7 @@ export class AddressSearchComponent implements OnInit {
    */
   @Output() locationSelected = new EventEmitter<GeoLocation>();
 
-  filteredOptions = new Subject<GeoResult[]>();
-  filteredOptionsArray: GeoResult[] = [];
+  filteredOptions = new BehaviorSubject<GeoResult[]>([]);
   loading = false;
   nothingFound = false;
   networkError = false;
@@ -96,10 +95,6 @@ export class AddressSearchComponent implements OnInit {
 
   ngOnInit() {
     this.initSearchPipeline();
-    // Keep a local array for isInputInOptions
-    this.filteredOptions.subscribe((options) => {
-      this.filteredOptionsArray = options;
-    });
   }
 
   private initSearchPipeline() {
@@ -183,9 +178,9 @@ export class AddressSearchComponent implements OnInit {
   }
 
   isInputInOptions(input: string): boolean {
-    if (!input || !this.filteredOptionsArray) return false;
+    if (!input) return false;
     const normalizedInput = input.trim().toLowerCase();
-    return this.filteredOptionsArray.some(
+    return this.filteredOptions.value.some(
       (option) => option.display_name.trim().toLowerCase() === normalizedInput,
     );
   }
