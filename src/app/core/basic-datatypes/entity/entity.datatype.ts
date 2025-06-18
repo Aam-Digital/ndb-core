@@ -37,6 +37,7 @@ export class EntityDatatype extends StringDatatype {
   override editComponent = "EditEntity";
   override viewComponent = "DisplayEntity";
   override importConfigComponent = "EntityImportConfig";
+  override importAllowsMultiMapping = true;
 
   constructor(
     private entityMapper: EntityMapperService,

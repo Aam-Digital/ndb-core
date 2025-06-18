@@ -40,6 +40,13 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
    */
   static dataType: string = "";
+
+  /**
+   * Whether this datatype allows multiple values to be mapped to the same entity field
+   * during import.
+   */
+  readonly importAllowsMultiMapping: boolean = false;
+
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;
   }
