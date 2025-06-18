@@ -37,6 +37,7 @@ export class DemoDataInitializerService {
     roles: ["user_app", "admin_app"],
     entityId: `User:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };
+  private databaseSynced = false;
 
   constructor(
     private demoDataService: DemoDataService,
@@ -59,7 +60,7 @@ export class DemoDataInitializerService {
       await this.generateDemoData();
     }
 
-    // this.syncDatabaseOnUserChange();
+    this.syncDatabaseOnUserChange();
   }
 
   async logInDemoUser() {
@@ -88,6 +89,8 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
+    if (this.databaseSynced) return;
+    this.databaseSynced = true;
     this.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
