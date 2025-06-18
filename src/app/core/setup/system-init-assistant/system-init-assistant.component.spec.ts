@@ -54,7 +54,10 @@ describe("SystemInitAssistantComponent", () => {
         { provide: NAVIGATOR_TOKEN, useValue: {} },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: ActivatedRoute, useValue: {} },
-        { provide: LanguageService, useValue: {} },
+        {
+          provide: LanguageService,
+          useValue: jasmine.createSpyObj(["getCurrentLocale"]),
+        },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: EntityAbility, useValue: { can: () => true } },
         SyncStateSubject,
