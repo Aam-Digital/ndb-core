@@ -66,7 +66,7 @@ export class GeoService {
       );
   }
 
-  private reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
+  reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
     const addr = result?.address;
     if (addr) {
       const city = addr.city ?? addr.town ?? "";
