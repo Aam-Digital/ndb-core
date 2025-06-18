@@ -7,6 +7,7 @@ import { EntityRegistry } from "../entity/database-entity.decorator";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ImportAdditionalService } from "./additional-actions/import-additional.service";
 import { ImportExistingService } from "./update-existing/import-existing.service";
+import { ImportProcessingContext } from "./import-processing-context";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -96,7 +97,11 @@ export class ImportService {
     const entityConstructor = this.entityTypes.get(importSettings.entityType);
 
     const mappedEntities: Entity[] = [];
+    const importProcessingContext = new ImportProcessingContext();
     for (const row of rawData) {
+      importProcessingContext.row = row;
+      importProcessingContext.rowIndex++;
+
       let entity = new entityConstructor();
 
       let hasMappedProperty = false; // to avoid empty records being created
@@ -108,7 +113,12 @@ export class ImportService {
           continue;
         }
 
-        const parsed = await this.parseCell(row[col], mapping, entity);
+        const parsed = await this.parseCell(
+          row[col],
+          mapping,
+          entity,
+          importProcessingContext,
+        );
         if (parsed === undefined) {
           continue;
         }
@@ -128,7 +138,12 @@ export class ImportService {
     );
   }
 
-  private async parseCell(val: any, mapping: ColumnMapping, entity: Entity) {
+  private async parseCell(
+    val: any,
+    mapping: ColumnMapping,
+    entity: Entity,
+    importProcessingContext: any,
+  ) {
     if (val === undefined || val === null) {
       return undefined;
     }
@@ -140,7 +155,12 @@ export class ImportService {
 
     let value = await this.schemaService
       .getDatatypeOrDefault(schema.dataType)
-      .importMapFunction(val, schema, mapping.additional);
+      .importMapFunction(
+        val,
+        schema,
+        mapping.additional,
+        importProcessingContext,
+      );
 
     // ignore empty or invalid values for import
     if (!value && value !== 0 && value !== false) {
