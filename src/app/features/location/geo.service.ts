@@ -72,7 +72,8 @@ export class GeoService {
 
   private formatStreet(addr: any): string {
     if (!addr.road && !addr.house_number) return "";
-    if (addr.road && addr.house_number) return `${addr.road} ${addr.house_number}`;
+    if (addr.road && addr.house_number)
+      return `${addr.road} ${addr.house_number}`;
     return addr.road || addr.house_number || "";
   }
 
