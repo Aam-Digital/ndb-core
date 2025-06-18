@@ -34,8 +34,7 @@ import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";
 import { HttpErrorResponse } from "@angular/common/http";
-import { MatDialog } from "@angular/material/dialog";
-import { NoLocationDailogComponent } from "../no-location-dailog/no-location-dailog.component";
+import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 /**
  * A search box integrated with OpenStreetMaps lookup of the entered address,
  * offering matching locations as an autocomplete-style dropdown.
@@ -92,7 +91,7 @@ export class AddressSearchComponent implements OnInit {
 
   constructor(
     private location: GeoService,
-    private dialog: MatDialog,
+    private confirmationDialog: ConfirmationDialogService,
   ) {}
 
   ngOnInit() {
@@ -134,13 +133,23 @@ export class AddressSearchComponent implements OnInit {
     );
   }
 
-  selectLocation(selected: GeoResult | string | undefined) {
+  async selectLocation(selected: GeoResult | string | undefined) {
     let result: GeoLocation;
     if (typeof selected === "object") {
       result = { geoLookup: selected };
     } else if (typeof selected === "string") {
-      // special case to set address text from search without mapped location (when no result was found)
-      this.dialog.open(NoLocationDailogComponent);
+      // Show confirmation dialog instead of custom dialog
+      await this.confirmationDialog.getConfirmation(
+        $localize`No mapped location`,
+        $localize`There is no mapped location for the entered address. You can still save the address as free text.`,
+        [
+          {
+            text: $localize`OK`,
+            dialogResult: true,
+            click: () => {},
+          },
+        ]
+      );
       result = { locationString: selected };
     }
 
