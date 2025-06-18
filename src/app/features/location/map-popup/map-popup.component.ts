@@ -97,8 +97,16 @@ export class MapPopupComponent {
       this.geoService.reverseLookup(newCoordinates),
     );
 
+    // Only update geoLookup, keep the user's address string as-is
+    this.updateLocation({
+      ...this.selectedLocation,
+      geoLookup: geoResult,
+    });
+  }
+
+  async onSave() {
     const manualAddress = this.selectedLocation?.locationString ?? "";
-    const lookupAddress = geoResult?.display_name ?? "";
+    const lookupAddress = this.selectedLocation?.geoLookup?.display_name ?? "";
 
     if (manualAddress && manualAddress !== lookupAddress) {
       // Show confirmation dialog
@@ -108,36 +116,27 @@ export class MapPopupComponent {
         [
           {
             text: $localize`Continue`,
-            click: () => true,
+            dialogResult: true, 
+            click: () => {},
           },
           {
             text: $localize`Edit Address`,
-            click: () => false,
+            dialogResult: false,
+            click: () => {},
           },
         ],
       );
 
       if (confirmed) {
-        // Continue: Save manual address with new geoLookup
-        this.updateLocation({
-          geoLookup: geoResult,
-          locationString: manualAddress,
-        });
-      } else {
-        // Edit Address: Save new geoLookup and update address string to match
-        this.updateLocation({
-          geoLookup: geoResult,
-          locationString: lookupAddress,
-        });
+        // Continue: Save manual address with pinned location
+        this.dialogRef.close([this.selectedLocation]);
       }
+      // If Edit Address, do nothing (let user edit)
       return;
     }
 
-    // Default: update both
-    this.updateLocation({
-      geoLookup: geoResult,
-      locationString: lookupAddress,
-    });
+    // No mismatch, just save
+    this.dialogRef.close([this.selectedLocation]);
   }
 
   updateLocation(event: GeoLocation) {
