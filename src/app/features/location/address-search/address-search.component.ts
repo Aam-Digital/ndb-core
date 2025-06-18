@@ -143,7 +143,7 @@ export class AddressSearchComponent implements OnInit {
             dialogResult: true,
             click: () => {},
           },
-        ]
+        ],
       );
       result = { locationString: selected };
     }
