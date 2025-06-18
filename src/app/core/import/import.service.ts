@@ -108,7 +108,7 @@ export class ImportService {
           continue;
         }
 
-        const parsed = await this.parseRow(row[col], mapping, entity);
+        const parsed = await this.parseCell(row[col], mapping, entity);
         if (parsed === undefined) {
           continue;
         }
@@ -128,7 +128,7 @@ export class ImportService {
     );
   }
 
-  private async parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
+  private async parseCell(val: any, mapping: ColumnMapping, entity: Entity) {
     if (val === undefined || val === null) {
       return undefined;
     }
