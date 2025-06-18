@@ -116,7 +116,7 @@ export class MapPopupComponent {
         [
           {
             text: $localize`Continue`,
-            dialogResult: true, 
+            dialogResult: true,
             click: () => {},
           },
           {
