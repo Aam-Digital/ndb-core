@@ -66,32 +66,34 @@ export class GeoService {
       );
   }
 
+  private getCity(addr: any): string {
+    return addr.city ?? addr.town ?? "";
+  }
+
+  private formatStreet(addr: any): string {
+    if (!addr.road && !addr.house_number) return "";
+    if (addr.road && addr.house_number) return `${addr.road} ${addr.house_number}`;
+    return addr.road || addr.house_number || "";
+  }
+
+  private formatPostcodeCity(addr: any): string {
+    const city = this.getCity(addr);
+    if (addr.postcode && city) return `${addr.postcode} ${city}`;
+    if (addr.postcode) return `${addr.postcode}`;
+    if (city) return city;
+    return "";
+  }
+
   reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
     const addr = result?.address;
     if (addr) {
-      const city = addr.city ?? addr.town ?? "";
-      let street = addr.road ?? "";
-      if (street && addr.house_number) {
-        street = `${street} ${addr.house_number}`;
-      } else if (addr.house_number) {
-        street = addr.house_number;
-      }
-      let postcodeCity = "";
-      if (addr.postcode && city) {
-        postcodeCity = `${addr.postcode} ${city}`;
-      } else if (addr.postcode) {
-        postcodeCity = `${addr.postcode}`;
-      } else if (city) {
-        postcodeCity = city;
-      }
-
-      result.display_name = [
+      const displayParts = [
         addr.amenity ?? addr.office,
-        street || undefined,
-        postcodeCity || undefined,
-      ]
-        .filter((x) => !!x && x !== "undefined")
-        .join(", ");
+        this.formatStreet(addr),
+        this.formatPostcodeCity(addr),
+      ].filter((x) => !!x && x !== "undefined");
+
+      result.display_name = displayParts.join(", ");
     }
     return result;
   }
