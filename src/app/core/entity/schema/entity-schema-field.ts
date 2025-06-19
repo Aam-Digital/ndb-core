@@ -28,6 +28,12 @@ import { DefaultValueConfig } from "../../default-values/default-value-config";
  */
 export interface EntitySchemaField {
   /**
+   * The id / property name of the field in the entity.
+   * This does not have to be configured but is assigned automatically based on the object key.
+   */
+  id?: string;
+
+  /**
    * The datatype of this field. This will trigger to matching datatype transformer when saving/loading the entity.
    *
    * If you don't set this explicitly, the dataType is inferred from the TypeScript type of the property that is annotated.
