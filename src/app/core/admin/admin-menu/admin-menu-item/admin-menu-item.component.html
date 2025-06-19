@@ -1,63 +1,53 @@
-<h2 mat-dialog-title>
-  @if (isNew) {
-    <ng-container i18n>Add New Menu Item</ng-container>
-  } @else {
-    <ng-container i18n>Edit Menu Item</ng-container>
-  }
-</h2>
+<mat-nav-list class="drop-list flex-column gap-regular limit-width">
+  @if (item) {
+    <div
+      class="flex-row menu-item-container drop-item"
+      cdkDrag
+      [cdkDragData]="item"
+      cdkDropList
+      [id]="item.uniqueId"
+      [cdkDropListData]="item.subMenu"
+      [cdkDropListConnectedTo]="connectedTo"
+      (cdkDropListDropped)="onDragDrop($event)"
+    >
+      <div class="flex-row menu-content" cdkDragHandle>
+        <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+        <app-menu-item
+          [item]="itemToDisplay"
+          [adminMode]="true"
+          (editRequest)="editMenuItem(item)"
+        ></app-menu-item>
+        <div class="menu-actions">
+          <button
+            mat-icon-button
+            color="accent"
+            (click)="editMenuItem(item)"
+            aria-label="Edit menu item"
+          >
+            <mat-icon class="edit-icon">edit</mat-icon>
+          </button>
+          <fa-icon
+            icon="times"
+            class="remove-icon"
+            aria-label="Remove menu item"
+            (click)="onDelete(item)"
+          ></fa-icon>
+        </div>
+      </div>
 
-<mat-dialog-content class="menu-item-form">
-  <form class="form-grid">
-    <p i18n>
-      Optionally select a record type to automatically use its name, icon and
-      list view (as link) for this menu item. Otherwise, you can select a custom
-      name and icon below.
-    </p>
-
-    <!-- EntityType -->
-    <mat-form-field appearance="fill" class="margin-bottom-large">
-      <mat-label i18n>Entity Type</mat-label>
-      <app-entity-type-select
-        [value]="item?.['entityType']"
-        (valueChange)="onEntityTypeSelected($event)"
-        [multi]="false"
-      ></app-entity-type-select>
-    </mat-form-field>
-
-    @if (item?.["entityType"]) {
-      <p i18n>
-        To manually define a label and link, clear the entity type field above.
-      </p>
-    } @else {
-      <!-- Label -->
-      <mat-form-field appearance="fill">
-        <mat-label i18n>Label</mat-label>
-        <input
-          matInput
-          [(ngModel)]="item.label"
-          name="label"
-          placeholder="Enter label"
-          i18n-placeholder
-        />
-      </mat-form-field>
-
-      <!-- Icon -->
-      <app-admin-icon-input [(icon)]="item.icon"></app-admin-icon-input>
-
-      <!-- Link Target -->
-      <mat-form-field appearance="fill">
-        <mat-label i18n>Link Target</mat-label>
-        <mat-select [(ngModel)]="item.link" name="link">
-          @for (option of availableRoutes; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      @if (item.subMenu && item.subMenu.length > 0) {
+        <div class="submenu">
+          @for (subItem of item.subMenu; track subItem; let i = $index) {
+            <app-admin-menu-item
+              [item]="subItem"
+              [connectedTo]="connectedTo"
+              (itemDrop)="onDragDrop($event)"
+              (deleteItem)="removeSubItem(i)"
+              class="submenu-list"
+            ></app-admin-menu-item>
           }
-        </mat-select>
-      </mat-form-field>
-    }
-  </form>
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
-  <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
-  <button mat-button (click)="cancel()" cdkFocusInitial i18n>Cancel</button>
-</mat-dialog-actions>
+        </div>
+      }
+    </div>
+  }
+</mat-nav-list>

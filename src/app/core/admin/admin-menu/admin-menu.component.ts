@@ -1,11 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import {
   MenuItem,
   NavigationMenuConfig,
 } from "app/core/ui/navigation/menu-item";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { Config } from "app/core/config/config";
-import { AdminMenuListComponent } from "app/core/admin/admin-menu/admin-menu-list/admin-menu-list.component";
+import { AdminMenuItemComponent } from "./admin-menu-item/admin-menu-item.component";
 import { MatButton } from "@angular/material/button";
 import {
   CdkDragDrop,
@@ -14,7 +14,6 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import { Logging } from "app/core/logging/logging.service";
-import { MatDialog } from "@angular/material/dialog";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import {
   MenuItemForAdminUi,
@@ -26,7 +25,7 @@ import { v4 as uuid } from "uuid";
 @Component({
   selector: "app-admin-menu",
   standalone: true,
-  imports: [AdminMenuListComponent, MatButton, DragDropModule, FaIconComponent],
+  imports: [AdminMenuItemComponent, MatButton, DragDropModule, FaIconComponent],
   templateUrl: "./admin-menu.component.html",
   styleUrl: "./admin-menu.component.scss",
 })
@@ -34,10 +33,7 @@ export class AdminMenuComponent implements OnInit {
   menuItems: MenuItemForAdminUi[];
   readonly navigationContainer = "navigation-container";
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private dialog: MatDialog,
-  ) {}
+  private readonly entityMapper = inject(EntityMapperService);
 
   async ngOnInit() {
     await this.loadNavigationConfig();

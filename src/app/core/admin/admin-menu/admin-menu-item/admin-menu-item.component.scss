@@ -1,37 +1,115 @@
-@use "../../../../../styles/mixins/grid-layout" as *;
+@use "variables/colors";
+@use "variables/sizes";
 
-.grid-layout-wide {
-  @include adaptive(
-    $min-block-width: 250px,
-    $max-screen-width: 414px
-  );
-  display: grid;
-  gap: 16px;
-  padding: 16px 24px 0 24px;
+.menu-item-container {
+  min-height: 50px;
+  position: relative;
+  display: block;
+  padding: 8px 0;
+  margin: auto;
 }
 
-
-.menu-item-form {
+/* Main menu content row */
+.menu-content {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-mat-form-field {
+  align-items: center;
   width: 100%;
+  gap: 10px;
 }
 
-.actions {
+/* Actions area on the right (edit & remove) */
+.menu-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 24px;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto; /* Push actions to far right */
 }
 
-mat-dialog-content {
-  padding: 0; 
+.edit-icon,
+.remove-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  /* Make icons visually balanced */
+  width: 24px;
+  height: 24px;
 }
 
-mat-dialog-actions {
-  padding: 16px 24px;
+.remove-icon {
+  cursor: pointer;
+}
+
+.drop-item:has(.remove-icon:hover) {
+  color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.edit-icon {
+  cursor: pointer;
+  color: colors.$accent;
+}
+
+/* Drag handle (left) */
+.drag-handle {
+  cursor: move;
+  color: colors.$accent;
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.drag-handle:hover {
+  opacity: 1;
+}
+
+/* Allow <app-menu-item> to grow */
+app-menu-item {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* Submenu indentation: only indent the visible content, not the actions */
+.submenu-list > .menu-item-container,
+.submenu .menu-item-container {
+  padding-left: 32px;
+}
+
+
+.limit-width {
+  max-width: 400px;
+}
+
+@media (max-width: 600px) {
+  .limit-width {
+    max-width: 100%;
+  }
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drop-list.cdk-drop-list-dragging .drop-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.cdk-drop-list-receiving {
+  background-color: rgba(0, 0, 0, 0.03);
+  border: 2px dashed #ccc;
 }

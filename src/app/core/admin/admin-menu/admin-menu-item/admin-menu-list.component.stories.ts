@@ -1,21 +1,21 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
-import { AdminMenuListComponent } from "./admin-menu-list.component";
+import { AdminMenuItemComponent } from "./admin-menu-item.component";
 import { MenuItem } from "app/core/ui/navigation/menu-item";
 
 export default {
   title: "Src/App/Admin",
-  component: AdminMenuListComponent,
+  component: AdminMenuItemComponent,
   decorators: [
     applicationConfig({
       providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
-} as Meta<AdminMenuListComponent>;
+} as Meta<AdminMenuItemComponent>;
 
-const Template: StoryFn<AdminMenuListComponent> = (
-  args: AdminMenuListComponent,
+const Template: StoryFn<AdminMenuItemComponent> = (
+  args: AdminMenuItemComponent,
 ) => ({
   props: { ...args },
 });

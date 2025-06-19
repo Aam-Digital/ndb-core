@@ -1,88 +1,115 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { MatListModule } from "@angular/material/list";
+import { MenuItem } from "app/core/ui/navigation/menu-item";
+import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
-import { MatButtonModule } from "@angular/material/button";
-import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
-import { ConfigService } from "app/core/config/config.service";
+import { MatIconButton } from "@angular/material/button";
+import { MatDialog } from "@angular/material/dialog";
+import { MenuService } from "app/core/ui/navigation/menu.service";
+import { firstValueFrom } from "rxjs";
+import { AdminMenuItemDetailsComponent } from "../admin-menu-item-details/admin-menu-item-details.component";
+import { MatIconModule } from "@angular/material/icon";
 import {
-  PREFIX_VIEW_CONFIG,
-  ViewConfig,
-} from "app/core/config/dynamic-routing/view-config.interface";
-import { MatDialogModule } from "@angular/material/dialog";
-import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/entity-type-select.component";
+  MenuItemForAdminUi,
+  MenuItemForAdminUiNew,
+} from "../menu-item-for-admin-ui";
 
 /**
- * Dialog component to edit a single menu item's details.
+ * Display and edit a menu item in the admin interface,
+ * including recursively editing and drag&drop of subMenu items.
  */
 @Component({
   selector: "app-admin-menu-item",
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
+    MatListModule,
+    MenuItemComponent,
+    FaIconComponent,
+    DragDropModule,
     MatFormFieldModule,
+    FormsModule,
     MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    AdminIconComponent,
-    MatDialogModule,
-    EntityTypeSelectComponent,
+    MatIconButton,
+    MatIconModule,
   ],
   templateUrl: "./admin-menu-item.component.html",
-  styleUrls: ["./admin-menu-item.component.scss"],
+  styleUrls: [
+    "./admin-menu-item.component.scss",
+    "../../../ui/navigation/menu-item/menu-item.component.scss",
+  ],
 })
-export class AdminMenuItemComponent implements OnInit {
-  item: MenuItem | EntityMenuItem;
-  availableRoutes: { value: string; label: string }[];
-  isNew: boolean;
-
-  constructor(
-    private configService: ConfigService,
-    public dialogRef: MatDialogRef<AdminMenuItemComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { item: MenuItem; isNew?: boolean },
-  ) {
-    this.item = data.item;
-    this.isNew = data.isNew;
-  }
-
-  ngOnInit(): void {
-    this.availableRoutes = this.loadAvailableRoutes();
-  }
-
-  private loadAvailableRoutes(): { value: string; label: string }[] {
-    const allConfigs: ViewConfig[] =
-      this.configService.getAllConfigs<ViewConfig>(PREFIX_VIEW_CONFIG);
-    return allConfigs
-      .filter((view) => !view._id.includes("/:id")) // skip details views (with "/:id" placeholder)
-      .map((view) => {
-        const id = view._id.replace(PREFIX_VIEW_CONFIG, "/");
-        const label = view.config?.entityType?.trim() || view.component || id;
-        return { value: id, label };
-      });
-  }
-
-  onEntityTypeSelected(entityType: string | string[]) {
-    (this.item as EntityMenuItem).entityType = entityType as string; // multi is set to false, so this is always a string
-  }
-
-  save() {
-    if ((this.item as EntityMenuItem).entityType) {
-      // remove unused hidden properties that may still be left in the item
-      delete this.item.label;
-      delete this.item.icon;
-      delete this.item.link;
+export class AdminMenuItemComponent {
+  @Input() set item(value: MenuItemForAdminUi | MenuItemForAdminUiNew) {
+    if (value instanceof MenuItemForAdminUiNew) {
+      this._item = undefined;
+      this.itemToDisplay = undefined;
+      this.editMenuItem(value);
+      return;
     }
 
-    this.dialogRef.close(this.item);
+    this._item = value;
+    this.itemToDisplay = this.menuService.generateMenuItemForEntityType(
+      this.item,
+    );
   }
 
-  cancel() {
-    this.dialogRef.close();
+  get item(): MenuItemForAdminUi {
+    return this._item;
+  }
+
+  private _item: MenuItemForAdminUi;
+  itemToDisplay: MenuItem;
+
+  @Output() itemChange = new EventEmitter<MenuItemForAdminUi>();
+
+  @Input() connectedTo: string[];
+  @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
+  @Output() deleteItem = new EventEmitter<MenuItemForAdminUi>();
+
+  constructor(
+    private dialog: MatDialog,
+    private menuService: MenuService,
+  ) {}
+
+  removeSubItem(index: number): void {
+    if (index > -1 && this.item?.subMenu) {
+      this.item = { ...this.item, subMenu: this.item.subMenu.splice(index, 1) };
+      this.itemChange.emit(this.item);
+    }
+  }
+
+  onDelete(item: MenuItemForAdminUi): void {
+    this.deleteItem.emit(item);
+  }
+
+  onDragDrop(event: CdkDragDrop<MenuItemForAdminUi[]>) {
+    this.itemDrop.emit(event);
+  }
+
+  async editMenuItem(item: MenuItemForAdminUi | MenuItemForAdminUiNew) {
+    const updatedItem = await this.openEditDialog(item);
+    if (updatedItem) {
+      this.item = { ...item, ...updatedItem };
+      this.itemChange.emit(this.item);
+    }
+  }
+
+  private async openEditDialog(
+    item: MenuItemForAdminUi | MenuItemForAdminUiNew,
+  ): Promise<MenuItemForAdminUi | undefined> {
+    const dialogRef = this.dialog.open(AdminMenuItemDetailsComponent, {
+      width: "600px",
+      data: {
+        item: item ? { ...item } : {},
+        isNew: (item as MenuItemForAdminUiNew).isNew,
+      },
+    });
+    return firstValueFrom(dialogRef.afterClosed());
   }
 }
