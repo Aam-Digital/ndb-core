@@ -35,6 +35,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";
 import { HttpErrorResponse } from "@angular/common/http";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
  * A search box integrated with OpenStreetMaps lookup of the entered address,
