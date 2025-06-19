@@ -94,7 +94,7 @@ describe("DemoDataInitializerService", () => {
   });
 
   it("should save the default users", () => {
-    service.run();
+    service.logInDemoUser();
 
     expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(normalUser);
     expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(adminUser);
@@ -102,11 +102,13 @@ describe("DemoDataInitializerService", () => {
 
   it("it should publish the demo data after logging in the default user", fakeAsync(() => {
     spyOn(database, "isEmpty").and.resolveTo(true);
-    service.run();
+    service.logInDemoUser();
 
     expect(sessionManager.offlineLogin).toHaveBeenCalledWith(normalUser);
     expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
+    tick();
 
+    service.generateDemoData();
     tick();
 
     expect(mockDemoDataService.publishDemoData).toHaveBeenCalled();
@@ -128,7 +130,7 @@ describe("DemoDataInitializerService", () => {
   }));
 
   it("should sync with existing demo data when another user logs in", fakeAsync(() => {
-    service.run();
+    service.logInDemoUser();
     database.init(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
 
