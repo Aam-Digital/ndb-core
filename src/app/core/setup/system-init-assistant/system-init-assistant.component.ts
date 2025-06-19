@@ -64,6 +64,10 @@ export class SystemInitAssistantComponent implements OnInit {
     );
   }
 
+  /**
+   * The system can be opened with a pre-selected use case: ?useCase=useCaseId
+   * @private
+   */
   private async initFromQueryParamAutomatically() {
     const preSelectedUseCase = this.route.snapshot.queryParamMap.get("useCase");
     if (!preSelectedUseCase) {

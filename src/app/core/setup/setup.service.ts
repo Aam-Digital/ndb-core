@@ -7,7 +7,7 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { Logging } from "../logging/logging.service";
-import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
+import { SyncStateSubject } from "../session/session-type";
 import { ConfigService } from "../config/config.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { catchError, switchMap } from "rxjs/operators";
@@ -27,7 +27,6 @@ export class SetupService {
   private readonly entityMapper = inject(EntityMapperService);
   private readonly schemaService = inject(EntitySchemaService);
   private readonly entityRegistry = inject(EntityRegistry);
-  private readonly loginState = inject(LoginStateSubject);
   private readonly configService = inject(ConfigService);
   private readonly syncState = inject(SyncStateSubject);
 

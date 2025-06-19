@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
-import { test as base, Page } from "@playwright/test";
+import { Page, test as base } from "@playwright/test";
 // eslint-disable-next-line no-restricted-imports
 import {
   argosScreenshot as argosScreenshotBase,
@@ -25,36 +25,17 @@ export const test = base.extend<{ forEachTest: void }>({
         // @ts-expect-error global state
         globalThis.NDB_E2E_REF_DATE = new Date(E2E_REF_DATE);
       }, E2E_REF_DATE);
-      await page.goto("/");
-      // Ensure the system is initialized before running tests.
-      await initSystemWithBaseConfig(page);
+
+      await page.goto("/?useCase=education");
+
+      // Give the app time to load
+      await page.getByText("Start Exploring").click({ timeout: 10_000 });
 
       await use();
     },
     { auto: true },
   ],
 });
-
-async function initSystemWithBaseConfig(page: Page) {
-  // Give the app time to load
-  await page
-    .getByRole("heading", { name: "Welcome to Aam Digital!" })
-    .waitFor({ timeout: 10000 });
-
-  await page.locator("app-choose-use-case mat-select").click();
-
-  await page.locator("mat-option").nth(1).click();
-
-  const initButton = page.locator('button:has-text("Initialize System")');
-  await initButton.click();
-
-  await page.waitForTimeout(1000); // wait for 1 second before clicking on explore
-
-  const exploreButton = page.locator('button:has-text("Start Exploring")');
-  await exploreButton.click();
-
-  await page.locator("h1.mat-dialog-title").waitFor({ state: "detached" });
-}
 
 export async function argosScreenshot(
   page: Page,
