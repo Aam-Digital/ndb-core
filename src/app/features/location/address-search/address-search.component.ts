@@ -137,13 +137,7 @@ export class AddressSearchComponent implements OnInit {
       await this.confirmationDialog.getConfirmation(
         $localize`No mapped location`,
         $localize`There is no mapped location for the entered address. You can still save the address as free text.`,
-        [
-          {
-            text: $localize`OK`,
-            dialogResult: true,
-            click: () => {},
-          },
-        ],
+        OkButton,
       );
       result = { locationString: selected };
     }
