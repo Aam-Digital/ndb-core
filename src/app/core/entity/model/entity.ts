@@ -101,6 +101,12 @@ export class Entity {
   static isInternalEntity?: boolean;
 
   /**
+   * Whether to enable user account creation for this entity type.
+   * When true, the UI will allow management of user accounts associated with this entity.
+   */
+  static enableUserAccounts?: boolean;
+
+  /**
    * human-readable label for uses of plural of the entity in the UI
    */
   static get labelPlural(): string {

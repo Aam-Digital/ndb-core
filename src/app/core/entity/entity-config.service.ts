@@ -144,6 +144,8 @@ export class EntityConfigService {
     entityType.color = entityConfig.color ?? entityType.color;
     entityType.route = entityConfig.route ?? entityType.route;
     entityType.hasPII = entityConfig.hasPII ?? entityType.hasPII;
+    entityType.enableUserAccounts =
+      entityConfig?.enableUserAccounts ?? entityType?.enableUserAccounts;
 
     entityType._isCustomizedType = true;
   }

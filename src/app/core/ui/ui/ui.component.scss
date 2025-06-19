@@ -19,7 +19,8 @@ body {
  * Both of these directives are required to make the shadow show
  */
 .ui-toolbar {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 2;
   justify-content: space-between;
   @include mat-elevation.elevation(2);
@@ -46,7 +47,6 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
-  height: 100vh;
 
   /*
   This only targets iOs devices. Note that (just like the line below), this is
@@ -67,6 +67,10 @@ body {
 
 .sidenav-menu {
   background-color: colors.$background-secondary;
+}
+
+.toolbar-spacer {
+  margin-top: var(--mat-toolbar-standard-height, 64px);
 }
 
 /**  Main content  **/

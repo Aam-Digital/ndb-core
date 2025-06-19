@@ -43,6 +43,7 @@ describe("AdminEntityComponent", () => {
   class AdminTestEntity extends Entity {
     static override readonly ENTITY_TYPE = "AdminTest";
     static override label = "Admin Test";
+    static override enableUserAccounts = false;
 
     @DatabaseField({ label: "Name" }) name: string;
   }
@@ -161,6 +162,7 @@ describe("AdminEntityComponent", () => {
       attributes: jasmine.objectContaining({
         testSaveField: newSchemaField,
       }),
+      enableUserAccounts: false,
     };
 
     const actual: Config = entityMapper.get(

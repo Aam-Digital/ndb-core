@@ -49,6 +49,16 @@
             </mat-label>
             <input formControlName="color" matInput />
           </mat-form-field>
+
+          <mat-checkbox formControlName="enableUserAccounts">
+            <span i18n>Enable User Accounts</span>
+            &nbsp;
+            <fa-icon
+              icon="question-circle"
+              matTooltip="Check this if entities of this type can have associated user accounts with login credentials. This allows assigning roles and managing access."
+              i18n-matTooltip
+            ></fa-icon>
+          </mat-checkbox>
         </div>
 
         <div class="entity-form-cell">

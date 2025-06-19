@@ -84,9 +84,13 @@ export class KeycloakAdminService extends UserAdminService {
     userEntityId: string,
   ): Observable<{ userDeleted: boolean }> {
     return this.getUser(userEntityId).pipe(
-      switchMap((userAccount) =>
-        this.http.delete(`${this.keycloakUrl}/users/${userAccount.id}`),
-      ),
+      switchMap((userAccount) => {
+        if (!userAccount) {
+          Logging.debug("User not found in Keycloak", { userEntityId });
+          return of(undefined);
+        }
+        return this.http.delete(`${this.keycloakUrl}/users/${userAccount.id}`);
+      }),
       switchMap(() => {
         return of({ userDeleted: true });
       }),

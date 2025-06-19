@@ -12,6 +12,7 @@ import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 import { Logging } from "../logging/logging.service";
+import { PanelComponent } from "../entity-details/EntityDetailsConfig";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -83,6 +84,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateGroupByConfig,
       addDefaultNoteDetailsConfig,
       migrateDefaultValue,
+      migrateUserEntityAndPanels,
     ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
@@ -392,6 +394,27 @@ const migrateDefaultValue: ConfigMigration = (key, configPart) => {
       configPart.config.field = configPart.field;
       delete configPart.field;
     }
+  }
+
+  return configPart;
+};
+
+/**
+ * Migration to enable user account features by setting the `enableUserAccounts` flag
+ * and remove the UserSecurity panel from view:user/:id.
+ */
+const migrateUserEntityAndPanels: ConfigMigration = (key, configPart) => {
+  if (key === "entity:User") {
+    configPart.enableUserAccounts = true;
+  }
+
+  if (key === "view:user/:id") {
+    configPart.config.panels = (configPart.config.panels || []).filter(
+      (panel) =>
+        !panel.components?.some(
+          (c: PanelComponent) => c.component === "UserSecurity",
+        ),
+    );
   }
 
   return configPart;

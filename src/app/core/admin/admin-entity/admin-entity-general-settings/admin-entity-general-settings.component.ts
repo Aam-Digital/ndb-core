@@ -92,6 +92,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       color: [this.generalSettings.color],
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],
+      enableUserAccounts: [this.generalSettings?.enableUserAccounts],
     });
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.fetchAnonymizationTableData();

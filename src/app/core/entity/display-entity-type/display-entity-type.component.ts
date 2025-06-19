@@ -6,17 +6,24 @@ import { asArray } from "app/utils/asArray";
 @Component({
   selector: "app-display-entity-type",
   standalone: true,
-  imports: [EntityTypeLabelPipe],
-  templateUrl: "./display-entity-type.component.html",
+  providers: [EntityTypeLabelPipe],
+  template: `<span class="display-entity-type-label">{{ entityLabel }}</span>`,
   styleUrls: ["./display-entity-type.component.scss"],
 })
 export class DisplayEntityTypeComponent
   extends ViewDirective<string[] | string, string>
   implements OnInit
 {
-  entityIds: string[] = [];
+  entityLabel: string;
+
+  constructor(private entityTypeLabelPipe: EntityTypeLabelPipe) {
+    super();
+  }
 
   async ngOnInit() {
-    this.entityIds = this.value ? asArray(this.value) : [];
+    const entityIds = this.value ? asArray(this.value) : [];
+    this.entityLabel = entityIds
+      .map((id) => this.entityTypeLabelPipe.transform(id) || id)
+      .join(", ");
   }
 }

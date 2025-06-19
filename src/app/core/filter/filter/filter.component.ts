@@ -102,9 +102,14 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
 
   filterOptionSelected(filter: Filter<T>, selectedOptions: string[]) {
     filter.selectedOptionValues = selectedOptions;
-    this.hasActiveFilters = this.filterSelections.some(
-      (f) => f.selectedOptionValues?.length > 0,
-    );
+    // It is only safe to update `hasActiveFilters` after the view is rendered.
+    // Using setTimeout ensures the change happens after Angular’s check cycle.
+    setTimeout(() => {
+      this.hasActiveFilters = this.filterSelections.some(
+        (f) => f.selectedOptionValues?.length > 0,
+      );
+    });
+
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
       this.updateUrl(filter.name, selectedOptions.toString());

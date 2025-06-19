@@ -171,7 +171,7 @@ export class EntitiesTableComponent<T extends Entity>
     }
   }
 
-  _columnsToDisplay: string[];
+  _columnsToDisplay: string[] = [];
 
   @Input() set entityType(value: EntityConstructor<T>) {
     this._entityType = value;
@@ -427,9 +427,7 @@ export class EntitiesTableComponent<T extends Entity>
 
   private inferDefaultSort(): Sort {
     // initial sorting by first column, ensure that not the 'action' column is used
-    const sortBy = (this._columnsToDisplay ?? []).filter(
-      (c) => !c.startsWith("__"),
-    )[0];
+    const sortBy = this._columnsToDisplay.filter((c) => !c.startsWith("__"))[0];
     const sortByColumn = this._columns.find((c) => c.id === sortBy);
 
     let sortDirection: SortDirection = "asc";
