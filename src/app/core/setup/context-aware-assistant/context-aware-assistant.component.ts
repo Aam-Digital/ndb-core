@@ -27,8 +27,8 @@ export class ContextAwareAssistantComponent {
   async restartDemo() {
     if (environment.session_type !== SessionType.mock) {
       await this.backupService.resetApplication();
+    } else {
+      window.location.href = "/";
     }
-
-    window.location.href = "/";
   }
 }
