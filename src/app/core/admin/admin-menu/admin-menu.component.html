@@ -17,11 +17,13 @@
   [cdkDropListConnectedTo]="connectedDropLists"
   (cdkDropListDropped)="onDragDrop($event)"
 >
-  <app-admin-menu-list
-    *ngFor="let item of menuItems; let i = index"
-    [item]="item"
-    [connectedTo]="connectedDropLists"
-    (itemDrop)="onDragDrop($event)"
-    (deleteItem)="removeTopLevelItem(i)"
-  ></app-admin-menu-list>
+  @for (item of menuItems; track item; let i = $index) {
+    <app-admin-menu-list
+      [item]="item"
+      [connectedTo]="connectedDropLists"
+      (itemDrop)="onDragDrop($event)"
+      (deleteItem)="removeItem(item)"
+      (itemChange)="onItemChange($event, i)"
+    ></app-admin-menu-list>
+  }
 </div>

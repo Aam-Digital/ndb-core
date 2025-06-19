@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import {
   MenuItem,
   NavigationMenuConfig,
@@ -13,38 +13,34 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import { NgFor } from "@angular/common";
 import { Logging } from "app/core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
-import { firstValueFrom } from "rxjs";
-import { AdminMenuItemComponent } from "app/core/admin/admin-menu/admin-menu-item/admin-menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MenuService } from "app/core/ui/navigation/menu.service";
+import {
+  MenuItemForAdminUi,
+  MenuItemForAdminUiNew,
+} from "./menu-item-for-admin-ui";
+import { v4 as uuid } from "uuid";
 
 /** Load and Store Menu Items for Administration */
 @Component({
   selector: "app-admin-menu",
   standalone: true,
-  imports: [
-    AdminMenuListComponent,
-    MatButton,
-    DragDropModule,
-    NgFor,
-    FaIconComponent,
-  ],
+  imports: [AdminMenuListComponent, MatButton, DragDropModule, FaIconComponent],
   templateUrl: "./admin-menu.component.html",
   styleUrl: "./admin-menu.component.scss",
 })
-export class AdminMenuComponent {
-  menuItems: MenuItem[];
+export class AdminMenuComponent implements OnInit {
+  menuItems: MenuItemForAdminUi[];
   readonly navigationContainer = "navigation-container";
 
   constructor(
     private entityMapper: EntityMapperService,
     private dialog: MatDialog,
-    private menuService: MenuService,
-  ) {
-    this.loadNavigationConfig();
+  ) {}
+
+  async ngOnInit() {
+    await this.loadNavigationConfig();
   }
 
   private async loadNavigationConfig() {
@@ -55,18 +51,16 @@ export class AdminMenuComponent {
     this.menuItems = this.addUniqueIds(configEntity.data.navigationMenu.items);
   }
 
-  // Add unique IDs to all menu items for drag and drop functionality
-  // This is necessary to ensure that each item can be uniquely identified
-  private addUniqueIds(items: MenuItem[]): MenuItem[] {
+  /**
+   * Add unique IDs to all menu items for drag and drop functionality.
+   * This is necessary to ensure that each item can be uniquely identified
+   */
+  private addUniqueIds(items: MenuItem[]): MenuItemForAdminUi[] {
     return items.map((item) => ({
       ...item,
-      uniqueId: this.generateUniqueId(),
+      uniqueId: uuid(),
       subMenu: item.subMenu ? this.addUniqueIds(item.subMenu) : [],
     }));
-  }
-
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substr(2, 9);
   }
 
   public get connectedDropLists(): string[] {
@@ -74,6 +68,17 @@ export class AdminMenuComponent {
       this.navigationContainer,
       ...this.getIdsRecursive(this.menuItems),
     ].reverse();
+  }
+
+  private getIdsRecursive(items: MenuItemForAdminUi[]): string[] {
+    let ids: string[] = [];
+    items?.forEach((item) => {
+      ids.push(item.uniqueId);
+      if (item.subMenu) {
+        ids = ids.concat(this.getIdsRecursive(item.subMenu));
+      }
+    });
+    return ids;
   }
 
   onDragDrop(event: CdkDragDrop<MenuItem[]>) {
@@ -108,43 +113,26 @@ export class AdminMenuComponent {
       Logging.debug("Drag drop error:", error);
     }
   }
-  // Recursively get all IDs for connected drop lists
-  private getIdsRecursive(items: MenuItem[]): string[] {
-    let ids: string[] = [];
-    items?.forEach((item) => {
-      ids.push(item.uniqueId);
-      if (item.subMenu) {
-        ids = ids.concat(this.getIdsRecursive(item.subMenu));
-      }
-    });
-    return ids;
-  }
 
   async save() {
     const currentConfig = await this.entityMapper.load(
       Config<{ navigationMenu: NavigationMenuConfig }>,
       Config.CONFIG_KEY,
     );
-    // Convert all items (including submenus) to plain MenuItem before saving
     currentConfig.data.navigationMenu.items = this.menuItems.map((item) =>
       this.toPlainMenuItem(item),
     );
     await this.entityMapper.save(currentConfig);
   }
 
-  // Recursively convert to plain MenuItem using menuService mapping
-  private toPlainMenuItem(item: MenuItem): MenuItem {
-    // Use menuService mapping function to ensure entity items are converted
-    const plainItem =
-      this.menuService && this.menuService.generateMenuItemForEntityType
-        ? this.menuService.generateMenuItemForEntityType(item)
-        : item;
+  private toPlainMenuItem(item: MenuItemForAdminUi): MenuItem {
+    delete item.uniqueId; // Remove uniqueId before saving
     return {
-      ...plainItem,
-      subMenu: item.subMenu
-        ? item.subMenu.map((sub) => this.toPlainMenuItem(sub))
-        : [],
-      uniqueId: item.uniqueId,
+      ...item,
+      subMenu:
+        item.subMenu?.length > 0
+          ? item.subMenu.map((sub) => this.toPlainMenuItem(sub))
+          : undefined,
     };
   }
 
@@ -152,23 +140,20 @@ export class AdminMenuComponent {
     await this.loadNavigationConfig();
   }
 
-  // New method: Add New Menu Item
   async addNewMenuItem() {
-    const dialogRef = this.dialog.open(AdminMenuItemComponent, {
-      width: "600px",
-      data: { item: {}, isNew: true },
-    });
-    const newItem = await firstValueFrom(dialogRef.afterClosed());
-    if (newItem) {
-      newItem.uniqueId = this.generateUniqueId();
-      newItem.subMenu = [];
-      this.menuItems.push(newItem);
-    }
+    const newItem = new MenuItemForAdminUiNew(uuid());
+    this.menuItems = [newItem, ...this.menuItems];
   }
 
-  removeTopLevelItem(index: number): void {
-    if (index > -1) {
-      this.menuItems.splice(index, 1);
-    }
+  removeItem(item: MenuItemForAdminUi): void {
+    this.menuItems = this.menuItems.filter((i) => i !== item);
+  }
+
+  onItemChange(newItem: MenuItemForAdminUi, index: number) {
+    this.menuItems = [
+      ...this.menuItems.slice(0, index),
+      newItem,
+      ...this.menuItems.slice(index + 1),
+    ];
   }
 }

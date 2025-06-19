@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { CommonModule, NgFor } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
-import { EntityMenuItem, MenuItem } from "app/core/ui/navigation/menu-item";
+import { MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { DragDropModule, CdkDragDrop } from "@angular/cdk/drag-drop";
+import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
@@ -14,6 +14,10 @@ import { MenuService } from "app/core/ui/navigation/menu.service";
 import { firstValueFrom } from "rxjs";
 import { AdminMenuItemComponent } from "../admin-menu-item/admin-menu-item.component";
 import { MatIconModule } from "@angular/material/icon";
+import {
+  MenuItemForAdminUi,
+  MenuItemForAdminUiNew,
+} from "../menu-item-for-admin-ui";
 
 @Component({
   selector: "app-admin-menu-list",
@@ -29,7 +33,6 @@ import { MatIconModule } from "@angular/material/icon";
     MatInputModule,
     MatIconButton,
     MatIconModule,
-    NgFor,
   ],
   templateUrl: "./admin-menu-list.component.html",
   styleUrls: [
@@ -38,45 +41,32 @@ import { MatIconModule } from "@angular/material/icon";
   ],
 })
 export class AdminMenuListComponent {
-  itemToDisplay: MenuItem;
+  @Input() set item(value: MenuItemForAdminUi | MenuItemForAdminUiNew) {
+    if (value instanceof MenuItemForAdminUiNew) {
+      this._item = undefined;
+      this.itemToDisplay = undefined;
+      this.editMenuItem(value);
+      return;
+    }
 
-  @Input() showAddNew: boolean = true;
-  @Input() connectedDropLists: string[] = [];
-
-  @Input() set menuItems(value: (MenuItem | EntityMenuItem)[]) {
-    this.menuItemsToDisplay = (value ?? []).map((item) => {
-      const displayItem = this.menuService.generateMenuItemForEntityType(item);
-      delete displayItem.subMenu;
-      return { originalItem: item, itemToDisplay: displayItem };
-    });
-  }
-  @Input() connectedTo: string[];
-  @Input() set item(value: MenuItem) {
     this._item = value;
-    // Ensure subMenu exists as an array if undefined
-    if (this._item && !this._item.subMenu) {
-      this._item.subMenu = [];
-    }
-    if (!this.itemToDisplay) {
-      this.itemToDisplay = this.menuService.generateMenuItemForEntityType(
-        this.item,
-      );
-    }
+    this.itemToDisplay = this.menuService.generateMenuItemForEntityType(
+      this.item,
+    );
   }
 
-  get item(): MenuItem {
+  get item(): MenuItemForAdminUi {
     return this._item;
   }
-  private _item: MenuItem;
 
-  @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItem[]>>();
-  @Output() readonly menuItemsChange = new EventEmitter<MenuItem[]>();
-  @Output() deleteItem = new EventEmitter<MenuItem>();
+  private _item: MenuItemForAdminUi;
+  itemToDisplay: MenuItem;
 
-  menuItemsToDisplay: {
-    originalItem: MenuItem | EntityMenuItem;
-    itemToDisplay: MenuItem;
-  }[] = [];
+  @Output() itemChange = new EventEmitter<MenuItemForAdminUi>();
+
+  @Input() connectedTo: string[];
+  @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
+  @Output() deleteItem = new EventEmitter<MenuItemForAdminUi>();
 
   constructor(
     private dialog: MatDialog,
@@ -85,46 +75,37 @@ export class AdminMenuListComponent {
 
   removeSubItem(index: number): void {
     if (index > -1 && this.item?.subMenu) {
-      this.item.subMenu.splice(index, 1);
-      this.emitChange();
+      this.item = { ...this.item, subMenu: this.item.subMenu.splice(index, 1) };
+      this.itemChange.emit(this.item);
     }
   }
 
-  onDelete(item: MenuItem): void {
+  onDelete(item: MenuItemForAdminUi): void {
     this.deleteItem.emit(item);
   }
 
-  async editMenuItem(item: MenuItem) {
-    const updatedItem = await this.openEditDialog(item);
-    if (updatedItem) {
-      Object.assign(item, updatedItem);
-      this.emitChange();
-    }
-  }
-
-  onDragDrop(event: CdkDragDrop<MenuItem[]>) {
+  onDragDrop(event: CdkDragDrop<MenuItemForAdminUi[]>) {
     this.itemDrop.emit(event);
   }
 
-  private async openEditDialog(item?: MenuItem): Promise<MenuItem | undefined> {
+  async editMenuItem(item: MenuItemForAdminUi | MenuItemForAdminUiNew) {
+    const updatedItem = await this.openEditDialog(item);
+    if (updatedItem) {
+      this.item = { ...item, ...updatedItem };
+      this.itemChange.emit(this.item);
+    }
+  }
+
+  private async openEditDialog(
+    item: MenuItemForAdminUi | MenuItemForAdminUiNew,
+  ): Promise<MenuItemForAdminUi | undefined> {
     const dialogRef = this.dialog.open(AdminMenuItemComponent, {
       width: "600px",
       data: {
         item: item ? { ...item } : {},
-        isNew: !item,
+        isNew: (item as MenuItemForAdminUiNew).isNew,
       },
     });
     return firstValueFrom(dialogRef.afterClosed());
-  }
-
-  submenuChanged(item: MenuItem, newSubmenu: MenuItem[]) {
-    item.subMenu = newSubmenu;
-    this.emitChange();
-  }
-
-  private emitChange() {
-    this.menuItemsChange.emit(
-      this.menuItemsToDisplay.map((x) => x.originalItem),
-    );
   }
 }
