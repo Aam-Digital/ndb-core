@@ -1,14 +1,14 @@
-<div class="top-action-bar">
-  <div class="flex-row gap-regular">
-    <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
-    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
-  </div>
+<div class="flex-row align-center gap-regular margin-bottom-regular">
+  <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
+  <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
 </div>
 
-<button mat-stroked-button color="accent" (click)="addNewMenuItem()">
-  <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
-  <span i18n>Add New</span>
-</button>
+<div class="margin-bottom-regular">
+  <button mat-stroked-button color="accent" (click)="addNewMenuItem()">
+    <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+    <span i18n>Add New</span>
+  </button>
+</div>
 
 <div
   cdkDropList

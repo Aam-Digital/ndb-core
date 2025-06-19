@@ -10,28 +10,32 @@
       [cdkDropListConnectedTo]="connectedTo"
       (cdkDropListDropped)="onDragDrop($event)"
     >
-      <div class="flex-row menu-content" cdkDragHandle>
+      <div class="flex-row" cdkDragHandle>
         <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+
         <app-menu-item
           [item]="itemToDisplay"
           [adminMode]="true"
           (editRequest)="editMenuItem(item)"
         ></app-menu-item>
-        <div class="menu-actions">
+
+        <div class="menu-actions flex-row gap-small align-center">
           <button
             mat-icon-button
             color="accent"
             (click)="editMenuItem(item)"
             aria-label="Edit menu item"
           >
-            <mat-icon class="edit-icon">edit</mat-icon>
+            <fa-icon aria-label="edit" icon="pen"></fa-icon>
           </button>
-          <fa-icon
-            icon="times"
-            class="remove-icon"
-            aria-label="Remove menu item"
+
+          <button
+            mat-icon-button
             (click)="onDelete(item)"
-          ></fa-icon>
+            aria-label="Remove menu item"
+          >
+            <fa-icon aria-label="delete" icon="times"></fa-icon>
+          </button>
         </div>
       </div>
 
