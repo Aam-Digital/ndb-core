@@ -75,6 +75,10 @@ export class EntityActionsService {
         icon: "link",
         label: $localize`:entity context menu:Copy Custom Form Link`,
         tooltip: $localize`:entity context menu tooltip:Copy a public form URL that links this entity to the submission.`,
+        visible: (entity) =>
+          this.getMatchingPublicFormConfigs(entity).then(
+            (configs) => configs.length > 0,
+          ),
       },
     ]);
   }
@@ -112,22 +116,7 @@ export class EntityActionsService {
    * If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
    */
   async copyPublicFormLink(entity: Entity): Promise<boolean> {
-    const entityType = entity.getConstructor().ENTITY_TYPE;
-
-    const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    const matchingForms = allForms.filter(
-      (config) =>
-        config.linkedEntity?.id.toLowerCase() === entityType.toLowerCase(),
-    );
-
-    if (matchingForms.length === 0) {
-      this.snackBar.open(
-        "No matching public form found for this entity",
-        "Close",
-        { duration: 3000 },
-      );
-      return false;
-    }
+    const matchingForms = await this.getMatchingPublicFormConfigs(entity);
 
     if (matchingForms.length === 1) {
       const config = matchingForms[0];
@@ -358,5 +347,18 @@ export class EntityActionsService {
         entities[0].getConstructor().label
       } "${entities.toString()}" ${action}`;
     }
+  }
+
+  /**
+   * Returns all PublicFormConfig entries matching the given entity type.
+   */
+  public async getMatchingPublicFormConfigs(
+    entity: Entity,
+  ): Promise<PublicFormConfig[]> {
+    const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
+    const allForms = await this.entityMapper.loadType(PublicFormConfig);
+    return allForms.filter(
+      (config) => config.linkedEntity?.id.toLowerCase() === entityType,
+    );
   }
 }
