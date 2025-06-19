@@ -64,6 +64,20 @@
   </div>
 </div>
 
+<!-- New field: additional info line -->
+@if (selectedLocation && !disabled) {
+  <mat-form-field floatLabel="always" class="full-width">
+    <mat-label i18n>Additional address info</mat-label>
+    <textarea
+      matInput
+      placeholder="e.g., 2nd floor, cabin 3"
+      i18n-placeholder
+      [ngModel]="selectedLocation.additionalDetails"
+      (ngModelChange)="onAdditionalDetailsChange($event)"
+    ></textarea>
+  </mat-form-field>
+}
+
 @if (!disabled) {
   <div class="margin-bottom-regular flex-row gap-regular full-width">
     <app-address-search
