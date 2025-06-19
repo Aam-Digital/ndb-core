@@ -68,19 +68,8 @@ export class EntityActionsService {
         label: $localize`:entity context menu:Duplicate`,
         tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
       },
-      {
-        action: "copy-form-link",
-        execute: (entity) => this.copyPublicFormLink(entity),
-        permission: "read",
-        icon: "link",
-        label: $localize`:entity context menu:Copy Custom Form Link`,
-        tooltip: $localize`:entity context menu tooltip:Copy a public form URL that links this entity to the submission.`,
-        visible: (entity) =>
-          this.getMatchingPublicFormConfigs(entity).then(
-            (configs) => configs.length > 0,
-          ),
-      },
     ]);
+    this.initCustomFormActions(entityActionsMenuService);
   }
 
   showSnackbarConfirmationWithUndo(
@@ -108,28 +97,6 @@ export class EntityActionsService {
         await this.router.navigate([navigateBackToUrl]);
       }
     });
-  }
-
-  /**
-   * Copies the public form link to clipboard if a matching form exists for the given entity.
-   * It checks all PublicFormConfig entries to find the one linked to the current entity type via `linkedEntity.id`.
-   * If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
-   */
-  async copyPublicFormLink(entity: Entity): Promise<boolean> {
-    const matchingForms = await this.getMatchingPublicFormConfigs(entity);
-
-    if (matchingForms.length === 1) {
-      const config = matchingForms[0];
-      const paramKey = config.linkedEntity.id;
-      const entityId = entity.getId();
-      const fullUrl = `${window.location.origin}/public-form/form/${config.route}?${paramKey}=${encodeURIComponent(entityId)}`;
-
-      await navigator.clipboard.writeText(fullUrl);
-      this.alertService.addInfo("Link copied: " + fullUrl);
-      return true;
-    }
-
-    return false;
   }
 
   /**
@@ -350,6 +317,57 @@ export class EntityActionsService {
   }
 
   /**
+   * Initializes and registers custom form actions for entities.
+   * - Loads all PublicFormConfig entries from the EntityMapper.
+   * - Filters configs to those with a linkedEntity ID.
+   * - For each matching config, registers a "copy-form-<route>" action that:
+   *   • Executes copying a prebuilt form URL based on the config.
+   *   • Is only visible when matching configs exist for the given entity.
+   */
+  private async initCustomFormActions(
+    entityActionsMenuService: EntityActionsMenuService,
+  ) {
+    const allForms = await this.entityMapper.loadType(PublicFormConfig);
+    const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
+    for (const config of matchingForms) {
+      entityActionsMenuService.registerActions([
+        {
+          action: `copy-form-${config.route}`,
+          execute: (entity) =>
+            this.copyPublicFormLinkFromConfig(entity, config),
+          permission: "read",
+          icon: "link",
+          label: `Copy Custom Form (${config.title})`,
+          tooltip: `Copy a public form URL for ${config.title} that links this entity to the submission.`,
+          visible: (entity) =>
+            this.getMatchingPublicFormConfigs(entity).then(
+              (configs) => configs.length > 0,
+            ),
+        },
+      ]);
+    }
+  }
+
+  /**
+   * Copies the public form link to clipboard if a matching form exists for the given entity.
+   * It checks all PublicFormConfig entries to find the one linked to the current entity type via `linkedEntity.id`.
+   * If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
+   */
+
+  private async copyPublicFormLinkFromConfig(
+    entity: Entity,
+    config: PublicFormConfig,
+  ): Promise<boolean> {
+    const paramKey = config.linkedEntity.id;
+    const entityId = entity.getId();
+    const fullUrl = `${window.location.origin}/public-form/form/${config.route}?${paramKey}=${encodeURIComponent(entityId)}`;
+
+    await navigator.clipboard.writeText(fullUrl);
+    this.alertService.addInfo("Link copied: " + fullUrl);
+    return true;
+  }
+
+  /**
    * Returns all PublicFormConfig entries matching the given entity type.
    */
   public async getMatchingPublicFormConfigs(
@@ -358,7 +376,8 @@ export class EntityActionsService {
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
     return allForms.filter(
-      (config) => config.linkedEntity?.id.toLowerCase() === entityType,
+      (config) =>
+        config.entity.toLowerCase() === entityType && config.linkedEntity?.id,
     );
   }
 }

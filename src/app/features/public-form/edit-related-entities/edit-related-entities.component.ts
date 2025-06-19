@@ -63,9 +63,12 @@ export class EditRelatedEntitiesComponent
 
   private initializeLinkedEntity(): void {
     const raw = this.formControl.value as FormFieldConfig;
-    this.form.patchValue({
-      id: raw.id ?? null,
-      hideFromForm: raw.hideFromForm ?? true,
-    });
+    this.form.patchValue(
+      {
+        id: raw?.id ?? null,
+        hideFromForm: raw?.hideFromForm ?? true,
+      },
+      { emitEvent: true },
+    );
   }
 }
