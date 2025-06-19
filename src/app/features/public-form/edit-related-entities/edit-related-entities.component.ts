@@ -32,7 +32,7 @@ export class EditRelatedEntitiesComponent
   entityConstructor: EntityConstructor;
 
   form: FormGroup;
-  relatedRefFields: { id: string; label: string }[] = [];
+  relatedRefFields: FormFieldConfig[] = [];
 
   private entities = inject(EntityRegistry);
 
@@ -44,18 +44,23 @@ export class EditRelatedEntitiesComponent
 
     this.relatedRefFields = Array.from(this.entityConstructor.schema.entries())
       .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
-      .map(([id, schema]) => ({ id, label: schema.label || id }));
+      .map(([id, schema]) => ({
+        id,
+        label: schema.label,
+        additional: schema.additional,
+      }));
 
     this.form = this.fb.group({
       id: [null],
-      hideFromForm: [true],
     });
     this.initializeLinkedEntity();
 
     this.form.get("id").valueChanges.subscribe((newId: string) => {
-      this.formControl.setValue({
+      const match = this.relatedRefFields.find((f) => f.id === newId);
+      this.formControl.patchValue({
         id: newId,
         hideFromForm: true,
+        additional: match?.additional,
       });
       this.formControl.markAsDirty();
     });
@@ -66,7 +71,6 @@ export class EditRelatedEntitiesComponent
     this.form.patchValue(
       {
         id: raw?.id ?? null,
-        hideFromForm: raw?.hideFromForm ?? true,
       },
       { emitEvent: true },
     );

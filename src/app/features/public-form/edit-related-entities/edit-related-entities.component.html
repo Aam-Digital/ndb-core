@@ -14,7 +14,7 @@
       <mat-label i18n>Link to entity field</mat-label>
       <mat-select formControlName="id">
         <mat-option *ngFor="let field of relatedRefFields" [value]="field.id">
-          {{ field.label }}
+          {{ field.label || field.additional }}
         </mat-option>
       </mat-select>
     </mat-form-field>
