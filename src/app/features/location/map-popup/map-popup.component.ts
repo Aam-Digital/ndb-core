@@ -85,7 +85,7 @@ export class MapPopupComponent {
     }
 
     if (data.hasOwnProperty("helpText")) {
-      this.helpText = data.helpText!;
+      this.helpText = data.helpText;
     }
   }
 
