@@ -77,11 +77,12 @@ export class AdminMenuItemComponent {
     private menuService: MenuService,
   ) {}
 
-  removeSubItem(index: number): void {
-    if (index > -1 && this.item?.subMenu) {
-      this.item = { ...this.item, subMenu: this.item.subMenu.splice(index, 1) };
-      this.itemChange.emit(this.item);
-    }
+  removeSubItem(item: MenuItemForAdminUi): void {
+    this.item = {
+      ...this.item,
+      subMenu: [...this.item.subMenu.filter((i) => i !== item)],
+    };
+    this.itemChange.emit(this.item);
   }
 
   onDelete(item: MenuItemForAdminUi): void {

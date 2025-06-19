@@ -46,7 +46,7 @@
               [item]="subItem"
               [connectedTo]="connectedTo"
               (itemDrop)="onDragDrop($event)"
-              (deleteItem)="removeSubItem(i)"
+              (deleteItem)="removeSubItem(subItem)"
               class="submenu-list"
             ></app-admin-menu-item>
           }
