@@ -340,9 +340,7 @@ export class EntityActionsService {
           label: `Copy Custom Form (${config.title})`,
           tooltip: `Copy a public form URL for ${config.title} that links this entity to the submission.`,
           visible: (entity) =>
-            this.getMatchingPublicFormConfigs(entity).then(
-              (configs) => configs.length > 0,
-            ),
+            this.getMatchingPublicFormConfigs(config, entity),
         },
       ]);
     }
@@ -367,17 +365,21 @@ export class EntityActionsService {
     return true;
   }
 
-  /**
-   * Returns all PublicFormConfig entries matching the given entity type.
-   */
-  public async getMatchingPublicFormConfigs(
-    entity: Entity,
-  ): Promise<PublicFormConfig[]> {
+  private getMatchingPublicFormConfigs(
+    config: PublicFormConfig,
+    entity: any,
+  ): Promise<boolean> {
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
-    const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    return allForms.filter(
-      (config) =>
-        config.entity.toLowerCase() === entityType && config.linkedEntity?.id,
-    );
+    const linkedEntity = config.linkedEntity;
+
+    if (!linkedEntity) return Promise.resolve(false);
+
+    if (linkedEntity.additional) {
+      return Promise.resolve(
+        linkedEntity.additional.toLowerCase() === entityType,
+      );
+    }
+
+    return Promise.resolve(linkedEntity.id.toLowerCase() === entityType);
   }
 }
