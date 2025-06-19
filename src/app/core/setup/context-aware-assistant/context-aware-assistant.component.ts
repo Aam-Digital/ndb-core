@@ -1,6 +1,8 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { environment } from "../../../../environments/environment";
+import { SessionType } from "../../session/session-type";
+import { BackupService } from "../../admin/backup/backup.service";
 
 /**
  * UI for some basic user guide,
@@ -20,7 +22,13 @@ import { environment } from "../../../../environments/environment";
 export class ContextAwareAssistantComponent {
   isDemoMode: boolean = environment.demo_mode;
 
-  public restartDemo() {
+  private readonly backupService = inject(BackupService);
+
+  async restartDemo() {
+    if (environment.session_type !== SessionType.mock) {
+      await this.backupService.resetApplication();
+    }
+
     window.location.href = "/";
   }
 }
