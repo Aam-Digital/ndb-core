@@ -1,5 +1,7 @@
-<div class="padding-regular" [class.disabled]="formControl.disabled">
-  <h3 i18n>Collect replies of this form linked to individual records</h3>
+<div class="padding-regular">
+  <h2 i18n>
+    <strong>Collect replies of this form linked to individual records</strong>
+  </h2>
   <p i18n>
     Here is the extracted text from the image: You can use forms with a special
     “magic link” to collect responses from participants that are already
@@ -9,14 +11,18 @@
     submission to the specific participant or organisation that gave it.
   </p>
 
-  <form [formGroup]="form">
-    <mat-form-field>
-      <mat-label i18n>Link to entity field</mat-label>
-      <mat-select formControlName="id">
-        <mat-option *ngFor="let field of relatedRefFields" [value]="field.id">
-          {{ field.label || field.additional }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <form [formGroup]="form" [class.disabled]="formControl.disabled">
+    <div class="flex-row align-center gap-small">
+      <fa-icon size="xl" icon="phone"></fa-icon>
+      <mat-form-field>
+        <mat-label i18n>Linked to</mat-label>
+        <mat-select formControlName="id" aria-disabled="formControl.disabled">
+          <mat-option *ngFor="let field of relatedRefFields" [value]="field.id">
+            {{ field.label || field.additional }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <fa-icon size="xl" icon="map"></fa-icon>
+    </div>
   </form>
 </div>
