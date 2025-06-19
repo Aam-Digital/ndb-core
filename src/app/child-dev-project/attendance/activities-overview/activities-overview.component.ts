@@ -4,6 +4,7 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * @deprecated configure a RelatedEntitiesComponent instead
@@ -13,7 +14,7 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
   selector: "app-activities-overview",
   templateUrl:
     "../../../core/entity-details/related-entities/related-entities.component.html",
-  imports: [EntitiesTableComponent],
+  imports: [EntitiesTableComponent, FontAwesomeModule],
 })
 export class ActivitiesOverviewComponent
   extends RelatedEntitiesComponent<RecurringActivity>

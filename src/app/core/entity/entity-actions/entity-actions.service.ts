@@ -352,7 +352,7 @@ export class EntityActionsService {
    * If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
    */
 
-  private async copyPublicFormLinkFromConfig(
+  public async copyPublicFormLinkFromConfig(
     entity: Entity,
     config: PublicFormConfig,
   ): Promise<boolean> {
@@ -365,9 +365,9 @@ export class EntityActionsService {
     return true;
   }
 
-  private getMatchingPublicFormConfigs(
+  public getMatchingPublicFormConfigs(
     config: PublicFormConfig,
-    entity: any,
+    entity: Entity,
   ): Promise<boolean> {
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
     const linkedEntity = config.linkedEntity;
