@@ -108,8 +108,8 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     private entityRegistry: EntityRegistry,
     private screenWidthObserver: ScreenWidthObserver,
     protected filterService: FilterService,
-    @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
     private entityActionsService: EntityActionsService,
+    @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
   ) {
     this.screenWidthObserver
       .shared()
