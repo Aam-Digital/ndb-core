@@ -56,6 +56,7 @@ export class ChildSchoolOverviewComponent
       screenWidthObserver,
       filterService,
       null,
+      null,
     );
 
     this.columns = [

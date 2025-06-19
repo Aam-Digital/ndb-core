@@ -53,7 +53,14 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
     screenWidthObserver: ScreenWidthObserver,
     filterService: FilterService,
   ) {
-    super(entityMapper, entities, screenWidthObserver, filterService, null);
+    super(
+      entityMapper,
+      entities,
+      screenWidthObserver,
+      filterService,
+      null,
+      null,
+    );
   }
 
   override getData() {
