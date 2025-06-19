@@ -134,7 +134,6 @@ export class AddressSearchComponent implements OnInit {
     if (typeof selected === "object") {
       result = { geoLookup: selected };
     } else if (typeof selected === "string") {
-      // Show confirmation dialog instead of custom dialog
       await this.confirmationDialog.getConfirmation(
         $localize`No mapped location`,
         $localize`There is no mapped location for the entered address. You can still save the address as free text.`,
