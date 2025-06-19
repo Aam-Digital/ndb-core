@@ -164,7 +164,7 @@ describe("DemoDataInitializerService", () => {
   }));
 
   it("should stop syncing after logout", fakeAsync(() => {
-    service.run();
+    service.logInDemoUser();
     tick();
 
     TestBed.inject(SessionSubject).next({
