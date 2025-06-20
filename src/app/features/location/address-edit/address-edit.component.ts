@@ -26,7 +26,7 @@ import { FormsModule } from "@angular/forms";
     MatIconButton,
     FaIconComponent,
     AddressGpsLocationComponent,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: "./address-edit.component.html",
   styleUrl: "./address-edit.component.scss",
