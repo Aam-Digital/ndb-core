@@ -17,7 +17,6 @@
 
 import { Component, Input } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { NgFor } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -28,12 +27,11 @@ import { SessionSubject } from "../../session/auth/session-info";
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
-  template: ` <ng-template
-    *ngFor="let widgetConfig of _widgets"
-    [appDynamicComponent]="widgetConfig"
-  ></ng-template>`,
+  template: ` @for (widgetConfig of _widgets; track widgetConfig) {
+    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+  }`,
   styleUrls: ["./dashboard.component.scss"],
-  imports: [NgFor, DynamicComponentDirective],
+  imports: [DynamicComponentDirective],
 })
 export class DashboardComponent implements DashboardConfig {
   @Input() set widgets(widgets: DynamicComponentConfig[]) {

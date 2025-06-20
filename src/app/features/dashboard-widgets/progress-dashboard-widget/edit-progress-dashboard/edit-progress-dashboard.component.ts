@@ -16,7 +16,6 @@ import {
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { NgForOf, NgIf } from "@angular/common";
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -37,9 +36,7 @@ export interface EditProgressDashboardComponentData {
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
-    NgIf,
     DialogCloseComponent,
-    NgForOf,
     MatButtonModule,
     FontAwesomeModule,
     MatTooltipModule,

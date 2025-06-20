@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -10,7 +9,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
  */
 @Component({
   selector: "app-anonymize-options",
-  imports: [CommonModule, MatOptionModule, MatSelectModule, MatTooltipModule],
+  imports: [MatOptionModule, MatSelectModule, MatTooltipModule],
   templateUrl: "./anonymize-options.component.html",
   styleUrl: "./anonymize-options.component.scss",
 })

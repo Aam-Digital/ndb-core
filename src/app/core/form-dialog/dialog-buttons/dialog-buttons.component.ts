@@ -6,7 +6,6 @@ import {
   Optional,
   Output,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
@@ -28,7 +27,6 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
 @Component({
   selector: "app-dialog-buttons",
   imports: [
-    CommonModule,
     MatButtonModule,
     Angulartics2Module,
     MatDialogModule,

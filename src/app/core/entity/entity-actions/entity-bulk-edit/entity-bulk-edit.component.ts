@@ -21,7 +21,6 @@ import { Entity, EntityConstructor } from "../../model/entity";
 import { MatOption } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { CommonModule } from "@angular/common";
 import {
   EntityForm,
   EntityFormService,
@@ -41,7 +40,6 @@ import {
     MatOption,
     MatFormFieldModule,
     MatSelectModule,
-    CommonModule,
     EntityFieldEditComponent,
   ],
   templateUrl: "./entity-bulk-edit.component.html",

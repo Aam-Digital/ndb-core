@@ -5,7 +5,6 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
 import { startWith } from "rxjs/operators";
 import { FormControl } from "@angular/forms";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
-import { NgForOf, NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -24,8 +23,6 @@ import { MatCardModule } from "@angular/material/card";
   selector: "app-edit-attendance",
   imports: [
     EditEntityComponent,
-    NgIf,
-    NgForOf,
     FontAwesomeModule,
     EntityBlockComponent,
     MatButtonModule,

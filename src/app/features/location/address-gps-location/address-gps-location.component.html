@@ -4,6 +4,9 @@
   matTooltip="To accurately log your current address, please allow GPS access."
   i18n-matTooltip
 >
-  <fa-icon *ngIf="!gpsLoading" icon="location-crosshairs"></fa-icon>
-  <mat-spinner *ngIf="gpsLoading" diameter="24"></mat-spinner>
+  @if (!gpsLoading) {
+    <fa-icon icon="location-crosshairs"></fa-icon>
+  } @else {
+    <mat-spinner diameter="24"></mat-spinner>
+  }
 </button>

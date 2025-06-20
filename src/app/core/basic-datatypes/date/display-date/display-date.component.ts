@@ -1,7 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { DatePipe, NgIf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
@@ -15,7 +15,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 @Component({
   selector: "app-display-date",
   templateUrl: "./display-date.component.html",
-  imports: [DatePipe, NgIf, FontAwesomeModule, MatTooltipModule],
+  imports: [DatePipe, FontAwesomeModule, MatTooltipModule],
 })
 export class DisplayDateComponent extends ViewDirective<Date, string> {
   @Input() displayAsAnonymized: boolean;

@@ -17,7 +17,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { NgIf } from "@angular/common";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -59,7 +58,6 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
     DialogCloseComponent,
     MatInputModule,
     FormsModule,
-    NgIf,
     MatTabsModule,
     MatSlideToggleModule,
     ReactiveFormsModule,

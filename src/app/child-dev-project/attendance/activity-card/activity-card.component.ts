@@ -4,7 +4,7 @@ import { RecurringActivity } from "../model/recurring-activity";
 import { MatCardModule } from "@angular/material/card";
 import { BorderHighlightDirective } from "../../../core/common-components/border-highlight/border-highlight.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DatePipe, NgIf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 
 @Component({
   selector: "app-activity-card",
@@ -15,7 +15,6 @@ import { DatePipe, NgIf } from "@angular/common";
     BorderHighlightDirective,
     FontAwesomeModule,
     DatePipe,
-    NgIf,
   ],
 })
 export class ActivityCardComponent {

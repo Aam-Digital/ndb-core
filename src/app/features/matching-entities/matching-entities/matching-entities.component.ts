@@ -24,7 +24,6 @@ import { ConfigService } from "../../../core/config/config.service";
 import { MatTableModule } from "@angular/material/table";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
 import { MapComponent } from "../../location/map/map.component";
@@ -75,9 +74,7 @@ export interface MatchingSide extends MatchingSideConfig {
     MatTableModule,
     FontAwesomeModule,
     MatTooltipModule,
-    NgIf,
     MatButtonModule,
-    NgForOf,
     EntitiesTableComponent,
     EntityFieldViewComponent,
     MapComponent,

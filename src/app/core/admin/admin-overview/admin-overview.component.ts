@@ -10,7 +10,7 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { ExtendedAlertConfig } from "../../alerts/alert-config";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { DatePipe, NgForOf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { DownloadService } from "../../export/download-service/download.service";
 import { MatListModule } from "@angular/material/list";
 import { RouteTarget } from "../../../route-target";
@@ -25,7 +25,7 @@ import { AdminOverviewService } from "./admin-overview.service";
   selector: "app-admin-overview",
   templateUrl: "./admin-overview.component.html",
   styleUrls: ["./admin-overview.component.scss"],
-  imports: [MatButtonModule, RouterLink, NgForOf, DatePipe, MatListModule],
+  imports: [MatButtonModule, RouterLink, DatePipe, MatListModule],
 })
 export class AdminOverviewComponent implements OnInit {
   /** all alerts */

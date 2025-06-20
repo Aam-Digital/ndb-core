@@ -1,45 +1,50 @@
 <mat-tab-group [preserveContent]="true" #matTabGroup>
-  <mat-tab *ngFor="let tab of tabs; index as tabIndex">
-    <ng-template mat-tab-label>
-      <div
-        class="drop-list flex-row"
-        [id]="'tabs-' + tabIndex"
-        cdkDropList
-        cdkDropListOrientation="horizontal"
-        (cdkDropListDropped)="drop($event)"
-        [cdkDropListConnectedTo]="getAllTabs(tabIndex)"
-      >
+  @for (tab of tabs; track tab; let tabIndex = $index) {
+    <mat-tab>
+      <ng-template mat-tab-label>
         <div
-          cdkDrag
-          cdkDragLockAxis="x"
-          class="flex-row align-center drop-item gap-small"
+          class="drop-list flex-row"
+          [id]="'tabs-' + tabIndex"
+          cdkDropList
+          cdkDropListOrientation="horizontal"
+          (cdkDropListDropped)="drop($event)"
+          [cdkDropListConnectedTo]="getAllTabs(tabIndex)"
         >
-          <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-          @if (tabIndex === matTabGroup.selectedIndex) {
-            <app-admin-section-header
-              [(title)]="tab[tabTitleProperty]"
-              (remove)="
-                tabs.splice(tabIndex, 1);
-                matTabGroup.selectedIndex = tabIndex - 1
-              "
-            ></app-admin-section-header>
-          } @else {
-            <!-- only current tab can be renamed -->
-            {{ tab[tabTitleProperty] }}
-          }
+          <div
+            cdkDrag
+            cdkDragLockAxis="x"
+            class="flex-row align-center drop-item gap-small"
+          >
+            <fa-icon
+              icon="grip-vertical"
+              size="xl"
+              class="drag-handle"
+            ></fa-icon>
+            @if (tabIndex === matTabGroup.selectedIndex) {
+              <app-admin-section-header
+                [(title)]="tab[tabTitleProperty]"
+                (remove)="
+                  tabs.splice(tabIndex, 1);
+                  matTabGroup.selectedIndex = tabIndex - 1
+                "
+              ></app-admin-section-header>
+            } @else {
+              <!-- only current tab can be renamed -->
+              {{ tab[tabTitleProperty] }}
+            }
+          </div>
         </div>
-      </div>
-    </ng-template>
-
-    <ng-template matTabContent>
-      <ng-template
-        *ngTemplateOutlet="
-          tabTemplate;
-          context: { $implicit: tab, index: tabIndex }
-        "
-      ></ng-template>
-    </ng-template>
-  </mat-tab>
+      </ng-template>
+      <ng-template matTabContent>
+        <ng-template
+          *ngTemplateOutlet="
+            tabTemplate;
+            context: { $implicit: tab, index: tabIndex }
+          "
+        ></ng-template>
+      </ng-template>
+    </mat-tab>
+  }
 
   <!-- Add new tab -->
   <mat-tab>

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { NgClass, NgIf } from "@angular/common";
+import { NgClass } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EditFileComponent } from "../edit-file/edit-file.component";
@@ -25,7 +25,6 @@ import { ErrorHintComponent } from "app/core/common-components/error-hint/error-
     MatButtonModule,
     MatTooltipModule,
     FontAwesomeModule,
-    NgIf,
     ErrorHintComponent,
     MatError,
     NgClass,

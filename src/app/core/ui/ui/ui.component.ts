@@ -20,7 +20,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { RouterLink, RouterOutlet } from "@angular/router";
@@ -53,7 +52,6 @@ import { GotoThirdPartySystemComponent } from "../../../features/third-party-aut
   styleUrls: ["./ui.component.scss"],
   imports: [
     MatToolbarModule,
-    NgIf,
     MatButtonModule,
     FontAwesomeModule,
     RouterLink,

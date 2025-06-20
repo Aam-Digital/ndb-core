@@ -13,47 +13,51 @@
 >
   <form [formGroup]="prefilledValueSettings">
     <div formArrayName="prefilledValue">
-      <div
-        *ngFor="let fieldGroup of prefilledValues.controls; let i = index"
-        [formGroupName]="i"
-        class="flex-row flex-wrap align-center gap-regular padding-regular margin-top-regular mat-elevation-z2 container"
-      >
-        <div class="flex-row align-center">
-          <mat-form-field class="full-width-field">
-            <mat-label i18n>Field</mat-label>
-            <app-entity-field-select
-              [entityType]="entityConstructor"
-              formControlName="field"
-            />
-          </mat-form-field>
-          <app-help-button
-            text="Select a field for which you want to set a default value."
-            i18n-text
-          ></app-help-button>
-        </div>
-        @if (fieldGroup.get("field").value) {
-          <div class="flex-grow">
-            <div class="full-width-field">
-              <app-admin-default-value
-                formControlName="defaultValue"
-                [entityType]="entityConstructor"
-                [entitySchemaField]="
-                  getSchemaField(fieldGroup.get('field').value)
-                "
-              ></app-admin-default-value>
-            </div>
-          </div>
-        }
-
-        <button
-          mat-icon-button
-          (click)="removePrefilledFields(i)"
-          matTooltip="Remove default value"
-          i18n-matTooltip
+      @for (
+        fieldGroup of prefilledValues.controls;
+        track fieldGroup;
+        let i = $index
+      ) {
+        <div
+          [formGroupName]="i"
+          class="flex-row flex-wrap align-center gap-regular padding-regular margin-top-regular mat-elevation-z2 container"
         >
-          <fa-icon icon="trash"></fa-icon>
-        </button>
-      </div>
+          <div class="flex-row align-center">
+            <mat-form-field class="full-width-field">
+              <mat-label i18n>Field</mat-label>
+              <app-entity-field-select
+                [entityType]="entityConstructor"
+                formControlName="field"
+              />
+            </mat-form-field>
+            <app-help-button
+              text="Select a field for which you want to set a default value."
+              i18n-text
+            ></app-help-button>
+          </div>
+          @if (fieldGroup.get("field").value) {
+            <div class="flex-grow">
+              <div class="full-width-field">
+                <app-admin-default-value
+                  formControlName="defaultValue"
+                  [entityType]="entityConstructor"
+                  [entitySchemaField]="
+                    getSchemaField(fieldGroup.get('field').value)
+                  "
+                ></app-admin-default-value>
+              </div>
+            </div>
+          }
+          <button
+            mat-icon-button
+            (click)="removePrefilledFields(i)"
+            matTooltip="Remove default value"
+            i18n-matTooltip
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+        </div>
+      }
     </div>
   </form>
 

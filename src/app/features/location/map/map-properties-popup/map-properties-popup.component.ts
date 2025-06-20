@@ -7,7 +7,6 @@ import {
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { NgForOf } from "@angular/common";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { getLocationProperties } from "../../map-utils";
@@ -27,7 +26,6 @@ export type LocationProperties = { [key: string]: string[] };
     DialogCloseComponent,
     MatFormFieldModule,
     MatSelectModule,
-    NgForOf,
     MatButtonModule,
   ],
 })

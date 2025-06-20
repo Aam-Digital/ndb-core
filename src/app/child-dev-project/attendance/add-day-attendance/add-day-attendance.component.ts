@@ -4,7 +4,6 @@ import { Note } from "../../notes/model/note";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { ConfirmationDialogButton } from "../../../core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { RollCallComponent } from "./roll-call/roll-call.component";
-import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -18,7 +17,6 @@ import { RouteTarget } from "../../../route-target";
   templateUrl: "./add-day-attendance.component.html",
   styleUrls: ["./add-day-attendance.component.scss"],
   imports: [
-    NgIf,
     MatButtonModule,
     FontAwesomeModule,
     MatTooltipModule,

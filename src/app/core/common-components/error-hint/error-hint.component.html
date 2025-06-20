@@ -1,4 +1,6 @@
-<div *ngFor="let err of form?.errors | keyvalue">
-  {{ err.value["errorMessage"] }}
-  <ng-content></ng-content>
-</div>
+@for (err of form?.errors | keyvalue; track err) {
+  <div>
+    {{ err.value["errorMessage"] }}
+    <ng-content></ng-content>
+  </div>
+}

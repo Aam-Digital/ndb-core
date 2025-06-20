@@ -12,7 +12,6 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
-import { NgForOf } from "@angular/common";
 import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
 import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
@@ -52,13 +51,7 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
     MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
   ],
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    NgForOf,
-    FormsModule,
-  ],
+  imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, FormsModule],
 })
 export class DateRangeFilterPanelComponent {
   selectedRangeValue: DateRange<Date>;

@@ -10,7 +10,6 @@ import { ColumnMapping } from "../column-mapping";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityConstructor } from "../../entity/model/entity";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
-import { NgForOf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -29,7 +28,6 @@ import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/e
   imports: [
     EditImportColumnMappingComponent,
     HelpButtonComponent,
-    NgForOf,
     MatInputModule,
     FormsModule,
     MatButtonModule,

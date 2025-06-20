@@ -6,7 +6,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 import { merge } from "lodash-es";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
@@ -22,7 +21,6 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
   styleUrls: ["./compare-rev.component.scss"],
   imports: [
     MatExpansionModule,
-    NgIf,
     MatTooltipModule,
     MatInputModule,
     MatButtonModule,

@@ -5,7 +5,6 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../dialog-close/dialog-close.component";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 
 /**
@@ -15,13 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
 @Component({
   selector: "app-confirmation-dialog",
   templateUrl: "./confirmation-dialog.component.html",
-  imports: [
-    DialogCloseComponent,
-    NgIf,
-    MatDialogModule,
-    MatButtonModule,
-    NgForOf,
-  ],
+  imports: [DialogCloseComponent, MatDialogModule, MatButtonModule],
 })
 export class ConfirmationDialogComponent {
   /**

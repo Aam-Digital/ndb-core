@@ -8,7 +8,6 @@ import {
   QueryList,
   ViewChild,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
@@ -59,7 +58,6 @@ import { TableRow } from "./table-row";
 @Component({
   selector: "app-entities-table",
   imports: [
-    CommonModule,
     EntityFieldEditComponent,
     EntityFieldLabelComponent,
     EntityFieldViewComponent,

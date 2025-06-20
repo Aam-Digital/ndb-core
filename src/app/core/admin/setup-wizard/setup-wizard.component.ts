@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import {
   MatStep,
   MatStepper,
@@ -23,7 +22,6 @@ import { Logging } from "../../logging/logging.service";
 @Component({
   selector: "app-setup-wizard",
   imports: [
-    CommonModule,
     MatStepper,
     MatStep,
     MatActionList,

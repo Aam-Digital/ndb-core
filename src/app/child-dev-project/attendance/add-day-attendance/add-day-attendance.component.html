@@ -8,29 +8,29 @@
   Record Attendance
 </app-view-title>
 
-<h2 *ngIf="currentStage === 0">
-  {{ stages[currentStage] }}
-</h2>
-<div
-  class="flex-row align-center relative-left margin-bottom-small"
-  *ngIf="currentStage !== 0"
->
-  <button mat-icon-button (click)="exit()" matTooltip="Back" i18n-matTooltip>
-    <fa-icon icon="arrow-left"></fa-icon>
-  </button>
-  <h2 class="remove-margin-bottom">{{ event.subject }}</h2>
-</div>
-<app-roll-call-setup
-  *ngIf="currentStage === 0"
-  (eventSelected)="finishBasicInformationStage($event)"
->
-</app-roll-call-setup>
+@if (currentStage === 0) {
+  <h2>
+    {{ stages[currentStage] }}
+  </h2>
+} @else {
+  <div class="flex-row align-center relative-left margin-bottom-small">
+    <button mat-icon-button (click)="exit()" matTooltip="Back" i18n-matTooltip>
+      <fa-icon icon="arrow-left"></fa-icon>
+    </button>
+    <h2 class="remove-margin-bottom">{{ event.subject }}</h2>
+  </div>
+}
+@if (currentStage === 0) {
+  <app-roll-call-setup (eventSelected)="finishBasicInformationStage($event)">
+  </app-roll-call-setup>
+}
 
-<app-roll-call
-  *ngIf="currentStage === 1"
-  [eventEntity]="event"
-  [sortParticipantsBy]="sortParticipantsBy"
-  (exit)="finishRollCallState()"
-  (complete)="saveRollCallResult($event)"
->
-</app-roll-call>
+@if (currentStage === 1) {
+  <app-roll-call
+    [eventEntity]="event"
+    [sortParticipantsBy]="sortParticipantsBy"
+    (exit)="finishRollCallState()"
+    (complete)="saveRollCallResult($event)"
+  >
+  </app-roll-call>
+}

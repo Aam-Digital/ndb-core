@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
@@ -17,7 +16,6 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
-import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
@@ -63,7 +61,6 @@ interface GroupCountRow {
     Angulartics2Module,
     DashboardListWidgetComponent,
     EntityBlockComponent,
-    NgIf,
     MatTooltipModule,
     MatIconButton,
     EntityFieldLabelComponent,

@@ -5,7 +5,6 @@ import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatIconButton } from "@angular/material/button";
-import { NgIf } from "@angular/common";
 import { AlertService } from "app/core/alerts/alert.service";
 import { GeoResult, GeoService } from "../geo.service";
 import { firstValueFrom } from "rxjs";
@@ -16,7 +15,6 @@ import { firstValueFrom } from "rxjs";
     MatTooltip,
     FaIconComponent,
     MatProgressSpinnerModule,
-    NgIf,
     MatTooltip,
     MatIconButton,
   ],

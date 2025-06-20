@@ -8,9 +8,11 @@
     [formControlName]="formControlName"
     [compareWith]="compareOptionFun"
   >
-    <mat-option *ngFor="let o of predefinedIntervals" [value]="o.interval">
-      {{ o.label }}
-    </mat-option>
+    @for (o of predefinedIntervals; track o) {
+      <mat-option [value]="o.interval">
+        {{ o.label }}
+      </mat-option>
+    }
 
     <mat-option
       (onSelectionChange)="openCustomIntervalSelection($event)"

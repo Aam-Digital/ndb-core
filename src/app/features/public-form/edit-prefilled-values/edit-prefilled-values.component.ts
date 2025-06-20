@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, inject, OnInit } from "@angular/core";
 import {
   FormArray,
@@ -26,7 +25,6 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
   standalone: true,
   imports: [
     AdminDefaultValueComponent,
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,

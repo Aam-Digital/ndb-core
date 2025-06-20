@@ -15,13 +15,7 @@ import { RouterLink } from "@angular/router";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { Logging } from "../../../core/logging/logging.service";
-import {
-  AsyncPipe,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  NgTemplateOutlet,
-} from "@angular/common";
+import { AsyncPipe, NgStyle, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -49,7 +43,6 @@ import { AblePurePipe } from "@casl/angular";
     "../../../core/entity-list/entity-list/entity-list.component.html",
   imports: [
     AblePurePipe,
-    NgIf,
     NgStyle,
     MatButtonModule,
     Angulartics2OnModule,
@@ -57,7 +50,6 @@ import { AblePurePipe } from "@casl/angular";
     MatMenuModule,
     NgTemplateOutlet,
     MatTabsModule,
-    NgForOf,
     MatFormFieldModule,
     MatInputModule,
     EntitiesTableComponent,

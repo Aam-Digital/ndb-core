@@ -29,7 +29,7 @@ import { LatestChangesService } from "../latest-changes.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MarkdownModule, MarkdownService } from "ngx-markdown";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MarkedRendererCustom } from "./MarkedRendererCustom";
 
@@ -48,8 +48,6 @@ import { MarkedRendererCustom } from "./MarkedRendererCustom";
     FontAwesomeModule,
     DatePipe,
     MatButtonModule,
-    NgForOf,
-    NgIf,
   ],
 })
 export class ChangelogComponent implements OnInit {
