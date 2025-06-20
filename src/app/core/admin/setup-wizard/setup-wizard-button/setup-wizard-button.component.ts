@@ -11,7 +11,11 @@ import {
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { filter } from "rxjs/operators";
 import { Logging } from "../../../logging/logging.service";
+import { environment } from "../../../../../environments/environment";
 
+/**
+ * @deprecated Will be replaced by AssistantDialog panel
+ */
 @UntilDestroy()
 @Component({
   selector: "app-setup-wizard-button",
@@ -48,7 +52,8 @@ export class SetupWizardButtonComponent implements OnInit {
   }
 
   private updateStatus(config: SetupWizardConfig) {
-    this.showSetupWizard = !config.finished;
+    this.showSetupWizard = !config.finished && !environment.demo_mode;
+    // demo_mode is showing the wizard in the assistant dialog
   }
 
   navigateToWizard() {

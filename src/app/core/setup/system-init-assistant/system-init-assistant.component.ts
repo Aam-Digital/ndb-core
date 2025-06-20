@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
 import { SetupService } from "../setup.service";
 import { BaseConfig } from "../base-config";
 import { MatButtonModule } from "@angular/material/button";
@@ -10,6 +9,7 @@ import { DemoDataInitializerService } from "../../demo-data/demo-data-initialize
 import { LanguageSelectComponent } from "app/core/language/language-select/language-select.component";
 import { availableLocales } from "app/core/language/languages";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { MatDialogRef } from "@angular/material/dialog";
 import { AssistantButtonComponent } from "../assistant-button/assistant-button.component";
 
 /**

@@ -1,14 +1,30 @@
 @use "variables/colors";
 @use "variables/sizes";
 
+:host {
+  --dialog-header-border: 18px;
+}
+
 .assistant-panel-container {
   height: 100%;
   box-sizing: border-box;
 }
 
 .dialog-header-bar {
-  border-top: 18px solid colors.$accent;
+  border-top: var(--dialog-header-border) solid colors.$accent;
 }
+
+::ng-deep mat-tab-header {
+  // gap to add context menu button in right corner
+  margin-right: 48px;
+}
+
+.context-menu-button {
+  position: absolute;
+  right: 0;
+  top: var(--dialog-header-border);
+}
+
 
 ::ng-deep .mat-mdc-tab-body-wrapper {
   height: 100%;

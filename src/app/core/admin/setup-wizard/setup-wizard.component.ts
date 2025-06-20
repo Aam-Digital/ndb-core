@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Optional } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   MatStep,
@@ -19,6 +19,7 @@ import {
 import { MarkdownComponent } from "ngx-markdown";
 import { MatTooltip } from "@angular/material/tooltip";
 import { Logging } from "../../logging/logging.service";
+import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
   selector: "app-setup-wizard",
@@ -47,7 +48,10 @@ export class SetupWizardComponent implements OnInit {
 
   private configEntity: Config<SetupWizardConfig>;
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(
+    private entityMapper: EntityMapperService,
+    @Optional() private dialogRef: MatDialogRef<any>,
+  ) {}
 
   async ngOnInit() {
     await this.loadSetupConfig();
@@ -96,5 +100,6 @@ export class SetupWizardComponent implements OnInit {
   async finishWizard() {
     this.configEntity.data.finished = true;
     await this.entityMapper.save(this.configEntity);
+    this.dialogRef?.close();
   }
 }

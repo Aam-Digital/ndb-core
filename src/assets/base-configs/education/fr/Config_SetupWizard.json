@@ -1,7 +1,7 @@
 {
   "_id": "Config:SetupWizard",
   "data": {
-    "openOnStart": true,
+    "openOnStart": false,
     "steps": [
       {
         "title": "Bienvenue",

@@ -8,6 +8,9 @@ import { DemoDataInitializerService } from "../../demo-data/demo-data-initialize
 import { SetupService } from "../setup.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LanguageService } from "app/core/language/language.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AssistantDialogComponent", () => {
   let component: AssistantDialogComponent;
@@ -15,7 +18,7 @@ describe("AssistantDialogComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AssistantDialogComponent],
+      imports: [AssistantDialogComponent, FontAwesomeTestingModule],
       providers: [
         {
           provide: ConfigService,
@@ -24,6 +27,10 @@ describe("AssistantDialogComponent", () => {
         {
           provide: DemoDataInitializerService,
           useValue: jasmine.createSpyObj(["generateDemoData"]),
+        },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(),
         },
         {
           provide: SetupService,
