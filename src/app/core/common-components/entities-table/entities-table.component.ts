@@ -52,9 +52,6 @@ import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TableRow } from "./table-row";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { PublicFormModule } from "app/features/public-form/public-form.module";
-import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -86,7 +83,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   styleUrl: "./entities-table.component.scss",
 })
 export class EntitiesTableComponent<T extends Entity>
-  implements AfterContentInit, OnInit
+  implements AfterContentInit
 {
   @Input() set records(value: T[]) {
     if (!value) {
@@ -101,7 +98,6 @@ export class EntitiesTableComponent<T extends Entity>
 
   private lastSelectedIndex: number = null;
   private lastSelection: boolean = null;
-  isCustomFormAvailable: PublicFormConfig | null = null;
 
   _records: T[] = [];
   /** data displayed in the template's table */
@@ -110,10 +106,6 @@ export class EntitiesTableComponent<T extends Entity>
 
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
   @ContentChildren(MatColumnDef) projectedColumns: QueryList<MatColumnDef>;
-
-  ngOnInit() {
-    this.loadMatchingCustomForm();
-  }
 
   ngAfterContentInit() {
     // dynamically add columns from content-projection (https://stackoverflow.com/a/58017564/1473411)
@@ -426,8 +418,6 @@ export class EntitiesTableComponent<T extends Entity>
     private router: Router,
     private filterService: FilterService,
     private schemaService: EntitySchemaService,
-    private entityMapper: EntityMapperService,
-    private publicFormModule: PublicFormModule,
   ) {
     this.recordsDataSource = this.createDataSource();
   }
@@ -503,31 +493,5 @@ export class EntitiesTableComponent<T extends Entity>
     } else {
       filter["isActive"] = true;
     }
-  }
-
-  private async loadMatchingCustomForm() {
-    if (!this._entityType || !this.entity) return;
-
-    const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
-
-    for (const config of matchingForms) {
-      const matchesCustomForm =
-        this.publicFormModule.getMatchingPublicFormConfigs(config, this.entity);
-
-      const matchesEntityType = config.entity === this._entityType.ENTITY_TYPE;
-
-      if (matchesCustomForm && matchesEntityType) {
-        this.isCustomFormAvailable = config;
-        break;
-      }
-    }
-  }
-
-  public async copyCustomFormLink() {
-    await this.publicFormModule.copyPublicFormLinkFromConfig(
-      this.entity,
-      this.isCustomFormAvailable,
-    );
   }
 }

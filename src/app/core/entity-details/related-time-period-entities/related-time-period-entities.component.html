@@ -5,7 +5,6 @@
 </app-pill>
 
 <app-entities-table
-  [entity]="entity"
   [entityType]="entityCtr"
   [records]="data"
   [filter]="filter"
@@ -16,3 +15,6 @@
   [(showInactive)]="showInactive"
 >
 </app-entities-table>
+
+<app-custom-form-link-button [entity]="entity" [entityType]="entityCtr">
+</app-custom-form-link-button>

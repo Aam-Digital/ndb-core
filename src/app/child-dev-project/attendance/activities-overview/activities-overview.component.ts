@@ -5,6 +5,7 @@ import { RelatedEntitiesComponent } from "../../../core/entity-details/related-e
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { CustomFormLinkButtonComponent } from "app/features/public-form/public-forms/custom-form-link-button/custom-form-link-button.component";
 
 /**
  * @deprecated configure a RelatedEntitiesComponent instead
@@ -14,7 +15,11 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   selector: "app-activities-overview",
   templateUrl:
     "../../../core/entity-details/related-entities/related-entities.component.html",
-  imports: [EntitiesTableComponent, FontAwesomeModule],
+  imports: [
+    EntitiesTableComponent,
+    FontAwesomeModule,
+    CustomFormLinkButtonComponent,
+  ],
 })
 export class ActivitiesOverviewComponent
   extends RelatedEntitiesComponent<RecurringActivity>

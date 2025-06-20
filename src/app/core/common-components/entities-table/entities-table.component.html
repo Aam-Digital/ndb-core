@@ -3,18 +3,6 @@
 </div>
 
 <div [hidden]="isLoading" class="table-container">
-  @if (isCustomFormAvailable) {
-    <button
-      mat-flat-button
-      i18n
-      (click)="copyCustomFormLink()"
-      matTooltip="Copy a public form URL that links this record to the form submission."
-      i18n-matTooltip
-    >
-      Copy custom form ({{ isCustomFormAvailable.title }}) link
-      <fa-icon class="color-accent" size="xl" icon="copy"></fa-icon>
-    </button>
-  }
   <table
     mat-table
     [dataSource]="recordsDataSource"
