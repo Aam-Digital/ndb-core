@@ -14,7 +14,6 @@ import { FormFieldConfig } from "../../../core/common-components/entity-form/For
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
-import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -53,16 +52,8 @@ export class NotesRelatedToEntityComponent
     entities: EntityRegistry,
     screenWidthObserver: ScreenWidthObserver,
     filterService: FilterService,
-    entityActionsService: EntityActionsService,
   ) {
-    super(
-      entityMapper,
-      entities,
-      screenWidthObserver,
-      filterService,
-      entityActionsService,
-      null,
-    );
+    super(entityMapper, entities, screenWidthObserver, filterService, null);
   }
 
   override ngOnInit() {
