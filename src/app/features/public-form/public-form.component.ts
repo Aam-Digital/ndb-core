@@ -172,7 +172,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         hideFromForm,
       };
 
-      const lastColumn = this.formConfig.columns.at(-1);
+      const lastColumn = this.formConfig.columns?.at(-1);
       lastColumn?.fields.push(prefillField);
     }
   }
