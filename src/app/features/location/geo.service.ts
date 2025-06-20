@@ -66,18 +66,37 @@ export class GeoService {
       );
   }
 
-  private reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
+  private getCity(addr: OpenStreetMapsSearchResult["address"]): string {
+    return addr.city ?? addr.town ?? "";
+  }
+
+  private formatStreet(addr: OpenStreetMapsSearchResult["address"]): string {
+    if (!addr.road && !addr.house_number) return "";
+    if (addr.road && addr.house_number)
+      return `${addr.road} ${addr.house_number}`;
+    return addr.road || addr.house_number || "";
+  }
+
+  private formatPostcodeCity(
+    addr: OpenStreetMapsSearchResult["address"],
+  ): string {
+    const city = this.getCity(addr);
+    if (addr.postcode && city) return `${addr.postcode} ${city}`;
+    if (addr.postcode) return `${addr.postcode}`;
+    if (city) return city;
+    return "";
+  }
+
+  reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
     const addr = result?.address;
     if (addr) {
-      const city = addr.city ?? addr.town;
-
-      result.display_name = [
+      const displayParts = [
         addr.amenity ?? addr.office,
-        addr.road ? addr.road + " " + addr.house_number : undefined,
-        addr.postcode ? addr.postcode + " " + city : city,
-      ]
-        .filter((x) => !!x)
-        .join(", ");
+        this.formatStreet(addr),
+        this.formatPostcodeCity(addr),
+      ].filter((x) => !!x && x !== "undefined");
+
+      result.display_name = displayParts.join(", ");
     }
     return result;
   }
