@@ -56,7 +56,7 @@ import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.compon
     HelpButtonComponent,
     AnonymizeOptionsComponent,
     FaIconComponent,
-    AdminIconComponent, // Importing the reusable AdminIconComponent
+    AdminIconComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
@@ -88,7 +88,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.basicSettingsForm = this.fb.group({
       label: [this.generalSettings.label, Validators.required],
       labelPlural: [this.generalSettings.labelPlural],
-      icon: [this.generalSettings.icon], // Icon field handled via AdminIconComponent
+      icon: [this.generalSettings.icon],
       color: [this.generalSettings.color],
       toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],

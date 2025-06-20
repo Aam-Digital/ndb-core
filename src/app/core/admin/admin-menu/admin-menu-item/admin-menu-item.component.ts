@@ -1,23 +1,20 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { MatListModule } from "@angular/material/list";
 import { MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { CdkDragDrop, DragDropModule } from "@angular/cdk/drag-drop";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
-import { MatIconButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { MenuService } from "app/core/ui/navigation/menu.service";
 import { firstValueFrom } from "rxjs";
 import { AdminMenuItemDetailsComponent } from "../admin-menu-item-details/admin-menu-item-details.component";
-import { MatIconModule } from "@angular/material/icon";
 import {
   MenuItemForAdminUi,
   MenuItemForAdminUiNew,
 } from "../menu-item-for-admin-ui";
+import { MatNavList } from "@angular/material/list";
+import { MatIconButton } from "@angular/material/button";
 
 /**
  * Display and edit a menu item in the admin interface,
@@ -27,16 +24,13 @@ import {
   selector: "app-admin-menu-item",
   standalone: true,
   imports: [
-    CommonModule,
-    MatListModule,
+    MatNavList,
     MenuItemComponent,
     FaIconComponent,
     DragDropModule,
     MatFormFieldModule,
     FormsModule,
-    MatInputModule,
     MatIconButton,
-    MatIconModule,
   ],
   templateUrl: "./admin-menu-item.component.html",
   styleUrls: [
