@@ -2,19 +2,26 @@
   <h3 i18n="Label for property selection">
     Select matching {{ entity.label }} property
   </h3>
+
   <mat-form-field>
     <mat-select [formControl]="propertyForm">
       <mat-option
         *ngFor="let property of availableProperties"
         [value]="property.property"
-        >{{ property.label }}</mat-option
-      >
+        >{{ property.label }}
+      </mat-option>
     </mat-select>
   </mat-form-field>
   <app-help-button
     text="Select which property of the target entity is matching with the values of this column. E.g. if your column contains names of children then select 'Name'."
     i18n-text="import - value mapping (entity) - help text"
   ></app-help-button>
+
+  <div i18n>
+    You can select this field to be mapped from multiple imported columns. The
+    linked record then has to match all those columns values (e.g. a first +
+    last name column).
+  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions>
