@@ -66,4 +66,47 @@ describe("GeoService", () => {
       { category: "Map" },
     );
   });
+
+  it("should format with amenity, street, postcode and city", () => {
+    const testResult: any = {
+      address: {
+        amenity: "Cafe",
+        road: "Main St",
+        house_number: "42",
+        postcode: "12345",
+        city: "Berlin",
+      },
+    };
+    const formatted = service.reformatDisplayName(testResult);
+    expect(formatted.display_name).toBe("Cafe, Main St 42, 12345 Berlin");
+  });
+
+  it("should format with office and city only", () => {
+    const testResult: any = {
+      address: {
+        office: "Company HQ",
+        city: "Munich",
+      },
+    };
+    const formatted = service.reformatDisplayName(testResult);
+    expect(formatted.display_name).toBe("Company HQ, Munich");
+  });
+
+  it("should handle missing address gracefully", () => {
+    const testResult: any = {};
+    const formatted = service.reformatDisplayName(testResult);
+    expect(formatted.display_name).toBeUndefined();
+  });
+
+  it("should not include 'undefined' in the result", () => {
+    const testResult: any = {
+      address: {
+        amenity: "Library",
+        road: undefined,
+        city: "Hamburg",
+      },
+    };
+    const formatted = service.reformatDisplayName(testResult);
+    expect(formatted.display_name).toBe("Library, Hamburg");
+  });
 });
