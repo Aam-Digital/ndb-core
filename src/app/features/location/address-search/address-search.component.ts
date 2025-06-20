@@ -19,7 +19,7 @@ import {
 } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { AsyncPipe } from "@angular/common";
-import { merge, of, Subject } from "rxjs";
+import { merge, of, BehaviorSubject, Subject } from "rxjs";
 import { GeoResult, GeoService } from "../geo.service";
 import {
   catchError,
@@ -34,6 +34,8 @@ import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../geo-location";
 import { HttpErrorResponse } from "@angular/common/http";
+import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
  * A search box integrated with OpenStreetMaps lookup of the entered address,
@@ -75,7 +77,7 @@ export class AddressSearchComponent implements OnInit {
    */
   @Output() locationSelected = new EventEmitter<GeoLocation>();
 
-  filteredOptions = new Subject<GeoResult[]>();
+  filteredOptions = new BehaviorSubject<GeoResult[]>([]);
   loading = false;
   nothingFound = false;
   networkError = false;
@@ -88,7 +90,10 @@ export class AddressSearchComponent implements OnInit {
   /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
 
-  constructor(private location: GeoService) {}
+  constructor(
+    private location: GeoService,
+    private confirmationDialog: ConfirmationDialogService,
+  ) {}
 
   ngOnInit() {
     this.initSearchPipeline();
@@ -125,12 +130,16 @@ export class AddressSearchComponent implements OnInit {
     );
   }
 
-  selectLocation(selected: GeoResult | string | undefined) {
+  async selectLocation(selected: GeoResult | string | undefined) {
     let result: GeoLocation;
     if (typeof selected === "object") {
       result = { geoLookup: selected };
     } else if (typeof selected === "string") {
-      // special case to set address text from search without mapped location (when no result was found)
+      await this.confirmationDialog.getConfirmation(
+        $localize`No mapped location`,
+        $localize`There is no mapped location for the entered address. You can still save the address as free text.`,
+        OkButton,
+      );
       result = { locationString: selected };
     }
 
@@ -160,6 +169,14 @@ export class AddressSearchComponent implements OnInit {
 
         return of([]);
       }),
+    );
+  }
+
+  isInputInOptions(input: string): boolean {
+    if (!input) return false;
+    const normalizedInput = input.trim().toLowerCase();
+    return this.filteredOptions.value.some(
+      (option) => option.display_name.trim().toLowerCase() === normalizedInput,
     );
   }
 }
