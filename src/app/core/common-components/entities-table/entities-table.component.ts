@@ -94,7 +94,6 @@ export class EntitiesTableComponent<T extends Entity>
     this.updateFilteredData();
     this.isLoading = false;
   }
-  @Input() entity: Entity;
 
   private lastSelectedIndex: number = null;
   private lastSelection: boolean = null;

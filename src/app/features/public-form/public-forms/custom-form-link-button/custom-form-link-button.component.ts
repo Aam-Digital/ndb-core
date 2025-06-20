@@ -3,7 +3,7 @@ import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { Entity } from "app/core/entity/model/entity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { PublicFormsService } from "../../public-forms.service";
 
@@ -15,7 +15,6 @@ import { PublicFormsService } from "../../public-forms.service";
 })
 export class CustomFormLinkButtonComponent implements OnInit {
   @Input() entity: Entity;
-  @Input() entityType: EntityConstructor;
 
   public matchingCustomForm: PublicFormConfig | null = null;
 
@@ -25,8 +24,7 @@ export class CustomFormLinkButtonComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    if (!this.entity || !this.entityType) return;
-
+    if (!this.entity) return;
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
     const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
 
@@ -36,7 +34,8 @@ export class CustomFormLinkButtonComponent implements OnInit {
           config,
           this.entity,
         );
-      const matchesEntityType = config.entity === this.entityType.ENTITY_TYPE;
+      const matchesEntityType =
+        config.entity === this.entity.getConstructor().ENTITY_TYPE;
 
       if (matchesCustomForm && matchesEntityType) {
         this.matchingCustomForm = config;
