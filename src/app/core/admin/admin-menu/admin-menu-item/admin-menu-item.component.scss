@@ -16,16 +16,6 @@
   margin-left: auto; /* Push actions to far right */
 }
 
-.menu-item-preview {
-  ::ng-deep mat-list-item {
-    pointer-events: none;
-  }
-
-  ::ng-deep .submenu-toggle {
-    display: none;
-  }
-}
-
 .drop-item:has(.remove-icon:hover) {
   color: rgb(255, 0, 0);
   background-color: rgba(255, 0, 0, 0.1);
