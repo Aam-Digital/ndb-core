@@ -105,7 +105,15 @@ export class ImportReviewDataComponent implements OnChanges {
     this.displayColumns = [
       this.IMPORT_STATUS_COLUMN,
       ...this.columnMapping
+        // remove unmapped columns:
         .filter(({ propertyName }) => !!propertyName)
+        // show multi-mapped columns only once:
+        .filter(
+          (c) =>
+            this.columnMapping.find(
+              (x) => x.propertyName === c.propertyName,
+            ) === c,
+        )
         .map(({ propertyName }) => propertyName),
     ];
 
