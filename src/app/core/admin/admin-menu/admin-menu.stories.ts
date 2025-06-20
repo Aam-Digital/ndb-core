@@ -22,7 +22,7 @@ const testConfig = new Config(Config.CONFIG_KEY, {
 });
 
 export default {
-  title: "Src/App/Admin",
+  title: "Core/Admin/Menu",
   component: AdminMenuComponent,
   decorators: [
     applicationConfig({
