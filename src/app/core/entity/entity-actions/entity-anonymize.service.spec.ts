@@ -25,6 +25,7 @@ import {
   expectAllUnchangedExcept,
 } from "./cascading-entity-action.spec";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
+import { PublicFormsService } from "app/features/public-form/public-forms.service";
 
 describe("EntityAnonymizeService", () => {
   let service: EntityAnonymizeService;
@@ -44,6 +45,7 @@ describe("EntityAnonymizeService", () => {
         { provide: EntityMapperService, useValue: entityMapper },
         { provide: FileService, useValue: mockFileService },
         { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
+        { provide: PublicFormsService, useValue: {} },
       ],
     });
 

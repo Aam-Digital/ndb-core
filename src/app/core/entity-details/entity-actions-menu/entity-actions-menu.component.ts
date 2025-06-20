@@ -3,7 +3,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Optional,
   Output,
   SimpleChanges,
@@ -18,7 +17,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 import { EntityActionsMenuService } from "./entity-actions-menu.service";
 import { EntityAction } from "./entity-action.interface";
-import { PublicFormsService } from "app/features/public-form/public-forms.service";
 
 @Component({
   selector: "app-entity-actions-menu",
@@ -33,7 +31,7 @@ import { PublicFormsService } from "app/features/public-form/public-forms.servic
     MatTooltipModule,
   ],
 })
-export class EntityActionsMenuComponent implements OnChanges, OnInit {
+export class EntityActionsMenuComponent implements OnChanges {
   @Input() entity: Entity;
 
   /**
@@ -56,13 +54,8 @@ export class EntityActionsMenuComponent implements OnChanges, OnInit {
 
   constructor(
     private entityActionsMenuService: EntityActionsMenuService,
-    private publicFormsService: PublicFormsService,
     @Optional() protected viewContext: ViewComponentContext,
   ) {}
-
-  async ngOnInit() {
-    this.publicFormsService.initCustomFormActions();
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entity) {
