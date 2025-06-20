@@ -48,9 +48,10 @@ export class AdminMenuItemComponent {
     }
 
     this._item = value;
-    this.itemToDisplay = this.menuService.generateMenuItemForEntityType(
-      this.item,
-    );
+    const plainItem = this.menuService.generateMenuItemForEntityType(this.item);
+    delete plainItem.link;
+    delete plainItem.subMenu;
+    this.itemToDisplay = plainItem;
   }
 
   get item(): MenuItemForAdminUi {

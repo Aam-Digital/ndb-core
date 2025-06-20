@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { CommonModule, NgForOf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -36,38 +36,13 @@ export class MenuItemComponent {
    */
   @Input() activeLink: string;
 
-  @Input() adminMode = false;
-  @Output() editRequest = new EventEmitter<void>();
-
   isExpanded: boolean = false;
+
   toggleSubMenu(): void {
     this.isExpanded = !this.isExpanded;
   }
+
   hasSubMenu(item: MenuItem): boolean {
     return !!item.subMenu && item.subMenu.length > 0;
-  }
-  onLabelClick(event: MouseEvent) {
-    if (this.adminMode) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.editRequest.emit();
-      return false;
-    }
-    return true;
-  }
-
-  onListItemClick(event: MouseEvent) {
-    if (this.adminMode) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.editRequest.emit();
-      return false;
-    } else if (this.hasSubMenu(this.item)) {
-      event.preventDefault();
-      this.toggleSubMenu();
-      return false;
-    }
-    // Else, allow navigation
-    return true;
   }
 }

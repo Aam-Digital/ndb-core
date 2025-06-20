@@ -15,8 +15,8 @@
 
         <app-menu-item
           [item]="itemToDisplay"
-          [adminMode]="true"
-          (editRequest)="editMenuItem(item)"
+          class="menu-item-preview"
+          (click)="editMenuItem(item)"
         ></app-menu-item>
 
         <div class="menu-actions flex-row gap-small align-center">

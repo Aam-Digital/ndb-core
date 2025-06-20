@@ -5,13 +5,25 @@
   min-height: 50px;
   position: relative;
   display: block;
-  padding: 8px 0;
+  padding: 8px;
   margin: auto;
+
+  border: 1px solid colors.$border-color;
 }
 
 /* Actions area on the right (edit & remove) */
 .menu-actions {
   margin-left: auto; /* Push actions to far right */
+}
+
+.menu-item-preview {
+  ::ng-deep mat-list-item {
+    pointer-events: none;
+  }
+
+  ::ng-deep .submenu-toggle {
+    display: none;
+  }
 }
 
 .drop-item:has(.remove-icon:hover) {
