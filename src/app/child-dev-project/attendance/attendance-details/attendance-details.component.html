@@ -122,6 +122,7 @@
   </div>
 
   <app-entities-table
+    [mainEntity]="entity"
     [entityType]="EventNote"
     [records]="entity.events"
     [customColumns]="eventsColumns"

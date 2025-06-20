@@ -22,11 +22,6 @@ import {
   EntitySpecialLoaderService,
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { PublicFormConfig } from "app/features/public-form/public-form-config";
-import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
  */
@@ -35,12 +30,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 @Component({
   selector: "app-related-entities",
   templateUrl: "./related-entities.component.html",
-  imports: [
-    EntitiesTableComponent,
-    FontAwesomeModule,
-    MatButtonModule,
-    MatTooltipModule,
-  ],
+  imports: [EntitiesTableComponent],
 })
 export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   /** currently viewed/main entity for which related entities are displayed in this component */
@@ -101,14 +91,12 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   data: E[];
   protected entityCtr: EntityConstructor<E>;
-  public isCustomFormAvailable: PublicFormConfig | null = null;
 
   constructor(
     protected entityMapper: EntityMapperService,
     private entityRegistry: EntityRegistry,
     private screenWidthObserver: ScreenWidthObserver,
     protected filterService: FilterService,
-    private entityActionsService: EntityActionsService,
     @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
   ) {
     this.screenWidthObserver
@@ -126,7 +114,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
       // show all related docs when visiting an archived entity
       this.showInactive = this.entity.anonymized;
     }
-    await this.loadMatchingCustomForm();
 
     this.listenToEntityUpdates();
   }
@@ -213,37 +200,5 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
         return this.screenWidthObserver.currentScreenSize() >= numericValue;
       })
       .map((c) => c.id);
-  }
-
-  private async loadMatchingCustomForm() {
-    const allForms = await this.entityMapper.loadType(PublicFormConfig);
-    const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
-
-    for (const config of matchingForms) {
-      const matchesCustomForm =
-        await this.entityActionsService.getMatchingPublicFormConfigs(
-          config,
-          this.entity,
-        );
-
-      const matchesEntityType =
-        config.entity &&
-        this.entityCtr &&
-        config.entity === this.entityCtr.ENTITY_TYPE;
-
-      if (matchesCustomForm && matchesEntityType) {
-        this.isCustomFormAvailable = config;
-        break;
-      }
-    }
-  }
-
-  public async copyCustomFormLink() {
-    if (this.isCustomFormAvailable) {
-      await this.entityActionsService.copyPublicFormLinkFromConfig(
-        this.entity,
-        this.isCustomFormAvailable,
-      );
-    }
   }
 }
