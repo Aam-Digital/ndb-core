@@ -67,20 +67,6 @@ export class ImportColumnMappingComponent implements OnChanges {
         this.columnMapping = autoMappings;
         this.columnMappingChange.emit([...this.columnMapping]);
       }
-      this.updateUsedPropertyNames();
-    }
-  }
-
-  /**
-   * Check which fields are already used in a mapping.
-   * @private
-   */
-  private updateUsedPropertyNames(): void {
-    this.usedPropertyNames.clear();
-    for (const col of this.columnMapping) {
-      if (col.propertyName) {
-        this.usedPropertyNames.add(col.propertyName);
-      }
     }
   }
 
@@ -89,7 +75,7 @@ export class ImportColumnMappingComponent implements OnChanges {
     newColumnMapping: ColumnMapping,
   ) {
     Object.assign(originalColumnMapping, newColumnMapping);
-
-    this.columnMappingChange.emit([...this.columnMapping]);
+    this.columnMapping = [...this.columnMapping];
+    this.columnMappingChange.emit(this.columnMapping);
   }
 }

@@ -1,23 +1,35 @@
-<mat-form-field>
-  <mat-label>{{ columnMapping.column }}</mat-label>
-  <app-entity-field-select
-    [entityType]="entityCtor"
-    [hideOption]="hideOption"
-    [(ngModel)]="columnMapping.propertyName"
-    (ngModelChange)="updateMapping()"
-  />
-</mat-form-field>
+<div class="flex-row gap-regular align-center">
+  <mat-form-field>
+    <mat-label>{{ columnMapping.column }}</mat-label>
+    <app-entity-field-select
+      [entityType]="entityCtor"
+      [hideOption]="hideOption"
+      [(ngModel)]="columnMapping.propertyName"
+      (ngModelChange)="updateMapping()"
+    />
+  </mat-form-field>
 
-@if (currentlyMappedDatatype?.importConfigComponent) {
-  <button
-    class="margin-left-small"
-    mat-stroked-button
-    (click)="openMappingComponent()"
-    i18n="import - column mapping - configure additional transformation button"
-    [matBadge]="mappingAdditionalWarning"
-    [matBadgeHidden]="!mappingAdditionalWarning"
-    matBadgeColor="warn"
-  >
-    Configure value mapping
-  </button>
-}
+  @if (currentlyMappedDatatype?.importConfigComponent) {
+    <button
+      class="margin-left-small"
+      mat-stroked-button
+      (click)="openMappingComponent()"
+      i18n="
+        import - column mapping - configure additional transformation button
+      "
+      [matBadge]="mappingAdditionalWarning"
+      [matBadgeHidden]="!mappingAdditionalWarning"
+      matBadgeColor="warn"
+    >
+      Configure value mapping
+    </button>
+  }
+
+  @if (hasMultiMapping) {
+    <fa-icon
+      icon="object-group"
+      matTooltip="This field is mapped from multiple imported columns."
+      i18n-matTooltip
+    ></fa-icon>
+  }
+</div>

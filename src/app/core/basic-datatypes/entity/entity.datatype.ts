@@ -21,6 +21,8 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { Logging } from "app/core/logging/logging.service";
+import { ImportProcessingContext } from "../../import/import-processing-context";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity.
@@ -37,10 +39,12 @@ export class EntityDatatype extends StringDatatype {
   override editComponent = "EditEntity";
   override viewComponent = "DisplayEntity";
   override importConfigComponent = "EntityImportConfig";
+  override importAllowsMultiMapping = true;
 
   constructor(
     private entityMapper: EntityMapperService,
     private removeService: EntityActionsService,
+    private schemaService: EntitySchemaService,
   ) {
     super();
   }
@@ -52,23 +56,52 @@ export class EntityDatatype extends StringDatatype {
    * @param val The value from an import that should be mapped to an entity reference.
    * @param schemaField The config defining details of the field that will hold the entity reference after mapping.
    * @param additional The field of the referenced entity that should be compared with the val. (e.g. if we run importMapFunction for a field that is an entity-reference to a "School" entity, this could be "name" if the "School" entity has a "name" property and the import should use that name to match the correct school)
+   * @param importProcessingContext context to share information across calls for multiple columns and rows.
    * @returns Promise resolving to the ID of the matched entity or undefined if no match is found.
    */
   override async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
-    additional?: string,
+    additional: string,
+    importProcessingContext: ImportProcessingContext,
   ): Promise<string | undefined> {
     if (!additional || val == null) {
       return undefined;
     }
 
+    const context = new EntityFieldImportContext(
+      importProcessingContext,
+      schemaField,
+    );
+
+    await this.loadImportMapEntities(schemaField.additional, context);
+
+    context.filteredEntities = context.filteredEntities.filter(
+      (entity) => normalizeValue(entity[additional]) === normalizeValue(val),
+    );
+
+    // return first match
+    return context.filteredEntities.length > 0
+      ? context.filteredEntities[0]._id
+      : undefined;
+  }
+
+  /**
+   * Load the required entity type's entities into cache if not available yet.
+   * @private
+   */
+  private async loadImportMapEntities(
+    entityType: string,
+    context: EntityFieldImportContext,
+  ) {
+    if (context.entities) {
+      return;
+    }
+
     try {
-      const entities = await this.entityMapper.loadType(schemaField.additional);
-      const matchedEntity = entities.find(
-        (entity) => normalizeValue(entity[additional]) === normalizeValue(val),
+      context.entities = (await this.entityMapper.loadType(entityType)).map(
+        (e) => this.schemaService.transformEntityToDatabaseFormat(e),
       );
-      return matchedEntity?.getId();
     } catch (error) {
       Logging.error("Error in EntityDatatype importMapFunction:", error);
       return undefined;
@@ -112,5 +145,50 @@ function normalizeValue(val: any): string {
   if (val == null) {
     return "";
   }
-  return String(val).trim(); // Convert everything to string and trim spaces
+  return String(val).trim().toLowerCase(); // Convert everything to string and trim spaces
+}
+
+/**
+ * Manage cache access to the current import processing context.
+ */
+class EntityFieldImportContext {
+  private contextKey: string;
+
+  constructor(
+    private globalContext: ImportProcessingContext,
+    private schemaField: EntitySchemaField,
+  ) {
+    this.contextKey = `${schemaField.id}_${globalContext.rowIndex}`;
+
+    if (!globalContext[this.contextKey]) {
+      globalContext[this.contextKey] = {};
+    }
+  }
+
+  /**
+   * Entities (in database format for easier comparison!)
+   */
+  get entities(): any[] | undefined {
+    return this.globalContext[`entities_${this.schemaField.additional}`];
+  }
+
+  set entities(value: any[]) {
+    this.globalContext[`entities_${this.schemaField.additional}`] = value;
+  }
+
+  /**
+   * Entities already filter by any other column conditions
+   * (in database format for easier comparison!)
+   */
+  get filteredEntities(): any[] {
+    return (
+      this.globalContext[this.contextKey].filteredEntities ??
+      this.entities ??
+      []
+    );
+  }
+
+  set filteredEntities(value: any[]) {
+    this.globalContext[this.contextKey].filteredEntities = value;
+  }
 }

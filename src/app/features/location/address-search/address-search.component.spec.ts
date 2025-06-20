@@ -70,7 +70,7 @@ describe("AddressSearchComponent", () => {
     tick(700);
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
     expect(component.loading).toBeFalse();
-    expect(options).toBeUndefined();
+    expect(options).toEqual([]);
 
     tick(2000);
     expect(mockGeoService.lookup).toHaveBeenCalledWith("input 2");
