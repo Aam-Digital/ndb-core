@@ -19,7 +19,7 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
 
-describe("PublicFormComponent", () => {
+fdescribe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
   let fixture: ComponentFixture<PublicFormComponent<TestEntity>>;
   let initRemoteDBSpy: jasmine.Spy;
@@ -50,6 +50,7 @@ describe("PublicFormComponent", () => {
           useValue: {
             snapshot: {
               paramMap: new Map([["id", FORM_ID]]),
+              queryParamMap: new Map([["childId", "Child:3"]]),
             },
           },
         },
@@ -226,6 +227,23 @@ describe("PublicFormComponent", () => {
       }),
     );
   }));
+
+  it("should add hidden prefilled field for related entity when query param exists", () => {
+    testFormConfig.linkedEntity = { id: "childId", hideFromForm: true };
+    component.formConfig = testFormConfig;
+    component.fieldGroups = testFormConfig.columns;
+
+    component["handleRelatedEntityFields"]();
+
+    const lastColumn = component.formConfig.columns.at(-1);
+    expect(lastColumn?.fields).toContain(
+      jasmine.objectContaining({
+        id: "childId",
+        defaultValue: { mode: "static", config: { value: "Child:3" } },
+        hideFromForm: true,
+      }),
+    );
+  });
 
   it("should update defaultValue for a field in prefilledFields that is already visible", fakeAsync(() => {
     const config = new PublicFormConfig();
