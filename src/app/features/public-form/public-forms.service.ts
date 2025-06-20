@@ -31,7 +31,6 @@ export class PublicFormsService {
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
     const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
     for (const config of matchingForms) {
-      console.log("hello");
       entityActionsMenuService.registerActions([
         {
           action: `copy-form-${config.route}`,

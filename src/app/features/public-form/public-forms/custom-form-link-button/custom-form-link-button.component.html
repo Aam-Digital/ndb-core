@@ -4,7 +4,11 @@
     mat-flat-button
     i18n
     (click)="copyLink()"
-    matTooltip="Copy a public form URL that links this record to the form submission."
+    matTooltip="This link to the `{{
+      matchingCustomForm?.title
+    }}` public form contains an individual ID that links submissions back to this {{
+      matchingCustomForm.entity
+    }}."
     i18n-matTooltip
   >
     Copy custom form ({{ matchingCustomForm?.title }}) link
