@@ -108,7 +108,7 @@ describe("RouterService", () => {
         path: "other",
         component: TestComponent,
         canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
-        canDeactivate: [jasmine.any(Function) as any],
+        canDeactivate: [jasmine.any(Function)],
         data: { permittedUserRoles: ["admin_app"] },
       },
       { path: "child", component: EntityListComponent },
