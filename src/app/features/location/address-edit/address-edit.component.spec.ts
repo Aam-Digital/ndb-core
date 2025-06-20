@@ -85,35 +85,36 @@ describe("AddressEditComponent", () => {
     expect(component.selectedLocation).toBeUndefined();
   });
 
-  it("should offer to update manual address after location was selected from search", fakeAsync(() => {
-    const selected: GeoLocation = {
-      locationString: SAMPLE_GEO_RESULT.display_name,
-      geoLookup: SAMPLE_GEO_RESULT,
-    };
+it("should offer to update manual address after location was selected from search", fakeAsync(() => {
+  const selected: GeoLocation = {
+    locationString: SAMPLE_GEO_RESULT.display_name,
+    geoLookup: SAMPLE_GEO_RESULT,
+  };
 
-    component.selectedLocation = {
-      locationString: "manual address",
-      geoLookup: undefined,
-    };
-    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
-    component.updateFromAddressSearch(selected);
-    tick();
-    expect(component.selectedLocation).toEqual({
-      locationString: "manual address",
-      geoLookup: SAMPLE_GEO_RESULT,
-    });
-
-    // test user confirms
-    component.selectedLocation = {
-      locationString: "manual address",
-      geoLookup: undefined,
-    };
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
-    component.updateFromAddressSearch(selected);
-    tick();
-    expect(component.selectedLocation).toEqual({
-      locationString: selected.locationString,
-      geoLookup: SAMPLE_GEO_RESULT,
-    });
-  }));
+  component.selectedLocation = {
+    locationString: "manual address",
+    geoLookup: undefined,
+  };
+  mockConfirmationDialog.getConfirmation.and.resolveTo(false);
+  component.updateFromAddressSearch(selected);
+  tick();
+  expect(component.selectedLocation).toEqual({
+    locationString: "manual address",
+    geoLookup: SAMPLE_GEO_RESULT,
+    additionalDetails: undefined,
+  });
+  // test user confirms
+  component.selectedLocation = {
+    locationString: "manual address",
+    geoLookup: undefined,
+  };
+  mockConfirmationDialog.getConfirmation.and.resolveTo(true);
+  component.updateFromAddressSearch(selected);
+  tick();
+  expect(component.selectedLocation).toEqual({
+    locationString: selected.locationString,
+    geoLookup: SAMPLE_GEO_RESULT,
+    additionalDetails: undefined,
+  });
+}));
 });
