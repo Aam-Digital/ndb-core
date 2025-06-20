@@ -14,6 +14,7 @@ import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
+import { PublicFormsService } from "app/features/public-form/public-forms.service";
 
 describe("EntityActionsService", () => {
   let service: EntityActionsService;
@@ -42,7 +43,12 @@ describe("EntityActionsService", () => {
     mockedEntityAnonymizeService.anonymizeEntity.and.resolveTo(
       new CascadingActionResult([singleTestEntity]),
     );
-    mockedEntityMapper = jasmine.createSpyObj(["save", "saveAll"]);
+    mockedEntityMapper = jasmine.createSpyObj([
+      "save",
+      "saveAll",
+      "receiveUpdates",
+    ]);
+    mockedEntityMapper.receiveUpdates.and.returnValue(of());
 
     snackBarSpy = jasmine.createSpyObj(["open"]);
     mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
@@ -73,6 +79,10 @@ describe("EntityActionsService", () => {
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,
+        },
+        {
+          provide: PublicFormsService,
+          useValue: jasmine.createSpyObj(["initCustomFormActions"]),
         },
       ],
     });

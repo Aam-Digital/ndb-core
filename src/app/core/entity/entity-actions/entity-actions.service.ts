@@ -11,6 +11,8 @@ import { OkButton } from "../../common-components/confirmation-dialog/confirmati
 import { CascadingActionResult } from "./cascading-entity-action";
 import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
+import { PublicFormsService } from "app/features/public-form/public-forms.service";
+import { PublicFormConfig } from "app/features/public-form/public-form-config";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -29,6 +31,7 @@ export class EntityActionsService {
     private entityAnonymize: EntityAnonymizeService,
     entityActionsMenuService: EntityActionsMenuService,
     private duplicateRecordService: DuplicateRecordService,
+    private publicFormsService: PublicFormsService,
   ) {
     entityActionsMenuService.registerActions([
       {
@@ -66,6 +69,11 @@ export class EntityActionsService {
         tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
       },
     ]);
+    this.publicFormsService.initCustomFormActions(); // Call once on load to initialize actions immediately (in case no updates happen)
+
+    this.entityMapper.receiveUpdates(PublicFormConfig).subscribe(() => {
+      this.publicFormsService.initCustomFormActions(); // Re-initialize when there are actual DB updates to PublicFormConfig
+    });
   }
 
   showSnackbarConfirmationWithUndo(

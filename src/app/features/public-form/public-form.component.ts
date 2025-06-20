@@ -113,6 +113,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     }
     this.fieldGroups = this.formConfig.columns;
     this.handlePrefilledFields();
+    this.handleRelatedEntityFields();
 
     await this.initForm();
   }
@@ -152,6 +153,28 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         lastColumn?.fields.push(newPrefilledField);
       }
     });
+  }
+
+  /**
+   * Checks if the public form has a linkedEntity configuration.
+   * If a matching query parameter is found in the URL, it adds a hidden prefilled field
+   * to the form so that the submission can be linked to the correct entity (e.g., child, school).
+   */
+  private handleRelatedEntityFields() {
+    const linkedFieldId = this.formConfig.linkedEntity?.id;
+    const hideFromForm = this.formConfig.linkedEntity?.hideFromForm;
+    const paramValue = this.route.snapshot.queryParamMap.get(linkedFieldId);
+
+    if (linkedFieldId && paramValue) {
+      const prefillField: FormFieldConfig = {
+        id: linkedFieldId,
+        defaultValue: { mode: "static", config: { value: paramValue } },
+        hideFromForm,
+      };
+
+      const lastColumn = this.formConfig.columns?.at(-1);
+      lastColumn?.fields.push(prefillField);
+    }
   }
 
   private async initForm() {
