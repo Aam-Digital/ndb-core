@@ -31,6 +31,7 @@ export function addPropertySchema(
   propertySchema: EntitySchemaField,
 ) {
   target[propertyName] = undefined; // This ensures that the field is not read only
+  propertySchema.id = propertyName; // Ensure the id is set to the property name
   getEntitySchema(target.constructor).set(propertyName, propertySchema);
   return target;
 }
