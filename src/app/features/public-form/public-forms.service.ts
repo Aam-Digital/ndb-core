@@ -12,10 +12,8 @@ export class PublicFormsService {
   constructor(
     private entityMapper: EntityMapperService,
     private alertService: AlertService,
-    entityActionsMenuService: EntityActionsMenuService,
-  ) {
-    this.initCustomFormActions(entityActionsMenuService);
-  }
+    private entityActionsMenuService: EntityActionsMenuService,
+  ) {}
 
   /**
    * Initializes and registers custom form actions for entities.
@@ -25,15 +23,18 @@ export class PublicFormsService {
    *   • Executes copying a prebuilt form URL based on the config.
    *   • Is only visible when matching configs exist for the given entity.
    */
-  private async initCustomFormActions(
-    entityActionsMenuService: EntityActionsMenuService,
-  ) {
+  public async initCustomFormActions() {
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
     const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
+    // Unregister any previously registered actions for these form configs
+    const actionKeys = matchingForms.map(
+      (config) => `copy-form-${config.getId()}`,
+    );
+    this.entityActionsMenuService.unregisterActions(actionKeys);
     for (const config of matchingForms) {
-      entityActionsMenuService.registerActions([
+      this.entityActionsMenuService.registerActions([
         {
-          action: `copy-form-${config.route}`,
+          action: `copy-form-${config.getId()}`,
           execute: (entity) =>
             this.copyPublicFormLinkFromConfig(entity, config),
           permission: "read",

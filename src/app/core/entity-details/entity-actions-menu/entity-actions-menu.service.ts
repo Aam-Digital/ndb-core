@@ -38,6 +38,16 @@ export class EntityActionsMenuService {
   registerActionsFactories(newActions: EntityActionsFactory[]) {
     this.actionsFactories.push(...newActions);
   }
+
+  /**
+   * Remove multiple registered static actions by their action keys.
+   * @param actionKeys Array of action keys to unregister.
+   */
+  unregisterActions(actionKeys: string[]): void {
+    this.actions = this.actions.filter(
+      (action) => !actionKeys.includes(action.action),
+    );
+  }
 }
 
 export type EntityActionsFactory = (entity: Entity) => EntityAction[];

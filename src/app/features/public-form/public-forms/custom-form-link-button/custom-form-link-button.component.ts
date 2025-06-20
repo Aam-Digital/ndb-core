@@ -32,7 +32,7 @@ export class CustomFormLinkButtonComponent implements OnInit {
 
     for (const config of matchingForms) {
       const matchesCustomForm =
-        this.publicFormsService.getMatchingPublicFormConfigs(
+        await this.publicFormsService.getMatchingPublicFormConfigs(
           config,
           this.entity,
         );
