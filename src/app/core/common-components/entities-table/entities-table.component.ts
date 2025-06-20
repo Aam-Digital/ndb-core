@@ -4,7 +4,6 @@ import {
   ContentChildren,
   EventEmitter,
   Input,
-  OnInit,
   Output,
   QueryList,
   ViewChild,
@@ -75,9 +74,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatTableModule,
     EntityInlineEditActionsComponent,
     EntityCreateButtonComponent,
-    FontAwesomeModule,
-    MatButtonModule,
-    MatTooltipModule,
   ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
@@ -97,7 +93,6 @@ export class EntitiesTableComponent<T extends Entity>
 
   private lastSelectedIndex: number = null;
   private lastSelection: boolean = null;
-
   _records: T[] = [];
   /** data displayed in the template's table */
   recordsDataSource: MatTableDataSource<TableRow<T>>;
