@@ -1,18 +1,14 @@
-<button
-  mat-icon-button
-  [matMenuTriggerFor]="menu"
-  matTooltip="Change language"
-  i18n-matTooltip
->
-  <fa-icon icon="globe" class="toolbar-icon"></fa-icon>
-</button>
+<mat-form-field appearance="fill" class="language-select-dropdown">
+  <mat-label i18n>Choose your language</mat-label>
 
-<mat-menu #menu>
-  <a
-    *appConfigurableEnum="let lang of localeEnumId"
-    (click)="changeLocale(lang.id)"
-    mat-menu-item
+  <mat-select
+    [value]="currentLocale"
+    (selectionChange)="changeLocale($event.value)"
   >
-    <span>{{ lang.label }}</span>
-  </a>
-</mat-menu>
+    @for (locale of availableLocales; track locale.id) {
+      <mat-option [value]="locale.id">
+        {{ locale.label }}
+      </mat-option>
+    }
+  </mat-select>
+</mat-form-field>

@@ -9,6 +9,7 @@ import {
 } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { Database } from "../database/database";
 import { DatabaseResolverService } from "../database/database-resolver.service";
+import { EntityRegistry } from "../entity/database-entity.decorator";
 
 describe("DemoDataService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
@@ -41,6 +42,7 @@ describe("DemoDataService", () => {
           useValue: { getDatabase: () => mockDatabase },
         },
         mockGeneratorsProviders,
+        EntityRegistry,
       ],
     });
   });

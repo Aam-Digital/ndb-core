@@ -42,6 +42,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
     });
   }
 
+  public hasConfig() {
+    return this.currentConfig !== undefined;
+  }
+
   public saveConfig(config: any): Promise<void> {
     return this.entityMapper.save(new Config(Config.CONFIG_KEY, config), true);
   }

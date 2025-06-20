@@ -1,0 +1,28 @@
+{
+  "_id": "Config:SetupWizard",
+  "data": {
+    "openOnStart": false,
+    "steps": [
+      {
+        "title": "Willkommen",
+        "text": "# Willkommen bei Aam Digital!\nWir helfen Ihnen, die Daten Ihrer Teilnehmer:innen oder Begünstigten und die Interaktionen Ihres Teams zu verwalten.\n\nDie Aam Digital Plattform ist sehr flexibel und kann genau an Ihre Projektbedürfnisse angepasst werden.\nDie folgenden Schritte führen Sie durch die wichtigsten Konfigurationsoptionen.\nIn wenigen Minuten können Sie schon mit Ihren Daten arbeiten.\n\nWir haben auch Tutorials, Anleitungen und Videos für Sie: [Aam Digital Support Center](https://chatwoot.help/hc/aam-digital/en)\n\nSie können den Einrichtungsassistenten jederzeit unterbrechen und das System erkunden.\nÜber den Button \"Setup Wizard\" im Hauptmenü auf der linken Seite können Sie jederzeit zurückkehren.\nZum endgültigen Ausblenden schließen Sie den Assistenten mit \"Finish\" im letzten Schritt."
+      },
+      {
+        "title": "Profile & Felder",
+        "text": "Das System enthält bereits einige grundlegende Strukturen für Ihr Fallmanagement.\nSie können die Felder und deren Anzeige anpassen.\n\nWenn Sie weitere Anforderungen haben, zögern Sie nicht, uns unter [support@aam-digital.com](mailto:support@aam-digital.com) zu kontaktieren.\n\n_Bitte beachten Sie, dass sich der Einrichtungsassistent und der Formular-Builder noch in der aktiven Entwicklung befinden („Beta“-Version).\nEinige erweiterte Konfigurationsoptionen sind hier noch nicht verfügbar und benötigen eventuell Unterstützung durch unser technisches Support-Team._"
+      },
+      {
+        "title": "Benutzerkonten",
+        "text": "Sie können Aam Digital als Team gemeinsam nutzen.\nDaten werden synchronisiert und alle Benutzer:innen haben Zugriff auf die neuesten Informationen."
+      },
+      {
+        "title": "Daten importieren",
+        "text": "Wenn Sie bereits vorhandene Daten aus einem früheren System haben, können Sie diese einfach importieren.\nSpeichern Sie die Daten im \".csv\"-Format (z. B. aus MS Excel).\nSie benötigen keine bestimmten Spaltennamen in Ihrer Datei.\nDas Importmodul hilft Ihnen, Ihre Tabellendaten den relevanten Feldern in Aam Digital zuzuordnen."
+      },
+      {
+        "title": "Fertig!",
+        "text": "Das war’s. Sie können das System jetzt erkunden und loslegen!\n\nSie können Ihre Konfiguration jederzeit anpassen, auch nachdem Sie begonnen haben, damit zu arbeiten.\nWir empfehlen, zunächst mit einer einfachen Konfiguration zu starten,\neinige Aufgaben damit zu erledigen\nund dann bei Bedarf weitere Felder und Anpassungen hinzuzufügen.\n\nKontaktieren Sie uns gerne bei Fragen oder Feedback: [support@aam-digital.com](mailto:support@aam-digital.com)"
+      }
+    ]
+  }
+}

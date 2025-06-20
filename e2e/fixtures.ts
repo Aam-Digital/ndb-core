@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
-import { test as base, Page } from "@playwright/test";
+import { Page, test as base } from "@playwright/test";
 // eslint-disable-next-line no-restricted-imports
 import {
   argosScreenshot as argosScreenshotBase,
@@ -25,9 +25,12 @@ export const test = base.extend<{ forEachTest: void }>({
         // @ts-expect-error global state
         globalThis.NDB_E2E_REF_DATE = new Date(E2E_REF_DATE);
       }, E2E_REF_DATE);
-      await page.goto("/");
+
+      await page.goto("/?useCase=education");
+
       // Give the app time to load
-      await page.getByText("Aam Digital - Demo").waitFor({ timeout: 10_000 });
+      await page.getByText("Start Exploring").click({ timeout: 10_000 });
+
       await use();
     },
     { auto: true },

@@ -9,8 +9,7 @@ import {
 import { SupportComponent } from "./support.component";
 import { BehaviorSubject, of } from "rxjs";
 import { SwUpdate } from "@angular/service-worker";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { WINDOW_TOKEN } from "../../../utils/di-tokens";
 import {
   HttpClient,
   provideHttpClient,
@@ -31,14 +30,6 @@ import { TEST_USER } from "../../user/demo-user-generator.service";
 import { SyncedPouchDatabase } from "../../database/pouchdb/synced-pouch-database";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 
-class MockDeleteRequest {
-  onsuccess: () => {};
-
-  constructor() {
-    setTimeout(() => this.onsuccess());
-  }
-}
-
 describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
@@ -51,14 +42,7 @@ describe("SupportComponent", () => {
       userAgent: "mock user agent",
       serviceWorker: { getRegistrations: () => [], ready: Promise.resolve() },
     },
-    indexedDB: {
-      databases: jasmine.createSpy(),
-      deleteDatabase: jasmine
-        .createSpy()
-        .and.callFake(() => new MockDeleteRequest()),
-    },
   };
-  let mockLocation: any;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -66,7 +50,6 @@ describe("SupportComponent", () => {
     mockDB.getPouchDB.and.returnValue({
       info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
     } as any);
-    mockLocation = {};
 
     await TestBed.configureTestingModule({
       imports: [SupportComponent, MatDialogModule, NoopAnimationsModule],
@@ -82,8 +65,10 @@ describe("SupportComponent", () => {
         { provide: SwUpdate, useValue: mockSW },
         { provide: PouchDatabase, useValue: mockDB },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
-        { provide: LOCATION_TOKEN, useValue: mockLocation },
-        { provide: BackupService, useValue: null },
+        {
+          provide: BackupService,
+          useValue: jasmine.createSpyObj(["resetApplication"]),
+        },
         { provide: DownloadService, useValue: null },
         {
           provide: DatabaseResolverService,
@@ -131,30 +116,6 @@ describe("SupportComponent", () => {
     expect(component.lastSync).toBe(lastSync);
     expect(component.lastRemoteLogin).toBe(lastRemoteLogin);
     localStorage.clear();
-  });
-
-  it("should reset the application after confirmation", async () => {
-    const confirmationDialog = TestBed.inject(ConfirmationDialogService);
-    spyOn(confirmationDialog, "getConfirmation").and.returnValue({
-      afterClosed: () => of(true),
-    } as any);
-    localStorage.setItem("someItem", "someValue");
-    const unregisterSpy = jasmine.createSpy();
-    mockWindow.navigator.serviceWorker.getRegistrations = () => [
-      { unregister: unregisterSpy },
-    ];
-    mockWindow.indexedDB.databases.and.resolveTo([
-      { name: "db1" },
-      { name: "db2" },
-    ]);
-
-    await component.resetApplication();
-
-    expect(unregisterSpy).toHaveBeenCalled();
-    expect(localStorage.getItem("someItem")).toBeNull();
-    expect(mockLocation.pathname).toBe("");
-    expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith("db1");
-    expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith("db2");
   });
 
   it("should display the service worker logs after they are available", fakeAsync(() => {

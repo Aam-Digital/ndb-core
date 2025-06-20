@@ -5,7 +5,11 @@ import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
-import { LoginStateSubject, SessionType } from "../session/session-type";
+import {
+  LoginStateSubject,
+  SessionType,
+  SyncStateSubject,
+} from "../session/session-type";
 import { environment } from "../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
@@ -38,8 +42,10 @@ describe("DemoDataInitializerService", () => {
   let adminDBName: string;
 
   let database: PouchDatabase;
+  let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
+    syncStateSubject = new SyncStateSubject();
     environment.session_type = SessionType.mock;
     demoUserDBName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${Entity.DATABASE}`;
     adminDBName = `${DemoUserGeneratorService.ADMIN_USERNAME}-${Entity.DATABASE}`;
@@ -51,7 +57,7 @@ describe("DemoDataInitializerService", () => {
     } as any);
     mockLocalAuth = jasmine.createSpyObj(["saveUser"]);
     sessionManager = jasmine.createSpyObj(["offlineLogin"]);
-    database = new MemoryPouchDatabase();
+    database = new MemoryPouchDatabase(demoUserDBName, syncStateSubject);
 
     TestBed.configureTestingModule({
       providers: [
@@ -74,11 +80,11 @@ describe("DemoDataInitializerService", () => {
   afterEach(async () => {
     localStorage.clear();
 
-    const tmpDB = new PouchDatabase(demoUserDBName);
+    const tmpDB = new PouchDatabase(demoUserDBName, syncStateSubject);
     tmpDB.init();
     await tmpDB.destroy();
 
-    const tmpDB2 = new PouchDatabase(adminDBName);
+    const tmpDB2 = new PouchDatabase(adminDBName, syncStateSubject);
     tmpDB2.init();
     await tmpDB2.destroy();
   });
@@ -88,18 +94,21 @@ describe("DemoDataInitializerService", () => {
   });
 
   it("should save the default users", () => {
-    service.run();
+    service.logInDemoUser();
 
     expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(normalUser);
     expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(adminUser);
   });
 
   it("it should publish the demo data after logging in the default user", fakeAsync(() => {
-    service.run();
+    spyOn(database, "isEmpty").and.resolveTo(true);
+    service.logInDemoUser();
 
     expect(sessionManager.offlineLogin).toHaveBeenCalledWith(normalUser);
     expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
+    tick();
 
+    service.generateDemoData();
     tick();
 
     expect(mockDemoDataService.publishDemoData).toHaveBeenCalled();
@@ -108,7 +117,7 @@ describe("DemoDataInitializerService", () => {
   it("should show a dialog while generating demo data", fakeAsync(() => {
     const closeSpy = jasmine.createSpy();
     mockDialog.open.and.returnValue({ close: closeSpy } as any);
-    service.run();
+    service.generateDemoData();
 
     expect(mockDialog.open).toHaveBeenCalledWith(
       DemoDataGeneratingProgressDialogComponent,
@@ -121,7 +130,7 @@ describe("DemoDataInitializerService", () => {
   }));
 
   it("should sync with existing demo data when another user logs in", fakeAsync(() => {
-    service.run();
+    service.logInDemoUser();
     database.init(demoUserDBName);
     const defaultUserDB = database.getPouchDB();
 
@@ -157,7 +166,7 @@ describe("DemoDataInitializerService", () => {
   }));
 
   it("should stop syncing after logout", fakeAsync(() => {
-    service.run();
+    service.logInDemoUser();
     tick();
 
     TestBed.inject(SessionSubject).next({
