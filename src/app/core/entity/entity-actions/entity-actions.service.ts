@@ -11,6 +11,7 @@ import { OkButton } from "../../common-components/confirmation-dialog/confirmati
 import { CascadingActionResult } from "./cascading-entity-action";
 import { EntityActionsMenuService } from "../../entity-details/entity-actions-menu/entity-actions-menu.service";
 import { DuplicateRecordService } from "app/core/entity-list/duplicate-records/duplicate-records.service";
+
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
  * including a confirmation dialog.

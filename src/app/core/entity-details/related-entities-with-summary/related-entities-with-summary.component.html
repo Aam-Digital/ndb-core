@@ -1,5 +1,4 @@
 <app-entities-table
-  [entity]="entity"
   [entityType]="entityCtr"
   [records]="data"
   [filter]="filter"
@@ -15,3 +14,6 @@
     <strong i18n>Average:</strong> {{ summaryAvg }} <br />
   </ng-container>
 </div>
+
+<app-custom-form-link-button [entity]="entity" [entityType]="entityCtr">
+</app-custom-form-link-button>
