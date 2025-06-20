@@ -6,4 +6,5 @@ import { GeoResult } from "./geo.service";
 export interface GeoLocation {
   locationString?: string;
   geoLookup?: GeoResult;
+  additionalDetails?: string;
 }
