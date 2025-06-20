@@ -9,6 +9,7 @@
     matSort
     [matSortActive]="_sortBy?.active"
     [matSortDirection]="_sortBy?.direction"
+    (matSortChange)="sortChange.emit($event)"
     class="full-width table"
   >
     <ng-container *ngFor="let col of _columns" [matColumnDef]="col.id">
