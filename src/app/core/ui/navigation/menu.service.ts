@@ -47,22 +47,21 @@ export class MenuService {
    * by looking up the entityType from EntityRegistry and then using its config.
    */
   generateMenuItemForEntityType(item: MenuItem): MenuItem {
+    const newItem: Partial<MenuItem> = { ...item };
     if ("entityType" in item) {
       const entityType = this.entities.get((item as EntityMenuItem).entityType);
-      return {
-        label: entityType.labelPlural,
-        icon: entityType.icon,
-        link: entityType.route,
-      };
-    } else if (item.subMenu) {
-      return {
-        ...item,
-        subMenu: item.subMenu.map((subItem) =>
-          this.generateMenuItemForEntityType(subItem),
-        ),
-      };
-    } else {
-      return item;
+      delete newItem["entityType"];
+      newItem.label = item.label ?? entityType.labelPlural;
+      newItem.icon = item.icon ?? entityType.icon;
+      newItem.link = entityType.route;
     }
+
+    if (item.subMenu) {
+      newItem.subMenu = item.subMenu.map((subItem) =>
+        this.generateMenuItemForEntityType(subItem),
+      );
+    }
+
+    return newItem as MenuItem;
   }
 }

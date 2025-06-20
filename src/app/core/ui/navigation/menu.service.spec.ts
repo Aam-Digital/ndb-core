@@ -4,7 +4,7 @@ import { MenuService } from "./menu.service";
 import { ConfigService } from "app/core/config/config.service";
 import { Config } from "@playwright/test";
 import { BehaviorSubject } from "rxjs";
-import { NavigationMenuConfig, EntityMenuItem } from "./menu-item";
+import { EntityMenuItem, NavigationMenuConfig } from "./menu-item";
 import {
   entityRegistry,
   EntityRegistry,
@@ -39,7 +39,10 @@ describe("MenuService", () => {
     const testConfig: NavigationMenuConfig = {
       items: [
         { label: "Home", icon: "home", link: "/" },
-        { entityType: "TestEntity" } as EntityMenuItem,
+        {
+          entityType: "TestEntity",
+          subMenu: [{ label: "submenu label", entityType: "TestEntity" }],
+        } as EntityMenuItem,
       ],
     };
 
@@ -49,7 +52,14 @@ describe("MenuService", () => {
 
     expect(service.menuItems.value).toEqual([
       { label: "Home", icon: "home", link: "/" },
-      { label: "Test Entities", icon: "child", link: "/test-entity" },
+      {
+        label: "Test Entities",
+        icon: "child",
+        link: "/test-entity",
+        subMenu: [
+          { label: "submenu label", icon: "child", link: "/test-entity" },
+        ],
+      },
     ]);
   }));
 });
