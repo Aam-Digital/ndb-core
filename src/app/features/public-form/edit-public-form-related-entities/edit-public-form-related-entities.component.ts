@@ -12,7 +12,7 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 
 @Component({
-  selector: "app-edit-related-entities",
+  selector: "app-edit-public-form-related-entities",
   standalone: true,
   imports: [
     CommonModule,
@@ -22,10 +22,10 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
     MatCheckboxModule,
     MatOptionModule,
   ],
-  templateUrl: "./edit-related-entities.component.html",
-  styleUrls: ["./edit-related-entities.component.scss"],
+  templateUrl: "./edit-public-form-related-entities.component.html",
+  styleUrls: ["./edit-public-form-related-entities.component.scss"],
 })
-export class EditRelatedEntitiesComponent
+export class EditPublicFormRelatedEntitiesComponent
   extends EditComponent<FormFieldConfig>
   implements OnInit
 {
