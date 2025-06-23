@@ -72,8 +72,6 @@ export class EntityActionsService {
         tooltip: $localize`:entity context menu tooltip:Create a copy of this record.`,
       },
     ]);
-    this.publicFormsService.initCustomFormActions(); // Call once on load to initialize actions immediately (in case no updates happen)
-
     this.entityMapper.receiveUpdates(PublicFormConfig).subscribe(() => {
       this.publicFormsService.initCustomFormActions(); // Re-initialize when there are actual DB updates to PublicFormConfig
     });
