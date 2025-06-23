@@ -73,27 +73,18 @@ export class EntityActionsMenuComponent implements OnChanges {
     );
 
     // check each action’s `visible` property to hide actions not applicable to the current entity
-    const visibleActions: EntityAction[] = [];
-    for (const action of allActions) {
-      if (action.visible) {
-        const allowed = await action.visible(this.entity);
-        if (!allowed) {
-          continue;
-        }
-      }
-      visibleActions.push(action);
-    }
+    const visibleActions = (
+      await Promise.all(
+        allActions.map(async (action) => {
+          const isVisible = action.visible
+            ? await action.visible(this.entity)
+            : true;
+          return isVisible ? action : null;
+        }),
+      )
+    ).filter(Boolean) as EntityAction[];
 
-    this.actions = visibleActions.filter((action) => {
-      switch (action.action) {
-        case "archive":
-          return this.entity.isActive && !this.entity.anonymized;
-        case "anonymize":
-          return !this.entity.anonymized && this.entity.getConstructor().hasPII;
-        default:
-          return true;
-      }
-    });
+    this.actions = visibleActions;
   }
 
   async executeAction(action: EntityAction) {
