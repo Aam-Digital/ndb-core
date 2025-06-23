@@ -1,0 +1,33 @@
+{
+  "_id": "ConfigurableEnum:attendance-status",
+  "values": [
+    {
+      "id": "PRESENT",
+      "shortName": "P",
+      "label": "Présent",
+      "style": "attendance-P",
+      "countAs": "PRESENT"
+    },
+    {
+      "id": "ABSENT",
+      "shortName": "A",
+      "label": "Absent",
+      "style": "attendance-A",
+      "countAs": "ABSENT"
+    },
+    {
+      "id": "LATE",
+      "shortName": "L",
+      "label": "En retard",
+      "style": "attendance-L",
+      "countAs": "PRESENT"
+    },
+    {
+      "id": "EXCUSED",
+      "shortName": "E",
+      "label": "Excusé",
+      "style": "attendance-E",
+      "countAs": "IGNORE"
+    }
+  ]
+}

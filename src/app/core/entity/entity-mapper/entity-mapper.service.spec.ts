@@ -25,10 +25,12 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { SyncStateSubject } from "app/core/session/session-type";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
   let testDatabase: PouchDatabase;
+  let syncStateSubject: SyncStateSubject;
 
   const existingEntity = {
     _id: "Entity:existing-entity",
@@ -41,6 +43,7 @@ describe("EntityMapperService", () => {
   };
 
   beforeEach(waitForAsync(() => {
+    syncStateSubject = new SyncStateSubject();
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
@@ -48,7 +51,7 @@ describe("EntityMapperService", () => {
           provide: DatabaseResolverService,
           useValue: new DatabaseResolverService({
             createDatabase: (dbName: string) => {
-              const db = new MemoryPouchDatabase(dbName);
+              const db = new MemoryPouchDatabase(dbName, syncStateSubject);
               db.init();
               return db;
             },

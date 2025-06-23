@@ -1,0 +1,21 @@
+<div class="flex-column gap-regular">
+  <div class="flex-grow" i18n>
+    You can find help and user guides on our
+    <a href="https://chatwoot.help/hc/aam-digital/en" target="_blank"
+      >Support Center</a
+    >
+  </div>
+
+  @if (isDemoMode) {
+    <div class="margin-top-large" i18n>
+      You are currently using the "Demo Mode". All changes will be reset after
+      closing or reloading the page.
+    </div>
+
+    <div class="action-button flex-row">
+      <button mat-stroked-button class="flex-grow" (click)="restartDemo()" i18n>
+        Restart demo with different use case
+      </button>
+    </div>
+  }
+</div>

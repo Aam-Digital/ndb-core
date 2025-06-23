@@ -22,6 +22,7 @@ import { MatMenuModule } from "@angular/material/menu";
     NgForOf,
     MatMenuModule,
   ],
+  standalone: true,
 })
 export class MenuItemComponent {
   /**

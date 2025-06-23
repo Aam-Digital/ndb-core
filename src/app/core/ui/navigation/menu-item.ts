@@ -26,6 +26,8 @@ export interface EntityMenuItem extends MenuItem {
    * The entity type to whose list this item should link.
    */
   entityType: string;
+
+  subMenu?: (MenuItem | EntityMenuItem)[];
 }
 
 /**

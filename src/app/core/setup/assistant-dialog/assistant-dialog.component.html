@@ -1,0 +1,45 @@
+<mat-tab-group
+  (selectedTabChange)="onTabChange($event)"
+  class="assistant-panel-container dialog-header-bar"
+>
+  @if (assistants.initDemo) {
+    <mat-tab id="initDemo" label="Initialize System" i18n-label>
+      <app-system-init-assistant></app-system-init-assistant>
+    </mat-tab>
+  }
+
+  @if (assistants.contextAwareGuide) {
+    <mat-tab id="contextAwareGuide" label="Guide" i18n-label>
+      <app-context-aware-assistant></app-context-aware-assistant>
+    </mat-tab>
+  }
+
+  @if (assistants.setupWizard) {
+    <mat-tab id="setupWizard" label="Setup Wizard" i18n-label>
+      <app-setup-wizard></app-setup-wizard>
+    </mat-tab>
+  }
+
+  <!-- ... more modes to be added -->
+</mat-tab-group>
+
+<button
+  class="context-menu-button"
+  mat-icon-button
+  color="primary"
+  [matMenuTriggerFor]="contextMenu"
+>
+  <fa-icon icon="ellipsis-v"></fa-icon>
+</button>
+<mat-menu #contextMenu>
+  <button
+    mat-menu-item
+    (click)="updateSetupWizardVisible(!assistants.setupWizard)"
+  >
+    <fa-icon
+      [icon]="assistants.setupWizard ? 'eye' : 'eye-slash'"
+      class="standard-icon-with-text"
+    ></fa-icon>
+    <span i18n>Setup Wizard</span>
+  </button>
+</mat-menu>

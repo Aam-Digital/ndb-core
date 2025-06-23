@@ -1,0 +1,27 @@
+[
+  {
+    "_id": "ConfigurableEnum:interaction-type",
+    "values": [
+      {
+        "id": "INCIDENT",
+        "label": "Incident"
+      },
+      {
+        "id": "NOTE",
+        "label": "General Note"
+      },
+      {
+        "id": "COACHING_CLASS",
+        "label": "Coaching Class",
+        "color": "#EEEEEE",
+        "isMeeting": true
+      },
+      {
+        "id": "SCHOOL_CLASS",
+        "label": "School Class",
+        "color": "#EEEEEE",
+        "isMeeting": true
+      }
+    ]
+  }
+]

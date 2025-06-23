@@ -27,6 +27,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
 
   constructor(private demoChildren: DemoChildGenerator) {
     super();
+    this.requiredEntityTypes = ["HealthCheck"];
   }
 
   public generateEntities(): Entity[] {

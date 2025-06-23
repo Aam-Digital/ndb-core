@@ -1,0 +1,186 @@
+[
+  {
+    "_id": "ConfigurableEnum:center",
+    "values": [
+      {
+        "id": "C1",
+        "label": "Saint-Germain"
+      },
+      {
+        "id": "C2",
+        "label": "Notre-Dame"
+      },
+      {
+        "id": "C3",
+        "label": "Halles"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:interaction-type",
+    "values": [
+      {
+        "id": "VISIT",
+        "label": "Visite à domicile"
+      },
+      {
+        "id": "GUARDIAN_TALK",
+        "label": "Entretien avec les parents"
+      },
+      {
+        "id": "INCIDENT",
+        "label": "Incident"
+      },
+      {
+        "id": "NOTE",
+        "label": "Remarque générale"
+      },
+      {
+        "id": "GUARDIAN_MEETING",
+        "label": "Réunion de parents",
+        "color": "#E1F5FE",
+        "isMeeting": true
+      },
+      {
+        "id": "COACHING_CLASS",
+        "label": "Cours de soutien",
+        "color": "#EEEEEE",
+        "isMeeting": true
+      },
+      {
+        "id": "SCHOOL_CLASS",
+        "label": "Cours scolaire",
+        "color": "#EEEEEE",
+        "isMeeting": true
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:materials",
+    "values": [
+      {
+        "id": "OTHER",
+        "label": ""
+      },
+      {
+        "id": "pencil",
+        "label": "crayon à papier"
+      },
+      {
+        "id": "eraser",
+        "label": "gomme"
+      },
+      {
+        "id": "pen (black)",
+        "label": "stylo (noir)"
+      },
+      {
+        "id": "crayons",
+        "label": "crayons de couleur"
+      },
+      {
+        "id": "copy (plain)",
+        "label": "cahier"
+      },
+      {
+        "id": "School Uniform",
+        "label": "Uniforme scolaire",
+        "color": "#B3E5FC"
+      },
+      {
+        "id": "School Shoes",
+        "label": "Chaussures scolaires",
+        "color": "#B3E5FC"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:math-levels",
+    "values": [
+      {
+        "id": "Nothing",
+        "label": "Aucune compétence",
+        "_ordinal": 0,
+        "color": "#fd7272"
+      },
+      {
+        "id": "Numbers 1-9",
+        "label": "Chiffres 1-9",
+        "_ordinal": 1,
+        "color": "#ff8153"
+      },
+      {
+        "id": "Numbers 10-99",
+        "label": "Chiffres 10-99",
+        "_ordinal": 2,
+        "color": "#ff982a"
+      },
+      {
+        "id": "Subtraction",
+        "label": "Soustraction",
+        "_ordinal": 3,
+        "color": "#d2c92e"
+      },
+      {
+        "id": "Division",
+        "label": "Division",
+        "_ordinal": 4,
+        "passed": true,
+        "color": "#c8e6c9"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:reading-levels",
+    "values": [
+      {
+        "id": "Nothing",
+        "label": "Aucune compétence",
+        "_ordinal": 0,
+        "color": "#fd7272"
+      },
+      {
+        "id": "Read Letters",
+        "label": "Lecture de lettres uniques",
+        "_ordinal": 1,
+        "color": "#ff8153"
+      },
+      {
+        "id": "Read Words",
+        "label": "Lecture de mots",
+        "_ordinal": 2,
+        "color": "#ff982a"
+      },
+      {
+        "id": "Read Sentence",
+        "label": "Lecture de phrases",
+        "_ordinal": 3,
+        "color": "#d2c92e"
+      },
+      {
+        "id": "Read Paragraph",
+        "label": "Lecture de paragraphes",
+        "_ordinal": 4,
+        "passed": true,
+        "color": "#c8e6c9"
+      }
+    ]
+  },
+  {
+    "_id": "ConfigurableEnum:activity-status",
+    "values": [
+      {
+        "id": "PLANNED",
+        "label": "Prévu"
+      },
+      {
+        "id": "ONGOING",
+        "label": "En cours"
+      },
+      {
+        "id": "COMPLETED",
+        "label": "Complété"
+      }
+    ]
+  }
+]

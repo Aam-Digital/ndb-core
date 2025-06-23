@@ -1,14 +1,19 @@
 import { PouchDatabase } from "./pouch-database";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
+import { SyncStateSubject } from "app/core/session/session-type";
+import { SyncState } from "app/core/session/session-states/sync-state.enum";
 
 /**
  * An alternative implementation of PouchDatabase that uses the in-memory adapter
  * not persisting any data after the page is closed.
  */
 export class MemoryPouchDatabase extends PouchDatabase {
-  constructor(dbName: string = "in-memory-db") {
-    super(dbName);
+  constructor(
+    dbName: string = "in-memory-db",
+    globalSyncState: SyncStateSubject,
+  ) {
+    super(dbName, globalSyncState);
   }
 
   /**
@@ -20,5 +25,6 @@ export class MemoryPouchDatabase extends PouchDatabase {
     PouchDB.plugin(memory);
     this.pouchDB = new PouchDB(dbName ?? this.dbName, { adapter: "memory" });
     this.databaseInitialized.complete();
+    this.globalSyncState.next(SyncState.COMPLETED);
   }
 }

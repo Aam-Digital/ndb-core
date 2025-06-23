@@ -1,0 +1,22 @@
+<mat-form-field class="full-width" floatLabel="always">
+  <mat-label>
+    <span i18n>Icon</span>
+    &nbsp;
+    <fa-icon
+      icon="question-circle"
+      matTooltip="Enter the ID of an icon here, which will be displayed as a visual icon then."
+      i18n-matTooltip
+    ></fa-icon>
+  </mat-label>
+  <input matInput [formControl]="iconControl" placeholder="Enter icon name" />
+  <mat-hint align="start" i18n>
+    Find available icon names at
+    <a
+      href="https://fontawesome.com/v6/search?o=r&m=free"
+      target="_blank"
+      rel="noopener"
+    >
+      fontawesome.com
+    </a>
+  </mat-hint>
+</mat-form-field>

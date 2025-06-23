@@ -1,6 +1,10 @@
-import { expect, test, argosScreenshot } from "#e2e/fixtures.js";
+import { argosScreenshot, expect, test } from "#e2e/fixtures.js";
 
 test("Dashboard widgets and actions", async ({ page }) => {
+  // somehow the entity-count dashboard is stuck in e2e tests and only shows numbers after navigating ...
+  await page.getByRole("navigation").getByText("Help").click();
+  await page.getByRole("navigation").getByText("Dashboard").click();
+
   await expect(page.getByText("Quick Actions")).toBeVisible();
   await expect(page.getByText("108 Children")).toBeVisible();
   await expect(page.getByText("12 Tasks due")).toBeVisible();
