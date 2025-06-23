@@ -27,7 +27,7 @@ export class CustomFormLinkButtonComponent implements OnInit {
    */
   @Input() formEntityType: EntityConstructor;
 
-  public matchingCustomForm: PublicFormConfig | null = null;
+  public matchingCustomForms: PublicFormConfig[] = [];
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -40,6 +40,8 @@ export class CustomFormLinkButtonComponent implements OnInit {
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
     const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
 
+    this.matchingCustomForms = [];
+
     for (const config of matchingForms) {
       const matchesCustomForm =
         await this.publicFormsService.getMatchingPublicFormConfigs(
@@ -50,18 +52,16 @@ export class CustomFormLinkButtonComponent implements OnInit {
         config.entity === this.formEntityType.ENTITY_TYPE;
 
       if (matchesCustomForm && matchesEntityType) {
-        this.matchingCustomForm = config;
-        break;
+        this.matchingCustomForms.push(config);
       }
     }
   }
 
-  async copyLink() {
-    if (!this.matchingCustomForm) return;
-
+  async copyLink(matchingCustomForm: PublicFormConfig) {
+    if (!matchingCustomForm) return;
     await this.publicFormsService.copyPublicFormLinkFromConfig(
       this.linkedEntity,
-      this.matchingCustomForm,
+      matchingCustomForm,
     );
   }
 }
