@@ -10,7 +10,6 @@ import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype"
 import { EditComponent } from "app/core/entity/default-datatype/edit-component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-edit-related-entities",
@@ -22,7 +21,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatSelectModule,
     MatCheckboxModule,
     MatOptionModule,
-    FontAwesomeModule,
   ],
   templateUrl: "./edit-related-entities.component.html",
   styleUrls: ["./edit-related-entities.component.scss"],

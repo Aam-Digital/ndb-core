@@ -66,19 +66,19 @@ export class PublicFormsService {
     return true;
   }
 
-  public getMatchingPublicFormConfigs(
+  public async getMatchingPublicFormConfigs(
     config: PublicFormConfig,
     entity: Entity,
   ): Promise<boolean> {
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
     const linkedEntity = config.linkedEntity;
 
-    if (!linkedEntity) return Promise.resolve(false);
+    if (!linkedEntity) return false;
 
     if (linkedEntity.additional) {
-      return Promise.resolve(
-        linkedEntity.additional.toLowerCase() === entityType,
-      );
+      return linkedEntity.additional.toLowerCase() === entityType;
     }
+
+    return false;
   }
 }
