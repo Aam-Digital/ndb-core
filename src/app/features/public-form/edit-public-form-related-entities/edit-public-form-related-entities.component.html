@@ -11,7 +11,7 @@
 
   <form [formGroup]="form">
     <div class="flex-row align-center gap-small">
-      <mat-form-field [class.form-disabled]="formControl.disabled">
+      <mat-form-field>
         <mat-label i18n>Linked to</mat-label>
         <mat-select formControlName="id">
           @for (field of relatedRefFields; track field.id) {

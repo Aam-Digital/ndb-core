@@ -51,7 +51,7 @@ export class EditPublicFormRelatedEntitiesComponent
       }));
 
     this.form = this.fb.group({
-      id: [null],
+      id: [{ value: null, disabled: this.formControl.disabled }],
     });
     this.initializeLinkedEntity();
 
@@ -67,6 +67,13 @@ export class EditPublicFormRelatedEntitiesComponent
   }
 
   private initializeLinkedEntity(): void {
+    this.formControl.statusChanges.subscribe(() => {
+      const idControl = this.form.get("id");
+      this.formControl.disabled
+        ? idControl?.disable({ emitEvent: false })
+        : idControl?.enable({ emitEvent: false });
+    });
+
     const raw = this.formControl.value as FormFieldConfig;
     this.form.patchValue(
       {
