@@ -5,7 +5,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { PublicFormsService } from "../../public-forms.service";
+import { PublicFormsService } from "../public-forms.service";
 
 @Component({
   selector: "app-custom-form-link-button",
@@ -14,8 +14,18 @@ import { PublicFormsService } from "../../public-forms.service";
   imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule],
 })
 export class CustomFormLinkButtonComponent implements OnInit {
-  @Input() entity: Entity;
-  @Input() entityType: EntityConstructor;
+  /**
+   * The entity instance that this form is associated with.
+   * For example, a Child record when linking a feedback form to a specific child.
+   */
+  @Input() linkedEntity: Entity;
+
+  /**
+   * The constructor of the entity type that the form submission will create.
+   * This is typically different from the linkedEntity type.
+   * For example, a FeedbackSubmission entity linked to a Child.
+   */
+  @Input() formEntityType: EntityConstructor;
 
   public matchingCustomForm: PublicFormConfig | null = null;
 
@@ -25,7 +35,7 @@ export class CustomFormLinkButtonComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    if (!this.entity || !this.entityType) return;
+    if (!this.linkedEntity || !this.formEntityType) return;
 
     const allForms = await this.entityMapper.loadType(PublicFormConfig);
     const matchingForms = allForms.filter((config) => config.linkedEntity?.id);
@@ -34,9 +44,10 @@ export class CustomFormLinkButtonComponent implements OnInit {
       const matchesCustomForm =
         await this.publicFormsService.getMatchingPublicFormConfigs(
           config,
-          this.entity,
+          this.linkedEntity,
         );
-      const matchesEntityType = config.entity === this.entityType.ENTITY_TYPE;
+      const matchesEntityType =
+        config.entity === this.formEntityType.ENTITY_TYPE;
 
       if (matchesCustomForm && matchesEntityType) {
         this.matchingCustomForm = config;
@@ -49,7 +60,7 @@ export class CustomFormLinkButtonComponent implements OnInit {
     if (!this.matchingCustomForm) return;
 
     await this.publicFormsService.copyPublicFormLinkFromConfig(
-      this.entity,
+      this.linkedEntity,
       this.matchingCustomForm,
     );
   }
