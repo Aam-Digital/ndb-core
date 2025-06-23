@@ -2,11 +2,18 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <p i18n>
-    The field settings here apply to the record type overall and affect both the
-    field here in the current view as well as all other forms and lists where
-    this field is displayed.
-  </p>
+  @if (isFormOverride) {
+    <p i18n>
+      These settings apply only to this Public Form. The main entity schema is
+      not affected.
+    </p>
+  } @else {
+    <p i18n>
+      The field settings here apply to the record type overall and affect both
+      the field here in the current view as well as all other forms and lists
+      where this field is displayed.
+    </p>
+  }
 
   <form [formGroup]="form">
     <mat-tab-group formGroupName="schemaFields">
@@ -79,7 +86,16 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label i18n>Type</mat-label>
+              <mat-label>
+                <span i18n>Type</span>
+                @if (isFormOverride) {
+                  <fa-icon
+                    icon="question-circle"
+                    matTooltip="The type of the field cannot be changed here because these changes only apply to this form. For data consistency, the field type is disabled."
+                    i18n-matTooltip
+                  ></fa-icon>
+                }
+              </mat-label>
               <app-basic-autocomplete
                 formControlName="dataType"
                 #formDataType

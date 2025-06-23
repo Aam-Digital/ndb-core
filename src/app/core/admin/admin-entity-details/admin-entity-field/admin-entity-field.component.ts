@@ -89,12 +89,13 @@ export class AdminEntityFieldComponent implements OnInit {
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
-
+  isFormOverride: boolean; // whether this is a form override field
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
       fieldId: string;
       entityType: EntityConstructor;
+      isFormOverride: boolean;
     },
     private dialogRef: MatDialogRef<any>,
     private fb: FormBuilder,
@@ -106,6 +107,7 @@ export class AdminEntityFieldComponent implements OnInit {
   ) {
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
+    this.isFormOverride = data.isFormOverride ?? false;
   }
 
   ngOnInit() {
@@ -114,6 +116,9 @@ export class AdminEntityFieldComponent implements OnInit {
     };
 
     this.initSettings();
+    if (this.isFormOverride) {
+      this.schemaFieldsForm.get("dataType")?.disable();
+    }
     this.initAvailableDatatypes(this.allDataTypes);
   }
 

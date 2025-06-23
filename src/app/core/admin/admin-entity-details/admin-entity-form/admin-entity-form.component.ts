@@ -71,6 +71,12 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   @Input() uniqueAreaId: string;
 
+  /**
+   * Used to control whether admin-specific overrides or customizations are applied
+   * to the entity form configuration and field editing dialogs.
+   */
+  @Input() isFormOverride: boolean;
+
   @Input() set config(value: FormConfig) {
     if (value === this._config) {
       // may be caused by two-way binding re-inputting the recently emitted change
@@ -198,12 +204,14 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   async openFieldConfig(field: ColumnConfig): Promise<string> {
     let fieldIdToEdit = toFormFieldConfig(field).id;
+    console.log(this.isFormOverride, "test");
     const dialogRef = this.matDialog.open(AdminEntityFieldComponent, {
       width: "99%",
       maxHeight: "90vh",
       data: {
         fieldId: fieldIdToEdit,
         entityType: this.entityType,
+        isFormOverride: this.isFormOverride,
       },
     });
     return lastValueFrom(dialogRef.afterClosed());
