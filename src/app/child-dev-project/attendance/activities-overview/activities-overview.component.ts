@@ -5,7 +5,7 @@ import { RelatedEntitiesComponent } from "../../../core/entity-details/related-e
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { CustomFormLinkButtonComponent } from "app/features/public-form/public-forms/custom-form-link-button/custom-form-link-button.component";
+import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 
 /**
  * @deprecated configure a RelatedEntitiesComponent instead

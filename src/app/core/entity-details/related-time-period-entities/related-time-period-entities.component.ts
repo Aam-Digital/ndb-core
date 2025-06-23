@@ -12,7 +12,7 @@ import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { TimePeriod } from "./time-period";
-import { CustomFormLinkButtonComponent } from "app/features/public-form/public-forms/custom-form-link-button/custom-form-link-button.component";
+import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 
 /**
  * Display a list of entity subrecords (entities related to the current entity details view)

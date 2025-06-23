@@ -4,7 +4,7 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { Entity } from "../../entity/model/entity";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
-import { CustomFormLinkButtonComponent } from "app/features/public-form/public-forms/custom-form-link-button/custom-form-link-button.component";
+import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 
 /**
  * Load and display a list of related entities
