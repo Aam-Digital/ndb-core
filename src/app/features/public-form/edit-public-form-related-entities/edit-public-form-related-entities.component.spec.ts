@@ -20,9 +20,7 @@ describe("EditPublicFormRelatedEntitiesComponent", () => {
     fixture = TestBed.createComponent(EditPublicFormRelatedEntitiesComponent);
     component = fixture.componentInstance;
     component.formControl = new FormControl();
-    component.form = new FormGroup({
-      id: new FormControl(null),
-    });
+    component.fieldIdControl = new FormControl();
     fixture.detectChanges();
   });
 

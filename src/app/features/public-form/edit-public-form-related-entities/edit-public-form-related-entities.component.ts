@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -30,16 +30,14 @@ export class EditPublicFormRelatedEntitiesComponent
   implements OnInit
 {
   entityConstructor: EntityConstructor;
-
-  form: FormGroup;
   relatedRefFields: FormFieldConfig[] = [];
+  fieldIdControl: FormControl;
 
   private entities = inject(EntityRegistry);
 
-  private fb = inject(FormBuilder);
-
   override ngOnInit(): void {
     if (!this.entity) return;
+
     this.entityConstructor = this.entities.get(this.entity["entity"]);
 
     this.relatedRefFields = Array.from(this.entityConstructor.schema.entries())
@@ -50,12 +48,18 @@ export class EditPublicFormRelatedEntitiesComponent
         additional: schema.additional,
       }));
 
-    this.form = this.fb.group({
-      id: [{ value: null, disabled: this.formControl.disabled }],
-    });
     this.initializeLinkedEntity();
+  }
 
-    this.form.get("id").valueChanges.subscribe((newId: string) => {
+  private initializeLinkedEntity(): void {
+    const raw = this.formControl.value as FormFieldConfig;
+
+    this.fieldIdControl = new FormControl({
+      value: raw?.id ?? null,
+      disabled: this.formControl.disabled,
+    });
+
+    this.fieldIdControl.valueChanges.subscribe((newId: string) => {
       const match = this.relatedRefFields.find((f) => f.id === newId);
       this.formControl.patchValue({
         id: newId,
@@ -64,22 +68,10 @@ export class EditPublicFormRelatedEntitiesComponent
       });
       this.formControl.markAsDirty();
     });
-  }
-
-  private initializeLinkedEntity(): void {
     this.formControl.statusChanges.subscribe(() => {
-      const idControl = this.form.get("id");
       this.formControl.disabled
-        ? idControl?.disable({ emitEvent: false })
-        : idControl?.enable({ emitEvent: false });
+        ? this.fieldIdControl.disable({ emitEvent: false })
+        : this.fieldIdControl.enable({ emitEvent: false });
     });
-
-    const raw = this.formControl.value as FormFieldConfig;
-    this.form.patchValue(
-      {
-        id: raw?.id ?? null,
-      },
-      { emitEvent: true },
-    );
   }
 }
