@@ -70,6 +70,10 @@ export class PublicFormsService {
     config: PublicFormConfig,
     entity: Entity,
   ): Promise<boolean> {
+    if (!entity.getConstructor) {
+      return false;
+    }
+
     const entityType = entity.getConstructor().ENTITY_TYPE.toLowerCase();
     const linkedEntity = config.linkedEntity;
 
