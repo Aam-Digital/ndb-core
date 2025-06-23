@@ -23,6 +23,7 @@ import {
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/public-forms/custom-form-link-button/custom-form-link-button.component";
+
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
  */
