@@ -53,7 +53,6 @@ export class PublicFormsService {
    * It checks all PublicFormConfig entries to find the one linked to the current entity type via `linkedEntity.id`.
    * If a matching form is found, it generates the link including the entity ID as a query parameter and copies it.
    */
-
   public async copyPublicFormLinkFromConfig(
     entity: Entity,
     config: PublicFormConfig,
