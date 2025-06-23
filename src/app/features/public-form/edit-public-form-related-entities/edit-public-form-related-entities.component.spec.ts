@@ -6,6 +6,7 @@ import {
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
 import { FormControl, ReactiveFormsModule, FormGroup } from "@angular/forms";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EditPublicFormRelatedEntitiesComponent", () => {
   let component: EditPublicFormRelatedEntitiesComponent;
@@ -13,7 +14,11 @@ describe("EditPublicFormRelatedEntitiesComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, EditPublicFormRelatedEntitiesComponent],
+      imports: [
+        ReactiveFormsModule,
+        EditPublicFormRelatedEntitiesComponent,
+        FontAwesomeTestingModule,
+      ],
       providers: [{ provide: EntityRegistry, useValue: entityRegistry }],
     }).compileComponents();
 

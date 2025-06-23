@@ -10,6 +10,9 @@ import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype"
 import { EditComponent } from "app/core/entity/default-datatype/edit-component";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "app-edit-public-form-related-entities",
@@ -21,6 +24,9 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
     MatSelectModule,
     MatCheckboxModule,
     MatOptionModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    MatTooltipModule,
   ],
   templateUrl: "./edit-public-form-related-entities.component.html",
   styleUrls: ["./edit-public-form-related-entities.component.scss"],
@@ -73,5 +79,10 @@ export class EditPublicFormRelatedEntitiesComponent
         ? this.fieldIdControl.disable({ emitEvent: false })
         : this.fieldIdControl.enable({ emitEvent: false });
     });
+  }
+
+  clearSelectedEntity() {
+    this.fieldIdControl.setValue(null);
+    this.formControl.setValue(null);
   }
 }
