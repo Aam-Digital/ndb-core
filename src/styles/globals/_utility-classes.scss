@@ -66,11 +66,3 @@ as opposed to just the width of the element */
 .border-box-sizing {
   box-sizing: border-box;
 }
-
-/**
- * This class is used to disable an element visually and prevent pointer events
- */
-.form-disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
