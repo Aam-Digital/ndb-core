@@ -9,11 +9,11 @@
     organisation that gave it.
   </p>
 
-  <form [formGroup]="form" [class.disabled]="formControl.disabled">
+  <form [formGroup]="form">
     <div class="flex-row align-center gap-small">
-      <mat-form-field>
+      <mat-form-field [class.form-disabled]="formControl.disabled">
         <mat-label i18n>Linked to</mat-label>
-        <mat-select formControlName="id" aria-disabled="formControl.disabled">
+        <mat-select formControlName="id">
           @for (field of relatedRefFields; track field.id) {
             <mat-option [value]="field.id">
               {{ field.label || field.additional }}
