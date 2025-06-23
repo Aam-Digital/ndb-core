@@ -32,4 +32,10 @@ export interface EntityAction {
    * @param e The entity on which the action is executed
    */
   execute: (entity: Entity, navigateOnDelete?: boolean) => Promise<boolean>;
+
+  /**
+   * Controls visibility of the action based on the given entity.
+   * Should return a Promise resolving to true if visible.
+   */
+  visible?: (entity: Entity) => Promise<boolean>;
 }
