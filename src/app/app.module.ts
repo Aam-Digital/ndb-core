@@ -86,7 +86,6 @@ import { MarkdownPageModule } from "./features/markdown-page/markdown-page.modul
 import { LoginStateSubject } from "./core/session/session-type";
 import { AdminModule } from "./core/admin/admin.module";
 import { Logging } from "./core/logging/logging.service";
-import { APP_INITIALIZER_DEMO_DATA } from "./core/demo-data/demo-data.app-initializer";
 import { TemplateExportModule } from "./features/template-export/template-export.module";
 import { PublicFormModule } from "./features/public-form/public-form.module";
 import { SkillModule } from "./features/skill/skill.module";
@@ -97,6 +96,7 @@ import { FirebaseConfiguration } from "./features/notification/notification-conf
 import { UserAdminService } from "./core/user/user-admin-service/user-admin.service";
 import { KeycloakAdminService } from "./core/user/user-admin-service/keycloak-admin.service";
 import { defaultValueStrategyProviders } from "./core/default-values/standard-default-value-strategies";
+import { DemoDataModule } from "./core/demo-data/demo-data.module";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 
 /**
@@ -143,6 +143,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
     TemplateExportModule,
     PublicFormModule,
     SkillModule,
+    DemoDataModule,
     // top level component
     UiComponent,
     // Global Angular Material modules
@@ -183,7 +184,6 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
       deps: [LoginStateSubject],
     },
     APP_INITIALIZER_PROPAGATE_CONFIG_UPDATES,
-    APP_INITIALIZER_DEMO_DATA,
     provideHttpClient(withInterceptorsFromDi()),
     NotificationService,
     ...defaultValueStrategyProviders,

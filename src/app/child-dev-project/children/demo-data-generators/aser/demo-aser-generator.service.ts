@@ -26,6 +26,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
 
   constructor(private demoChildren: DemoChildGenerator) {
     super();
+    this.requiredEntityTypes = ["Aser"];
   }
 
   public generateEntities(): Entity[] {

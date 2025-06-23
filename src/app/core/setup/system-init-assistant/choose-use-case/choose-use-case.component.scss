@@ -1,0 +1,29 @@
+@use "variables/colors";
+
+.flex-1 {
+  flex: 1;
+}
+
+.description-container {
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+  min-height: 150px;
+  align-content: center;
+}
+
+.description-no-use-case {
+  color: colors.$hint-text;
+}
+
+.hidden {
+  padding: 0;
+  box-shadow: none;
+  visibility: hidden;
+  height: 0;
+}
+
+.greyed-out {
+  opacity: 0.5;
+}

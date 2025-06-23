@@ -3,9 +3,6 @@ import { Injectable } from "@angular/core";
 import { DemoChildGenerator } from "../demo-child-generator.service";
 import { faker } from "../../../../core/demo-data/faker";
 import { ratingAnswers } from "./rating-answers";
-import { EntityConfigService } from "../../../../core/entity/entity-config.service";
-import { DemoConfigGeneratorService } from "../../../../core/config/demo-config-generator.service";
-import { EntityConfig } from "../../../../core/entity/entity-config";
 import { Entity } from "../../../../core/entity/model/entity";
 import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-type";
 
@@ -29,19 +26,14 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
   constructor(
     private childrenGenerator: DemoChildGenerator,
     private config: DemoHistoricalDataConfig,
-    private configGenerator: DemoConfigGeneratorService,
   ) {
     super();
+    this.requiredEntityTypes = ["HistoricalEntityData"];
   }
 
   protected generateEntities(): Entity[] {
-    const config = this.configGenerator.entities[0];
     const attributes: any[] = Object.keys(
-      (
-        config.data[
-          EntityConfigService.PREFIX_ENTITY_CONFIG + "HistoricalEntityData"
-        ] as EntityConfig
-      ).attributes,
+      this.entityRegistry.get("HistoricalEntityData").schema,
     );
 
     const entities: Entity[] = [];

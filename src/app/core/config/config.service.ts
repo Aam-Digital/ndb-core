@@ -42,6 +42,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
     });
   }
 
+  public hasConfig() {
+    return this.currentConfig !== undefined;
+  }
+
   public saveConfig(config: any): Promise<void> {
     return this.entityMapper.save(new Config(Config.CONFIG_KEY, config), true);
   }
@@ -54,6 +58,12 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return this.currentConfig.data[id];
   }
 
+  /**
+   * Return all config items of the given "type"
+   * (determined by the given prefix of their id).
+   *
+   * @param prefix The prefix of config items to return (e.g. "view:" or "entity:")
+   */
   public getAllConfigs<T>(prefix: string): T[] {
     const matchingConfigs = [];
     for (const id of Object.keys(this.currentConfig.data)) {

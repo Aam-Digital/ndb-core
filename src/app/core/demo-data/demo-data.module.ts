@@ -21,7 +21,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
-import { DemoConfigGeneratorService } from "../config/demo-config-generator.service";
 import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoSchoolGenerator } from "../../child-dev-project/children/demo-data-generators/demo-school-generator.service";
 import { DemoChildSchoolRelationGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-school-relation-generator.service";
@@ -34,20 +33,13 @@ import { DemoHealthCheckGeneratorService } from "../../child-dev-project/childre
 import { DemoProgressDashboardWidgetGeneratorService } from "../../features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../child-dev-project/children/demo-data-generators/observations/demo-historical-data-generator";
-import { DemoPermissionGeneratorService } from "../permissions/demo-permission-generator.service";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
-import { DemoConfigurableEnumGeneratorService } from "../basic-datatypes/configurable-enum/demo-configurable-enum-generator.service";
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
-import { DemoSiteSettingsGeneratorService } from "../site-settings/demo-site-settings-generator.service";
 import { DemoReportConfigGeneratorService } from "../../features/reporting/demo-report-config-generator.service";
 
 const demoDataGeneratorProviders = [
-  ...DemoPermissionGeneratorService.provider(),
-  ...DemoConfigGeneratorService.provider(),
-  ...DemoSiteSettingsGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
-  ...DemoConfigurableEnumGeneratorService.provider(),
   ...DemoChildGenerator.provider({ count: 120 }),
   ...DemoSchoolGenerator.provider({ count: 8 }),
   ...DemoChildSchoolRelationGenerator.provider(),
@@ -108,10 +100,4 @@ const demoDataGeneratorProviders = [
   declarations: [DemoDataGeneratingProgressDialogComponent],
   exports: [DemoDataGeneratingProgressDialogComponent],
 })
-export class DemoDataModule {
-  constructor(private demoDataInitializer: DemoDataInitializerService) {}
-
-  publishDemoData() {
-    return this.demoDataInitializer.run();
-  }
-}
+export class DemoDataModule {}

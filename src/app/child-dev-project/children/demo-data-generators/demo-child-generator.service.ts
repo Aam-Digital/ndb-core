@@ -36,7 +36,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
     child.name = faker.person.firstName() + " " + faker.person.lastName();
     child.projectNumber = id;
     child.religion = faker.helpers.arrayElement(religions);
-    child.gender = faker.helpers.arrayElement(genders.slice(1));
+    child.gender = faker.helpers.arrayElement(genders.slice(0, 2));
     child.dateOfBirth = new DateWithAge(
       faker.date.birthdate({ mode: "age", min: 5, max: 20 }),
     );

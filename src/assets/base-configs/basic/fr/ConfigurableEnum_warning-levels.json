@@ -1,0 +1,25 @@
+{
+  "_id": "ConfigurableEnum:warning-levels",
+  "values": [
+    {
+      "_ordinal": 0,
+      "id": "",
+      "label": ""
+    },
+    {
+      "_ordinal": 1,
+      "id": "OK",
+      "label": "bien"
+    },
+    {
+      "_ordinal": 2,
+      "id": "WARNING",
+      "label": "suivi nécessaire"
+    },
+    {
+      "_ordinal": 3,
+      "id": "URGENT",
+      "label": "suivi urgent"
+    }
+  ]
+}

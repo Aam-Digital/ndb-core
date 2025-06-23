@@ -18,7 +18,7 @@ describe("LanguageSelectComponent", () => {
   beforeEach(async () => {
     mockLocation = jasmine.createSpyObj("Location", ["reload"]);
     mockLanguageService = jasmine.createSpyObj("LanguageService", [
-      "currentRegionCode",
+      "getCurrentLocale",
       "initDefaultLanguage",
     ]);
     await TestBed.configureTestingModule({

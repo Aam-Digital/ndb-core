@@ -1,0 +1,26 @@
+<div class="flex-row flex-wrap gap-regular align-center">
+  <mat-form-field appearance="fill" class="flex-1">
+    <mat-label i18n>Select your use case:</mat-label>
+
+    <mat-select
+      [(ngModel)]="selectedUseCase"
+      (selectionChange)="onSelectionChange()"
+    >
+      @for (useCase of demoUseCases; track useCase) {
+        <mat-option [value]="useCase">
+          {{ useCase.name }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="flex-1 description-container">
+    @if (selectedUseCase) {
+      <div markdown [data]="selectedUseCase.description"></div>
+    } @else {
+      <p class="description-no-use-case" i18n>
+        Select a use case as an initial configuration for your system.
+      </p>
+    }
+  </div>
+</div>
