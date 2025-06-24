@@ -40,7 +40,9 @@ describe("EditImportColumnMappingComponent", () => {
     fixture = TestBed.createComponent(EditImportColumnMappingComponent);
     component = fixture.componentInstance;
     component.columnMapping = columnMapping;
+    component.otherColumnMappings = [];
     component.rawData = rawData;
+    component.entityCtor = TestEntity;
     fixture.detectChanges();
 
     spyOn(component.columnMappingChange, "emit");

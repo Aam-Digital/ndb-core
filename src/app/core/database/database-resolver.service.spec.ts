@@ -5,16 +5,23 @@ import { SessionInfo } from "../session/auth/session-info";
 import { MemoryPouchDatabase } from "./pouchdb/memory-pouch-database";
 import { Entity } from "../entity/model/entity";
 import { DatabaseFactoryService } from "./database-factory.service";
+import { SyncStateSubject } from "../session/session-type";
 
 describe("DatabaseResolverService", () => {
   let service: DatabaseResolverService;
+  let syncStateSubject: SyncStateSubject;
 
   beforeEach(() => {
+    syncStateSubject = new SyncStateSubject();
+
     TestBed.configureTestingModule({
       providers: [
         {
           provide: DatabaseFactoryService,
-          useValue: { createDatabase: () => new MemoryPouchDatabase() },
+          useValue: {
+            createDatabase: () =>
+              new MemoryPouchDatabase("unit-test-db", syncStateSubject),
+          },
         },
       ],
     });

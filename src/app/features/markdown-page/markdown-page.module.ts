@@ -23,6 +23,7 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from "@angular/common/http";
+import { MarkdownContent } from "./markdown-content";
 
 /**
  * Display any information contained in a markdown file.
@@ -37,6 +38,8 @@ import {
   providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class MarkdownPageModule {
+  static databaseEntities = [MarkdownContent];
+
   constructor(private components: ComponentRegistry) {
     this.registerComponents();
   }

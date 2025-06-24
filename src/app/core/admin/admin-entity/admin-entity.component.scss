@@ -1,13 +1,21 @@
 @use "variables/colors";
+@use "variables/sizes";
 
 .host-container {
-  height: 100vh;
+  height: calc(100vh - 64px);
+
+  // undo margins of routed view
+  margin-top: - sizes.$margin-main-view-top;
+  margin-right: - sizes.$margin-main-view-right;
+  margin-bottom: - sizes.$margin-main-view-bottom;
+  margin-left: - sizes.$margin-main-view-left;
 }
 
 .header {
   padding: 20px;
   background-color: colors.$background-secondary;
 }
+
 .config-nav {
   background-color: colors.$background-secondary;
 }

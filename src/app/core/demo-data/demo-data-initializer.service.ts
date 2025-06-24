@@ -25,6 +25,7 @@ import { Entity } from "../entity/model/entity";
 @Injectable()
 export class DemoDataInitializerService {
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
+
   private readonly normalUser: SessionInfo = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
     id: DemoUserGeneratorService.DEFAULT_USERNAME,
@@ -48,18 +49,29 @@ export class DemoDataInitializerService {
     private sessionInfo: SessionSubject,
   ) {}
 
-  async run() {
+  async logInDemoUser() {
+    this.localAuthService.saveUser(this.normalUser);
+    this.localAuthService.saveUser(this.adminUser);
+
+    await this.sessionManager.offlineLogin(this.normalUser);
+
+    this.syncDatabaseOnUserChange();
+  }
+
+  /**
+   * Generates additional demo data (regardless of whether the demo data is already present).
+   * Make sure a user is logged in before calling this method so that a valid database is available.
+   *
+   * Alternatively, use `DemoDataInitializerService.run()` to do a complete initialization including user setup.
+   */
+  async generateDemoData() {
     const dialogRef = this.dialog.open(
       DemoDataGeneratingProgressDialogComponent,
     );
 
-    this.localAuthService.saveUser(this.normalUser);
-    this.localAuthService.saveUser(this.adminUser);
-    await this.sessionManager.offlineLogin(this.normalUser);
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();
-    this.syncDatabaseOnUserChange();
   }
 
   private syncDatabaseOnUserChange() {

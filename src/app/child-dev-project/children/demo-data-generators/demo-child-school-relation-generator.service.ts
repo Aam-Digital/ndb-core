@@ -5,7 +5,6 @@ import { Injectable } from "@angular/core";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { faker } from "../../../core/demo-data/faker";
 import { Entity } from "../../../core/entity/model/entity";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 
 /**
  * Generate ChildSchoolRelation entities linking a child to a school for a specific year.
@@ -30,7 +29,6 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   constructor(
     private demoChildren: DemoChildGenerator,
     private demoSchools: DemoSchoolGenerator,
-    private entityRegistry: EntityRegistry,
   ) {
     super();
   }

@@ -14,6 +14,7 @@ import { FormFieldConfig } from "../../../core/common-components/entity-form/For
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -23,7 +24,7 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
 @Component({
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
-  imports: [EntitiesTableComponent],
+  imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
 export class NotesRelatedToEntityComponent
   extends RelatedEntitiesComponent<Note>

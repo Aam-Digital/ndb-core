@@ -1,0 +1,17 @@
+{
+  "_id": "ConfigurableEnum:genders",
+  "values": [
+    {
+      "id": "M",
+      "label": "männlich"
+    },
+    {
+      "id": "F",
+      "label": "weiblich"
+    },
+    {
+      "id": "X",
+      "label": "nicht-binär"
+    }
+  ]
+}
