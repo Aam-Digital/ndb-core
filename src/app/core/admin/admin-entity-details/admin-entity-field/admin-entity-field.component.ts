@@ -116,7 +116,7 @@ export class AdminEntityFieldComponent implements OnInit {
     this.publicFormConfig = data.publicFormConfig;
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.entitySchemaField = {
       ...(this.entityType.schema.get(this.fieldId) ?? {}),
     };
