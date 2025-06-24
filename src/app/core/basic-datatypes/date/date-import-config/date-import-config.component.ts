@@ -72,13 +72,12 @@ export class DateImportConfigComponent {
   async save() {
     console.log("value", this.format.errors);
     const confirmed =
-      
       !this.format.errors ||
       (await this.confirmation.getConfirmation(
         $localize`Ignore values?`,
         $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
       ));
-      
+
     if (confirmed) {
       this.data.col.additional = this.format.value?.toUpperCase();
       this.dialog.close();
