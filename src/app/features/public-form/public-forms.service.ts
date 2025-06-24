@@ -4,6 +4,7 @@ import { PublicFormConfig } from "./public-form-config";
 import { Entity } from "app/core/entity/model/entity";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
+import { AdminEntityService } from "app/core/admin/admin-entity.service";
 
 @Injectable({
   providedIn: "root",
@@ -13,6 +14,7 @@ export class PublicFormsService {
     private entityMapper: EntityMapperService,
     private alertService: AlertService,
     private entityActionsMenuService: EntityActionsMenuService,
+    private adminEntityService: AdminEntityService,
   ) {}
 
   /**
@@ -84,5 +86,43 @@ export class PublicFormsService {
     }
 
     return false;
+  }
+
+  public async updateFieldInPublicFormConfig(
+    publicFormConfig: PublicFormConfig,
+    fieldId: string,
+    entitySchemaField: any,
+    entityType: any,
+  ): Promise<void> {
+    let fieldExists = false;
+    const columns = publicFormConfig.columns;
+
+    if (Array.isArray(columns)) {
+      for (const column of columns) {
+        if (Array.isArray(column.fields)) {
+          for (let i = 0; i < column.fields.length; i++) {
+            const f = column.fields[i];
+            if (typeof f === "string" && f === fieldId) {
+              column.fields[i] = { id: fieldId, ...entitySchemaField };
+              fieldExists = true;
+            } else if (typeof f === "object" && f?.id === fieldId) {
+              column.fields[i] = { ...f, ...entitySchemaField, id: fieldId };
+              fieldExists = true;
+            }
+          }
+        }
+      }
+    }
+
+    if (!fieldExists) {
+      // Update base schema also if the field was not found in the publicform
+      this.adminEntityService.updateSchemaField(
+        entityType,
+        fieldId,
+        entitySchemaField,
+      );
+    }
+
+    await this.entityMapper.save(publicFormConfig, false);
   }
 }
