@@ -21,6 +21,7 @@ body {
 .ui-toolbar {
   position: sticky;
   top: 0;
+  padding-right: 0px;
   z-index: 2;
   justify-content: space-between;
   @include mat-elevation.elevation(2);
@@ -71,6 +72,10 @@ body {
 
 .toolbar-spacer {
   margin-top: var(--mat-toolbar-standard-height, 64px);
+}
+
+::ng-deep .cdk-overlay-pane.mat-mdc-dialog-panel {
+  margin-top: var(--toolbar-height) !important;
 }
 
 /**  Main content  **/

@@ -11,6 +11,7 @@ import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { TimePeriod } from "./time-period";
+import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 
 /**
  * Display a list of entity subrecords (entities related to the current entity details view)
@@ -32,6 +33,7 @@ import { TimePeriod } from "./time-period";
     FormsModule,
     MatTooltipModule,
     PillComponent,
+    CustomFormLinkButtonComponent,
   ],
 })
 export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>

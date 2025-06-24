@@ -19,6 +19,7 @@ import { MatMenuModule } from "@angular/material/menu";
     Angulartics2Module,
     MatMenuModule,
   ],
+  standalone: true,
 })
 export class MenuItemComponent {
   /**

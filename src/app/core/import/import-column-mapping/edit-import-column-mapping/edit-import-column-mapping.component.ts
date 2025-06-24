@@ -1,4 +1,12 @@
-import { Component, EventEmitter, inject, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { ColumnMapping } from "../../column-mapping";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
@@ -12,6 +20,8 @@ import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { MappingDialogData } from "../mapping-dialog-data";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatTooltip } from "@angular/material/tooltip";
 
 /**
  * Component to edit a single imported column's mapping to an entity field
@@ -28,9 +38,11 @@ import { MappingDialogData } from "../mapping-dialog-data";
     FormsModule,
     MatButtonModule,
     MatBadgeModule,
+    FaIconComponent,
+    MatTooltip,
   ],
 })
-export class EditImportColumnMappingComponent {
+export class EditImportColumnMappingComponent implements OnChanges {
   private dialog = inject(MatDialog);
   private componentRegistry = inject(ComponentRegistry);
   private schemaService = inject(EntitySchemaService);
@@ -53,9 +65,10 @@ export class EditImportColumnMappingComponent {
   @Input() entityCtor: EntityConstructor;
 
   /**
-   * Entity fields that are already mapped and should not be offered to the user for selecting here.
+   * Existing column mappings of other columns
+   * (e.g. to hide already mapped fields)
    */
-  @Input() usedPropertyNames: Set<string>;
+  @Input() otherColumnMappings: ColumnMapping[];
 
   /**
    * the actually imported data
@@ -70,9 +83,27 @@ export class EditImportColumnMappingComponent {
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: string;
 
+  /** whether the currently mapped datatype has been mapped to other columns also */
+  hasMultiMapping?: boolean;
+
   hideOption = (option: FormFieldConfig) =>
-    this.usedPropertyNames.has(option.id) &&
+    this.otherColumnMappings.some((c) => c.propertyName === option.id) &&
+    !this.schemaService.getDatatypeOrDefault(option.dataType)
+      .importAllowsMultiMapping &&
     option.id !== this.columnMapping.propertyName;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.updateHasMultiMapping();
+  }
+
+  private updateHasMultiMapping() {
+    this.hasMultiMapping = this.otherColumnMappings.some(
+      (c) =>
+        this.columnMapping?.propertyName !== undefined &&
+        c.propertyName === this.columnMapping?.propertyName &&
+        c.column !== this.columnMapping?.column,
+    );
+  }
 
   async openMappingComponent() {
     const uniqueValues = new Set<any>();
@@ -106,6 +137,7 @@ export class EditImportColumnMappingComponent {
     this.columnMapping.manuallyUpdated = true;
 
     this.updateDatatypeAndWarning();
+    this.updateHasMultiMapping();
     this.columnMappingChange.emit(this.columnMapping);
   }
 

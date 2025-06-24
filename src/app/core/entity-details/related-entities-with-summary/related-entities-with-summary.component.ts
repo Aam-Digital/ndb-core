@@ -3,6 +3,7 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { Entity } from "../../entity/model/entity";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
+import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 
 /**
  * Load and display a list of related entities
@@ -12,7 +13,7 @@ import { EntitiesTableComponent } from "../../common-components/entities-table/e
 @Component({
   selector: "app-related-entities-with-summary",
   templateUrl: "./related-entities-with-summary.component.html",
-  imports: [EntitiesTableComponent],
+  imports: [EntitiesTableComponent, NgIf, CustomFormLinkButtonComponent],
 })
 export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   extends RelatedEntitiesComponent<E>

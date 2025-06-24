@@ -70,7 +70,7 @@ describe("LoginComponent", () => {
     expect(sessionManager.remoteLogin).toHaveBeenCalled();
   });
 
-  it("should route to redirect uri once state changes to 'logged-in'", () => {
+  it("should route to redirect uri once state changes to 'logged-in'", fakeAsync(() => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigateByUrl");
     TestBed.inject(ActivatedRoute).snapshot.queryParams = {
       redirect_uri: "someUrl",
@@ -78,9 +78,10 @@ describe("LoginComponent", () => {
 
     fixture.detectChanges();
     loginState.next(LoginState.LOGGED_IN);
+    tick(100);
 
     expect(navigateSpy).toHaveBeenCalledWith("someUrl");
-  });
+  }));
 
   it("should show offline login if remote login fails", fakeAsync(() => {
     const mockUsers: SessionInfo[] = [{ name: "test", id: "101", roles: [] }];

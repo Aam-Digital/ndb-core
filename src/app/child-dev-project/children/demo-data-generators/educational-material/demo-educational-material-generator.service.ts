@@ -36,6 +36,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     private demoChildren: DemoChildGenerator,
   ) {
     super();
+    this.requiredEntityTypes = ["EducationalMaterial"];
   }
 
   public generateEntities(): Entity[] {

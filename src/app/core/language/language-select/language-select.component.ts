@@ -1,14 +1,16 @@
-import { ChangeDetectionStrategy, Component, Inject } from "@angular/core";
-import { LanguageService } from "../language.service";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  Input,
+} from "@angular/core";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-import { MatMenuModule } from "@angular/material/menu";
-import { LOCALE_ENUM_ID } from "../languages";
-import { ConfigurableEnumDirective } from "../../basic-datatypes/configurable-enum/configurable-enum-directive/configurable-enum.directive";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGE_LOCAL_STORAGE_KEY,
+} from "../language-statics";
+import { MatSelectModule } from "@angular/material/select";
+import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -17,31 +19,21 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   selector: "app-language-select",
   templateUrl: "./language-select.component.html",
   styleUrls: ["./language-select.component.scss"],
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    ConfigurableEnumDirective,
-    FontAwesomeModule,
-    MatTooltipModule,
-  ],
+  imports: [MatSelectModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSelectComponent {
-  localeEnumId = LOCALE_ENUM_ID;
-  /**
-   * The region code of the currently selected language/region
-   */
-  siteRegionCode: string;
+  @Input() availableLocales: ConfigurableEnumValue[] = [];
 
-  constructor(
-    private translationService: LanguageService,
-    @Inject(LOCATION_TOKEN) private location: Location,
-  ) {
-    this.siteRegionCode = this.translationService.currentRegionCode();
+  currentLocale: string;
+
+  constructor(@Inject(LOCATION_TOKEN) private location: Location) {
+    this.currentLocale =
+      localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || DEFAULT_LANGUAGE;
   }
 
   changeLocale(lang: string) {
+    if (lang === this.currentLocale) return;
     localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, lang);
     this.location.reload();
   }

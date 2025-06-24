@@ -89,7 +89,10 @@ export class LoginComponent implements OnInit {
 
   private routeAfterLogin() {
     const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
-    this.router.navigateByUrl(decodeURIComponent(redirectUri));
+    setTimeout(
+      () => this.router.navigateByUrl(decodeURIComponent(redirectUri)),
+      100,
+    );
   }
 
   tryLogin() {

@@ -40,6 +40,13 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
    */
   static dataType: string = "";
+
+  /**
+   * Whether this datatype allows multiple values to be mapped to the same entity field
+   * during import.
+   */
+  readonly importAllowsMultiMapping: boolean = false;
+
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;
   }
@@ -100,11 +107,14 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * @param val The value from an imported cell to be mapped
    * @param schemaField The schema field definition for the target property into which the value is mapped
    * @param additional config as returned by the configComponent
+   * @param importProcessingContext an object that the datatype can use to store any relevant context across multiple calls
+   *                                to share information across processing of multiple columns and rows.
    */
   async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
     additional?: any,
+    importProcessingContext?: any,
   ): Promise<EntityType | EntityType[]> {
     if (schemaField.isArray) {
       return asArray(val).map((v) =>

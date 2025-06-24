@@ -44,11 +44,11 @@ export class SyncedPouchDatabase extends PouchDatabase {
   constructor(
     dbName: string,
     authService: KeycloakAuthService,
-    private globalSyncState: SyncStateSubject,
+    globalSyncState: SyncStateSubject,
     private navigator: Navigator,
     private loginStateSubject: LoginStateSubject,
   ) {
-    super(dbName);
+    super(dbName, globalSyncState);
 
     this.remoteDatabase = new RemotePouchDatabase(dbName, authService);
 
@@ -90,7 +90,7 @@ export class SyncedPouchDatabase extends PouchDatabase {
       this.pouchDB = this.remoteDatabase.getPouchDB();
       this.databaseInitialized.complete();
     } else {
-      super.init(dbName ?? this.dbName);
+      super.init(dbName ?? this.dbName, undefined, true);
 
       // keep remote database on default name (e.g. "app" instead of "user_uuid-app")
       this.remoteDatabase.init(remoteDbName);

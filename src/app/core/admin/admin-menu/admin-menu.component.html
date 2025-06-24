@@ -1,0 +1,29 @@
+<div class="flex-row align-center gap-regular margin-bottom-regular">
+  <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
+  <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+</div>
+
+<div class="margin-bottom-regular">
+  <button mat-stroked-button color="accent" (click)="addNewMenuItem()">
+    <fa-icon icon="plus-circle" class="standard-icon-with-text"></fa-icon>
+    <span i18n>Add New</span>
+  </button>
+</div>
+
+<div
+  cdkDropList
+  [id]="navigationContainer"
+  [cdkDropListData]="menuItems"
+  [cdkDropListConnectedTo]="connectedDropLists"
+  (cdkDropListDropped)="onDragDrop($event)"
+>
+  @for (item of menuItems; track item; let i = $index) {
+    <app-admin-menu-item
+      [item]="item"
+      [connectedTo]="connectedDropLists"
+      (itemDrop)="onDragDrop($event)"
+      (deleteItem)="removeItem(item)"
+      (itemChange)="onItemChange($event, i)"
+    ></app-admin-menu-item>
+  }
+</div>

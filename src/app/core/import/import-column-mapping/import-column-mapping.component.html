@@ -13,15 +13,13 @@
 </div>
 
 <div>
-  @for (col of columnMapping; track col) {
-    <div>
-      <app-edit-import-column-mapping
-        [columnMapping]="col"
-        [entityCtor]="entityCtor"
-        [usedPropertyNames]="usedPropertyNames"
-        [rawData]="rawData"
-        (columnMappingChange)="updateColumnMapping(col, $event)"
-      />
-    </div>
-  }
+  <div *ngFor="let col of columnMapping">
+    <app-edit-import-column-mapping
+      [columnMapping]="col"
+      [entityCtor]="entityCtor"
+      [otherColumnMappings]="columnMapping"
+      [rawData]="rawData"
+      (columnMappingChange)="updateColumnMapping(col, $event)"
+    />
+  </div>
 </div>
