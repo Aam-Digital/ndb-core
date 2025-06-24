@@ -134,7 +134,10 @@ export class MapPopupComponent {
     );
   }
 
-  private shouldShowConfirmation(manualAddress: string, lookupAddress: string): boolean {
+  private shouldShowConfirmation(
+    manualAddress: string,
+    lookupAddress: string,
+  ): boolean {
     return (
       manualAddress &&
       manualAddress !== lookupAddress &&
@@ -142,7 +145,9 @@ export class MapPopupComponent {
     );
   }
 
-  private async showAddressMismatchDialog(): Promise<string | boolean | undefined> {
+  private async showAddressMismatchDialog(): Promise<
+    string | boolean | undefined
+  > {
     return this.confirmationDialog.getConfirmation(
       $localize`Address Mismatch`,
       $localize`Address details captured does not match with the location on the map. What would you like to do?`,
@@ -161,7 +166,10 @@ export class MapPopupComponent {
     );
   }
 
-  private async handleConfirmationResult(result: string | boolean | undefined, lookupAddress: string) {
+  private async handleConfirmationResult(
+    result: string | boolean | undefined,
+    lookupAddress: string,
+  ) {
     if (result === "continue") {
       this.saveAndClose();
     } else if (result === "update") {
