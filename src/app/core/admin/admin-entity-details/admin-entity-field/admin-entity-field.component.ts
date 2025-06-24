@@ -131,8 +131,6 @@ export class AdminEntityFieldComponent implements OnInit {
       }
     }
 
-    console.log("this.entitySchemaField", this.entitySchemaField);
-
     this.initAvailableDatatypes(this.allDataTypes);
   }
 
