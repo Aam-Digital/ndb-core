@@ -123,8 +123,6 @@ export class AdminEntityFieldComponent implements OnInit {
 
     this.overrideEntitySchema();
 
-    console.log("entitySchemaField", this.entitySchemaField);
-
     this.initSettings();
 
     if (this.publicFormConfig) {
