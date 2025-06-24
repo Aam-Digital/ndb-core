@@ -295,29 +295,32 @@ export class AdminEntityFieldComponent implements OnInit {
 
   async save() {
     this.form.markAllAsTouched();
-    if (this.form.invalid) {
-      return;
-    }
+    if (this.form.invalid) return;
 
     const fieldId = this.fieldIdForm.getRawValue();
+    let shouldUpdateSchema = false;
 
     if (this.isFormOverride) {
-      await this.publicFormService.updateFieldInPublicFormConfig(
-        this.publicFormConfigEntity,
+      const publicFormConfigUpdated =
+        await this.publicFormService.updateFieldInPublicFormConfig(
+          this.publicFormConfigEntity,
+          fieldId,
+          this.entitySchemaField,
+        );
+
+      await this.entityMapper.save(this.publicFormConfigEntity, false);
+      shouldUpdateSchema = !publicFormConfigUpdated;
+    } else {
+      shouldUpdateSchema = true;
+    }
+
+    if (shouldUpdateSchema) {
+      this.adminEntityService.updateSchemaField(
+        this.entityType,
         fieldId,
         this.entitySchemaField,
-        this.entityType,
       );
-
-      console.log(this.publicFormConfigEntity, "test");
-      this.dialogRef.close(fieldId);
-      return;
     }
-    this.adminEntityService.updateSchemaField(
-      this.entityType,
-      fieldId,
-      this.entitySchemaField,
-    );
 
     this.dialogRef.close(fieldId);
   }

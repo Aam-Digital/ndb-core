@@ -4,7 +4,6 @@ import { PublicFormConfig } from "./public-form-config";
 import { Entity } from "app/core/entity/model/entity";
 import { AlertService } from "app/core/alerts/alert.service";
 import { EntityActionsMenuService } from "app/core/entity-details/entity-actions-menu/entity-actions-menu.service";
-import { AdminEntityService } from "app/core/admin/admin-entity.service";
 
 @Injectable({
   providedIn: "root",
@@ -14,7 +13,6 @@ export class PublicFormsService {
     private entityMapper: EntityMapperService,
     private alertService: AlertService,
     private entityActionsMenuService: EntityActionsMenuService,
-    private adminEntityService: AdminEntityService,
   ) {}
 
   /**
@@ -88,12 +86,19 @@ export class PublicFormsService {
     return false;
   }
 
+  /**
+   * Updates a specific field in the columns of a PublicFormConfig.
+   * - Searches for the field by fieldId in all columns.
+   * - If found as a string, replaces it with an object containing the new schema.
+   * - If found as an object, merges the new schema into the existing object.
+   * - Saves the updated PublicFormConfig.
+   * @returns true if the field was found and updated, false otherwise.
+   */
   public async updateFieldInPublicFormConfig(
     publicFormConfig: PublicFormConfig,
     fieldId: string,
     entitySchemaField: any,
-    entityType: any,
-  ): Promise<void> {
+  ): Promise<boolean> {
     let fieldExists = false;
     const columns = publicFormConfig.columns;
 
@@ -114,15 +119,7 @@ export class PublicFormsService {
       }
     }
 
-    if (!fieldExists) {
-      // Update base schema also if the field was not found in the publicform
-      this.adminEntityService.updateSchemaField(
-        entityType,
-        fieldId,
-        entitySchemaField,
-      );
-    }
-
     await this.entityMapper.save(publicFormConfig, false);
+    return fieldExists;
   }
 }
