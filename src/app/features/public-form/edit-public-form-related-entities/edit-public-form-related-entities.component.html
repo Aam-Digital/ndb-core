@@ -25,5 +25,15 @@
         }
       </mat-select>
     </mat-form-field>
+
+    <button
+      mat-icon-button
+      [disabled]="formControl.disabled"
+      (click)="clearSelectedEntity()"
+      matTooltip="Clear selected entity"
+      i18n-matTooltip
+    >
+      <fa-icon icon="times"></fa-icon>
+    </button>
   </div>
 </div>
