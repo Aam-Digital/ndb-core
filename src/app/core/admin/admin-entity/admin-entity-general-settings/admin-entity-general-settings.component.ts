@@ -29,6 +29,7 @@ import { AnonymizeOptionsComponent } from "../../admin-entity-details/admin-enti
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
+import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -55,6 +56,7 @@ import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.d
     HelpButtonComponent,
     AnonymizeOptionsComponent,
     FaIconComponent,
+    AdminIconComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {

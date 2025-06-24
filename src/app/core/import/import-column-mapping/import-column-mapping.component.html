@@ -17,7 +17,7 @@
     <app-edit-import-column-mapping
       [columnMapping]="col"
       [entityCtor]="entityCtor"
-      [usedPropertyNames]="usedPropertyNames"
+      [otherColumnMappings]="columnMapping"
       [rawData]="rawData"
       (columnMappingChange)="updateColumnMapping(col, $event)"
     />

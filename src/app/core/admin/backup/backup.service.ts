@@ -1,7 +1,9 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Database } from "../../database/database";
 import { Config } from "../../config/config";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * Create and load backups of the database.
@@ -11,6 +13,10 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 })
 export class BackupService {
   private db: Database;
+
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly window = inject(WINDOW_TOKEN);
+  private readonly location = inject(LOCATION_TOKEN);
 
   constructor(private dbResolver: DatabaseResolverService) {
     this.db = this.dbResolver.getDatabase();
@@ -54,5 +60,33 @@ export class BackupService {
       delete record._rev;
       await this.db.put(record, forceUpdate);
     }
+  }
+
+  async resetApplication() {
+    const choice = await this.confirmationDialog.getConfirmation(
+      $localize`:Reset Application Confirmation:Reset Application`,
+      $localize`:Reset Application Confirmation:Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again.`,
+    );
+    if (!choice) {
+      return;
+    }
+
+    const dbs = await this.window.indexedDB.databases();
+    await Promise.all(dbs.map(({ name }) => this.destroyDatabase(name)));
+
+    const registrations =
+      await this.window.navigator.serviceWorker.getRegistrations();
+    const unregisterPromises = registrations.map((reg) => reg.unregister());
+    await Promise.all(unregisterPromises);
+    localStorage.clear();
+    this.location.pathname = "";
+  }
+
+  private destroyDatabase(name: string) {
+    return new Promise((resolve, reject) => {
+      const del = this.window.indexedDB.deleteDatabase(name);
+      del.onsuccess = resolve;
+      del.onerror = reject;
+    });
   }
 }

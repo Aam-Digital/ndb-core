@@ -1,9 +1,8 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
+import { WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import * as Sentry from "@sentry/angular";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
@@ -46,12 +45,10 @@ export class SupportComponent implements OnInit {
     private currentUserSubject: CurrentUserSubject,
     private sw: SwUpdate,
     private databaseResolver: DatabaseResolverService,
-    private confirmationDialog: ConfirmationDialogService,
     private http: HttpClient,
     private backupService: BackupService,
     private downloadService: DownloadService,
     @Inject(WINDOW_TOKEN) private window: Window,
-    @Inject(LOCATION_TOKEN) private location: Location,
   ) {}
 
   ngOnInit() {
@@ -167,23 +164,7 @@ export class SupportComponent implements OnInit {
   }
 
   async resetApplication() {
-    const choice = await this.confirmationDialog.getConfirmation(
-      "Reset Application",
-      "Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again.",
-    );
-    if (!choice) {
-      return;
-    }
-
-    const dbs = await this.window.indexedDB.databases();
-    await Promise.all(dbs.map(({ name }) => this.destroyDatabase(name)));
-
-    const registrations =
-      await this.window.navigator.serviceWorker.getRegistrations();
-    const unregisterPromises = registrations.map((reg) => reg.unregister());
-    await Promise.all(unregisterPromises);
-    localStorage.clear();
-    this.location.pathname = "";
+    await this.backupService.resetApplication();
   }
 
   async downloadLocalDatabase() {
@@ -193,13 +174,5 @@ export class SupportComponent implements OnInit {
       "json",
       "aamdigital_data_" + new Date().toISOString(),
     );
-  }
-
-  private destroyDatabase(name: string) {
-    return new Promise((resolve, reject) => {
-      const del = this.window.indexedDB.deleteDatabase(name);
-      del.onsuccess = resolve;
-      del.onerror = reject;
-    });
   }
 }

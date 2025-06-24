@@ -4,6 +4,7 @@ import PouchDB from "pouchdb-browser";
 import { Logging } from "../../logging/logging.service";
 import { HttpStatusCode } from "@angular/common/http";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { SyncStateSubject } from "app/core/session/session-type";
 
 /**
  * An alternative implementation of PouchDatabase that directly makes HTTP requests to a remote CouchDB.
@@ -12,8 +13,9 @@ export class RemotePouchDatabase extends PouchDatabase {
   constructor(
     dbName: string,
     private authService: KeycloakAuthService,
+    globalSyncState?: SyncStateSubject,
   ) {
-    super(dbName);
+    super(dbName, globalSyncState);
   }
 
   /**

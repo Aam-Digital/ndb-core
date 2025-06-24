@@ -131,7 +131,7 @@ describe("Entity", () => {
     class TestconfigurableenumToString extends Entity {
       static override toStringAttributes = ["gender", "age", "testDate"];
       static override label = "Testconfigurableenum";
-      gender: ConfigurableEnumValue = genders[1];
+      gender: ConfigurableEnumValue = genders[0];
       testDate = new Date("2025-01-31");
       age = 25;
     }

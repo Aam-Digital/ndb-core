@@ -1,5 +1,5 @@
-import { $localize } from "@angular/localize/init";
 import { Ordering } from "../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
+import enumJson from "../../assets/base-configs/basic/ConfigurableEnum_warning-levels.json";
 
 export enum WarningLevel {
   WARNING = "WARNING",
@@ -21,23 +21,4 @@ export function getWarningLevelColor(warningLevel: WarningLevel) {
   }
 }
 
-export const warningLevels: Ordering.EnumValue[] = Ordering.imposeTotalOrdering(
-  [
-    {
-      id: "",
-      label: "",
-    },
-    {
-      id: "OK",
-      label: $localize`:Label warning level:Solved`,
-    },
-    {
-      id: "WARNING",
-      label: $localize`:Label warning level:Needs Follow-Up`,
-    },
-    {
-      id: "URGENT",
-      label: $localize`:Label warning level:Urgent Follow-Up`,
-    },
-  ],
-);
+export const warningLevels: Ordering.EnumValue[] = enumJson.values;

@@ -8,6 +8,7 @@ import { AdminOverviewService } from "../../core/admin/admin-overview/admin-over
 import { PublicFormConfig } from "./public-form-config";
 import { AsyncComponent, ComponentRegistry } from "app/dynamic-components";
 import { publicFormRoutes } from "./public-form-routing";
+import { PublicFormsService } from "./public-forms.service";
 
 /**
  * Configure publicly accessible forms for users without login to record some data into the system.
@@ -24,6 +25,7 @@ export class PublicFormModule {
     components: ComponentRegistry,
     routerService: RouterService,
     adminOverviewService: AdminOverviewService,
+    publicFormsService: PublicFormsService,
   ) {
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
@@ -31,6 +33,7 @@ export class PublicFormModule {
       label: $localize`:admin menu item:Manage Public Forms`,
       link: PublicFormConfig.route,
     });
+    publicFormsService.initCustomFormActions();
   }
 }
 
@@ -55,6 +58,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
       import(
         "app/features/public-form/edit-publicform-route/edit-publicform-route.component"
       ).then((c) => c.EditPublicformRouteComponent),
+  ],
+  [
+    "EditPublicFormRelatedEntitiesComponent",
+    () =>
+      import(
+        "app/features/public-form/edit-public-form-related-entities/edit-public-form-related-entities.component"
+      ).then((c) => c.EditPublicFormRelatedEntitiesComponent),
   ],
 ];
 
@@ -127,7 +137,7 @@ const viewConfigs: ViewConfig[] = [
               config: {
                 fieldGroups: [
                   {
-                    fields: ["prefilledFields"],
+                    fields: ["prefilledFields", "linkedEntity"],
                   },
                 ],
               },

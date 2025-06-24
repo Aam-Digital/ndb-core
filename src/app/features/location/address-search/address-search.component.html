@@ -39,15 +39,15 @@
       <mat-option disabled i18n>Location not found</mat-option>
     }
 
+    <!-- Always show user-typed value if not empty and not in options -->
     @if (
-      (networkError || otherTypeError || nothingFound) &&
-      inputElement.value?.length > 2
+      inputElement.value?.length > 2 && !isInputInOptions(inputElement.value)
     ) {
-      <mat-option [value]="inputElement.value" i18n
-        >Set address without map location as "{{
-          inputElement.value
-        }}"</mat-option
-      >
+      <mat-option [value]="inputElement.value" i18n>
+        <span class="address-warning">
+          Set address without map location as "{{ inputElement.value }}"
+        </span>
+      </mat-option>
     }
 
     @for (option of filteredOptions | async; track option) {

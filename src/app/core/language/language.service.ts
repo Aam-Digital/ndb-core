@@ -33,16 +33,13 @@ export class LanguageService {
   }
 
   /**
-   * returns the region code of the locale currently used
-   * Extracts the region code (i.e. 'de', 'us', 'in') in lowercase letters
-   * from a locale (i.e. 'en-US', 'hi-IN')
+   * Returns the current locale string (e.g., 'en-US', 'hi-IN').
+   * First tries to read the value from localStorage, otherwise falls back to base locale.
    */
-  currentRegionCode(): string {
-    const components = this.baseLocale.split("-");
-    if (components.length >= 2) {
-      return components[1].toLowerCase();
-    } else {
-      return components[0].toLowerCase();
-    }
+  getCurrentLocale(): string {
+    return (
+      this.window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ||
+      this.baseLocale
+    );
   }
 }

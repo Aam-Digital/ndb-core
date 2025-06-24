@@ -63,25 +63,28 @@ export class EntityActionsMenuComponent implements OnChanges {
     }
   }
 
-  private filterAvailableActions() {
-    this.actions = this.entityActionsMenuService
-      .getActions(this.entity)
-      .filter((action) => {
-        if (!this.entity) {
-          return false;
-        }
+  private async filterAvailableActions() {
+    if (!this.entity) {
+      this.actions = [];
+      return;
+    }
+    const allActions: EntityAction[] = this.entityActionsMenuService.getActions(
+      this.entity,
+    );
 
-        switch (action.action) {
-          case "archive":
-            return this.entity.isActive && !this.entity.anonymized;
-          case "anonymize":
-            return (
-              !this.entity.anonymized && this.entity.getConstructor().hasPII
-            );
-          default:
-            return true;
-        }
-      });
+    // check each action’s `visible` property to hide actions not applicable to the current entity
+    const visibleActions = (
+      await Promise.all(
+        allActions.map(async (action) => {
+          const isVisible = action.visible
+            ? await action.visible(this.entity)
+            : true;
+          return isVisible ? action : null;
+        }),
+      )
+    ).filter(Boolean) as EntityAction[];
+
+    this.actions = visibleActions;
   }
 
   async executeAction(action: EntityAction) {
