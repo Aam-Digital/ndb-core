@@ -109,6 +109,8 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   @Input() isDisabled: boolean = false;
 
+  @Input() entity: Entity;
+
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
 
@@ -212,6 +214,7 @@ export class AdminEntityFormComponent implements OnChanges {
         fieldId: fieldIdToEdit,
         entityType: this.entityType,
         isFormOverride: this.isFormOverride,
+        entity: this.entity,
       },
     });
     return lastValueFrom(dialogRef.afterClosed());

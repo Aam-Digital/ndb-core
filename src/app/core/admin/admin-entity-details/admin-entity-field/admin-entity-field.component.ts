@@ -42,6 +42,9 @@ import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options
 import { MatCheckbox } from "@angular/material/checkbox";
 import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
+import { PublicFormConfig } from "app/features/public-form/public-form-config";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { PublicFormsService } from "app/features/public-form/public-forms.service";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -86,16 +89,19 @@ export class AdminEntityFieldComponent implements OnInit {
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
 
+  publicFormConfigEntity: PublicFormConfig;
+
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
   isFormOverride: boolean; // whether this is a form override field
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    data: {
+    public data: {
       fieldId: string;
       entityType: EntityConstructor;
       isFormOverride: boolean;
+      entity: Entity;
     },
     private dialogRef: MatDialogRef<any>,
     private fb: FormBuilder,
@@ -104,20 +110,29 @@ export class AdminEntityFieldComponent implements OnInit {
     private entityRegistry: EntityRegistry,
     private adminEntityService: AdminEntityService,
     private dialog: MatDialog,
+    private entityMapper: EntityMapperService,
+    private publicFormService: PublicFormsService,
   ) {
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
     this.isFormOverride = data.isFormOverride ?? false;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.entitySchemaField = {
       ...(this.entityType.schema.get(this.fieldId) ?? {}),
     };
 
     this.initSettings();
+
     if (this.isFormOverride) {
-      this.schemaFieldsForm.get("dataType")?.disable();
+      if (this.schemaFieldsForm.get("dataType")?.value) {
+        this.schemaFieldsForm.get("dataType")?.disable();
+      }
+      this.publicFormConfigEntity = await this.entityMapper.load(
+        PublicFormConfig.ENTITY_TYPE,
+        this.data.entity.getId(),
+      );
     }
     this.initAvailableDatatypes(this.allDataTypes);
   }
@@ -278,13 +293,26 @@ export class AdminEntityFieldComponent implements OnInit {
     this.createNewAdditionalOption = undefined;
   }
 
-  save() {
+  async save() {
     this.form.markAllAsTouched();
     if (this.form.invalid) {
       return;
     }
 
     const fieldId = this.fieldIdForm.getRawValue();
+
+    if (this.isFormOverride) {
+      await this.publicFormService.updateFieldInPublicFormConfig(
+        this.publicFormConfigEntity,
+        fieldId,
+        this.entitySchemaField,
+        this.entityType,
+      );
+
+      console.log(this.publicFormConfigEntity, "test");
+      this.dialogRef.close(fieldId);
+      return;
+    }
 
     this.adminEntityService.updateSchemaField(
       this.entityType,
