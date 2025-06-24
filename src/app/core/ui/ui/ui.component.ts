@@ -20,7 +20,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {

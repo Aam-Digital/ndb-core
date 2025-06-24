@@ -1,5 +1,4 @@
 import { Component, OnInit, inject } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -18,7 +17,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   selector: "app-edit-public-form-related-entities",
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -26,8 +24,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatOptionModule,
     MatButtonModule,
     FontAwesomeModule,
-    MatTooltipModule,
-  ],
+    MatTooltipModule
+],
   templateUrl: "./edit-public-form-related-entities.component.html",
   styleUrls: ["./edit-public-form-related-entities.component.scss"],
 })
