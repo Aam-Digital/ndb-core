@@ -7,7 +7,6 @@ import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../entity/schema/entity-schema-field";
-import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
@@ -132,35 +131,6 @@ const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (
     configPart.editComponent = configPart.edit;
     delete configPart.edit;
   }
-  return configPart;
-};
-
-const migrateMenuItemConfig: ConfigMigration = (key, configPart) => {
-  if (key !== "navigationMenu") {
-    return configPart;
-  }
-
-  const oldItems: (
-    | {
-        name: string;
-        icon: string;
-        link: string;
-      }
-    | MenuItem
-  )[] = configPart.items;
-
-  configPart.items = oldItems.map((item) => {
-    if (item.hasOwnProperty("name")) {
-      return {
-        label: item["name"],
-        icon: item.icon,
-        link: item.link,
-      };
-    } else {
-      return item;
-    }
-  });
-
   return configPart;
 };
 
