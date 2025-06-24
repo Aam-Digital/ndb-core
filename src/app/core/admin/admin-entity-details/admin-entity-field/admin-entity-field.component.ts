@@ -114,13 +114,16 @@ export class AdminEntityFieldComponent implements OnInit {
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
     this.publicFormConfig = data.publicFormConfig;
-    console.log("publicofrm", data.publicFormConfig);
   }
 
   async ngOnInit() {
     this.entitySchemaField = {
       ...(this.entityType.schema.get(this.fieldId) ?? {}),
     };
+
+    this.overrideEntitySchema();
+
+    console.log("entitySchemaField", this.entitySchemaField);
 
     this.initSettings();
 
@@ -129,7 +132,27 @@ export class AdminEntityFieldComponent implements OnInit {
         this.schemaFieldsForm.get("dataType")?.disable();
       }
     }
+
+    console.log("this.entitySchemaField", this.entitySchemaField);
+
     this.initAvailableDatatypes(this.allDataTypes);
+  }
+
+  private overrideEntitySchema() {
+    if (this.publicFormConfig?.columns) {
+      for (const column of this.publicFormConfig.columns) {
+        if (!Array.isArray(column.fields)) continue;
+
+        for (const field of column.fields) {
+          if (typeof field === "object" && field.id === this.fieldId) {
+            this.entitySchemaField = {
+              ...this.entitySchemaField,
+              ...field,
+            };
+          }
+        }
+      }
+    }
   }
 
   private initSettings() {

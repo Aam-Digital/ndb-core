@@ -205,6 +205,7 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   async openFieldConfig(field: ColumnConfig): Promise<string> {
     let fieldIdToEdit = toFormFieldConfig(field).id;
+    console.log(this.entityType.ENTITY_TYPE, "weee");
     const dialogRef = this.matDialog.open(AdminEntityFieldComponent, {
       width: "99%",
       maxHeight: "90vh",
