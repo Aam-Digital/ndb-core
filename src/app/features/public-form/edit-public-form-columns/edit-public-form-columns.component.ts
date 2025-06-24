@@ -12,6 +12,7 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { PublicFormConfig } from "../public-form-config";
 import { migratePublicFormConfig } from "../public-form.component";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { PublicFormsService } from "../public-forms.service";
 
 @Component({
   selector: "app-edit-public-form-columns",
@@ -27,12 +28,12 @@ export class EditPublicFormColumnsComponent
   entityConstructor: EntityConstructor;
   formConfig: FormConfig;
   publicFormConfig: PublicFormConfig;
-
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
   private entities = inject(EntityRegistry);
   private adminEntityService = inject(AdminEntityService);
   private entityMapper = inject(EntityMapperService);
+  private publicFormsService = inject(PublicFormsService);
 
   override ngOnInit() {
     if (this.entity) {
@@ -59,10 +60,16 @@ export class EditPublicFormColumnsComponent
           this.adminEntityService.setAndSaveEntityConfig(
             this.entityConstructor,
           );
-        if (event === "cancelled")
+        if (event === "cancelled") {
+          this.publicFormsService.cancelSave().then((result) => {
+            if (result) {
+              this.publicFormConfig = result;
+            }
+          });
           this.entityConstructor.schema = new Map(
             this.originalEntitySchemaFields,
           );
+        }
       });
     }
   }

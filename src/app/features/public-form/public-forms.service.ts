@@ -15,6 +15,7 @@ export class PublicFormsService {
     private entityActionsMenuService: EntityActionsMenuService,
   ) {}
 
+  private originalPublicFormConfig: PublicFormConfig;
   /**
    * Initializes and registers custom form actions for entities.
    * - Loads all PublicFormConfig entries from the EntityMapper.
@@ -102,6 +103,10 @@ export class PublicFormsService {
     let fieldExists = false;
     const columns = publicFormConfig.columns;
 
+    this.originalPublicFormConfig = Object.assign(
+      new PublicFormConfig(),
+      JSON.parse(JSON.stringify(publicFormConfig)),
+    );
     if (Array.isArray(columns)) {
       columns.forEach((column) => {
         if (Array.isArray(column.fields)) {
@@ -119,8 +124,16 @@ export class PublicFormsService {
         }
       });
     }
-console.log("publcFormConfig", publicFormConfig);
     await this.entityMapper.save(publicFormConfig, false);
     return fieldExists;
+  }
+
+  public async cancelSave(): Promise<PublicFormConfig | null> {
+    if (this.originalPublicFormConfig) {
+      await this.entityMapper.save(this.originalPublicFormConfig, true);
+
+      return this.originalPublicFormConfig;
+    }
+    return null;
   }
 }
