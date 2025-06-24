@@ -1,0 +1,18 @@
+@for (matchingForm of matchingCustomForms; track matchingForm) {
+  <button
+    class="margin-top-regular"
+    mat-flat-button
+    (click)="copyLink(matchingForm)"
+    matTooltip="This link to the `{{
+      matchingForm?.title
+    }}` public form contains an individual ID that links submissions back to this {{
+      linkedEntity.getConstructor().ENTITY_TYPE
+    }}."
+    i18n-matTooltip
+  >
+    <span i18n
+      >Copy link to individualized public form ({{ matchingForm?.title }})</span
+    >
+    <fa-icon class="color-accent" size="xl" icon="copy"></fa-icon>
+  </button>
+}
