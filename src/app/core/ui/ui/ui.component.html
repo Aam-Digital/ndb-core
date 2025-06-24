@@ -19,7 +19,7 @@
 <mat-toolbar color="primary" class="ui-toolbar">
   <!-- Left items -->
   <div class="flex-row align-center">
-    @if ((configReady$ | async) && sideNavMode === 'over') {
+    @if ((configReady$ | async) && sideNavMode === "over") {
       <span>
         <button mat-icon-button (click)="sideNav.toggle()">
           <fa-icon class="header-icon" icon="bars"></fa-icon>
@@ -34,7 +34,7 @@
         angulartics2On="click"
         angularticsCategory="Navigation"
         angularticsAction="navbar_site_title_link"
-        >
+      >
         {{ siteSettings.siteName }}
       </a>
     }
@@ -44,7 +44,7 @@
   <div
     class="flex-row align-center flex-grow-1-3 justify-content-end"
     [class.gap-small]="isDesktop"
-    >
+  >
     @if (isLoggedIn()) {
       <app-search [class.full-width]="isDesktop"></app-search>
 
@@ -71,10 +71,10 @@
         [opened]="sideNavMode === 'side'"
         class="sidenav-menu"
         disableClose
-        >
+      >
         <div
           class="flex-column justify-space-between full-height overflow-y-hidden"
-          >
+        >
           <div class="toolbar-spacer"></div>
           @if (siteSettings.logo) {
             <app-display-img
@@ -98,11 +98,15 @@
                 mat-button
                 routerLink="user-account"
                 class="footer-cell width-1-2"
-                >
+              >
                 <fa-icon icon="user" class="standard-icon-with-text"></fa-icon>
                 <span i18n="Navigate to user profile page">Profile</span>
               </button>
-              <button mat-button (click)="logout()" class="footer-cell width-1-2">
+              <button
+                mat-button
+                (click)="logout()"
+                class="footer-cell width-1-2"
+              >
                 <fa-icon
                   icon="sign-out-alt"
                   class="standard-icon-with-text"
@@ -116,7 +120,7 @@
                 class="footer-cell"
                 routerLink="/support"
                 (click)="closeSidenavOnMobile()"
-                >
+              >
                 <fa-icon icon="info-circle" class="info-icon"></fa-icon>
               </button>
               <button
@@ -124,7 +128,7 @@
                 class="footer-cell full-width"
                 style="height: 100%"
                 (click)="version.showLatestChanges()"
-                >
+              >
                 <app-version #version></app-version>
               </button>
             </div>

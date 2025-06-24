@@ -17,8 +17,8 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
     MatFormFieldModule,
     MatInputModule,
     MatTooltipModule,
-    FaIconComponent
-],
+    FaIconComponent,
+  ],
   templateUrl: "./admin-icon-input.component.html",
   styleUrl: "./admin-icon-input.component.scss",
 })

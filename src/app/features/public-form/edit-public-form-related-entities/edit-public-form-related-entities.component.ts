@@ -24,8 +24,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatOptionModule,
     MatButtonModule,
     FontAwesomeModule,
-    MatTooltipModule
-],
+    MatTooltipModule,
+  ],
   templateUrl: "./edit-public-form-related-entities.component.html",
   styleUrls: ["./edit-public-form-related-entities.component.scss"],
 })

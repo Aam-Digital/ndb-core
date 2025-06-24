@@ -6,8 +6,7 @@
   <mat-form-field>
     <mat-select [formControl]="propertyForm">
       @for (property of availableProperties; track property) {
-        <mat-option
-          [value]="property.property"
+        <mat-option [value]="property.property"
           >{{ property.label }}
         </mat-option>
       }
