@@ -65,13 +65,23 @@ export class MapPopupComponent {
     private geoService: GeoService,
     private confirmationDialog: ConfirmationDialogService,
   ) {
-    this.markedLocations = new BehaviorSubject<GeoResult[]>(
-      (data.marked as GeoResult[]) ?? [],
-    );
+    this.markedLocations = this.initMarkedLocations(data);
     this.selectedLocation = data.selectedLocation;
     this.lastSavedLocation = data.selectedLocation
       ? { ...data.selectedLocation }
       : undefined;
+    this.ensureGeoLookupInMarkedLocations();
+    this.setDialogCloseBehavior(data);
+    this.setHelpText(data);
+  }
+
+  private initMarkedLocations(
+    data: MapPopupConfig,
+  ): BehaviorSubject<GeoResult[]> {
+    return new BehaviorSubject<GeoResult[]>((data.marked as GeoResult[]) ?? []);
+  }
+
+  private ensureGeoLookupInMarkedLocations() {
     if (
       this.selectedLocation &&
       this.selectedLocation.geoLookup &&
@@ -84,13 +94,17 @@ export class MapPopupComponent {
         this.selectedLocation.geoLookup,
       ]);
     }
+  }
 
+  private setDialogCloseBehavior(data: MapPopupConfig) {
     if (!data.disabled) {
       this.dialogRef.disableClose = true;
     }
+  }
 
+  private setHelpText(data: MapPopupConfig) {
     if (data.hasOwnProperty("helpText")) {
-      this.helpText = data.helpText;
+      this.helpText = data.helpText!;
     }
   }
 
