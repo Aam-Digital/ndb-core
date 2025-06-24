@@ -56,6 +56,8 @@ export class MapPopupComponent {
   helpText: string = $localize`Search an address or click on the map directly to select a different location`;
 
   selectedLocation: GeoLocation;
+  private lastSavedLocation: GeoLocation | undefined;
+  private manualAddressJustEdited = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: MapPopupConfig,
@@ -67,6 +69,9 @@ export class MapPopupComponent {
       (data.marked as GeoResult[]) ?? [],
     );
     this.selectedLocation = data.selectedLocation;
+    this.lastSavedLocation = data.selectedLocation
+      ? { ...data.selectedLocation }
+      : undefined;
     if (
       this.selectedLocation &&
       this.selectedLocation.geoLookup &&
@@ -105,41 +110,72 @@ export class MapPopupComponent {
   }
 
   async onSave() {
-    const manualAddress = this.selectedLocation?.locationString ?? "";
-    const lookupAddress = this.selectedLocation?.geoLookup?.display_name ?? "";
-
-    if (manualAddress && manualAddress !== lookupAddress) {
-      // Show confirmation dialog
-      const confirmed = await this.confirmationDialog.getConfirmation(
-        $localize`Address Mismatch`,
-        $localize`Address details captured does not match with the location on the map. Do you want to continue or edit the address?`,
-        [
-          {
-            text: $localize`Continue`,
-            dialogResult: true,
-            click: () => {},
-          },
-          {
-            text: $localize`Edit Address`,
-            dialogResult: false,
-            click: () => {},
-          },
-        ],
-      );
-
-      if (confirmed) {
-        // Continue: Save manual address with pinned location
-        this.dialogRef.close([this.selectedLocation]);
-      }
-      // If Edit Address, do nothing (let user edit)
+    // If nothing changed, just close
+    if (
+      JSON.stringify(this.selectedLocation) ===
+      JSON.stringify(this.lastSavedLocation)
+    ) {
+      this.dialogRef.close([this.selectedLocation]);
       return;
     }
 
-    // No mismatch, just save
+    const manualAddress = this.selectedLocation?.locationString ?? "";
+    const lookupAddress = this.selectedLocation?.geoLookup?.display_name ?? "";
+
+    // Only show confirmation if the address was NOT just manually edited and there is a mismatch
+    if (
+      manualAddress &&
+      manualAddress !== lookupAddress &&
+      !this.manualAddressJustEdited
+    ) {
+      const result = await this.confirmationDialog.getConfirmation(
+        $localize`Address Mismatch`,
+        $localize`Address details captured does not match with the location on the map. What would you like to do?`,
+        [
+          {
+            text: $localize`Continue (with old address)`,
+            dialogResult: "continue",
+            click: () => {},
+          },
+          {
+            text: $localize`Update to new address`,
+            dialogResult: "update",
+            click: () => {},
+          }
+        ],
+      );
+
+      if (result === "continue") {
+        this.lastSavedLocation = { ...this.selectedLocation };
+        this.manualAddressJustEdited = false;
+        this.dialogRef.close([this.selectedLocation]);
+      } else if (result === "update") {
+        this.selectedLocation = {
+          ...this.selectedLocation,
+          locationString: lookupAddress,
+        };
+        this.lastSavedLocation = { ...this.selectedLocation };
+        this.manualAddressJustEdited = false;
+        this.dialogRef.close([this.selectedLocation]);
+      }
+      
+      return;
+    }
+
+    // Save and reset manual edit flag
+    this.lastSavedLocation = { ...this.selectedLocation };
+    this.manualAddressJustEdited = false;
     this.dialogRef.close([this.selectedLocation]);
   }
 
   updateLocation(event: GeoLocation) {
+    // Detect if manual address was just edited
+    if (
+      this.selectedLocation?.locationString !== event?.locationString &&
+      event?.locationString !== event?.geoLookup?.display_name
+    ) {
+      this.manualAddressJustEdited = true;
+    }
     this.selectedLocation = event;
     this.markedLocations.next(event?.geoLookup ? [event.geoLookup] : []);
   }
