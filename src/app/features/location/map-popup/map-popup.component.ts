@@ -110,61 +110,77 @@ export class MapPopupComponent {
   }
 
   async onSave() {
-    // If nothing changed, just close
-    if (
-      JSON.stringify(this.selectedLocation) ===
-      JSON.stringify(this.lastSavedLocation)
-    ) {
-      this.dialogRef.close([this.selectedLocation]);
+    if (this.isUnchanged()) {
+      this.closeDialog();
       return;
     }
 
     const manualAddress = this.selectedLocation?.locationString ?? "";
     const lookupAddress = this.selectedLocation?.geoLookup?.display_name ?? "";
 
-    // Only show confirmation if the address was NOT just manually edited and there is a mismatch
-    if (
-      manualAddress &&
-      manualAddress !== lookupAddress &&
-      !this.manualAddressJustEdited
-    ) {
-      const result = await this.confirmationDialog.getConfirmation(
-        $localize`Address Mismatch`,
-        $localize`Address details captured does not match with the location on the map. What would you like to do?`,
-        [
-          {
-            text: $localize`Continue (with old address)`,
-            dialogResult: "continue",
-            click: () => {},
-          },
-          {
-            text: $localize`Update to new address`,
-            dialogResult: "update",
-            click: () => {},
-          },
-        ],
-      );
-
-      if (result === "continue") {
-        this.lastSavedLocation = { ...this.selectedLocation };
-        this.manualAddressJustEdited = false;
-        this.dialogRef.close([this.selectedLocation]);
-      } else if (result === "update") {
-        this.selectedLocation = {
-          ...this.selectedLocation,
-          locationString: lookupAddress,
-        };
-        this.lastSavedLocation = { ...this.selectedLocation };
-        this.manualAddressJustEdited = false;
-        this.dialogRef.close([this.selectedLocation]);
-      }
-
+    if (this.shouldShowConfirmation(manualAddress, lookupAddress)) {
+      const result = await this.showAddressMismatchDialog();
+      await this.handleConfirmationResult(result, lookupAddress);
       return;
     }
 
-    // Save and reset manual edit flag
+    this.saveAndClose();
+  }
+
+  private isUnchanged(): boolean {
+    return (
+      JSON.stringify(this.selectedLocation) ===
+      JSON.stringify(this.lastSavedLocation)
+    );
+  }
+
+  private shouldShowConfirmation(manualAddress: string, lookupAddress: string): boolean {
+    return (
+      manualAddress &&
+      manualAddress !== lookupAddress &&
+      !this.manualAddressJustEdited
+    );
+  }
+
+  private async showAddressMismatchDialog(): Promise<string | boolean | undefined> {
+    return this.confirmationDialog.getConfirmation(
+      $localize`Address Mismatch`,
+      $localize`Address details captured does not match with the location on the map. What would you like to do?`,
+      [
+        {
+          text: $localize`Continue (with old address)`,
+          dialogResult: "continue",
+          click: () => {},
+        },
+        {
+          text: $localize`Update to new address`,
+          dialogResult: "update",
+          click: () => {},
+        },
+      ],
+    );
+  }
+
+  private async handleConfirmationResult(result: string | boolean | undefined, lookupAddress: string) {
+    if (result === "continue") {
+      this.saveAndClose();
+    } else if (result === "update") {
+      this.selectedLocation = {
+        ...this.selectedLocation,
+        locationString: lookupAddress,
+      };
+      this.saveAndClose();
+    }
+    // If dialog closed without a result, do nothing (let user edit)
+  }
+
+  private saveAndClose() {
     this.lastSavedLocation = { ...this.selectedLocation };
     this.manualAddressJustEdited = false;
+    this.closeDialog();
+  }
+
+  private closeDialog() {
     this.dialogRef.close([this.selectedLocation]);
   }
 
