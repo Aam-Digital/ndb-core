@@ -89,19 +89,17 @@ export class AdminEntityFieldComponent implements OnInit {
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
 
-  publicFormConfigEntity: PublicFormConfig;
+  publicFormConfig: PublicFormConfig;
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
-  isFormOverride: boolean; // whether this is a form override field
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    public data: {
+    data: {
       fieldId: string;
       entityType: EntityConstructor;
-      isFormOverride: boolean;
-      entity: Entity;
+      publicFormConfig: PublicFormConfig;
     },
     private dialogRef: MatDialogRef<any>,
     private fb: FormBuilder,
@@ -115,7 +113,8 @@ export class AdminEntityFieldComponent implements OnInit {
   ) {
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
-    this.isFormOverride = data.isFormOverride ?? false;
+    this.publicFormConfig = data.publicFormConfig;
+    console.log("publicofrm", data.publicFormConfig);
   }
 
   async ngOnInit() {
@@ -125,14 +124,10 @@ export class AdminEntityFieldComponent implements OnInit {
 
     this.initSettings();
 
-    if (this.isFormOverride) {
+    if (this.publicFormConfig) {
       if (this.schemaFieldsForm.get("dataType")?.value) {
         this.schemaFieldsForm.get("dataType")?.disable();
       }
-      this.publicFormConfigEntity = await this.entityMapper.load(
-        PublicFormConfig.ENTITY_TYPE,
-        this.data.entity.getId(),
-      );
     }
     this.initAvailableDatatypes(this.allDataTypes);
   }
@@ -300,15 +295,15 @@ export class AdminEntityFieldComponent implements OnInit {
     const fieldId = this.fieldIdForm.getRawValue();
     let shouldUpdateSchema = false;
 
-    if (this.isFormOverride) {
+    if (this.publicFormConfig) {
       const publicFormConfigUpdated =
         await this.publicFormService.updateFieldInPublicFormConfig(
-          this.publicFormConfigEntity,
+          this.publicFormConfig,
           fieldId,
           this.entitySchemaField,
         );
 
-      await this.entityMapper.save(this.publicFormConfigEntity, false);
+      await this.entityMapper.save(this.publicFormConfig, false);
       shouldUpdateSchema = !publicFormConfigUpdated;
     } else {
       shouldUpdateSchema = true;

@@ -103,22 +103,23 @@ export class PublicFormsService {
     const columns = publicFormConfig.columns;
 
     if (Array.isArray(columns)) {
-      for (const column of columns) {
+      columns.forEach((column) => {
         if (Array.isArray(column.fields)) {
-          for (let i = 0; i < column.fields.length; i++) {
-            const f = column.fields[i];
-            if (typeof f === "string" && f === fieldId) {
-              column.fields[i] = { id: fieldId, ...entitySchemaField };
+          column.fields = column.fields.map((field) => {
+            if (typeof field === "string" && field === fieldId) {
               fieldExists = true;
-            } else if (typeof f === "object" && f?.id === fieldId) {
-              column.fields[i] = { ...f, ...entitySchemaField, id: fieldId };
-              fieldExists = true;
+              return { id: fieldId, ...entitySchemaField };
             }
-          }
+            if (typeof field === "object" && field?.id === fieldId) {
+              fieldExists = true;
+              return { ...field, ...entitySchemaField, id: fieldId };
+            }
+            return field;
+          });
         }
-      }
+      });
     }
-
+console.log("publcFormConfig", publicFormConfig);
     await this.entityMapper.save(publicFormConfig, false);
     return fieldExists;
   }

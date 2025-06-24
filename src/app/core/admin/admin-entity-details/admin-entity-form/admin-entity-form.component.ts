@@ -39,6 +39,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
+import { PublicFormConfig } from "app/features/public-form/public-form-config";
 
 @UntilDestroy()
 @Component({
@@ -104,12 +105,10 @@ export class AdminEntityFormComponent implements OnChanges {
   @Input() isDisabled: boolean = false;
 
   /**
-   * Used to control whether admin-specific overrides or customizations are applied
-   * to the entity form configuration and field editing dialogs.
+   * If set, the form is used to edit a public form configuration.
+   * This allows to use the admin entity field dialog to edit the fields of the public form.
    */
-  @Input() isFormOverride: boolean;
-
-  @Input() entity: Entity;
+  @Input() publicFormConfig?: PublicFormConfig;
 
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
@@ -206,15 +205,13 @@ export class AdminEntityFormComponent implements OnChanges {
    */
   async openFieldConfig(field: ColumnConfig): Promise<string> {
     let fieldIdToEdit = toFormFieldConfig(field).id;
-    console.log(this.isFormOverride, "test");
     const dialogRef = this.matDialog.open(AdminEntityFieldComponent, {
       width: "99%",
       maxHeight: "90vh",
       data: {
         fieldId: fieldIdToEdit,
         entityType: this.entityType,
-        isFormOverride: this.isFormOverride,
-        entity: this.entity,
+        publicFormConfig: this.publicFormConfig,
       },
     });
     return lastValueFrom(dialogRef.afterClosed());

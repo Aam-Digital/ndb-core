@@ -11,6 +11,7 @@ import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { PublicFormConfig } from "../public-form-config";
 import { migratePublicFormConfig } from "../public-form.component";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
 @Component({
   selector: "app-edit-public-form-columns",
@@ -25,13 +26,17 @@ export class EditPublicFormColumnsComponent
 {
   entityConstructor: EntityConstructor;
   formConfig: FormConfig;
+  publicFormConfig: PublicFormConfig;
+
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
   private entities = inject(EntityRegistry);
   private adminEntityService = inject(AdminEntityService);
+  private entityMapper = inject(EntityMapperService);
 
-  override ngOnInit(): void {
+  override ngOnInit() {
     if (this.entity) {
+      this.loadPublicFormConfig();
       this.entityConstructor = this.entities.get(this.entity["entity"]);
 
       const publicFormConfig: PublicFormConfig = migratePublicFormConfig({
@@ -60,6 +65,13 @@ export class EditPublicFormColumnsComponent
           );
       });
     }
+  }
+
+  private async loadPublicFormConfig() {
+    this.publicFormConfig = await this.entityMapper.load(
+      PublicFormConfig.ENTITY_TYPE,
+      this.entity.getId(),
+    );
   }
 
   updateValue(newConfig: FormConfig) {
