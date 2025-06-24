@@ -31,21 +31,7 @@ export const notesComponents: ComponentTuple[] = [
       ).then((c) => c.NotesRelatedToEntityComponent),
   ],
   [
-    "NotesOfChild",
-    () =>
-      import(
-        "./notes-related-to-entity/notes-related-to-entity.component"
-      ).then((c) => c.NotesRelatedToEntityComponent),
-  ],
-  [
     "ImportantNotesDashboard",
-    () =>
-      import(
-        "./dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component"
-      ).then((c) => c.ImportantNotesDashboardComponent),
-  ],
-  [
-    "ImportantNotesComponent",
     () =>
       import(
         "./dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component"

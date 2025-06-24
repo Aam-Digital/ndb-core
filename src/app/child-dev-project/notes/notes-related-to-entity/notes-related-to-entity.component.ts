@@ -20,7 +20,6 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
  * The component that is responsible for listing the Notes that are related to a certain entity.
  */
 @DynamicComponent("NotesRelatedToEntity")
-@DynamicComponent("NotesOfChild") // for backward compatibility
 @Component({
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",

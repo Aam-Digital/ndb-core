@@ -7,12 +7,13 @@ import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../entity/schema/entity-schema-field";
-import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 import { Logging } from "../logging/logging.service";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
+import { ConfigMigration } from "./config-migration";
+import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -86,14 +87,16 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migratePercentageDatatype,
       migrateEntityBlock,
       migrateGroupByConfig,
-      addDefaultNoteDetailsConfig,
       migrateDefaultValue,
       migrateUserEntityAndPanels,
     ];
 
+    // default migrations that are not only temporary but will remain in the codebase
+    const defaultConfigs: ConfigMigration[] = [addDefaultNoteDetailsConfig];
+
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
       let docPart = rawValue;
-      for (const migration of migrations) {
+      for (const migration of migrations.concat(defaultConfigs)) {
         docPart = migration(_that, docPart);
       }
       return docPart;
@@ -102,13 +105,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return Object.assign(new (doc.constructor as new () => E)(), newDoc);
   }
 }
-
-/**
- * A ConfigMigration is checked during a full JSON.parse using a reviver function.
- * If the migration does not apply to the given configPart, make sure to return it unchanged.
- * Multiple migrations are chained and can transform the same config part one after the other.
- */
-type ConfigMigration = (key: string, configPart: any) => any;
 
 const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (
   key,
@@ -135,35 +131,6 @@ const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (
     configPart.editComponent = configPart.edit;
     delete configPart.edit;
   }
-  return configPart;
-};
-
-const migrateMenuItemConfig: ConfigMigration = (key, configPart) => {
-  if (key !== "navigationMenu") {
-    return configPart;
-  }
-
-  const oldItems: (
-    | {
-        name: string;
-        icon: string;
-        link: string;
-      }
-    | MenuItem
-  )[] = configPart.items;
-
-  configPart.items = oldItems.map((item) => {
-    if (item.hasOwnProperty("name")) {
-      return {
-        label: item["name"],
-        icon: item.icon,
-        link: item.link,
-      };
-    } else {
-      return item;
-    }
-  });
-
   return configPart;
 };
 
@@ -332,26 +299,6 @@ const migrateEntityBlock: ConfigMigration = (key, configPart) => {
 
   if (key === "viewComponent" && configPart === "ChildBlock") {
     return "EntityBlock";
-  }
-
-  return configPart;
-};
-
-/**
- * Add default view:note/:id NoteDetails config
- * to avoid breaking note details with a default config from AdminModule
- */
-const addDefaultNoteDetailsConfig: ConfigMigration = (key, configPart) => {
-  if (
-    // add at top-level of config
-    configPart?.["_id"] === "Config:CONFIG_ENTITY" &&
-    configPart?.["data"] &&
-    !configPart?.["data"]["view:note/:id"]
-  ) {
-    configPart["data"]["view:note/:id"] = {
-      component: "NoteDetails",
-      config: {},
-    };
   }
 
   return configPart;
