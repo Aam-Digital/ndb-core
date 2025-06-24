@@ -312,7 +312,7 @@ export class AdminEntityFieldComponent implements OnInit {
     if (this.form.invalid) return;
 
     const fieldId = this.fieldIdForm.getRawValue();
-    let shouldUpdateSchema = false;
+    let shouldUpdateBaseSchema = false;
 
     if (this.publicFormConfig) {
       const publicFormConfigUpdated =
@@ -323,12 +323,12 @@ export class AdminEntityFieldComponent implements OnInit {
         );
 
       await this.entityMapper.save(this.publicFormConfig, false);
-      shouldUpdateSchema = !publicFormConfigUpdated;
+      shouldUpdateBaseSchema = !publicFormConfigUpdated;
     } else {
-      shouldUpdateSchema = true;
+      shouldUpdateBaseSchema = true;
     }
 
-    if (shouldUpdateSchema) {
+    if (shouldUpdateBaseSchema) {
       this.adminEntityService.updateSchemaField(
         this.entityType,
         fieldId,

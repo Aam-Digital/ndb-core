@@ -61,8 +61,9 @@ export class EditPublicFormColumnsComponent
             this.entityConstructor,
           );
         if (event === "cancelled") {
-          this.publicFormsService.cancelSave().then((result) => {
+          this.publicFormsService.cancelChanges().then((result) => {
             if (result) {
+              // restore the original schema so that the form can be edited again with original fields
               this.publicFormConfig = result;
             }
           });

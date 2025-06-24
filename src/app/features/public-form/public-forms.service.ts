@@ -128,7 +128,7 @@ export class PublicFormsService {
     return fieldExists;
   }
 
-  public async cancelSave(): Promise<PublicFormConfig | null> {
+  public async cancelChanges(): Promise<PublicFormConfig | null> {
     if (this.originalPublicFormConfig) {
       await this.entityMapper.save(this.originalPublicFormConfig, true);
 
