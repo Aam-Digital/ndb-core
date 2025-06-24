@@ -141,7 +141,7 @@ export class MapPopupComponent {
             text: $localize`Update to new address`,
             dialogResult: "update",
             click: () => {},
-          }
+          },
         ],
       );
 
@@ -158,7 +158,7 @@ export class MapPopupComponent {
         this.manualAddressJustEdited = false;
         this.dialogRef.close([this.selectedLocation]);
       }
-      
+
       return;
     }
 
