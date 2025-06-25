@@ -16,7 +16,7 @@ export class EntityRegistry extends Registry<EntityConstructor> {
     }));
     if (onlyUserFacing) {
       entities = entities.filter(
-        ({ key, value }) => value._isCustomizedType && value.label,
+        ({ key, value }) => !value.isInternalEntity && value.label,
       );
     }
     return entities;
