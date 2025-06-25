@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { Todo } from "../model/todo";
 import { PrebuiltFilterConfig } from "../../../core/entity-list/EntityListConfig";
-import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import {
@@ -165,7 +164,7 @@ export class TodoListComponent
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openFormPopup(entity, undefined, TodoDetailsComponent);
+    this.formDialog.openView(entity);
   }
 }
 

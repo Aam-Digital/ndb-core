@@ -46,7 +46,7 @@ export class TodoService {
   }
 
   async uncompleteTodo(todo: Todo) {
-    todo.completed = undefined;
+    todo.completed = null; // set to `null` not `undefined` to propagate and save the reset
     await this.entityMapper.save(todo);
     // we do not delete recurring todos created when completing this for now
   }

@@ -105,6 +105,7 @@ export class Todo extends Entity {
   @DatabaseField({
     label: $localize`:label for Todo entity property:completed`,
     viewComponent: "DisplayTodoCompletion",
+    editComponent: "EditTodoCompletion",
     anonymize: "retain",
   })
   completed?: TodoCompletion;

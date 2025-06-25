@@ -54,6 +54,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
       ).then((c) => c.DisplayRecurringIntervalComponent),
   ],
   [
+    "EditTodoCompletion",
+    () =>
+      import(
+        "./todo-completion/edit-todo-completion/edit-todo-completion.component"
+      ).then((c) => c.EditTodoCompletionComponent),
+  ],
+  [
     "DisplayTodoCompletion",
     () =>
       import(
