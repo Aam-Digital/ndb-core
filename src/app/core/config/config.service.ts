@@ -14,6 +14,7 @@ import { Logging } from "../logging/logging.service";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
 import { ConfigMigration } from "./config-migration";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
+import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -92,7 +93,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
-    const defaultConfigs: ConfigMigration[] = [addDefaultNoteDetailsConfig];
+    const defaultConfigs: ConfigMigration[] = [
+      addDefaultNoteDetailsConfig,
+      addDefaultTodoViews,
+    ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
       let docPart = rawValue;
