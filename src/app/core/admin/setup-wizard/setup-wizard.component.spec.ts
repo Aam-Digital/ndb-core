@@ -8,7 +8,7 @@ import {
 import { SetupWizardComponent } from "./setup-wizard.component";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import {
@@ -25,7 +25,7 @@ describe("SetupWizardComponent", () => {
     await TestBed.configureTestingModule({
       imports: [SetupWizardComponent],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
       ],
     }).compileComponents();
 

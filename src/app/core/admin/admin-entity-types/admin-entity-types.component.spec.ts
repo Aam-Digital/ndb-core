@@ -6,7 +6,7 @@ import {
   EntityRegistry,
 } from "../../entity/database-entity.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 
 describe("AdminEntityTypesComponent", () => {
   let component: AdminEntityTypesComponent;
@@ -17,7 +17,7 @@ describe("AdminEntityTypesComponent", () => {
       imports: [AdminEntityTypesComponent],
       providers: [
         { provide: EntityRegistry, useValue: entityRegistry },
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
       ],
     }).compileComponents();
 

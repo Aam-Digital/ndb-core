@@ -11,7 +11,7 @@ import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { Config } from "../../config/config";
 import { Logging } from "../../logging/logging.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EventAttendanceMapDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
@@ -35,7 +35,7 @@ describe("AbilityService", () => {
 
   beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
-    entityMapper = mockEntityMapper() as any;
+    entityMapper = mockEntityMapperProvider() as any;
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     spyOn(entityMapper, "load").and.callThrough();
 

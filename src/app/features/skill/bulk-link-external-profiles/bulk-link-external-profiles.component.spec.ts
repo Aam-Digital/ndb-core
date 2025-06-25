@@ -11,7 +11,7 @@ import {
   SkillApiService,
 } from "../skill-api/skill-api.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { of, throwError } from "rxjs";
@@ -49,7 +49,7 @@ describe("BulkLinkExternalProfilesComponent", () => {
         { provide: SkillApiService, useValue: mockSkillApi },
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(),
+          useValue: mockEntityMapperProvider(),
         },
       ],
     }).compileComponents();

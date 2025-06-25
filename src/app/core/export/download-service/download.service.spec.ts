@@ -7,7 +7,7 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { GeoLocation } from "app/features/location/geo-location";
@@ -24,7 +24,7 @@ describe("DownloadService", () => {
     mockDataTransformationService = jasmine.createSpyObj([
       "queryAndTransformData",
     ]);
-    mockedEntityMapper = mockEntityMapper([testSchool, testChild]);
+    mockedEntityMapper = mockEntityMapperProvider([testSchool, testChild]);
     TestBed.configureTestingModule({
       providers: [
         DownloadService,

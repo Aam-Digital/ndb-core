@@ -9,8 +9,6 @@ import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import moment from "moment";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { genders } from "../../child-dev-project/children/model/genders";
-import { mockEntityMapper } from "../../core/entity/entity-mapper/mock-entity-mapper-service";
-import { entityRegistry } from "../../core/entity/database-entity.decorator";
 import { createEntityOfType } from "../../core/demo-data/create-entity-of-type";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 
@@ -574,10 +572,10 @@ describe("DataAggregationService", () => {
     c1.name = "1";
 
     mockQueryService.queryData.and.callFake((query) => {
-    if (query === "TestEntity:toArray.name") return [c1];
-    if (query === "OtherEntity:toArray") return [];
-    return [];
-  });
+      if (query === "TestEntity:toArray.name") return [c1];
+      if (query === "OtherEntity:toArray") return [];
+      return [];
+    });
 
     const complexQuery: Aggregation = {
       label: "!!",

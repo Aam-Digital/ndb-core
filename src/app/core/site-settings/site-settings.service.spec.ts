@@ -4,7 +4,7 @@ import { SiteSettingsService } from "./site-settings.service";
 import { FileService } from "../../features/file/file.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { SiteSettings } from "./site-settings";
@@ -14,8 +14,6 @@ import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { FileModule } from "../../features/file/file.module";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 
 describe("SiteSettingsService", () => {
@@ -25,17 +23,20 @@ describe("SiteSettingsService", () => {
 
   beforeEach(waitForAsync(() => {
     localStorage.clear();
-    entityMapper = mockEntityMapper();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, ConfigurableEnumModule, FileModule],
       providers: [
         { provide: FileService, useValue: mockFileService },
-        { provide: EntityMapperService, useValue: entityMapper },
+        mockEntityMapperProvider(),
         EntityAbility,
       ],
     });
     service = TestBed.inject(SiteSettingsService);
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   }));
 
   afterEach(() => {

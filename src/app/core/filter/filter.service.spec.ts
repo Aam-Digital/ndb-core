@@ -4,11 +4,12 @@ import { FilterService } from "./filter.service";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 import moment from "moment";
 import { DataFilter } from "./filters/filters";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
+import { mockEntityMapperProvider } from "../entity/entity-mapper/mock-entity-mapper-service";
+import { getDefaultEnumEntities } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -16,10 +17,8 @@ describe("FilterService", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [
-        {
-          provide: ConfigurableEnumService,
-          useValue: createTestingConfigurableEnumService(),
-        },
+        ConfigurableEnumService,
+        mockEntityMapperProvider(getDefaultEnumEntities()),
       ],
     });
     service = TestBed.inject(FilterService);

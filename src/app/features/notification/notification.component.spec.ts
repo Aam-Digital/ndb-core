@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NotificationComponent } from "./notification.component";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../core/entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { SessionSubject } from "../../core/session/auth/session-info";
 import { of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -25,7 +25,7 @@ describe("NotificationComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
         { provide: SessionSubject, useValue: of(null) },
         { provide: ActivatedRoute, useValue: {} },
         { provide: EntityRegistry, useValue: entityRegistry },

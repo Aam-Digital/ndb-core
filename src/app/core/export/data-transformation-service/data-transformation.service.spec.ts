@@ -7,12 +7,11 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
-import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
-import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("DataTransformationService", () => {
   let service: DataTransformationService;
@@ -20,7 +19,7 @@ describe("DataTransformationService", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [DatabaseTestingModule],
+      imports: [MockedTestingModule.withState()],
     });
 
     service = TestBed.inject<DataTransformationService>(
@@ -28,8 +27,6 @@ describe("DataTransformationService", () => {
     );
     entityMapper = TestBed.inject(EntityMapperService);
   }));
-
-  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

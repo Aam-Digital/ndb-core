@@ -23,7 +23,7 @@ describe("DiscreteImportConfigComponent", () => {
       entityType: TestEntity,
     };
     await TestBed.configureTestingModule({
-      imports: [DiscreteImportConfigComponent, MockedTestingModule],
+      imports: [DiscreteImportConfigComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: { close: () => undefined } },

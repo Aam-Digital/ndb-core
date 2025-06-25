@@ -15,7 +15,7 @@ describe("EditAgeComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [EditAgeComponent, MockedTestingModule],
+      imports: [EditAgeComponent, MockedTestingModule.withState()],
     }).compileComponents();
   }));
 

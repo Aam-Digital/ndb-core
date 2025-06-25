@@ -11,7 +11,7 @@ import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-ic
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 
 describe("AdminEntityGeneralSettingsComponent", () => {
   let component: AdminEntityGeneralSettingsComponent;
@@ -46,7 +46,7 @@ describe("AdminEntityGeneralSettingsComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(),
+          useValue: mockEntityMapperProvider(),
         },
       ],
     }).compileComponents();

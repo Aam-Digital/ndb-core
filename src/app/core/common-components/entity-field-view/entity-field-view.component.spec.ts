@@ -15,10 +15,8 @@ describe("EntityFieldViewComponent", () => {
     testEntity = TestEntity.create("tester");
 
     await TestBed.configureTestingModule({
-      imports: [EntityFieldViewComponent, MockedTestingModule],
-      providers: [
-        ...provideTestingConfigService(),
-      ],
+      imports: [EntityFieldViewComponent, MockedTestingModule.withState()],
+      providers: [...provideTestingConfigService()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EntityFieldViewComponent);

@@ -7,7 +7,7 @@ import {
 
 import { SetupWizardButtonComponent } from "./setup-wizard-button.component";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { SetupWizardConfig } from "../setup-wizard-config";
 import { Config } from "../../../config/config";
 import { Router } from "@angular/router";
@@ -20,7 +20,7 @@ describe("SetupWizardButtonComponent", () => {
     await TestBed.configureTestingModule({
       imports: [SetupWizardButtonComponent],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
       ],
     }).compileComponents();
 

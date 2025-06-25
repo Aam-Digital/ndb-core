@@ -1,4 +1,4 @@
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
@@ -15,7 +15,7 @@ import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-en
 import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { Entity } from "../core/entity/model/entity";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
@@ -65,15 +65,17 @@ export const entityFormStorybookDefaultParameters = {
         indicesRegistered: EMPTY,
       },
     },
-    { provide: EntityMapperService, useValue: mockEntityMapper() },
+    { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
   ],
 })
 export class StorybookBaseModule {
   private static initData: Entity[] = [];
+
   static withData(data: Entity[] = [new Entity(TEST_USER)]) {
     StorybookBaseModule.initData = data;
     return StorybookBaseModule;
   }
+
   constructor() {
     const icons = inject(FaIconLibrary);
     const entityMapper = inject(EntityMapperService);

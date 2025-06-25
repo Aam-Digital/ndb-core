@@ -3,15 +3,17 @@ import { Observable, Subject } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Entity, EntityConstructor } from "../model/entity";
 import { UpdatedEntity } from "../model/entity-update";
-import { entityRegistry } from "../database-entity.decorator";
-import { TEST_USER } from "../../user/demo-user-generator.service";
+import { Provider } from "@angular/core";
 
-export function mockEntityMapper(
-  withData: Entity[] = [],
-): MockEntityMapperService {
-  const ems = new MockEntityMapperService();
-  ems.addAll(withData);
-  return ems;
+export function mockEntityMapperProvider(withData: Entity[] = []): Provider {
+  return {
+    provide: EntityMapperService,
+    useFactory: () => {
+      const ems = new MockEntityMapperService();
+      ems.addAll(withData);
+      return ems;
+    },
+  };
 }
 
 /**

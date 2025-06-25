@@ -11,7 +11,7 @@ import { Entity } from "./model/entity";
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "./entity-mapper/mock-entity-mapper-service";
 import { EntityConfig } from "./entity-config";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
@@ -29,7 +29,7 @@ describe("EntityConfigService", () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfigService, useValue: mockConfigService },
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
         {
           provide: EntityRegistry,
           useValue: entityRegistry,

@@ -12,7 +12,7 @@ import {
   ComponentRegistry,
 } from "../../../../dynamic-components";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { Logging } from "../../../logging/logging.service";
@@ -25,17 +25,20 @@ describe("DisplayEntityComponent", () => {
   let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    entityMapper = mockEntityMapper();
     mockRouter = jasmine.createSpyObj(["navigate"]);
     await TestBed.configureTestingModule({
       imports: [EntityBlockComponent],
       providers: [
-        { provide: EntityMapperService, useValue: entityMapper },
+        mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: ComponentRegistry, useValue: componentRegistry },
         { provide: Router, useValue: mockRouter },
       ],
     }).compileComponents();
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   beforeEach(() => {

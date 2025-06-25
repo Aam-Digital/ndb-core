@@ -1,5 +1,8 @@
 import { EntityDatatype } from "./entity.datatype";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import {
+  mockEntityMapperProvider,
+  MockEntityMapperService,
+} from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
@@ -12,22 +15,20 @@ import { CoreTestingModule } from "../../../utils/core-testing.module";
 // because there was conflicts with the standard tests in entity.datatype.spec.ts
 
 describe("Schema data type: entity (advanced functionality)", () => {
-  let entityMapper: ReturnType<typeof mockEntityMapper>;
+  let entityMapper: MockEntityMapperService;
   let dataType: EntityDatatype;
   let schema: EntitySchemaField;
 
   beforeEach(() => {
-    entityMapper = mockEntityMapper([]); // Empty entity mapper
-
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [
-        EntityDatatype,
-        { provide: EntityMapperService, useValue: entityMapper },
-      ],
+      providers: [EntityDatatype, mockEntityMapperProvider([])],
     });
     dataType = TestBed.inject(EntityDatatype);
 
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
     schema = TestEntity.schema.get("ref") as EntitySchemaField;
   });
 

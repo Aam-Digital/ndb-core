@@ -1,15 +1,16 @@
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule, provideAppInitializer } from "@angular/core";
 import { ConfigService } from "../core/config/config.service";
 import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
-import { provideTestingConfigService } from "../core/config/testing-config-service";
 import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
 import { EntityConfigService } from "../core/entity/entity-config.service";
 import { DatabaseResolverService } from "../core/database/database-resolver.service";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { getDefaultConfigEntity } from "../core/config/testing-config-service";
+import { getDefaultEnumEntities } from "app/core/basic-datatypes/configurable-enum/configurable-enum-testing";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -24,23 +25,24 @@ import { DatabaseResolverService } from "../core/database/database-resolver.serv
 @NgModule({
   imports: [AppModule],
   providers: [
-    ...provideTestingConfigService(),
-    {
-      provide: ConfigurableEnumService,
-      useValue: createTestingConfigurableEnumService(),
-    },
+    ConfigService,
+    ConfigurableEnumService,
     { provide: SwRegistrationOptions, useValue: { enabled: false } },
+    provideAppInitializer(async () => {
+      const databaseResolver = inject(DatabaseResolverService);
+      const components = inject(ComponentRegistry);
+      const entityConfigService = inject(EntityConfigService);
+      const entityMapper = inject(EntityMapperService);
+
+      environment.session_type = SessionType.mock;
+      databaseResolver.getDatabase().init("test-db");
+      components.allowDuplicates();
+
+      await entityMapper.save(getDefaultConfigEntity());
+      entityMapper.saveAll(getDefaultEnumEntities());
+
+      entityConfigService.setupEntitiesFromConfig();
+    }),
   ],
 })
-export class DatabaseTestingModule {
-  constructor() {
-    const databaseResolver = inject(DatabaseResolverService);
-    const components = inject(ComponentRegistry);
-    const entityConfigService = inject(EntityConfigService);
-
-    entityConfigService.setupEntitiesFromConfig();
-    environment.session_type = SessionType.mock;
-    databaseResolver.getDatabase().init("test-db");
-    components.allowDuplicates();
-  }
-}
+export class DatabaseTestingModule {}

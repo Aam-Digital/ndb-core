@@ -1,14 +1,20 @@
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "./mock-entity-mapper-service";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { TestBed } from "@angular/core/testing";
+import { EntityMapperService } from "./entity-mapper.service";
 
 describe("MockEntityMapperServicer", () => {
   let service: MockEntityMapperService;
+
   beforeEach(() => {
-    service = mockEntityMapper();
+    TestBed.configureTestingModule({
+      providers: [mockEntityMapperProvider([])],
+    });
+    service = TestBed.inject(EntityMapperService) as MockEntityMapperService;
   });
 
   it("should publish a update for a newly added entity", (done) => {

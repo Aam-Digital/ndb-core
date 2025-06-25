@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { AdminEntityService } from "./admin-entity.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../entity/entity-mapper/mock-entity-mapper-service";
 
 describe("AdminEntityService", () => {
   let service: AdminEntityService;
@@ -12,7 +12,7 @@ describe("AdminEntityService", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(),
+          useValue: mockEntityMapperProvider(),
         },
       ],
     });

@@ -24,7 +24,7 @@ describe("RouterService", () => {
     spyOn(Logging, "warn");
 
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule],
+      imports: [MockedTestingModule.withState()],
       providers: [],
     });
     service = TestBed.inject(RouterService);

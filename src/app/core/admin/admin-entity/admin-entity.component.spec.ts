@@ -4,7 +4,7 @@ import { AdminEntityComponent } from "./admin-entity.component";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { ConfigService } from "../../config/config.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import {
@@ -68,8 +68,6 @@ describe("AdminEntityComponent", () => {
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue(config[viewConfigId]);
 
-    entityMapper = mockEntityMapper([new Config(Config.CONFIG_KEY, config)]);
-
     TestBed.configureTestingModule({
       imports: [
         AdminEntityDetailsComponent,
@@ -81,10 +79,7 @@ describe("AdminEntityComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: entityMapper,
-        },
+        mockEntityMapperProvider([new Config(Config.CONFIG_KEY, config)]),
         {
           provide: ConfigService,
           useValue: mockConfigService,
@@ -101,6 +96,9 @@ describe("AdminEntityComponent", () => {
     });
     fixture = TestBed.createComponent(AdminEntityComponent);
     component = fixture.componentInstance;
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
 
     component.entityType = AdminTestEntity.ENTITY_TYPE;
 

@@ -14,7 +14,7 @@ import { Router } from "@angular/router";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
@@ -49,7 +49,7 @@ describe("SessionManagerService", () => {
         CurrentUserSubject,
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper([new Config()]),
+          useValue: mockEntityMapperProvider([new Config()]),
         },
         { provide: DatabaseResolverService, useValue: mockDatabaseResolver },
         { provide: KeycloakAuthService, useValue: mockKeycloak },

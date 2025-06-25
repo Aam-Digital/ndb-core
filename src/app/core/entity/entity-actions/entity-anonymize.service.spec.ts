@@ -5,7 +5,7 @@ import { of } from "rxjs";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { DatabaseField } from "../database-field.decorator";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../entity-mapper/mock-entity-mapper-service";
 import {
@@ -33,8 +33,6 @@ describe("EntityAnonymizeService", () => {
   let mockFileService: jasmine.SpyObj<FileService>;
 
   beforeEach(() => {
-    entityMapper = mockEntityMapper(allEntities.map((e) => e.copy()));
-
     mockFileService = jasmine.createSpyObj(["removeFile"]);
     mockFileService.removeFile.and.returnValue(of(null));
 
@@ -42,7 +40,7 @@ describe("EntityAnonymizeService", () => {
       imports: [CoreTestingModule],
       providers: [
         EntityAnonymizeService,
-        { provide: EntityMapperService, useValue: entityMapper },
+        mockEntityMapperProvider(allEntities.map((e) => e.copy())),
         { provide: FileService, useValue: mockFileService },
         { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
         { provide: PublicFormsService, useValue: {} },
@@ -50,6 +48,10 @@ describe("EntityAnonymizeService", () => {
     });
 
     service = TestBed.inject(EntityAnonymizeService);
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   /*

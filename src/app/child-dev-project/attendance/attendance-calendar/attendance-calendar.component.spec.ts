@@ -7,7 +7,7 @@ import { SimpleChange } from "@angular/core";
 import moment from "moment";
 import { Note } from "../../notes/model/note";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
@@ -30,7 +30,7 @@ describe("AttendanceCalendarComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(),
+          useValue: mockEntityMapperProvider(),
         },
         {
           provide: AnalyticsService,

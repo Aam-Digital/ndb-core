@@ -3,7 +3,7 @@ import { BulkMergeService } from "./bulk-merge-service";
 import { CoreTestingModule } from "app/utils/core-testing.module";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { TestEntity } from "app/utils/test-utils/TestEntity";
@@ -40,18 +40,20 @@ describe("BulkMergeService", () => {
   let recordB: TestEntity;
 
   beforeEach(() => {
-    entityMapper = mockEntityMapper();
-
     recordA = TestEntity.create({ name: "A" });
     recordB = TestEntity.create({ name: "B" });
     entityMapper.addAll([recordA, recordB]);
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, NoopAnimationsModule],
-      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+      providers: [mockEntityMapperProvider()],
     });
 
     service = TestBed.inject(BulkMergeService);
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   it("should be created", () => {

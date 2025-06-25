@@ -1,11 +1,10 @@
-import { NgModule, inject } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { CoreModule } from "../core/core.module";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../core/entity/database-entity.decorator";
-import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ComponentRegistry } from "../dynamic-components";
 import { EntityActionsService } from "../core/entity/entity-actions/entity-actions.service";
@@ -22,8 +21,8 @@ import { defaultValueStrategyProviders } from "../core/default-values/standard-d
   imports: [CoreModule, ConfigurableEnumModule],
   providers: [
     { provide: EntityRegistry, useValue: entityRegistry },
-    { provide: EntityMapperService, useValue: mockEntityMapper() },
-      ConfigurableEnumService,
+    mockEntityMapperProvider(),
+    ConfigurableEnumService,
     {
       provide: EntityActionsService,
       useValue: jasmine.createSpyObj(["anonymize"]),

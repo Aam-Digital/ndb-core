@@ -10,7 +10,7 @@ import { Subject } from "rxjs";
 import { Config } from "../../config/config";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
@@ -31,17 +31,19 @@ describe("PermissionEnforcerService", () => {
   beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
     mockLocation = jasmine.createSpyObj(["reload"]);
-    entityMapper = mockEntityMapper();
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
       providers: [
         { provide: LOCATION_TOKEN, useValue: mockLocation },
-        { provide: EntityMapperService, useValue: entityMapper },
+        mockEntityMapperProvider(),
       ],
     });
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     service = TestBed.inject(PermissionEnforcerService);
+
+    entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+
     TestBed.inject(AbilityService).initializeRules();
     destroySpy = spyOn(
       TestBed.inject(DatabaseResolverService),

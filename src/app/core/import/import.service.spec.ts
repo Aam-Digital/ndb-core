@@ -10,7 +10,7 @@ import {
   expectEntitiesToMatch,
 } from "../../utils/expect-entity-data.spec";
 import moment from "moment";
-import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
@@ -24,16 +24,13 @@ describe("ImportService", () => {
   let entityMapper: EntityMapperService;
 
   beforeEach(async () => {
-    entityMapper = mockEntityMapper();
-
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [
-        ImportService,
-        { provide: EntityMapperService, useValue: entityMapper },
-      ],
+      providers: [ImportService, mockEntityMapperProvider()],
     });
     service = TestBed.inject(ImportService);
+
+    entityMapper = TestBed.inject(EntityMapperService);
   });
 
   it("should execute import, saving entities and creating history record", async () => {

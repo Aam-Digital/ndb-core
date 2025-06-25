@@ -13,7 +13,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
@@ -26,14 +26,17 @@ describe("BirthdayDashboardComponent", () => {
   let entityMapper: MockEntityMapperService;
 
   beforeEach(async () => {
-    entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
       imports: [BirthdayDashboardComponent, FontAwesomeTestingModule],
       providers: [
-        { provide: EntityMapperService, useValue: entityMapper },
+        mockEntityMapperProvider(),
         { provide: ConfigService, useValue: {} },
       ],
     }).compileComponents();
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   beforeEach(() => {

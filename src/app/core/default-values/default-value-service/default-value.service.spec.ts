@@ -9,7 +9,6 @@ import { DynamicPlaceholderValueService } from "../x-dynamic-placeholder/dynamic
 import { InheritedValueService } from "../../../features/default-value-inherited/inherited-value.service";
 import { EventEmitter } from "@angular/core";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum-testing";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DefaultValueStrategy } from "../default-value-strategy.interface";
@@ -117,10 +116,7 @@ describe("DefaultValueService", () => {
           useValue: mockInheritedValueService,
           multi: true,
         },
-        {
-          provide: ConfigurableEnumService,
-          useValue: createTestingConfigurableEnumService(),
-        },
+        ConfigurableEnumService,
       ],
     });
     service = TestBed.inject(DefaultValueService);

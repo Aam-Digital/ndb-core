@@ -4,7 +4,7 @@ import { EntityCountDashboardComponent } from "./entity-count-dashboard.componen
 
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -25,10 +25,9 @@ describe("EntityCountDashboardComponent", () => {
   }
 
   beforeEach(async () => {
-    entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
       imports: [EntityCountDashboardComponent, MockedTestingModule.withState()],
-      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+      providers: [mockEntityMapperProvider()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EntityCountDashboardComponent);
@@ -38,6 +37,10 @@ describe("EntityCountDashboardComponent", () => {
     component.groupBy = ["category", "other", "ref"];
 
     fixture.detectChanges();
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   it("should create", () => {

@@ -2,10 +2,9 @@ import { TestBed } from "@angular/core/testing";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { EntityDeleteService } from "./entity-delete.service";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../entity-mapper/mock-entity-mapper-service";
-import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import {
   allEntities,
   ENTITIES,
@@ -24,6 +23,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { UserAdminService } from "../../user/user-admin-service/user-admin.service";
+import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
@@ -34,8 +34,6 @@ describe("EntityDeleteService", () => {
   let mockUserAdminService: jasmine.SpyObj<UserAdminService>;
 
   beforeEach(() => {
-    entityMapper = mockEntityMapper(allEntities.map((e) => e.copy()));
-
     mockUserAdminService = jasmine.createSpyObj(["deleteUser"]);
     mockUserAdminService.deleteUser.and.returnValue(
       throwError(() => {
@@ -56,7 +54,7 @@ describe("EntityDeleteService", () => {
       imports: [CoreTestingModule],
       providers: [
         EntityDeleteService,
-        { provide: EntityMapperService, useValue: entityMapper },
+        mockEntityMapperProvider(allEntities.map((e) => e.copy())),
         { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: MatSnackBar, useValue: snackBarSpy },
         {
@@ -72,6 +70,10 @@ describe("EntityDeleteService", () => {
     });
 
     service = TestBed.inject(EntityDeleteService);
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   function removeReference(

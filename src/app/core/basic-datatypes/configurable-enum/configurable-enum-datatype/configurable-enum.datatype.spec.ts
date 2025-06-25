@@ -63,7 +63,7 @@ describe("Schema data type: configurable-enum", () => {
     enumService.getEnumValues.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule],
+      imports: [MockedTestingModule.withState()],
       providers: [{ provide: ConfigurableEnumService, useValue: enumService }],
     });
 
