@@ -1,13 +1,16 @@
-<h2 mat-dialog-title i18n>Configure Field "{{ entitySchemaField.label }}"</h2>
+<h2 mat-dialog-title i18n>
+  Configure Field "{{ data.entitySchemaField.label }}"
+</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  @if (publicFormConfig) {
+  @if (data.overwriteLocally) {
     <p>
       <fa-icon icon="exclamation-triangle" style="color: red"></fa-icon>
       <span i18n>
-        You are currently editing a field in a Public Form. The field settings
-        here only apply to this form and do not affect the main entity schema.
+        You are currently overwriting the field for a local view only. The field
+        settings here only apply to this and do not affect the main entity
+        schema.
       </span>
     </p>
   } @else {
@@ -91,7 +94,7 @@
             <mat-form-field>
               <mat-label>
                 <span i18n>Type</span>
-                @if (publicFormConfig) {
+                @if (data.overwriteLocally) {
                   <fa-icon
                     icon="question-circle"
                     matTooltip="The type of the field cannot be changed here because these changes only apply to this form. For data consistency, you have to change the type for the field overall."
@@ -171,13 +174,13 @@
           <div class="entity-form-cell">
             <app-admin-default-value
               formControlName="defaultValue"
-              [entityType]="entityType"
-              [entitySchemaField]="entitySchemaField"
+              [entityType]="data.entityType"
+              [entitySchemaField]="data.entitySchemaField"
             >
             </app-admin-default-value>
 
             <app-anonymize-options
-              [value]="entitySchemaField.anonymize"
+              [value]="data.entitySchemaField.anonymize"
               (valueChange)="schemaFieldsForm.get('anonymize').setValue($event)"
             >
               <span i18n>Anonymize</span>
@@ -198,7 +201,7 @@
 
           <div class="entity-form-cell">
             <app-configure-entity-field-validator
-              [entitySchemaField]="entitySchemaField"
+              [entitySchemaField]="data.entitySchemaField"
               (entityValidatorChanges)="entityFieldValidatorChanges($event)"
             ></app-configure-entity-field-validator>
           </div>

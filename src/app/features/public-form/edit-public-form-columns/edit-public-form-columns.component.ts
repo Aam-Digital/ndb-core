@@ -11,8 +11,6 @@ import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { PublicFormConfig } from "../public-form-config";
 import { migratePublicFormConfig } from "../public-form.component";
-import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { PublicFormsService } from "../public-forms.service";
 
 @Component({
   selector: "app-edit-public-form-columns",
@@ -32,12 +30,9 @@ export class EditPublicFormColumnsComponent
 
   private entities = inject(EntityRegistry);
   private adminEntityService = inject(AdminEntityService);
-  private entityMapper = inject(EntityMapperService);
-  private publicFormsService = inject(PublicFormsService);
 
   override ngOnInit() {
     if (this.entity) {
-      this.loadPublicFormConfig();
       this.entityConstructor = this.entities.get(this.entity["entity"]);
 
       const publicFormConfig: PublicFormConfig = migratePublicFormConfig({
@@ -60,26 +55,8 @@ export class EditPublicFormColumnsComponent
           this.adminEntityService.setAndSaveEntityConfig(
             this.entityConstructor,
           );
-        if (event === "cancelled") {
-          this.publicFormsService.cancelChanges().then((result) => {
-            if (result) {
-              // restore the original schema so that the form can be edited again with original fields
-              this.publicFormConfig = result;
-            }
-          });
-          this.entityConstructor.schema = new Map(
-            this.originalEntitySchemaFields,
-          );
-        }
       });
     }
-  }
-
-  private async loadPublicFormConfig() {
-    this.publicFormConfig = await this.entityMapper.load(
-      PublicFormConfig.ENTITY_TYPE,
-      this.entity.getId(),
-    );
   }
 
   updateValue(newConfig: FormConfig) {
