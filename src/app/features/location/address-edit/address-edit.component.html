@@ -14,18 +14,19 @@
   <div class="flex-row gap-regular align-center full-width">
     <mat-form-field floatLabel="always" class="full-width">
       <mat-label i18n>Selected Location</mat-label>
-      <input
+      <textarea
         #manualAddressInput
         matInput
+        placeholder="no location selected"
+        i18n-placeholder
         [value]="
           selectedLocation?.locationString ??
           selectedLocation?.geoLookup?.display_name
         "
         (change)="updateLocationString(manualAddressInput.value)"
-        placeholder="no location selected"
-        i18n-placeholder
         [disabled]="disabled || !manualAddressEnabled"
-      />
+        rows="2"
+      ></textarea>
 
       @if (
         selectedLocation?.geoLookup?.display_name !==
@@ -34,14 +35,14 @@
         <mat-hint>
           @if (selectedLocation?.geoLookup) {
             <span
-              matTooltip="You have manually edited the exact address above, this is the actual mapped location. To change the location marked on the map, use the adress search field or click on the map."
+              matTooltip="You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map."
               i18n-matTooltip
             >
               {{ selectedLocation.geoLookup.display_name }}
             </span>
           } @else {
             <span
-              matTooltip="You have manually entered the address above without locating it on the map. To change the location marked on the map, use the adress search field or click on the map."
+              matTooltip="You have manually entered the address above without locating it on the map. To change the location on the map, use the address search field or click on the map."
               i18n-matTooltip
               i18n
             >
@@ -63,7 +64,6 @@
           <fa-icon icon="edit"></fa-icon>
         </button>
       }
-
       <button
         mat-icon-button
         (click)="clearLocation()"
@@ -75,18 +75,3 @@
     }
   </div>
 </div>
-
-<!-- New field: additional info line -->
-@if (selectedLocation) {
-  <mat-form-field floatLabel="always" class="full-width">
-    <mat-label i18n>Additional address info</mat-label>
-    <input
-      matInput
-      placeholder="e.g., 2nd floor, cabin 3"
-      i18n-placeholder
-      [ngModel]="selectedLocation.additionalDetails"
-      (ngModelChange)="onAdditionalDetailsChange($event)"
-      [disabled]="disabled"
-    />
-  </mat-form-field>
-}

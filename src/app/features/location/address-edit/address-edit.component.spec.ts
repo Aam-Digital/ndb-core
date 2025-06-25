@@ -101,7 +101,6 @@ describe("AddressEditComponent", () => {
     expect(component.selectedLocation).toEqual({
       locationString: "manual address",
       geoLookup: SAMPLE_GEO_RESULT,
-      additionalDetails: undefined,
     });
     // test user confirms
     component.selectedLocation = {
@@ -114,7 +113,6 @@ describe("AddressEditComponent", () => {
     expect(component.selectedLocation).toEqual({
       locationString: selected.locationString,
       geoLookup: SAMPLE_GEO_RESULT,
-      additionalDetails: undefined,
     });
   }));
 });

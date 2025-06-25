@@ -9,7 +9,6 @@ import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
-import { FormsModule } from "@angular/forms";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.
@@ -26,7 +25,6 @@ import { FormsModule } from "@angular/forms";
     MatIconButton,
     FaIconComponent,
     AddressGpsLocationComponent,
-    FormsModule,
   ],
   templateUrl: "./address-edit.component.html",
   styleUrl: "./address-edit.component.scss",
@@ -40,16 +38,12 @@ export class AddressEditComponent {
    * The initially pre-selected location (displayed in addition to the search field allowing to change it).
    */
   @Input() selectedLocation: GeoLocation;
-
   /**
    * Whether the search box is enabled and visible.
    */
   @Input() disabled: boolean;
-
   manualAddressEnabled: boolean;
-
   constructor(private confirmationDialog: ConfirmationDialogService) {}
-
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;
     this.selectedLocationChange.emit(selected);
@@ -57,11 +51,9 @@ export class AddressEditComponent {
       this.selectedLocation?.geoLookup?.display_name !==
       this.selectedLocation?.locationString;
   }
-
   clearLocation() {
     this.updateLocation(undefined);
   }
-
   updateLocationString(value: string) {
     const manualAddress: string = value ?? "";
     if (manualAddress === "" && this.selectedLocation?.geoLookup) {
@@ -69,11 +61,9 @@ export class AddressEditComponent {
       // possible alternative UX: ask user if they want to remove the mapped location also? or update the location with the display_location?
       return;
     }
-
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: this.selectedLocation?.geoLookup,
-      additionalDetails: this.selectedLocation?.additionalDetails,
     });
   }
 
@@ -88,7 +78,6 @@ export class AddressEditComponent {
       // nothing changed, skip
       return;
     }
-
     let manualAddress: string = this.selectedLocation?.locationString ?? "";
     let lookupAddress: string =
       value?.locationString ?? value?.geoLookup?.display_name ?? "";
@@ -96,7 +85,6 @@ export class AddressEditComponent {
       // auto-apply lookup location for empty field
       manualAddress = lookupAddress;
     }
-
     if (manualAddress !== lookupAddress) {
       if (
         // if manualAddress has been automatically set before, we assume the user wants to auto update now also
@@ -111,11 +99,9 @@ export class AddressEditComponent {
         manualAddress = lookupAddress;
       }
     }
-
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: value?.geoLookup,
-      additionalDetails: this.selectedLocation?.additionalDetails,
     });
   }
 
@@ -125,15 +111,5 @@ export class AddressEditComponent {
       geoLookup: geoResult,
     };
     this.updateFromAddressSearch(newLocation, true);
-  }
-
-  onAdditionalDetailsChange(details: string) {
-    if (this.selectedLocation) {
-      this.selectedLocation = {
-        ...this.selectedLocation,
-        additionalDetails: details,
-      };
-      this.selectedLocationChange.emit(this.selectedLocation);
-    }
   }
 }
