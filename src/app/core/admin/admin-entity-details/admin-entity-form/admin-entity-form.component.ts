@@ -311,17 +311,7 @@ export class AdminEntityFormComponent implements OnChanges {
       !this.updateEntitySchema ||
       configDetails.editComponent === "EditDescriptionOnly"
     ) {
-      for (const group of this.config.fieldGroups) {
-        const index = group.fields.findIndex(
-          (f) => typeof f === "string" && f === updatedField.id,
-        );
-
-        if (index !== -1) {
-          group.fields[index] = {
-            ...updatedField,
-          } as FormFieldConfig;
-        }
-      }
+      this.applySchemaOverride(updatedField);
       await this.initForm();
     } else {
       // save to entity type's global schema
@@ -332,6 +322,22 @@ export class AdminEntityFormComponent implements OnChanges {
       );
     }
     this.emitUpdatedConfig();
+  }
+
+  private applySchemaOverride(updatedField: EntitySchemaField): void {
+    for (const group of this.config.fieldGroups) {
+      const index = group.fields.findIndex((f) =>
+        f instanceof String
+          ? f === updatedField.id
+          : toFormFieldConfig(f).id === updatedField.id,
+      );
+
+      if (index !== -1) {
+        group.fields[index] = {
+          ...updatedField,
+        } as FormFieldConfig;
+      }
+    }
   }
 
   /**
