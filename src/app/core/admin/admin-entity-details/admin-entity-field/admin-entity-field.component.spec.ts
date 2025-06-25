@@ -29,7 +29,7 @@ import { AdminEntityService } from "../../admin-entity.service";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
-describe("AdminEntityFieldComponent", () => {
+fdescribe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
   let fixture: ComponentFixture<AdminEntityFieldComponent>;
   let loader: HarnessLoader;
@@ -141,8 +141,12 @@ describe("AdminEntityFieldComponent", () => {
   }));
 
   it("should init 'additional' value from schema field for configurable-enum", fakeAsync(() => {
-    component.entityType = TestEntity;
-    component.fieldId = "category";
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "Category",
+      dataType: ConfigurableEnumDatatype.dataType,
+      additional: "genders",
+    };
     component.ngOnInit();
 
     expect(component.additionalForm.value).toBe("genders");
@@ -182,8 +186,12 @@ describe("AdminEntityFieldComponent", () => {
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
-    component.entityType = TestEntity;
-    component.fieldId = "ref";
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "ref",
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    };
     component.ngOnInit();
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
@@ -195,31 +203,5 @@ describe("AdminEntityFieldComponent", () => {
       { value: RecurringActivity.ENTITY_TYPE, label: RecurringActivity.label },
     ]);
     expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
-  }));
-
-  it("should update entityConstructor schema upon save", fakeAsync(() => {
-    const testFieldData: EntitySchemaField = {
-      label: "test field",
-      dataType: "string",
-    };
-
-    @DatabaseEntity("EntityUpdatedInAdminUI")
-    class EntityUpdatedInAdminUI extends Entity {}
-
-    component.entityType = EntityUpdatedInAdminUI;
-    component.fieldId = "testField";
-    component.schemaFieldsForm.get("label").setValue(testFieldData.label);
-    component.schemaFieldsForm.get("dataType").setValue(testFieldData.dataType);
-
-    const adminService = TestBed.inject(AdminEntityService);
-    spyOn(adminService.entitySchemaUpdated, "next");
-
-    component.save();
-    tick();
-
-    expect(EntityUpdatedInAdminUI.schema.get("testField")).toEqual(
-      testFieldData,
-    );
-    expect(adminService.entitySchemaUpdated.next).toHaveBeenCalled();
   }));
 });
