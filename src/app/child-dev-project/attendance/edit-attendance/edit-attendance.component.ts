@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -43,7 +43,9 @@ export class EditAttendanceComponent
 
   @Input() declare entity: Note;
 
-  constructor(screenWithObserver: ScreenWidthObserver) {
+  constructor() {
+    const screenWithObserver = inject(ScreenWidthObserver);
+
     super();
     screenWithObserver
       .platform()

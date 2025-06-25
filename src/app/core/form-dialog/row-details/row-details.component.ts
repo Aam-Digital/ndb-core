@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity } from "../../entity/model/entity";
@@ -51,16 +51,14 @@ export interface DetailsComponentData {
   ],
 })
 export class RowDetailsComponent implements OnInit {
+  data = inject<DetailsComponentData>(MAT_DIALOG_DATA);
+  private formService = inject(EntityFormService);
+
   form: EntityForm<Entity>;
   fieldGroups: FieldGroup[];
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
-    private formService: EntityFormService,
-  ) {}
 
   ngOnInit(): void {
     this.init(this.data)

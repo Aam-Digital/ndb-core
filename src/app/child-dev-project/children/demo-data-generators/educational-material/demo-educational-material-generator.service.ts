@@ -1,6 +1,6 @@
 import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { faker } from "../../../../core/demo-data/faker";
 import { materials } from "./materials";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -17,6 +17,9 @@ export class DemoEducationMaterialConfig {
  */
 @Injectable()
 export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<Entity> {
+  private config = inject(DemoEducationMaterialConfig);
+  private demoChildren = inject(DemoChildGenerator);
+
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoEducationalMaterialGeneratorService.provider()]`
@@ -31,10 +34,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     ];
   }
 
-  constructor(
-    private config: DemoEducationMaterialConfig,
-    private demoChildren: DemoChildGenerator,
-  ) {
+  constructor() {
     super();
     this.requiredEntityTypes = ["EducationalMaterial"];
   }

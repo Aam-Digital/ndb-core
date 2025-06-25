@@ -23,6 +23,9 @@ import { AssistantButtonComponent } from "../assistant-button/assistant-button.c
   styleUrl: "./system-init-assistant.component.scss",
 })
 export class SystemInitAssistantComponent implements OnInit {
+  private dialogRef = inject<MatDialogRef<SystemInitAssistantComponent>>(MatDialogRef);
+  private route = inject(ActivatedRoute);
+
   private readonly demoDataInitializer = inject(DemoDataInitializerService);
   private readonly setupService = inject(SetupService);
 
@@ -31,11 +34,6 @@ export class SystemInitAssistantComponent implements OnInit {
   demoInitialized: boolean = false;
   generatingData: boolean = false;
   availableLocales: ConfigurableEnumValue[];
-
-  constructor(
-    private dialogRef: MatDialogRef<SystemInitAssistantComponent>,
-    private route: ActivatedRoute,
-  ) {}
 
   async ngOnInit(): Promise<void> {
     this.adjustAssistantDialogPanel();

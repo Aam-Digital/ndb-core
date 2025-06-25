@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { CanActivate, Router } from "@angular/router";
 import { EntityAbility } from "../ability/entity-ability";
 import { AbstractPermissionGuard } from "./abstract-permission.guard";
@@ -13,10 +13,11 @@ export class EntityPermissionGuard
   extends AbstractPermissionGuard
   implements CanActivate
 {
-  constructor(
-    router: Router,
-    private ability: EntityAbility,
-  ) {
+  private ability = inject(EntityAbility);
+
+  constructor() {
+    const router = inject(Router);
+
     super(router);
   }
 

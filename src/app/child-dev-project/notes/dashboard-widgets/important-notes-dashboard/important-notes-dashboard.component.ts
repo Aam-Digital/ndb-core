@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { Note } from "../../model/note";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
@@ -16,6 +16,8 @@ import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/das
   imports: [DashboardListWidgetComponent, MatTableModule, DatePipe, NgStyle],
 })
 export class ImportantNotesDashboardComponent extends DashboardWidget {
+  private formDialog = inject(FormDialogService);
+
   static override getRequiredEntities() {
     return Note.ENTITY_TYPE;
   }
@@ -25,10 +27,6 @@ export class ImportantNotesDashboardComponent extends DashboardWidget {
     data
       .filter((note) => note.warningLevel && this.noteIsRelevant(note))
       .sort((a, b) => b.warningLevel._ordinal - a.warningLevel._ordinal);
-
-  constructor(private formDialog: FormDialogService) {
-    super();
-  }
 
   @Input() subtitle: string =
     $localize`:dashboard widget subtitle:Notes needing follow-up`;

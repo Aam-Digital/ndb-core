@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, Input, OnInit, ViewEncapsulation, inject } from "@angular/core";
 import { Entity } from "../../../../core/entity/model/entity";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
@@ -24,14 +24,14 @@ import { MatSelectModule } from "@angular/material/select";
   ],
 })
 export class GroupedChildAttendanceComponent implements OnInit {
+  private attendanceService = inject(AttendanceService);
+
   @Input() entity: Entity;
 
   loading: boolean = true;
   selectedActivity: RecurringActivity;
   activities: RecurringActivity[] = [];
   archivedActivities: RecurringActivity[] = [];
-
-  constructor(private attendanceService: AttendanceService) {}
 
   ngOnInit() {
     return this.loadActivities();

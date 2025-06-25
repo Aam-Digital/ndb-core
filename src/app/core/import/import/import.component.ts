@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from "@angular/core";
+import { Component, ViewChild, inject } from "@angular/core";
 import { ParsedData } from "../../common-components/input-file/input-file.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
@@ -46,6 +46,12 @@ import { ImportMatchExistingComponent } from "../update-existing/import-match-ex
   ],
 })
 export class ImportComponent {
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private alertService = inject(AlertService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private location = inject<Location>(LOCATION_TOKEN);
+
   rawData: any[];
 
   importSettings: Partial<ImportSettings> = {};
@@ -56,13 +62,7 @@ export class ImportComponent {
   /** calculated for validation on columnMapping changes */
   mappedColumnsCount: number;
 
-  constructor(
-    private confirmationDialog: ConfirmationDialogService,
-    private alertService: AlertService,
-    private route: ActivatedRoute,
-    private router: Router,
-    @Inject(LOCATION_TOKEN) private location: Location,
-  ) {
+  constructor() {
     this.route.queryParamMap.subscribe((params) => {
       if (params.has("entityType")) {
         this.importSettings.entityType = params.get("entityType");

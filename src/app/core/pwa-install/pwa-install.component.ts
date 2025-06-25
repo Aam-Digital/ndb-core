@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  TemplateRef,
-  ViewChild,
-} from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, inject } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatButtonModule } from "@angular/material/button";
@@ -20,6 +13,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PwaInstallComponent implements OnInit {
+  snackBar = inject(MatSnackBar);
+  private pwaInstallService = inject(PwaInstallService);
+  private changeDetector = inject(ChangeDetectorRef);
+
   @ViewChild("iOSInstallInstructions")
   templateIOSInstallInstructions: TemplateRef<any>;
 
@@ -31,12 +28,6 @@ export class PwaInstallComponent implements OnInit {
   _showPWAInstallButton = false;
 
   private pwaInstallType: PWAInstallType;
-
-  constructor(
-    public snackBar: MatSnackBar,
-    private pwaInstallService: PwaInstallService,
-    private changeDetector: ChangeDetectorRef,
-  ) {}
 
   ngOnInit() {
     this.pwaInstallType = this.pwaInstallService.getPWAInstallType();

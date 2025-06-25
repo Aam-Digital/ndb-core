@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityFieldViewComponent } from "./entity-field-view.component";
-import { ConfigService } from "../../config/config.service";
-import { createTestingConfigService } from "../../config/testing-config-service";
+import { provideTestingConfigService } from "../../config/testing-config-service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
@@ -18,7 +17,7 @@ describe("EntityFieldViewComponent", () => {
     await TestBed.configureTestingModule({
       imports: [EntityFieldViewComponent, MockedTestingModule],
       providers: [
-        { provide: ConfigService, useValue: createTestingConfigService() },
+        ...provideTestingConfigService(),
       ],
     }).compileComponents();
 

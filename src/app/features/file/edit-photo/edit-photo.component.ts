@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgClass } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -31,19 +31,20 @@ import { ErrorHintComponent } from "app/core/common-components/error-hint/error-
   ],
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
+  private dialog = inject(MatDialog);
+
   private readonly defaultImage = "assets/child.png";
   private compression = 480;
   private initialImg: SafeUrl = this.defaultImage;
   imgPath: SafeUrl = this.initialImg;
 
-  constructor(
-    fileService: FileService,
-    alertService: AlertService,
-    entityMapper: EntityMapperService,
-    private dialog: MatDialog,
-    @Inject(NAVIGATOR_TOKEN) navigator: Navigator,
-  ) {
-    super(fileService, alertService, entityMapper, navigator);
+  constructor() {
+    inject(FileService);
+    inject(AlertService);
+    inject(EntityMapperService);
+    inject<Navigator>(NAVIGATOR_TOKEN);
+
+    super();
   }
 
   override async onFileSelected(file: File): Promise<void> {

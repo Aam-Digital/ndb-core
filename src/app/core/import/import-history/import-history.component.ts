@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ImportMetadata } from "../import-metadata";
 import { ImportService } from "../import.service";
@@ -27,16 +27,16 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   ],
 })
 export class ImportHistoryComponent implements OnInit {
+  private entityMapper = inject(EntityMapperService);
+  private importService = inject(ImportService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   @Input() data: any[];
   @Output() itemSelected = new EventEmitter<ImportMetadata>();
 
   previousImports: ImportMetadata[];
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private importService: ImportService,
-    private confirmationDialog: ConfirmationDialogService,
-  ) {
+  constructor() {
     this.entityMapper
       .receiveUpdates(ImportMetadata)
       .pipe(untilDestroyed(this))

@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MAT_SNACK_BAR_DATA } from "@angular/material/snack-bar";
 import { Observable } from "rxjs";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -10,8 +10,8 @@ import { AsyncPipe } from "@angular/common";
   imports: [MatProgressBarModule, AsyncPipe],
 })
 export class ProgressComponent {
-  constructor(
-    @Inject(MAT_SNACK_BAR_DATA)
-    public config: { message: string; progress: Observable<number> },
-  ) {}
+  config = inject<{
+    message: string;
+    progress: Observable<number>;
+}>(MAT_SNACK_BAR_DATA);
 }

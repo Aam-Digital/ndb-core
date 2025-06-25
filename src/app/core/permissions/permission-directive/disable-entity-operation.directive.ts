@@ -1,13 +1,4 @@
-import {
-  ComponentRef,
-  Directive,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  TemplateRef,
-  ViewContainerRef,
-} from "@angular/core";
+import { ComponentRef, Directive, Input, OnChanges, OnDestroy, OnInit, TemplateRef, ViewContainerRef, inject } from "@angular/core";
 import { DisabledWrapperComponent } from "./disabled-wrapper.component";
 import { EntityActionPermission, EntitySubject } from "../permission-types";
 import { EntityAbility } from "../ability/entity-ability";
@@ -24,6 +15,10 @@ import { Unsubscribe } from "@casl/ability";
 export class DisableEntityOperationDirective
   implements OnInit, OnChanges, OnDestroy
 {
+  private templateRef = inject<TemplateRef<HTMLButtonElement>>(TemplateRef);
+  private viewContainerRef = inject(ViewContainerRef);
+  private ability = inject(EntityAbility);
+
   /**
    * These arguments are required to check whether the user has permissions to perform the operation.
    * The operation property defines to what kind of operation an element belongs, e.g. OperationType.CREATE
@@ -40,11 +35,7 @@ export class DisableEntityOperationDirective
 
   private readonly unsubscribeAbilityUpdates: Unsubscribe;
 
-  constructor(
-    private templateRef: TemplateRef<HTMLButtonElement>,
-    private viewContainerRef: ViewContainerRef,
-    private ability: EntityAbility,
-  ) {
+  constructor() {
     this.unsubscribeAbilityUpdates = this.ability.on("updated", () =>
       this.applyPermissions(),
     );

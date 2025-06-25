@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { EditComponent } from "../../entity/default-datatype/edit-component";
 import { Entity } from "../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
@@ -57,6 +57,9 @@ export class EditTextWithAutocompleteComponent
   extends EditComponent<string>
   implements OnInit
 {
+  private entityMapperService = inject(EntityMapperService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   /**
    * Config passed using component
    */
@@ -85,13 +88,6 @@ export class EditTextWithAutocompleteComponent
   autocompleteDisabled = true;
   lastValue = "";
   addedFormControls = [];
-
-  constructor(
-    private entityMapperService: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService,
-  ) {
-    super();
-  }
 
   keyup() {
     this.lastValue = this.formControl.value;

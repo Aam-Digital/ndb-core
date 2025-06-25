@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {
   MatDialog,
   MatDialogConfig,
@@ -20,15 +20,13 @@ import {
 
 @Injectable({ providedIn: "root" })
 export class FormDialogService {
+  private dialog = inject(MatDialog);
+  private schemaService = inject(EntitySchemaService);
+
   static dialogSettings: MatDialogConfig = {
     width: "99%",
     maxWidth: "980px",
   };
-
-  constructor(
-    private dialog: MatDialog,
-    private schemaService: EntitySchemaService,
-  ) {}
 
   openView<E extends Entity>(entity: E, component: string) {
     return this.dialog.open(DialogViewComponent, {

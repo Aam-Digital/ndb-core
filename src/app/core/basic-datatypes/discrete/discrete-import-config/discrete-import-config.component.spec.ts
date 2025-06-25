@@ -41,7 +41,7 @@ describe("DiscreteImportConfigComponent", () => {
 
   it("should use the edit component for the selected property", () => {
     expect(component.component).toBe(
-      new ConfigurableEnumDatatype(undefined).editComponent,
+      new ConfigurableEnumDatatype().editComponent,
     );
     expect(component.schema).toBe(TestEntity.schema.get("category"));
   });

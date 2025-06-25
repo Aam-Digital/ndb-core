@@ -573,14 +573,11 @@ describe("DataAggregationService", () => {
     const c1 = new TestEntity();
     c1.name = "1";
 
-    const entityMapper = mockEntityMapper([c1]);
-    const queryService = new QueryService(
-      entityMapper,
-      null,
-      null,
-      entityRegistry,
-    );
-    service = new DataAggregationService(queryService);
+    mockQueryService.queryData.and.callFake((query) => {
+    if (query === "TestEntity:toArray.name") return [c1];
+    if (query === "OtherEntity:toArray") return [];
+    return [];
+  });
 
     const complexQuery: Aggregation = {
       label: "!!",

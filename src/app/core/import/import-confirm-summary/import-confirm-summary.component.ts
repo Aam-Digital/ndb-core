@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ImportService } from "../import.service";
 import {
   MAT_DIALOG_DATA,
@@ -29,14 +29,12 @@ export interface ImportDialogData {
   imports: [MatDialogModule, MatProgressBarModule, MatButtonModule],
 })
 export class ImportConfirmSummaryComponent {
-  importInProgress: boolean;
+  private dialogRef = inject<MatDialogRef<ImportConfirmSummaryComponent>>(MatDialogRef);
+  data = inject<ImportDialogData>(MAT_DIALOG_DATA);
+  private snackBar = inject(MatSnackBar);
+  private importService = inject(ImportService);
 
-  constructor(
-    private dialogRef: MatDialogRef<ImportConfirmSummaryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ImportDialogData,
-    private snackBar: MatSnackBar,
-    private importService: ImportService,
-  ) {}
+  importInProgress: boolean;
 
   // TODO: detailed summary including warnings of unmapped columns, ignored values, etc. (#1943)
 

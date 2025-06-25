@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from "@angular/core";
+import { Component, Input, ViewChild, inject } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../../notes/model/note";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
@@ -26,6 +26,9 @@ import { RouteTarget } from "../../../route-target";
   ],
 })
 export class AddDayAttendanceComponent {
+  private entityMapper = inject(EntityMapperService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   /** (optional) property name of the participant entities by which they are sorted for the roll call */
   @Input() sortParticipantsBy: string;
 
@@ -60,11 +63,6 @@ export class AddDayAttendanceComponent {
     $localize`:One of the stages while recording child-attendances:Select Event`,
     $localize`:One of the stages while recording child-attendances:Record Attendance`,
   ];
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService,
-  ) {}
 
   finishBasicInformationStage(event: Note) {
     this.event = event;

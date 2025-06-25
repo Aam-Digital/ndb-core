@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ContentChild,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, ContentChild, Input, OnChanges, OnInit, SimpleChanges, ViewChild, inject } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import {
   DashboardTheme,
@@ -53,6 +44,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 export class DashboardListWidgetComponent<E>
   implements OnInit, OnChanges, AfterViewInit
 {
+  private entityMapperService = inject(EntityMapperService);
+
   @Input() subtitle: string;
   @Input() icon: IconName = "exclamation-triangle";
   @Input() theme: DashboardTheme;
@@ -90,8 +83,6 @@ export class DashboardListWidgetComponent<E>
 
   @ContentChild(MatTable) matTable: MatTable<E>;
   @ViewChild("paginator") private paginator: MatPaginator;
-
-  constructor(private entityMapperService: EntityMapperService) {}
 
   ngOnInit() {
     this.data

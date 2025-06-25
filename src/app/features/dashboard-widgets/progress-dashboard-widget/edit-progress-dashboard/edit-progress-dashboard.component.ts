@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import {
   ProgressDashboardConfig,
@@ -43,6 +43,9 @@ export interface EditProgressDashboardComponentData {
   ],
 })
 export class EditProgressDashboardComponent implements OnInit {
+  private data = inject<ProgressDashboardConfig>(MAT_DIALOG_DATA);
+  private fb = inject(FormBuilder);
+
   /**
    * This marks the control as invalid when the whole form has an error
    */
@@ -53,11 +56,6 @@ export class EditProgressDashboardComponent implements OnInit {
   title: FormControl;
   parts: FormArray;
   outputData: FormGroup;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) private data: ProgressDashboardConfig,
-    private fb: FormBuilder,
-  ) {}
 
   ngOnInit(): void {
     this.title = new FormControl(this.data.title, [Validators.required]);

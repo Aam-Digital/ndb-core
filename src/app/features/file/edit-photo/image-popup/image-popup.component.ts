@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
 
@@ -9,5 +9,7 @@ import { DialogCloseComponent } from "../../../../core/common-components/dialog-
   styleUrls: ["./image-popup.component.scss"],
 })
 export class ImagePopupComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { url: string }) {}
+  data = inject<{
+    url: string;
+}>(MAT_DIALOG_DATA);
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ChildSchoolRelation } from "../model/childSchoolRelation";
 import { ChildrenService } from "../children.service";
@@ -6,7 +6,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { NgIf } from "@angular/common";
 import { PillComponent } from "../../../core/common-components/pill/pill.component";
 import { RelatedTimePeriodEntitiesComponent } from "../../../core/entity-details/related-time-period-entities/related-time-period-entities.component";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
@@ -41,23 +40,18 @@ export class ChildSchoolOverviewComponent
   extends RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>
   implements OnInit
 {
+  private childrenService = inject(ChildrenService);
+
   mode: "child" | "school" = "child";
   override entityCtr = ChildSchoolRelation;
 
-  constructor(
-    private childrenService: ChildrenService,
-    entityMapper: EntityMapperService,
-    entityRegistry: EntityRegistry,
-    screenWidthObserver: ScreenWidthObserver,
-    filterService: FilterService,
-  ) {
-    super(
-      entityMapper,
-      entityRegistry,
-      screenWidthObserver,
-      filterService,
-      null,
-    );
+  constructor() {
+    inject(EntityMapperService);
+    inject(EntityRegistry);
+    inject(ScreenWidthObserver);
+    inject(FilterService);
+
+    super();
 
     this.columns = [
       { id: "childId" }, // schoolId/childId replaced dynamically during init

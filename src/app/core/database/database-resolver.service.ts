@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Database, DatabaseDocChange } from "./database";
 import { SessionInfo } from "../session/auth/session-info";
 import { DatabaseFactoryService } from "./database-factory.service";
@@ -15,6 +15,8 @@ import { SyncedPouchDatabase } from "./pouchdb/synced-pouch-database";
   providedIn: "root",
 })
 export class DatabaseResolverService {
+  private databaseFactory = inject(DatabaseFactoryService);
+
   private databases: Map<string, Database> = new Map();
 
   /**
@@ -27,7 +29,7 @@ export class DatabaseResolverService {
 
   private _changesFeed: Subject<any>;
 
-  constructor(private databaseFactory: DatabaseFactoryService) {
+  constructor() {
     this._changesFeed = new Subject();
   }
 

@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { LOCALE_ID, NgModule } from "@angular/core";
+import { LOCALE_ID, NgModule, inject } from "@angular/core";
 import {
   provideHttpClient,
   withInterceptorsFromDi,
@@ -194,7 +194,9 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
   ],
 })
 export class AppModule {
-  constructor(icons: FaIconLibrary) {
+  constructor() {
+    const icons = inject(FaIconLibrary);
+
     icons.addIconPacks(fas, far);
   }
 }

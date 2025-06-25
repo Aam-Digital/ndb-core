@@ -16,7 +16,7 @@
  */
 
 import { catchError, map } from "rxjs/operators";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { Changelog } from "./changelog";
 import { AlertService } from "../../alerts/alert.service";
@@ -29,12 +29,10 @@ import { environment } from "../../../../environments/environment";
  */
 @Injectable({ providedIn: "root" })
 export class LatestChangesService {
-  private static GITHUB_API = "https://api.github.com/repos/";
+  private http = inject(HttpClient);
+  private alertService = inject(AlertService);
 
-  constructor(
-    private http: HttpClient,
-    private alertService: AlertService,
-  ) {}
+  private static GITHUB_API = "https://api.github.com/repos/";
 
   /**
    * Load the changelog information of changes since the last update.

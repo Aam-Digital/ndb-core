@@ -1,21 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ContentChild,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Optional,
-  Output,
-  Self,
-  signal,
-  TemplateRef,
-  TrackByFunction,
-  ViewChild,
-  WritableSignal,
-} from "@angular/core";
+import { AfterViewInit, Component, ContentChild, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, signal, TemplateRef, TrackByFunction, ViewChild, WritableSignal, inject } from "@angular/core";
 import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
@@ -199,13 +182,13 @@ export class BasicAutocompleteComponent<O, V = O>
     o,
   ) => o?.asValue;
 
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Self() ngControl: NgControl,
-    @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective,
-  ) {
+  constructor() {
+    const elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+    const errorStateMatcher = inject(ErrorStateMatcher);
+    const ngControl = inject(NgControl, { optional: true, self: true });
+    const parentForm = inject(NgForm, { optional: true });
+    const parentFormGroup = inject(FormGroupDirective, { optional: true });
+
     super(
       elementRef,
       errorStateMatcher,

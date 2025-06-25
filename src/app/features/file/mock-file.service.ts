@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Entity } from "../../core/entity/model/entity";
 import { EMPTY, Observable, of } from "rxjs";
 import { FileService } from "./file.service";
@@ -14,14 +14,15 @@ import { SyncStateSubject } from "../../core/session/session-type";
  */
 @Injectable()
 export class MockFileService extends FileService {
+  private sanitizer = inject(DomSanitizer);
+
   private fileMap = new Map<string, string>();
 
-  constructor(
-    entityMapper: EntityMapperService,
-    entities: EntityRegistry,
-    syncState: SyncStateSubject,
-    private sanitizer: DomSanitizer,
-  ) {
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+    const entities = inject(EntityRegistry);
+    const syncState = inject(SyncStateSubject);
+
     super(entityMapper, entities, syncState);
   }
 

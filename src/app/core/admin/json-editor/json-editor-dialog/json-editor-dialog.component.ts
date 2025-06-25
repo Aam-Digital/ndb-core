@@ -1,4 +1,4 @@
-import { Component, Inject, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import {
@@ -24,12 +24,14 @@ import { JsonEditorComponent } from "../json-editor.component";
   styleUrl: "./json-editor-dialog.component.scss",
 })
 export class JsonEditorDialogComponent {
+  data = inject(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<JsonEditorDialogComponent>>(MatDialogRef);
+
   jsonDataControl: FormControl;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<JsonEditorDialogComponent>,
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.jsonDataControl = new FormControl(data?.value || {});
   }
 

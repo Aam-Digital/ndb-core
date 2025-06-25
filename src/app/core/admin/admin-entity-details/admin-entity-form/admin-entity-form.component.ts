@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   EntityForm,
@@ -60,6 +53,9 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
   ],
 })
 export class AdminEntityFormComponent implements OnChanges {
+  private entityFormService = inject(EntityFormService);
+  private matDialog = inject(MatDialog);
+
   @Input() entityType: EntityConstructor;
 
   /**
@@ -114,11 +110,9 @@ export class AdminEntityFormComponent implements OnChanges {
     label: $localize`:Label drag and drop item:Create Text Block`,
   };
 
-  constructor(
-    private entityFormService: EntityFormService,
-    private matDialog: MatDialog,
-    adminEntityService: AdminEntityService,
-  ) {
+  constructor() {
+    const adminEntityService = inject(AdminEntityService);
+
     adminEntityService.entitySchemaUpdated
       .pipe(untilDestroyed(this))
       .subscribe(() => {

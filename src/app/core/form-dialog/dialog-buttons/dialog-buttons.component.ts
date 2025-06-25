@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Optional,
-  Output,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
@@ -39,21 +32,21 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
   styleUrls: ["./dialog-buttons.component.scss"],
 })
 export class DialogButtonsComponent<E extends Entity> implements OnInit {
+  private entityFormService = inject(EntityFormService);
+  private dialog = inject<MatDialogRef<any>>(MatDialogRef, { optional: true });
+  private alertService = inject(AlertService);
+  private router = inject(Router);
+  private ability = inject(EntityAbility);
+  private unsavedChanges = inject(UnsavedChangesService);
+  protected viewContext = inject(ViewComponentContext, { optional: true });
+
   @Input() entity: E;
   @Input() form: EntityForm<E>;
   detailsRoute: string;
 
   @Output() closeView = new EventEmitter<any>();
 
-  constructor(
-    private entityFormService: EntityFormService,
-    @Optional() private dialog: MatDialogRef<any>,
-    private alertService: AlertService,
-    private router: Router,
-    private ability: EntityAbility,
-    private unsavedChanges: UnsavedChangesService,
-    @Optional() protected viewContext: ViewComponentContext,
-  ) {
+  constructor() {
     if (this.dialog) {
       this.initDialogSettings();
     }

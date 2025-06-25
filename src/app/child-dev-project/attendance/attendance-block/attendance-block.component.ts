@@ -1,4 +1,4 @@
-import { Component, Inject, Input, LOCALE_ID, OnChanges } from "@angular/core";
+import { Component, Input, LOCALE_ID, OnChanges, inject } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { DatePipe, formatPercent, PercentPipe } from "@angular/common";
@@ -20,12 +20,12 @@ import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-c
   ],
 })
 export class AttendanceBlockComponent implements OnChanges {
+  private locale = inject(LOCALE_ID);
+
   @Input() attendanceData: ActivityAttendance;
   @Input() forChild: string;
   LStatus = AttendanceLogicalStatus;
   logicalCount: { [key in AttendanceLogicalStatus]?: number };
-
-  constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   ngOnChanges() {
     this.logicalCount =

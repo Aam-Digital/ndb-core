@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  OnInit,
-  Output,
-  ViewChild,
-} from "@angular/core";
+import { Component, EventEmitter, OnInit, Output, ViewChild, inject } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { Note } from "../../../notes/model/note";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -43,6 +37,13 @@ import { DataFilter } from "../../../../core/filter/filters/filters";
   ],
 })
 export class RollCallSetupComponent implements OnInit {
+  private entityMapper = inject(EntityMapperService);
+  private attendanceService = inject(AttendanceService);
+  private currentUser = inject(CurrentUserSubject);
+  private formDialog = inject(FormDialogService);
+  private alertService = inject(AlertService);
+  private filerService = inject(FilterService);
+
   date = new Date();
 
   existingEvents: NoteForActivitySetup[] = [];
@@ -67,15 +68,6 @@ export class RollCallSetupComponent implements OnInit {
    * This avoids displaying irrelevant filters for an empty or very short list.
    */
   readonly FILTER_VISIBLE_THRESHOLD = 4;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private attendanceService: AttendanceService,
-    private currentUser: CurrentUserSubject,
-    private formDialog: FormDialogService,
-    private alertService: AlertService,
-    private filerService: FilterService,
-  ) {}
 
   async ngOnInit() {
     await this.initAvailableEvents();

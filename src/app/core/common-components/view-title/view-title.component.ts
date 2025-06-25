@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  HostBinding,
-  Input,
-  Optional,
-  TemplateRef,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, HostBinding, Input, TemplateRef, ViewChild, inject } from "@angular/core";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
 import { Location, NgTemplateOutlet } from "@angular/common";
@@ -31,6 +23,10 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
   ],
 })
 export class ViewTitleComponent implements AfterViewInit {
+  private router = inject(Router);
+  private location = inject(Location);
+  protected viewContext = inject(ViewComponentContext, { optional: true });
+
   @ViewChild("template") template: TemplateRef<any>;
 
   /** The page title to be displayed */
@@ -46,11 +42,7 @@ export class ViewTitleComponent implements AfterViewInit {
 
   readonly parentUrl: string;
 
-  constructor(
-    private router: Router,
-    private location: Location,
-    @Optional() protected viewContext: ViewComponentContext,
-  ) {
+  constructor() {
     this.parentUrl = this.findParentUrl();
 
     if (this.viewContext?.isDialog) {

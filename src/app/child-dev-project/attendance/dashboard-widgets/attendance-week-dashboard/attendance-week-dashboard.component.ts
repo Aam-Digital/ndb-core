@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceService } from "../../attendance.service";
@@ -38,6 +38,10 @@ export class AttendanceWeekDashboardComponent
   extends DashboardWidget
   implements OnInit
 {
+  private attendanceService = inject(AttendanceService);
+  private router = inject(Router);
+  private entityRegistry = inject(EntityRegistry);
+
   static override getRequiredEntities() {
     return EventNote.ENTITY_TYPE;
   }
@@ -77,14 +81,6 @@ export class AttendanceWeekDashboardComponent
   @Input() attendanceStatusType: string;
 
   entries: AttendanceWeekRow[][];
-
-  constructor(
-    private attendanceService: AttendanceService,
-    private router: Router,
-    private entityRegistry: EntityRegistry,
-  ) {
-    super();
-  }
 
   ngOnInit() {
     if (this.periodLabel && !this.label) {

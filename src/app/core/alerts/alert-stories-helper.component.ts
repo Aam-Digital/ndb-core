@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { AlertService } from "./alert.service";
 
 @Component({
@@ -10,5 +10,5 @@ import { AlertService } from "./alert.service";
   `,
 })
 export class AlertStoriesHelperComponent {
-  constructor(public alertService: AlertService) {}
+  alertService = inject(AlertService);
 }

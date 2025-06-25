@@ -24,7 +24,7 @@ import { SchemaEmbedDatatype } from "./schema-embed.datatype";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { NumberDatatype } from "../number/number.datatype";
 import { MonthDatatype } from "../month/month.datatype";
-import { Injectable } from "@angular/core";
+import { Injectable, inject as inject_1 } from "@angular/core";
 
 describe("Schema data type: schema-embed", () => {
   @Injectable()
@@ -32,7 +32,9 @@ describe("Schema data type: schema-embed", () => {
     static override dataType = "schema-embed-test";
     override embeddedType = InnerClass as unknown as EntityConstructor;
 
-    constructor(schemaService: EntitySchemaService) {
+    constructor() {
+      const schemaService = inject_1(EntitySchemaService);
+
       super(schemaService);
     }
   }

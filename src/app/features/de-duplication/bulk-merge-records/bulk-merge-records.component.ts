@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -36,6 +36,10 @@ import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
   styleUrls: ["./bulk-merge-records.component.scss"],
 })
 export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
+  private readonly dialogRef = inject<MatDialogRef<BulkMergeRecordsComponent<E>>>(MatDialogRef);
+  private readonly confirmationDialog = inject(ConfirmationDialogService);
+  private readonly entityFormService = inject(EntityFormService);
+
   entityConstructor: EntityConstructor;
   entitiesToMerge: E[];
   mergedEntity: E;
@@ -45,16 +49,12 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
   /** whether the entitiesToMerge contain some file attachments that would be lost during a merge */
   hasDiscardedFileOrPhoto: boolean = false;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    data: {
-      entityConstructor: EntityConstructor;
-      entitiesToMerge: E[];
-    },
-    private readonly dialogRef: MatDialogRef<BulkMergeRecordsComponent<E>>,
-    private readonly confirmationDialog: ConfirmationDialogService,
-    private readonly entityFormService: EntityFormService,
-  ) {
+  constructor() {
+    const data = inject<{
+    entityConstructor: EntityConstructor;
+    entitiesToMerge: E[];
+}>(MAT_DIALOG_DATA);
+
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;
     this.mergedEntity = new this.entityConstructor() as E;

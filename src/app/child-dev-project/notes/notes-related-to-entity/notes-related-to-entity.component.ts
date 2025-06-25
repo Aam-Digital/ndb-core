@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { Note } from "../model/note";
 import { ChildrenService } from "../../children/children.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -30,6 +30,9 @@ export class NotesRelatedToEntityComponent
   extends RelatedEntitiesComponent<Note>
   implements OnInit
 {
+  private childrenService = inject(ChildrenService);
+  private formDialog = inject(FormDialogService);
+
   override entityCtr = Note;
   override _columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },
@@ -46,15 +49,13 @@ export class NotesRelatedToEntityComponent
   getColor = (note: Note) => note?.getColor();
   newRecordFactory = this.createNewRecordFactory();
 
-  constructor(
-    private childrenService: ChildrenService,
-    private formDialog: FormDialogService,
-    entityMapper: EntityMapperService,
-    entities: EntityRegistry,
-    screenWidthObserver: ScreenWidthObserver,
-    filterService: FilterService,
-  ) {
-    super(entityMapper, entities, screenWidthObserver, filterService, null);
+  constructor() {
+   inject(EntityMapperService);
+   inject(EntityRegistry);
+   inject(ScreenWidthObserver);
+   inject(FilterService);
+
+    super();
   }
 
   override ngOnInit() {

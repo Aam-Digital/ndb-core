@@ -28,8 +28,6 @@ describe("ImportExistingService", () => {
         {
           provide: ConfigurableEnumService,
           useValue: new ConfigurableEnumService(
-            entityMapper,
-            jasmine.createSpyObj(["can"]),
           ),
         },
       ],

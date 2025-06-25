@@ -1,11 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild, inject } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -83,6 +76,14 @@ export interface MatchingSide extends MatchingSideConfig {
   ],
 })
 export class MatchingEntitiesComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private formDialog = inject(FormDialogService);
+  private entityMapper = inject(EntityMapperService);
+  private configService = inject(ConfigService);
+  private entityRegistry = inject(EntityRegistry);
+  private filterService = inject(FilterService);
+  private changeDetector = inject(ChangeDetectorRef);
+
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
 
   @Input() entity: Entity;
@@ -108,15 +109,7 @@ export class MatchingEntitiesComponent implements OnInit {
   filteredMapEntities: Entity[] = [];
   displayedLocationProperties: LocationProperties = {};
 
-  constructor(
-    private route: ActivatedRoute,
-    private formDialog: FormDialogService,
-    private entityMapper: EntityMapperService,
-    private configService: ConfigService,
-    private entityRegistry: EntityRegistry,
-    private filterService: FilterService,
-    private changeDetector: ChangeDetectorRef,
-  ) {
+  constructor() {
     const config: MatchingEntitiesConfig =
       this.configService.getConfig<MatchingEntitiesConfig>(
         MatchingEntitiesComponent.DEFAULT_CONFIG_KEY,

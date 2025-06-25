@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { Angulartics2OnModule } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -29,16 +29,14 @@ import { UnsavedChangesService } from "../../../entity-details/form/unsaved-chan
   styleUrl: "./entity-inline-edit-actions.component.scss",
 })
 export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
+  private entityFormService = inject(EntityFormService);
+  private alertService = inject(AlertService);
+  private entityRemoveService = inject(EntityActionsService);
+  private unsavedChanges = inject(UnsavedChangesService);
+
   @Input() row: TableRow<T>;
 
   form: EntityForm<T>;
-
-  constructor(
-    private entityFormService: EntityFormService,
-    private alertService: AlertService,
-    private entityRemoveService: EntityActionsService,
-    private unsavedChanges: UnsavedChangesService,
-  ) {}
 
   async edit() {
     this.form = await this.entityFormService.createEntityForm(

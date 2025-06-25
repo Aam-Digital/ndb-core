@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {
   Filter,
   FilterSelectionOption,
@@ -28,14 +28,13 @@ import { DynamicPlaceholderValueService } from "app/core/default-values/x-dynami
   providedIn: "root",
 })
 export class FilterGeneratorService {
-  constructor(
-    private enumService: ConfigurableEnumService,
-    private entities: EntityRegistry,
-    private entityMapperService: EntityMapperService,
-    private filterService: FilterService,
-    private schemaService: EntitySchemaService,
-    private placeholderService: DynamicPlaceholderValueService,
-  ) {}
+  private enumService = inject(ConfigurableEnumService);
+  private entities = inject(EntityRegistry);
+  private entityMapperService = inject(EntityMapperService);
+  private filterService = inject(FilterService);
+  private schemaService = inject(EntitySchemaService);
+  private placeholderService = inject(DynamicPlaceholderValueService);
+
 
   /**
    *

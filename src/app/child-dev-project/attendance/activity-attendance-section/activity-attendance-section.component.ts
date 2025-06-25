@@ -1,12 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  LOCALE_ID,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, LOCALE_ID, OnChanges, OnInit, SimpleChanges, inject } from "@angular/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";
@@ -39,6 +31,10 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
   ],
 })
 export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
+  private attendanceService = inject(AttendanceService);
+  private locale = inject(LOCALE_ID);
+  private dialog = inject(MatDialog);
+
   @Input() entity: RecurringActivity;
   @Input() forChild?: string;
 
@@ -83,12 +79,6 @@ export class ActivityAttendanceSectionComponent implements OnInit, OnChanges {
         ),
     },
   ];
-
-  constructor(
-    private attendanceService: AttendanceService,
-    @Inject(LOCALE_ID) private locale: string,
-    private dialog: MatDialog,
-  ) {}
 
   ngOnInit() {
     return this.init();

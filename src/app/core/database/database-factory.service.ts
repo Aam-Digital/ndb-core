@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouchdb/pouch-database";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
@@ -22,12 +22,11 @@ import { Entity } from "../entity/model/entity";
   providedIn: "root",
 })
 export class DatabaseFactoryService {
-  constructor(
-    private authService: KeycloakAuthService,
-    private syncState: SyncStateSubject,
-    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
-    private loginStateSubject: LoginStateSubject,
-  ) {}
+  private authService = inject(KeycloakAuthService);
+  private syncState = inject(SyncStateSubject);
+  private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
+  private loginStateSubject = inject(LoginStateSubject);
+
 
   createDatabase(dbName: string): Database {
     // only the "primary" (app) database should manage the global login state

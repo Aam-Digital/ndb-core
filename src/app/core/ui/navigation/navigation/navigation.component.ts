@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";
@@ -26,17 +26,17 @@ import { MenuService } from "../menu.service";
   ],
 })
 export class NavigationComponent {
+  private menuService = inject(MenuService);
+  private router = inject(Router);
+  private routePermissionService = inject(RoutePermissionsService);
+
   /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
 
   /** all menu items to be displayed */
   public menuItems: MenuItem[] = [];
 
-  constructor(
-    private menuService: MenuService,
-    private router: Router,
-    private routePermissionService: RoutePermissionsService,
-  ) {
+  constructor() {
     // subscribe to menu items from the menu service
     this.menuService.menuItems.subscribe(async (menuItems) => {
       this.menuItems =

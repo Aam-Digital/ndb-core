@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { AlertService } from "../../core/alerts/alert.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Todo } from "./model/todo";
@@ -9,11 +9,10 @@ import { CurrentUserSubject } from "../../core/session/current-user-subject";
   providedIn: "root",
 })
 export class TodoService {
-  constructor(
-    private currentUser: CurrentUserSubject,
-    private alertService: AlertService,
-    private entityMapper: EntityMapperService,
-  ) {}
+  private currentUser = inject(CurrentUserSubject);
+  private alertService = inject(AlertService);
+  private entityMapper = inject(EntityMapperService);
+
 
   async completeTodo(todo: Todo) {
     const nextTodo = await this.createNextRepetition(todo);

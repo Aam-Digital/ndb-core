@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import {
   MatCell,
@@ -52,13 +52,11 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
   styleUrl: "./admin-entity-types.component.scss",
 })
 export class AdminEntityTypesComponent implements OnInit {
+  private entities = inject(EntityRegistry);
+  private entityMapper = inject(EntityMapperService);
+
   entityTypes: EntityConstructor[] = [];
   columnsToDisplay: string[] = ["label", "id", "icon"];
-
-  constructor(
-    private entities: EntityRegistry,
-    private entityMapper: EntityMapperService,
-  ) {}
 
   ngOnInit() {
     this.loadEntityTypes();

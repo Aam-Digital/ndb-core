@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild, inject } from "@angular/core";
 import * as L from "leaflet";
 import { BehaviorSubject, Observable, timeInterval } from "rxjs";
 import { debounceTime, filter, map } from "rxjs/operators";
@@ -32,6 +24,8 @@ import { GeoResult } from "../geo.service";
   imports: [FontAwesomeModule, MatButtonModule],
 })
 export class MapComponent implements AfterViewInit {
+  private dialog = inject(MatDialog);
+
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
 
   @ViewChild("map") private mapElement: ElementRef<HTMLDivElement>;
@@ -99,10 +93,9 @@ export class MapComponent implements AfterViewInit {
 
   @Output() entityClick = new EventEmitter<Entity>();
 
-  constructor(
-    configService: ConfigService,
-    private dialog: MatDialog,
-  ) {
+  constructor() {
+    const configService = inject(ConfigService);
+
     const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
     if (config?.start) {
       this.start_location = config.start;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, EventEmitter, Output, inject } from "@angular/core";
 import { Logging } from "app/core/logging/logging.service";
 import { GpsService } from "../gps.service";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -22,15 +22,13 @@ import { firstValueFrom } from "rxjs";
   styleUrl: "./address-gps-location.component.scss",
 })
 export class AddressGpsLocationComponent {
+  private gpsService = inject(GpsService);
+  private alertService = inject(AlertService);
+  private geoService = inject(GeoService);
+
   @Output() locationSelected = new EventEmitter<GeoResult>();
 
   public gpsLoading = false;
-
-  constructor(
-    private gpsService: GpsService,
-    private alertService: AlertService,
-    private geoService: GeoService,
-  ) {}
 
   async updateLocationFromGps() {
     this.gpsLoading = true;

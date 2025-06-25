@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -28,19 +28,17 @@ import { AdminOverviewService } from "./admin-overview.service";
   imports: [MatButtonModule, RouterLink, DatePipe, MatListModule],
 })
 export class AdminOverviewComponent implements OnInit {
+  private alertService = inject(AlertService);
+  private backupService = inject(BackupService);
+  private downloadService = inject(DownloadService);
+  private dbResolver = inject(DatabaseResolverService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private snackBar = inject(MatSnackBar);
+  private configService = inject(ConfigService);
+  protected adminOverviewService = inject(AdminOverviewService);
+
   /** all alerts */
   alerts: ExtendedAlertConfig[] = [];
-
-  constructor(
-    private alertService: AlertService,
-    private backupService: BackupService,
-    private downloadService: DownloadService,
-    private dbResolver: DatabaseResolverService,
-    private confirmationDialog: ConfirmationDialogService,
-    private snackBar: MatSnackBar,
-    private configService: ConfigService,
-    protected adminOverviewService: AdminOverviewService,
-  ) {}
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;

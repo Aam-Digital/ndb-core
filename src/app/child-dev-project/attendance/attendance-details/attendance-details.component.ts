@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
@@ -31,6 +31,8 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
   ],
 })
 export class AttendanceDetailsComponent {
+  private formDialog = inject(FormDialogService);
+
   @Input() entity: ActivityAttendance;
   @Input() forChild: string;
   EventNote = EventNote;
@@ -55,11 +57,12 @@ export class AttendanceDetailsComponent {
     },
   ];
 
-  constructor(
-    private formDialog: FormDialogService,
-    @Inject(MAT_DIALOG_DATA)
-    data: { forChild: string; attendance: ActivityAttendance },
-  ) {
+  constructor() {
+    const data = inject<{
+    forChild: string;
+    attendance: ActivityAttendance;
+}>(MAT_DIALOG_DATA);
+
     this.entity = data.attendance;
     this.forChild = data.forChild;
   }

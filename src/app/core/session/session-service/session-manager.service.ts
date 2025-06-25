@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 
 import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { LoginStateSubject, SessionType } from "../session-type";
@@ -40,22 +40,20 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
  */
 @Injectable()
 export class SessionManagerService {
+  private remoteAuthService = inject(KeycloakAuthService);
+  private localAuthService = inject(LocalAuthService);
+  private sessionInfo = inject(SessionSubject);
+  private currentUser = inject(CurrentUserSubject);
+  private entityMapper = inject(EntityMapperService);
+  private loginStateSubject = inject(LoginStateSubject);
+  private router = inject(Router);
+  private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
+  private configService = inject(ConfigService);
+  private databaseResolver = inject(DatabaseResolverService);
+
   readonly RESET_REMOTE_SESSION_KEY = "RESET_REMOTE";
   private remoteLoggedIn = false;
   private updateSubscription: Subscription;
-
-  constructor(
-    private remoteAuthService: KeycloakAuthService,
-    private localAuthService: LocalAuthService,
-    private sessionInfo: SessionSubject,
-    private currentUser: CurrentUserSubject,
-    private entityMapper: EntityMapperService,
-    private loginStateSubject: LoginStateSubject,
-    private router: Router,
-    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
-    private configService: ConfigService,
-    private databaseResolver: DatabaseResolverService,
-  ) {}
 
   /**
    * Login for a remote session and start the sync.

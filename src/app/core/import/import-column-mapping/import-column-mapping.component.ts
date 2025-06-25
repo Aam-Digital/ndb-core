@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityConstructor } from "../../entity/model/entity";
@@ -35,6 +28,9 @@ import { EditImportColumnMappingComponent } from "./edit-import-column-mapping/e
   ],
 })
 export class ImportColumnMappingComponent implements OnChanges {
+  private entities = inject(EntityRegistry);
+  private importColumnMappingService = inject(ImportColumnMappingService);
+
   @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[] = [];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
@@ -48,11 +44,6 @@ export class ImportColumnMappingComponent implements OnChanges {
     }
     this.entityCtor = this.entities.get(value);
   }
-
-  constructor(
-    private entities: EntityRegistry,
-    private importColumnMappingService: ImportColumnMappingService,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.columnMapping) {

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { DataAggregationService } from "../data-aggregation.service";
 import {
   getGroupingInformationString,
@@ -37,6 +37,11 @@ import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
   ],
 })
 export class ReportingComponent {
+  private dataAggregationService = inject(DataAggregationService);
+  private dataTransformationService = inject(DataTransformationService);
+  private sqlReportService = inject(SqlReportService);
+  private entityMapper = inject(EntityMapperService);
+
   reports: ReportEntity[];
   mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
 
@@ -52,12 +57,7 @@ export class ReportingComponent {
   data: any[];
   exportableData: any;
 
-  constructor(
-    private dataAggregationService: DataAggregationService,
-    private dataTransformationService: DataTransformationService,
-    private sqlReportService: SqlReportService,
-    private entityMapper: EntityMapperService,
-  ) {
+  constructor() {
     this.entityMapper.loadType(ReportEntity).then((res) => {
       this.reports = res.sort((a, b) => a.title?.localeCompare(b.title));
     });

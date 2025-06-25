@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, inject } from "@angular/core";
 import { LatestChangesDialogService } from "../latest-changes-dialog.service";
 
 /**
@@ -29,10 +29,10 @@ import { LatestChangesDialogService } from "../latest-changes-dialog.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppVersionComponent implements OnInit {
+  private changelogDialog = inject(LatestChangesDialogService);
+
   /** the current app version */
   currentVersion: string;
-
-  constructor(private changelogDialog: LatestChangesDialogService) {}
 
   ngOnInit(): void {
     this.currentVersion = this.changelogDialog.getCurrentVersion();

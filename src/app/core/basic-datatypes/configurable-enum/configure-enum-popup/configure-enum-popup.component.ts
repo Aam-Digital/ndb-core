@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -42,15 +42,17 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
   ],
 })
 export class ConfigureEnumPopupComponent {
+  enumEntity = inject<ConfigurableEnum>(MAT_DIALOG_DATA);
+  private dialog = inject<MatDialogRef<ConfigureEnumPopupComponent>>(MatDialogRef);
+  private entityMapper = inject(EntityMapperService);
+  private confirmationService = inject(ConfirmationDialogService);
+  private entities = inject(EntityRegistry);
+
   newOptionInput: string;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
-    private dialog: MatDialogRef<ConfigureEnumPopupComponent>,
-    private entityMapper: EntityMapperService,
-    private confirmationService: ConfirmationDialogService,
-    private entities: EntityRegistry,
-  ) {
+  constructor() {
+    const enumEntity = this.enumEntity;
+
     const initialValues = JSON.stringify(enumEntity.values);
     this.dialog.afterClosed().subscribe(() => {
       if (JSON.stringify(this.enumEntity.values) !== initialValues) {

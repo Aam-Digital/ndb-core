@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  ViewChild,
-  ViewEncapsulation,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, ViewEncapsulation, inject } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { Observable } from "rxjs";
 import { concatMap, debounceTime, tap } from "rxjs/operators";
@@ -50,6 +44,10 @@ import { MatButtonModule } from "@angular/material/button";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchComponent {
+  private router = inject(Router);
+  private userRoleGuard = inject(UserRoleGuard);
+  private searchService = inject(SearchService);
+
   static INPUT_DEBOUNCE_TIME_MS = 400;
   MIN_CHARACTERS_FOR_SEARCH = 2;
 
@@ -71,12 +69,9 @@ export class SearchComponent {
   @ViewChild("searchInput") searchInput: ElementRef<HTMLInputElement>;
   @ViewChild("autoResults") autocomplete: MatAutocomplete;
 
-  constructor(
-    private router: Router,
-    private userRoleGuard: UserRoleGuard,
-    private searchService: SearchService,
-    screenWithObserver: ScreenWidthObserver,
-  ) {
+  constructor() {
+    const screenWithObserver = inject(ScreenWidthObserver);
+
     screenWithObserver
       .platform()
       .pipe(untilDestroyed(this))

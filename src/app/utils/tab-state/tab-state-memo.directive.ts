@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabGroup } from "@angular/material/tabs";
-import { Directive, OnInit, Optional } from "@angular/core";
+import { Directive, OnInit, inject } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ViewComponentContext } from "../../core/ui/abstract-view/view-component-context";
 
@@ -23,14 +23,12 @@ import { ViewComponentContext } from "../../core/ui/abstract-view/view-component
   standalone: false,
 })
 export class TabStateMemoDirective implements OnInit {
-  private readonly tabIndexKey = "tabIndex";
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private tab = inject(MatTabGroup);
+  private viewContext = inject(ViewComponentContext, { optional: true });
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private tab: MatTabGroup,
-    @Optional() private viewContext: ViewComponentContext,
-  ) {}
+  private readonly tabIndexKey = "tabIndex";
 
   ngOnInit() {
     if (this.viewContext?.isDialog) {

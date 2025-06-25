@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
 import { FileService } from "../file.service";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -10,13 +10,13 @@ import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynam
   imports: [FaDynamicIconComponent],
 })
 export class DisplayImgComponent implements OnChanges {
+  private fileService = inject(FileService);
+
   @Input() defaultImage: string;
   @Input() defaultIcon: string;
   @Input() entity: Entity;
   @Input() imgProperty: string;
   imgSrc: string;
-
-  constructor(private fileService: FileService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (

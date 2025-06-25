@@ -4,7 +4,7 @@ import { BooleanFilter } from "./booleanFilter";
 import { Entity } from "../../entity/model/entity";
 
 describe("Filters", () => {
-  const filterService = new FilterService(undefined);
+  const filterService = new FilterService();
 
   function testFilter(
     filterObj: Filter<Entity>,

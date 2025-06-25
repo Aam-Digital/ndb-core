@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
@@ -25,5 +25,5 @@ export interface FilterOverlayData<T extends Entity> {
   imports: [MatDialogModule, FilterComponent, MatButtonModule],
 })
 export class FilterOverlayComponent<T extends Entity> {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: FilterOverlayData<T>) {}
+  data = inject<FilterOverlayData<T>>(MAT_DIALOG_DATA);
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
 import { Logging } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
@@ -16,16 +16,14 @@ export type FileDownloadFormat = "csv" | "json" | "pdf";
  */
 @Injectable({ providedIn: "root" })
 export class DownloadService {
+  private dataTransformationService = inject(DataTransformationService);
+  private papa = inject(Papa);
+  private entityMapperService = inject(EntityMapperService);
+
   /** CSV row separator */
   static readonly SEPARATOR_ROW = "\n";
   /** CSV column/field separator */
   static readonly SEPARATOR_COL = ",";
-
-  constructor(
-    private dataTransformationService: DataTransformationService,
-    private papa: Papa,
-    private entityMapperService: EntityMapperService,
-  ) {}
 
   /**
    * Starts the download process with the provided data

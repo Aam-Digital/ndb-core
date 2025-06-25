@@ -1,13 +1,4 @@
-import {
-  AfterContentInit,
-  Component,
-  ContentChildren,
-  EventEmitter,
-  Input,
-  Output,
-  QueryList,
-  ViewChild,
-} from "@angular/core";
+import { AfterContentInit, Component, ContentChildren, EventEmitter, Input, Output, QueryList, ViewChild, inject } from "@angular/core";
 import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
@@ -76,6 +67,12 @@ import { TableRow } from "./table-row";
 export class EntitiesTableComponent<T extends Entity>
   implements AfterContentInit
 {
+  private entityFormService = inject(EntityFormService);
+  private formDialog = inject(FormDialogService);
+  private router = inject(Router);
+  private filterService = inject(FilterService);
+  private schemaService = inject(EntitySchemaService);
+
   @Input() set records(value: T[]) {
     if (!value) {
       return;
@@ -401,13 +398,7 @@ export class EntitiesTableComponent<T extends Entity>
     }
   }
 
-  constructor(
-    private entityFormService: EntityFormService,
-    private formDialog: FormDialogService,
-    private router: Router,
-    private filterService: FilterService,
-    private schemaService: EntitySchemaService,
-  ) {
+  constructor() {
     this.recordsDataSource = this.createDataSource();
   }
 

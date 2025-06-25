@@ -49,13 +49,13 @@ describe("EntityMapperService", () => {
       providers: [
         {
           provide: DatabaseResolverService,
-          useValue: new DatabaseResolverService({
-            createDatabase: (dbName: string) => {
+          useClass: class extends DatabaseResolverService {
+            override getDatabase(dbName?: string) {
               const db = new MemoryPouchDatabase(dbName, syncStateSubject);
               db.init();
               return db;
-            },
-          } as any),
+    }
+         },
         },
         CurrentUserSubject,
         EntityMapperService,

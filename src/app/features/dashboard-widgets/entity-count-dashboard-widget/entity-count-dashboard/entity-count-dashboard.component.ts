@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -70,6 +70,10 @@ export class EntityCountDashboardComponent
   extends DashboardWidget
   implements EntityCountDashboardConfig, OnInit
 {
+  private entityMapper = inject(EntityMapperService);
+  private router = inject(Router);
+  private entities = inject(EntityRegistry);
+
   getPrev() {
     this.currentGroupIndex =
       (this.currentGroupIndex - 1 + this.groupBy.length) % this.groupBy.length;
@@ -121,14 +125,6 @@ export class EntityCountDashboardComponent
   @Input() subtitle: string;
   @Input() explanation: string =
     $localize`:dashboard widget explanation:Counting all "active" records. If configured, you can view different disaggregations by using the arrows below.`;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private router: Router,
-    private entities: EntityRegistry,
-  ) {
-    super();
-  }
 
   async ngOnInit() {
     if (!this._entity) {

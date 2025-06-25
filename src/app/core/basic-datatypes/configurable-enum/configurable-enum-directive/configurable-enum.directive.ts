@@ -1,4 +1,4 @@
-import { Directive, Input, TemplateRef, ViewContainerRef } from "@angular/core";
+import { Directive, Input, TemplateRef, ViewContainerRef, inject } from "@angular/core";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
 
@@ -14,6 +14,10 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
   standalone: true,
 })
 export class ConfigurableEnumDirective {
+  private templateRef = inject<TemplateRef<any>>(TemplateRef);
+  private viewContainerRef = inject(ViewContainerRef);
+  private enumService = inject(ConfigurableEnumService);
+
   /**
    * Sets the string id of the enum config id.
    * @param enumConfigId
@@ -26,17 +30,6 @@ export class ConfigurableEnumDirective {
       });
     }
   }
-
-  /**
-   * For implementation details see
-   * https://www.talkinghightech.com/en/create-ngfor-directive/ and
-   * https://angular.io/guide/structural-directives#write-a-structural-directive
-   */
-  constructor(
-    private templateRef: TemplateRef<any>,
-    private viewContainerRef: ViewContainerRef,
-    private enumService: ConfigurableEnumService,
-  ) {}
 
   /**
    * Make sure the template checker knows the type of the context with which the

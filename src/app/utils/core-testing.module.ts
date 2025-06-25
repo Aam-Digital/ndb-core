@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { CoreModule } from "../core/core.module";
 import {
   entityRegistry,
@@ -23,10 +23,7 @@ import { defaultValueStrategyProviders } from "../core/default-values/standard-d
   providers: [
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: EntityMapperService, useValue: mockEntityMapper() },
-    {
-      provide: ConfigurableEnumService,
-      useValue: new ConfigurableEnumService(mockEntityMapper(), null),
-    },
+      ConfigurableEnumService,
     {
       provide: EntityActionsService,
       useValue: jasmine.createSpyObj(["anonymize"]),
@@ -38,7 +35,9 @@ import { defaultValueStrategyProviders } from "../core/default-values/standard-d
   ],
 })
 export class CoreTestingModule {
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.allowDuplicates();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -35,15 +35,15 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   ],
 })
 export class DateImportConfigComponent {
+  data = inject<MappingDialogData>(MAT_DIALOG_DATA);
+  private confirmation = inject(ConfirmationDialogService);
+  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
+
   format = new FormControl("");
   valid = false;
   values: { value: string; parsed?: Date }[] = [];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: MappingDialogData,
-    private confirmation: ConfirmationDialogService,
-    private dialog: MatDialogRef<any>,
-  ) {
+  constructor() {
     this.values = this.data.values
       .filter((val) => !!val)
       .map((value) => ({ value }));

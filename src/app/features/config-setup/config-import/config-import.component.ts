@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   InputFileComponent,
   ParsedData,
@@ -29,11 +29,11 @@ import { RouteTarget } from "../../../route-target";
   ],
 })
 export class ConfigImportComponent {
+  private configImportParser = inject(ConfigImportParserService);
+
   loadedConfigFile: any;
   entityName: string = "Child";
   generatedConfig: string = "";
-
-  constructor(private configImportParser: ConfigImportParserService) {}
 
   loadData(loadedConfigFile: ParsedData) {
     // TODO: handle csv parse errors

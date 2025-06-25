@@ -1,5 +1,5 @@
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DemoChildGenerator } from "../demo-child-generator.service";
 import { faker } from "../../../../core/demo-data/faker";
 import { ratingAnswers } from "./rating-answers";
@@ -13,6 +13,9 @@ export class DemoHistoricalDataConfig {
 
 @Injectable()
 export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
+  private childrenGenerator = inject(DemoChildGenerator);
+  private config = inject(DemoHistoricalDataConfig);
+
   static provider(config: DemoHistoricalDataConfig) {
     return [
       {
@@ -23,10 +26,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<Entity> {
     ];
   }
 
-  constructor(
-    private childrenGenerator: DemoChildGenerator,
-    private config: DemoHistoricalDataConfig,
-  ) {
+  constructor() {
     super();
     this.requiredEntityTypes = ["HistoricalEntityData"];
   }

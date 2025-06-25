@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Optional } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
@@ -35,6 +35,12 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
 export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
+  protected entityMapper = inject(EntityMapperService);
+  private entityRegistry = inject(EntityRegistry);
+  private screenWidthObserver = inject(ScreenWidthObserver);
+  protected filterService = inject(FilterService);
+  private entitySpecialLoader = inject(EntitySpecialLoaderService, { optional: true });
+
   /** currently viewed/main entity for which related entities are displayed in this component */
   @Input() entity: Entity;
 
@@ -94,13 +100,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   data: E[];
   protected entityCtr: EntityConstructor<E>;
 
-  constructor(
-    protected entityMapper: EntityMapperService,
-    private entityRegistry: EntityRegistry,
-    private screenWidthObserver: ScreenWidthObserver,
-    protected filterService: FilterService,
-    @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
-  ) {
+  constructor() {
     this.screenWidthObserver
       .shared()
       .pipe(untilDestroyed(this))

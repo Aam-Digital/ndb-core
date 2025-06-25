@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { ConfigService } from "app/core/config/config.service";
 import { EntityMenuItem, MenuItem, NavigationMenuConfig } from "./menu-item";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
@@ -8,6 +8,9 @@ import { BehaviorSubject } from "rxjs";
   providedIn: "root",
 })
 export class MenuService {
+  private configService = inject(ConfigService);
+  private entities = inject(EntityRegistry);
+
   /**
    * name of config array in the config json file
    */
@@ -18,10 +21,7 @@ export class MenuService {
    */
   menuItems = new BehaviorSubject<MenuItem[]>([]);
 
-  constructor(
-    private configService: ConfigService,
-    private entities: EntityRegistry,
-  ) {
+  constructor() {
     this.configService.configUpdates.subscribe(() =>
       this.initMenuItemsFromConfig(),
     );

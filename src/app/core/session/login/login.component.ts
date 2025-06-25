@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -52,17 +52,19 @@ import { race, timer } from "rxjs";
   ],
 })
 export class LoginComponent implements OnInit {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  sessionManager = inject(SessionManagerService);
+  loginState = inject(LoginStateSubject);
+  siteSettingsService = inject(SiteSettingsService);
+
   offlineUsers: SessionInfo[] = [];
   enableOfflineLogin: boolean;
   loginInProgress = false;
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    public sessionManager: SessionManagerService,
-    public loginState: LoginStateSubject,
-    public siteSettingsService: SiteSettingsService,
-  ) {
+  constructor() {
+    const sessionManager = this.sessionManager;
+
     this.enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
 
     sessionManager

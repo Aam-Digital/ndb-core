@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import {
   FormBuilder,
@@ -43,6 +43,11 @@ import { of } from "rxjs";
   ],
 })
 export class UserSecurityComponent implements OnInit {
+  private userAdminService = inject(UserAdminService);
+  private fb = inject(FormBuilder);
+  private alertService = inject(AlertService);
+  private http = inject(HttpClient);
+
   @Input() entity: Entity;
   form: FormGroup;
   availableRoles: Role[] = [];
@@ -50,13 +55,9 @@ export class UserSecurityComponent implements OnInit {
   editing = true;
   userIsPermitted = false;
 
-  constructor(
-    private userAdminService: UserAdminService,
-    sessionInfo: SessionSubject,
-    private fb: FormBuilder,
-    private alertService: AlertService,
-    private http: HttpClient,
-  ) {
+  constructor() {
+    const sessionInfo = inject(SessionSubject);
+
     this.form = this.fb.group({
       userEntityId: [{ value: "", disabled: true }],
       email: ["", [Validators.required, Validators.email]],

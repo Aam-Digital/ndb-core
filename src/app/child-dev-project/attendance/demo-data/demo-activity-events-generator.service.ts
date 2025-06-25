@@ -1,5 +1,5 @@
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { faker } from "../../../core/demo-data/faker";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
@@ -17,6 +17,9 @@ export class DemoEventsConfig {
  */
 @Injectable()
 export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventNote> {
+  private config = inject(DemoEventsConfig);
+  private demoActivities = inject(DemoActivityGeneratorService);
+
   /**
    * Create a specific event for a date based on the given activity and fill with random attendance.
    * @param activity The activity for which to generate a concrete event instance
@@ -68,13 +71,6 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
       },
       { provide: DemoEventsConfig, useValue: config },
     ];
-  }
-
-  constructor(
-    private config: DemoEventsConfig,
-    private demoActivities: DemoActivityGeneratorService,
-  ) {
-    super();
   }
 
   generateEntities(): EventNote[] {

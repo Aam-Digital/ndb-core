@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Injectable,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Injectable, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
@@ -78,6 +70,11 @@ class HorizontalHammerConfig extends HammerGestureConfig {
   ],
 })
 export class RollCallComponent implements OnChanges {
+  private enumService = inject(ConfigurableEnumService);
+  private entityMapper = inject(EntityMapperService);
+  private formDialog = inject(FormDialogService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   /**
    * The event to be displayed and edited.
    */
@@ -114,13 +111,6 @@ export class RollCallComponent implements OnChanges {
 
   children: Entity[] = [];
   inactiveParticipants: Entity[];
-
-  constructor(
-    private enumService: ConfigurableEnumService,
-    private entityMapper: EntityMapperService,
-    private formDialog: FormDialogService,
-    private confirmationDialog: ConfirmationDialogService,
-  ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.eventEntity) {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import {
   FormBuilder,
@@ -24,6 +24,8 @@ import { HelpButtonComponent } from "../../../../common-components/help-button/h
   styleUrl: "./configure-entity-field-validator.component.scss",
 })
 export class ConfigureEntityFieldValidatorComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   validatorForm: FormGroup;
 
   /**
@@ -35,8 +37,6 @@ export class ConfigureEntityFieldValidatorComponent implements OnInit {
    * Emit the latest state of the validators config whenever the user changed it in the displayed form.
    */
   @Output() entityValidatorChanges = new EventEmitter<FormValidatorConfig>();
-
-  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
     this.init();

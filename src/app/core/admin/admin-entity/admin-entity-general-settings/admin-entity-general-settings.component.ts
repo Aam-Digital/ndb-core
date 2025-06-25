@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
@@ -57,6 +57,9 @@ import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.compon
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private adminEntityService = inject(AdminEntityService);
+
   @Input() entityConstructor: EntityConstructor;
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
@@ -71,11 +74,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
-
-  constructor(
-    private fb: FormBuilder,
-    private adminEntityService: AdminEntityService,
-  ) {}
 
   ngOnInit(): void {
     this.init();

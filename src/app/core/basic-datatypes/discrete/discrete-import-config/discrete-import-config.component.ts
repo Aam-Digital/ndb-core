@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -33,19 +33,16 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
   ],
 })
 export class DiscreteImportConfigComponent implements OnInit {
+  data = inject<MappingDialogData>(MAT_DIALOG_DATA);
+  private fb = inject(FormBuilder);
+  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
+  private confirmation = inject(ConfirmationDialogService);
+  private schemaService = inject(EntitySchemaService);
+  private configurableEnumService = inject(ConfigurableEnumService);
+
   form: FormGroup;
   component: string;
   schema: EntitySchemaField;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: MappingDialogData,
-    private fb: FormBuilder,
-    private dialog: MatDialogRef<any>,
-    private confirmation: ConfirmationDialogService,
-    private schemaService: EntitySchemaService,
-    private configurableEnumService: ConfigurableEnumService,
-  ) {}
 
   ngOnInit() {
     this.schema = this.data.entityType.schema.get(this.data.col.propertyName);

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  Input,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, inject } from "@angular/core";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import {
   DEFAULT_LANGUAGE,
@@ -23,11 +18,13 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSelectComponent {
+  private location = inject<Location>(LOCATION_TOKEN);
+
   @Input() availableLocales: ConfigurableEnumValue[] = [];
 
   currentLocale: string;
 
-  constructor(@Inject(LOCATION_TOKEN) private location: Location) {
+  constructor() {
     this.currentLocale =
       localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) || DEFAULT_LANGUAGE;
   }

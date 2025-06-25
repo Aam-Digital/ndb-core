@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import { Pipe, PipeTransform, inject } from "@angular/core";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
@@ -9,7 +9,8 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   standalone: true,
 })
 export class EntityTypeLabelPipe implements PipeTransform {
-  constructor(private entityTypes: EntityRegistry) {}
+  private entityTypes = inject(EntityRegistry);
+
 
   transform(value: string, plural: boolean = false): string {
     const entity = this.entityTypes.get(value);

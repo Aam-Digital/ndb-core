@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { EntityForm } from "../../common-components/entity-form/entity-form.service";
 import { AbstractControl } from "@angular/forms";
@@ -13,10 +13,8 @@ import { Logging } from "../../logging/logging.service";
   providedIn: "root",
 })
 export class DefaultValueService {
-  constructor(
-    @Inject(DefaultValueStrategy)
-    private defaultValueStrategies: DefaultValueStrategy[],
-  ) {}
+  private defaultValueStrategies: DefaultValueStrategy[] = inject(DefaultValueStrategy) as unknown as DefaultValueStrategy[];
+
 
   async handleEntityForm<T extends Entity>(
     form: EntityForm<T>,

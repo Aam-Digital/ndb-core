@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from "@angular/core";
+import { EventEmitter, Injectable, inject } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -54,18 +54,19 @@ export interface EntityForm<T extends Entity> {
  */
 @Injectable({ providedIn: "root" })
 export class EntityFormService {
+  private fb = inject(FormBuilder);
+  private entityMapper = inject(EntityMapperService);
+  private entitySchemaService = inject(EntitySchemaService);
+  private dynamicValidator = inject(DynamicValidatorsService);
+  private ability = inject(EntityAbility);
+  private unsavedChanges = inject(UnsavedChangesService);
+  private defaultValueService = inject(DefaultValueService);
+
   private subscriptions: Subscription[] = [];
 
-  constructor(
-    private fb: FormBuilder,
-    private entityMapper: EntityMapperService,
-    private entitySchemaService: EntitySchemaService,
-    private dynamicValidator: DynamicValidatorsService,
-    private ability: EntityAbility,
-    private unsavedChanges: UnsavedChangesService,
-    private defaultValueService: DefaultValueService,
-    router: Router,
-  ) {
+  constructor() {
+    const router = inject(Router);
+
     router.events
       .pipe(filter((e) => e instanceof ActivationStart))
       .subscribe(() => {

@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Output,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
 import { Todo } from "../model/todo";
 import {
   MAT_DIALOG_DATA,
@@ -37,6 +30,10 @@ import { FieldGroup } from "../../../core/entity-details/form/field-group";
   ],
 })
 export class TodoDetailsComponent implements OnInit {
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
+  private todoService = inject(TodoService);
+  private entityFormService = inject(EntityFormService);
+
   @Input() entity: Todo;
 
   @Output() close = new EventEmitter<Todo>();
@@ -44,12 +41,9 @@ export class TodoDetailsComponent implements OnInit {
   formColumns: FieldGroup[];
   form: EntityForm<Todo>;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) data: DetailsComponentData,
-    private dialogRef: MatDialogRef<any>,
-    private todoService: TodoService,
-    private entityFormService: EntityFormService,
-  ) {
+  constructor() {
+    const data = inject<DetailsComponentData>(MAT_DIALOG_DATA);
+
     this.entity = data.entity as Todo;
     this.formColumns = [{ fields: data.columns }];
   }

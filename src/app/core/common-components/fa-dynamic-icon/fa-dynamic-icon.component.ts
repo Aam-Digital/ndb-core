@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input, inject } from "@angular/core";
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import {
   faCalendarAlt,
@@ -41,6 +41,8 @@ const iconAliases = new Map<string, IconDefinition>([
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FaDynamicIconComponent {
+  private iconLibrary = inject(FaIconLibrary);
+
   /** The fallback icon if the given icon is neither known (inside the internal map)
    * nor registered as a font-awesome icon
    */
@@ -99,6 +101,4 @@ export class FaDynamicIconComponent {
    * The font-awesome internal icon definition
    */
   _icon: IconDefinition;
-
-  constructor(private iconLibrary: FaIconLibrary) {}
 }

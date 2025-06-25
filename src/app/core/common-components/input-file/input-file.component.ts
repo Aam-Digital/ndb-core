@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { readFile } from "../../../utils/utils";
 import { Papa } from "ngx-papaparse";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -24,6 +24,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   ],
 })
 export class InputFileComponent<T = any> {
+  private papa = inject(Papa);
+
   /** returns parsed data as an object on completing load after user selects a file */
   @Output() fileLoad = new EventEmitter<ParsedData<T>>();
 
@@ -31,8 +33,6 @@ export class InputFileComponent<T = any> {
 
   parsedData: ParsedData<T>;
   formControl = new FormControl();
-
-  constructor(private papa: Papa) {}
 
   async loadFile($event: Event): Promise<void> {
     this.formControl.reset();

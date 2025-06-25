@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation, inject } from "@angular/core";
 import { Note } from "../../notes/model/note";
 import {
   MatCalendar,
@@ -55,6 +48,11 @@ import { Angulartics2Module } from "angulartics2";
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {
+  private entityMapper = inject(EntityMapperService);
+  private formDialog = inject(FormDialogService);
+  private analyticsService = inject(AnalyticsService);
+  private attendanceService = inject(AttendanceService);
+
   @Input() records: Note[] = [];
   @Input() highlightForChild: string;
   @Input() activity: RecurringActivity;
@@ -69,12 +67,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   selectedEventAttendanceOriginal: EventAttendance;
   selectedEventStats: AverageAttendanceStats;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private formDialog: FormDialogService,
-    private analyticsService: AnalyticsService,
-    private attendanceService: AttendanceService,
-  ) {
+  constructor() {
     this.entityMapper
       .receiveUpdates(EventNote)
       .pipe(untilDestroyed(this))

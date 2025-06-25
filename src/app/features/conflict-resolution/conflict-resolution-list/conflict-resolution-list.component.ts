@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, ViewChild, inject } from "@angular/core";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { QueryDataSource } from "../../../core/database/query-data-source";
 import { Entity } from "../../../core/entity/model/entity";
@@ -39,7 +39,9 @@ export class ConflictResolutionListComponent implements AfterViewInit {
 
   private readonly db: Database;
 
-  constructor(dbResolver: DatabaseResolverService) {
+  constructor() {
+    const dbResolver = inject(DatabaseResolverService);
+
     this.db = dbResolver.getDatabase();
   }
 

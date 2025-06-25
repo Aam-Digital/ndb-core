@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Optional,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
@@ -104,6 +96,18 @@ import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service
 export class EntityListComponent<T extends Entity>
   implements EntityListConfig, OnChanges
 {
+  private screenWidthObserver = inject(ScreenWidthObserver);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  protected entityMapperService = inject(EntityMapperService);
+  private entities = inject(EntityRegistry);
+  private dialog = inject(MatDialog);
+  private duplicateRecord = inject(DuplicateRecordService);
+  private entityActionsService = inject(EntityActionsService);
+  private entityEditService = inject(EntityEditService);
+  private bulkMergeService = inject(BulkMergeService);
+  private entitySpecialLoader = inject(EntitySpecialLoaderService, { optional: true });
+
   @Input() allEntities: T[];
 
   @Input() entityType: string;
@@ -166,19 +170,7 @@ export class EntityListComponent<T extends Entity>
     };
   }
 
-  constructor(
-    private screenWidthObserver: ScreenWidthObserver,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    protected entityMapperService: EntityMapperService,
-    private entities: EntityRegistry,
-    private dialog: MatDialog,
-    private duplicateRecord: DuplicateRecordService,
-    private entityActionsService: EntityActionsService,
-    private entityEditService: EntityEditService,
-    private bulkMergeService: BulkMergeService,
-    @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
-  ) {
+  constructor() {
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))

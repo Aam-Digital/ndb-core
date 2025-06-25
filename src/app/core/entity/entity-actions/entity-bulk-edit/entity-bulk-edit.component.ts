@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -46,6 +46,9 @@ import {
   styleUrl: "./entity-bulk-edit.component.scss",
 })
 export class EntityBulkEditComponent<E extends Entity> implements OnInit {
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
+  private entityFormService = inject(EntityFormService);
+
   entityConstructor: EntityConstructor;
   entitiesToEdit: E[];
 
@@ -61,15 +64,12 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
   showValueForm: boolean = false;
   selectedField: FormFieldConfig;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    data: {
-      entitiesToEdit: E[];
-      entityConstructor: EntityConstructor;
-    },
-    private dialogRef: MatDialogRef<any>,
-    private entityFormService: EntityFormService,
-  ) {
+  constructor() {
+    const data = inject<{
+    entitiesToEdit: E[];
+    entityConstructor: EntityConstructor;
+}>(MAT_DIALOG_DATA);
+
     this.entityConstructor = data.entityConstructor;
     this.entityData = data.entitiesToEdit[0];
     this.entitiesToEdit = data.entitiesToEdit;

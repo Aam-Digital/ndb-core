@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FileService } from "../file.service";
@@ -16,9 +16,8 @@ import { MatButtonModule } from "@angular/material/button";
   imports: [MatButtonModule],
 })
 export class ViewFileComponent extends ViewDirective<string> {
-  constructor(public fileService: FileService) {
-    super();
-  }
+  fileService = inject(FileService);
+
 
   showFile(event: Event) {
     // Prevent event bubbling

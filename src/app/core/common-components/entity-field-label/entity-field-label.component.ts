@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityConstructor } from "../../entity/model/entity";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
@@ -15,6 +15,9 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   imports: [MatTooltipModule],
 })
 export class EntityFieldLabelComponent implements OnChanges {
+  private entityFormService = inject(EntityFormService);
+  private entityRegistry = inject(EntityRegistry);
+
   /** field id or full config */
   @Input() field: ColumnConfig;
   /** full field config extended from schema (used internally and for template) */
@@ -23,11 +26,6 @@ export class EntityFieldLabelComponent implements OnChanges {
   /** entity type to look up the schema details for the given field */
   @Input() entityType: EntityConstructor | string;
   _entityType: EntityConstructor;
-
-  constructor(
-    private entityFormService: EntityFormService,
-    private entityRegistry: EntityRegistry,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entityType) {

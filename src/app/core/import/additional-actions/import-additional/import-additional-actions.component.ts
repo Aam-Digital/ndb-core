@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -51,6 +44,8 @@ import { MatExpansionModule } from "@angular/material/expansion";
   providers: [EntityTypeLabelPipe],
 })
 export class ImportAdditionalActionsComponent implements OnChanges {
+  private importAdditionalService = inject(ImportAdditionalService);
+
   @Input() entityType: string;
 
   @Input() importActions: AdditionalImportAction[] = [];
@@ -70,7 +65,7 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     ),
   });
 
-  constructor(private importAdditionalService: ImportAdditionalService) {
+  constructor() {
     this.linkEntityForm
       .get("action")
       .valueChanges.subscribe((val) =>

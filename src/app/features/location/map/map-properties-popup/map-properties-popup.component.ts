@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -30,17 +30,18 @@ export type LocationProperties = { [key: string]: string[] };
   ],
 })
 export class MapPropertiesPopupComponent {
+  private dialogRef = inject<MatDialogRef<MapPropertiesPopupComponent>>(MatDialogRef);
+
   entityProperties: {
     entity: EntityConstructor;
     properties: { name: string; label: string }[];
     selected: string[];
   }[];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) mapProperties: LocationProperties,
-    entities: EntityRegistry,
-    private dialogRef: MatDialogRef<MapPropertiesPopupComponent>,
-  ) {
+  constructor() {
+    const mapProperties = inject<LocationProperties>(MAT_DIALOG_DATA);
+    const entities = inject(EntityRegistry);
+
     this.entityProperties = Object.entries(mapProperties).map(
       ([entityType, selected]) => {
         const entity = entities.get(entityType);

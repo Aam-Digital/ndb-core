@@ -22,15 +22,6 @@ export class MockEntityMapperService extends EntityMapperService {
   private data: Map<string, Map<string, Entity>> = new Map();
   private observables: Map<string, Subject<UpdatedEntity<any>>> = new Map();
 
-  constructor() {
-    super(
-      null,
-      null,
-      { getCurrentUser: () => ({ name: TEST_USER }) } as any,
-      entityRegistry,
-    );
-  }
-
   private publishUpdates(type: string, update: UpdatedEntity<any>) {
     const subj = this.observables.get(type);
     if (subj !== undefined) {

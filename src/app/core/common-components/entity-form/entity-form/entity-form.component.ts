@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation, inject } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -45,6 +39,10 @@ import { FormsModule } from "@angular/forms";
 export class EntityFormComponent<T extends Entity = Entity>
   implements OnChanges
 {
+  private entityMapper = inject(EntityMapperService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private ability = inject(EntityAbility);
+
   /**
    * The entity which should be displayed and edited
    */
@@ -61,12 +59,6 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   private initialFormValues: any;
   private changesSubscription: Subscription;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService,
-    private ability: EntityAbility,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.fieldGroups) {

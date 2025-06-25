@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -33,16 +33,16 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   ],
 })
 export class EntityImportConfigComponent {
+  data = inject<MappingDialogData>(MAT_DIALOG_DATA);
+  private confirmation = inject(ConfirmationDialogService);
+  private dialog = inject<MatDialogRef<any>>(MatDialogRef);
+  private entities = inject(EntityRegistry);
+
   entity: EntityConstructor;
   propertyForm = new FormControl("");
   availableProperties: { property: string; label: string }[] = [];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: MappingDialogData,
-    private confirmation: ConfirmationDialogService,
-    private dialog: MatDialogRef<any>,
-    private entities: EntityRegistry,
-  ) {
+  constructor() {
     const propertyName = this.data.col.propertyName;
     const entityName = this.data.entityType.schema.get(propertyName).additional;
     this.entity = this.entities.get(entityName);

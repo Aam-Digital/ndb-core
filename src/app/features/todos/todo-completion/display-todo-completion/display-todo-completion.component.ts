@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
 import { DatePipe } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -18,11 +18,9 @@ export class DisplayTodoCompletionComponent
   extends ViewDirective<TodoCompletion>
   implements OnInit
 {
-  completedBy: Entity;
+  private entityMapper = inject(EntityMapperService);
 
-  constructor(private entityMapper: EntityMapperService) {
-    super();
-  }
+  completedBy: Entity;
 
   ngOnInit() {
     if (this.value?.completedBy) {

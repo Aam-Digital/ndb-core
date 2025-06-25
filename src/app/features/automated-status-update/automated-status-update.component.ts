@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -57,14 +57,14 @@ export interface AffectedEntity {
   styleUrl: "./automated-status-update.component.scss",
 })
 export class AutomatedStatusUpdateComponent implements OnInit {
+  data = inject<{
+    entities: AffectedEntity[];
+}>(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<AutomatedStatusUpdateComponent>>(MatDialogRef);
+  private entityFormService = inject(EntityFormService);
+
   entityConstructor: EntityConstructor;
   entityForm: EntityForm<Entity>;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { entities: AffectedEntity[] },
-    private dialogRef: MatDialogRef<AutomatedStatusUpdateComponent>,
-    private entityFormService: EntityFormService,
-  ) {}
 
   async ngOnInit(): Promise<void> {
     for (const entity of this.data.entities) {

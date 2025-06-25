@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { SiteSettings } from "./site-settings";
 import { delay, firstValueFrom, Observable, skipWhile } from "rxjs";
 import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
@@ -20,6 +20,11 @@ import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/co
   providedIn: "root",
 })
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
+  private title = inject(Title);
+  private fileService = inject(FileService);
+  private schemaService = inject(EntitySchemaService);
+  private enumService = inject(ConfigurableEnumService);
+
   readonly DEFAULT_FAVICON = "favicon.ico";
   readonly SITE_SETTINGS_LOCAL_STORAGE_KEY = Entity.createPrefixedId(
     SiteSettings.ENTITY_TYPE,
@@ -32,13 +37,9 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   defaultLanguage = this.getPropertyObservable("defaultLanguage");
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
 
-  constructor(
-    private title: Title,
-    private fileService: FileService,
-    private schemaService: EntitySchemaService,
-    private enumService: ConfigurableEnumService,
-    entityMapper: EntityMapperService,
-  ) {
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper);
 
     this.initAvailableLocales();
