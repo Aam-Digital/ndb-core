@@ -15,78 +15,82 @@ export const addDefaultTodoViews: ConfigMigration = (key, configPart) => {
     return configPart;
   }
 
+  const configData = configPart["data"];
   const viewConfigKey = `view:${Todo.route.substring(1) /* remove leading slash */}`;
 
   // List View
-  if (!configPart?.["data"][viewConfigKey]) {
+  if (!configData[viewConfigKey]) {
     // add standard Todo list view
-    configPart["data"][viewConfigKey] = {
-      component: "EntityList",
-      config: {
-        entityType: "Todo",
-        columns: [
-          "deadline",
-          "subject",
-          "assignedTo",
-          "startDate",
-          "relatedEntities",
-        ],
-        filters: [
-          { id: "assignedTo", default: PLACEHOLDERS.CURRENT_USER },
-          { id: "todo-due-status", type: "prebuilt" },
-        ],
-        defaultSort: { active: "deadline", direction: "asc" },
-        clickMode: "popup-details",
-      },
-    };
+    configData[viewConfigKey] = defaultTodoListView;
   } else {
     // add prebuilt filter to existing Todo list view
-    const existingFilters =
-      configPart["data"][viewConfigKey].config.filters || [];
+    const existingFilters = configData[viewConfigKey].config.filters || [];
     if (!existingFilters.some((f) => f.id === todoDueStatusFilter.id)) {
       existingFilters.push(todoDueStatusFilter);
     }
-    configPart["data"][viewConfigKey].config.filters = existingFilters;
+    configData[viewConfigKey].config.filters = existingFilters;
   }
 
   // Details View
-  if (!configPart?.["data"][viewConfigKey + "/:id"]) {
-    configPart["data"][viewConfigKey + "/:id"] = {
-      component: "EntityDetails",
-      config: {
-        entityType: Todo.ENTITY_TYPE,
-        panels: [
-          {
-            title: "Overview",
-            components: [
-              {
-                title: "",
-                component: "Form",
-                config: {
-                  fieldGroups: [
-                    {
-                      fields: [
-                        "subject",
-                        "deadline",
-                        "startDate",
-                        "description",
-                        "assignedTo",
-                        "relatedEntities",
-                        "repetitionInterval",
-                        "completed",
-                      ],
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      },
-    };
+  if (!configData[viewConfigKey + "/:id"]) {
+    configData[viewConfigKey + "/:id"] = defaultTodoDetailsView;
   }
 
   return configPart;
+};
+
+export const defaultTodoListView = {
+  component: "EntityList",
+  config: {
+    entityType: "Todo",
+    columns: [
+      "deadline",
+      "subject",
+      "assignedTo",
+      "startDate",
+      "relatedEntities",
+    ],
+    filters: [
+      { id: "assignedTo", default: PLACEHOLDERS.CURRENT_USER },
+      { id: "todo-due-status", type: "prebuilt" },
+    ],
+    defaultSort: { active: "deadline", direction: "asc" },
+    clickMode: "popup-details",
+  },
+};
+
+export const defaultTodoDetailsView = {
+  component: "EntityDetails",
+  config: {
+    entityType: Todo.ENTITY_TYPE,
+    panels: [
+      {
+        title: "Overview",
+        components: [
+          {
+            title: "",
+            component: "Form",
+            config: {
+              fieldGroups: [
+                {
+                  fields: [
+                    "subject",
+                    "deadline",
+                    "startDate",
+                    "description",
+                    "assignedTo",
+                    "relatedEntities",
+                    "repetitionInterval",
+                    "completed",
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  },
 };
 
 /**
