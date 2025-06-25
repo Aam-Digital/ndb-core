@@ -3,9 +3,12 @@
 
 <mat-dialog-content>
   @if (publicFormConfig) {
-    <p i18n>
-      These settings apply only to this Public Form. The main entity schema is
-      not affected.
+    <p>
+      <fa-icon icon="exclamation-triangle" style="color: red"></fa-icon>
+      <span i18n>
+        You are currently editing a field in a Public Form. The field settings
+        here only apply to this form and do not affect the main entity schema.
+      </span>
     </p>
   } @else {
     <p i18n>
