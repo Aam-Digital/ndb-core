@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import {
   EditFileComponent,
@@ -20,12 +20,12 @@ import { TemplateExportApiService } from "../template-export-api/template-export
   imports: EditFileComponent_IMPORTS,
 })
 export class EditTemplateExportFileComponent extends EditFileComponent {
-  constructor(
-    templateExportApi: TemplateExportApiService,
-    alertService: AlertService,
-    entityMapper: EntityMapperService,
-    @Inject(NAVIGATOR_TOKEN) navigator: Navigator,
-  ) {
-    super(templateExportApi, alertService, entityMapper, navigator);
+  constructor() {
+    inject(TemplateExportApiService);
+    inject(AlertService);
+    inject(EntityMapperService);
+    inject<Navigator>(NAVIGATOR_TOKEN);
+
+    super();
   }
 }

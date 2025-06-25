@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Entity } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -11,13 +11,13 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
   providedIn: "root",
 })
 export class SearchService {
+  private indexingService = inject(DatabaseIndexingService);
+  private schemaService = inject(EntitySchemaService);
+  private entities = inject(EntityRegistry);
+
   private searchableEntities: [string, string[]][];
 
-  constructor(
-    private indexingService: DatabaseIndexingService,
-    private schemaService: EntitySchemaService,
-    private entities: EntityRegistry,
-  ) {
+  constructor() {
     this.createSearchIndex();
   }
 

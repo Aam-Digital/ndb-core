@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DatabaseIndexingService } from "../../database-indexing/database-indexing.service";
 import { Entity } from "../../model/entity";
 import { EntityRegistry } from "../../database-entity.decorator";
@@ -10,10 +10,10 @@ import { EntityRegistry } from "../../database-entity.decorator";
   providedIn: "root",
 })
 export class HistoricalDataService {
-  constructor(
-    private dbIndexingService: DatabaseIndexingService,
-    private entityRegistry: EntityRegistry,
-  ) {
+  private dbIndexingService = inject(DatabaseIndexingService);
+  private entityRegistry = inject(EntityRegistry);
+
+  constructor() {
     this.createHistoricalDataIndex();
   }
 

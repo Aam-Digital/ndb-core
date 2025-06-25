@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { EditComponent } from "../../../../core/entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
@@ -9,7 +9,6 @@ import { MatInputModule } from "@angular/material/input";
 import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSelectModule } from "@angular/material/select";
-import { NgForOf } from "@angular/common";
 import { ErrorHintComponent } from "../../../../core/common-components/error-hint/error-hint.component";
 
 /**
@@ -27,7 +26,6 @@ import { ErrorHintComponent } from "../../../../core/common-components/error-hin
     ReactiveFormsModule,
     FontAwesomeModule,
     MatSelectModule,
-    NgForOf,
     ErrorHintComponent,
   ],
 })
@@ -35,6 +33,8 @@ export class EditRecurringIntervalComponent
   extends EditComponent<any>
   implements OnInit
 {
+  private matDialog = inject(MatDialog);
+
   predefinedIntervals: { label: string; interval: TimeInterval }[] = [
     {
       label: $localize`:default interval select option:weekly`,
@@ -48,10 +48,6 @@ export class EditRecurringIntervalComponent
 
   compareOptionFun = (a: TimeInterval, b: TimeInterval) =>
     JSON.stringify(a) === JSON.stringify(b);
-
-  constructor(private matDialog: MatDialog) {
-    super();
-  }
 
   override ngOnInit(): void {
     super.ngOnInit();

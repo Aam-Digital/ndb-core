@@ -12,13 +12,15 @@ import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
   providedIn: "root",
 })
 export class BackupService {
+  private dbResolver = inject(DatabaseResolverService);
+
   private db: Database;
 
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly window = inject(WINDOW_TOKEN);
   private readonly location = inject(LOCATION_TOKEN);
 
-  constructor(private dbResolver: DatabaseResolverService) {
+  constructor() {
     this.db = this.dbResolver.getDatabase();
     // WARNING: currently only the default "app" database is backed up
   }

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
@@ -17,6 +17,10 @@ import { EntityRegistry } from "../entity/database-entity.decorator";
   providedIn: "root",
 })
 export class QueryService {
+  private entityMapper = inject(EntityMapperService);
+  private childrenService = inject(ChildrenService);
+  private attendanceService = inject(AttendanceService);
+
   private entities: { [type: string]: { [id: string]: Entity } } = {};
 
   /**
@@ -64,12 +68,9 @@ export class QueryService {
     ["getAttendanceArray\\(true\\)", ChildSchoolRelation],
   ];
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private childrenService: ChildrenService,
-    private attendanceService: AttendanceService,
-    entityRegistry: EntityRegistry,
-  ) {
+  constructor() {
+    const entityRegistry = inject(EntityRegistry);
+
     entityRegistry.forEach((entity, name) =>
       this.queryStringMap.push([name, entity]),
     );

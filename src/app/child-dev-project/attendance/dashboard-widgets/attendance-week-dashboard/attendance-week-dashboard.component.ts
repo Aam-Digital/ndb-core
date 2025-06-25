@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceService } from "../../attendance.service";
@@ -9,7 +9,6 @@ import moment, { Moment } from "moment";
 import { groupBy } from "../../../../utils/utils";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { NgForOf, NgIf } from "@angular/common";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
@@ -29,9 +28,7 @@ interface AttendanceWeekRow {
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
   imports: [
-    NgIf,
     MatTableModule,
-    NgForOf,
     EntityBlockComponent,
     AttendanceDayBlockComponent,
     DashboardListWidgetComponent,
@@ -41,6 +38,10 @@ export class AttendanceWeekDashboardComponent
   extends DashboardWidget
   implements OnInit
 {
+  private attendanceService = inject(AttendanceService);
+  private router = inject(Router);
+  private entityRegistry = inject(EntityRegistry);
+
   static override getRequiredEntities() {
     return EventNote.ENTITY_TYPE;
   }
@@ -80,14 +81,6 @@ export class AttendanceWeekDashboardComponent
   @Input() attendanceStatusType: string;
 
   entries: AttendanceWeekRow[][];
-
-  constructor(
-    private attendanceService: AttendanceService,
-    private router: Router,
-    private entityRegistry: EntityRegistry,
-  ) {
-    super();
-  }
 
   ngOnInit() {
     if (this.periodLabel && !this.label) {

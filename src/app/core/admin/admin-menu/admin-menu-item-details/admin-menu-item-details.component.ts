@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -39,15 +39,20 @@ import { EntityTypeSelectComponent } from "../../../entity/entity-type-select/en
   styleUrls: ["./admin-menu-item-details.component.scss"],
 })
 export class AdminMenuItemDetailsComponent implements OnInit {
+  private configService = inject(ConfigService);
+  dialogRef = inject<MatDialogRef<AdminMenuItemDetailsComponent>>(MatDialogRef);
+  data = inject<{
+    item: MenuItem;
+    isNew?: boolean;
+}>(MAT_DIALOG_DATA);
+
   item: MenuItem | EntityMenuItem;
   availableRoutes: { value: string; label: string }[];
   isNew: boolean;
 
-  constructor(
-    private configService: ConfigService,
-    public dialogRef: MatDialogRef<AdminMenuItemDetailsComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { item: MenuItem; isNew?: boolean },
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.item = data.item;
     this.isNew = data.isNew;
   }

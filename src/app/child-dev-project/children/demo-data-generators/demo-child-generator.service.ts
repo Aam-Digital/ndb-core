@@ -2,7 +2,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { religions } from "./fixtures/religions";
 import { languages } from "./fixtures/languages";
 import { dropoutTypes } from "./fixtures/dropout-types";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
@@ -17,6 +17,8 @@ export class DemoChildConfig {
 
 @Injectable()
 export class DemoChildGenerator extends DemoDataGenerator<Entity> {
+  config = inject(DemoChildConfig);
+
   static count: number;
 
   /**
@@ -69,10 +71,6 @@ export class DemoChildGenerator extends DemoDataGenerator<Entity> {
     child.dropoutType = faker.helpers.arrayElement(dropoutTypes);
     child.status = $localize`:Child status:Dropout`;
     child.inactive = true;
-  }
-
-  constructor(public config: DemoChildConfig) {
-    super();
   }
 
   generateEntities(): Entity[] {

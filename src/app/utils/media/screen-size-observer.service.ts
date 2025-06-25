@@ -1,5 +1,5 @@
 import { combineLatest, fromEvent, Observable } from "rxjs";
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { distinctUntilChanged, map, startWith } from "rxjs/operators";
 import { WINDOW_TOKEN } from "../di-tokens";
 
@@ -79,6 +79,8 @@ export type IsDesktop = boolean;
   providedIn: "root",
 })
 export class ScreenWidthObserver {
+  private window = inject<Window>(WINDOW_TOKEN);
+
   /**
    * create an observable that emits whenever the `query` matches.
    * Also emits the current state to begin with.
@@ -128,7 +130,7 @@ export class ScreenWidthObserver {
     return this._platform.pipe(startWith(this.isDesktop()));
   }
 
-  constructor(@Inject(WINDOW_TOKEN) private window: Window) {
+  constructor() {
     this._shared = combineLatest(
       this.queryLists.map((queryList) =>
         ScreenWidthObserver.matching(queryList),

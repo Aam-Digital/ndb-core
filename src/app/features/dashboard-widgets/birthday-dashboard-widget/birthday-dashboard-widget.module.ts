@@ -1,9 +1,11 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
 
 @NgModule({})
 export class BirthdayDashboardWidgetModule {
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll([
       [
         "BirthdayDashboard",

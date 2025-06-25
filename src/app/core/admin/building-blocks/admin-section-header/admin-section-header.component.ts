@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -20,7 +19,6 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 @Component({
   selector: "app-admin-section-header",
   imports: [
-    CommonModule,
     FaIconComponent,
     FormsModule,
     MatButtonModule,
@@ -31,6 +29,8 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
   styleUrl: "./admin-section-header.component.scss",
 })
 export class AdminSectionHeaderComponent {
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   @Input() title: string;
 
   /** supports two-way data binding for the editable title: `<app-admin-section-header [(title)]="section.title"` */
@@ -44,8 +44,6 @@ export class AdminSectionHeaderComponent {
   /** overwrite the label (default: "title") displayed for the form field */
   @Input()
   label = $localize`:Admin UI - Config Section Header form field label:Title`;
-
-  constructor(private confirmationDialog: ConfirmationDialogService) {}
 
   async removeSection() {
     if (this.disableConfirmation) {

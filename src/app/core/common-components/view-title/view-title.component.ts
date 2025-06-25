@@ -1,15 +1,7 @@
-import {
-  AfterViewInit,
-  Component,
-  HostBinding,
-  Input,
-  Optional,
-  TemplateRef,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, HostBinding, Input, TemplateRef, ViewChild, inject } from "@angular/core";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
-import { Location, NgIf, NgTemplateOutlet } from "@angular/common";
+import { Location, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -24,7 +16,6 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
   templateUrl: "./view-title.component.html",
   styleUrls: ["./view-title.component.scss"],
   imports: [
-    NgIf,
     MatButtonModule,
     MatTooltipModule,
     FontAwesomeModule,
@@ -32,6 +23,10 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
   ],
 })
 export class ViewTitleComponent implements AfterViewInit {
+  private router = inject(Router);
+  private location = inject(Location);
+  protected viewContext = inject(ViewComponentContext, { optional: true });
+
   @ViewChild("template") template: TemplateRef<any>;
 
   /** The page title to be displayed */
@@ -47,11 +42,7 @@ export class ViewTitleComponent implements AfterViewInit {
 
   readonly parentUrl: string;
 
-  constructor(
-    private router: Router,
-    private location: Location,
-    @Optional() protected viewContext: ViewComponentContext,
-  ) {
+  constructor() {
     this.parentUrl = this.findParentUrl();
 
     if (this.viewContext?.isDialog) {

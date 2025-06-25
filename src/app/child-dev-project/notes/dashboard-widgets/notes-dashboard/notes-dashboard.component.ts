@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
-import { DecimalPipe, NgIf } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { Note } from "../../model/note";
@@ -30,7 +30,6 @@ interface NotesDashboardConfig {
   templateUrl: "./notes-dashboard.component.html",
   styleUrls: ["./notes-dashboard.component.scss"],
   imports: [
-    NgIf,
     MatTableModule,
     EntityBlockComponent,
     DecimalPipe,
@@ -41,6 +40,9 @@ export class NotesDashboardComponent
   extends DashboardWidget
   implements OnInit, NotesDashboardConfig
 {
+  private childrenService = inject(ChildrenService);
+  private entities = inject(EntityRegistry);
+
   static override getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;
   }
@@ -69,13 +71,6 @@ export class NotesDashboardComponent
   entries: EntityWithRecentNoteInfo[];
 
   subtitle: string;
-
-  constructor(
-    private childrenService: ChildrenService,
-    private entities: EntityRegistry,
-  ) {
-    super();
-  }
 
   ngOnInit() {
     if (!this._entity) {

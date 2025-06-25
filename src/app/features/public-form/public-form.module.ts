@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterService } from "../../core/config/dynamic-routing/router.service";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
@@ -21,12 +21,12 @@ export class PublicFormModule {
   static databaseEntities = [PublicFormConfig];
   static routes = publicFormRoutes;
 
-  constructor(
-    components: ComponentRegistry,
-    routerService: RouterService,
-    adminOverviewService: AdminOverviewService,
-    publicFormsService: PublicFormsService,
-  ) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+    const routerService = inject(RouterService);
+    const adminOverviewService = inject(AdminOverviewService);
+    const publicFormsService = inject(PublicFormsService);
+
     components.addAll(dynamicComponents);
     routerService.addRoutes(viewConfigs);
     adminOverviewService.menuItems.push({

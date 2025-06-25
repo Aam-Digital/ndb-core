@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { EntityTypeLabelPipe } from "app/core/common-components/entity-type-label/entity-type-label.pipe";
 import { ViewDirective } from "../default-datatype/view.directive";
 import { asArray } from "app/utils/asArray";
@@ -14,11 +14,9 @@ export class DisplayEntityTypeComponent
   extends ViewDirective<string[] | string, string>
   implements OnInit
 {
-  entityLabel: string;
+  private entityTypeLabelPipe = inject(EntityTypeLabelPipe);
 
-  constructor(private entityTypeLabelPipe: EntityTypeLabelPipe) {
-    super();
-  }
+  entityLabel: string;
 
   async ngOnInit() {
     const entityIds = this.value ? asArray(this.value) : [];

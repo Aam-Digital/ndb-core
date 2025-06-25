@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { FileService } from "../../file/file.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { Entity } from "app/core/entity/model/entity";
@@ -49,14 +49,15 @@ export interface TemplateExportResult {
   providedIn: "root",
 })
 export class TemplateExportApiService extends FileService {
+  private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
+
   readonly API_URL = environment.API_PROXY_PREFIX + "/v1/export";
 
-  constructor(
-    entityMapper: EntityMapperService,
-    entities: EntityRegistry,
-    syncState: SyncStateSubject,
-    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
-  ) {
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+    const entities = inject(EntityRegistry);
+    const syncState = inject(SyncStateSubject);
+
     super(entityMapper, entities, syncState);
   }
 

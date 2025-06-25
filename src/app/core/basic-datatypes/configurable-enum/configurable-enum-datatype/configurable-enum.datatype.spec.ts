@@ -122,7 +122,7 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should not expand 'undefined' into a full INVALID_OPTION enum object", () => {
-    const dataType = new ConfigurableEnumDatatype(enumService);
+    const dataType = new ConfigurableEnumDatatype();
 
     const undefinedToObjectFormat = dataType.transformToObjectFormat(
       undefined,
@@ -133,7 +133,7 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should map values using importMappingFunction", async () => {
-    const dataType = new ConfigurableEnumDatatype(enumService);
+    const dataType = new ConfigurableEnumDatatype();
     enumService.getEnumValues.and.returnValue(genders);
 
     const input = "MALEx";
@@ -150,7 +150,7 @@ describe("Schema data type: configurable-enum", () => {
   });
 
   it("should map values using importMappingFunction for arrays", async () => {
-    const dataType = new ConfigurableEnumDatatype(enumService);
+    const dataType = new ConfigurableEnumDatatype();
     enumService.getEnumValues.and.returnValue(genders);
 
     const input = "MALEx";

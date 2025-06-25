@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
 
 export enum PWAInstallType {
@@ -28,14 +28,14 @@ enum OS {
 
 @Injectable({ providedIn: "root" })
 export class PwaInstallService {
+  private window = inject<Window>(WINDOW_TOKEN);
+
   /**
    * Resolves once/if it is possible to directly install the app
    */
   static canInstallDirectly: Promise<void>;
 
   private static deferredInstallPrompt: any;
-
-  constructor(@Inject(WINDOW_TOKEN) private window: Window) {}
 
   static registerPWAInstallListener() {
     this.canInstallDirectly = new Promise((resolve) => {

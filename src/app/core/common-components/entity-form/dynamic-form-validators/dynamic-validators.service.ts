@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DynamicValidator, FormValidatorConfig } from "./form-validator-config";
 import {
   AbstractControl,
@@ -52,6 +52,8 @@ export function patternWithMessage(
   providedIn: "root",
 })
 export class DynamicValidatorsService {
+  private entityMapper = inject(EntityMapperService);
+
   /**
    * A map of all validators along with a factory that generates the validator function
    * given a value that serves as basis for the validation.
@@ -94,8 +96,6 @@ export class DynamicValidatorsService {
         return null;
     }
   }
-
-  constructor(private entityMapper: EntityMapperService) {}
 
   /**
    * Builds all validator functions that are part of the configuration object.

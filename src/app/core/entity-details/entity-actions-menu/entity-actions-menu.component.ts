@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Optional,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -32,6 +24,9 @@ import { EntityAction } from "./entity-action.interface";
   ],
 })
 export class EntityActionsMenuComponent implements OnChanges {
+  private entityActionsMenuService = inject(EntityActionsMenuService);
+  protected viewContext = inject(ViewComponentContext, { optional: true });
+
   @Input() entity: Entity;
 
   /**
@@ -51,11 +46,6 @@ export class EntityActionsMenuComponent implements OnChanges {
    * Whether some buttons should be displayed directly, outside the three-dot menu in dialog views.
    */
   @Input() showExpanded?: boolean;
-
-  constructor(
-    private entityActionsMenuService: EntityActionsMenuService,
-    @Optional() protected viewContext: ViewComponentContext,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entity) {

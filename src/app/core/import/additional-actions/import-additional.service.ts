@@ -24,13 +24,15 @@ import { EntityRelationsService } from "../../entity/entity-mapper/entity-relati
   providedIn: "root",
 })
 export class ImportAdditionalService {
+  private configService = inject(ConfigService);
+
   private readonly entityMapper = inject(EntityMapperService);
   private readonly entityRegistry = inject(EntityRegistry);
   private readonly entityRelationsService = inject(EntityRelationsService);
 
   private linkableEntities = new Map<string, AdditionalImportAction[]>();
 
-  constructor(private configService: ConfigService) {
+  constructor() {
     this.updateLinkableEntities();
     this.configService.configUpdates.subscribe(() =>
       // need to wait until EntityConfigService has updated the entityRegistry after the configUpdate

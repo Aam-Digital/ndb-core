@@ -7,73 +7,72 @@
     class="flex-grow admin-grid-layout padding-right-regular drop-list"
   >
     <!-- FIELD GROUPS -->
-    <div
-      *ngFor="let group of config.fieldGroups; let i = index"
-      class="entity-form-cell admin-form-column section-container"
-      cdkDrag
-    >
-      <div class="flex-row align-center">
-        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-        <!-- GROUP HEADER -->
-        <app-admin-section-header
-          [title]="group.header"
-          (titleChange)="group.header = $event; emitUpdatedConfig()"
-          (remove)="removeGroup(i)"
-        ></app-admin-section-header>
-      </div>
-
-      <div
-        cdkDropList
-        [id]="uniqueAreaId + '-group' + i"
-        [cdkDropListData]="group.fields"
-        (cdkDropListDropped)="drop($event)"
-        [cdkDropListConnectedTo]="getConnectedGroups()"
-        [cdkDropListDisabled]="isDisabled"
-        class="fields-group-list drop-list"
-      >
-        <!-- FIELD [start] -->
-        <div
-          *ngFor="let field of group.fields"
-          class="admin-form-field flex-row align-center"
-          cdkDrag
-          cdkDragBoundary=".overall-container"
-        >
+    @for (group of config.fieldGroups; track group; let i = $index) {
+      <div class="entity-form-cell admin-form-column section-container" cdkDrag>
+        <div class="flex-row align-center">
           <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-
-          <div class="field-hover-buttons flex-row align-center gap-small">
-            <button
-              class="field-edit-button"
-              mat-stroked-button
-              color="accent"
-              (click)="openConfigDetails(field)"
-              i18n="Button label"
-            >
-              Edit Field
-            </button>
-
-            <button
-              mat-icon-button
-              color="black"
-              (click)="hideField(field, group)"
-              aria-label="Hide Field"
-              matTooltip="remove (i.e. hide) this field from the form"
-              i18n-matTooltip
-            >
-              <fa-icon icon="times"></fa-icon>
-            </button>
-          </div>
-
-          <div class="dummy-form-field">
-            <app-entity-field-edit
-              [field]="field"
-              [entity]="dummyEntity"
-              [form]="dummyForm"
-            ></app-entity-field-edit>
-          </div>
+          <!-- GROUP HEADER -->
+          <app-admin-section-header
+            [title]="group.header"
+            (titleChange)="group.header = $event; emitUpdatedConfig()"
+            (remove)="removeGroup(i)"
+          ></app-admin-section-header>
         </div>
-        <!-- FIELD [end]-->
+        <div
+          cdkDropList
+          [id]="uniqueAreaId + '-group' + i"
+          [cdkDropListData]="group.fields"
+          (cdkDropListDropped)="drop($event)"
+          [cdkDropListConnectedTo]="getConnectedGroups()"
+          [cdkDropListDisabled]="isDisabled"
+          class="fields-group-list drop-list"
+        >
+          <!-- FIELD [start] -->
+          @for (field of group.fields; track field) {
+            <div
+              class="admin-form-field flex-row align-center"
+              cdkDrag
+              cdkDragBoundary=".overall-container"
+            >
+              <fa-icon
+                icon="grip-vertical"
+                size="xl"
+                class="drag-handle"
+              ></fa-icon>
+              <div class="field-hover-buttons flex-row align-center gap-small">
+                <button
+                  class="field-edit-button"
+                  mat-stroked-button
+                  color="accent"
+                  (click)="openConfigDetails(field)"
+                  i18n="Button label"
+                >
+                  Edit Field
+                </button>
+                <button
+                  mat-icon-button
+                  color="black"
+                  (click)="hideField(field, group)"
+                  aria-label="Hide Field"
+                  matTooltip="remove (i.e. hide) this field from the form"
+                  i18n-matTooltip
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+              <div class="dummy-form-field">
+                <app-entity-field-edit
+                  [field]="field"
+                  [entity]="dummyEntity"
+                  [form]="dummyForm"
+                ></app-entity-field-edit>
+              </div>
+            </div>
+          }
+          <!-- FIELD [end]-->
+        </div>
       </div>
-    </div>
+    }
 
     <!-- DROP AREA: NEW FIELD GROUP -->
     <div class="entity-form-cell admin-form-column">
@@ -117,38 +116,38 @@
         ></fa-icon>
       </div>
 
-      <div
-        *ngFor="let field of availableFields"
-        class="admin-form-field flex-row align-center"
-        [class.admin-form-field-new]="
-          field === createNewFieldPlaceholder ||
-          field === createNewTextPlaceholder
-        "
-        cdkDrag
-        cdkDragBoundary="mat-drawer-container"
-      >
-        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-
-        <div>
-          <app-entity-field-label
-            [field]="field"
-            [entityType]="entityType"
-          ></app-entity-field-label>
-
-          <button
-            *ngIf="
+      @for (field of availableFields; track field) {
+        <div
+          class="admin-form-field flex-row align-center"
+          [class.admin-form-field-new]="
+            field === createNewFieldPlaceholder ||
+            field === createNewTextPlaceholder
+          "
+          cdkDrag
+          cdkDragBoundary="mat-drawer-container"
+        >
+          <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+          <div>
+            <app-entity-field-label
+              [field]="field"
+              [entityType]="entityType"
+            ></app-entity-field-label>
+            @if (
               field !== createNewFieldPlaceholder &&
               field !== createNewTextPlaceholder
-            "
-            mat-stroked-button
-            color="accent"
-            class="field-hover-buttons field-edit-button-small"
-            (click)="openFieldConfig(field)"
-          >
-            Edit
-          </button>
+            ) {
+              <button
+                mat-stroked-button
+                color="accent"
+                class="field-hover-buttons field-edit-button-small"
+                (click)="openFieldConfig(field)"
+              >
+                Edit
+              </button>
+            }
+          </div>
         </div>
-      </div>
+      }
     </mat-card-content>
   </mat-card>
 </div>

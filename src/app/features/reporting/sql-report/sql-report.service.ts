@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { SqlReport } from "../report-config";
 import { HttpClient } from "@angular/common/http";
 import moment from "moment";
@@ -47,9 +47,9 @@ export interface ReportCalculation {
   providedIn: "root",
 })
 export class SqlReportService {
-  static readonly API_URL = environment.API_PROXY_PREFIX + "/v1/reporting";
+  private http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  static readonly API_URL = environment.API_PROXY_PREFIX + "/v1/reporting";
 
   /**
    * Get the combines results of the SQL statements in the report

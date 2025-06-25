@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DatabaseRule } from "../permission-types";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -19,21 +19,19 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
  */
 @Injectable({ providedIn: "root" })
 export class PermissionEnforcerService {
+  private sessionInfo = inject(SessionSubject);
+  private ability = inject(EntityAbility);
+  private entityMapper = inject(EntityMapperService);
+  private dbResolver = inject(DatabaseResolverService);
+  private analyticsService = inject(AnalyticsService);
+  private entities = inject(EntityRegistry);
+  private location = inject<Location>(LOCATION_TOKEN);
+  private configService = inject(ConfigService);
+
   /**
    * This is a suffix used to persist the user-relevant rules in local storage to later check for changes.
    */
   static readonly LOCALSTORAGE_KEY = "RULES";
-
-  constructor(
-    private sessionInfo: SessionSubject,
-    private ability: EntityAbility,
-    private entityMapper: EntityMapperService,
-    private dbResolver: DatabaseResolverService,
-    private analyticsService: AnalyticsService,
-    private entities: EntityRegistry,
-    @Inject(LOCATION_TOKEN) private location: Location,
-    private configService: ConfigService,
-  ) {}
 
   async enforcePermissionsOnLocalData(
     userRules: DatabaseRule[],

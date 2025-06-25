@@ -1,5 +1,4 @@
-import { Component, Input } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, Input, inject } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -11,12 +10,12 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
  */
 @Component({
   selector: "app-entity-archived-info",
-  imports: [CommonModule, MatCardModule, MatButtonModule, FontAwesomeModule],
+  imports: [MatCardModule, MatButtonModule, FontAwesomeModule],
   templateUrl: "./entity-archived-info.component.html",
   styleUrls: ["./entity-archived-info.component.scss"],
 })
 export class EntityArchivedInfoComponent {
-  @Input() entity: Entity;
+  entityActionsService = inject(EntityActionsService);
 
-  constructor(public entityActionsService: EntityActionsService) {}
+  @Input() entity: Entity;
 }

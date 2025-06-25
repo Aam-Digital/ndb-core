@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import {
   catchError,
@@ -31,19 +31,20 @@ import { SyncedPouchDatabase } from "app/core/database/pouchdb/synced-pouch-data
  */
 @Injectable()
 export class CouchdbFileService extends FileService {
+  private sanitizer = inject(DomSanitizer);
+  private databaseResolver = inject(DatabaseResolverService);
+  private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
+
   private attachmentsUrl = `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
   private cache: { [key: string]: Observable<string> } = {};
 
-  constructor(
-    private sanitizer: DomSanitizer,
-    private databaseResolver: DatabaseResolverService,
-    entityMapper: EntityMapperService,
-    entities: EntityRegistry,
-    syncState: SyncStateSubject,
-    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
-  ) {
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+    const entities = inject(EntityRegistry);
+    const syncState = inject(SyncStateSubject);
+
     super(entityMapper, entities, syncState);
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { ConfigService } from "../config/config.service";
 import {
@@ -20,15 +20,16 @@ import { SessionSubject } from "../session/auth/session-info";
   providedIn: "root",
 })
 export class AnalyticsService {
+  private angulartics2 = inject(Angulartics2);
+  private angulartics2Matomo = inject(Angulartics2Matomo);
+  private configService = inject(ConfigService);
+  private sessionInfo = inject(SessionSubject);
+
   private isInitialized = false;
 
-  constructor(
-    private angulartics2: Angulartics2,
-    private angulartics2Matomo: Angulartics2Matomo,
-    private configService: ConfigService,
-    loginState: LoginStateSubject,
-    private sessionInfo: SessionSubject,
-  ) {
+  constructor() {
+    const loginState = inject(LoginStateSubject);
+
     if (environment.production) {
       this.init();
     }

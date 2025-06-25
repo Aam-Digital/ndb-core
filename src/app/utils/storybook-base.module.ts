@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
@@ -74,11 +74,11 @@ export class StorybookBaseModule {
     StorybookBaseModule.initData = data;
     return StorybookBaseModule;
   }
-  constructor(
-    icons: FaIconLibrary,
-    entityMapper: EntityMapperService,
-    entityConfigService: EntityConfigService,
-  ) {
+  constructor() {
+    const icons = inject(FaIconLibrary);
+    const entityMapper = inject(EntityMapperService);
+    const entityConfigService = inject(EntityConfigService);
+
     (entityMapper as MockEntityMapperService).addAll(
       StorybookBaseModule.initData,
     );

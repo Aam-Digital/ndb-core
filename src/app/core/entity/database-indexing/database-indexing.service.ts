@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { QueryOptions } from "../../database/database";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
 import { BackgroundProcessState } from "../../ui/sync-status/background-process-state.interface";
@@ -32,6 +32,9 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
   providedIn: "root",
 })
 export class DatabaseIndexingService {
+  private dbResolver = inject(DatabaseResolverService);
+  private entitySchemaService = inject(EntitySchemaService);
+
   private _indicesRegistered = new BehaviorSubject<BackgroundProcessState[]>(
     [],
   );
@@ -40,11 +43,6 @@ export class DatabaseIndexingService {
   get indicesRegistered(): Observable<BackgroundProcessState[]> {
     return this._indicesRegistered.asObservable();
   }
-
-  constructor(
-    private dbResolver: DatabaseResolverService,
-    private entitySchemaService: EntitySchemaService,
-  ) {}
 
   /**
    * Register a new database query to be created/updated and indexed.

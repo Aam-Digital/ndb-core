@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { UserRoleGuard } from "./permission-guard/user-role.guard";
 import { PureAbility } from "@casl/ability";
 import { EntityAbility } from "./ability/entity-ability";
@@ -18,7 +18,9 @@ import { EntityPermissionGuard } from "./permission-guard/entity-permission.guar
   ],
 })
 export class PermissionsModule {
-  constructor(abilityService: AbilityService) {
+  constructor() {
+    const abilityService = inject(AbilityService);
+
     abilityService.initializeRules();
   }
 }

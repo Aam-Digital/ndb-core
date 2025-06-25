@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { Entity } from "../entity/model/entity";
 import {
@@ -20,13 +20,13 @@ import { MongoQuery } from "@casl/ability";
   providedIn: "root",
 })
 export class FilterService {
+  private enumService = inject(ConfigurableEnumService);
+
   private filterFactory = createFactory(
     allParsingInstructions,
     allInterpreters,
     { compare: this.extendedCompare.bind(this) },
   ) as Filter;
-
-  constructor(private enumService: ConfigurableEnumService) {}
 
   combineFilters<T extends Entity>(
     entityFilters: EntityFilter<T>[],

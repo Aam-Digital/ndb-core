@@ -149,13 +149,7 @@ describe("SiteSettingsService", () => {
 
     const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
 
-    service = new SiteSettingsService(
-      TestBed.inject(Title),
-      TestBed.inject(FileService),
-      TestBed.inject(EntitySchemaService),
-      TestBed.inject(ConfigurableEnumService),
-      TestBed.inject(EntityMapperService),
-    );
+    service = new SiteSettingsService();
 
     expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
   }));

@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { diff } from "deep-object-diff";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../../core/database/database";
@@ -6,7 +6,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
 import { merge } from "lodash-es";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
@@ -22,7 +21,6 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
   styleUrls: ["./compare-rev.component.scss"],
   imports: [
     MatExpansionModule,
-    NgIf,
     MatTooltipModule,
     MatInputModule,
     MatButtonModule,
@@ -30,6 +28,10 @@ import { DatabaseResolverService } from "../../../core/database/database-resolve
   ],
 })
 export class CompareRevComponent {
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private snackBar = inject(MatSnackBar);
+  private conflictResolver = inject(AutoResolutionService);
+
   /** revision key (_rev) of the confliction version to be displayed */
   @Input() rev: string;
 
@@ -60,12 +62,9 @@ export class CompareRevComponent {
 
   private readonly db: Database;
 
-  constructor(
-    dbResolver: DatabaseResolverService,
-    private confirmationDialog: ConfirmationDialogService,
-    private snackBar: MatSnackBar,
-    private conflictResolver: AutoResolutionService,
-  ) {
+  constructor() {
+    const dbResolver = inject(DatabaseResolverService);
+
     this.db = dbResolver.getDatabase();
   }
 

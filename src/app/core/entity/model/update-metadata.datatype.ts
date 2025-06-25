@@ -1,7 +1,7 @@
 import { UpdateMetadata } from "./update-metadata";
 import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 import { EntityConstructor } from "./entity";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 
 /**
@@ -13,7 +13,9 @@ export class UpdateMetadataDatatype extends SchemaEmbedDatatype {
 
   override embeddedType = UpdateMetadata as unknown as EntityConstructor;
 
-  constructor(schemaService: EntitySchemaService) {
+  constructor() {
+    const schemaService = inject(EntitySchemaService);
+
     super(schemaService);
   }
 }

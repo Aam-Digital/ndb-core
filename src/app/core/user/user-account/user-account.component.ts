@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { MatTabsModule } from "@angular/material/tabs";
@@ -50,13 +50,11 @@ import { NotificationSettingsComponent } from "../../../features/notification/no
   ],
 })
 export class UserAccountComponent implements OnInit {
+  protected currentUser = inject(CurrentUserSubject);
+  protected sessionInfo = inject(SessionSubject);
+
   passwordChangeDisabled = false;
   tooltipText: string;
-
-  constructor(
-    protected currentUser: CurrentUserSubject,
-    protected sessionInfo: SessionSubject,
-  ) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();

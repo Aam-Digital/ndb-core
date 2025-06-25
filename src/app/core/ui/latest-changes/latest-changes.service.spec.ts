@@ -57,7 +57,7 @@ describe("LatestChangesService", () => {
   ];
 
   beforeEach(() => {
-    alertService = new AlertService(null);
+    alertService = new AlertService();
     http = new HttpClient(null);
 
     TestBed.configureTestingModule({

@@ -1,5 +1,4 @@
 import { Component, Input, OnInit, ViewChild } from "@angular/core";
-import { NgIf } from "@angular/common";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { Entity } from "../../entity/model/entity";
@@ -14,7 +13,7 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
 @Component({
   selector: "app-related-entities-with-summary",
   templateUrl: "./related-entities-with-summary.component.html",
-  imports: [EntitiesTableComponent, NgIf, CustomFormLinkButtonComponent],
+  imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
 export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   extends RelatedEntitiesComponent<E>

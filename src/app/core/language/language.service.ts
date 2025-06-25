@@ -1,4 +1,4 @@
-import { Inject, Injectable, LOCALE_ID } from "@angular/core";
+import { Injectable, LOCALE_ID, inject } from "@angular/core";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
@@ -10,11 +10,10 @@ import { SiteSettingsService } from "../site-settings/site-settings.service";
   providedIn: "root",
 })
 export class LanguageService {
-  constructor(
-    @Inject(LOCALE_ID) private baseLocale: string,
-    @Inject(WINDOW_TOKEN) private window: Window,
-    private siteSettings: SiteSettingsService,
-  ) {}
+  private baseLocale = inject(LOCALE_ID);
+  private window = inject<Window>(WINDOW_TOKEN);
+  private siteSettings = inject(SiteSettingsService);
+
 
   initDefaultLanguage(): void {
     const languageSelected = this.window.localStorage.getItem(

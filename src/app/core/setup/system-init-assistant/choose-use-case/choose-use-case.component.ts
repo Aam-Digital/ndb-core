@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { BaseConfig } from "../../base-config";
 import { MatSelectModule } from "@angular/material/select";
 import { MarkdownComponent } from "ngx-markdown";
@@ -12,6 +12,8 @@ import { LanguageService } from "app/core/language/language.service";
   styleUrls: ["./choose-use-case.component.scss"],
 })
 export class ChooseUseCaseComponent {
+  private languageService = inject(LanguageService);
+
   private _demoUseCases: BaseConfig[] = [];
 
   @Input()
@@ -30,7 +32,7 @@ export class ChooseUseCaseComponent {
   selectedUseCase: BaseConfig;
   locale: string;
 
-  constructor(private languageService: LanguageService) {
+  constructor() {
     this.locale = this.languageService.getCurrentLocale();
   }
 

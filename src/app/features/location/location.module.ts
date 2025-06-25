@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { locationComponents } from "./location-components";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
@@ -10,7 +10,9 @@ import { LocationDatatype } from "./location.datatype";
   ],
 })
 export class LocationModule {
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll(locationComponents);
   }
 }

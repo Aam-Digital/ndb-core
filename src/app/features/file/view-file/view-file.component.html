@@ -1,3 +1,5 @@
-<button mat-button class="filename" *ngIf="value" (click)="showFile($event)">
-  {{ value }}
-</button>
+@if (value) {
+  <button mat-button class="filename" (click)="showFile($event)">
+    {{ value }}
+  </button>
+}

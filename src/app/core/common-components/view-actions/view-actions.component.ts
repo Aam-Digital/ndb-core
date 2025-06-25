@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Optional,
-  TemplateRef,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, TemplateRef, ViewChild, inject } from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 
@@ -18,9 +12,9 @@ import { ViewComponentContext } from "../../ui/abstract-view/view-component-cont
   imports: [NgTemplateOutlet],
 })
 export class ViewActionsComponent implements AfterViewInit {
-  @ViewChild("template") template: TemplateRef<any>;
+  protected viewContext = inject(ViewComponentContext, { optional: true });
 
-  constructor(@Optional() protected viewContext: ViewComponentContext) {}
+  @ViewChild("template") template: TemplateRef<any>;
 
   ngAfterViewInit(): void {
     if (this.viewContext) {

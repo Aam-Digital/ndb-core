@@ -15,9 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { NgFor } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
@@ -28,14 +27,17 @@ import { SessionSubject } from "../../session/auth/session-info";
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
-  template: ` <ng-template
-    *ngFor="let widgetConfig of _widgets"
-    [appDynamicComponent]="widgetConfig"
-  ></ng-template>`,
+  template: ` @for (widgetConfig of _widgets; track widgetConfig) {
+    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+  }`,
   styleUrls: ["./dashboard.component.scss"],
-  imports: [NgFor, DynamicComponentDirective],
+  imports: [DynamicComponentDirective],
 })
 export class DashboardComponent implements DashboardConfig {
+  private ability = inject(EntityAbility);
+  private components = inject(ComponentRegistry);
+  private session = inject(SessionSubject);
+
   @Input() set widgets(widgets: DynamicComponentConfig[]) {
     this.filterPermittedWidgets(widgets).then((res) => (this._widgets = res));
   }
@@ -43,12 +45,6 @@ export class DashboardComponent implements DashboardConfig {
     return this._widgets;
   }
   _widgets: DynamicComponentConfig[] = [];
-
-  constructor(
-    private ability: EntityAbility,
-    private components: ComponentRegistry,
-    private session: SessionSubject,
-  ) {}
 
   private async filterPermittedWidgets(
     widgets: DynamicComponentConfig[],

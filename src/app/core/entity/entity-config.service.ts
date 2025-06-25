@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Entity, EntityConstructor } from "./model/entity";
 import { ConfigService } from "../config/config.service";
 import { EntityRegistry } from "./database-entity.decorator";
@@ -23,6 +23,9 @@ import { EntityListConfig } from "../entity-list/EntityListConfig";
   providedIn: "root",
 })
 export class EntityConfigService {
+  private configService = inject(ConfigService);
+  private entities = inject(EntityRegistry);
+
   /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";
 
@@ -39,10 +42,7 @@ export class EntityConfigService {
 
   // TODO: merge with EntityRegistry?
 
-  constructor(
-    private configService: ConfigService,
-    private entities: EntityRegistry,
-  ) {
+  constructor() {
     this.storeCoreEntitySchemas();
   }
 

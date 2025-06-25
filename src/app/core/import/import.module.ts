@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry, ComponentTuple } from "../../dynamic-components";
 import { DiscreteImportConfigComponent } from "../basic-datatypes/discrete/discrete-import-config/discrete-import-config.component";
 import { EntityActionsMenuService } from "../entity-details/entity-actions-menu/entity-actions-menu.service";
@@ -14,12 +14,13 @@ import { Router } from "@angular/router";
   imports: [DiscreteImportConfigComponent],
 })
 export class ImportModule {
-  constructor(
-    components: ComponentRegistry,
-    entityActionsMenu: EntityActionsMenuService,
-    private importAdditionalService: ImportAdditionalService,
-    private router: Router,
-  ) {
+  private importAdditionalService = inject(ImportAdditionalService);
+  private router = inject(Router);
+
+  constructor() {
+    const components = inject(ComponentRegistry);
+    const entityActionsMenu = inject(EntityActionsMenuService);
+
     components.addAll(importComponents);
 
     entityActionsMenu.registerActionsFactories([

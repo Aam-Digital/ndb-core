@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { PublicFormConfig } from "app/features/public-form/public-form-config";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -14,6 +14,9 @@ import { PublicFormsService } from "../public-forms.service";
   imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule],
 })
 export class CustomFormLinkButtonComponent implements OnInit {
+  private entityMapper = inject(EntityMapperService);
+  private publicFormsService = inject(PublicFormsService);
+
   /**
    * The entity instance that this form is associated with.
    * For example, a Child record when linking a feedback form to a specific child.
@@ -28,11 +31,6 @@ export class CustomFormLinkButtonComponent implements OnInit {
   @Input() formEntityType: EntityConstructor;
 
   public matchingCustomForms: PublicFormConfig[] = [];
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private publicFormsService: PublicFormsService,
-  ) {}
 
   async ngOnInit() {
     if (!this.linkedEntity || !this.formEntityType) return;

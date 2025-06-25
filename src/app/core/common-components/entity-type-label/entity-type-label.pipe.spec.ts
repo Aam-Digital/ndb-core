@@ -1,6 +1,7 @@
 import { EntityTypeLabelPipe } from "./entity-type-label.pipe";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
+import { TestBed } from "@angular/core/testing";
 
 describe("EntityTypeLabelPipeEntity", () => {
   class EntityTypeLabelPipeEntity extends Entity {
@@ -10,14 +11,22 @@ describe("EntityTypeLabelPipeEntity", () => {
   }
 
   let pipe: EntityTypeLabelPipe;
+  let entityRegistry: EntityRegistry;
 
   beforeEach(() => {
-    const entityRegistry = new EntityRegistry();
+    entityRegistry = new EntityRegistry();
     entityRegistry.add(
       EntityTypeLabelPipeEntity.ENTITY_TYPE,
       EntityTypeLabelPipeEntity,
     );
-    pipe = new EntityTypeLabelPipe(entityRegistry);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: EntityRegistry, useValue: entityRegistry },
+        EntityTypeLabelPipe,
+      ],
+    });
+    pipe = TestBed.inject(EntityTypeLabelPipe);
   });
 
   it("returns entity-type label for a valid type/prefix", () => {

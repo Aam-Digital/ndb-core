@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Logging } from "../../../../core/logging/logging.service";
@@ -35,6 +35,10 @@ export class ProgressDashboardComponent
   extends DashboardWidget
   implements OnInit
 {
+  private entityMapper = inject(EntityMapperService);
+  private dialog = inject(MatDialog);
+  private syncState = inject(SyncStateSubject);
+
   static override getRequiredEntities() {
     return ProgressDashboardConfig.ENTITY_TYPE;
   }
@@ -48,14 +52,6 @@ export class ProgressDashboardComponent
     $localize`:dashboard widget explanation: Shows the progress of different parts of project tasks. You can use this to track any kind of targets.`;
 
   overallPercentage: number;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private dialog: MatDialog,
-    private syncState: SyncStateSubject,
-  ) {
-    super();
-  }
 
   async ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);

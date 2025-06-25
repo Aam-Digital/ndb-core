@@ -1,4 +1,4 @@
-import { Component, Inject, Injector } from "@angular/core";
+import { Component, Injector, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   MAT_DIALOG_DATA,
@@ -40,12 +40,11 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
   component: string;
   config: any;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    dialogData: DialogViewData<T>,
-    injector: Injector,
-    router: Router,
-  ) {
+  constructor() {
+    const dialogData = inject<DialogViewData<T>>(MAT_DIALOG_DATA);
+    const injector = inject(Injector);
+    const router = inject(Router);
+
     super(injector, true);
 
     this.component = dialogData.component;

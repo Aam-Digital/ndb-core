@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform, Type } from "@angular/core";
+import { Pipe, PipeTransform, Type, inject } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
 
 /**
@@ -19,7 +19,8 @@ import { ComponentRegistry } from "../../../dynamic-components";
   standalone: true,
 })
 export class DynamicComponentPipe implements PipeTransform {
-  constructor(private componentRegistry: ComponentRegistry) {}
+  private componentRegistry = inject(ComponentRegistry);
+
 
   async transform(value: string): Promise<Type<any>> {
     return await this.componentRegistry.get(value)();

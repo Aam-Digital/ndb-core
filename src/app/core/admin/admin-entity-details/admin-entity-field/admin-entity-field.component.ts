@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -17,7 +17,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { NgIf } from "@angular/common";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -59,7 +58,6 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
     DialogCloseComponent,
     MatInputModule,
     FormsModule,
-    NgIf,
     MatTabsModule,
     MatSlideToggleModule,
     ReactiveFormsModule,
@@ -74,6 +72,14 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private allDataTypes = inject(DefaultDatatype) as unknown as DefaultDatatype[];
+  private configurableEnumService = inject(ConfigurableEnumService);
+  private entityRegistry = inject(EntityRegistry);
+  private adminEntityService = inject(AdminEntityService);
+  private dialog = inject(MatDialog);
+
   fieldId: string;
   entityType: EntityConstructor;
 
@@ -90,20 +96,12 @@ export class AdminEntityFieldComponent implements OnInit {
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    data: {
-      fieldId: string;
-      entityType: EntityConstructor;
-    },
-    private dialogRef: MatDialogRef<any>,
-    private fb: FormBuilder,
-    @Inject(DefaultDatatype) private allDataTypes: DefaultDatatype[],
-    private configurableEnumService: ConfigurableEnumService,
-    private entityRegistry: EntityRegistry,
-    private adminEntityService: AdminEntityService,
-    private dialog: MatDialog,
-  ) {
+  constructor() {
+    const data = inject<{
+    fieldId: string;
+    entityType: EntityConstructor;
+}>(MAT_DIALOG_DATA);
+
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
   }

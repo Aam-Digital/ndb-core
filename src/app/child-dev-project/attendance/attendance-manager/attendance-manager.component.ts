@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ComingSoonDialogService } from "../../../features/coming-soon/coming-soon-dialog.service";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
@@ -14,5 +14,5 @@ import { RouteTarget } from "../../../route-target";
   imports: [MatCardModule, MatButtonModule, RouterLink, ViewTitleComponent],
 })
 export class AttendanceManagerComponent {
-  constructor(public comingSoonDialog: ComingSoonDialogService) {}
+  comingSoonDialog = inject(ComingSoonDialogService);
 }

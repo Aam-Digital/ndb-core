@@ -44,7 +44,7 @@ describe("UpdateManagerService", () => {
     appRef = jasmine.createSpyObj([], { isStable: stableSubject });
     latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
     spyOn(Logging, "error");
-    unsavedChanges = new UnsavedChangesService(undefined);
+    unsavedChanges = new UnsavedChangesService();
     unsavedChanges.pending = true;
 
     service = createService();
@@ -184,13 +184,6 @@ describe("UpdateManagerService", () => {
   });
 
   function createService() {
-    return new UpdateManagerService(
-      appRef,
-      swUpdate,
-      snackBar,
-      latestChangesDialog,
-      unsavedChanges,
-      mockLocation,
-    );
+    return new UpdateManagerService();
   }
 });

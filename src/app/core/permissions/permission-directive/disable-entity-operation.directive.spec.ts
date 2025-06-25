@@ -10,7 +10,7 @@ describe("DisableEntityOperationDirective", () => {
   let mockAbility: EntityAbility;
 
   beforeEach(() => {
-    mockAbility = new EntityAbility(null);
+    mockAbility = new EntityAbility();
     spyOn(mockAbility, "cannot");
 
     TestBed.configureTestingModule({

@@ -1,29 +1,37 @@
 import { ConfigurableEnumDirective } from "./configurable-enum.directive";
-import { ViewContainerRef } from "@angular/core";
+import { TemplateRef, ViewContainerRef } from "@angular/core";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { ConfigurableEnumConfig } from "../configurable-enum.types";
+import { TestBed } from "@angular/core/testing";
 
 describe("ConfigurableEnumDirective", () => {
-  let testTemplateRef;
+  let mockTemplateRef: jasmine.SpyObj<TemplateRef<any>>;
   let mockViewContainerRef: jasmine.SpyObj<ViewContainerRef>;
   let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+  let directive: ConfigurableEnumDirective;
 
   beforeEach(() => {
-    testTemplateRef = {};
-    mockViewContainerRef = jasmine.createSpyObj("mockViewContainerRef", [
+    mockTemplateRef = jasmine.createSpyObj("TemplateRef", ["elementRef"]);
+    mockViewContainerRef = jasmine.createSpyObj("ViewContainerRef", [
       "createEmbeddedView",
     ]);
-    mockEnumService = jasmine.createSpyObj("mockConfigService", [
+    mockEnumService = jasmine.createSpyObj("ConfigurableEnumService", [
       "getEnumValues",
     ]);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: TemplateRef, useValue: mockTemplateRef },
+        { provide: ViewContainerRef, useValue: mockViewContainerRef },
+        { provide: ConfigurableEnumService, useValue: mockEnumService },
+        ConfigurableEnumDirective,
+      ],
+    });
+
+    directive = TestBed.inject(ConfigurableEnumDirective);
   });
 
   it("should create an instance", () => {
-    const directive = new ConfigurableEnumDirective(
-      testTemplateRef,
-      mockViewContainerRef,
-      mockEnumService,
-    );
     expect(directive).toBeTruthy();
   });
 
@@ -34,12 +42,6 @@ describe("ConfigurableEnumDirective", () => {
       { id: "2", label: "B" },
     ];
     mockEnumService.getEnumValues.and.returnValue(testEnumValues);
-
-    const directive = new ConfigurableEnumDirective(
-      testTemplateRef,
-      mockViewContainerRef,
-      mockEnumService,
-    );
 
     directive.appConfigurableEnumOf = testEnumConfigId;
 

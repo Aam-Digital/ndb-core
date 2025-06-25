@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { attendanceComponents } from "./attendance-components";
 import { RecurringActivity } from "./model/recurring-activity";
@@ -43,7 +43,9 @@ import {
 export class AttendanceModule {
   static databaseEntities = [RecurringActivity, EventNote];
 
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll(attendanceComponents);
   }
 }

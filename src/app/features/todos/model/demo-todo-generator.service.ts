@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
@@ -14,6 +14,10 @@ export class DemoTodoConfig {
 
 @Injectable()
 export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
+  private config = inject(DemoTodoConfig);
+  private demoChildren = inject(DemoChildGenerator);
+  private demoUsers = inject(DemoUserGeneratorService);
+
   static provider(
     config: DemoTodoConfig = {
       minPerChild: 1,
@@ -24,14 +28,6 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
       { provide: DemoTodoGeneratorService, useClass: DemoTodoGeneratorService },
       { provide: DemoTodoConfig, useValue: config },
     ];
-  }
-
-  constructor(
-    private config: DemoTodoConfig,
-    private demoChildren: DemoChildGenerator,
-    private demoUsers: DemoUserGeneratorService,
-  ) {
-    super();
   }
 
   public generateEntities(): Todo[] {

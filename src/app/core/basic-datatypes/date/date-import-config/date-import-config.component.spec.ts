@@ -40,6 +40,7 @@ describe("DateImportConfigComponent", () => {
   it("should parse dates with entered format", () => {
     component.format.setValue("d/m/yyyy");
 
+    //Tests may fail with moment.js > 2.29v
     expect(component.values.map(({ parsed }) => parsed)).toEqual([
       moment("2023-02-01").toDate(),
       moment("2023-04-14").toDate(),
@@ -68,13 +69,14 @@ describe("DateImportConfigComponent", () => {
     expect(confirmationSpy).toHaveBeenCalled();
   });
 
-  it("should set the format as additional on save", () => {
+  it("should set the format as additional on save", async () => {
     expect(data.col.additional).toBeUndefined();
     component.format.setValue("d/m/yyyy");
     const closeSpy = spyOn(TestBed.inject(MatDialogRef), "close");
 
-    component.save();
+    await component.save();
 
+    //Tests may fail with moment.js > 2.29
     expect(closeSpy).toHaveBeenCalled();
     expect(data.col.additional).toBe("D/M/YYYY");
   });

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { ReactiveFormsModule, Validators } from "@angular/forms";
 import { EditComponent } from "app/core/entity/default-datatype/edit-component";
 import { PublicFormConfig } from "../public-form-config";
@@ -34,11 +34,9 @@ export class EditPublicformRouteComponent
   extends EditComponent<string>
   implements OnInit
 {
-  prefixValue: string;
+  private alertService = inject(AlertService);
 
-  constructor(private alertService: AlertService) {
-    super();
-  }
+  prefixValue: string;
 
   override ngOnInit(): void {
     const publicFormConfig: PublicFormConfig = {

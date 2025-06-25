@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation, inject } from "@angular/core";
 import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
@@ -66,6 +60,9 @@ export class NoteDetailsComponent
   extends AbstractEntityDetailsComponent
   implements OnChanges
 {
+  private configService = inject(ConfigService);
+  private entityFormService = inject(EntityFormService);
+
   @Input() declare entity: Note;
   override entityConstructor = Note;
 
@@ -88,15 +85,13 @@ export class NoteDetailsComponent
   form: EntityForm<Note>;
   tmpEntity: Note;
 
-  constructor(
-    entityMapperService: EntityMapperService,
-    entities: EntityRegistry,
-    ability: EntityAbility,
-    router: Router,
-    unsavedChanges: UnsavedChangesService,
-    private configService: ConfigService,
-    private entityFormService: EntityFormService,
-  ) {
+  constructor() {
+    const entityMapperService = inject(EntityMapperService);
+    const entities = inject(EntityRegistry);
+    const ability = inject(EntityAbility);
+    const router = inject(Router);
+    const unsavedChanges = inject(UnsavedChangesService);
+
     super(entityMapperService, entities, ability, router, unsavedChanges);
 
     this.exportConfig = this.configService.getConfig<{

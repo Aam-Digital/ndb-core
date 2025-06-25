@@ -1,10 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
 import { MatListModule } from "@angular/material/list";
-import { CommonModule, NgForOf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 import { MatMenuModule } from "@angular/material/menu";
@@ -21,25 +20,23 @@ import { MenuService } from "../menu.service";
   styleUrls: ["./navigation.component.scss"],
   imports: [
     MatListModule,
-    NgForOf,
     Angulartics2Module,
     MatMenuModule,
-    CommonModule,
     MenuItemComponent,
   ],
 })
 export class NavigationComponent {
+  private menuService = inject(MenuService);
+  private router = inject(Router);
+  private routePermissionService = inject(RoutePermissionsService);
+
   /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
 
   /** all menu items to be displayed */
   public menuItems: MenuItem[] = [];
 
-  constructor(
-    private menuService: MenuService,
-    private router: Router,
-    private routePermissionService: RoutePermissionsService,
-  ) {
+  constructor() {
     // subscribe to menu items from the menu service
     this.menuService.menuItems.subscribe(async (menuItems) => {
       this.menuItems =

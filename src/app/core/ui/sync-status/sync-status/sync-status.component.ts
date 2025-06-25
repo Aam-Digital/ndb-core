@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { SyncState } from "../../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../../entity/database-indexing/database-indexing.service";
 import { BackgroundProcessState } from "../background-process-state.interface";
@@ -37,6 +37,9 @@ import { SyncStateSubject } from "../../../session/session-type";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyncStatusComponent {
+  private syncState = inject(SyncStateSubject);
+  private dbIndexingService = inject(DatabaseIndexingService);
+
   private indexingProcesses: BackgroundProcessState[];
 
   private _backgroundProcesses = new BehaviorSubject<BackgroundProcessState[]>(
@@ -47,10 +50,7 @@ export class SyncStatusComponent {
     .asObservable()
     .pipe(debounceTime(1000));
 
-  constructor(
-    private syncState: SyncStateSubject,
-    private dbIndexingService: DatabaseIndexingService,
-  ) {
+  constructor() {
     this.dbIndexingService.indicesRegistered
       .pipe(untilDestroyed(this))
       .subscribe((indicesStatus) => {

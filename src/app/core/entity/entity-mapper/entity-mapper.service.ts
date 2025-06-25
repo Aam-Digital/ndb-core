@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { Observable } from "rxjs";
@@ -39,12 +39,11 @@ import { DatabaseDocChange } from "../../database/database";
  */
 @Injectable({ providedIn: "root" })
 export class EntityMapperService {
-  constructor(
-    private dbResolver: DatabaseResolverService,
-    private entitySchemaService: EntitySchemaService,
-    private currentUser: CurrentUserSubject,
-    private registry: EntityRegistry,
-  ) {}
+  private dbResolver = inject(DatabaseResolverService);
+  private entitySchemaService = inject(EntitySchemaService);
+  private currentUser = inject(CurrentUserSubject);
+  private registry = inject(EntityRegistry);
+
 
   /**
    * Load an Entity from the database with the given id or the registered name of that class.

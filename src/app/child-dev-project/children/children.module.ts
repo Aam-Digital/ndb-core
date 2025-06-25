@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { childrenComponents } from "./children-components";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
@@ -24,7 +24,9 @@ import { ChildSchoolRelation } from "./model/childSchoolRelation";
 export class ChildrenModule {
   static databaseEntities = [ChildSchoolRelation];
 
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll(childrenComponents);
   }
 }

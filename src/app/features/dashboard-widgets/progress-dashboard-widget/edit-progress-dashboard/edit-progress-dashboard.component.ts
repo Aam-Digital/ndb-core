@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import {
   ProgressDashboardConfig,
@@ -16,7 +16,6 @@ import {
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { NgForOf, NgIf } from "@angular/common";
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -37,15 +36,16 @@ export interface EditProgressDashboardComponentData {
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
-    NgIf,
     DialogCloseComponent,
-    NgForOf,
     MatButtonModule,
     FontAwesomeModule,
     MatTooltipModule,
   ],
 })
 export class EditProgressDashboardComponent implements OnInit {
+  private data = inject<ProgressDashboardConfig>(MAT_DIALOG_DATA);
+  private fb = inject(FormBuilder);
+
   /**
    * This marks the control as invalid when the whole form has an error
    */
@@ -56,11 +56,6 @@ export class EditProgressDashboardComponent implements OnInit {
   title: FormControl;
   parts: FormArray;
   outputData: FormGroup;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) private data: ProgressDashboardConfig,
-    private fb: FormBuilder,
-  ) {}
 
   ngOnInit(): void {
     this.title = new FormControl(this.data.title, [Validators.required]);

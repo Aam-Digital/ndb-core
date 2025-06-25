@@ -15,12 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Signal, signal, ViewChild } from "@angular/core";
+import { Component, Signal, signal, ViewChild, inject } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import {
@@ -62,7 +62,6 @@ import { LoginState } from "../../session/session-states/login-state.enum";
   styleUrls: ["./ui.component.scss"],
   imports: [
     MatToolbarModule,
-    NgIf,
     MatButtonModule,
     FontAwesomeModule,
     RouterLink,
@@ -84,6 +83,13 @@ import { LoginState } from "../../session/session-states/login-state.enum";
   ],
 })
 export class UiComponent {
+  private screenWidthObserver = inject(ScreenWidthObserver);
+  private siteSettingsService = inject(SiteSettingsService);
+  private sessionManager = inject(SessionManagerService);
+  private setupService = inject(SetupService);
+  private router = inject(Router);
+  private loginState = inject(LoginStateSubject);
+
   /** display mode for the menu to make it responsive and usable on smaller screens */
   sideNavMode: MatDrawerMode;
 
@@ -103,14 +109,9 @@ export class UiComponent {
   configReady$ = new BehaviorSubject<boolean>(false);
   showPrimaryAction = signal(false);
 
-  constructor(
-    private screenWidthObserver: ScreenWidthObserver,
-    private siteSettingsService: SiteSettingsService,
-    private sessionManager: SessionManagerService,
-    private setupService: SetupService,
-    private router: Router,
-    private loginState: LoginStateSubject,
-  ) {
+  constructor() {
+    const router = this.router;
+
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -24,6 +24,14 @@ import { Entity } from "../entity/model/entity";
  */
 @Injectable()
 export class DemoDataInitializerService {
+  private demoDataService = inject(DemoDataService);
+  private localAuthService = inject(LocalAuthService);
+  private sessionManager = inject(SessionManagerService);
+  private dialog = inject(MatDialog);
+  private dbResolver = inject(DatabaseResolverService);
+  private loginState = inject(LoginStateSubject);
+  private sessionInfo = inject(SessionSubject);
+
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
 
   private readonly normalUser: SessionInfo = {
@@ -38,16 +46,6 @@ export class DemoDataInitializerService {
     roles: ["user_app", "admin_app"],
     entityId: `User:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };
-
-  constructor(
-    private demoDataService: DemoDataService,
-    private localAuthService: LocalAuthService,
-    private sessionManager: SessionManagerService,
-    private dialog: MatDialog,
-    private dbResolver: DatabaseResolverService,
-    private loginState: LoginStateSubject,
-    private sessionInfo: SessionSubject,
-  ) {}
 
   async logInDemoUser() {
     this.localAuthService.saveUser(this.normalUser);

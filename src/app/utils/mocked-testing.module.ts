@@ -1,4 +1,4 @@
-import { ModuleWithProviders, NgModule } from "@angular/core";
+import { ModuleWithProviders, NgModule, inject } from "@angular/core";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
@@ -10,7 +10,6 @@ import { Entity } from "../core/entity/model/entity";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 import { ConfigService } from "../core/config/config.service";
 import { environment } from "../../environments/environment";
-import { createTestingConfigService } from "../core/config/testing-config-service";
 import { provideHttpClientTesting } from "@angular/common/http/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AppModule } from "../app.module";
@@ -32,6 +31,7 @@ import {
   withInterceptorsFromDi,
 } from "@angular/common/http";
 import { LoggingService } from "../core/logging/logging.service";
+import { getDefaultConfigEntity } from "app/core/config/testing-config-service";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -81,7 +81,7 @@ export class MockedTestingModule {
     data: Entity[] = [createEntityOfType("User", TEST_USER)],
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
-    const mockedEntityMapper = mockEntityMapper([...data]);
+    const mockedEntityMapper = mockEntityMapper([...data, getDefaultConfigEntity()]);
     let mockLoggingService: jasmine.SpyObj<LoggingService>;
     mockLoggingService = jasmine.createSpyObj(["warn"]);
 
@@ -96,7 +96,7 @@ export class MockedTestingModule {
 
         { provide: LoggingService, useValue: mockLoggingService },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
-        { provide: ConfigService, useValue: createTestingConfigService() },
+        ConfigService,
         {
           provide: ConfigurableEnumService,
           useValue: createTestingConfigurableEnumService(),
@@ -117,7 +117,9 @@ export class MockedTestingModule {
     };
   }
 
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.allowDuplicates();
   }
 }

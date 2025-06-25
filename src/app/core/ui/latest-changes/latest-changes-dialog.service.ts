@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { ChangelogComponent } from "./changelog/changelog.component";
 import { environment } from "../../../../environments/environment";
@@ -27,12 +27,10 @@ import { LatestChangesService } from "./latest-changes.service";
  */
 @Injectable({ providedIn: "root" })
 export class LatestChangesDialogService {
-  public static readonly VERSION_KEY = "AppVersion";
+  private dialog = inject(MatDialog);
+  private latestChangesService = inject(LatestChangesService);
 
-  constructor(
-    private dialog: MatDialog,
-    private latestChangesService: LatestChangesService,
-  ) {}
+  public static readonly VERSION_KEY = "AppVersion";
 
   /**
    * Get current app version inferred from the latest changelog entry.

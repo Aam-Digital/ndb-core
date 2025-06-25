@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { UpdateManagerService } from "./update-manager.service";
 import { MarkdownModule } from "ngx-markdown";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -45,7 +45,9 @@ import { MatButtonModule } from "@angular/material/button";
   ],
 })
 export class LatestChangesModule {
-  constructor(private updateManagerService: UpdateManagerService) {
+  private updateManagerService = inject(UpdateManagerService);
+
+  constructor() {
     this.updateManagerService.listenToAppUpdates();
     this.updateManagerService.regularlyCheckForUpdates();
     this.updateManagerService.detectUnrecoverableState();

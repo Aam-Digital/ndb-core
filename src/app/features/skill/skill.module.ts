@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 import { Skill } from "./skill";
@@ -28,7 +28,9 @@ import { mockSkillApi } from "./skill-api/skill-api-mock";
 export class SkillModule {
   static databaseEntities = [Skill];
 
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll(dynamicComponents);
   }
 }

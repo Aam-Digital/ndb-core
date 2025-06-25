@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
@@ -42,24 +42,22 @@ import { DatabaseResolverService } from "../../core/database/database-resolver.s
   ],
 })
 export class PublicFormComponent<E extends Entity> implements OnInit {
+  private databaseResolver = inject(DatabaseResolverService);
+  private route = inject(ActivatedRoute);
+  private entities = inject(EntityRegistry);
+  private entityMapper = inject(EntityMapperService);
+  private entityFormService = inject(EntityFormService);
+  private configService = inject(ConfigService);
+  private snackbar = inject(MatSnackBar);
+  private ability = inject(EntityAbility);
+  private router = inject(Router);
+
   private entityType: EntityConstructor<E>;
   formConfig: PublicFormConfig;
   entity: E;
   fieldGroups: FieldGroup[];
   form: EntityForm<E>;
   error: "not_found" | "no_permissions";
-
-  constructor(
-    private databaseResolver: DatabaseResolverService,
-    private route: ActivatedRoute,
-    private entities: EntityRegistry,
-    private entityMapper: EntityMapperService,
-    private entityFormService: EntityFormService,
-    private configService: ConfigService,
-    private snackbar: MatSnackBar,
-    private ability: EntityAbility,
-    private router: Router,
-  ) {}
 
   ngOnInit() {
     this.databaseResolver.initDatabasesForAnonymous();

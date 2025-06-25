@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
-import { DatePipe, NgIf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -12,17 +12,15 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
   selector: "app-display-todo-completion",
   templateUrl: "./display-todo-completion.component.html",
   styleUrls: ["./display-todo-completion.component.scss"],
-  imports: [NgIf, FontAwesomeModule, DatePipe],
+  imports: [FontAwesomeModule, DatePipe],
 })
 export class DisplayTodoCompletionComponent
   extends ViewDirective<TodoCompletion>
   implements OnInit
 {
-  completedBy: Entity;
+  private entityMapper = inject(EntityMapperService);
 
-  constructor(private entityMapper: EntityMapperService) {
-    super();
-  }
+  completedBy: Entity;
 
   ngOnInit() {
     if (this.value?.completedBy) {

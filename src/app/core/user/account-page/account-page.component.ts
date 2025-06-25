@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -20,10 +20,10 @@ import { Logging } from "app/core/logging/logging.service";
   ],
 })
 export class AccountPageComponent implements OnInit {
+  authService = inject(KeycloakAuthService);
+
   @Input() disabled: boolean;
   user: KeycloakUserDto;
-
-  constructor(public authService: KeycloakAuthService) {}
 
   async ngOnInit() {
     try {

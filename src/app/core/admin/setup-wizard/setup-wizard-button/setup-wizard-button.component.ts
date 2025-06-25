@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";
 import { Router } from "@angular/router";
@@ -24,12 +24,10 @@ import { environment } from "../../../../../environments/environment";
   styleUrls: ["./setup-wizard-button.component.scss"],
 })
 export class SetupWizardButtonComponent implements OnInit {
-  showSetupWizard: boolean;
+  private entityMapper = inject(EntityMapperService);
+  private router = inject(Router);
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private router: Router,
-  ) {}
+  showSetupWizard: boolean;
 
   ngOnInit() {
     this.entityMapper

@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Injectable,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Injectable, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
@@ -19,7 +11,7 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { Logging } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { NgClass } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -61,12 +53,10 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     ]),
   ],
   imports: [
-    NgIf,
     MatProgressBarModule,
     MatButtonModule,
     FontAwesomeModule,
     EntityBlockComponent,
-    NgForOf,
     NgClass,
     RollCallTabComponent,
     HammerModule,
@@ -80,6 +70,11 @@ class HorizontalHammerConfig extends HammerGestureConfig {
   ],
 })
 export class RollCallComponent implements OnChanges {
+  private enumService = inject(ConfigurableEnumService);
+  private entityMapper = inject(EntityMapperService);
+  private formDialog = inject(FormDialogService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   /**
    * The event to be displayed and edited.
    */
@@ -116,13 +111,6 @@ export class RollCallComponent implements OnChanges {
 
   children: Entity[] = [];
   inactiveParticipants: Entity[];
-
-  constructor(
-    private enumService: ConfigurableEnumService,
-    private entityMapper: EntityMapperService,
-    private formDialog: FormDialogService,
-    private confirmationDialog: ConfirmationDialogService,
-  ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.eventEntity) {

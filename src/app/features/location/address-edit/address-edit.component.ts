@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult } from "../geo.service";
@@ -30,6 +30,8 @@ import { AddressGpsLocationComponent } from "../address-gps-location/address-gps
   styleUrl: "./address-edit.component.scss",
 })
 export class AddressEditComponent {
+  private confirmationDialog = inject(ConfirmationDialogService);
+
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
    */
@@ -45,8 +47,6 @@ export class AddressEditComponent {
   @Input() disabled: boolean;
 
   manualAddressEnabled: boolean;
-
-  constructor(private confirmationDialog: ConfirmationDialogService) {}
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;

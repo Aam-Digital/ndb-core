@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceService } from "../attendance.service";
@@ -9,7 +9,7 @@ import {
   ScreenSize,
   ScreenWidthObserver,
 } from "../../../utils/media/screen-size-observer.service";
-import { NgForOf, SlicePipe } from "@angular/common";
+import { SlicePipe } from "@angular/common";
 import { AttendanceBlockComponent } from "../attendance-block/attendance-block.component";
 
 /**
@@ -22,25 +22,26 @@ import { AttendanceBlockComponent } from "../attendance-block/attendance-block.c
 @Component({
   selector: "app-recent-attendance-blocks",
   template: `
-    <app-attendance-block
-      *ngFor="let att of attendanceList | slice: 0 : maxAttendanceBlocks"
-      [attendanceData]="att"
-      [forChild]="entity.getId()"
-    ></app-attendance-block>
+    @for (att of attendanceList | slice: 0 : maxAttendanceBlocks; track att) {
+      <app-attendance-block
+        [attendanceData]="att"
+        [forChild]="entity.getId()"
+      ></app-attendance-block>
+    }
   `,
-  imports: [NgForOf, SlicePipe, AttendanceBlockComponent],
+  imports: [SlicePipe, AttendanceBlockComponent],
 })
 export class RecentAttendanceBlocksComponent implements OnInit {
+  private attendanceService = inject(AttendanceService);
+  private screenWidthObserver = inject(ScreenWidthObserver);
+
   attendanceList: ActivityAttendance[] = [];
   maxAttendanceBlocks: number = 3;
 
   @Input() entity: Entity;
   @Input() config: { filterByActivityType: string };
 
-  constructor(
-    private attendanceService: AttendanceService,
-    private screenWidthObserver: ScreenWidthObserver,
-  ) {
+  constructor() {
     this.screenWidthObserver
       .shared()
       .pipe(untilDestroyed(this))

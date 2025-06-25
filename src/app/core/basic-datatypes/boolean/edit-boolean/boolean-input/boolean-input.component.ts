@@ -1,11 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Optional,
-  Self,
-  ViewChild,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, ElementRef, ViewChild, ViewEncapsulation, inject } from "@angular/core";
 import { CustomFormControlDirective } from "../../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { MatCheckbox, MatCheckboxModule } from "@angular/material/checkbox";
 import {
@@ -30,13 +23,13 @@ import { ErrorStateMatcher } from "@angular/material/core";
 export class BooleanInputComponent extends CustomFormControlDirective<boolean> {
   @ViewChild(MatCheckbox, { static: true }) inputElement: MatCheckbox;
 
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Self() ngControl: NgControl,
-    @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective,
-  ) {
+  constructor() {
+    const elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+    const errorStateMatcher = inject(ErrorStateMatcher);
+    const ngControl = inject(NgControl, { optional: true, self: true });
+    const parentForm = inject(NgForm, { optional: true });
+    const parentFormGroup = inject(FormGroupDirective, { optional: true });
+
     super(
       elementRef,
       errorStateMatcher,

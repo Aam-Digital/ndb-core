@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
@@ -21,15 +21,23 @@ import { EntityRelationsService } from "../entity-mapper/entity-relations.servic
   providedIn: "root",
 })
 export class EntityEditService extends CascadingEntityAction {
-  constructor(
-    protected override entityMapper: EntityMapperService,
-    protected override schemaService: EntitySchemaService,
-    protected override entityRelationsService: EntityRelationsService,
-    private matDialog: MatDialog,
-    private entityActionsService: EntityActionsService,
-    private unsavedChanges: UnsavedChangesService,
-  ) {
+  protected override entityMapper: EntityMapperService;
+  protected override schemaService: EntitySchemaService;
+  protected override entityRelationsService: EntityRelationsService;
+  private matDialog = inject(MatDialog);
+  private entityActionsService = inject(EntityActionsService);
+  private unsavedChanges = inject(UnsavedChangesService);
+
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+    const schemaService = inject(EntitySchemaService);
+    const entityRelationsService = inject(EntityRelationsService);
+
     super(entityMapper, schemaService, entityRelationsService);
+  
+    this.entityMapper = entityMapper;
+    this.schemaService = schemaService;
+    this.entityRelationsService = entityRelationsService;
   }
 
   /**

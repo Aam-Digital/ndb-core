@@ -88,7 +88,7 @@
 
     <!--
         ADVANCED SETTINGS
-      -->
+        -->
     <mat-tab
       label="Configure PII / Anonymization"
       i18n-label
@@ -108,40 +108,39 @@
           ></app-help-button>
         </div>
 
-        <div *ngIf="showPIIDetails">
-          <p i18n>
-            Configure how records of this type can be anonymized. Users can
-            "anonymize" a record as an alternative to just archiving it (keeping
-            all personal details) or deleting it (losing any trace of the
-            record, even in reports). Select below which fields can be
-            "retained" to keep some limited data for statistical reporting and
-            which fields have to be removed because they contain personal
-            details.
-          </p>
-
-          <mat-table [dataSource]="fieldAnonymizationDataSource">
-            <ng-container matColumnDef="label">
-              <mat-cell *matCellDef="let anonymizeData">
-                {{ anonymizeData.label }}
-              </mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="field">
-              <mat-cell *matCellDef="let anonymizeData">
-                <app-anonymize-options
-                  [value]="anonymizeData.field.anonymize"
-                  (valueChange)="
-                    changeFieldAnonymization(anonymizeData.field, $event)
-                  "
-                ></app-anonymize-options>
-              </mat-cell>
-            </ng-container>
-
-            <mat-row
-              *matRowDef="let row; columns: ['label', 'field']"
-            ></mat-row>
-          </mat-table>
-        </div>
+        @if (showPIIDetails) {
+          <div>
+            <p i18n>
+              Configure how records of this type can be anonymized. Users can
+              "anonymize" a record as an alternative to just archiving it
+              (keeping all personal details) or deleting it (losing any trace of
+              the record, even in reports). Select below which fields can be
+              "retained" to keep some limited data for statistical reporting and
+              which fields have to be removed because they contain personal
+              details.
+            </p>
+            <mat-table [dataSource]="fieldAnonymizationDataSource">
+              <ng-container matColumnDef="label">
+                <mat-cell *matCellDef="let anonymizeData">
+                  {{ anonymizeData.label }}
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="field">
+                <mat-cell *matCellDef="let anonymizeData">
+                  <app-anonymize-options
+                    [value]="anonymizeData.field.anonymize"
+                    (valueChange)="
+                      changeFieldAnonymization(anonymizeData.field, $event)
+                    "
+                  ></app-anonymize-options>
+                </mat-cell>
+              </ng-container>
+              <mat-row
+                *matRowDef="let row; columns: ['label', 'field']"
+              ></mat-row>
+            </mat-table>
+          </div>
+        }
       </div>
     </mat-tab>
   </mat-tab-group>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { MatTableModule } from "@angular/material/table";
@@ -30,6 +30,8 @@ export class BirthdayDashboardComponent
   extends DashboardWidget
   implements BirthdayDashboardConfig, OnInit
 {
+  private entityMapper = inject(EntityMapperService);
+
   static override getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : "Child";
   }
@@ -57,7 +59,7 @@ export class BirthdayDashboardComponent
     $localize`:dashboard widget subtitle:Upcoming Birthdays`;
   @Input() explanation: string;
 
-  constructor(private entityMapper: EntityMapperService) {
+  constructor() {
     super();
     this.today = new Date();
     this.today.setHours(0, 0, 0, 0);

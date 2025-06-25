@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -34,20 +34,16 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
  */
 @Injectable()
 export class EntityDatatype extends StringDatatype {
+  private entityMapper = inject(EntityMapperService);
+  private removeService = inject(EntityActionsService);
+  private schemaService = inject(EntitySchemaService);
+
   static override dataType = "entity";
   static override label: string = $localize`:datatype-label:link to another record`;
   override editComponent = "EditEntity";
   override viewComponent = "DisplayEntity";
   override importConfigComponent = "EntityImportConfig";
   override importAllowsMultiMapping = true;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private removeService: EntityActionsService,
-    private schemaService: EntitySchemaService,
-  ) {
-    super();
-  }
 
   /**
    * Maps a value from an import to an actual entity in the database by comparing the value with the given field of entities.

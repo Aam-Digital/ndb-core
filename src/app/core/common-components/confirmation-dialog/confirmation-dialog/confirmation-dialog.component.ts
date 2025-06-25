@@ -1,11 +1,10 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../dialog-close/dialog-close.component";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 
 /**
@@ -15,24 +14,11 @@ import { MatButtonModule } from "@angular/material/button";
 @Component({
   selector: "app-confirmation-dialog",
   templateUrl: "./confirmation-dialog.component.html",
-  imports: [
-    DialogCloseComponent,
-    NgIf,
-    MatDialogModule,
-    MatButtonModule,
-    NgForOf,
-  ],
+  imports: [DialogCloseComponent, MatDialogModule, MatButtonModule],
 })
 export class ConfirmationDialogComponent {
-  /**
-   * This component is used as a template for MatDialog, created with the required dependencies through that service.
-   * @param dialogRef The reference to the dialog this component is displayed within
-   * @param data The configuration defining what text and buttons will be displayed
-   */
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogConfig,
-  ) {}
+  dialogRef = inject<MatDialogRef<ConfirmationDialogComponent>>(MatDialogRef);
+  data = inject<ConfirmationDialogConfig>(MAT_DIALOG_DATA);
 }
 
 /**

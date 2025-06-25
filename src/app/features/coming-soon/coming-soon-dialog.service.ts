@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { ComingSoonComponent } from "./coming-soon/coming-soon.component";
 
@@ -10,7 +10,8 @@ import { ComingSoonComponent } from "./coming-soon/coming-soon.component";
   providedIn: "root",
 })
 export class ComingSoonDialogService {
-  constructor(private dialog: MatDialog) {}
+  private dialog = inject(MatDialog);
+
 
   /**
    * Open dialog with the coming soon page.

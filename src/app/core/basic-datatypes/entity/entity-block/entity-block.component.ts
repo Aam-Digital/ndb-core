@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Router } from "@angular/router";
@@ -28,6 +28,9 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
   ],
 })
 export class EntityBlockComponent implements OnInit {
+  private entityMapper = inject(EntityMapperService);
+  private router = inject(Router);
+
   @Input() entity: Entity;
   @Input() linkDisabled = false;
 
@@ -39,11 +42,6 @@ export class EntityBlockComponent implements OnInit {
 
   entityBlockConfig: EntityBlockConfig;
   entityIcon: string;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private router: Router,
-  ) {}
 
   async ngOnInit() {
     if (!this.entity) {

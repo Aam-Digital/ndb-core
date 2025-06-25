@@ -1,14 +1,14 @@
 import { Component, Input } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
 
 @Component({
   selector: "app-attendance-summary",
   templateUrl: "./attendance-summary.component.html",
   styleUrls: ["./attendance-summary.component.scss"],
-  imports: [NgIf, DatePipe, NgForOf, DynamicComponentDirective],
+  imports: [DatePipe, DynamicComponentDirective],
 })
 export class AttendanceSummaryComponent {
   @Input() attendance: ActivityAttendance;

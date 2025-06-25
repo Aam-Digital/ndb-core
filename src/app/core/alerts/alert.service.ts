@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 
 import { AlertConfig, ExtendedAlertConfig } from "./alert-config";
@@ -35,12 +35,12 @@ import { AlertDisplay } from "./alert-display";
  */
 @Injectable({ providedIn: "root" })
 export class AlertService {
+  private snackBar = inject(MatSnackBar);
+
   /** All alerts currently to be displayed */
   alerts: ExtendedAlertConfig[] = [];
 
   private static ALERT_BASE_CLASS = "ndb-alert";
-
-  constructor(private snackBar: MatSnackBar) {}
 
   /**
    * Display the given alert.

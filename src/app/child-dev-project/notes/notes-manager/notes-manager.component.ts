@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { Note } from "../model/note";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -12,7 +12,6 @@ import {
 import { EventNote } from "../../attendance/model/event-note";
 import { merge } from "rxjs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
@@ -40,7 +39,6 @@ export interface NotesManagerConfig {
   imports: [
     EntityListComponent,
     MatSlideToggleModule,
-    NgIf,
     FormsModule,
     Angulartics2Module,
     MatMenuModule,
@@ -49,6 +47,9 @@ export interface NotesManagerConfig {
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {
+  private formDialog = inject(FormDialogService);
+  private entityMapperService = inject(EntityMapperService);
+
   // inputs to be passed through to EntityList
   @Input() defaultSort: Sort;
   @Input() exportConfig: ExportColumnConfig[];
@@ -66,11 +67,6 @@ export class NotesManagerComponent implements OnInit {
 
   entityConstructor = Note;
   notes: Note[];
-
-  constructor(
-    private formDialog: FormDialogService,
-    private entityMapperService: EntityMapperService,
-  ) {}
 
   async ngOnInit() {
     this.notes = await this.loadEntities();

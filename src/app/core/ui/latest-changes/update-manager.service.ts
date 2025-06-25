@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ApplicationRef, Inject, Injectable } from "@angular/core";
+import { ApplicationRef, Injectable, inject } from "@angular/core";
 import { SwUpdate } from "@angular/service-worker";
 import { filter, first } from "rxjs/operators";
 import { concat, interval } from "rxjs";
@@ -34,16 +34,16 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
  */
 @Injectable({ providedIn: "root" })
 export class UpdateManagerService {
+  private appRef = inject(ApplicationRef);
+  private updates = inject(SwUpdate);
+  private snackBar = inject(MatSnackBar);
+  private latestChangesDialogService = inject(LatestChangesDialogService);
+  private unsavedChanges = inject(UnsavedChangesService);
+  private location = inject<Location>(LOCATION_TOKEN);
+
   private readonly UPDATE_PREFIX = "update-";
 
-  constructor(
-    private appRef: ApplicationRef,
-    private updates: SwUpdate,
-    private snackBar: MatSnackBar,
-    private latestChangesDialogService: LatestChangesDialogService,
-    private unsavedChanges: UnsavedChangesService,
-    @Inject(LOCATION_TOKEN) private location: Location,
-  ) {
+  constructor() {
     this.updates.unrecoverable.subscribe((err) => {
       Logging.error("App is in unrecoverable state: " + err.reason);
       this.location.reload();

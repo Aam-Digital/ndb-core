@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Optional, Self } from "@angular/core";
+import { Component, ElementRef, Input, inject } from "@angular/core";
 import {
   FormGroupDirective,
   FormsModule,
@@ -37,20 +37,20 @@ import { filter, map } from "rxjs/operators";
   styleUrls: ["./location-input.component.scss"],
 })
 export class LocationInputComponent extends CustomFormControlDirective<GeoLocation> {
+  private dialog = inject(MatDialog);
+
   /**
    * Automatically run an address lookup when the user leaves the input field.
    */
   @Input() autoLookup = true;
 
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Self() ngControl: NgControl,
-    @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective,
+  constructor() {
+    const elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+    const errorStateMatcher = inject(ErrorStateMatcher);
+    const ngControl = inject(NgControl, { optional: true, self: true });
+    const parentForm = inject(NgForm, { optional: true });
+    const parentFormGroup = inject(FormGroupDirective, { optional: true });
 
-    private dialog: MatDialog,
-  ) {
     super(
       elementRef,
       errorStateMatcher,

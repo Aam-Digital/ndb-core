@@ -18,7 +18,7 @@
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
-import { fakeAsync, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { firstValueFrom } from "rxjs";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Entity } from "../model/entity";
@@ -47,7 +47,9 @@ describe("DatabaseIndexingService", () => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
     const mockResolver = jasmine.createSpyObj("mockResolver", ["getDatabase"]);
     mockResolver.getDatabase.and.callFake(() => mockDb);
-    service = new DatabaseIndexingService(mockResolver, null);
+    TestBed.configureTestingModule({
+    });
+    service = TestBed.inject(DatabaseIndexingService);
   });
 
   it("should pass through any query to the database", async () => {

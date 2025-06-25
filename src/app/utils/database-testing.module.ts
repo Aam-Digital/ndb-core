@@ -1,8 +1,8 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ConfigService } from "../core/config/config.service";
 import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
-import { createTestingConfigService } from "../core/config/testing-config-service";
+import { provideTestingConfigService } from "../core/config/testing-config-service";
 import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
@@ -24,7 +24,7 @@ import { DatabaseResolverService } from "../core/database/database-resolver.serv
 @NgModule({
   imports: [AppModule],
   providers: [
-    { provide: ConfigService, useValue: createTestingConfigService() },
+    ...provideTestingConfigService(),
     {
       provide: ConfigurableEnumService,
       useValue: createTestingConfigurableEnumService(),
@@ -33,11 +33,11 @@ import { DatabaseResolverService } from "../core/database/database-resolver.serv
   ],
 })
 export class DatabaseTestingModule {
-  constructor(
-    databaseResolver: DatabaseResolverService,
-    components: ComponentRegistry,
-    entityConfigService: EntityConfigService,
-  ) {
+  constructor() {
+    const databaseResolver = inject(DatabaseResolverService);
+    const components = inject(ComponentRegistry);
+    const entityConfigService = inject(EntityConfigService);
+
     entityConfigService.setupEntitiesFromConfig();
     environment.session_type = SessionType.mock;
     databaseResolver.getDatabase().init("test-db");

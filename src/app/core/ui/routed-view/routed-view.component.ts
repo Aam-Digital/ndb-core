@@ -1,4 +1,4 @@
-import { Component, Injector } from "@angular/core";
+import { Component, Injector, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
@@ -23,7 +23,10 @@ export class RoutedViewComponent<T = any> extends AbstractViewComponent {
   component: string;
   config: any;
 
-  constructor(route: ActivatedRoute, injector: Injector) {
+  constructor() {
+    const route = inject(ActivatedRoute);
+    const injector = inject(Injector);
+
     super(injector, false);
 
     route.data.subscribe((data: { component: string } & ViewConfig<T>) => {

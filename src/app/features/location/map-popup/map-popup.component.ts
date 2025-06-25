@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -51,16 +51,18 @@ export interface MapPopupConfig {
   ],
 })
 export class MapPopupComponent {
+  data = inject<MapPopupConfig>(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<MapPopupComponent>>(MatDialogRef);
+  private geoService = inject(GeoService);
+
   markedLocations: BehaviorSubject<GeoResult[]>;
   helpText: string = $localize`Search an address or click on the map directly to select a different location`;
 
   selectedLocation: GeoLocation;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: MapPopupConfig,
-    private dialogRef: MatDialogRef<MapPopupComponent>,
-    private geoService: GeoService,
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.markedLocations = new BehaviorSubject<GeoResult[]>(
       (data.marked as GeoResult[]) ?? [],
     );
