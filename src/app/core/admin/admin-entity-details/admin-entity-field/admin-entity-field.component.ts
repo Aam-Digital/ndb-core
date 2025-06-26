@@ -118,17 +118,23 @@ export class AdminEntityFieldComponent implements OnInit {
     this.initSettings();
 
     if (this.data.overwriteLocally) {
-      const formControls = ["dataType", "additional", "isArray"];
-
-      formControls.forEach((ctrlName) => {
-        const control = this.schemaFieldsForm.get(ctrlName);
-        if (control?.value) {
-          control.disable();
-        }
-      });
+      this.lockGlobalFields();
     }
 
     this.initAvailableDatatypes(this.allDataTypes);
+  }
+
+  /**
+   * Disable editing of those fields that have to be consistent across all uses of the field.
+   * @private
+   */
+  private lockGlobalFields() {
+    ["dataType", "additional", "isArray"].forEach((ctrlName) => {
+      const control = this.schemaFieldsForm.get(ctrlName);
+      if (control?.value) {
+        control.disable();
+      }
+    });
   }
 
   private initSettings() {
