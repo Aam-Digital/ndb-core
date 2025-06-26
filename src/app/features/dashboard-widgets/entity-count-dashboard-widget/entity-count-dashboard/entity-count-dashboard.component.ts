@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { sortBy } from "lodash-es";
 
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -161,19 +162,22 @@ export class EntityCountDashboardComponent
   ): GroupCountRow[] {
     const groupByType = this._entity.schema.get(groupByField);
     const groups = groupBy(entities, groupByField as keyof Entity);
-    return groups.map(([group, entities]) => {
-      const label = extractHumanReadableLabel(group);
-      const groupedByEntity =
-        groupByType.dataType === EntityDatatype.dataType
-          ? groupByType.additional
-          : undefined;
-      return {
-        label: label,
-        value: entities.length,
-        id: group?.["id"] || label,
-        groupedByEntity: groupedByEntity,
-      };
-    });
+    return sortBy(
+      groups.map(([group, entities]) => {
+        const label = extractHumanReadableLabel(group);
+        const groupedByEntity =
+          groupByType.dataType === EntityDatatype.dataType
+            ? groupByType.additional
+            : undefined;
+        return {
+          label: label,
+          value: entities.length,
+          id: group?.["id"] || label,
+          groupedByEntity: groupedByEntity,
+        };
+      }),
+      (group) => group.id,
+    );
   }
 
   goToEntityList(filterId: string) {
