@@ -45,7 +45,7 @@ function generateChildren(params: { count: number }): Entity[] {
   return range(params.count).map((i) => generateChild(String(i + 1)));
 }
 
-/** @deprecated */
+/** @deprecated Don’t pass `id` explicitly, use `generateChild()` instead */
 export function generateChild(id: string): Entity;
 export function generateChild(): Entity;
 export function generateChild(id?: string): Entity {
