@@ -72,6 +72,7 @@ export class Entity {
 
   /**
    * True if this type's schema has been customized dynamically from the config.
+   * @deprecated todo: This property is no longer used and will be removed in future versions.
    */
   static _isCustomizedType?: boolean; // todo should be private or renamed to "isCustomizedType"
 
