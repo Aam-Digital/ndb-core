@@ -91,16 +91,15 @@
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field
+              [matTooltip]="
+                'The type of the field cannot be changed here because these changes only apply to this form. For data consistency, you have to change the type for the field overall.'
+              "
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!data.overwriteLocally"
+            >
               <mat-label>
                 <span i18n>Type</span>
-                @if (data.overwriteLocally) {
-                  <fa-icon
-                    icon="question-circle"
-                    matTooltip="The type of the field cannot be changed here because these changes only apply to this form. For data consistency, you have to change the type for the field overall."
-                    i18n-matTooltip
-                  ></fa-icon>
-                }
               </mat-label>
               <app-basic-autocomplete
                 formControlName="dataType"
