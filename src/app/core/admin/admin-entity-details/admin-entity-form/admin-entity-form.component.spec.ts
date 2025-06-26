@@ -24,7 +24,7 @@ import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DefaultValueService } from "../../../default-values/default-value-service/default-value.service";
 import { AdminEntityService } from "../../admin-entity.service";
 
-fdescribe("AdminEntityFormComponent", () => {
+describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
   let fixture: ComponentFixture<AdminEntityFormComponent>;
 
