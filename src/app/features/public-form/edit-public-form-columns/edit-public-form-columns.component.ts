@@ -24,7 +24,6 @@ export class EditPublicFormColumnsComponent
 {
   entityConstructor: EntityConstructor;
   formConfig: FormConfig;
-  publicFormConfig: PublicFormConfig;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
   private entities = inject(EntityRegistry);
