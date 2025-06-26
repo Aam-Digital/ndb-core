@@ -102,6 +102,7 @@ describe("AddressEditComponent", () => {
       locationString: "manual address",
       geoLookup: SAMPLE_GEO_RESULT,
     });
+
     // test user confirms
     component.selectedLocation = {
       locationString: "manual address",
