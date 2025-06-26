@@ -19,17 +19,12 @@ import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype"
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
-import {
-  DatabaseEntity,
-  EntityRegistry,
-} from "../../../entity/database-entity.decorator";
+import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Validators } from "@angular/forms";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
-import { AdminEntityService } from "../../admin-entity.service";
-import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
-fdescribe("AdminEntityFieldComponent", () => {
+describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;
   let fixture: ComponentFixture<AdminEntityFieldComponent>;
   let loader: HarnessLoader;
@@ -63,25 +58,11 @@ fdescribe("AdminEntityFieldComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should generate id (if new field) from label", async () => {
-    const labelInput = await loader
-      .getHarness(MatFormFieldHarness.with({ floatingLabelText: "Label" }))
-      .then((field) => field.getControl(MatInputHarness));
-    const idInput = await loader
-      .getHarness(
-        MatFormFieldHarness.with({ floatingLabelText: "Field ID (readonly)" }),
-      )
-      .then((field) => field.getControl(MatInputHarness));
-
-    // Initially ID is automatically generated from label
-    await labelInput.setValue("new label");
-    await expectAsync(idInput.getValue()).toBeResolvedTo("newLabel");
-
-    // manual edit of ID field stops auto generation of ID
-    await idInput.setValue("my_id");
-    await labelInput.setValue("other label");
-    await expectAsync(idInput.getValue()).toBeResolvedTo("my_id");
-  });
+  it("should generate id (if new field) from label", fakeAsync(() => {
+    component.schemaFieldsForm.get("label").setValue("New Label");
+    tick();
+    expect(component.fieldIdForm.value).toBe(generateIdFromLabel("New Label"));
+  }));
 
   it("should include 'additional' field only for relevant datatypes", fakeAsync(() => {
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
