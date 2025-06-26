@@ -1,7 +1,7 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "../../notes/model/note";
-import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
+import { generateChild } from "../../children/demo-data-generators/demo-child-generator.service";
 import { RecurringActivity } from "../model/recurring-activity";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
@@ -24,9 +24,9 @@ const Template: StoryFn<ActivityCardComponent> = (
 });
 
 const demoChildren = [
-  DemoChildGenerator.generateEntity("1"),
-  DemoChildGenerator.generateEntity("2"),
-  DemoChildGenerator.generateEntity("3"),
+  generateChild("1"),
+  generateChild("2"),
+  generateChild("3"),
 ];
 
 const simpleEvent = Note.create(new Date(), "some meeting");
