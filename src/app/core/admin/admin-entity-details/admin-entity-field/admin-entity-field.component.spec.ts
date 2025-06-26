@@ -59,9 +59,15 @@ describe("AdminEntityFieldComponent", () => {
   });
 
   it("should generate id (if new field) from label", fakeAsync(() => {
+    // Initially ID is automatically generated from label
     component.schemaFieldsForm.get("label").setValue("New Label");
     tick();
     expect(component.fieldIdForm.value).toBe(generateIdFromLabel("New Label"));
+
+    // manual edit of ID field stops auto generation of ID
+    component.fieldIdForm.setValue("new_id");
+    component.schemaFieldsForm.get("label").setValue("Changed Label");
+    expect(component.fieldIdForm.value).toBe("new_id");
   }));
 
   it("should include 'additional' field only for relevant datatypes", fakeAsync(() => {
