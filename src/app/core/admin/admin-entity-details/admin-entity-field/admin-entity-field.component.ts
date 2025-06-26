@@ -315,4 +315,8 @@ export class AdminEntityFieldComponent implements OnInit {
     }
     this.dialog.open(ConfigureEnumPopupComponent, { data: enumEntity });
   }
+
+  resetToBaseFieldSettings() {
+    this.dialogRef.close(this.fieldIdForm.getRawValue());
+  }
 }
