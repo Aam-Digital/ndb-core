@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
@@ -19,6 +19,8 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
   toDate: Date;
 
   @Input() filterConfig: DateFilter<T>;
+  @Output() selectedOptionChange = new EventEmitter<any>();
+
 
   constructor(private dialog: MatDialog) {}
 
@@ -36,9 +38,7 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
     ) {
       this.fromDate = range.start;
       this.toDate = range.end;
-      this.filterConfig.selectedOptionChange.emit(
-        this.filterConfig.selectedOptionValues,
-      );
+      this.selectedOptionChange.emit(this.filterConfig.selectedOptionValues);
     }
   }
 
@@ -47,9 +47,7 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
       isValidDate(this.toDate) ? dateToString(this.toDate) : "",
     ];
-    this.filterConfig.selectedOptionChange.emit(
-      this.filterConfig.selectedOptionValues,
-    );
+    this.selectedOptionChange.emit(this.filterConfig.selectedOptionValues);
   }
 
   openDialog(e: Event) {

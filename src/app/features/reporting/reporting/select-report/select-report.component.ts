@@ -18,6 +18,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ReportEntity } from "../../report-config";
+import { DateFilter } from "app/core/filter/filters/dateFilter";
+import { defaultDateFilters } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { DateRangeFilterComponent } from "app/core/basic-datatypes/date/date-range-filter/date-range-filter.component";
 
 @Component({
   selector: "app-select-report",
@@ -36,6 +39,7 @@ import { ReportEntity } from "../../report-config";
     FontAwesomeModule,
     MatProgressBarModule,
     MatTooltipModule,
+    DateRangeFilterComponent
   ],
 })
 export class SelectReportComponent implements OnChanges {
@@ -51,11 +55,14 @@ export class SelectReportComponent implements OnChanges {
   /** whether the currently selected report includes filter parameters for a "from" - "to" date range */
   isDateRangeReport: boolean;
 
+  dateRangeFilterConfig: DateFilter<any>;
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("reports")) {
       if (this.reports?.length === 1) {
         this.selectedReport = this.reports[0];
         this.checkDateRangeReport();
+        this.setupDateRangeFilter();
       }
     }
   }
@@ -76,9 +83,15 @@ export class SelectReportComponent implements OnChanges {
   reportChange() {
     this.dataChanged.emit();
     this.checkDateRangeReport();
+    this.setupDateRangeFilter();
   }
 
   dateChange() {
+    if (this.isDateRangeReport && this.dateRangeFilterConfig) {
+      const range = this.dateRangeFilterConfig.getDateRange();
+      this.fromDate = range.start;
+      this.toDate = range.end;
+    }
     this.dataChanged.emit();
   }
 
@@ -98,6 +111,18 @@ export class SelectReportComponent implements OnChanges {
         !!this.selectedReport.transformations["endDate"];
     } else {
       this.isDateRangeReport = false;
+    }
+  }
+
+  private setupDateRangeFilter(): void {
+    if (this.isDateRangeReport) {
+      this.dateRangeFilterConfig = new DateFilter<any>(
+        "reportPeriod",
+        "Enter a date range",
+        defaultDateFilters
+      );
+    } else {
+      this.dateRangeFilterConfig = undefined;
     }
   }
 }
