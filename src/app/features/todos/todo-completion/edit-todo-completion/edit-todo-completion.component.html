@@ -1,4 +1,6 @@
-@if (!formControl.value) {
+@if (entity.isNew) {
+  <!-- hide while creating new task -->
+} @else if (!formControl.value) {
   <button mat-raised-button color="accent" (click)="completeTodo()">
     <fa-icon icon="check" class="margin-right-small"></fa-icon>
     <span i18n>Complete Task</span>
