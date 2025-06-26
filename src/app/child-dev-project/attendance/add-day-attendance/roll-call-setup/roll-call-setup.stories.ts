@@ -1,4 +1,4 @@
-import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
+import { generateChild } from "../../../children/demo-data-generators/demo-child-generator.service";
 import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
@@ -24,9 +24,9 @@ const demoEvent = Note.create(new Date(), "coaching");
 demoEvent.category = { id: "COACHING", label: "Coaching", isMeeting: true };
 
 const demoChildren = [
-  DemoChildGenerator.generateEntity("1"),
-  DemoChildGenerator.generateEntity("2"),
-  DemoChildGenerator.generateEntity("3"),
+  generateChild("1"),
+  generateChild("2"),
+  generateChild("3"),
 ];
 demoChildren.forEach((c) => demoEvent.addChild(c));
 

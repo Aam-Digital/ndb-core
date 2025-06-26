@@ -51,108 +51,136 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   public generateEntities(): Note[] {
-    const data = [];
-
-    for (const child of this.demoChildren.entities) {
-      if (!child.isActive) {
-        continue;
-      }
-
-      let numberOfNotes = faker.number.int({
-        min: this.config.minNotesPerChild,
-        max: this.config.maxNotesPerChild,
-      });
-
-      // generate a recent note for the last week for some children to have data for dashboard
-      if (numberOfNotes > 0 && faker.number.int(100) < 40) {
-        data.push(
-          this.generateNoteForChild(child, faker.date.recent({ days: 6 })),
-        );
-        numberOfNotes--;
-      }
-
-      for (let i = 0; i < numberOfNotes; i++) {
-        data.push(this.generateNoteForChild(child));
-      }
-    }
-
-    for (const center of centersUnique) {
-      const children: Entity[] = this.demoChildren.entities.filter(
-        (c) => c["center"] === center,
-      );
-      for (let i = 0; i < this.config.groupNotes; i++) {
-        data.push(this.generateGroupNote(children));
-      }
-    }
-
-    return data;
+    return generateNotes({
+      children: this.demoChildren.entities,
+      authors: this.demoUsers.entities,
+      minNotesPerChild: this.config.minNotesPerChild,
+      maxNotesPerChild: this.config.maxNotesPerChild,
+      groupNotes: this.config.groupNotes,
+    });
   }
+}
 
-  private generateNoteForChild(child: Entity, date?: Date): Note {
-    const note = new Note(faker.string.uuid());
+function generateNotes(params: {
+  children: Entity[];
+  authors: Entity[];
+  minNotesPerChild: number;
+  maxNotesPerChild: number;
+  groupNotes: number;
+}): Note[] {
+  const notes = [];
 
-    const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
-    Object.assign(note, selectedStory);
-
-    note.addChild(child.getId());
-    note.authors = [
-      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
-    ];
-
-    if (!date) {
-      date = faker.date.between({
-        from: child["admissionDate"],
-        to: faker.getEarlierDateOrToday(child["dropoutDate"]),
-      });
+  for (const child of params.children) {
+    if (!child.isActive) {
+      continue;
     }
-    note.date = date;
 
-    this.removeFollowUpMarkerForOldNotes(note);
-
-    return note;
-  }
-
-  /**
-   * Set all older notes to be "resolved" in order to keep the list of notes needing follow-up limited in the demo.
-   */
-  private removeFollowUpMarkerForOldNotes(note: Note) {
-    const lastMonths = faker.defaultRefDate();
-    lastMonths.setMonth(lastMonths.getMonth() - 1);
-    if (note.date < lastMonths) {
-      note.warningLevel = warningLevels.find((level) => level.id === "OK");
-    }
-  }
-
-  private generateGroupNote(children: Entity[]) {
-    const note = new Note();
-
-    const selectedStory = faker.helpers.arrayElement(noteGroupStories);
-    Object.assign(note, selectedStory);
-
-    note.children = children.map((c) => c.getId());
-    children.forEach((child) => {
-      const attendance = note.getAttendance(child.getId());
-      // get an approximate presence of 85%
-      if (faker.number.int(100) <= 15) {
-        attendance.status = defaultAttendanceStatusTypes.find(
-          (t) => t.countAs === AttendanceLogicalStatus.ABSENT,
-        );
-        attendance.remarks = faker.helpers.arrayElement(absenceRemarks);
-      } else {
-        attendance.status = defaultAttendanceStatusTypes.find(
-          (t) => t.countAs === AttendanceLogicalStatus.PRESENT,
-        );
-      }
+    let numberOfNotes = faker.number.int({
+      min: params.minNotesPerChild,
+      max: params.maxNotesPerChild,
     });
 
-    note.authors = [
-      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
-    ];
+    // generate a recent note for the last week for some children to have data for dashboard
+    if (numberOfNotes > 0 && faker.number.int(100) < 40) {
+      notes.push(
+        generateNote({
+          child,
+          author: faker.helpers.arrayElement(params.authors),
+          date: faker.date.recent({ days: 6 }),
+        }),
+      );
+      numberOfNotes--;
+    }
 
-    note.date = faker.date.past({ years: 1 });
+    for (let i = 0; i < numberOfNotes; i++) {
+      notes.push(
+        generateNote({
+          child,
+          author: faker.helpers.arrayElement(params.authors),
+        }),
+      );
+    }
+  }
 
-    this.removeFollowUpMarkerForOldNotes(note);
+  for (const center of centersUnique) {
+    const children = params.children.filter((c) => c["center"] === center);
+    for (let i = 0; i < params.groupNotes; i++) {
+      notes.push(
+        generateGroupNote({
+          children,
+          author: faker.helpers.arrayElement(params.authors),
+        }),
+      );
+    }
+  }
 
-    return note;
+  return notes;
+}
+
+export function generateNote(params: {
+  child: Entity;
+  author: Entity;
+  date?: Date;
+}): Note {
+  const note = new Note(faker.string.uuid());
+
+  const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
+  Object.assign(note, selectedStory);
+
+  note.addChild(params.child.getId());
+  note.authors = [params.author.getId()];
+
+  let date = params.date;
+  if (!date) {
+    date = faker.date.between({
+      from: params.child["admissionDate"],
+      to: faker.getEarlierDateOrToday(params.child["dropoutDate"]),
+    });
+  }
+  note.date = date;
+
+  removeFollowUpMarkerForOldNotes(note);
+
+  return note;
+}
+
+function generateGroupNote(params: { children: Entity[]; author: Entity }) {
+  const note = new Note();
+
+  const selectedStory = faker.helpers.arrayElement(noteGroupStories);
+  Object.assign(note, selectedStory);
+
+  note.children = params.children.map((c) => c.getId());
+  params.children.forEach((child) => {
+    const attendance = note.getAttendance(child.getId());
+    // get an approximate presence of 85%
+    if (faker.number.int(100) <= 15) {
+      attendance.status = defaultAttendanceStatusTypes.find(
+        (t) => t.countAs === AttendanceLogicalStatus.ABSENT,
+      );
+      attendance.remarks = faker.helpers.arrayElement(absenceRemarks);
+    } else {
+      attendance.status = defaultAttendanceStatusTypes.find(
+        (t) => t.countAs === AttendanceLogicalStatus.PRESENT,
+      );
+    }
+  });
+
+  note.authors = [params.author.getId()];
+
+  note.date = faker.date.past({ years: 1 });
+
+  removeFollowUpMarkerForOldNotes(note);
+
+  return note;
+}
+/**
+ * Set all older notes to be "resolved" in order to keep the list of notes needing follow-up limited in the demo.
+ */
+function removeFollowUpMarkerForOldNotes(note: Note) {
+  const lastMonths = faker.defaultRefDate();
+  lastMonths.setMonth(lastMonths.getMonth() - 1);
+  if (note.date < lastMonths) {
+    note.warningLevel = warningLevels.find((level) => level.id === "OK");
   }
 }
