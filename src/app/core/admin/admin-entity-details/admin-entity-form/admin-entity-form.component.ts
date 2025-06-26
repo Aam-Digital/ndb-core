@@ -307,6 +307,8 @@ export class AdminEntityFormComponent implements OnChanges {
         ? await this.openTextConfig(configDetails)
         : await this.openFieldConfig(field);
 
+    if (!updatedField) return;
+
     if (
       !this.updateEntitySchema ||
       configDetails.editComponent === "EditDescriptionOnly"
