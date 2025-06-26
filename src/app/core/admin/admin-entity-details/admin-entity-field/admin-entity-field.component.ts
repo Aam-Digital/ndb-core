@@ -118,9 +118,14 @@ export class AdminEntityFieldComponent implements OnInit {
     this.initSettings();
 
     if (this.data.overwriteLocally) {
-      if (this.schemaFieldsForm.get("dataType")?.value) {
-        this.schemaFieldsForm.get("dataType")?.disable();
-      }
+      const formControls = ["dataType", "additional", "isArray"];
+
+      formControls.forEach((ctrlName) => {
+        const control = this.schemaFieldsForm.get(ctrlName);
+        if (control?.value) {
+          control.disable();
+        }
+      });
     }
 
     this.initAvailableDatatypes(this.allDataTypes);
