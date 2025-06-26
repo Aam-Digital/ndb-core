@@ -19,13 +19,6 @@ export class TodosModule {
 
 const dynamicComponents: [string, AsyncComponent][] = [
   [
-    "TodoList",
-    () =>
-      import("./todo-list/todo-list.component").then(
-        (c) => c.TodoListComponent,
-      ),
-  ],
-  [
     "TodosRelatedToEntity",
     () =>
       import(

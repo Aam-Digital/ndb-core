@@ -125,7 +125,8 @@ export class EntityListComponent<T extends Entity>
    */
   @Input() loaderMethod: LoaderMethod;
 
-  @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
+  @Input() clickMode: "navigate" | "popup" | "popup-details" | "none" =
+    "navigate";
 
   /** initial / default state whether to include archived records in the list */
   @Input() showInactive: boolean;

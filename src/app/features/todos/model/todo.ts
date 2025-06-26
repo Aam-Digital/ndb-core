@@ -119,7 +119,13 @@ export class Todo extends Entity {
     return !this.completed;
   }
 
+  get isCompleted(): boolean {
+    // used for filter
+    return !!this.completed;
+  }
+
   get isOverdue(): boolean {
+    // used for filter
     return !!(
       !this.completed &&
       this.deadline &&
