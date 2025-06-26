@@ -12,9 +12,10 @@
         <button
           mat-flat-button
           i18n
-          class="util-button"
+          class="util-button flex-grow"
           (click)="selectAll()"
-          [disabled]="!filterConfig.singleSelectOnly"
+          [disabled]="!!filterConfig.singleSelectOnly"
+          [class.hidden]="!!filterConfig.singleSelectOnly"
         >
           Select All
         </button>
@@ -22,7 +23,7 @@
         <button
           mat-flat-button
           i18n
-          class="util-button"
+          class="util-button flex-grow"
           (click)="deselectAll()"
         >
           Clear
