@@ -15,7 +15,6 @@ export class PublicFormsService {
     private entityActionsMenuService: EntityActionsMenuService,
   ) {}
 
-  private originalPublicFormConfig: PublicFormConfig;
   /**
    * Initializes and registers custom form actions for entities.
    * - Loads all PublicFormConfig entries from the EntityMapper.
