@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Optional,
@@ -65,6 +66,7 @@ import {
 } from "../../ui/dialog-view/dialog-view.component";
 import { AblePurePipe } from "@casl/angular";
 import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -113,6 +115,8 @@ import { BulkMergeService } from "app/features/de-duplication/bulk-merge-service
 export class EntityListComponent<T extends Entity>
   implements EntityListConfig, OnChanges
 {
+  private readonly formDialog = inject(FormDialogService);
+
   @Input() allEntities: T[];
 
   @Input() entityType: string;
@@ -333,10 +337,23 @@ export class EntityListComponent<T extends Entity>
     });
   }
 
-  addNew() {
-    if (this.clickMode === "navigate") {
-      this.router.navigate(["new"], { relativeTo: this.activatedRoute });
+  addNew(newEntity?: T) {
+    if (!newEntity) {
+      newEntity = new this.entityConstructor();
     }
+
+    switch (this.clickMode) {
+      case "navigate":
+        this.router.navigate(["new"], { relativeTo: this.activatedRoute });
+        break;
+      case "popup":
+        this.formDialog.openFormPopup(newEntity, this.columns);
+        break;
+      case "popup-details":
+        this.formDialog.openView(newEntity);
+        break;
+    }
+
     this.addNewClick.emit();
   }
 

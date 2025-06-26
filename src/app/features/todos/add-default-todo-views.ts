@@ -20,20 +20,22 @@ export const addDefaultTodoViews: ConfigMigration = (key, configPart) => {
 
   // List View
   if (!configData[viewConfigKey]) {
-    // add standard Todo list view
-    configData[viewConfigKey] = defaultTodoListView;
+    // add standard list view
+    configData[viewConfigKey] = JSON.parse(JSON.stringify(defaultTodoListView));
   } else {
-    // add prebuilt filter to existing Todo list view
+    // add prebuilt filter to existing list view
     const existingFilters = configData[viewConfigKey].config.filters || [];
     if (!existingFilters.some((f) => f.id === todoDueStatusFilter.id)) {
-      existingFilters.push(todoDueStatusFilter);
+      existingFilters.push(JSON.parse(JSON.stringify(todoDueStatusFilter)));
     }
     configData[viewConfigKey].config.filters = existingFilters;
   }
 
   // Details View
   if (!configData[viewConfigKey + "/:id"]) {
-    configData[viewConfigKey + "/:id"] = defaultTodoDetailsView;
+    configData[viewConfigKey + "/:id"] = JSON.parse(
+      JSON.stringify(defaultTodoDetailsView),
+    );
   }
 
   return configPart;
