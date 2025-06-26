@@ -129,9 +129,12 @@ describe("AdminEntityFormComponent", () => {
   }
 
   it("should add new field in view if field config dialog succeeds", fakeAsync(() => {
-    const newFieldId = "test-created-field";
+    const newField = {
+      id: "test",
+      label: "Test Field",
+    };
     mockDialog.open.and.returnValue({
-      afterClosed: () => of(newFieldId),
+      afterClosed: () => of(newField),
     } as any);
 
     const targetContainer = component.config.fieldGroups[0].fields;
@@ -139,7 +142,7 @@ describe("AdminEntityFormComponent", () => {
     tick();
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(targetContainer).toEqual(["name", newFieldId, "other"]);
+    expect(targetContainer).toEqual(["name", newField.id, "other"]);
     expect(component.availableFields).toContain(
       component.createNewFieldPlaceholder,
     );
