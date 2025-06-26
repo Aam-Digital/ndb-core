@@ -90,6 +90,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateGroupByConfig,
       migrateDefaultValue,
       migrateUserEntityAndPanels,
+      removeOutdatedTodoViews,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
@@ -370,6 +371,21 @@ const migrateUserEntityAndPanels: ConfigMigration = (key, configPart) => {
           (c: PanelComponent) => c.component === "UserSecurity",
         ),
     );
+  }
+
+  return configPart;
+};
+
+/**
+ * Remove outdated task view configs
+ * to fall back to the new default that is automatically added.
+ */
+const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
+  if (
+    configPart?.component === "TodoList" ||
+    configPart?.component === "TodoDetails"
+  ) {
+    return undefined; // remove this config
   }
 
   return configPart;
