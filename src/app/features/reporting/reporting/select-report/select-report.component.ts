@@ -72,7 +72,7 @@ export const defaultReportDateFilters: DateRangeFilterConfigOption[] = [
     FontAwesomeModule,
     MatProgressBarModule,
     MatTooltipModule,
-    DateRangeFilterComponent
+    DateRangeFilterComponent,
   ],
 })
 export class SelectReportComponent implements OnChanges {
@@ -99,7 +99,7 @@ export class SelectReportComponent implements OnChanges {
         this.setupDateRangeFilter();
       }
     }
-    
+
     if (changes.hasOwnProperty("dateRangeOptions")) {
       this.setupDateRangeFilter();
     }
@@ -161,7 +161,7 @@ export class SelectReportComponent implements OnChanges {
       this.dateRangeFilterConfig = new DateFilter<any>(
         "reportPeriod",
         "Enter a date range",
-        options
+        options,
       );
     } else {
       this.dateRangeFilterConfig = undefined;

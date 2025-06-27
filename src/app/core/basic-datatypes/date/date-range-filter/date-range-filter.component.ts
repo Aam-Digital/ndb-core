@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
@@ -20,7 +27,6 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
 
   @Input() filterConfig: DateFilter<T>;
   @Output() selectedOptionChange = new EventEmitter<any>();
-
 
   constructor(private dialog: MatDialog) {}
 

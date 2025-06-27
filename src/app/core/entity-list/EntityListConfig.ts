@@ -95,8 +95,14 @@ export interface DateRangeFilterConfig extends BasicFilterConfig {
 }
 
 export interface DateRangeFilterConfigOption {
-  startOffsets?: { amount: number; unit: unitOfTime.Base | unitOfTime._quarter }[];
-  endOffsets?: { amount: number; unit: unitOfTime.Base | unitOfTime._quarter}[];
+  startOffsets?: {
+    amount: number;
+    unit: unitOfTime.Base | unitOfTime._quarter;
+  }[];
+  endOffsets?: {
+    amount: number;
+    unit: unitOfTime.Base | unitOfTime._quarter;
+  }[];
   label: string;
 }
 

@@ -54,7 +54,7 @@ export class ReportingComponent {
   data: any[];
   exportableData: any;
 
-  dateRangeOptions: any[] = []; 
+  dateRangeOptions: any[] = [];
 
   constructor(
     private configService: ConfigService,
@@ -70,10 +70,11 @@ export class ReportingComponent {
   }
 
   private loadDateRangeOptionsFromConfig() {
-    const reportViewConfig = this.configService.getConfig<any>("view:report")?.config;
+    const reportViewConfig =
+      this.configService.getConfig<any>("view:report")?.config;
     if (reportViewConfig?.filters?.length) {
       const periodFilter = reportViewConfig.filters.find(
-        (f: any) => f.id === "reportPeriod"
+        (f: any) => f.id === "reportPeriod",
       );
       if (periodFilter && Array.isArray(periodFilter.options)) {
         this.dateRangeOptions = periodFilter.options;

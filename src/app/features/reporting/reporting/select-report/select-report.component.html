@@ -24,9 +24,10 @@
       </mat-select>
     </mat-form-field>
 
-    @if (isDateRangeReport){<app-date-range-filter
-      [filterConfig]="dateRangeFilterConfig"
-      (selectedOptionChange)="dateChange()"
+    @if (isDateRangeReport) {
+      <app-date-range-filter
+        [filterConfig]="dateRangeFilterConfig"
+        (selectedOptionChange)="dateChange()"
       ></app-date-range-filter>
     }
   </div>
