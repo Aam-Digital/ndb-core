@@ -44,7 +44,7 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   }
 }
 
-function generateTodos(params: {
+export function generateTodos(params: {
   children: Entity[];
   assignedTo: Entity[];
   minPerChild: number;
@@ -79,7 +79,7 @@ function generateTodos(params: {
  * @param opts.isDue If true, the generated deadline is before the reference
  * date (today). If false, the deadline is after the reference date.
  */
-function generateTodo({
+export function generateTodo({
   entity,
   assignedTo,
   isDue,

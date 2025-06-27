@@ -14,11 +14,17 @@ export function DatabaseField(propertySchema: EntitySchemaField = {}) {
     // Retrieve datatype from TypeScript type definition
     if (propertySchema.dataType === undefined) {
       const type = Reflect.getMetadata("design:type", target, propertyName);
-      const typeName = type.DATA_TYPE ?? type.name.toLowerCase();
-      if (typeName === "array") {
-        propertySchema.isArray = true;
-      } else if (typeName !== "object") {
-        propertySchema.dataType = typeName;
+      if (type) {
+        const typeName = type.DATA_TYPE ?? type.name.toLowerCase();
+        if (typeName === "array") {
+          propertySchema.isArray = true;
+        } else if (typeName !== "object") {
+          propertySchema.dataType = typeName;
+        }
+      } else {
+        // If this decorator is used from the e2e test runner decorator metadata
+        // is not available. For this case we have an all-purpose Datatype.
+        propertySchema.dataType = "";
       }
     }
     addPropertySchema(target, propertyName, propertySchema);
