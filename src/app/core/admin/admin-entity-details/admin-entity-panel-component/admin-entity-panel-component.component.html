@@ -1,7 +1,19 @@
 <div class="padding-regular">
   <p>[ {{ config.component }} ]</p>
 
-  <p style="font-size: 0.9em; color: darkgray" i18n>
-    Editing advanced sub-sections is not supported yet in this preview.
-  </p>
+  @if (config.config?.entityType) {
+    <div class="table-content-preview">
+      <span i18n>Add Fields:</span>
+      <app-entity-fields-menu
+        [entityType]="targetEntityType"
+        [(activeFields)]="activeFields"
+        [availableFields]="allFields"
+        (activeFieldsChange)="updateFields(activeFields)"
+      ></app-entity-fields-menu>
+    </div>
+  } @else {
+    <p style="font-size: 0.9em; color: darkgray" i18n>
+      Editing advanced sub-sections is not supported yet in this preview.
+    </p>
+  }
 </div>
