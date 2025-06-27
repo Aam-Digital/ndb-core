@@ -20,6 +20,7 @@ import {
 import { RouteTarget } from "../../../route-target";
 import { firstValueFrom } from "rxjs";
 import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
+import { ConfigService } from "app/core/config/config.service";
 
 @RouteTarget("Reporting")
 @Component({
@@ -53,7 +54,10 @@ export class ReportingComponent {
   data: any[];
   exportableData: any;
 
+  dateRangeOptions: any[] = []; 
+
   constructor(
+    private configService: ConfigService,
     private dataAggregationService: DataAggregationService,
     private dataTransformationService: DataTransformationService,
     private sqlReportService: SqlReportService,
@@ -61,7 +65,20 @@ export class ReportingComponent {
   ) {
     this.entityMapper.loadType(ReportEntity).then((res) => {
       this.reports = res.sort((a, b) => a.title?.localeCompare(b.title));
+      this.loadDateRangeOptionsFromConfig();
     });
+  }
+
+  private loadDateRangeOptionsFromConfig() {
+    const reportViewConfig = this.configService.getConfig<any>("view:report")?.config;
+    if (reportViewConfig?.filters?.length) {
+      const periodFilter = reportViewConfig.filters.find(
+        (f: any) => f.id === "reportPeriod"
+      );
+      if (periodFilter && Array.isArray(periodFilter.options)) {
+        this.dateRangeOptions = periodFilter.options;
+      }
+    }
   }
 
   async calculateResults(

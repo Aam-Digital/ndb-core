@@ -1239,6 +1239,75 @@
     },
     "view:report": {
       "component": "Reporting",
+      "config":{
+        "filters":[
+          {
+            "id":"reportPeriod",
+            "options": [
+              {
+                "startOffsets": [
+                  {
+                    "amount": 0,
+                    "unit": "months"
+                  }
+                ],
+                "endOffsets": [
+                  {
+                    "amount": 0,
+                    "unit": "months"
+                  }
+                ],
+                "label": "Current month"
+              },
+              {
+                "startOffsets": [
+                  {
+                    "amount": -1,
+                    "unit": "months"
+                  }
+                ],
+                "endOffsets": [
+                  {
+                    "amount": -1,
+                    "unit": "months"
+                  }
+                ],
+                "label": "Last month"
+              },
+              {
+                "startOffsets": [
+                  {
+                    "amount": 0,
+                    "unit": "quarter"
+                  }
+                ],
+                "endOffsets": [
+                  {
+                    "amount": 0,
+                    "unit": "quarter"
+                  }
+                ],
+                "label": "Current quarter"
+              },
+              {
+                "startOffsets": [
+                  {
+                    "amount": -1,
+                    "unit": "quarter"
+                  }
+                ],
+                "endOffsets": [
+                  {
+                    "amount": -1,
+                    "unit": "quarter"
+                  }
+                ],
+                "label": "Last quarter"
+              }
+            ]
+          }
+        ]
+      },
       "_id": "view:report"
     },
     "entity:Child": {

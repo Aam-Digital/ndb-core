@@ -30,38 +30,17 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   },
   {
     startOffsets: [{ amount: -1, unit: "weeks" }],
-    endOffsets: [{ amount: -1, unit: "weeks" }],
-    label: $localize`:Filter label:Last week`,
+    label: $localize`:Filter label:Since last week`,
   },
   {
     startOffsets: [{ amount: 0, unit: "months" }],
     endOffsets: [{ amount: 0, unit: "months" }],
-    label: $localize`:Filter label:Current month`,
+    label: $localize`:Filter label:This month`,
   },
   {
     startOffsets: [{ amount: -1, unit: "months" }],
     endOffsets: [{ amount: -1, unit: "months" }],
     label: $localize`:Filter label:Last month`,
-  },
-  {
-    startOffsets: [{ amount: 0, unit: "quarters" }],
-    endOffsets: [{ amount: 0, unit: "quarters" }],
-    label: $localize`:Filter label:Current quarter`,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: "quarters" }],
-    endOffsets: [{ amount: -1, unit: "quarters" }],
-    label: $localize`:Filter label:Last quarter`,
-  },
-  {
-    startOffsets: [{ amount: 0, unit: "years" }],
-    endOffsets: [{ amount: 0, unit: "years" }],
-    label: $localize`:Filter label:Current year`,
-  },
-  {
-    startOffsets: [{ amount: -1, unit: "years" }],
-    endOffsets: [{ amount: -1, unit: "years" }],
-    label: $localize`:Filter label:Last year`,
   },
 ];
 
