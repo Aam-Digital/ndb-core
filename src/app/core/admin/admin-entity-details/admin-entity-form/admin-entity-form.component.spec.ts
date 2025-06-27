@@ -22,6 +22,7 @@ import { FormConfig } from "../../../entity-details/form/form.component";
 import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 import { DefaultValueService } from "../../../default-values/default-value-service/default-value.service";
+import { AdminEntityService } from "../../admin-entity.service";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
@@ -129,9 +130,12 @@ describe("AdminEntityFormComponent", () => {
   }
 
   it("should add new field in view if field config dialog succeeds", fakeAsync(() => {
-    const newFieldId = "test-created-field";
+    const newField = {
+      id: "test",
+      label: "Test Field",
+    };
     mockDialog.open.and.returnValue({
-      afterClosed: () => of(newFieldId),
+      afterClosed: () => of(newField),
     } as any);
 
     const targetContainer = component.config.fieldGroups[0].fields;
@@ -139,7 +143,7 @@ describe("AdminEntityFormComponent", () => {
     tick();
 
     expect(mockDialog.open).toHaveBeenCalled();
-    expect(targetContainer).toEqual(["name", newFieldId, "other"]);
+    expect(targetContainer).toEqual(["name", newField.id, "other"]);
     expect(component.availableFields).toContain(
       component.createNewFieldPlaceholder,
     );
@@ -200,5 +204,21 @@ describe("AdminEntityFormComponent", () => {
     component.hideField(field, group);
 
     expect(component.config.fieldGroups[0].fields).not.toContain(field);
+  }));
+
+  it("should update the global schema when updateEntitySchema is true", fakeAsync(async () => {
+    component.updateEntitySchema = true;
+    const field = { id: "test", label: "Test Field" } as any;
+    spyOn(component, "openFieldConfig").and.returnValue(Promise.resolve(field));
+    const adminEntityService = TestBed.inject(AdminEntityService);
+    spyOn(adminEntityService, "updateSchemaField");
+    await component.openConfigDetails("category" as any);
+    tick();
+
+    expect(adminEntityService.updateSchemaField).toHaveBeenCalledWith(
+      TestEntity,
+      "test",
+      field,
+    );
   }));
 });

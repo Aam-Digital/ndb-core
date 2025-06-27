@@ -26,36 +26,35 @@ export class DemoUserGeneratorService extends DemoDataGenerator<Entity> {
     ];
   }
 
-  /**
-   * Generate User entities to be loaded by the DemoDataModule.
-   */
-  public generateEntities(): Entity[] {
-    const users = [];
-    const demoUser = createEntityOfType(
-      "User",
-      DemoUserGeneratorService.DEFAULT_USERNAME,
-    );
-    demoUser.name = DemoUserGeneratorService.DEFAULT_USERNAME;
+  generateEntities = generateUsers;
+}
 
-    const demoAdmin = createEntityOfType(
-      "User",
-      DemoUserGeneratorService.ADMIN_USERNAME,
-    );
-    demoAdmin.name = DemoUserGeneratorService.ADMIN_USERNAME;
+export function generateUsers(): Entity[] {
+  const users = [];
+  const demoUser = createEntityOfType(
+    "User",
+    DemoUserGeneratorService.DEFAULT_USERNAME,
+  );
+  demoUser.name = DemoUserGeneratorService.DEFAULT_USERNAME;
 
-    users.push(demoUser, demoAdmin);
+  const demoAdmin = createEntityOfType(
+    "User",
+    DemoUserGeneratorService.ADMIN_USERNAME,
+  );
+  demoAdmin.name = DemoUserGeneratorService.ADMIN_USERNAME;
 
-    const userNames = new Set<string>();
-    while (userNames.size < 10) {
-      userNames.add(faker.person.firstName());
-    }
-    for (const name of userNames) {
-      const user = createEntityOfType("User", name);
-      user.name = name;
-      user.phone = faker.phone.number();
-      users.push(user);
-    }
+  users.push(demoUser, demoAdmin);
 
-    return users;
+  const userNames = new Set<string>();
+  while (userNames.size < 10) {
+    userNames.add(faker.person.firstName());
   }
+  for (const name of userNames) {
+    const user = createEntityOfType("User", name);
+    user.name = name;
+    user.phone = faker.phone.number();
+    users.push(user);
+  }
+
+  return users;
 }
