@@ -105,6 +105,7 @@ export class Todo extends Entity {
   @DatabaseField({
     label: $localize`:label for Todo entity property:completed`,
     viewComponent: "DisplayTodoCompletion",
+    editComponent: "EditTodoCompletion",
     anonymize: "retain",
   })
   completed?: TodoCompletion;
@@ -118,7 +119,13 @@ export class Todo extends Entity {
     return !this.completed;
   }
 
+  get isCompleted(): boolean {
+    // used for filter
+    return !!this.completed;
+  }
+
   get isOverdue(): boolean {
+    // used for filter
     return !!(
       !this.completed &&
       this.deadline &&

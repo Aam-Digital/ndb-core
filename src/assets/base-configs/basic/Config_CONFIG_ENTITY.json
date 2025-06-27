@@ -81,7 +81,7 @@
     "view:note": {
       "component": "NotesManager",
       "config": {
-        "entity": "Note",
+        "entityType": "Note",
         "title": "Notes & Reports",
         "includeEventNotes": false,
         "showEventNotesToggle": true,
@@ -206,7 +206,7 @@
     "view:user": {
       "component": "EntityList",
       "config": {
-        "entity": "User",
+        "entityType": "User",
         "columns": [
           "name"
         ]
@@ -218,7 +218,7 @@
     "view:user/:id": {
       "component": "EntityDetails",
       "config": {
-        "entity": "User",
+        "entityType": "User",
         "panels": [
           {
             "title": "User Information",
@@ -267,7 +267,7 @@
     "view:school": {
       "component": "EntityList",
       "config": {
-        "entity": "School",
+        "entityType": "School",
         "columns": [
           "name",
           {
@@ -287,7 +287,7 @@
     "view:school/:id": {
       "component": "EntityDetails",
       "config": {
-        "entity": "School",
+        "entityType": "School",
         "panels": [
           {
             "title": "Basic Information",
@@ -353,7 +353,7 @@
     "view:child": {
       "component": "ChildrenList",
       "config": {
-        "entity": "Child",
+        "entityType": "Child",
         "columns": [
           {
             "viewComponent": "ChildBlock",
@@ -390,7 +390,7 @@
     "view:child/:id": {
       "component": "EntityDetails",
       "config": {
-        "entity": "Child",
+        "entityType": "Child",
         "panels": [
           {
             "title": "Basic Information",
@@ -468,7 +468,7 @@
     "view:attendance/recurring-activity": {
       "component": "EntityList",
       "config": {
-        "entity": "RecurringActivity",
+        "entityType": "RecurringActivity",
         "columns": [
           "title",
           "type",
@@ -493,7 +493,7 @@
     "view:attendance/recurring-activity/:id": {
       "component": "EntityDetails",
       "config": {
-        "entity": "RecurringActivity",
+        "entityType": "RecurringActivity",
         "panels": [
           {
             "title": "Basic Information",
@@ -559,28 +559,6 @@
       "label": "Task",
       "labelPlural": "Tasks",
       "attributes": {}
-    },
-    "view:todo": {
-      "component": "TodoList",
-      "config": {
-        "entity": "Todo",
-        "columns": [
-          "deadline",
-          "subject",
-          "assignedTo",
-          "startDate",
-          "relatedEntities"
-        ],
-        "filters": [
-          {
-            "id": "assignedTo"
-          },
-          {
-            "id": "due-status",
-            "type": "prebuilt"
-          }
-        ]
-      }
     }
   }
 }

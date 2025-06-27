@@ -80,6 +80,7 @@ export interface BasicFilterConfig {
   type?: string;
   default?: string;
   label?: string;
+  singleSelectOnly?: boolean;
 }
 
 export interface BooleanFilterConfig extends BasicFilterConfig {
@@ -90,6 +91,7 @@ export interface BooleanFilterConfig extends BasicFilterConfig {
 export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {
   options: FilterSelectionOption<T>[];
 }
+
 export interface DateRangeFilterConfig extends BasicFilterConfig {
   options: DateRangeFilterConfigOption[];
 }
@@ -98,10 +100,6 @@ export interface DateRangeFilterConfigOption {
   startOffsets?: { amount: number; unit: unitOfTime.Base }[];
   endOffsets?: { amount: number; unit: unitOfTime.Base }[];
   label: string;
-}
-
-export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {
-  options: FilterSelectionOption<T>[];
 }
 
 export interface ConfigurableEnumFilterConfig<T> extends BasicFilterConfig {

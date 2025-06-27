@@ -19,13 +19,6 @@ export class TodosModule {
 
 const dynamicComponents: [string, AsyncComponent][] = [
   [
-    "TodoList",
-    () =>
-      import("./todo-list/todo-list.component").then(
-        (c) => c.TodoListComponent,
-      ),
-  ],
-  [
     "TodosRelatedToEntity",
     () =>
       import(
@@ -52,6 +45,13 @@ const dynamicComponents: [string, AsyncComponent][] = [
       import(
         "./recurring-interval/display-recurring-interval/display-recurring-interval.component"
       ).then((c) => c.DisplayRecurringIntervalComponent),
+  ],
+  [
+    "EditTodoCompletion",
+    () =>
+      import(
+        "./todo-completion/edit-todo-completion/edit-todo-completion.component"
+      ).then((c) => c.EditTodoCompletionComponent),
   ],
   [
     "DisplayTodoCompletion",

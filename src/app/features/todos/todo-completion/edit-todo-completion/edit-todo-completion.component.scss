@@ -1,0 +1,6 @@
+@use "variables/sizes";
+
+:host {
+  display: inline-block;
+  padding: sizes.$regular;
+}

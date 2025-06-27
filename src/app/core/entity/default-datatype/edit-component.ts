@@ -10,7 +10,9 @@ import { EntityForm } from "app/core/common-components/entity-form/entity-form.s
  * <T> refers to the type of the value which is processed in the component.
  */
 @Directive()
-export abstract class EditComponent<T> implements OnInit, OnChanges {
+export abstract class EditComponent<T, E extends Entity = Entity>
+  implements OnInit, OnChanges
+{
   /**
    * The configuration for this form field.
    */
@@ -24,7 +26,7 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
   /**
    * The entity which is edited.
    */
-  @Input() entity: Entity;
+  @Input() entity: E;
 
   /**
    * The form context with additional config and events.

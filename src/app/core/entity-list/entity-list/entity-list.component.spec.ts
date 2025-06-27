@@ -91,7 +91,10 @@ describe("EntityListComponent", () => {
       providers: [
         { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: FormDialogService, useValue: null },
+        {
+          provide: FormDialogService,
+          useValue: jasmine.createSpyObj(["openFormPopup", "openView"]),
+        },
       ],
     }).compileComponents();
   }));

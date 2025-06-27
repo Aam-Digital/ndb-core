@@ -4,7 +4,6 @@ import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
@@ -89,6 +88,6 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openFormPopup(entity, this.columns, TodoDetailsComponent);
+    this.formDialog.openView(entity);
   }
 }

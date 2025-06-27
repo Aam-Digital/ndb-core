@@ -10,6 +10,7 @@ export class ConfigurableEnumFilter<
     name: string,
     label: string,
     enumValues: ConfigurableEnumValue[],
+    singleSelectOnly: boolean = false,
   ) {
     const options: FilterSelectionOption<T>[] = enumValues.map(
       (enumValue: ConfigurableEnumValue) => ({
@@ -19,6 +20,6 @@ export class ConfigurableEnumFilter<
         filter: { [name + ".id"]: enumValue.id } as DataFilter<T>,
       }),
     );
-    super(name, options, label);
+    super(name, options, label, singleSelectOnly);
   }
 }

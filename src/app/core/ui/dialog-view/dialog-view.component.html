@@ -1,5 +1,9 @@
 <div mat-dialog-title>
-  <ng-container *ngTemplateOutlet="viewContext?.title?.template"></ng-container>
+  <div class="margin-top-regular">
+    <ng-container
+      *ngTemplateOutlet="viewContext?.title?.template"
+    ></ng-container>
+  </div>
   <div style="width: 24px"><!-- spacer for dialog close button--></div>
   <app-dialog-close class="dialog-close" mat-dialog-close></app-dialog-close>
 </div>

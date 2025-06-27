@@ -1,7 +1,7 @@
 <mat-form-field appearance="fill" class="full-width">
   <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
   <app-basic-autocomplete
-    [multi]="true"
+    [multi]="!filterConfig.singleSelectOnly"
     [options]="filterConfig.options"
     [formControl]="autocompleteControl"
     [optionToString]="getOptionLabel"
@@ -9,13 +9,21 @@
   >
     <ng-container autocompleteHeader>
       <div class="flex-row">
-        <button mat-flat-button i18n class="util-button" (click)="selectAll()">
-          Select All
-        </button>
         <button
           mat-flat-button
           i18n
-          class="util-button"
+          class="util-button flex-grow"
+          (click)="selectAll()"
+          [disabled]="!!filterConfig.singleSelectOnly"
+          [class.hidden]="!!filterConfig.singleSelectOnly"
+        >
+          Select All
+        </button>
+
+        <button
+          mat-flat-button
+          i18n
+          class="util-button flex-grow"
           (click)="deselectAll()"
         >
           Clear
