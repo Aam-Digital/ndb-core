@@ -44,7 +44,7 @@ export class ConfirmationDialogService {
     text: string,
     buttons: ConfirmationDialogButton[] = YesNoButtons,
     closeButton = true,
-  ): Promise<boolean> {
+  ): Promise<boolean | string | undefined> {
     const dialogRef = this.ngZone.run(() => {
       return this.dialog.open(ConfirmationDialogComponent, {
         data: {
