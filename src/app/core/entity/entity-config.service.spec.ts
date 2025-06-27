@@ -182,6 +182,11 @@ describe("EntityConfigService", () => {
     service.setupEntitiesFromConfig();
 
     const dynamicEntity = entityRegistry.get("NoExtends");
+
+    // Logging schema differences for debugging test failures.
+    // todo: remove these logs if the test passes reliably.
+    console.log("Expected:", [...Entity.schema.entries()]);
+    console.log("Received:", [...dynamicEntity.schema.entries()]);
     expect([...dynamicEntity.schema.entries()]).toEqual([
       ...Entity.schema.entries(),
     ]);
