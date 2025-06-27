@@ -38,16 +38,16 @@ export class AddressEditComponent {
    * The initially pre-selected location (displayed in addition to the search field allowing to change it).
    */
   @Input() selectedLocation: GeoLocation;
-
+  
   /**
    * Whether the search box is enabled and visible.
    */
   @Input() disabled: boolean;
-
+  
   manualAddressEnabled: boolean;
-
+  
   constructor(private confirmationDialog: ConfirmationDialogService) {}
-
+  
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;
     this.selectedLocationChange.emit(selected);
@@ -55,11 +55,11 @@ export class AddressEditComponent {
       this.selectedLocation?.geoLookup?.display_name !==
       this.selectedLocation?.locationString;
   }
-
+  
   clearLocation() {
     this.updateLocation(undefined);
   }
-
+  
   updateLocationString(value: string) {
     const manualAddress: string = value ?? "";
     if (manualAddress === "" && this.selectedLocation?.geoLookup) {
@@ -67,7 +67,7 @@ export class AddressEditComponent {
       // possible alternative UX: ask user if they want to remove the mapped location also? or update the location with the display_location?
       return;
     }
-
+    
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: this.selectedLocation?.geoLookup,
@@ -85,7 +85,7 @@ export class AddressEditComponent {
       // nothing changed, skip
       return;
     }
-
+    
     let manualAddress: string = this.selectedLocation?.locationString ?? "";
     let lookupAddress: string =
       value?.locationString ?? value?.geoLookup?.display_name ?? "";
@@ -93,7 +93,7 @@ export class AddressEditComponent {
       // auto-apply lookup location for empty field
       manualAddress = lookupAddress;
     }
-
+    
     if (manualAddress !== lookupAddress) {
       if (
         // if manualAddress has been automatically set before, we assume the user wants to auto update now also
@@ -108,7 +108,7 @@ export class AddressEditComponent {
         manualAddress = lookupAddress;
       }
     }
-
+    
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: value?.geoLookup,
