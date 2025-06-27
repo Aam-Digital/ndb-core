@@ -1,7 +1,25 @@
 <div class="padding-regular">
-  <p>[ {{ config.component }} ]</p>
+  @if (config.config?.entityType) {
+    <span i18n>Entity Type:</span> {{ targetEntityType?.ENTITY_TYPE }}
 
-  <p style="font-size: 0.9em; color: darkgray" i18n>
-    Editing advanced sub-sections is not supported yet in this preview.
-  </p>
+    <p class="hint-text" i18n>
+      You can select which fields should be shown or hidden in this panel.
+    </p>
+
+    <div>
+      <span i18n>Add Fields:</span>
+      <app-entity-fields-menu
+        [entityType]="targetEntityType"
+        [(activeFields)]="activeFields"
+        [availableFields]="allFields"
+        (activeFieldsChange)="updateFields(activeFields)"
+      ></app-entity-fields-menu>
+    </div>
+  } @else {
+    <p>[ {{ config.component }} ]</p>
+
+    <p class="hint-text" i18n>
+      Editing advanced sub-sections is not supported yet in this preview.
+    </p>
+  }
 </div>
