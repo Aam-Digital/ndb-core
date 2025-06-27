@@ -54,36 +54,27 @@ describe("EntityCountDashboardComponent", () => {
     expect(component.totalEntities).toBe(3);
   });
 
-  it("should calculate children per center correctly", async () => {
+  it("should calculate and order children per center correctly", async () => {
     const centerA = { id: "a", label: "CenterA" };
     const centerB = { id: "b", label: "CenterB" };
-    entityMapper.add(createChild(centerA));
+
+    // Add centerB first to ensure that the counts are properly sorted
     entityMapper.add(createChild(centerB));
+    entityMapper.add(createChild(centerA));
     entityMapper.add(createChild(centerA));
 
     await component.ngOnInit();
 
-    const currentlyShownGroupCounts =
+    const currentRows =
       component.entityGroupCounts[
         component.groupBy[component.currentGroupIndex]
       ];
-    expect(currentlyShownGroupCounts.length)
-      .withContext("unexpected number of centersWithProbability")
-      .toBe(2);
 
-    const actualCenterAEntry = currentlyShownGroupCounts.filter(
-      (e) => e.label === centerA.label,
-    )[0];
-    expect(actualCenterAEntry.value)
-      .withContext("child count of CenterA not correct")
-      .toBe(2);
+    const labels = currentRows.map((row) => row.label);
+    expect(labels).toEqual(["CenterA", "CenterB"]);
 
-    const actualCenterBEntry = currentlyShownGroupCounts.filter(
-      (e) => e.label === centerB.label,
-    )[0];
-    expect(actualCenterBEntry.value)
-      .withContext("child count of CenterB not correct")
-      .toBe(1);
+    const counts = currentRows.map((row) => row.value);
+    expect(counts).toEqual([2, 1]);
   });
 
   it("should groupBy enum values and display label", async () => {
