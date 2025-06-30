@@ -1,5 +1,11 @@
 <!-- Header: title + actions -->
 <app-view-title>
+  @if (entityConstructor?.icon) {
+    <fa-icon
+      [icon]="entityConstructor.icon"
+      class="standard-icon-with-text margin-left-regular"
+    ></fa-icon>
+  }
   @if (!entity?.isNew) {
     {{ entity?.toString() }}
   } @else {

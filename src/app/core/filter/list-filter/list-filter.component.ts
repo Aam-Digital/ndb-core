@@ -6,7 +6,10 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { SelectableFilter } from "../filters/filters";
 import { MatButtonModule } from "@angular/material/button";
 import { BasicAutocompleteComponent } from "app/core/common-components/basic-autocomplete/basic-autocomplete.component";
+import { asArray } from "../../../utils/asArray";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-list-filter",
   templateUrl: "./list-filter.component.html",
@@ -29,12 +32,19 @@ export class ListFilterComponent<E extends Entity> implements OnInit {
   ngOnInit() {
     this.autocompleteControl.setValue(this.filterConfig.selectedOptionValues);
 
-    this.autocompleteControl.valueChanges.subscribe((values) => {
-      this.filterConfig.selectedOptionChange.emit(values);
-    });
-    this.filterConfig.selectedOptionChange.subscribe((values) => {
-      this.autocompleteControl.setValue(values, { emitEvent: false });
-    });
+    this.autocompleteControl.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((values) => {
+        this.filterConfig.selectedOptionChange.emit(asArray(values));
+      });
+
+    this.filterConfig.selectedOptionChange
+      .pipe(untilDestroyed(this))
+      .subscribe((values) => {
+        this.autocompleteControl.setValue(asArray(values), {
+          emitEvent: false,
+        });
+      });
   }
 
   getOptionLabel = (option: any) => option.label;

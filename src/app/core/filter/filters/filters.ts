@@ -103,6 +103,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     public override name: string,
     public options: FilterSelectionOption<T>[],
     public override label: string = name,
+    public singleSelectOnly: boolean = false,
   ) {
     super(name, label);
     this.selectedOptionValues = [];
