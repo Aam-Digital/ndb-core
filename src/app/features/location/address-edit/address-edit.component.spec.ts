@@ -96,7 +96,7 @@ describe("AddressEditComponent", () => {
       geoLookup: undefined,
     };
     mockConfirmationDialog.getConfirmation.and.resolveTo(false);
-    component.updateFromAddressSearch(selected);
+    component.updateFromAddressSearch({ location: selected, userInput: "manual address" });
     tick();
     expect(component.selectedLocation).toEqual({
       locationString: "manual address",
@@ -109,7 +109,7 @@ describe("AddressEditComponent", () => {
       geoLookup: undefined,
     };
     mockConfirmationDialog.getConfirmation.and.resolveTo(true);
-    component.updateFromAddressSearch(selected);
+    component.updateFromAddressSearch({ location: selected, userInput: "manual address" });
     tick();
     expect(component.selectedLocation).toEqual({
       locationString: selected.locationString,
