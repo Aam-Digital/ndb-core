@@ -14,6 +14,7 @@ import { Logging } from "../logging/logging.service";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
 import { ConfigMigration } from "./config-migration";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
+import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -89,10 +90,14 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateGroupByConfig,
       migrateDefaultValue,
       migrateUserEntityAndPanels,
+      removeOutdatedTodoViews,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
-    const defaultConfigs: ConfigMigration[] = [addDefaultNoteDetailsConfig];
+    const defaultConfigs: ConfigMigration[] = [
+      addDefaultNoteDetailsConfig,
+      addDefaultTodoViews,
+    ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
       let docPart = rawValue;
@@ -366,6 +371,21 @@ const migrateUserEntityAndPanels: ConfigMigration = (key, configPart) => {
           (c: PanelComponent) => c.component === "UserSecurity",
         ),
     );
+  }
+
+  return configPart;
+};
+
+/**
+ * Remove outdated task view configs
+ * to fall back to the new default that is automatically added.
+ */
+const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
+  if (
+    configPart?.component === "TodoList" ||
+    configPart?.component === "TodoDetails"
+  ) {
+    return undefined; // remove this config
   }
 
   return configPart;

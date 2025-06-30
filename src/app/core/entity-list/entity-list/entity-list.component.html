@@ -9,7 +9,7 @@
     <div class="flex-row gap-regular">
       <app-entity-create-button
         [entityType]="entityConstructor"
-        (entityCreate)="addNew()"
+        (entityCreate)="addNew($event)"
       ></app-entity-create-button>
 
       <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
