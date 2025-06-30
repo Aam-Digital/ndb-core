@@ -443,8 +443,9 @@ const migrateActivitiesOverviewComponent: ConfigMigration = (
       ],
     },
   };
+};
 
- * Remove outdated task view configs
+/* Remove outdated task view configs
  * to fall back to the new default that is automatically added.
  */
 const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
