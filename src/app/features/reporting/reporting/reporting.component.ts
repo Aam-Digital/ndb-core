@@ -55,7 +55,7 @@ export class ReportingComponent {
   data: any[];
   exportableData: any;
 
-  dateRangeOptions: any[] = [];
+  dateRangeOptions: DateRangeFilterConfigOption[] = [];
 
   constructor(
     private configService: ConfigService,
