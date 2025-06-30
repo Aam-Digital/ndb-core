@@ -314,9 +314,12 @@ describe("EntityFormService", () => {
         config: { value: 1 },
       },
     };
-    Entity.schema.set("test", schema);
+    TestEntity.schema.set("test", schema);
 
-    let form = await service.createEntityForm([{ id: "test" }], new Entity());
+    let form = await service.createEntityForm(
+      [{ id: "test" }],
+      new TestEntity(),
+    );
     expect(form.formGroup.get("test")).toHaveValue(1);
 
     schema.defaultValue = {
@@ -324,7 +327,7 @@ describe("EntityFormService", () => {
       config: { value: PLACEHOLDERS.NOW },
     };
 
-    form = await service.createEntityForm([{ id: "test" }], new Entity());
+    form = await service.createEntityForm([{ id: "test" }], new TestEntity());
     expect(
       moment(form.formGroup.get("test").value).isSame(moment(), "minutes"),
     ).toBeTrue();
@@ -333,79 +336,82 @@ describe("EntityFormService", () => {
       mode: "dynamic",
       config: { value: PLACEHOLDERS.CURRENT_USER },
     };
-    form = await service.createEntityForm([{ id: "test" }], new Entity());
+    form = await service.createEntityForm([{ id: "test" }], new TestEntity());
     expect(form.formGroup.get("test")).toHaveValue(
       `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
     );
 
     schema.dataType = EntityDatatype.dataType;
     schema.isArray = true;
-    form = await service.createEntityForm([{ id: "test" }], new Entity());
+    form = await service.createEntityForm([{ id: "test" }], new TestEntity());
     expect(form.formGroup.get("test")).toHaveValue([
       `${TestEntity.ENTITY_TYPE}:${TEST_USER}`,
     ]);
 
-    Entity.schema.delete("test");
+    TestEntity.schema.delete("test");
   });
 
   it("should not fail if user entity does not exist and current user value is assigned", async () => {
     TestBed.inject(CurrentUserSubject).next(undefined);
 
     // simple property
-    Entity.schema.set("user", {
+    TestEntity.schema.set("user", {
       defaultValue: {
         mode: "dynamic",
         config: { value: PLACEHOLDERS.CURRENT_USER },
       },
     });
-    let form = await service.createEntityForm([{ id: "user" }], new Entity());
+    let form = await service.createEntityForm(
+      [{ id: "user" }],
+      new TestEntity(),
+    );
     expect(form.formGroup.get("user")).toHaveValue(null);
 
     // array property
-    Entity.schema.get("user").dataType = EntityDatatype.dataType;
-    Entity.schema.get("user").isArray = true;
-    form = await service.createEntityForm([{ id: "user" }], new Entity());
+    TestEntity.schema.get("user").dataType = EntityDatatype.dataType;
+    TestEntity.schema.get("user").isArray = true;
+    form = await service.createEntityForm([{ id: "user" }], new TestEntity());
     expect(form.formGroup.get("user")).toHaveValue(null);
 
-    Entity.schema.delete("user");
+    TestEntity.schema.delete("user");
   });
 
   it("should not assign default values to existing entities", async () => {
-    Entity.schema.set("test", {
+    TestEntity.schema.set("test", {
       defaultValue: {
         mode: "static",
         config: { value: 1 },
       },
     });
 
-    const entity = new Entity();
+    const entity = new TestEntity();
     entity._rev = "1-existing_entity";
     const form = await service.createEntityForm([{ id: "test" }], entity);
     expect(form.formGroup.get("test")).toHaveValue(null);
 
-    Entity.schema.delete("test");
+    TestEntity.schema.delete("test");
   });
 
   it("should not overwrite existing values with default value", async () => {
-    Entity.schema.set("test", {
+    TestEntity.schema.set("test", {
       defaultValue: {
         mode: "static",
         config: { value: 1 },
       },
     });
 
-    const entity = new Entity();
+    const entity = new TestEntity();
     entity["test"] = 2;
     const form = await service.createEntityForm([{ id: "test" }], entity);
     expect(form.formGroup.get("test")).toHaveValue(2);
 
-    Entity.schema.delete("test");
+    TestEntity.schema.delete("test");
   });
 
   it("should not save 'null' as value from empty form fields", async () => {
-    Entity.schema.set("test", { dataType: "string" });
+    TestEntity.schema.set("test", { dataType: "string" });
 
-    const entity = new Entity();
+    const entity = new TestEntity();
     const form = await service.createEntityForm([{ id: "test" }], entity);
     form.formGroup.get("test").reset();
     expect(form.formGroup.get("test").getRawValue()).toEqual(null);
@@ -419,6 +425,8 @@ describe("EntityFormService", () => {
     expect(actualSaved).toEqual(entity);
     // service should remove 'null' value, which are the default for empty form fields
     expect(actualSaved["test"]).not.toEqual(null);
+
+    TestEntity.schema.delete("test");
   });
 
   it("should add column definitions from property schema", () => {
