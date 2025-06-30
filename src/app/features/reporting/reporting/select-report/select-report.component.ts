@@ -127,15 +127,6 @@ export class SelectReportComponent implements OnChanges {
     this.setupDateRangeFilter();
   }
 
-  dateChange() {
-    if (this.isDateRangeReport && this.dateRangeFilterConfig) {
-      const range = this.dateRangeFilterConfig.getDateRange();
-      this.fromDate = range.start;
-      this.toDate = range.end;
-    }
-    this.dataChanged.emit();
-  }
-
   onDateRangeChange(event: { from: Date; to: Date }) {
     this.fromDate = event.from;
     this.toDate = event.to;

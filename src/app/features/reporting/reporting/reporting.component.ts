@@ -21,7 +21,10 @@ import { RouteTarget } from "../../../route-target";
 import { firstValueFrom } from "rxjs";
 import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
 import { ConfigService } from "app/core/config/config.service";
-import { DateRangeFilterConfig } from "app/core/entity-list/EntityListConfig";
+import {
+  DateRangeFilterConfig,
+  DateRangeFilterConfigOption,
+} from "app/core/entity-list/EntityListConfig";
 
 @RouteTarget("Reporting")
 @Component({

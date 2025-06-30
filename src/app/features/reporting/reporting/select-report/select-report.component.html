@@ -27,7 +27,6 @@
     @if (isDateRangeReport) {
       <app-date-range-filter
         [filterConfig]="dateRangeFilterConfig"
-        (selectedOptionChange)="dateChange()"
         (dateRangeChange)="onDateRangeChange($event)"
       ></app-date-range-filter>
     }
