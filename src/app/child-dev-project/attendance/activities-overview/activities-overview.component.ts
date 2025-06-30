@@ -6,6 +6,7 @@ import { FormFieldConfig } from "../../../core/common-components/entity-form/For
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
+import { ENTITY_DEFAULT_VALUES } from "app/utils/entity-default-values";
 
 /**
  * @deprecated configure a RelatedEntitiesComponent instead
@@ -36,13 +37,8 @@ export class ActivitiesOverviewComponent
       relevantValue: "",
     },
   };
-  override _columns: FormFieldConfig[] = [
-    this.titleColumn,
-    { id: "type" },
-    { id: "assignedTo" },
-    { id: "linkedGroups" },
-    { id: "excludedParticipants" },
-  ];
+  override _columns: FormFieldConfig[] =
+    ENTITY_DEFAULT_VALUES["ActivitiesOverview"].columns;
 
   override async ngOnInit() {
     this.titleColumn.additional.relevantValue = this.entity.getId();

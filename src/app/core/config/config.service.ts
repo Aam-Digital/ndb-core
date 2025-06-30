@@ -14,6 +14,7 @@ import { Logging } from "../logging/logging.service";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
 import { ConfigMigration } from "./config-migration";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
+import { ENTITY_DEFAULT_VALUES } from "app/utils/entity-default-values";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -89,6 +90,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateGroupByConfig,
       migrateDefaultValue,
       migrateUserEntityAndPanels,
+      migrateComponentEntityTypeDefaults,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
@@ -366,6 +368,35 @@ const migrateUserEntityAndPanels: ConfigMigration = (key, configPart) => {
           (c: PanelComponent) => c.component === "UserSecurity",
         ),
     );
+  }
+
+  return configPart;
+};
+
+/**
+ * Migration to set or update entityType for specific components
+ */
+const migrateComponentEntityTypeDefaults: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (typeof configPart !== "object" || !configPart?.component) {
+    return configPart;
+  }
+
+  if (!configPart.config) {
+    configPart.config = {};
+  }
+
+  const defaults = ENTITY_DEFAULT_VALUES[configPart.component];
+  if (defaults) {
+    configPart.config.entityType = defaults.entityType;
+    if (
+      !Array.isArray(configPart.config.columns) ||
+      configPart.config.columns.length === 0
+    ) {
+      configPart.config.columns = defaults.columns;
+    }
   }
 
   return configPart;
