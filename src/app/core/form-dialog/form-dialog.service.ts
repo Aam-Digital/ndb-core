@@ -21,7 +21,7 @@ import {
 @Injectable({ providedIn: "root" })
 export class FormDialogService {
   static dialogSettings: MatDialogConfig = {
-    width: "99%",
+    width: "90%",
     maxWidth: "980px",
   };
 
@@ -30,13 +30,13 @@ export class FormDialogService {
     private schemaService: EntitySchemaService,
   ) {}
 
-  openView<E extends Entity>(entity: E, component: string) {
+  openView<E extends Entity>(entity: E, component: string = "EntityDetails") {
     return this.dialog.open(DialogViewComponent, {
       width: "99%",
       maxWidth: "95vw",
       maxHeight: "90vh",
       // EntityDetails with its multiple tabs needs an explicit height to not change size between tabs
-      height: component === "EntityDetails" ? "90vh" : undefined,
+      height: component === "EntityDetails" ? "85vh" : undefined,
 
       data: {
         component: component,

@@ -1670,29 +1670,6 @@
         }
       },
       "_id": "entity:ChildSchoolRelation"
-    },
-    "view:todo": {
-      "component": "TodoList",
-      "config": {
-        "entityType": "Todo",
-        "columns": [
-          "deadline",
-          "subject",
-          "assignedTo",
-          "startDate",
-          "relatedEntities"
-        ],
-        "filters": [
-          {
-            "id": "assignedTo"
-          },
-          {
-            "id": "due-status",
-            "type": "prebuilt"
-          }
-        ]
-      },
-      "_id": "view:todo"
     }
   }
 }
