@@ -91,6 +91,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateDefaultValue,
       migrateUserEntityAndPanels,
       migrateComponentEntityTypeDefaults,
+      migrateActivitiesOverviewComponent,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
@@ -400,4 +401,35 @@ const migrateComponentEntityTypeDefaults: ConfigMigration = (
   }
 
   return configPart;
+};
+
+/**
+ * Migration to replace the deprecated `ActivitiesOverviewComponent`
+ * with the more generic `RelatedEntities` component in the config.
+ */
+const migrateActivitiesOverviewComponent: ConfigMigration = (
+  _key,
+  configPart,
+) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.component !== "ActivitiesOverview"
+  ) {
+    return configPart;
+  }
+
+  return {
+    ...configPart,
+    component: "RelatedEntities",
+    config: {
+      ...configPart.config,
+      columns: configPart.config?.columns ?? [
+        { id: "title" },
+        { id: "participants" },
+        { id: "start", visibleFrom: "sm" },
+        { id: "end", visibleFrom: "sm" },
+        { id: "assignedTo" },
+      ],
+    },
+  };
 };
