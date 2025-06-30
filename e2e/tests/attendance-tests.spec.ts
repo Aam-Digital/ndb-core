@@ -1,4 +1,4 @@
-import { expect, test } from "#e2e/fixtures.js";
+import { argosScreenshot, expect, test } from "#e2e/fixtures.js";
 
 test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("navigation").getByText("Attendance").click();
@@ -79,42 +79,13 @@ test("View and download attendance report", async ({ page }) => {
   expect((await downloadPromise).suggestedFilename()).toMatch("report.csv");
 });
 
-test("View attendance percentage color in children list", async ({ page }) => {
+test("Children list displays monthly attendance percentage", async ({
+  page,
+}) => {
   await page.getByRole("navigation").getByText("Children").click();
-
   await page.getByRole("tab", { name: "School Info" }).click();
-  const CoachingAttendance = page
-    .getByRole("columnheader", { name: "Attendance (School)" })
-    .locator("app-entity-field-label");
-  const rowCount = await CoachingAttendance.count();
-
-  for (let i = 0; i < rowCount; i++) {
-    const cell = CoachingAttendance.nth(i);
-
-    // Get the percentage value as text
-    const percentageText = await cell.textContent();
-    const percentage = parseInt(
-      percentageText?.replace("%", "").trim() || "0",
-      10,
-    );
-
-    let expectedColor;
-    if (percentage >= 80) {
-      expectedColor = "rgb(144, 238, 144)"; // Green highlight
-    } else if (percentage >= 60 && percentage < 80) {
-      expectedColor = "rgb(255, 165, 0)"; // Orange highlight
-    } else if (percentage < 60) {
-      expectedColor = "rgb(255, 99, 71)"; // Red highlight
-    }
-
-    if (expectedColor) {
-      // Verify the color of the cell
-      const color = await cell.evaluate(
-        (el) => window.getComputedStyle(el).backgroundColor,
-      );
-      expect(color).toBe(expectedColor);
-    }
-  }
+  await expect(page.getByRole("cell", { name: /\d+%/ })).toHaveCount(10);
+  await argosScreenshot(page, "children-school-info");
 });
 
 test("Attendance Dashboard View", async ({ page }) => {
@@ -205,63 +176,16 @@ test("Attendance Dashboard View", async ({ page }) => {
   }
 });
 
-test("Managing Attendance view and Recurring Activities list", async ({
-  page,
-}) => {
+test("Recurring activities list", async ({ page }) => {
   await page.getByRole("navigation").getByText("Attendance").click();
-  await page.locator("mat-list-item").filter({ hasText: "Attendance" }).click();
-  await expect(page).toHaveURL(/.*attendance/);
-
-  // Verify "Record Attendance" section
-  const recordAttendanceSection = page.getByText("Record Attendance", {
-    exact: true,
-  });
-  await expect(recordAttendanceSection).toBeVisible();
-
-  // Verify "Recurring Activities" section
-  const recurringActivitiesSection = page.getByText("Recurring Activities", {
-    exact: true,
-  });
-  await expect(recurringActivitiesSection).toBeVisible();
-
-  // Verify "Monthly Attendance" section
-  const monthlyAttendanceSection = page.getByText("Monthly Attendance");
-  await expect(monthlyAttendanceSection).toBeVisible();
-
-  /*
-      Navigate to "Manage Activities"
-    */
-  const manageActivitiesButton = page.getByRole("button", {
-    name: "Manage Activities",
-  });
-  await expect(manageActivitiesButton).toBeVisible();
-  await manageActivitiesButton.click();
-
-  // Check navigation to "Manage Activities" page
-  await expect(page).toHaveURL("/attendance/recurring-activity");
+  await page
+    .getByRole("button", {
+      name: "Manage Activities",
+    })
+    .click();
   await expect(
     page.getByRole("heading", { name: "Recurring Activities" }),
   ).toBeVisible();
-
-  /*
-      "Add New" button is visible for Recurring Activity
-    */
-  const addNewButton = page.getByRole("button", {
-    name: "add elementAdd New",
-  });
-  await expect(addNewButton).toBeVisible();
-
-  /*
-      Verify table columns for Recurring Activities
-    */
-  await expect(page.locator("text=Title")).toBeVisible();
-  await expect(page.locator("text=Type")).toBeVisible();
-  await expect(page.locator("text=Assigned user(s)")).toBeVisible();
-
-  // Verify pagination controls are visible
-  await expect(page.locator("text=Items per page")).toBeVisible();
-
-  // Verify "Include archived records" toggle
-  const archivedRecordsToggle = page.locator("text=Include archived records");
-  await expect(archivedRecordsToggle).toBeVisible();
+  await expect(page.getByRole("row")).toHaveCount(10);
+  await argosScreenshot(page, "recurring-activities-list");
 });
