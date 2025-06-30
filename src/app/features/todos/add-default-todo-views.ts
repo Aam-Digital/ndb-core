@@ -148,7 +148,7 @@ export const todoDueStatusFilter: PrebuiltFilterConfig<Todo> = {
       label: $localize`:Filter-option for todos:All Open`,
       filter: { isCompleted: false },
     },
-    { key: "", label: $localize`Any`, filter: {} },
+    { key: "any", label: $localize`Any`, filter: {} },
   ],
   singleSelectOnly: true,
   default: "current",
