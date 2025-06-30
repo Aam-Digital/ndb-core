@@ -136,6 +136,12 @@ export class SelectReportComponent implements OnChanges {
     this.dataChanged.emit();
   }
 
+  onDateRangeChange(event: { from: Date; to: Date }) {
+    this.fromDate = event.from;
+    this.toDate = event.to;
+    this.dataChanged.emit();
+  }
+
   private checkDateRangeReport(): void {
     if (this.selectedReport.mode !== "sql") {
       this.isDateRangeReport = true;

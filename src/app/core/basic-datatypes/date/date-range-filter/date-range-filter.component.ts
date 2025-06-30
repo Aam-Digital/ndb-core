@@ -31,6 +31,7 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
    * Emits an array with two elements, the selected from and to dates as string
    */
   @Output() selectedOptionChange = new EventEmitter<string[]>();
+  @Output() dateRangeChange = new EventEmitter<{ from: Date; to: Date }>();
 
   constructor(private dialog: MatDialog) {}
 
@@ -48,7 +49,10 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
     ) {
       this.fromDate = range.start;
       this.toDate = range.end;
-      this.selectedOptionChange.emit(this.filterConfig.selectedOptionValues);
+      this.filterConfig.selectedOptionChange.emit(
+        this.filterConfig.selectedOptionValues,
+      );
+      this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
     }
   }
 
@@ -57,7 +61,10 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
       isValidDate(this.toDate) ? dateToString(this.toDate) : "",
     ];
-    this.selectedOptionChange.emit(this.filterConfig.selectedOptionValues);
+    this.filterConfig.selectedOptionChange.emit(
+        this.filterConfig.selectedOptionValues,
+      );
+      this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
   }
 
   openDialog(e: Event) {

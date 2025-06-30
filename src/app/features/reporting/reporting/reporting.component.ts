@@ -21,6 +21,7 @@ import { RouteTarget } from "../../../route-target";
 import { firstValueFrom } from "rxjs";
 import { SqlV2TableComponent } from "./sql-v2-table/sql-v2-table.component";
 import { ConfigService } from "app/core/config/config.service";
+import { DateRangeFilterConfig } from "app/core/entity-list/EntityListConfig";
 
 @RouteTarget("Reporting")
 @Component({
@@ -71,10 +72,10 @@ export class ReportingComponent {
 
   private loadDateRangeOptionsFromConfig() {
     const reportViewConfig =
-      this.configService.getConfig<any>("view:report")?.config;
+      this.configService.getConfig<{ config?: { filters?: DateRangeFilterConfig[] } }>("view:report")?.config;
     if (reportViewConfig?.filters?.length) {
       const periodFilter = reportViewConfig.filters.find(
-        (f: any) => f.id === "reportPeriod",
+        (f: DateRangeFilterConfig) => f.id === "reportPeriod",
       );
       if (periodFilter && Array.isArray(periodFilter.options)) {
         this.dateRangeOptions = periodFilter.options;
