@@ -78,16 +78,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   columnsToDisplay: string[];
 
-  titleColumn: FormFieldConfig = {
-    id: "title",
-    editComponent: "EditTextWithAutocomplete",
-    additional: {
-      entityType: "RecurringActivity",
-      relevantProperty: "linkedGroups",
-      relevantValue: "",
-    },
-  };
-
   /**
    * This filter is applied before displaying the data.
    */
@@ -121,15 +111,14 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     this.property = this.property ?? this.getProperty();
     this.data = await this.getData();
     this.filter = this.initFilter();
-    this.titleColumn.additional.relevantValue = this.entity.getId();
-    console.log(this.titleColumn, "test");
-
-    if (this.showInactive === undefined) {
-      // show all related docs when visiting an archived entity
-      this.showInactive = this.entity.anonymized;
-    }
 
     this.listenToEntityUpdates();
+
+    //need to pass relevantValue for ActivitiesOverview
+    const titleColumn = this._columns?.find((col) => col.id === "title");
+    if (titleColumn?.additional?.relevantValue) {
+      titleColumn.additional.relevantValue = this.entity?.getId();
+    }
   }
 
   protected getData(): Promise<E[]> {

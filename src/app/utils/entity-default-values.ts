@@ -32,16 +32,6 @@ export const ENTITY_DEFAULT_VALUES: Record<
       { id: "completed", hideFromForm: true },
     ],
   },
-  ActivitiesOverview: {
-    entityType: "RecurringActivity",
-    columns: [
-      { id: "title" },
-      { id: "type" },
-      { id: "assignedTo" },
-      { id: "linkedGroups" },
-      { id: "excludedParticipants" },
-    ],
-  },
   ChildSchoolOverview: {
     entityType: "ChildSchoolRelation",
   },

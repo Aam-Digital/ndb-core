@@ -419,16 +419,22 @@ const migrateActivitiesOverviewComponent: ConfigMigration = (
   }
 
   return {
-    ...configPart,
     component: "RelatedEntities",
     config: {
-      ...configPart.config,
+      entityType: "RecurringActivity",
       columns: configPart.config?.columns ?? [
-        { id: "title" },
-        { id: "participants" },
-        { id: "start", visibleFrom: "sm" },
-        { id: "end", visibleFrom: "sm" },
+        {
+          id: "title",
+          editComponent: "EditTextWithAutocomplete",
+          additional: {
+            entityType: "RecurringActivity",
+            relevantProperty: "linkedGroups",
+            relevantValue: "",
+          },
+        },
         { id: "assignedTo" },
+        { id: "linkedGroups" },
+        { id: "excludedParticipants" },
       ],
     },
   };
