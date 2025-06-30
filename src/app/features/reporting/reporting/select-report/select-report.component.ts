@@ -79,7 +79,10 @@ export class SelectReportComponent implements OnChanges {
   @Input() reports: ReportEntity[];
   @Input() loading: boolean;
   @Input() exportableData: any;
+
+  /** Optionally overwrite the default time periods shown to users for quick selection */
   @Input() dateRangeOptions?: DateRangeFilterConfigOption[];
+
   @Output() calculateClick = new EventEmitter<CalculateReportOptions>();
   @Output() dataChanged = new EventEmitter<void>();
 
