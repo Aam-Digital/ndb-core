@@ -58,6 +58,7 @@ export const defaultTodoListView = {
     ],
     defaultSort: { active: "deadline", direction: "asc" },
     clickMode: "popup-details",
+    showInactive: true,
   },
 };
 
