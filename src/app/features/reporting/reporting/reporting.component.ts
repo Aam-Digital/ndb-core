@@ -71,8 +71,9 @@ export class ReportingComponent {
   }
 
   private loadDateRangeOptionsFromConfig() {
-    const reportViewConfig =
-      this.configService.getConfig<{ config?: { filters?: DateRangeFilterConfig[] } }>("view:report")?.config;
+    const reportViewConfig = this.configService.getConfig<{
+      config?: { filters?: DateRangeFilterConfig[] };
+    }>("view:report")?.config;
     if (reportViewConfig?.filters?.length) {
       const periodFilter = reportViewConfig.filters.find(
         (f: DateRangeFilterConfig) => f.id === "reportPeriod",

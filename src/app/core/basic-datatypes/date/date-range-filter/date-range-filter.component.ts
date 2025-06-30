@@ -62,9 +62,9 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       isValidDate(this.toDate) ? dateToString(this.toDate) : "",
     ];
     this.filterConfig.selectedOptionChange.emit(
-        this.filterConfig.selectedOptionValues,
-      );
-      this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
+      this.filterConfig.selectedOptionValues,
+    );
+    this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
   }
 
   openDialog(e: Event) {
