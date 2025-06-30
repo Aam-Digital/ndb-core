@@ -26,7 +26,11 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
   toDate: Date;
 
   @Input() filterConfig: DateFilter<T>;
-  @Output() selectedOptionChange = new EventEmitter<any>();
+
+  /**
+   * Emits an array with two elements, the selected from and to dates as string
+   */
+  @Output() selectedOptionChange = new EventEmitter<string[]>();
 
   constructor(private dialog: MatDialog) {}
 
