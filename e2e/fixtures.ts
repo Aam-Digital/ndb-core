@@ -74,7 +74,7 @@ export async function argosScreenshot(
 export async function loadApp(page: Page, entities?: Entity[]) {
   if (entities) {
     await page.addInitScript((data) => {
-      window["ndbDemoData"] = data;
+      window["e2eDemoData"] = data;
     }, serializeEntities(entities));
   }
 

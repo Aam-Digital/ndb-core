@@ -69,9 +69,9 @@ export class DemoDataInitializerService {
       DemoDataGeneratingProgressDialogComponent,
     );
 
-    if (window["ndbDemoData"]) {
+    if (window["e2eDemoData"]) {
       const db = this.dbResolver.getDatabase();
-      await db.putAll(window["ndbDemoData"]);
+      await db.putAll(window["e2eDemoData"]);
     } else {
       await this.demoDataService.publishDemoData();
     }
