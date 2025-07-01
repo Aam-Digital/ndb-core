@@ -16,18 +16,18 @@
     <mat-form-field floatLabel="always" class="full-width" style="margin-bottom: 0;">
       <mat-label i18n>Selected Location</mat-label>
       <textarea
-        #manualAddressInput
-        matInput
-        placeholder="no location selected"
-        i18n-placeholder
-        [value]="
-          selectedLocation?.locationString ??
-          selectedLocation?.geoLookup?.display_name
-        "
-        (change)="updateLocationString(manualAddressInput.value)"
-        [disabled]="true"
-        rows="2"
-      ></textarea>
+  #manualAddressInput
+  matInput
+  placeholder="no location selected"
+  i18n-placeholder
+  [value]="
+    selectedLocation?.locationString ??
+    selectedLocation?.geoLookup?.display_name
+  "
+  (change)="updateLocationString(manualAddressInput.value)"
+  [disabled]="disabled || !manualAddressEnabled"
+  rows="2"
+></textarea>
 
       @if (
         selectedLocation?.geoLookup?.display_name !==
