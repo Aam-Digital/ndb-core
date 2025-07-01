@@ -9,12 +9,6 @@ import { EntityFieldsMenuComponent } from "../../common-components/entity-fields
 import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 import { MatTableModule } from "@angular/material/table";
 import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
-import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDropList,
-  moveItemInArray,
-} from "@angular/cdk/drag-drop";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatSelect } from "@angular/material/select";
@@ -22,7 +16,7 @@ import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.com
 import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { Logging } from "../../logging/logging.service";
-import { ReorderableListComponent } from "app/utils/reorderable-list.component";
+import { ReorderableListComponent } from "app/utils/reorderable-list/reorderable-list.component";
 
 @Component({
   selector: "app-admin-entity-list",
@@ -31,9 +25,7 @@ import { ReorderableListComponent } from "app/utils/reorderable-list.component";
     EntityFieldsMenuComponent,
     MatTableModule,
     EntityFieldLabelComponent,
-    CdkDrag,
     FaIconComponent,
-    CdkDropList,
     MatFormField,
     MatLabel,
     MatSelect,
@@ -119,9 +111,5 @@ export class AdminEntityListComponent implements OnChanges {
 
   removeItem<E>(array: E[], item: E): E[] {
     return array.filter((currentItem) => currentItem !== item);
-  }
-
-  drop<E>(event: CdkDragDrop<E[], any>, columnsArray: E[]) {
-    moveItemInArray(columnsArray, event.previousIndex, event.currentIndex);
   }
 }
