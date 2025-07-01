@@ -38,6 +38,8 @@ export interface ReportCalculation {
   outcome: {
     result_hash: string;
   };
+
+  errorDetails?: string;
 }
 
 /**
@@ -281,7 +283,10 @@ export class SqlReportService {
       case "FINISHED_SUCCESS":
         return this.fetchReportCalculationData(value.id);
       default:
-        throw new Error("Invalid ReportCalculation outcome.");
+        throw new ReportCalculationError(
+          "Invalid ReportCalculation outcome.",
+          value,
+        );
     }
   }
 
@@ -341,5 +346,15 @@ export class SqlReportService {
     }
 
     return csv;
+  }
+}
+
+export class ReportCalculationError extends Error {
+  constructor(
+    message: string,
+    public reportCalculation: ReportCalculation,
+  ) {
+    super(message);
+    this.name = "ReportCalculationError";
   }
 }
