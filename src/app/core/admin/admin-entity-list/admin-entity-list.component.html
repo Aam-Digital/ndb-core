@@ -11,35 +11,35 @@
 </app-view-title>
 
 <div>
-  <div
-    cdkDropList
-    (cdkDropListDropped)="drop($event, config?.filters)"
-    cdkDropListOrientation="mixed"
-    class="drop-list flex-row gap-regular flex-wrap gap-large"
-  >
-    @for (filter of config?.filters; track filter) {
-      <div cdkDrag class="filter-field drop-item flex-row gap-small">
-        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-        <mat-form-field appearance="fill">
-          <mat-label>
-            <app-entity-field-label
-              [field]="filter"
-              [entityType]="entityConstructor"
-            ></app-entity-field-label>
-          </mat-label>
-          <mat-select disabled></mat-select>
-        </mat-form-field>
+  <app-reorderable-list
+    [items]="filters"
+    [orientation]="'mixed'"
+    [itemTemplate]="filterTemplate"
+    (itemsChange)="updateFilters($event)"
+  ></app-reorderable-list>
 
-        <fa-icon
-          icon="times"
-          class="remove-icon"
-          (click)="
-            filters = removeItem(filters, filter.id); updateFilters(filters)
-          "
-        ></fa-icon>
-      </div>
-    }
-  </div>
+  <ng-template #filterTemplate let-filter>
+    <div class="filter-field drop-item flex-row gap-small">
+      <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+      <mat-form-field appearance="fill">
+        <mat-label>
+          <app-entity-field-label
+            [field]="filter"
+            [entityType]="entityConstructor"
+          ></app-entity-field-label>
+        </mat-label>
+        <mat-select disabled></mat-select>
+      </mat-form-field>
+
+      <fa-icon
+        icon="times"
+        class="remove-icon"
+        (click)="
+          filters = removeItem(filters, filter.id); updateFilters(filters)
+        "
+      ></fa-icon>
+    </div>
+  </ng-template>
 
   <div class="table-content-preview">
     <span i18n>Add Filter:</span>
@@ -61,31 +61,31 @@
         [appAdminTabTemplate]="config?.columnGroups?.groups"
         let-item
       >
-        <div
-          class="table-header drop-list flex-row"
-          cdkDropList
-          cdkDropListOrientation="horizontal"
-          cdkDropListLockAxis="x"
-          (cdkDropListDropped)="drop($event, item.columns)"
-        >
-          @for (col of item["columns"]; track col) {
-            <div cdkDrag class="column-header drop-item flex-row gap-small">
-              <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+        <app-reorderable-list
+          [items]="item.columns"
+          [orientation]="'horizontal'"
+          [dropLockAxis]="'x'"
+          [itemTemplate]="columnTemplate"
+          (itemsChange)="item.columns = $event"
+        ></app-reorderable-list>
 
-              <!-- TODO: for custom column overrides, this cannot display the label yet -->
-              <app-entity-field-label
-                [field]="col"
-                [entityType]="entityConstructor"
-              ></app-entity-field-label>
+        <ng-template #columnTemplate let-col>
+          <div class="column-header drop-item flex-row gap-small">
+            <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
 
-              <fa-icon
-                icon="times"
-                class="remove-icon"
-                (click)="item.columns = removeItem(item.columns, col)"
-              ></fa-icon>
-            </div>
-          }
-        </div>
+            <!-- TODO: for custom column overrides, this cannot display the label yet -->
+            <app-entity-field-label
+              [field]="col"
+              [entityType]="entityConstructor"
+            ></app-entity-field-label>
+
+            <fa-icon
+              icon="times"
+              class="remove-icon"
+              (click)="item.columns = removeItem(item.columns, col)"
+            ></fa-icon>
+          </div>
+        </ng-template>
 
         <div class="table-content-preview">
           <span i18n>Drag & drop table column headers. Add columns:</span>

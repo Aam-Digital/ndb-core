@@ -8,15 +8,33 @@
       </p>
     </div>
 
-    <div>
-      <span i18n>Columns shown:</span>
-      <app-entity-fields-menu
-        [entityType]="targetEntityType"
-        [(activeFields)]="activeFields"
-        [availableFields]="allFields"
-        (activeFieldsChange)="updateFields(activeFields)"
-      ></app-entity-fields-menu>
+    <div class="margin-bottom-regular">
+      <app-reorderable-list
+        [items]="activeFields"
+        [orientation]="'horizontal'"
+        [itemTemplate]="fieldTemplate"
+        (itemsChange)="updateFields($event)"
+      ></app-reorderable-list>
+
+      <ng-template #fieldTemplate let-field let-remove="remove">
+        <div class="drop-item column-preview flex-row gap-small">
+          <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+          <app-entity-field-label
+            [field]="field"
+            [entityType]="targetEntityType"
+          ></app-entity-field-label>
+          <fa-icon icon="times" (click)="remove(field)"></fa-icon>
+        </div>
+      </ng-template>
     </div>
+    <span i18n>Columns shown:</span>
+
+    <app-entity-fields-menu
+      [entityType]="targetEntityType"
+      [(activeFields)]="activeFields"
+      [availableFields]="allFields"
+      (activeFieldsChange)="updateFields($event)"
+    ></app-entity-fields-menu>
   } @else {
     <p>[ {{ config.component }} ]</p>
 

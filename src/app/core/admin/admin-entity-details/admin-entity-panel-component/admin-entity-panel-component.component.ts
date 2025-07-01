@@ -5,10 +5,19 @@ import { EntityConstructor } from "../../../entity/model/entity";
 import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityFieldsMenuComponent } from "app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { ReorderableListComponent } from "app/utils/reorderable-list.component";
+import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-admin-entity-panel-component",
-  imports: [CommonModule, EntityFieldsMenuComponent],
+  imports: [
+    CommonModule,
+    EntityFieldsMenuComponent,
+    ReorderableListComponent,
+    EntityFieldLabelComponent,
+    FontAwesomeModule,
+  ],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
 })
