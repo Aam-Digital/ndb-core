@@ -15,7 +15,7 @@ import { RelatedEntitiesComponent } from "../../../core/entity-details/related-e
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
-import { ENTITY_DEFAULT_VALUES } from "app/utils/entity-default-values";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -32,7 +32,7 @@ export class NotesRelatedToEntityComponent
 {
   override entityCtr = Note;
   override _columns: FormFieldConfig[] =
-    ENTITY_DEFAULT_VALUES["NotesRelatedToEntity"].columns;
+    RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns;
 
   /**
    * returns the color for a note; passed to the entity subrecord component

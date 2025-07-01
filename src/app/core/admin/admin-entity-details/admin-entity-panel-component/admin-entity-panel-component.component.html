@@ -2,15 +2,17 @@
   @if (targetEntityType?.ENTITY_TYPE) {
     <span i18n>Entity Type:</span> {{ targetEntityType?.ENTITY_TYPE }}
 
-    <p class="hint-text" i18n>
-      You can select which fields should be shown or hidden in this panel.
-    </p>
+    <div class="margin-top-regular hint-text">
+      <p i18n>
+        You can select which fields should be shown or hidden in this panel.
+      </p>
+    </div>
 
     <div>
-      <span i18n>Add Fields:</span>
+      <span i18n>Columns shown:</span>
       <app-entity-fields-menu
         [entityType]="targetEntityType"
-        [(activeFields)]="activeFields"
+        [activeFields]="activeFields"
         [availableFields]="allFields"
         (activeFieldsChange)="updateFields(activeFields)"
       ></app-entity-fields-menu>

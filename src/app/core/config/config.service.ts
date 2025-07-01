@@ -14,7 +14,7 @@ import { Logging } from "../logging/logging.service";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
 import { ConfigMigration } from "./config-migration";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
-import { ENTITY_DEFAULT_VALUES } from "app/utils/entity-default-values";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 
 /**
@@ -394,7 +394,7 @@ const migrateComponentEntityTypeDefaults: ConfigMigration = (
     configPart.config = {};
   }
 
-  const defaults = ENTITY_DEFAULT_VALUES[configPart.component];
+  const defaults = RELATED_ENTITIES_DEFAULT_CONFIGS[configPart.component];
   if (defaults) {
     configPart.config.entityType = defaults.entityType;
     if (

@@ -13,7 +13,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { FilterService } from "../../../core/filter/filter.service";
-import { ENTITY_DEFAULT_VALUES } from "app/utils/entity-default-values";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -25,7 +25,7 @@ import { ENTITY_DEFAULT_VALUES } from "app/utils/entity-default-values";
 export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo> {
   override entityCtr = Todo;
   override _columns: FormFieldConfig[] =
-    ENTITY_DEFAULT_VALUES["TodosRelatedToEntity"].columns;
+    RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
 
   // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
   override filter: DataFilter<Todo> = { isActive: true };

@@ -5,7 +5,7 @@
 
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 
-export const ENTITY_DEFAULT_VALUES: Record<
+export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
   string,
   { entityType: string; columns?: FormFieldConfig[] }
 > = {
