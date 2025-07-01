@@ -38,6 +38,8 @@ export interface ReportCalculation {
   outcome: {
     result_hash: string;
   };
+
+  errorDetails?: string;
 }
 
 /**
@@ -149,13 +151,15 @@ export class SqlReportService {
           const key = keys[0];
           const value = item[key];
           if (Array.isArray(value)) {
+            const subRows = this.flattenData(value, level + 1);
+
             result.push({
               key,
-              value: this.sumChildValues(value),
+              value: this.sumChildValues(subRows, level + 1),
               level,
             });
 
-            result.push(...this.flattenData(value, level + 1));
+            result.push(...subRows);
           } else {
             result.push({ key, value, level });
           }
@@ -174,14 +178,15 @@ export class SqlReportService {
   /**
    * sum of all number values of this item
    *
-   * @param value any object array
+   * @param subRows the flattened child rows of this item
    */
-  private sumChildValues(value: any[]): number {
-    return value
-      .flatMap((it) => it)
-      .flatMap((it) => Object.values(it))
-      .filter((valueType) => typeof valueType === "number")
-      .reduce((p, n) => p + n);
+  private sumChildValues(subRows: SqlReportRow[], level: number): number {
+    return subRows
+      .filter((r) => r.level === level)
+      .reduce(
+        (sum, row) => sum + (typeof row.value === "number" ? row.value : 0),
+        0,
+      );
   }
 
   /**
@@ -278,7 +283,10 @@ export class SqlReportService {
       case "FINISHED_SUCCESS":
         return this.fetchReportCalculationData(value.id);
       default:
-        throw new Error("Invalid ReportCalculation outcome.");
+        throw new ReportCalculationError(
+          "Invalid ReportCalculation outcome.",
+          value,
+        );
     }
   }
 
@@ -338,5 +346,15 @@ export class SqlReportService {
     }
 
     return csv;
+  }
+}
+
+export class ReportCalculationError extends Error {
+  constructor(
+    message: string,
+    public reportCalculation: ReportCalculation,
+  ) {
+    super(message);
+    this.name = "ReportCalculationError";
   }
 }

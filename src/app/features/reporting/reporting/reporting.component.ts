@@ -15,6 +15,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { ReportEntity } from "../report-config";
 import {
   ReportCalculation,
+  ReportCalculationError,
   SqlReportService,
 } from "../sql-report/sql-report.service";
 import { RouteTarget } from "../../../route-target";
@@ -78,10 +79,14 @@ export class ReportingComponent {
       selectedReport,
       fromDate,
       toDate,
-    ).catch((reason) => {
+    ).catch((reason: ReportCalculationError | Error) => {
       this.isLoading = false;
       this.isError = true;
-      this.errorDetails = reason.message || reason;
+      this.errorDetails =
+        (reason.message ?? reason) +
+        " " +
+        ((reason as ReportCalculationError)?.reportCalculation?.errorDetails ??
+          "");
       return Promise.reject(reason.message || reason);
     });
 

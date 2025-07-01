@@ -299,4 +299,75 @@ describe("SqlReportService", () => {
 `;
     expect(result).toEqual(expectedCsv);
   });
+
+  it("should convert double-nested data into SqlReportRow[]", async () => {
+    // Given
+    let data = [
+      {
+        "total reached": [
+          {
+            "<18": [
+              [
+                {
+                  "count(*)": 2,
+                  gender: "M",
+                },
+              ],
+            ],
+          },
+          {
+            "18+": [
+              [
+                {
+                  "count(*)": 2,
+                  gender: "M",
+                },
+                {
+                  "count(*)": 1,
+                  gender: "F",
+                },
+              ],
+            ],
+          },
+        ],
+      },
+    ];
+
+    // When
+    const result = service.flattenData(data);
+
+    // Then
+    expect(result).toEqual([
+      {
+        key: "total reached",
+        value: 5,
+        level: 0,
+      },
+      {
+        key: "<18",
+        value: 2,
+        level: 1,
+      },
+      {
+        key: "gender: M",
+        value: 2,
+        level: 2,
+      },
+      {
+        key: "18+",
+        value: 3,
+        level: 1,
+      },
+      {
+        key: "gender: M",
+        value: 2,
+        level: 2,
+      },
+      {
+        key: "gender: F",
+        value: 1,
+        level: 2,
+      },
+    ]);
+  });
 });
