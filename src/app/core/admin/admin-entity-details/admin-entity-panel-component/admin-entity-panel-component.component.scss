@@ -1,27 +1,4 @@
-@use "variables/colors";
-
 .hint-text {
   font-size: 0.9em;
   color: darkgray;
-}
-
-.column-preview {
-  align-items: center;
-}
-.drag-handle {
-  cursor: move;
-  margin: auto;
-  color: colors.$accent;
-}
-app-entity-fields-menu {
-  color: colors.$accent;
-}
-
-.remove-icon {
-  cursor: pointer;
-  margin: auto;
-}
-.drop-item:has(.remove-icon:hover) {
-  color: rgb(255, 0, 0);
-  background-color: rgba(255, 0, 0, 0.1);
 }

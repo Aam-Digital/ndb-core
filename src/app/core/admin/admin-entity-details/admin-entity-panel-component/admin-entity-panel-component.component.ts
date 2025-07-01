@@ -19,7 +19,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     FontAwesomeModule,
   ],
   templateUrl: "./admin-entity-panel-component.component.html",
-  styleUrl: "./admin-entity-panel-component.component.scss",
+  styleUrls: [
+    "./admin-entity-panel-component.component.scss",
+    "../../admin-entity-list/admin-entity-list.component.scss",
+  ],
 })
 export class AdminEntityPanelComponentComponent implements OnInit {
   @Input() config: PanelComponent;

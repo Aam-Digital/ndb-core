@@ -4,7 +4,8 @@
 
     <div class="margin-top-regular hint-text">
       <p i18n>
-        You can select which fields should be shown or hidden in this panel.
+        Select which fields should be visible in this panel. You can also
+        reorder them to control their display sequence.
       </p>
     </div>
 
@@ -23,7 +24,11 @@
             [field]="field"
             [entityType]="targetEntityType"
           ></app-entity-field-label>
-          <fa-icon icon="times" (click)="remove(field)"></fa-icon>
+          <fa-icon
+            icon="times"
+            class="remove-icon"
+            (click)="remove(field)"
+          ></fa-icon>
         </div>
       </ng-template>
     </div>

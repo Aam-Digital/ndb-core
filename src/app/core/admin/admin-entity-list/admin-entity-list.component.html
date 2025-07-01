@@ -18,7 +18,7 @@
     (itemsChange)="updateFilters($event)"
   ></app-reorderable-list>
 
-  <ng-template #filterTemplate let-filter>
+  <ng-template #filterTemplate let-filter let-remove="remove">
     <div class="filter-field drop-item flex-row gap-small">
       <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
       <mat-form-field appearance="fill">
@@ -34,9 +34,7 @@
       <fa-icon
         icon="times"
         class="remove-icon"
-        (click)="
-          filters = removeItem(filters, filter.id); updateFilters(filters)
-        "
+        (click)="remove(filter)"
       ></fa-icon>
     </div>
   </ng-template>
@@ -69,7 +67,7 @@
           (itemsChange)="item.columns = $event"
         ></app-reorderable-list>
 
-        <ng-template #columnTemplate let-col>
+        <ng-template #columnTemplate let-col let-remove="remove">
           <div class="column-header drop-item flex-row gap-small">
             <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
 
@@ -82,7 +80,7 @@
             <fa-icon
               icon="times"
               class="remove-icon"
-              (click)="item.columns = removeItem(item.columns, col)"
+              (click)="remove(col)"
             ></fa-icon>
           </div>
         </ng-template>

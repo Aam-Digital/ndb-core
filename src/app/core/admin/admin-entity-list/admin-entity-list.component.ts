@@ -108,8 +108,4 @@ export class AdminEntityListComponent implements OnChanges {
   newColumnGroupFactory(): GroupConfig {
     return { name: "", columns: [] };
   }
-
-  removeItem<E>(array: E[], item: E): E[] {
-    return array.filter((currentItem) => currentItem !== item);
-  }
 }
