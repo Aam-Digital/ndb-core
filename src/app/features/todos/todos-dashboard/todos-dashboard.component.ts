@@ -2,7 +2,6 @@ import { Component, Input } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import moment from "moment";
 import { DashboardListWidgetComponent } from "../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { DatePipe, NgStyle } from "@angular/common";
@@ -70,6 +69,6 @@ export class TodosDashboardComponent extends DashboardWidget {
   };
 
   openEntity(entity: Todo) {
-    this.formDialog.openFormPopup(entity, undefined, TodoDetailsComponent);
+    this.formDialog.openView(entity);
   }
 }

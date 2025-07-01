@@ -61,7 +61,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 }
 
-function generateNotes(params: {
+export function generateNotes(params: {
   children: Entity[];
   authors: Entity[];
   minNotesPerChild: number;
@@ -174,6 +174,7 @@ function generateGroupNote(params: { children: Entity[]; author: Entity }) {
 
   return note;
 }
+
 /**
  * Set all older notes to be "resolved" in order to keep the list of notes needing follow-up limited in the demo.
  */
