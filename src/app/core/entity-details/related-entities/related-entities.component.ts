@@ -119,11 +119,12 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
     this.listenToEntityUpdates();
 
-    //need to pass relevantValue for ActivitiesOverview
-    const titleColumn = this._columns?.find((col) => col.id === "title");
-    if (titleColumn?.additional?.relevantValue) {
-      titleColumn.additional.relevantValue = this.entity?.getId();
-    }
+    // added relatedEntitiesParent (e.g., current RecurringActivity or School) to each column with additional config
+    this._columns?.forEach((column) => {
+      if (column.additional) {
+        column.relatedEntitiesParent = this.entity;
+      }
+    });
   }
 
   protected getData(): Promise<E[]> {
