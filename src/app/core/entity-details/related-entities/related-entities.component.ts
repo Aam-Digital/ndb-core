@@ -112,6 +112,11 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     this.data = await this.getData();
     this.filter = this.initFilter();
 
+    if (this.showInactive === undefined) {
+      // show all related docs when visiting an archived entity
+      this.showInactive = this.entity.anonymized;
+    }
+
     this.listenToEntityUpdates();
 
     //need to pass relevantValue for ActivitiesOverview
