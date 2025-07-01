@@ -85,35 +85,50 @@ describe("AddressEditComponent", () => {
     expect(component.selectedLocation).toBeUndefined();
   });
 
-  it("should offer to update manual address after location was selected from search", fakeAsync(() => {
-    const selected: GeoLocation = {
-      locationString: SAMPLE_GEO_RESULT.display_name,
-      geoLookup: SAMPLE_GEO_RESULT,
-    };
+it("should update manual address with suggested address and append extra details if present", fakeAsync(() => {
+  const SAMPLE_GEO_RESULT: GeoResult = {
+    lat: 1,
+    lon: 1,
+    display_name: "lookup address",
+  };
 
-    component.selectedLocation = {
-      locationString: "manual address",
-      geoLookup: undefined,
-    };
-    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
-    component.updateFromAddressSearch({ location: selected, userInput: "manual address" });
-    tick();
-    expect(component.selectedLocation).toEqual({
-      locationString: "manual address",
-      geoLookup: SAMPLE_GEO_RESULT,
-    });
+  // Case 1: Extra details present
+  const selectedWithExtra: GeoLocation = {
+    locationString: SAMPLE_GEO_RESULT.display_name,
+    geoLookup: SAMPLE_GEO_RESULT,
+  };
 
-    // test user confirms
-    component.selectedLocation = {
-      locationString: "manual address",
-      geoLookup: undefined,
-    };
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
-    component.updateFromAddressSearch({ location: selected, userInput: "manual address" });
-    tick();
-    expect(component.selectedLocation).toEqual({
-      locationString: selected.locationString,
-      geoLookup: SAMPLE_GEO_RESULT,
-    });
-  }));
+  component.selectedLocation = {
+    locationString: "manual address",
+    geoLookup: undefined,
+  };
+
+  component.updateFromAddressSearch({
+    location: selectedWithExtra,
+    userInput: "lookup address Manual"
+  });
+  tick();
+
+  expect(component.selectedLocation).toEqual({
+    locationString: "lookup address\nManual",
+    geoLookup: SAMPLE_GEO_RESULT,
+  });
+
+  // Case 2: No extra details, user input matches suggestion
+  component.selectedLocation = {
+    locationString: "lookup address",
+    geoLookup: undefined,
+  };
+
+  component.updateFromAddressSearch({
+    location: selectedWithExtra,
+    userInput: "lookup address"
+  });
+  tick();
+
+  expect(component.selectedLocation).toEqual({
+    locationString: "lookup address",
+    geoLookup: SAMPLE_GEO_RESULT,
+  });
+}));
 });

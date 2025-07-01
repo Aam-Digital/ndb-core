@@ -97,18 +97,20 @@ describe("AddressSearchComponent", () => {
   }));
 
   it("should emit new location if value is selected and clear search field", async () => {
-    const input = await loader.getHarness(MatInputHarness);
-    const selected = { display_name: "selected" } as GeoResult;
-    spyOn(component.locationSelected, "emit");
+  const input = await loader.getHarness(MatInputHarness);
+  const selected = { display_name: "selected" } as GeoResult;
+  spyOn(component.locationSelected, "emit");
 
-    component.selectLocation(selected);
+  component['lastUserInput'] = "";
 
-    expect(component.locationSelected.emit).toHaveBeenCalledWith({
-      geoLookup: selected,
-    } as GeoLocation);
-    await expectAsync(input.getValue()).toBeResolvedTo("");
+  await component.selectLocation(selected);
+
+  expect(component.locationSelected.emit).toHaveBeenCalledWith({
+    location: { geoLookup: selected },
+    userInput: ""
   });
-
+  await expectAsync(input.getValue()).toBeResolvedTo("");
+});
   it("should handle network errors", fakeAsync(async () => {
     const error = new HttpErrorResponse({ status: 0 });
     mockGeoService.lookup.and.returnValue(throwError(() => error));
