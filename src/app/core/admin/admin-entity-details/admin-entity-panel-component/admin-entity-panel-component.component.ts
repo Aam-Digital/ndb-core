@@ -17,7 +17,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   @Input() entityType: EntityConstructor;
 
   allFields: ColumnConfig[] = [];
-  // Stores the currently active/selected field IDs to be shown in the panel
+  /** Stores the currently active/selected field IDs to be shown in the panel */
   activeFields: string[];
   // Represents the entity type that current panel is linked to
   targetEntityType: EntityConstructor;
