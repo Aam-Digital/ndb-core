@@ -108,10 +108,9 @@ function serializeEntities(entities: Entity[]): unknown[] {
     },
   });
 
-  const config = new Config(Config.CONFIG_KEY, defaultJsonConfig);
   const entityConfigService = new EntityConfigService(null, entityRegistry);
   entityConfigService.setupEntities(
-    Object.entries(config.data.data).flatMap(([id, config]) => {
+    Object.entries(defaultJsonConfig.data).flatMap(([id, config]) => {
       if (id.startsWith("entity:")) {
         return [[id.substring("entity:".length), config as EntityConfig]];
       } else {
