@@ -15,7 +15,6 @@ import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.data
 import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype.js";
 import defaultJsonConfig from "#src/assets/base-configs/education/Config_CONFIG_ENTITY.json";
-import { Config } from "#src/app/core/config/config.js";
 import { faker } from "#src/app/core/demo-data/faker.js";
 import { entityRegistry } from "#src/app/core/entity/database-entity.decorator.js";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype.js";
