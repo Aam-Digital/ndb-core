@@ -1,7 +1,6 @@
-<div class="flex-row align-center full-width" style="gap: 16px;">
-
+<div class="flex-row align-center full-width" style="gap: 16px">
   @if (!disabled) {
-    <div class="flex-row align-center full-width" style="gap: 4px; flex: 1 1 0;">
+    <div class="flex-row align-center full-width" style="gap: 4px; flex: 1 1 0">
       <app-address-search
         (locationSelected)="updateFromAddressSearch($event)"
         class="full-width"
@@ -12,22 +11,26 @@
     </div>
   }
 
-  <div class="flex-row align-center full-width" style="gap: 4px; flex: 1 1 0;">
-    <mat-form-field floatLabel="always" class="full-width" style="margin-bottom: 0;">
+  <div class="flex-row align-center full-width" style="gap: 4px; flex: 1 1 0">
+    <mat-form-field
+      floatLabel="always"
+      class="full-width"
+      style="margin-bottom: 0"
+    >
       <mat-label i18n>Selected Location</mat-label>
       <textarea
-  #manualAddressInput
-  matInput
-  placeholder="no location selected"
-  i18n-placeholder
-  [value]="
-    selectedLocation?.locationString ??
-    selectedLocation?.geoLookup?.display_name
-  "
-  (change)="updateLocationString(manualAddressInput.value)"
-  [disabled]="disabled || !manualAddressEnabled"
-  rows="2"
-></textarea>
+        #manualAddressInput
+        matInput
+        placeholder="no location selected"
+        i18n-placeholder
+        [value]="
+          selectedLocation?.locationString ??
+          selectedLocation?.geoLookup?.display_name
+        "
+        (change)="updateLocationString(manualAddressInput.value)"
+        [disabled]="disabled || !manualAddressEnabled"
+        rows="2"
+      ></textarea>
 
       @if (
         selectedLocation?.geoLookup?.display_name !==

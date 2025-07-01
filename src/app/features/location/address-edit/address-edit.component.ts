@@ -37,14 +37,14 @@ export class AddressEditComponent {
    * The initially pre-selected location (displayed in addition to the search field allowing to change it).
    */
   @Input() selectedLocation: GeoLocation;
-  
+
   /**
    * Whether the search box is enabled and visible.
    */
   @Input() disabled: boolean;
-  
+
   manualAddressEnabled: boolean;
-  
+
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;
     this.selectedLocationChange.emit(selected);
@@ -52,11 +52,11 @@ export class AddressEditComponent {
       this.selectedLocation?.geoLookup?.display_name !==
       this.selectedLocation?.locationString;
   }
-  
+
   clearLocation() {
     this.updateLocation(undefined);
   }
-  
+
   updateLocationString(value: string) {
     const manualAddress: string = value ?? "";
     if (manualAddress === "" && this.selectedLocation?.geoLookup) {
@@ -64,59 +64,60 @@ export class AddressEditComponent {
       // possible alternative UX: ask user if they want to remove the mapped location also? or update the location with the display_location?
       return;
     }
-    
+
     this.updateLocation({
       locationString: manualAddress,
       geoLookup: this.selectedLocation?.geoLookup,
     });
   }
 
- /**
- * Extracts extra details from the user's input that are not present in the suggestion.
- * Handles abbreviations, punctuation, and house numbers, generically.
- */
-private extractExtraLine(userInput: string, selectedSuggestion: string): string {
-  // Normalize and split into words
-  const normalize = (str: string) =>
-    str.replace(/[.,]/g, "")
-      .replace(/\s+/g, " ")
-      .trim()
-      .toLowerCase();
+  /**
+   * Extracts extra details from the user's input that are not present in the suggestion.
+   * Handles abbreviations, punctuation, and house numbers, generically.
+   */
+  private extractExtraLine(
+    userInput: string,
+    selectedSuggestion: string,
+  ): string {
+    // Normalize and split into words
+    const normalize = (str: string) =>
+      str.replace(/[.,]/g, "").replace(/\s+/g, " ").trim().toLowerCase();
 
-  const inputClean = normalize(userInput);
-  const suggestionClean = normalize(selectedSuggestion);
+    const inputClean = normalize(userInput);
+    const suggestionClean = normalize(selectedSuggestion);
 
-  // Split into word sets for comparison
-  const inputWords = new Set(inputClean.split(" "));
-  const suggestionWords = new Set(suggestionClean.split(" "));
+    // Split into word sets for comparison
+    const inputWords = new Set(inputClean.split(" "));
+    const suggestionWords = new Set(suggestionClean.split(" "));
 
-  // Find words in input that are not in suggestion
-  const unmatchedWords = Array.from(inputWords).filter(
-    word => word && !suggestionWords.has(word)
-  );
+    // Find words in input that are not in suggestion
+    const unmatchedWords = Array.from(inputWords).filter(
+      (word) => word && !suggestionWords.has(word),
+    );
 
-  // Heuristic: Only keep words that look like house numbers, apartments, or short extras
-  const likelyExtras = unmatchedWords.filter(
-    word =>
-      /^[0-9]+[a-zA-Z]?$/i.test(word) || // 17a, 12, 5b
-      /^[a-zA-Z]+[0-9]+$/i.test(word) || // Apt5, Haus7
-      word.length <= 6 // short extras like "EG", "OG", "Süd"
-  );
+    // Heuristic: Only keep words that look like house numbers, apartments, or short extras
+    const likelyExtras = unmatchedWords.filter(
+      (word) =>
+        /^[0-9]+[a-zA-Z]?$/i.test(word) || // 17a, 12, 5b
+        /^[a-zA-Z]+[0-9]+$/i.test(word) || // Apt5, Haus7
+        word.length <= 6, // short extras like "EG", "OG", "Süd"
+    );
 
-  // If nothing matches, fallback to all unmatched words
-  const resultWords = likelyExtras.length > 0 ? likelyExtras : unmatchedWords;
+    // If nothing matches, fallback to all unmatched words
+    const resultWords = likelyExtras.length > 0 ? likelyExtras : unmatchedWords;
 
-  // Join and capitalize
-  let result = resultWords.join(" ").trim();
-  if (result.length > 0) {
-    result = result.charAt(0).toUpperCase() + result.slice(1);
+    // Join and capitalize
+    let result = resultWords.join(" ").trim();
+    if (result.length > 0) {
+      result = result.charAt(0).toUpperCase() + result.slice(1);
+    }
+
+    return result;
   }
-
-  return result;
-}
-  async updateFromAddressSearch(
-    event: { location: GeoLocation, userInput: string },
-  ) {
+  async updateFromAddressSearch(event: {
+    location: GeoLocation;
+    userInput: string;
+  }) {
     const value = event.location;
     const userInput = event.userInput;
 
@@ -132,15 +133,19 @@ private extractExtraLine(userInput: string, selectedSuggestion: string): string 
 
     if (userInput && value?.geoLookup?.display_name) {
       // Extract only unmatched details from user input
-      const extra = this.extractExtraLine(userInput, value.geoLookup.display_name);
+      const extra = this.extractExtraLine(
+        userInput,
+        value.geoLookup.display_name,
+      );
 
       if (extra) {
-        manualAddress = value.geoLookup.display_name + '\n' + extra;
+        manualAddress = value.geoLookup.display_name + "\n" + extra;
       } else {
         manualAddress = value.geoLookup.display_name;
       }
     } else {
-      manualAddress = value?.locationString ?? value?.geoLookup?.display_name ?? "";
+      manualAddress =
+        value?.locationString ?? value?.geoLookup?.display_name ?? "";
     }
 
     this.updateLocation({

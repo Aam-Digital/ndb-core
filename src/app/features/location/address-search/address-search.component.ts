@@ -75,7 +75,10 @@ export class AddressSearchComponent implements OnInit {
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
    */
-  @Output() locationSelected = new EventEmitter<{ location: GeoLocation, userInput: string }>();
+  @Output() locationSelected = new EventEmitter<{
+    location: GeoLocation;
+    userInput: string;
+  }>();
 
   filteredOptions = new BehaviorSubject<GeoResult[]>([]);
   loading = false;
