@@ -104,7 +104,7 @@ export class MapPopupComponent {
 
   private setHelpText(data: MapPopupConfig) {
     if (data.hasOwnProperty("helpText")) {
-      this.helpText = data.helpText!;
+      this.helpText = data.helpText;
     }
   }
 
