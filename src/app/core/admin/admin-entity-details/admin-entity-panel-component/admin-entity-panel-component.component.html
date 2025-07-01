@@ -12,7 +12,7 @@
       <span i18n>Columns shown:</span>
       <app-entity-fields-menu
         [entityType]="targetEntityType"
-        [activeFields]="activeFields"
+        [(activeFields)]="activeFields"
         [availableFields]="allFields"
         (activeFieldsChange)="updateFields(activeFields)"
       ></app-entity-fields-menu>
