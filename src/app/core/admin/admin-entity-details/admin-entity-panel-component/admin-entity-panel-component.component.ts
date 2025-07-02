@@ -26,10 +26,7 @@ import { lastValueFrom } from "rxjs";
     FormsModule,
   ],
   templateUrl: "./admin-entity-panel-component.component.html",
-  styleUrls: [
-    "./admin-entity-panel-component.component.scss",
-    "../../admin-entity-list/admin-entity-list.component.scss",
-  ],
+  styleUrl: "./admin-entity-panel-component.component.scss",
 })
 export class AdminEntityPanelComponentComponent implements OnInit {
   @Input() config: PanelComponent;
