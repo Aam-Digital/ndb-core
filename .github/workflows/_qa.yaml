@@ -87,7 +87,7 @@ jobs:
           key: ${{ runner.os }}-playwright-v1-${{ hashFiles('package-lock.json') }}
 
       - if: steps.cache-playwright.outputs.cache-hit != 'true'
-        run: npm exec playwright install chromium
+        run: npx playwright install chromium
 
       - name: Cache angular
         uses: actions/cache@v4
@@ -95,7 +95,7 @@ jobs:
           path: .angular/cache
           key: angular-v1-devel-${{ hashFiles('package-lock.json') }}
 
-      - run: npm exec ng build --configuration=development
+      - run: npx ng build --configuration=development
 
       # See playwright.config.ts for more CI-specific configuration
       - run: npx playwright test
