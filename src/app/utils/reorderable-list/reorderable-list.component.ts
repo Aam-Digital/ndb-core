@@ -19,11 +19,9 @@ import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entit
 
 @Component({
   selector: "app-reorderable-list",
-  standalone: true,
   imports: [CommonModule, CdkDropList, CdkDrag, EntityFieldsMenuComponent],
   templateUrl: "./reorderable-list.component.html",
   styleUrls: ["./reorderable-list.component.scss"],
-  encapsulation: ViewEncapsulation.None,
 })
 export class ReorderableListComponent {
   @Input() items: any[] = [];
@@ -46,7 +44,7 @@ export class ReorderableListComponent {
     this.itemsChange.emit([...this.items]);
   }
 
-  handleActiveFieldsChange(updatedItems: (string | ColumnConfig)[]) {
+  updateItems(updatedItems: (string | ColumnConfig)[]) {
     this.items = [...updatedItems];
     this.itemsChange.emit(this.items);
   }
