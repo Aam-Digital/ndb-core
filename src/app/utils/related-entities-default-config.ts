@@ -7,7 +7,7 @@ import { FormFieldConfig } from "app/core/common-components/entity-form/FormConf
 
 export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
   string,
-  { entityType: string; columns?: FormFieldConfig[] }
+  { entityType: string; columns?: FormFieldConfig[]; single?: boolean }
 > = {
   NotesRelatedToEntity: {
     entityType: "Note",
@@ -34,5 +34,6 @@ export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
   },
   ChildSchoolOverview: {
     entityType: "ChildSchoolRelation",
+    single: true,
   },
 };
