@@ -44,6 +44,9 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
     ) {
       this.fromDate = range.start;
       this.toDate = range.end;
+      this.filterConfig.selectedOptionChange.emit(
+        this.filterConfig.selectedOptionValues,
+      );
       this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
     }
   }
@@ -53,6 +56,9 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
       isValidDate(this.toDate) ? dateToString(this.toDate) : "",
     ];
+    this.filterConfig.selectedOptionChange.emit(
+      this.filterConfig.selectedOptionValues,
+    );
     this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
   }
 
