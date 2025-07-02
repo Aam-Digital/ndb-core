@@ -35,9 +35,8 @@ export class AdminMenuComponent implements OnInit {
   menuItems: MenuItemForAdminUi[];
   readonly navigationContainer = "navigation-container";
 
-  private readonly entityMapper = inject(EntityMapperService);
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private readonly entityMapper: EntityMapperService) {}
 
   async ngOnInit() {
     await this.loadNavigationConfig();
