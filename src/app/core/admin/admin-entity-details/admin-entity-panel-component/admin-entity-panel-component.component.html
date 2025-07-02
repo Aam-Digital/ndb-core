@@ -6,7 +6,7 @@
         [(ngModel)]="entityTypeModel"
         (ngModelChange)="onEntityTypeChange($event)"
         [multi]="false"
-        [showInternalTypes] = "true"
+        [showInternalTypes]="true"
       ></app-entity-type-select>
     </mat-form-field>
 
@@ -17,37 +17,30 @@
       </p>
     </div>
 
-    <div class="margin-bottom-regular">
-      <app-reorderable-list
-        [items]="activeFields"
-        [orientation]="'horizontal'"
-        [itemTemplate]="fieldTemplate"
-        (itemsChange)="updateFields($event)"
-      ></app-reorderable-list>
-
-      <ng-template #fieldTemplate let-field let-remove="remove">
-        <div class="drop-item column-preview flex-row gap-small">
-          <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
-          <app-entity-field-label
-            [field]="field"
-            [entityType]="targetEntityType"
-          ></app-entity-field-label>
-          <fa-icon
-            icon="times"
-            class="remove-icon"
-            (click)="remove(field)"
-          ></fa-icon>
-        </div>
-      </ng-template>
-    </div>
-    <span i18n>Columns shown:</span>
-
-    <app-entity-fields-menu
+    <app-reorderable-list
+      [items]="activeFields"
+      [availableItems]="allFields"
       [entityType]="targetEntityType"
-      [(activeFields)]="activeFields"
-      [availableFields]="allFields"
-      (activeFieldsChange)="updateFields($event)"
-    ></app-entity-fields-menu>
+      [orientation]="'mixed'"
+      [itemTemplate]="fieldTemplate"
+      [fieldLabel]="'Columns shown:'"
+      (itemsChange)="updateFields($event)"
+    ></app-reorderable-list>
+
+    <ng-template #fieldTemplate let-field let-remove="remove">
+      <div class="drop-item column-preview flex-row gap-small">
+        <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+        <app-entity-field-label
+          [field]="field"
+          [entityType]="targetEntityType"
+        ></app-entity-field-label>
+        <fa-icon
+          icon="times"
+          class="remove-icon"
+          (click)="remove(field)"
+        ></fa-icon>
+      </div>
+    </ng-template>
   } @else {
     <p>[ {{ config.component }} ]</p>
 

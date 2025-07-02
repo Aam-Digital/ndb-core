@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityFieldsMenuComponent } from "app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ReorderableListComponent } from "app/utils/reorderable-list/reorderable-list.component";
 import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
@@ -23,7 +22,6 @@ import { lastValueFrom } from "rxjs";
   selector: "app-admin-entity-panel-component",
   imports: [
     CommonModule,
-    EntityFieldsMenuComponent,
     ReorderableListComponent,
     EntityFieldLabelComponent,
     FontAwesomeModule,

@@ -5,7 +5,6 @@ import {
   EntityListConfig,
   GroupConfig,
 } from "../../entity-list/EntityListConfig";
-import { EntityFieldsMenuComponent } from "../../common-components/entity-fields-menu/entity-fields-menu.component";
 import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 import { MatTableModule } from "@angular/material/table";
 import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
@@ -22,7 +21,6 @@ import { ReorderableListComponent } from "#src/app/utils/reorderable-list/reorde
   selector: "app-admin-entity-list",
   imports: [
     CommonModule,
-    EntityFieldsMenuComponent,
     MatTableModule,
     EntityFieldLabelComponent,
     FaIconComponent,
