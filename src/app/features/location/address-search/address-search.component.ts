@@ -151,7 +151,10 @@ export class AddressSearchComponent implements OnInit {
       result = { locationString: selected };
     }
 
-    this.locationSelected.emit({ location: result, userInput: this.lastUserInput });
+    this.locationSelected.emit({
+      location: result,
+      userInput: this.lastUserInput,
+    });
     this.filteredOptions.next([]);
   }
 

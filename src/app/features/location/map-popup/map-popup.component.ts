@@ -159,25 +159,27 @@ export class MapPopupComponent {
     );
   }
 
-  private async showAddressMismatchDialog(): Promise<"continue" | "update" | undefined> {
-  const result = await this.confirmationDialog.getConfirmation(
-    $localize`Address Mismatch`,
-    $localize`Address details captured does not match with the location on the map. What would you like to do?`,
-    [
-      {
-        text: $localize`Continue (with old address)`,
-        dialogResult: "continue",
-        click: () => {},
-      },
-      {
-        text: $localize`Update to new address`,
-        dialogResult: "update",
-        click: () => {},
-      },
-    ],
-  );
-  return result === "continue" || result === "update" ? result : undefined;
-}
+  private async showAddressMismatchDialog(): Promise<
+    "continue" | "update" | undefined
+  > {
+    const result = await this.confirmationDialog.getConfirmation(
+      $localize`Address Mismatch`,
+      $localize`Address details captured does not match with the location on the map. What would you like to do?`,
+      [
+        {
+          text: $localize`Continue (with old address)`,
+          dialogResult: "continue",
+          click: () => {},
+        },
+        {
+          text: $localize`Update to new address`,
+          dialogResult: "update",
+          click: () => {},
+        },
+      ],
+    );
+    return result === "continue" || result === "update" ? result : undefined;
+  }
 
   private async handleConfirmationResult(
     result: string | boolean | undefined,
