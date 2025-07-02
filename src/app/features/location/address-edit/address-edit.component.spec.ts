@@ -85,8 +85,15 @@ describe("AddressEditComponent", () => {
     expect(component.selectedLocation).toBeUndefined();
   });
 
-  it("should offer to update manual address after location was selected from search", fakeAsync(() => {
-    const selected: GeoLocation = {
+  it("should update manual address with suggested address and append extra details if present", fakeAsync(() => {
+    const SAMPLE_GEO_RESULT: GeoResult = {
+      lat: 1,
+      lon: 1,
+      display_name: "lookup address",
+    };
+
+    // Case 1: Extra details present
+    const selectedWithExtra: GeoLocation = {
       locationString: SAMPLE_GEO_RESULT.display_name,
       geoLookup: SAMPLE_GEO_RESULT,
     };
@@ -95,24 +102,32 @@ describe("AddressEditComponent", () => {
       locationString: "manual address",
       geoLookup: undefined,
     };
-    mockConfirmationDialog.getConfirmation.and.resolveTo(false);
-    component.updateFromAddressSearch(selected);
+
+    component.updateFromAddressSearch({
+      location: selectedWithExtra,
+      userInput: "lookup address Manual",
+    });
     tick();
+
     expect(component.selectedLocation).toEqual({
-      locationString: "manual address",
+      locationString: "lookup address\nManual",
       geoLookup: SAMPLE_GEO_RESULT,
     });
 
-    // test user confirms
+    // Case 2: No extra details, user input matches suggestion
     component.selectedLocation = {
-      locationString: "manual address",
+      locationString: "lookup address",
       geoLookup: undefined,
     };
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
-    component.updateFromAddressSearch(selected);
+
+    component.updateFromAddressSearch({
+      location: selectedWithExtra,
+      userInput: "lookup address",
+    });
     tick();
+
     expect(component.selectedLocation).toEqual({
-      locationString: selected.locationString,
+      locationString: "lookup address",
       geoLookup: SAMPLE_GEO_RESULT,
     });
   }));
