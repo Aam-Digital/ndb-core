@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { sortBy } from "lodash-es";
 
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
@@ -22,6 +23,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
 import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enum/configurable-enum.types";
+import { ConfigurableEnumService } from "app/core/basic-datatypes/configurable-enum/configurable-enum.service";
 
 /**
  * Configuration (stored in Config document in the DB) for the dashboard widget.
@@ -129,6 +131,7 @@ export class EntityCountDashboardComponent
     private entityMapper: EntityMapperService,
     private router: Router,
     private entities: EntityRegistry,
+    private configurableEnum: ConfigurableEnumService,
   ) {
     super();
   }
@@ -157,16 +160,14 @@ export class EntityCountDashboardComponent
 
   private calculateGroupCounts(
     entities: Entity[],
-    groupByField: string,
+    fieldName: string,
   ): GroupCountRow[] {
-    const groupByType = this._entity.schema.get(groupByField);
-    const groups = groupBy(entities, groupByField as keyof Entity);
-    return groups.map(([group, entities]) => {
+    const field = this._entity.schema.get(fieldName);
+    const groupedByEntity =
+      field.dataType === EntityDatatype.dataType ? field.additional : undefined;
+    const groups = groupBy(entities, fieldName as keyof Entity);
+    const groupCounts = groups.map(([group, entities]) => {
       const label = extractHumanReadableLabel(group);
-      const groupedByEntity =
-        groupByType.dataType === EntityDatatype.dataType
-          ? groupByType.additional
-          : undefined;
       return {
         label: label,
         value: entities.length,
@@ -174,6 +175,22 @@ export class EntityCountDashboardComponent
         groupedByEntity: groupedByEntity,
       };
     });
+
+    if (field.dataType === "configurable-enum") {
+      const enumValues = this.configurableEnum.getEnumValues(field.additional);
+      const groupCountsMap = new Map(
+        groupCounts.map((aggregate) => [aggregate.id, aggregate]),
+      );
+      const groupCountSorted = enumValues
+        .map((enumValue) => groupCountsMap.get(enumValue.id))
+        .filter(Boolean);
+      if (groupCountsMap.has("")) {
+        groupCountSorted.unshift(groupCountsMap.get(""));
+      }
+      return groupCountSorted;
+    }
+
+    return groupCounts;
   }
 
   goToEntityList(filterId: string) {
