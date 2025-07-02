@@ -129,10 +129,12 @@ export class AdminMenuComponent implements OnInit {
     const { uniqueId, isNew, ...rest } = item as any;
 
     // If it's an EntityMenuItem (has entityType), only keep entityType and subMenu
-    if ('entityType' in rest && rest.entityType) {
+    if ("entityType" in rest && rest.entityType) {
       const entityMenuItem: any = { entityType: rest.entityType };
       if (item.subMenu?.length) {
-        entityMenuItem.subMenu = item.subMenu.map((sub) => this.toPlainMenuItem(sub));
+        entityMenuItem.subMenu = item.subMenu.map((sub) =>
+          this.toPlainMenuItem(sub),
+        );
       }
       return entityMenuItem;
     }
