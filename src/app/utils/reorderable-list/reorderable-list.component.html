@@ -4,11 +4,11 @@
   [cdkDropListLockAxis]="dropLockAxis"
   (cdkDropListDropped)="drop($event)"
 >
-  <div class="flex-row gap-regular flex-wrap gap-large column">
+  <div class="flex-row gap-regular flex-wrap gap-large column-header">
     @for (item of items; track getFieldId(item)) {
       <div cdkDrag class="drop-item">
         @if (templateType === "filter") {
-          <div class="flex-row gap-small">
+          <div class="flex-row gap-small filter-field">
             <fa-icon
               icon="grip-vertical"
               size="xl"
