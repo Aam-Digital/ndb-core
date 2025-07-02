@@ -7,10 +7,6 @@ import {
 } from "../../entity-list/EntityListConfig";
 import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 import { MatTableModule } from "@angular/material/table";
-import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { MatSelect } from "@angular/material/select";
 import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
@@ -22,11 +18,6 @@ import { ReorderableListComponent } from "#src/app/utils/reorderable-list/reorde
   imports: [
     CommonModule,
     MatTableModule,
-    EntityFieldLabelComponent,
-    FaIconComponent,
-    MatFormField,
-    MatLabel,
-    MatSelect,
     AdminTabsComponent,
     AdminTabTemplateDirective,
     ViewTitleComponent,

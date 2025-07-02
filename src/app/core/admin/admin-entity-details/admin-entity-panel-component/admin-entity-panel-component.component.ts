@@ -5,8 +5,6 @@ import { EntityConstructor } from "../../../entity/model/entity";
 import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ReorderableListComponent } from "app/utils/reorderable-list/reorderable-list.component";
-import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
@@ -23,8 +21,6 @@ import { lastValueFrom } from "rxjs";
   imports: [
     CommonModule,
     ReorderableListComponent,
-    EntityFieldLabelComponent,
-    FontAwesomeModule,
     EntityTypeSelectComponent,
     MatFormFieldModule,
     FormsModule,

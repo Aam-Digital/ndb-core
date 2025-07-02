@@ -16,31 +16,10 @@
     [availableItems]="allFields"
     [entityType]="entityConstructor"
     [orientation]="'mixed'"
-    [itemTemplate]="filterTemplate"
+    [templateType]="'filter'"
     [fieldLabel]="'Add Filter:'"
     (itemsChange)="updateFilters($event)"
   ></app-reorderable-list>
-
-  <ng-template #filterTemplate let-filter let-remove="remove">
-    <div class="filter-field drop-item flex-row gap-small">
-      <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-      <mat-form-field appearance="fill">
-        <mat-label>
-          <app-entity-field-label
-            [field]="filter"
-            [entityType]="entityConstructor"
-          ></app-entity-field-label>
-        </mat-label>
-        <mat-select disabled></mat-select>
-      </mat-form-field>
-
-      <fa-icon
-        icon="times"
-        class="remove-icon"
-        (click)="remove(filter)"
-      ></fa-icon>
-    </div>
-  </ng-template>
 
   <div class="mat-elevation-z1">
     <app-admin-tabs
@@ -56,28 +35,9 @@
           [availableItems]="allFields"
           [entityType]="entityConstructor"
           [orientation]="'mixed'"
-          [itemTemplate]="columnTemplate"
           [fieldLabel]="'Drag & drop table column headers. Add columns:'"
           (itemsChange)="item.columns = $event"
         ></app-reorderable-list>
-
-        <ng-template #columnTemplate let-col let-remove="remove">
-          <div class="column-header drop-item flex-row gap-small">
-            <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
-
-            <!-- TODO: for custom column overrides, this cannot display the label yet -->
-            <app-entity-field-label
-              [field]="col"
-              [entityType]="entityConstructor"
-            ></app-entity-field-label>
-
-            <fa-icon
-              icon="times"
-              class="remove-icon"
-              (click)="remove(col)"
-            ></fa-icon>
-          </div>
-        </ng-template>
       </ng-template>
     </app-admin-tabs>
   </div>

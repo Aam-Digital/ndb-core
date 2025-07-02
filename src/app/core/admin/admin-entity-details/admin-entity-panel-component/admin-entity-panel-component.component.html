@@ -22,25 +22,9 @@
       [availableItems]="allFields"
       [entityType]="targetEntityType"
       [orientation]="'mixed'"
-      [itemTemplate]="fieldTemplate"
       [fieldLabel]="'Columns shown:'"
       (itemsChange)="updateFields($event)"
     ></app-reorderable-list>
-
-    <ng-template #fieldTemplate let-field let-remove="remove">
-      <div class="drop-item column-preview flex-row gap-small">
-        <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
-        <app-entity-field-label
-          [field]="field"
-          [entityType]="targetEntityType"
-        ></app-entity-field-label>
-        <fa-icon
-          icon="times"
-          class="remove-icon"
-          (click)="remove(field)"
-        ></fa-icon>
-      </div>
-    </ng-template>
   } @else {
     <p>[ {{ config.component }} ]</p>
 

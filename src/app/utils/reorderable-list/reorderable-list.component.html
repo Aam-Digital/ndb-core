@@ -5,14 +5,44 @@
   (cdkDropListDropped)="drop($event)"
 >
   <div class="flex-row gap-regular flex-wrap gap-large column">
-    @for (item of items; track item) {
+    @for (item of items; track getFieldId(item)) {
       <div cdkDrag class="drop-item">
-        <ng-container
-          *ngTemplateOutlet="
-            itemTemplate;
-            context: { $implicit: item, remove: remove.bind(this) }
-          "
-        ></ng-container>
+        @if (templateType === "filter") {
+          <div class="flex-row gap-small">
+            <fa-icon
+              icon="grip-vertical"
+              size="xl"
+              class="drag-handle"
+            ></fa-icon>
+            <mat-form-field appearance="fill">
+              <mat-label>
+                <app-entity-field-label
+                  [field]="item"
+                  [entityType]="entityType"
+                ></app-entity-field-label>
+              </mat-label>
+              <mat-select disabled></mat-select>
+            </mat-form-field>
+            <fa-icon
+              icon="times"
+              class="remove-icon"
+              (click)="remove(item)"
+            ></fa-icon>
+          </div>
+        } @else {
+          <div class="default-item flex-row gap-small align-center">
+            <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+            <app-entity-field-label
+              [field]="getFieldId(item)"
+              [entityType]="entityType"
+            ></app-entity-field-label>
+            <fa-icon
+              icon="times"
+              class="remove-icon"
+              (click)="remove(item)"
+            ></fa-icon>
+          </div>
+        }
       </div>
     }
   </div>
