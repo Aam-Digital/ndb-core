@@ -126,30 +126,25 @@ export class AdminMenuComponent implements OnInit {
   }
 
   private toPlainMenuItem(item: MenuItemForAdminUi): MenuItem {
-    const { uniqueId, isNew, ...rest } = item as any;
-
-    // If it's an EntityMenuItem (has entityType), only keep entityType and subMenu
-    if ("entityType" in rest && rest.entityType) {
-      const entityMenuItem: any = { entityType: rest.entityType };
-      if (item.subMenu?.length) {
-        entityMenuItem.subMenu = item.subMenu.map((sub) =>
-          this.toPlainMenuItem(sub),
-        );
-      }
-      return entityMenuItem;
+  // If it's an EntityMenuItem (has entityType), only keep entityType and subMenu
+  if ('entityType' in item && item.entityType) {
+    const entityMenuItem: any = { entityType: item.entityType };
+    if (item.subMenu?.length) {
+      entityMenuItem.subMenu = item.subMenu.map((sub) => this.toPlainMenuItem(sub));
     }
-
-    // Otherwise, return as normal MenuItem
-    return {
-      label: rest.label,
-      icon: rest.icon,
-      link: rest.link,
-      subMenu: item.subMenu?.length
-        ? item.subMenu.map((sub) => this.toPlainMenuItem(sub))
-        : undefined,
-    };
+    return entityMenuItem;
   }
 
+  // Otherwise, return as normal MenuItem,
+  return {
+    label: item.label,
+    icon: item.icon,
+    link: item.link,
+    subMenu: item.subMenu?.length
+      ? item.subMenu.map((sub) => this.toPlainMenuItem(sub))
+      : undefined,
+  };
+}
   async cancel() {
     await this.loadNavigationConfig();
   }
