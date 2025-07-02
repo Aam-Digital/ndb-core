@@ -11,7 +11,6 @@ import { Title } from "@angular/platform-browser";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
-import { FileModule } from "../../features/file/file.module";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
@@ -24,7 +23,7 @@ describe("SiteSettingsService", () => {
     localStorage.clear();
     entityMapper = mockEntityMapper();
     TestBed.configureTestingModule({
-      imports: [CoreTestingModule, ConfigurableEnumModule, FileModule],
+      imports: [CoreTestingModule, ConfigurableEnumModule],
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
         EntityAbility,
