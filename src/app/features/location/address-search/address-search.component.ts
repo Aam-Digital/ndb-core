@@ -139,7 +139,6 @@ export class AddressSearchComponent implements OnInit {
 
   async selectLocation(selected: GeoResult | string | undefined) {
     let result: GeoLocation;
-    const userInput = this.lastUserInput;
 
     if (typeof selected === "object") {
       result = { geoLookup: selected };
@@ -152,7 +151,7 @@ export class AddressSearchComponent implements OnInit {
       result = { locationString: selected };
     }
 
-    this.locationSelected.emit({ location: result, userInput });
+    this.locationSelected.emit({ location: result, userInput: this.lastUserInput });
     this.filteredOptions.next([]);
   }
 
