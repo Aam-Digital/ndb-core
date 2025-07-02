@@ -62,6 +62,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   }
 
   private initializeFields(): void {
+    console.log(this.config);
     if (!this.targetEntityType) return;
     const targetEntitySchemaFields = Array.from(
       this.targetEntityType.schema.keys(),
@@ -108,6 +109,8 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     }
 
     this.updateConfigForNewEntityType(newType);
+    this.applyCustomOverrides(newType);
+
     this.activeFields = [];
     this.initializeFields();
   }
@@ -126,6 +129,13 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     return await lastValueFrom(dialogRef.afterClosed());
   }
 
+  /**
+   * Updates the configuration and component reference based on the newly selected entity type.
+   * This resets the target entity type, sets the new entity type in the config,
+   * and applies default column configurations if available.
+   *
+   * @param newType - The new entity type selected.
+   */
   private updateConfigForNewEntityType(newType: string) {
     this.entityTypeModel = newType;
     this.config.config.entityType = newType;
@@ -136,11 +146,44 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     );
 
     if (matchingEntry) {
-      const [componentKey] = matchingEntry;
+      const [componentKey, defaults] = matchingEntry;
       this.config.component = componentKey;
+      this.config.config.columns = [...(defaults.columns ?? [])];
     } else {
-      delete this.config.component;
+      this.config.config.columns = [];
     }
-    this.config.config.columns = [];
+  }
+
+  /**
+   * Applies custom configuration overrides for specific entity types.
+   * This is used to customize properties such as component name, loader method, or additional config values.
+   *
+   * @param newType - The new entity type being configured.
+   */
+  private applyCustomOverrides(newType: string) {
+    delete this.config.config.loaderMethod;
+    delete this.config.config.property;
+
+    switch (newType) {
+      case "Aser":
+      case "HealthCheck":
+        this.config.config.property = this.entityType.ENTITY_TYPE.toLowerCase();
+        this.config.component = "RelatedEntities";
+        break;
+
+      case "EducationalMaterial":
+        this.config.config.property = this.entityType.ENTITY_TYPE.toLowerCase();
+        this.config.component = "RelatedEntitiesWithSummary";
+        break;
+
+      case "HistoricalEntityData":
+        this.config.config.loaderMethod = "HistoricalDataService";
+        this.config.component = "RelatedEntities";
+        break;
+
+      case "RecurringActivity":
+        this.config.component = "RelatedEntities";
+        break;
+    }
   }
 }
