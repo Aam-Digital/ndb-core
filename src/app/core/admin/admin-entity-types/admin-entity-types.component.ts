@@ -117,9 +117,7 @@ export class AdminEntityTypesComponent implements OnInit {
     newConfig.data[EntityConfigService.getListViewId(entityConfig)] =
       listViewConfig;
 
-    const data = newConfig.data as { [key: string]: any };
-
-    this.addEntityMenuItem(data, id);
+    this.addEntityMenuItem(newConfig.data as { [key: string]: any }, id);
 
     await this.entityMapper.save(newConfig);
   }
