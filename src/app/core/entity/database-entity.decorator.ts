@@ -48,6 +48,6 @@ export function DatabaseEntity(entityType: string) {
     // append parent schema definitions
     const parentConstructor = Object.getPrototypeOf(constructor);
     const schema = getEntitySchema(constructor);
-    parentConstructor.schema.forEach((value, key) => schema.set(key, value));
+    parentConstructor.schema?.forEach((value, key) => schema.set(key, value));
   };
 }
