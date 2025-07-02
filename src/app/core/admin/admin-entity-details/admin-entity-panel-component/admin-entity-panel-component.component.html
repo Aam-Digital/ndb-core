@@ -1,6 +1,14 @@
 <div class="padding-regular">
   @if (targetEntityType?.ENTITY_TYPE) {
-    <span i18n>Entity Type:</span> {{ targetEntityType?.ENTITY_TYPE }}
+    <mat-form-field appearance="fill" class="margin-bottom-regular">
+      <mat-label i18n>Entity Type</mat-label>
+      <app-entity-type-select
+        [(ngModel)]="entityTypeModel"
+        (ngModelChange)="onEntityTypeChange($event)"
+        [multi]="false"
+        [showInternalTypes] = "true"
+      ></app-entity-type-select>
+    </mat-form-field>
 
     <div class="margin-top-regular hint-text">
       <p i18n>

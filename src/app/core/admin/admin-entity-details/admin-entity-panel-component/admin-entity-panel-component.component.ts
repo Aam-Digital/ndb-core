@@ -8,6 +8,16 @@ import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { ReorderableListComponent } from "app/utils/reorderable-list/reorderable-list.component";
 import { EntityFieldLabelComponent } from "app/core/common-components/entity-field-label/entity-field-label.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
+import { FormsModule } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
+import {
+  ConfirmationDialogComponent,
+  YesNoButtons,
+} from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { lastValueFrom } from "rxjs";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -17,6 +27,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     ReorderableListComponent,
     EntityFieldLabelComponent,
     FontAwesomeModule,
+    EntityTypeSelectComponent,
+    MatFormFieldModule,
+    FormsModule,
   ],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrls: [
@@ -34,11 +47,17 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   // Represents the entity type that current panel is linked to
   targetEntityType: EntityConstructor;
 
-  constructor(private entities: EntityRegistry) {}
+  entityTypeModel: string;
+  isDialogOpen = false;
 
+  constructor(
+    private entities: EntityRegistry,
+    private dialog: MatDialog,
+  ) {}
   ngOnInit(): void {
     if (!this.config.config?.entityType) return;
-    this.targetEntityType = this.entities.get(this.config.config?.entityType);
+    this.entityTypeModel = this.config.config.entityType;
+    this.targetEntityType = this.entities.get(this.entityTypeModel);
     this.initializeFields();
   }
 
@@ -69,5 +88,59 @@ export class AdminEntityPanelComponentComponent implements OnInit {
           (existingFields) => existingFields.id === fieldId,
         ) ?? { id: fieldId },
     );
+  }
+
+  async onEntityTypeChange(newType: string | string[]) {
+    if (
+      Array.isArray(newType) ||
+      newType === this.config.config.entityType ||
+      this.isDialogOpen
+    )
+      return;
+
+    this.isDialogOpen = true;
+    const confirmed = await this.confirmEntityTypeChange();
+    this.isDialogOpen = false;
+
+    if (!confirmed) {
+      this.entityTypeModel = this.config.config.entityType;
+      return;
+    }
+
+    this.updateConfigForNewEntityType(newType);
+    this.activeFields = [];
+    this.initializeFields();
+  }
+
+  private async confirmEntityTypeChange(): Promise<boolean> {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: "Change Entity Type",
+        text: "Changing the entity type will discard selected fields. Continue?",
+        buttons: YesNoButtons,
+        closeButton: true,
+      },
+      width: "400px",
+    });
+
+    return await lastValueFrom(dialogRef.afterClosed());
+  }
+
+  private updateConfigForNewEntityType(newType: string) {
+    this.entityTypeModel = newType;
+    this.config.config.entityType = newType;
+    this.targetEntityType = this.entities.get(newType);
+
+    const matchingEntry = Object.entries(RELATED_ENTITIES_DEFAULT_CONFIGS).find(
+      ([_, value]) => value.entityType === newType,
+    );
+
+    if (matchingEntry) {
+      const [componentKey] = matchingEntry;
+      this.config.component = componentKey;
+    } else {
+      delete this.config.component;
+    }
+    this.config.config.columns = [];
   }
 }

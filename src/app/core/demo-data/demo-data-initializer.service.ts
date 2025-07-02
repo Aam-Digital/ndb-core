@@ -69,7 +69,12 @@ export class DemoDataInitializerService {
       DemoDataGeneratingProgressDialogComponent,
     );
 
-    await this.demoDataService.publishDemoData();
+    if (window["e2eDemoData"]) {
+      const db = this.dbResolver.getDatabase();
+      await db.putAll(window["e2eDemoData"]);
+    } else {
+      await this.demoDataService.publishDemoData();
+    }
 
     dialogRef.close();
   }

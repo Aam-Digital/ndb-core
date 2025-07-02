@@ -4,8 +4,6 @@
   "compilerOptions": {
     "noEmit": true,
     "rootDir": "..",
-    "strict": true,
-    "isolatedModules": true,
     "types": [
       "node"
     ]
