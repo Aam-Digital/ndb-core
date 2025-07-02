@@ -2,7 +2,11 @@
   padding: 8px 16px;
   border-bottom: 1px solid #0000001f;
 }
-
+.table-content-preview {
+  font-style: italic;
+  padding: 16px;
+  color: #5f5f5f;
+}
 .cdk-drag-preview {
   box-sizing: border-box;
   border-radius: 4px;

@@ -13,8 +13,11 @@
 <div>
   <app-reorderable-list
     [items]="filters"
+    [availableItems]="allFields"
+    [entityType]="entityConstructor"
     [orientation]="'mixed'"
     [itemTemplate]="filterTemplate"
+    [fieldLabel]="'Add Filter:'"
     (itemsChange)="updateFilters($event)"
   ></app-reorderable-list>
 
@@ -39,17 +42,6 @@
     </div>
   </ng-template>
 
-  <div class="table-content-preview">
-    <span i18n>Add Filter:</span>
-    <app-entity-fields-menu
-      [entityType]="entityConstructor"
-      [(activeFields)]="filters"
-      (activeFieldsChange)="updateFilters(filters)"
-      [availableFields]="allFields"
-      icon="square-plus"
-    ></app-entity-fields-menu>
-  </div>
-
   <div class="mat-elevation-z1">
     <app-admin-tabs
       [tabs]="config?.columnGroups?.groups"
@@ -61,9 +53,11 @@
       >
         <app-reorderable-list
           [items]="item.columns"
-          [orientation]="'horizontal'"
-          [dropLockAxis]="'x'"
+          [availableItems]="allFields"
+          [entityType]="entityConstructor"
+          [orientation]="'mixed'"
           [itemTemplate]="columnTemplate"
+          [fieldLabel]="'Drag & drop table column headers. Add columns:'"
           (itemsChange)="item.columns = $event"
         ></app-reorderable-list>
 
@@ -84,16 +78,6 @@
             ></fa-icon>
           </div>
         </ng-template>
-
-        <div class="table-content-preview">
-          <span i18n>Drag & drop table column headers. Add columns:</span>
-          <app-entity-fields-menu
-            [entityType]="entityConstructor"
-            [(activeFields)]="item.columns"
-            [availableFields]="allFields"
-            icon="square-plus"
-          ></app-entity-fields-menu>
-        </div>
       </ng-template>
     </app-admin-tabs>
   </div>

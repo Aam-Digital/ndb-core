@@ -17,3 +17,13 @@
     }
   </div>
 </div>
+
+<div class="table-content-preview" *ngIf="availableItems.length > 0">
+  <span class="add-label">{{ fieldLabel }}</span>
+  <app-entity-fields-menu
+    [entityType]="entityType"
+    [availableFields]="availableItems"
+    [activeFields]="items"
+    (activeFieldsChange)="handleActiveFieldsChange($event)"
+  ></app-entity-fields-menu>
+</div>
