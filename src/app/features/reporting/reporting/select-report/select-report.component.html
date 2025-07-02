@@ -24,30 +24,12 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field *ngIf="isDateRangeReport">
-      <mat-label i18n>Enter a date range</mat-label>
-      <mat-date-range-input [rangePicker]="picker" [disabled]="loading">
-        <input
-          [(ngModel)]="fromDate"
-          (ngModelChange)="dateChange()"
-          matStartDate
-          i18n-placeholder="Date selection for the reporting"
-          placeholder="Start date"
-        />
-        <input
-          [(ngModel)]="toDate"
-          (ngModelChange)="dateChange()"
-          matEndDate
-          i18n-placeholder="Date selection for the reporting"
-          placeholder="End date"
-        />
-      </mat-date-range-input>
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="picker"
-      ></mat-datepicker-toggle>
-      <mat-date-range-picker #picker></mat-date-range-picker>
-    </mat-form-field>
+    @if (isDateRangeReport) {
+      <app-date-range-filter
+        [filterConfig]="dateRangeFilterConfig"
+        (dateRangeChange)="onDateRangeChange($event)"
+      ></app-date-range-filter>
+    }
   </div>
 
   <div>
