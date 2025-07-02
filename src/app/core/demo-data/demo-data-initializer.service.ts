@@ -53,7 +53,7 @@ export class DemoDataInitializerService {
     this.localAuthService.saveUser(this.normalUser);
     this.localAuthService.saveUser(this.adminUser);
 
-    await this.sessionManager.offlineLogin(this.adminUser);
+    await this.sessionManager.offlineLogin(this.normalUser);
 
     this.syncDatabaseOnUserChange();
   }

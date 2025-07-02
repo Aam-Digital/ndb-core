@@ -35,8 +35,10 @@ export class AdminMenuComponent implements OnInit {
   menuItems: MenuItemForAdminUi[];
   readonly navigationContainer = "navigation-container";
 
-
-  constructor(private dialog: MatDialog, private readonly entityMapper: EntityMapperService) {}
+  constructor(
+    private dialog: MatDialog,
+    private readonly entityMapper: EntityMapperService,
+  ) {}
 
   async ngOnInit() {
     await this.loadNavigationConfig();
@@ -125,25 +127,27 @@ export class AdminMenuComponent implements OnInit {
   }
 
   private toPlainMenuItem(item: MenuItemForAdminUi): MenuItem {
-  // If it's an EntityMenuItem (has entityType), only keep entityType and subMenu
-  if ('entityType' in item && item.entityType) {
-    const entityMenuItem: any = { entityType: item.entityType };
-    if (item.subMenu?.length) {
-      entityMenuItem.subMenu = item.subMenu.map((sub) => this.toPlainMenuItem(sub));
+    // If it's an EntityMenuItem (has entityType), only keep entityType and subMenu
+    if ("entityType" in item && item.entityType) {
+      const entityMenuItem: any = { entityType: item.entityType };
+      if (item.subMenu?.length) {
+        entityMenuItem.subMenu = item.subMenu.map((sub) =>
+          this.toPlainMenuItem(sub),
+        );
+      }
+      return entityMenuItem;
     }
-    return entityMenuItem;
-  }
 
-  // Otherwise, return as normal MenuItem,
-  return {
-    label: item.label,
-    icon: item.icon,
-    link: item.link,
-    subMenu: item.subMenu?.length
-      ? item.subMenu.map((sub) => this.toPlainMenuItem(sub))
-      : undefined,
-  };
-}
+    // Otherwise, return as normal MenuItem,
+    return {
+      label: item.label,
+      icon: item.icon,
+      link: item.link,
+      subMenu: item.subMenu?.length
+        ? item.subMenu.map((sub) => this.toPlainMenuItem(sub))
+        : undefined,
+    };
+  }
   async cancel() {
     await this.loadNavigationConfig();
   }
