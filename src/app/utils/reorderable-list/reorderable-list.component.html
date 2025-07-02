@@ -36,6 +36,11 @@
               [field]="getFieldId(item)"
               [entityType]="entityType"
             ></app-entity-field-label>
+            <fa-icon
+              icon="times"
+              class="remove-icon"
+              (click)="remove(item)"
+            ></fa-icon>
           </div>
         }
       </div>

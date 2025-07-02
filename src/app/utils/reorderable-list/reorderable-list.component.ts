@@ -27,10 +27,7 @@ import { MatSelectModule } from "@angular/material/select";
     MatSelectModule,
   ],
   templateUrl: "./reorderable-list.component.html",
-  styleUrls: [
-    "./reorderable-list.component.scss",
-    "../../core/admin/admin-entity-list/admin-entity-list.component.scss",
-  ],
+  styleUrl: "./reorderable-list.component.scss",
 })
 export class ReorderableListComponent {
   @Input() items: any[] = [];
