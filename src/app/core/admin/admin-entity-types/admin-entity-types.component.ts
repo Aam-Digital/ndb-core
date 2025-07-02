@@ -119,6 +119,12 @@ export class AdminEntityTypesComponent implements OnInit {
 
     const data = newConfig.data as { [key: string]: any };
 
+    this.addEntityMenuItem(data, id);
+
+    await this.entityMapper.save(newConfig);
+  }
+
+  private addEntityMenuItem(data: { [key: string]: any }, id: string) {
     if (!data.navigationMenu) {
       data.navigationMenu = { items: [] };
     }
@@ -130,8 +136,6 @@ export class AdminEntityTypesComponent implements OnInit {
         entityType: id,
       });
     }
-
-    await this.entityMapper.save(newConfig);
   }
 
   private getDefaultEntityConfig(
