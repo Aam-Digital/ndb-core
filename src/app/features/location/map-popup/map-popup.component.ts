@@ -160,7 +160,7 @@ export class MapPopupComponent {
   }
 
   private async showAddressMismatchDialog(): Promise<
-    string | boolean | undefined
+   "continue" | "update" | undefined
   > {
     return this.confirmationDialog.getConfirmation(
       $localize`Address Mismatch`,
