@@ -36,11 +36,7 @@
               [field]="getFieldId(item)"
               [entityType]="entityType"
             ></app-entity-field-label>
-            <fa-icon
-              icon="times"
-              class="remove-icon"
-              (click)="remove(item)"
-            ></fa-icon>
+
           </div>
         }
       </div>
@@ -48,12 +44,14 @@
   </div>
 </div>
 
-<div class="table-content-preview" *ngIf="availableItems.length > 0">
-  <span class="add-label">{{ fieldLabel }}</span>
-  <app-entity-fields-menu
-    [entityType]="entityType"
-    [availableFields]="availableItems"
-    [activeFields]="items"
-    (activeFieldsChange)="updateItems($event)"
-  ></app-entity-fields-menu>
-</div>
+@if (availableItems.length > 0) {
+  <div class="table-content-preview">
+    <span>{{ fieldLabel }}</span>
+    <app-entity-fields-menu
+      [entityType]="entityType"
+      [availableFields]="availableItems"
+      [activeFields]="items"
+      (activeFieldsChange)="updateItems($event)"
+    ></app-entity-fields-menu>
+  </div>
+}
