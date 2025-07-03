@@ -22,7 +22,6 @@
             "i18nMissingTranslation": "warning",
             "assets": [
               "src/assets",
-              "src/favicon.ico",
               "src/manifest.webmanifest",
               "src/firebase-messaging-sw.js",
               {
@@ -123,7 +122,6 @@
             },
             "assets": [
               "src/assets",
-              "src/favicon.ico",
               "src/manifest.webmanifest"
             ],
             "fileReplacements": [
