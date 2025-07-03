@@ -57,7 +57,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   }
 
   private initializeFields(): void {
-    console.log(this.config);
     if (!this.targetEntityType) return;
     const targetEntitySchemaFields = Array.from(
       this.targetEntityType.schema.keys(),

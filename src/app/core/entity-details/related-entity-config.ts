@@ -23,4 +23,10 @@ export interface RelatedEntityConfig {
    * (Optional) A custom loader method to fetch related entities.
    */
   loaderMethod?: string;
+
+  /**
+   * If set to `true`, the component will assume that there can be only one active related entity at a time
+   * (e.g., only one currently attended school per child).
+   */
+  single?: boolean;
 }
