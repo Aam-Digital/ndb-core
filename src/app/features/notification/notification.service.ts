@@ -274,7 +274,7 @@ export class NotificationService {
 
         let notification = new Notification(payload.notification.title, {
           body: payload.notification.body,
-          icon: "/favicon.ico",
+          icon: "/assets/icons/favicon.png",
           data: {
             url: window.location.protocol + "//" + window.location.hostname,
             // "/foo-bar/123", // todo: deep link here

@@ -1,19 +1,16 @@
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { SiteSettingsService } from "./site-settings.service";
-import { FileService } from "../../features/file/file.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import {
   mockEntityMapper,
   MockEntityMapperService,
 } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { SiteSettings } from "./site-settings";
-import { of } from "rxjs";
 import { Title } from "@angular/platform-browser";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
-import { FileModule } from "../../features/file/file.module";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
@@ -21,16 +18,13 @@ import { CoreTestingModule } from "../../utils/core-testing.module";
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
   let entityMapper: MockEntityMapperService;
-  let mockFileService: jasmine.SpyObj<FileService>;
 
   beforeEach(waitForAsync(() => {
     localStorage.clear();
     entityMapper = mockEntityMapper();
-    mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
-      imports: [CoreTestingModule, ConfigurableEnumModule, FileModule],
+      imports: [CoreTestingModule, ConfigurableEnumModule],
       providers: [
-        { provide: FileService, useValue: mockFileService },
         { provide: EntityMapperService, useValue: entityMapper },
         EntityAbility,
       ],
@@ -76,29 +70,6 @@ describe("SiteSettingsService", () => {
 
     expect(titleSpy).toHaveBeenCalled();
   });
-
-  it("should reset favicon when deleted", fakeAsync(() => {
-    const siteSettings = SiteSettings.create({ favicon: "some.icon" });
-    mockFileService.loadFile.and.returnValue(of({ url: "icon.url" }));
-    const mockIconEl = { href: "initial" };
-    spyOn(document, "querySelector").and.returnValue(mockIconEl as any);
-    entityMapper.add(siteSettings);
-    tick();
-
-    expect(mockFileService.loadFile).toHaveBeenCalledWith(
-      siteSettings,
-      "favicon",
-    );
-    expect(mockIconEl.href).toBe("icon.url");
-
-    mockFileService.loadFile.calls.reset();
-    delete siteSettings.favicon;
-    entityMapper.add(siteSettings);
-    tick();
-
-    expect(mockFileService.loadFile).not.toHaveBeenCalled();
-    expect(mockIconEl.href).toBe("favicon.ico");
-  }));
 
   function expectStyleSetProperty(siteSettingsProperty, cssVariable, value) {
     spyOn(document.documentElement.style, "setProperty");
@@ -151,7 +122,6 @@ describe("SiteSettingsService", () => {
 
     service = new SiteSettingsService(
       TestBed.inject(Title),
-      TestBed.inject(FileService),
       TestBed.inject(EntitySchemaService),
       TestBed.inject(ConfigurableEnumService),
       TestBed.inject(EntityMapperService),
