@@ -56,7 +56,7 @@ export interface ConfirmationDialogConfig {
 
 export interface ConfirmationDialogButton {
   text: string;
-  dialogResult?: boolean | undefined;
+  dialogResult?: boolean | string | undefined;
   click();
 }
 
