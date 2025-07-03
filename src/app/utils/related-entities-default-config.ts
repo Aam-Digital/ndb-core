@@ -4,6 +4,7 @@
  */
 
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
+import { RelatedEntityConfig } from "../core/entity-details/related-entity-config";
 
 export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
   string,
@@ -35,5 +36,29 @@ export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
   ChildSchoolOverview: {
     entityType: "ChildSchoolRelation",
     single: true,
+  },
+};
+
+export const RELATED_ENTITY_OVERRIDES: Record<string, RelatedEntityConfig> = {
+  Aser: {
+    entityType: "Aser",
+    component: "RelatedEntities",
+  },
+  HealthCheck: {
+    entityType: "HealthCheck",
+    component: "RelatedEntities",
+  },
+  EducationalMaterial: {
+    entityType: "EducationalMaterial",
+    component: "RelatedEntitiesWithSummary",
+  },
+  HistoricalEntityData: {
+    entityType: "HistoricalEntityData",
+    component: "RelatedEntities",
+    loaderMethod: "HistoricalDataService",
+  },
+  RecurringActivity: {
+    entityType: "RecurringActivity",
+    component: "RelatedEntities",
   },
 };

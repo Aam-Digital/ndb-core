@@ -7,7 +7,10 @@ import { EntityFieldsMenuComponent } from "app/core/common-components/entity-fie
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
+import {
+  RELATED_ENTITIES_DEFAULT_CONFIGS,
+  RELATED_ENTITY_OVERRIDES,
+} from "app/utils/related-entities-default-config";
 import { FormsModule } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import {
@@ -15,6 +18,7 @@ import {
   YesNoButtons,
 } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { lastValueFrom } from "rxjs";
+import { RelatedEntityConfig } from "#src/app/core/entity-details/related-entity-config";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -154,27 +158,15 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private applyCustomOverrides(newType: string) {
     delete this.config.config.loaderMethod;
     delete this.config.config.property;
+    const overrideRelatedConfig: RelatedEntityConfig =
+      RELATED_ENTITY_OVERRIDES[newType];
 
-    switch (newType) {
-      case "Aser":
-      case "HealthCheck":
-        this.config.config.property = this.entityType.ENTITY_TYPE.toLowerCase();
-        this.config.component = "RelatedEntities";
-        break;
-
-      case "EducationalMaterial":
-        this.config.config.property = this.entityType.ENTITY_TYPE.toLowerCase();
-        this.config.component = "RelatedEntitiesWithSummary";
-        break;
-
-      case "HistoricalEntityData":
-        this.config.config.loaderMethod = "HistoricalDataService";
-        this.config.component = "RelatedEntities";
-        break;
-
-      case "RecurringActivity":
-        this.config.component = "RelatedEntities";
-        break;
+    if (overrideRelatedConfig) {
+      this.config.component = overrideRelatedConfig.component;
+      this.config.config = {
+        ...this.config.config,
+        ...overrideRelatedConfig,
+      };
     }
   }
 }
