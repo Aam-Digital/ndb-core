@@ -33,30 +33,34 @@ import { MatSelectModule } from "@angular/material/select";
   styleUrl: "./reorderable-list.component.scss",
 })
 export class ReorderableListComponent {
-  @Input() items: any[] = [];
+  @Input() items: (string | ColumnConfig)[] = [];
   @Input() availableItems: (string | ColumnConfig)[] = [];
   @Input() entityType: EntityConstructor;
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
 
-  @Output() itemsChange = new EventEmitter<any[]>();
+  @Output() itemsChange = new EventEmitter<string[]>();
 
   drop(event: CdkDragDrop<(string | ColumnConfig)[]>) {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
-    this.itemsChange.emit([...this.items]);
+    this.itemsChange.emit([...this.items] as string[]);
   }
 
   remove(item: string | ColumnConfig) {
     this.items = this.items.filter((i) => i !== item);
-    this.itemsChange.emit([...this.items]);
+    this.itemsChange.emit([...this.items] as string[]);
   }
 
   updateItems(updatedItems: (string | ColumnConfig)[]) {
     this.items = [...updatedItems];
-    this.itemsChange.emit(this.items);
+    this.itemsChange.emit(this.items as string[]);
   }
 
   getFieldId(field: string | ColumnConfig): string {
     return typeof field === "string" ? field : field.id;
+  }
+
+  get itemsAsStrings(): string[] {
+    return this.items.map(this.getFieldId);
   }
 }
