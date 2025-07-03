@@ -16,17 +16,25 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import { ChildSchoolRelation } from "app/child-dev-project/children/model/childSchoolRelation";
 
 describe("RelatedEntitiesComponent", () => {
-  let component: RelatedEntitiesComponent<TestEntity>;
-  let fixture: ComponentFixture<RelatedEntitiesComponent<TestEntity>>;
+  let component: RelatedEntitiesComponent<any>;
+  let fixture: ComponentFixture<RelatedEntitiesComponent<any>>;
+  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   beforeEach(async () => {
+    mockChildrenService = jasmine.createSpyObj("ChildrenService", [
+      "queryRelations",
+    ]);
     await TestBed.configureTestingModule({
       imports: [RelatedEntitiesComponent, MockedTestingModule.withState()],
+      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(RelatedEntitiesComponent<TestEntity>);
+    fixture = TestBed.createComponent(RelatedEntitiesComponent<any>);
     component = fixture.componentInstance;
   });
 
@@ -224,4 +232,107 @@ describe("RelatedEntitiesComponent", () => {
       singleRelation: component.entity.getId(),
     });
   });
+
+  it("it calls children service with id from passed child", fakeAsync(() => {
+    const child = createEntityOfType("Child");
+    mockChildrenService.queryRelations.and.resolveTo([]);
+
+    component.entity = child;
+    component.entityType = "ChildSchoolRelation";
+    component.columns = [];
+    component.enableChildSchoolMode = true;
+    fixture.detectChanges();
+    tick();
+
+    expect(mockChildrenService.queryRelations).toHaveBeenCalledWith(
+      child.getId(),
+    );
+  }));
+
+  it("it detects mode and uses correct index to load data", fakeAsync(() => {
+    const testSchool = createEntityOfType("School");
+    mockChildrenService.queryRelations.and.resolveTo([]);
+
+    component.entity = testSchool;
+    component.entityType = "ChildSchoolRelation";
+    component.columns = [];
+    component.enableChildSchoolMode = true;
+    fixture.detectChanges();
+    tick();
+
+    expect(component.mode).toBe("school");
+    expect(mockChildrenService.queryRelations).toHaveBeenCalledWith(
+      testSchool.getId(),
+    );
+  }));
+
+  // it("should create a relation with the child ID", fakeAsync(() => {
+  //   const child = createEntityOfType("Child");
+  //   const existingRelation = new ChildSchoolRelation();
+  //   existingRelation.childId = child.getId();
+  //   existingRelation.start = moment().subtract(1, "year").toDate();
+  //   existingRelation.end = moment().subtract(1, "week").toDate();
+  //   mockChildrenService.queryRelations.and.resolveTo([existingRelation]);
+
+  //   component.entity = child;
+  //   component.entityType = "ChildSchoolRelation";
+  //   component.columns = [];
+  //   component.enableChildSchoolMode = true;
+  //   fixture.detectChanges();
+  //   tick();
+
+  //   const newRelation = component.createNewRecordFactory()();
+
+  //   expect(newRelation.childId).toEqual(child.getId());
+  //   expect(
+  //     moment(existingRelation.end)
+  //       .add(1, "day")
+  //       .isSame(newRelation.start, "day"),
+  //   ).toBeTrue();
+  // }));
+
+  it("should create a relation with the school ID", fakeAsync(() => {
+    const school = createEntityOfType("School", "testID");
+    mockChildrenService.queryRelations.and.resolveTo([]);
+
+    component.entity = school;
+    component.entityType = "ChildSchoolRelation";
+    component.columns = [];
+    component.enableChildSchoolMode = true;
+    fixture.detectChanges();
+    tick();
+
+    const newRelation = component.createNewRecordFactory()();
+
+    expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
+    expect(newRelation.schoolId).toBe("School:testID");
+  }));
+
+  it("should show archived school in 'child' mode", fakeAsync(() => {
+    const child = createEntityOfType("Child");
+    mockChildrenService.queryRelations.and.resolveTo([]);
+
+    component.entity = child;
+    component.entityType = "ChildSchoolRelation";
+    component.columns = [];
+    component.enableChildSchoolMode = true;
+    fixture.detectChanges();
+    tick();
+
+    expect(component.showInactive).toBeTrue();
+  }));
+
+  it("should not show archived children in 'school' mode", fakeAsync(() => {
+    const school = createEntityOfType("School");
+    mockChildrenService.queryRelations.and.resolveTo([]);
+
+    component.entity = school;
+    component.entityType = "ChildSchoolRelation";
+    component.columns = [];
+    component.enableChildSchoolMode = true;
+    fixture.detectChanges();
+    tick();
+
+    expect(component.showInactive).toBeFalse();
+  }));
 });
