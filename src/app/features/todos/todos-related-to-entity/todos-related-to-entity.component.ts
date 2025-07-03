@@ -14,6 +14,7 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { FilterService } from "../../../core/filter/filter.service";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
+import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -44,8 +45,16 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
     entities: EntityRegistry,
     screenWidthObserver: ScreenWidthObserver,
     filterService: FilterService,
+    childrenService: ChildrenService,
   ) {
-    super(entityMapper, entities, screenWidthObserver, filterService, null);
+    super(
+      entityMapper,
+      entities,
+      screenWidthObserver,
+      filterService,
+      childrenService,
+      null,
+    );
   }
 
   override getData() {

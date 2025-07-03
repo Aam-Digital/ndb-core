@@ -6,7 +6,6 @@
       "installMode": "prefetch",
       "resources": {
         "files": [
-          "/favicon.ico",
           "/index.html",
           "/*.js",
           "/*.css",
@@ -23,12 +22,24 @@
         "files": [
           "/*.svg",
           "/assets/**",
+          "!/assets/icons/*",
           "!**/keycloak.json"
         ]
       }
     }
   ],
   "dataGroups": [
+    {
+      "name": "icons",
+      "urls": [
+        "/assets/icons/*"
+      ],
+      "cacheConfig": {
+        "maxSize": 1,
+        "maxAge": "30d",
+        "strategy": "performance"
+      }
+    },
     {
       "name": "config",
       "urls": [
