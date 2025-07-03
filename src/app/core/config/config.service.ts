@@ -94,6 +94,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateComponentEntityTypeDefaults,
       migrateActivitiesOverviewComponent,
       removeOutdatedTodoViews,
+      migrateChildSchoolOverviewComponent,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
@@ -454,6 +455,45 @@ const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
     configPart?.component === "TodoDetails"
   ) {
     return undefined; // remove this config
+  }
+
+  return configPart;
+};
+
+/**
+ * Replace deprecated `ChildSchoolOverview`/`PreviousSchools`/`ChildrenOverview`
+ * components with `RelatedEntities` using ChildSchoolRelation entity.
+ */
+const migrateChildSchoolOverviewComponent: ConfigMigration = (
+  _key,
+  configPart,
+) => {
+  const deprecatedComponents = [
+    "ChildSchoolOverview",
+    "PreviousSchools",
+    "ChildrenOverview",
+  ];
+
+  if (
+    typeof configPart === "object" &&
+    deprecatedComponents.includes(configPart.component)
+  ) {
+    return {
+      title: "School History",
+      component: "RelatedEntities",
+      config: {
+        entityType: "ChildSchoolRelation",
+        columns: [
+          { id: "childId" },
+          { id: "start", visibleFrom: "md" },
+          { id: "end", visibleFrom: "md" },
+          { id: "schoolClass" },
+          { id: "result" },
+        ],
+        loaderMethod: "ChildrenService",
+        enableChildSchoolMode: true,
+      },
+    };
   }
 
   return configPart;

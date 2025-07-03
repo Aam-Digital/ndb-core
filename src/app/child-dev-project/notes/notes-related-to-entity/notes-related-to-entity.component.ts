@@ -42,14 +42,21 @@ export class NotesRelatedToEntityComponent
   newRecordFactory = this.createNewRecordFactory();
 
   constructor(
-    private childrenService: ChildrenService,
+    childrenService: ChildrenService,
     private formDialog: FormDialogService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
     screenWidthObserver: ScreenWidthObserver,
     filterService: FilterService,
   ) {
-    super(entityMapper, entities, screenWidthObserver, filterService, null);
+    super(
+      entityMapper,
+      entities,
+      screenWidthObserver,
+      filterService,
+      childrenService,
+      null,
+    );
   }
 
   override ngOnInit() {
