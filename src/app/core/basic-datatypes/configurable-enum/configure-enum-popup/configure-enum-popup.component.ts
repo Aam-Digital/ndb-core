@@ -25,6 +25,7 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -52,6 +53,7 @@ export class ConfigureEnumPopupComponent {
     private entityMapper: EntityMapperService,
     private confirmationService: ConfirmationDialogService,
     private entities: EntityRegistry,
+    private snackBar: MatSnackBar,
   ) {
     const initialValues = JSON.stringify(enumEntity.values);
     this.dialog.afterClosed().subscribe(() => {
@@ -127,18 +129,56 @@ export class ConfigureEnumPopupComponent {
     );
   }
 
+  // Multi-line paste handler for adding new options
+  onPasteNewOption(event: ClipboardEvent) {
+    const clipboardData = event.clipboardData;
+    if (!clipboardData) return;
+
+    const pastedText = clipboardData.getData("text");
+    const lines = pastedText.split(/\r?\n/).map(line => line.trim()).filter(line => line);
+
+    if (lines.length > 1) {
+      event.preventDefault();
+      this.newOptionInput = lines.join('\n');
+    }
+  }
+
   async createNewOption() {
-    try {
-      this.enumEntity.addOption(this.newOptionInput);
-    } catch (error) {
-      await this.confirmationService.getConfirmation(
-        $localize`Failed to create new option`,
-        $localize`Couldn't create this new option. Please check if the value already exists.`,
-        OkButton,
-      );
-      return;
+    if (!this.newOptionInput || !this.newOptionInput.trim()) return;
+
+    const lines = this.newOptionInput
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(line => line);
+
+    const existingLabels = this.enumEntity.values.map(
+      v => v.label.trim().toLowerCase()
+    );
+    let skipped = 0;
+    let added = 0;
+
+    for (const line of lines) {
+      if (existingLabels.includes(line.toLowerCase())) {
+        skipped++;
+        continue;
+      }
+      try {
+        this.enumEntity.addOption(line);
+        existingLabels.push(line.toLowerCase());
+        added++;
+      } catch (err) {
+     console.error('Failed to add option:', line, err);
+    }
     }
 
     this.newOptionInput = "";
+
+    if (skipped > 0) {
+      this.snackBar.open(
+        $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped === 1 ? 'y' : 'ies'}.`,
+        undefined,
+        { duration: 3000 }
+      );
+    }
   }
 }

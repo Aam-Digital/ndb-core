@@ -30,7 +30,8 @@
   <!-- CREATING NEW OPTION -->
   <mat-form-field class="full-width">
     <mat-label i18n>Add new option</mat-label>
-    <input matInput [(ngModel)]="newOptionInput" />
+    <input matInput [(ngModel)]="newOptionInput"
+    (paste)="onPasteNewOption($event)" />
     <button
       mat-icon-button
       color="accent"
@@ -39,6 +40,9 @@
     >
       <fa-icon icon="square-plus"></fa-icon>
     </button>
+    <mat-hint i18n>
+    You can paste multiple values at once (one per line)
+    </mat-hint>
   </mat-form-field>
 </mat-dialog-content>
 
