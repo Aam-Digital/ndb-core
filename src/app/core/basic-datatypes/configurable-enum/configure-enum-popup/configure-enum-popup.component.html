@@ -30,8 +30,14 @@
   <!-- CREATING NEW OPTION -->
   <mat-form-field class="full-width">
     <mat-label i18n>Add new option</mat-label>
-    <input matInput [(ngModel)]="newOptionInput"
-    (paste)="onPasteNewOption($event)" />
+    <textarea
+    matInput
+    [(ngModel)]="newOptionInput"
+    (paste)="onPasteNewOption($event)"
+    rows="2"
+    cdkTextareaAutosize
+    #autosize="cdkTextareaAutosize"
+  ></textarea>
     <button
       mat-icon-button
       color="accent"
