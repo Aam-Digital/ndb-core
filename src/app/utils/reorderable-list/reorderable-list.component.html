@@ -3,7 +3,10 @@
   cdkDropListOrientation="mixed"
   (cdkDropListDropped)="drop($event)"
 >
-  <div class="flex-row gap-regular flex-wrap gap-large column-header">
+  <div
+    class="flex-row gap-regular flex-wrap gap-large"
+    [class.column-header]="templateType !== 'filter'"
+  >
     @for (item of items; track getFieldId(item)) {
       <div cdkDrag class="drop-item">
         @if (templateType === "filter") {
