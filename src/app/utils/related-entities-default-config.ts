@@ -8,7 +8,7 @@ import { RelatedEntityConfig } from "../core/entity-details/related-entity-confi
 
 export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
   string,
-  { entityType: string; columns?: FormFieldConfig[]; single?: boolean }
+  { entityType: string; columns?: FormFieldConfig[] }
 > = {
   NotesRelatedToEntity: {
     entityType: "Note",
@@ -33,10 +33,6 @@ export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
       { id: "completed", hideFromForm: true },
     ],
   },
-  ChildSchoolOverview: {
-    entityType: "ChildSchoolRelation",
-    single: true,
-  },
 };
 
 export const RELATED_ENTITY_OVERRIDES: Record<string, RelatedEntityConfig> = {
@@ -60,5 +56,10 @@ export const RELATED_ENTITY_OVERRIDES: Record<string, RelatedEntityConfig> = {
   RecurringActivity: {
     entityType: "RecurringActivity",
     component: "RelatedEntities",
+  },
+  ChildSchoolOverview: {
+    entityType: "ChildSchoolRelation",
+    component: "RelatedEntities",
+    single: true,
   },
 };

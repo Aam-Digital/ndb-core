@@ -479,7 +479,6 @@ const migrateChildSchoolOverviewComponent: ConfigMigration = (
     deprecatedComponents.includes(configPart.component)
   ) {
     return {
-      title: "School History",
       component: "RelatedEntities",
       config: {
         entityType: "ChildSchoolRelation",
