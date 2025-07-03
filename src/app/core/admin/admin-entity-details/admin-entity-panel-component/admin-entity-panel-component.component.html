@@ -6,25 +6,25 @@
         [(ngModel)]="entityTypeModel"
         (ngModelChange)="onEntityTypeChange($event)"
         [multi]="false"
-        [showInternalTypes] = "true"
+        [showInternalTypes]="true"
       ></app-entity-type-select>
     </mat-form-field>
 
     <div class="margin-top-regular hint-text">
       <p i18n>
-        You can select which fields should be shown or hidden in this panel.
+        Select which fields should be visible in this panel. You can also
+        reorder them to control their display sequence.
       </p>
     </div>
 
-    <div>
-      <span i18n>Columns shown:</span>
-      <app-entity-fields-menu
-        [entityType]="targetEntityType"
-        [(activeFields)]="activeFields"
-        [availableFields]="allFields"
-        (activeFieldsChange)="updateFields(activeFields)"
-      ></app-entity-fields-menu>
-    </div>
+    <app-reorderable-list
+      [items]="activeFields"
+      [availableItems]="allFields"
+      [entityType]="targetEntityType"
+      fieldLabel="Columns shown:"
+      i18n-fieldLabel
+      (itemsChange)="updateFields($event)"
+    ></app-reorderable-list>
   } @else {
     <p>[ {{ config.component }} ]</p>
 

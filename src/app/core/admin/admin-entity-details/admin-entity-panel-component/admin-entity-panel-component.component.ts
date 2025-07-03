@@ -3,8 +3,8 @@ import { CommonModule } from "@angular/common";
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
-import { EntityFieldsMenuComponent } from "app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
+import { ReorderableListComponent } from "app/utils/reorderable-list/reorderable-list.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import {
@@ -24,7 +24,7 @@ import { RelatedEntityConfig } from "#src/app/core/entity-details/related-entity
   selector: "app-admin-entity-panel-component",
   imports: [
     CommonModule,
-    EntityFieldsMenuComponent,
+    ReorderableListComponent,
     EntityTypeSelectComponent,
     MatFormFieldModule,
     FormsModule,
