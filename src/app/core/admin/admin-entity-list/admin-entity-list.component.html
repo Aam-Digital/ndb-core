@@ -15,9 +15,9 @@
     [items]="filters"
     [availableItems]="allFields"
     [entityType]="entityConstructor"
-    [orientation]="'mixed'"
-    [templateType]="'filter'"
-    [fieldLabel]="'Add Filter:'"
+    templateType="filter"
+    fieldLabel="Add Filter:"
+    i18n-fieldLabel
     (itemsChange)="updateFilters($event)"
   ></app-reorderable-list>
 
@@ -34,8 +34,8 @@
           [items]="item.columns"
           [availableItems]="allFields"
           [entityType]="entityConstructor"
-          [orientation]="'mixed'"
-          [fieldLabel]="'Drag & drop table column headers. Add columns:'"
+          fieldLabel="Drag & drop table column headers. Add columns:"
+          i18n-fieldLabel
           (itemsChange)="item.columns = $event"
         ></app-reorderable-list>
       </ng-template>

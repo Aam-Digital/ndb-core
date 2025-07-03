@@ -21,8 +21,8 @@
       [items]="activeFields"
       [availableItems]="allFields"
       [entityType]="targetEntityType"
-      [orientation]="'mixed'"
-      [fieldLabel]="'Columns shown:'"
+      fieldLabel="Columns shown:"
+      i18n-fieldLabel
       (itemsChange)="updateFields($event)"
     ></app-reorderable-list>
   } @else {

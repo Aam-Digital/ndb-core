@@ -1,7 +1,6 @@
 <div
   cdkDropList
-  [cdkDropListOrientation]="orientation"
-  [cdkDropListLockAxis]="dropLockAxis"
+  cdkDropListOrientation="mixed"
   (cdkDropListDropped)="drop($event)"
 >
   <div class="flex-row gap-regular flex-wrap gap-large column-header">

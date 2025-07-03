@@ -33,8 +33,6 @@ export class ReorderableListComponent {
   @Input() items: any[] = [];
   @Input() availableItems: (string | ColumnConfig)[] = [];
   @Input() entityType: EntityConstructor;
-  @Input() orientation: "vertical" | "horizontal" | "mixed" = "vertical";
-  @Input() dropLockAxis: "x" | "y" | null = null;
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
 
