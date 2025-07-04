@@ -76,18 +76,9 @@ export class ConfigureEnumPopupComponent {
     );
   }
 
-  // --- Helper for confirmation dialogs ---
-  private async showConfirmationDialog(
-    title: string,
-    message: string,
-    actions: { text: string; dialogResult: any; click: () => void }[],
-  ): Promise<any> {
-    return this.confirmationService.getConfirmation(title, message, actions);
-  }
-
   private async confirmDiscardChanges(): Promise<boolean> {
     if (this.hasUnsavedChanges()) {
-      const confirmed = await this.showConfirmationDialog(
+      const confirmed = await this.confirmationService.getConfirmation(
         $localize`Discard changes?`,
         $localize`You have unsaved changes. Discard them?`,
         [
@@ -95,29 +86,28 @@ export class ConfigureEnumPopupComponent {
           { text: $localize`Cancel`, dialogResult: false, click() {} },
         ],
       );
-      return !!confirmed;
+      return confirmed === true;
     }
     return true;
   }
 
-  private async confirmAddPendingOption(): Promise<null | boolean> {
+  private async confirmAddPendingOption(): Promise<boolean> {
     if (this.hasValidInput()) {
-      const confirmed = await this.showConfirmationDialog(
+      const confirmed = await this.confirmationService.getConfirmation(
         $localize`Add new option?`,
         $localize`You have a new option that is not added yet, do you want to add it?`,
         [
           { text: $localize`Add`, dialogResult: true, click() {} },
-          { text: $localize`Discard`, dialogResult: false, click() {} },
-          { text: $localize`Cancel`, dialogResult: null, click() {} },
+          { text: $localize`Cancel`, dialogResult: false, click() {} },
         ],
       );
-      return confirmed;
+      return confirmed === true;
     }
     return true;
   }
 
   private async confirmCommaSplit(): Promise<boolean> {
-    const confirmed = await this.showConfirmationDialog(
+    const confirmed = await this.confirmationService.getConfirmation(
       $localize`Split by commas?`,
       $localize`Do you want to split the text by commas and add multiple options?`,
       [
@@ -125,7 +115,7 @@ export class ConfigureEnumPopupComponent {
         { text: $localize`No`, dialogResult: false, click() {} },
       ],
     );
-    return !!confirmed;
+    return confirmed === true;
   }
 
   private async parseInputLines(input: string): Promise<string[]> {
@@ -151,16 +141,14 @@ export class ConfigureEnumPopupComponent {
 
   private async handlePendingNewOption(): Promise<boolean> {
     const confirmed = await this.confirmAddPendingOption();
-    if (confirmed === true) {
+    if (confirmed) {
       await this.createNewOption();
       return true;
-    } else if (confirmed === false) {
+    } else {
+      // Discard input and proceed to close the dialog
       this.newOptionInput = "";
       return true;
-    } else if (confirmed === null) {
-      return false;
     }
-    return true;
   }
 
   async onSave() {
@@ -198,7 +186,7 @@ export class ConfigureEnumPopupComponent {
         ", ",
       )} records. If deleted, the records will not be lost but specially marked.`;
     }
-    const confirmed = await this.showConfirmationDialog(
+    const confirmed = await this.confirmationService.getConfirmation(
       $localize`Delete option`,
       deletionText,
       [
@@ -206,7 +194,7 @@ export class ConfigureEnumPopupComponent {
         { text: $localize`Cancel`, dialogResult: false, click() {} },
       ],
     );
-    if (confirmed) {
+    if (confirmed === true) {
       this.localEnum.values.splice(index, 1);
     }
   }
