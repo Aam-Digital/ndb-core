@@ -88,4 +88,45 @@ describe("ConfigureEnumPopupComponent", () => {
       jasmine.any(Array),
     );
   });
+
+  it("should set newOptionInput with pasted multiline text and prevent default paste", () => {
+    const pastedText = "Option A\nOption B\nOption C";
+
+    const clipboardData = {
+      getData: jasmine.createSpy("getData").and.returnValue(pastedText),
+    };
+
+    const preventDefaultSpy = jasmine.createSpy("preventDefault");
+
+    const fakeEvent = {
+      clipboardData: clipboardData,
+      preventDefault: preventDefaultSpy,
+    } as unknown as ClipboardEvent;
+
+    component.onPasteNewOption(fakeEvent);
+
+    expect(clipboardData.getData).toHaveBeenCalledWith("text");
+    expect(component.newOptionInput).toBe("Option A\nOption B\nOption C");
+    expect(preventDefaultSpy).toHaveBeenCalled();
+  });
+
+  it("should not prevent default if pasted text is a single line", () => {
+    const pastedText = "Single Option";
+
+    const clipboardData = {
+      getData: jasmine.createSpy("getData").and.returnValue(pastedText),
+    };
+
+    const preventDefaultSpy = jasmine.createSpy("preventDefault");
+
+    const fakeEvent = {
+      clipboardData: clipboardData,
+      preventDefault: preventDefaultSpy,
+    } as unknown as ClipboardEvent;
+
+    component.onPasteNewOption(fakeEvent);
+
+    expect(component.newOptionInput).toBeUndefined(); // because splitByLine returns only 1 line
+    expect(preventDefaultSpy).not.toHaveBeenCalled();
+  });
 });

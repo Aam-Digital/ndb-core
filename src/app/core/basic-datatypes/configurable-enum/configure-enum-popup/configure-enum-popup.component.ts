@@ -30,12 +30,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import {
   ConfirmationDialogButton,
   YesNoButtons,
+  CustomYesNoButtons,
 } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-
-const AddCancelButtons: ConfirmationDialogButton[] = [
-  { text: $localize`Add`, dialogResult: true, click() {} },
-  { text: $localize`Cancel`, dialogResult: false, click() {} },
-];
 
 const DiscardCancelButtons: ConfirmationDialogButton[] = [
   { text: $localize`Discard`, dialogResult: true, click() {} },
@@ -83,10 +79,6 @@ export class ConfigureEnumPopupComponent {
     );
   }
 
-  get localValues(): ConfigurableEnumValue[] {
-    return this.localEnum.values;
-  }
-
   hasUnsavedChanges(): boolean {
     return (
       JSON.stringify(this.localEnum.values) !==
@@ -109,7 +101,7 @@ export class ConfigureEnumPopupComponent {
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Add new option?`,
       $localize`You have a new option that is not added yet, do you want to add it?`,
-      AddCancelButtons,
+      CustomYesNoButtons($localize`Yes`, $localize`No`),
     );
     return confirmed === true;
   }

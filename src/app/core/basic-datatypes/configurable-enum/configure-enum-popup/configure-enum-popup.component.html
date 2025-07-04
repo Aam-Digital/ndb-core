@@ -9,7 +9,7 @@
   (cdkDropListDropped)="drop($event)"
 >
   <mat-form-field
-    *ngFor="let v of localValues; let i = index"
+    *ngFor="let v of localEnum.values; let i = index"
     cdkDrag
     class="full-width"
     appearance="fill"
