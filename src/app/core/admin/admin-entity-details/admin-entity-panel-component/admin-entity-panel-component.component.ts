@@ -11,14 +11,10 @@ import {
   RELATED_ENTITY_OVERRIDES,
 } from "app/utils/related-entities-default-config";
 import { FormsModule } from "@angular/forms";
-import { MatDialog } from "@angular/material/dialog";
-import {
-  ConfirmationDialogComponent,
-  YesNoButtons,
-} from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { lastValueFrom } from "rxjs";
+import { YesNoButtons } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -47,7 +43,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
 
   constructor(
     private entities: EntityRegistry,
-    private dialog: MatDialog,
+    private confirmation: ConfirmationDialogService,
   ) {}
   ngOnInit(): void {
     if (!this.config.config?.entityType) return;
@@ -94,7 +90,11 @@ export class AdminEntityPanelComponentComponent implements OnInit {
       return;
 
     this.isDialogOpen = true;
-    const confirmed = await this.confirmEntityTypeChange();
+    const confirmed = await this.confirmation.getConfirmation(
+      $localize`Change Entity Type`,
+      $localize`Changing the entity type will discard selected fields. Continue?`,
+      YesNoButtons,
+    );
     this.isDialogOpen = false;
 
     if (!confirmed) {
@@ -107,20 +107,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
 
     this.activeFields = [];
     this.initializeFields();
-  }
-
-  private async confirmEntityTypeChange(): Promise<boolean> {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        title: "Change Entity Type",
-        text: "Changing the entity type will discard selected fields. Continue?",
-        buttons: YesNoButtons,
-        closeButton: true,
-      },
-      width: "400px",
-    });
-
-    return await lastValueFrom(dialogRef.afterClosed());
   }
 
   /**
