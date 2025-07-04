@@ -167,6 +167,7 @@ export class SelectReportComponent implements OnChanges {
       this.dateRangeFilterConfig = undefined;
     }
   }
+
   get exportFileName(): string {
     const reportName = this.getReportName();
     const datePart = this.getDatePart();
