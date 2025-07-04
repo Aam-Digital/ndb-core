@@ -76,9 +76,18 @@ export class ConfigureEnumPopupComponent {
     );
   }
 
+  // --- Helper for confirmation dialogs ---
+  private async showConfirmationDialog(
+    title: string,
+    message: string,
+    actions: { text: string; dialogResult: any; click: () => void }[],
+  ): Promise<any> {
+    return this.confirmationService.getConfirmation(title, message, actions);
+  }
+
   private async confirmDiscardChanges(): Promise<boolean> {
     if (this.hasUnsavedChanges()) {
-      const confirmed = await this.confirmationService.getConfirmation(
+      const confirmed = await this.showConfirmationDialog(
         $localize`Discard changes?`,
         $localize`You have unsaved changes. Discard them?`,
         [
@@ -91,9 +100,9 @@ export class ConfigureEnumPopupComponent {
     return true;
   }
 
-  private async handlePendingNewOption(): Promise<boolean> {
+  private async confirmAddPendingOption(): Promise<null | boolean> {
     if (this.hasValidInput()) {
-      const confirmed = await this.confirmationService.getConfirmation(
+      const confirmed = await this.showConfirmationDialog(
         $localize`Add new option?`,
         $localize`You have a new option that is not added yet, do you want to add it?`,
         [
@@ -102,15 +111,54 @@ export class ConfigureEnumPopupComponent {
           { text: $localize`Cancel`, dialogResult: null, click() {} },
         ],
       );
-      if (confirmed === true) {
-        await this.createNewOption();
-        return true;
-      } else if (confirmed === false) {
-        this.newOptionInput = "";
-        return true;
+      return confirmed;
+    }
+    return true;
+  }
+
+  private async confirmCommaSplit(): Promise<boolean> {
+    const confirmed = await this.showConfirmationDialog(
+      $localize`Split by commas?`,
+      $localize`Do you want to split the text by commas and add multiple options?`,
+      [
+        { text: $localize`Yes`, dialogResult: true, click() {} },
+        { text: $localize`No`, dialogResult: false, click() {} },
+      ],
+    );
+    return !!confirmed;
+  }
+
+  private async parseInputLines(input: string): Promise<string[]> {
+    if (input.includes("\n")) {
+      return input
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter((line) => line);
+    } else if (input.includes(",")) {
+      const confirmed = await this.confirmCommaSplit();
+      if (confirmed) {
+        return input
+          .split(",")
+          .map((line) => line.trim())
+          .filter((line) => line);
       } else {
-        return false;
+        return [input];
       }
+    } else {
+      return [input];
+    }
+  }
+
+  private async handlePendingNewOption(): Promise<boolean> {
+    const confirmed = await this.confirmAddPendingOption();
+    if (confirmed === true) {
+      await this.createNewOption();
+      return true;
+    } else if (confirmed === false) {
+      this.newOptionInput = "";
+      return true;
+    } else if (confirmed === null) {
+      return false;
     }
     return true;
   }
@@ -150,9 +198,13 @@ export class ConfigureEnumPopupComponent {
         ", ",
       )} records. If deleted, the records will not be lost but specially marked.`;
     }
-    const confirmed = await this.confirmationService.getConfirmation(
+    const confirmed = await this.showConfirmationDialog(
       $localize`Delete option`,
       deletionText,
+      [
+        { text: $localize`Delete`, dialogResult: true, click() {} },
+        { text: $localize`Cancel`, dialogResult: false, click() {} },
+      ],
     );
     if (confirmed) {
       this.localEnum.values.splice(index, 1);
@@ -199,7 +251,6 @@ export class ConfigureEnumPopupComponent {
     );
   }
 
-  // Multi-line paste handler for adding new options
   onPasteNewOption(event: ClipboardEvent) {
     const clipboardData = event.clipboardData;
     if (!clipboardData) return;
@@ -220,36 +271,7 @@ export class ConfigureEnumPopupComponent {
     if (!this.hasValidInput()) return;
 
     const input = this.newOptionInput.trim();
-
-    let lines: string[] = [];
-
-    if (input.includes("\n")) {
-      // Split by line breaks, each line is an option (even if it contains commas)
-      lines = input
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter((line) => line);
-    } else if (input.includes(",")) {
-      // Ask user if they want to split by commas
-      const confirmed = await this.confirmationService.getConfirmation(
-        $localize`Split by commas?`,
-        $localize`Do you want to split the text by commas and add multiple options?`,
-        [
-          { text: $localize`Yes`, dialogResult: true, click() {} },
-          { text: $localize`No`, dialogResult: false, click() {} },
-        ],
-      );
-      if (confirmed) {
-        lines = input
-          .split(",")
-          .map((line) => line.trim())
-          .filter((line) => line);
-      } else {
-        lines = [input];
-      }
-    } else {
-      lines = [input];
-    }
+    const lines = await this.parseInputLines(input);
 
     let skipped = 0;
     for (const line of lines) {
