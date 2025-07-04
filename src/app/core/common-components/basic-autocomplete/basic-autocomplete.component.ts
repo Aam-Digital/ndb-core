@@ -85,7 +85,6 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
 /**
  * Custom `MatFormFieldControl` for any select / dropdown field.
  */
-
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",
