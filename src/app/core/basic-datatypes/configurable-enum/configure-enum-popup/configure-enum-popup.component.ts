@@ -18,7 +18,6 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
@@ -46,6 +45,8 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 })
 export class ConfigureEnumPopupComponent {
   newOptionInput: string;
+  localValues: ConfigurableEnumValue[];
+  private initialValues: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
@@ -55,17 +56,52 @@ export class ConfigureEnumPopupComponent {
     private entities: EntityRegistry,
     private snackBar: MatSnackBar,
   ) {
-    const initialValues = JSON.stringify(enumEntity.values);
-    this.dialog.afterClosed().subscribe(() => {
-      if (JSON.stringify(this.enumEntity.values) !== initialValues) {
-        this.entityMapper.save(this.enumEntity);
-      }
-    });
+    // Deep copy for editing
+    this.localValues = enumEntity.values.map(v => ({ ...v }));
+    this.initialValues = JSON.stringify(this.localValues);
+  }
+
+  hasUnsavedChanges(): boolean {
+    return JSON.stringify(this.localValues) !== this.initialValues;
+  }
+
+  private async confirmDiscardChanges(): Promise<boolean> {
+    if (this.hasUnsavedChanges()) {
+      const confirmed = await this.confirmationService.getConfirmation(
+        $localize`Discard changes?`,
+        $localize`You have unsaved changes. Discard them?`,
+        [
+          { text: $localize`Discard`, dialogResult: true, click() {} },
+          { text: $localize`Cancel`, dialogResult: false, click() {} },
+        ]
+      );
+      return !!confirmed;
+    }
+    return true;
+  }
+
+  async onSave() {
+    // Copy localValues back to the original entity
+    this.enumEntity.values = this.localValues.map(v => ({ ...v }));
+    await this.saveChanges();
+    this.dialog.close(true);
+  }
+
+  async onCancel() {
+    if (await this.confirmDiscardChanges()) {
+      this.dialog.close(false);
+    }
+    // else do nothing, stay open
+  }
+
+  private async saveChanges() {
+    await this.entityMapper.save(this.enumEntity);
+    this.initialValues = JSON.stringify(this.localValues);
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(
-      this.enumEntity.values,
+      this.localValues,
       event.previousIndex,
       event.currentIndex,
     );
@@ -84,8 +120,7 @@ export class ConfigureEnumPopupComponent {
       deletionText,
     );
     if (confirmed) {
-      this.enumEntity.values.splice(index, 1);
-      await this.entityMapper.save(this.enumEntity);
+      this.localValues.splice(index, 1);
     }
   }
 
@@ -151,11 +186,10 @@ export class ConfigureEnumPopupComponent {
       .map(line => line.trim())
       .filter(line => line);
 
-    const existingLabels = this.enumEntity.values.map(
+    const existingLabels = this.localValues.map(
       v => v.label.trim().toLowerCase()
     );
     let skipped = 0;
-    let added = 0;
 
     for (const line of lines) {
       if (existingLabels.includes(line.toLowerCase())) {
@@ -163,12 +197,15 @@ export class ConfigureEnumPopupComponent {
         continue;
       }
       try {
-        this.enumEntity.addOption(line);
+        // Use the same structure as enum values
+        this.localValues.push({
+          id: line.toUpperCase(),
+          label: line,
+        });
         existingLabels.push(line.toLowerCase());
-        added++;
       } catch (err) {
-     console.error('Failed to add option:', line, err);
-    }
+        console.error('Failed to add option:', line, err);
+      }
     }
 
     this.newOptionInput = "";

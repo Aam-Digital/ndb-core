@@ -324,7 +324,9 @@ export class AdminEntityFieldComponent implements OnInit {
       // if the user makes changes, the dialog component itself is saving the new entity to the database already
       enumEntity = new ConfigurableEnum(this.additionalForm.value);
     }
-    this.dialog.open(ConfigureEnumPopupComponent, { data: enumEntity });
+    this.dialog.open(ConfigureEnumPopupComponent, { data: enumEntity,
+      disableClose: true
+     });
   }
 
   resetToBaseFieldSettings() {

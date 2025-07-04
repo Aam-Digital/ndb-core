@@ -85,6 +85,7 @@ export const BASIC_AUTOCOMPLETE_COMPONENT_IMPORTS = [
 /**
  * Custom `MatFormFieldControl` for any select / dropdown field.
  */
+
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",
@@ -147,7 +148,7 @@ export class BasicAutocompleteComponent<O, V = O>
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
 
     return values
-      .map((v) => this._options.find((o) => o.asValue === v)?.asString)
+      .map((v) => this._options.find((o) => this.compareEnumValues(o.asValue, v))?.asString)
       .join(", ");
   }
 
@@ -277,6 +278,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this.virtualScrollViewport.checkViewportSize();
     }, 0);
   }
+
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
@@ -350,12 +352,27 @@ export class BasicAutocompleteComponent<O, V = O>
     return filteredOptions;
   }
 
+  /**
+   * Compare two enum values by id if present, otherwise by reference.
+   */
+  compareEnumValues(a: any, b: any): boolean {
+    if (a === b) return true;
+    if (!a || !b) return false;
+    if (a.id !== undefined && b.id !== undefined) {
+      return a.id === b.id;
+    }
+    if (a.value !== undefined && b.value !== undefined) {
+      return a.value === b.value;
+    }
+    return false;
+  }
+
   private setInitialInputValue() {
     this._options.forEach(
       (o) =>
         (o.selected = Array.isArray(this.value)
-          ? this.value?.includes(o.asValue)
-          : this.value === o.asValue),
+          ? this.value?.some(v => this.compareEnumValues(v, o.asValue))
+          : this.compareEnumValues(this.value, o.asValue)),
     );
     this._selectedOptions = this._options.filter(
       (o) => o.selected && !o.isHidden,
