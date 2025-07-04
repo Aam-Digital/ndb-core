@@ -19,7 +19,7 @@ import {
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
-fdescribe("ConfigureEnumPopupComponent", () => {
+describe("ConfigureEnumPopupComponent", () => {
   let component: ConfigureEnumPopupComponent;
   let fixture: ComponentFixture<ConfigureEnumPopupComponent>;
   let entityMapper: MockEntityMapperService;
