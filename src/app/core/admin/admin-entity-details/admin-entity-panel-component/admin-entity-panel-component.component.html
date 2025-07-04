@@ -1,9 +1,9 @@
 <div class="padding-regular">
-  @if (targetEntityType?.ENTITY_TYPE) {
+  @if (entityConstructor?.ENTITY_TYPE) {
     <mat-form-field appearance="fill" class="margin-bottom-regular">
       <mat-label i18n>Entity Type</mat-label>
       <app-entity-type-select
-        [(ngModel)]="entityTypeModel"
+        [(ngModel)]="selectedEntityType"
         (ngModelChange)="onEntityTypeChange($event)"
         [multi]="false"
         [showInternalTypes]="true"
@@ -20,7 +20,7 @@
     <app-admin-list-manager
       [items]="activeFields"
       [availableItems]="allFields"
-      [entityType]="targetEntityType"
+      [entityType]="entityConstructor"
       fieldLabel="Columns shown:"
       i18n-fieldLabel
       (itemsChange)="updateFields($event)"

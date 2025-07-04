@@ -32,14 +32,12 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   @Input() config: PanelComponent;
   @Input() entityType: EntityConstructor;
 
+  entityConstructor: EntityConstructor;
+  selectedEntityType: string;
+  isDialogOpen = false;
   allFields: ColumnConfig[] = [];
   /** Stores the currently active/selected field IDs to be shown in the panel */
   activeFields: string[];
-  // Represents the entity type that current panel is linked to
-  targetEntityType: EntityConstructor;
-
-  entityTypeModel: string;
-  isDialogOpen = false;
 
   constructor(
     private entities: EntityRegistry,
@@ -47,15 +45,15 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     if (!this.config.config?.entityType) return;
-    this.entityTypeModel = this.config.config.entityType;
-    this.targetEntityType = this.entities.get(this.entityTypeModel);
+    this.selectedEntityType = this.config.config.entityType;
+    this.entityConstructor = this.entities.get(this.selectedEntityType);
     this.initializeFields();
   }
 
   private initializeFields(): void {
-    if (!this.targetEntityType) return;
+    if (!this.entityConstructor) return;
     const targetEntitySchemaFields = Array.from(
-      this.targetEntityType.schema.keys(),
+      this.entityConstructor.schema.keys(),
     );
     this.activeFields = (this.config.config.columns ?? []).map((col) =>
       typeof col === "string" ? col : col.id,
@@ -98,7 +96,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.isDialogOpen = false;
 
     if (!confirmed) {
-      this.entityTypeModel = this.config.config.entityType;
+      this.selectedEntityType = this.config.config.entityType;
       return;
     }
 
@@ -117,9 +115,9 @@ export class AdminEntityPanelComponentComponent implements OnInit {
    * @param newType - The new entity type selected.
    */
   private updateConfigForNewEntityType(newType: string) {
-    this.entityTypeModel = newType;
+    this.selectedEntityType = newType;
     this.config.config.entityType = newType;
-    this.targetEntityType = this.entities.get(newType);
+    this.entityConstructor = this.entities.get(newType);
 
     const matchingEntry = Object.entries(RELATED_ENTITIES_DEFAULT_CONFIGS).find(
       ([_, value]) => value.entityType === newType,
