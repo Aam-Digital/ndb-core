@@ -40,7 +40,7 @@ export class AdminListManagerComponent implements OnInit {
   @Input() entityType: EntityConstructor;
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
-  @Input() activeFields: (string | FormFieldConfig)[];
+  @Input() activeFields: (string | FormFieldConfig)[] = [];
 
   @Output() itemsChange = new EventEmitter<string[]>();
 
@@ -49,7 +49,10 @@ export class AdminListManagerComponent implements OnInit {
   ngOnInit(): void {
     if (!this.entityType) return;
     const targetEntitySchemaFields = Array.from(this.entityType.schema.keys());
-    this.availableItems = [...this.activeFields, ...targetEntitySchemaFields];
+    this.availableItems = [
+      ...(this.activeFields ?? []),
+      ...targetEntitySchemaFields,
+    ];
   }
 
   drop(event: CdkDragDrop<(string | ColumnConfig)[]>) {
@@ -72,6 +75,6 @@ export class AdminListManagerComponent implements OnInit {
   }
 
   get itemsAsStrings(): string[] {
-    return this.items.map(this.getFieldId);
+    return this.items?.map(this.getFieldId);
   }
 }

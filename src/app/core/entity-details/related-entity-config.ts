@@ -7,7 +7,7 @@ export interface RelatedEntitiesComponentConfig {
   /**
    * The string identifier of the related entity type (e.g., "Aser", "HealthCheck").
    */
-  entityType: string;
+  entityType?: string;
 
   /**
    * (Optional)The name of the component to be rendered (e.g., "RelatedEntities", "RelatedEntitiesWithSummary").

@@ -39,30 +39,10 @@ export const RELATED_ENTITY_OVERRIDES: Record<
   string,
   RelatedEntitiesComponentConfig
 > = {
-  Aser: {
-    entityType: "Aser",
-    component: "RelatedEntities",
-  },
-  HealthCheck: {
-    entityType: "HealthCheck",
-    component: "RelatedEntities",
-  },
   EducationalMaterial: {
-    entityType: "EducationalMaterial",
     component: "RelatedEntitiesWithSummary",
   },
   HistoricalEntityData: {
-    entityType: "HistoricalEntityData",
-    component: "RelatedEntities",
     loaderMethod: "HistoricalDataService",
-  },
-  RecurringActivity: {
-    entityType: "RecurringActivity",
-    component: "RelatedEntities",
-  },
-  ChildSchoolOverview: {
-    entityType: "ChildSchoolRelation",
-    component: "RelatedTimePeriodEntities",
-    single: true,
   },
 };
