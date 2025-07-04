@@ -3,7 +3,7 @@
  * This interface allows dynamic assignment of component behavior based on the entity type, including which
  * component to use, what property relates the entity, and custom loader methods.
  */
-export interface RelatedEntityConfig {
+export interface RelatedEntitiesComponentConfig {
   /**
    * The string identifier of the related entity type (e.g., "Aser", "HealthCheck").
    */
