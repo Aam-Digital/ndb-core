@@ -11,7 +11,7 @@
 </app-view-title>
 
 <div>
-  <app-reorderable-list
+  <app-admin-list-manager
     [items]="filters"
     [availableItems]="allFields"
     [entityType]="entityConstructor"
@@ -19,7 +19,7 @@
     fieldLabel="Add Filter:"
     i18n-fieldLabel
     (itemsChange)="updateFilters($event)"
-  ></app-reorderable-list>
+  ></app-admin-list-manager>
 
   <div class="mat-elevation-z1">
     <app-admin-tabs
@@ -30,14 +30,14 @@
         [appAdminTabTemplate]="config?.columnGroups?.groups"
         let-item
       >
-        <app-reorderable-list
+        <app-admin-list-manager
           [items]="item.columns"
           [availableItems]="allFields"
           [entityType]="entityConstructor"
           fieldLabel="Drag & drop table column headers. Add columns:"
           i18n-fieldLabel
           (itemsChange)="item.columns = $event"
-        ></app-reorderable-list>
+        ></app-admin-list-manager>
       </ng-template>
     </app-admin-tabs>
   </div>

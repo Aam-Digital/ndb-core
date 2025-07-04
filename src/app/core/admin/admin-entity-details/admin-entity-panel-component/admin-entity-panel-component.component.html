@@ -17,14 +17,14 @@
       </p>
     </div>
 
-    <app-reorderable-list
+    <app-admin-list-manager
       [items]="activeFields"
       [availableItems]="allFields"
       [entityType]="targetEntityType"
       fieldLabel="Columns shown:"
       i18n-fieldLabel
       (itemsChange)="updateFields($event)"
-    ></app-reorderable-list>
+    ></app-admin-list-manager>
   } @else {
     <p>[ {{ config.component }} ]</p>
 

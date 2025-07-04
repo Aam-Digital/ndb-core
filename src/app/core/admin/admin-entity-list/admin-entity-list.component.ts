@@ -11,7 +11,7 @@ import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.com
 import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { Logging } from "../../logging/logging.service";
-import { ReorderableListComponent } from "#src/app/utils/reorderable-list/reorderable-list.component";
+import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 
 @Component({
   selector: "app-admin-entity-list",
@@ -21,7 +21,7 @@ import { ReorderableListComponent } from "#src/app/utils/reorderable-list/reorde
     AdminTabsComponent,
     AdminTabTemplateDirective,
     ViewTitleComponent,
-    ReorderableListComponent,
+    AdminListManagerComponent,
   ],
   templateUrl: "./admin-entity-list.component.html",
   styleUrls: [

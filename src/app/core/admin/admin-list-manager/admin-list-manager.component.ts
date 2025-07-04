@@ -18,7 +18,7 @@ import { MatSelectModule } from "@angular/material/select";
  * Component for Admin UI to edit table columns or fields in other contexts like filters.
  */
 @Component({
-  selector: "app-reorderable-list",
+  selector: "app-admin-list-manager",
   imports: [
     CommonModule,
     CdkDropList,
@@ -29,10 +29,10 @@ import { MatSelectModule } from "@angular/material/select";
     MatFormFieldModule,
     MatSelectModule,
   ],
-  templateUrl: "./reorderable-list.component.html",
-  styleUrl: "./reorderable-list.component.scss",
+  templateUrl: "./admin-list-manager.component.html",
+  styleUrl: "./admin-list-manager.component.scss",
 })
-export class ReorderableListComponent {
+export class AdminListManagerComponent {
   @Input() items: (string | ColumnConfig)[] = [];
   @Input() availableItems: (string | ColumnConfig)[] = [];
   @Input() entityType: EntityConstructor;
