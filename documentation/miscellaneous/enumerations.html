@@ -1,0 +1,836 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content miscellaneous-enumerations">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Miscellaneous</li>
+  <li class="breadcrumb-item">Enumerations</li>
+</ol>
+
+<section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#AlertDisplay" title="src/app/core/alerts/alert-display.ts" ><b>AlertDisplay</b>&nbsp;&nbsp;&nbsp;(src/.../alert-display.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#AttendanceLogicalStatus" title="src/app/child-dev-project/attendance/model/attendance-status.ts" ><b>AttendanceLogicalStatus</b>&nbsp;&nbsp;&nbsp;(src/.../attendance-status.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Browser" title="src/app/core/pwa-install/pwa-install.service.ts" ><b>Browser</b>&nbsp;&nbsp;&nbsp;(src/.../pwa-install.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#CalculationType" title="src/app/core/basic-datatypes/number/display-dynamic-percentage/display-calculated-value.component.ts" ><b>CalculationType</b>&nbsp;&nbsp;&nbsp;(src/.../display-calculated-value.component.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#LoaderMethod" title="src/app/core/entity/entity-special-loader/entity-special-loader.service.ts" ><b>LoaderMethod</b>&nbsp;&nbsp;&nbsp;(src/.../entity-special-loader.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#LoginState" title="src/app/core/session/session-states/login-state.enum.ts" ><b>LoginState</b>&nbsp;&nbsp;&nbsp;(src/.../login-state.enum.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#LogLevel" title="src/app/core/logging/log-level.ts" ><b>LogLevel</b>&nbsp;&nbsp;&nbsp;(src/.../log-level.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#OS" title="src/app/core/pwa-install/pwa-install.service.ts" ><b>OS</b>&nbsp;&nbsp;&nbsp;(src/.../pwa-install.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#PLACEHOLDERS" title="src/app/core/entity/schema/entity-schema-field.ts" ><b>PLACEHOLDERS</b>&nbsp;&nbsp;&nbsp;(src/.../entity-schema-field.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#PWAInstallType" title="src/app/core/pwa-install/pwa-install.service.ts" ><b>PWAInstallType</b>&nbsp;&nbsp;&nbsp;(src/.../pwa-install.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ScreenSize" title="src/app/utils/media/screen-size-observer.service.ts" ><b>ScreenSize</b>&nbsp;&nbsp;&nbsp;(src/.../screen-size-observer.service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SessionType" title="src/app/core/session/session-type.ts" ><b>SessionType</b>&nbsp;&nbsp;&nbsp;(src/.../session-type.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SyncState" title="src/app/core/session/session-states/sync-state.enum.ts" ><b>SyncState</b>&nbsp;&nbsp;&nbsp;(src/.../sync-state.enum.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#WarningLevel" title="src/app/child-dev-project/warning-level.ts" ><b>WarningLevel</b>&nbsp;&nbsp;&nbsp;(src/.../warning-level.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <h3>src/app/core/alerts/alert-display.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="AlertDisplay"></a>
+                        <span class="name "><b>AlertDisplay</b><a href="#AlertDisplay"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Different settings how to display an Alert.</p>
+</div>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;NONE
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;TEMPORARY
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;PERSISTENT
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/child-dev-project/attendance/model/attendance-status.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="AttendanceLogicalStatus"></a>
+                        <span class="name "><b>AttendanceLogicalStatus</b><a href="#AttendanceLogicalStatus"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>logical type of an attendance status, i.e. how it will be considered for statistics and analysis.</p>
+</div>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;PRESENT
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>PRESENT</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;ABSENT
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>ABSENT</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;IGNORE
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>IGNORE</code>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/core/pwa-install/pwa-install.service.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="Browser"></a>
+                        <span class="name "><b>Browser</b><a href="#Browser"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Opera
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;MicrosoftInternetExplorer
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Edge
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Safari
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Chrome
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Firefox
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Other
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="OS"></a>
+                        <span class="name "><b>OS</b><a href="#OS"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;iOS
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;MacOS
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Android
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Linux
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Windows
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Other
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="PWAInstallType"></a>
+                        <span class="name "><b>PWAInstallType</b><a href="#PWAInstallType"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;ShowiOSInstallInstructions
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;RunningAsPWA
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;NotAvailable
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/core/basic-datatypes/number/display-dynamic-percentage/display-calculated-value.component.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="CalculationType"></a>
+                        <span class="name "><b>CalculationType</b><a href="#CalculationType"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;Percentage
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>percentage</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;BMI
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>bmi</code>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/core/entity/entity-special-loader/entity-special-loader.service.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="LoaderMethod"></a>
+                        <span class="name "><b>LoaderMethod</b><a href="#LoaderMethod"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;ChildrenService
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>ChildrenService</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;HistoricalDataService
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>HistoricalDataService</code>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/core/session/session-states/login-state.enum.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="LoginState"></a>
+                        <span class="name "><b>LoginState</b><a href="#LoginState"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>State of the login at the local database, which is synonymous to login at the whole application</p>
+</div>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;LOGIN_FAILED
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;LOGGED_OUT
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;LOGGED_IN
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;IN_PROGRESS
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;UNAVAILABLE
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/core/logging/log-level.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="LogLevel"></a>
+                        <span class="name "><b>LogLevel</b><a href="#LogLevel"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Log level indicates the context and severity of a message.</p>
+</div>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;DEBUG
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;INFO
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;WARN
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;ERROR
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/core/entity/schema/entity-schema-field.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="PLACEHOLDERS"></a>
+                        <span class="name "><b>PLACEHOLDERS</b><a href="#PLACEHOLDERS"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Available placeholder variables that can be used to configure a dynamic default value.
+(e.g. &quot;$now&quot; to set to current date)</p>
+</div>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;NOW
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>$now</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;CURRENT_USER
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>$current_user</code>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/utils/media/screen-size-observer.service.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="ScreenSize"></a>
+                        <span class="name "><b>ScreenSize</b><a href="#ScreenSize"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Different ranges of screen sizes.</p>
+</div>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;xs
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;sm
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>1</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;md
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>2</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;lg
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>3</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;xl
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>4</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;xxl
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>5</code>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/core/session/session-type.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="SessionType"></a>
+                        <span class="name "><b>SessionType</b><a href="#SessionType"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>Available Session types with their keys that can be used in the app-config.</p>
+</div>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;synced
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>synced</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;local
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>local</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;mock
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>mock</code>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/core/session/session-states/sync-state.enum.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="SyncState"></a>
+                        <span class="name "><b>SyncState</b><a href="#SyncState"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-description"><p>State of the Synchronization between local and remote database</p>
+</div>
+                        </td>
+                    </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;STARTED
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;COMPLETED
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;FAILED
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;UNSYNCED
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;ABORTED
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+    <h3>src/app/child-dev-project/warning-level.ts</h3>
+    <section data-compodoc="block-enums">
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="WarningLevel"></a>
+                        <span class="name "><b>WarningLevel</b><a href="#WarningLevel"><span class="icon ion-ios-link"></span></a></span>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;WARNING
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>WARNING</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;URGENT
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>URGENT</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;OK
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <i>Value : </i><code>OK</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                &nbsp;NONE
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-enumerations';
+            var COMPODOC_CURRENT_PAGE_URL = 'enumerations.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

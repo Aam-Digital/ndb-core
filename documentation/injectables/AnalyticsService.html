@@ -1,0 +1,722 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AnalyticsService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/core/analytics/analytics.service.ts</code>
+        </p>
+
+
+            <p class="comment">
+                <h3>Description</h3>
+            </p>
+            <p class="comment">
+                <p>Track usage analytics data and report it to a backend server like Matomo.</p>
+<p>This is automatically disabled if the config doc does not specify &quot;usage_analytics&quot; settings.</p>
+
+            </p>
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#eventTrack" >eventTrack</a>
+                            </li>
+                            <li>
+                                <a href="#init" >init</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                <a href="#setUser" >setUser</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(angulartics2: Angulartics2, angulartics2Matomo: Angulartics2Matomo, configService: <a href="../injectables/ConfigService.html" target="_self">ConfigService</a>, loginState: <a href="../injectables/LoginStateSubject.html" target="_self">LoginStateSubject</a>, sessionInfo: <a href="../injectables/SessionSubject.html" target="_self">SessionSubject</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">src/app/core/analytics/analytics.service.ts:23</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>angulartics2</td>
+                                                  
+                                                        <td>
+                                                                    <code>Angulartics2</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>angulartics2Matomo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Angulartics2Matomo</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>configService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ConfigService.html" target="_self" >ConfigService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>loginState</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/LoginStateSubject.html" target="_self" >LoginStateSubject</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>sessionInfo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SessionSubject.html" target="_self" >SessionSubject</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="eventTrack"></a>
+                    <span class="name">
+                        <span ><b>eventTrack</b></span>
+                        <a href="#eventTrack"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>eventTrack(action: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, properties: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="128"
+                                    class="link-to-prism">src/app/core/analytics/analytics.service.ts:128</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Explicitly record a user action</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>action</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>String identifying the action</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>properties</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>{
+      category: &quot;no_category&quot;,
+      label: &quot;no_label&quot;,
+    }</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>Additional properties for categorization</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="init"></a>
+                    <span class="name">
+                        <span ><b>init</b></span>
+                        <a href="#init"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>init()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/app/core/analytics/analytics.service.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Set up usage analytics tracking.</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setUser"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                        <span ><b>setUser</b></span>
+                        <a href="#setUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>setUser(username: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">src/app/core/analytics/analytics.service.ts:54</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Sets a unique user hash which is always for the same user but does not expose the username.
+This improves the logging behavior.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>username</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>actual username</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { environment } from &quot;../../../environments/environment&quot;;
+import { ConfigService } from &quot;../config/config.service&quot;;
+import {
+  USAGE_ANALYTICS_CONFIG_ID,
+  UsageAnalyticsConfig,
+} from &quot;./usage-analytics-config&quot;;
+import { Angulartics2, Angulartics2Matomo } from &quot;angulartics2&quot;;
+import md5 from &quot;md5&quot;;
+import { LoginState } from &quot;../session/session-states/login-state.enum&quot;;
+import { LoginStateSubject } from &quot;../session/session-type&quot;;
+import { SessionSubject } from &quot;../session/auth/session-info&quot;;
+
+/**
+ * Track usage analytics data and report it to a backend server like Matomo.
+ *
+ * This is automatically disabled if the config doc does not specify &quot;usage_analytics&quot; settings.
+ */
+@Injectable({
+  providedIn: &quot;root&quot;,
+})
+export class AnalyticsService {
+  private isInitialized &#x3D; false;
+
+  constructor(
+    private angulartics2: Angulartics2,
+    private angulartics2Matomo: Angulartics2Matomo,
+    private configService: ConfigService,
+    loginState: LoginStateSubject,
+    private sessionInfo: SessionSubject,
+  ) {
+    if (environment.production) {
+      this.init();
+    }
+
+    // update the user context for remote error logging and tracking and load config initially
+    loginState.subscribe((s: LoginState) &#x3D;&gt; this.updateSessionInfo(s));
+  }
+
+  private updateSessionInfo(newState: LoginState): void {
+    if (newState &#x3D;&#x3D;&#x3D; LoginState.LOGGED_IN) {
+      const username &#x3D; this.sessionInfo.value?.name;
+      this.setUser(username);
+    } else {
+      this.setUser(undefined);
+    }
+  }
+
+  /**
+   * Sets a unique user hash which is always for the same user but does not expose the username.
+   * This improves the logging behavior.
+   * @param username actual username
+   */
+  public setUser(username: string): void {
+    const baseUrl &#x3D; location.host;
+    this.angulartics2Matomo.setUsername(md5(&#x60;${baseUrl}${username ?? &quot;&quot;}&#x60;));
+  }
+
+  /**
+   * Set up usage analytics tracking.
+   */
+  init(): void {
+    window[&quot;_paq&quot;] &#x3D; window[&quot;_paq&quot;] || [];
+    window[&quot;_paq&quot;].push([
+      &quot;setDocumentTitle&quot;,
+      document.domain + &quot;/&quot; + document.title,
+    ]);
+    window[&quot;_paq&quot;].push([&quot;trackPageView&quot;]);
+    window[&quot;_paq&quot;].push([&quot;enableLinkTracking&quot;]);
+    this.setVersion();
+    this.setOrganization(location.hostname);
+    this.setUser(undefined);
+    this.configService.configUpdates.subscribe(() &#x3D;&gt; this.setConfigValues());
+  }
+
+  private setVersion(): void {
+    this.angulartics2.setUserProperties.next({
+      dimension1: &quot;ndb-core@&quot; + environment.appVersion,
+    });
+  }
+
+  private setOrganization(orgName: string): void {
+    this.angulartics2.setUserProperties.next({
+      dimension2: orgName,
+    });
+  }
+
+  /**
+   * dynamically sets up everything for Matomo.
+   *
+   * The code is inspired by:
+   * https://github.com/Arnaud73/ngx-matomo/blob/master/projects/ngx-matomo/src/lib/matomo-injector.service.ts
+   * @private
+   */
+  private setConfigValues() {
+    const { url, site_id, no_cookies } &#x3D;
+      this.configService.getConfig&lt;UsageAnalyticsConfig&gt;(
+        USAGE_ANALYTICS_CONFIG_ID,
+      ) || { url: &quot;https://matomo.aam-digital.org&quot; };
+    const u &#x3D; url.endsWith(&quot;/&quot;) ? url : url + &quot;/&quot;;
+
+    if (!this.isInitialized) {
+      const g &#x3D; document.createElement(&quot;script&quot;);
+      const s &#x3D; document.getElementsByTagName(&quot;script&quot;)[0];
+      g.type &#x3D; &quot;text/javascript&quot;;
+      g.async &#x3D; true;
+      g.defer &#x3D; true;
+      g.src &#x3D; u + &quot;matomo.js&quot;;
+      s.parentNode.insertBefore(g, s);
+      this.angulartics2Matomo.startTracking();
+      this.isInitialized &#x3D; true;
+    }
+
+    window[&quot;_paq&quot;].push([&quot;setTrackerUrl&quot;, u + &quot;matomo.php&quot;]);
+    if (no_cookies) {
+      window[&quot;_paq&quot;].push([&quot;disableCookies&quot;]);
+    }
+    if (site_id) {
+      window[&quot;_paq&quot;].push([&quot;setSiteId&quot;, site_id]);
+    }
+  }
+
+  /**
+   * Explicitly record a user action
+   * @param action String identifying the action
+   * @param properties Additional properties for categorization
+   */
+  eventTrack(
+    action: string,
+    properties: {
+      category: string;
+      label?: string;
+      value?: number;
+    } &#x3D; {
+      category: &quot;no_category&quot;,
+      label: &quot;no_label&quot;,
+    },
+  ): void {
+    this.angulartics2.eventTrack.next({
+      action: action,
+      properties: properties,
+    });
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AnalyticsService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
