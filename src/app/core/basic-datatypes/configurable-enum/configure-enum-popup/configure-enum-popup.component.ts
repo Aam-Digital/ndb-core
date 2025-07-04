@@ -178,16 +178,37 @@ export class ConfigureEnumPopupComponent {
   }
 
   async createNewOption() {
-    if (!this.newOptionInput || !this.newOptionInput.trim()) return;
+    if (!this.hasValidInput()) return;
 
-    const lines = this.newOptionInput
+    const lines = this.getInputLines();
+    const { skipped } = this.addUniqueOptions(lines);
+
+    this.newOptionInput = "";
+
+    if (skipped > 0) {
+      this.showDuplicateSkippedMessage(skipped);
+    }
+  }
+
+  private hasValidInput(): boolean {
+    return !!this.newOptionInput && !!this.newOptionInput.trim();
+  }
+
+  private getInputLines(): string[] {
+    return this.newOptionInput
       .split(/\r?\n/)
       .map((line) => line.trim())
       .filter((line) => line);
+  }
 
+  private addUniqueOptions(lines: string[]): {
+    added: number;
+    skipped: number;
+  } {
     const existingLabels = this.localValues.map((v) =>
       v.label.trim().toLowerCase(),
     );
+    let added = 0;
     let skipped = 0;
 
     for (const line of lines) {
@@ -195,26 +216,18 @@ export class ConfigureEnumPopupComponent {
         skipped++;
         continue;
       }
-      try {
-        // Use the same structure as enum values
-        this.localValues.push({
-          id: line.toUpperCase(),
-          label: line,
-        });
-        existingLabels.push(line.toLowerCase());
-      } catch (err) {
-        console.error("Failed to add option:", line, err);
-      }
+      this.localValues.push({ id: line.toUpperCase(), label: line });
+      existingLabels.push(line.toLowerCase());
+      added++;
     }
+    return { added, skipped };
+  }
 
-    this.newOptionInput = "";
-
-    if (skipped > 0) {
-      this.snackBar.open(
-        $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped === 1 ? "y" : "ies"}.`,
-        undefined,
-        { duration: 3000 },
-      );
-    }
+  private showDuplicateSkippedMessage(skipped: number) {
+    this.snackBar.open(
+      $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped === 1 ? "y" : "ies"}.`,
+      undefined,
+      { duration: 3000 },
+    );
   }
 }
