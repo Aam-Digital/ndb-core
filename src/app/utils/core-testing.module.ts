@@ -12,6 +12,7 @@ import { ConfigurableEnumModule } from "../core/basic-datatypes/configurable-enu
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { defaultValueStrategyProviders } from "../core/default-values/standard-default-value-strategies";
+import { SyncStateSubject } from "../core/session/session-type";
 
 /**
  * A basic module that can be imported in unit tests to provide default datatypes.
@@ -21,7 +22,8 @@ import { defaultValueStrategyProviders } from "../core/default-values/standard-d
   imports: [CoreModule, ConfigurableEnumModule],
   providers: [
     { provide: EntityRegistry, useValue: entityRegistry },
-    mockEntityMapperProvider(),
+    ...mockEntityMapperProvider(),
+    SyncStateSubject,
     ConfigurableEnumService,
     {
       provide: EntityActionsService,

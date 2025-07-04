@@ -27,7 +27,7 @@ describe("EntityCountDashboardComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EntityCountDashboardComponent, MockedTestingModule.withState()],
-      providers: [mockEntityMapperProvider()],
+      providers: [...mockEntityMapperProvider()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EntityCountDashboardComponent);

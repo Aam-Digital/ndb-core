@@ -12,7 +12,7 @@ describe("MockEntityMapperServicer", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [mockEntityMapperProvider([])],
+      providers: [...mockEntityMapperProvider([])],
     });
     service = TestBed.inject(EntityMapperService) as MockEntityMapperService;
   });

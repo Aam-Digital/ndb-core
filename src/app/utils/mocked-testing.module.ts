@@ -93,7 +93,7 @@ export class MockedTestingModule {
         },
 
         { provide: LoggingService, useValue: mockLoggingService },
-        mockEntityMapperProvider([
+        ...mockEntityMapperProvider([
           ...data,
           getDefaultConfigEntity(),
           ...getDefaultEnumEntities(),

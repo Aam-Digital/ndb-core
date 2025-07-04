@@ -40,7 +40,7 @@ describe("EntityInlineEditActionsComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+        ...mockEntityMapperProvider(),
         { provide: CurrentUserSubject, useValue: of(null) },
         { provide: EntityActionsService, useValue: null },
       ],

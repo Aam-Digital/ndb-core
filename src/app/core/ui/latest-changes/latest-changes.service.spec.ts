@@ -25,7 +25,7 @@ import { of, throwError } from "rxjs";
 describe("LatestChangesService", () => {
   let service: LatestChangesService;
 
-  let alertService: AlertService;
+  let alertService: jasmine.SpyObj<AlertService>;
   let http: HttpClient;
 
   const testReleases = [
@@ -57,7 +57,7 @@ describe("LatestChangesService", () => {
   ];
 
   beforeEach(() => {
-    alertService = new AlertService();
+    alertService = jasmine.createSpyObj(["addWarning"]);
     http = new HttpClient(null);
 
     TestBed.configureTestingModule({
@@ -120,10 +120,10 @@ describe("LatestChangesService", () => {
     spyOn(http, "get").and.returnValue(
       throwError(() => ({ status: 404, message: "not found" })),
     );
-    const alertSpy = spyOn(alertService, "addAlert");
+
     service.getChangelogsBetweenVersions("1.0").subscribe({
       error: () => {
-        expect(alertSpy)
+        expect(alertService.addWarning)
           .withContext('"not found" error not defined')
           .toHaveBeenCalledTimes(1);
         done();

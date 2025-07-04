@@ -5,7 +5,6 @@ import {
   ExternalProfileSearchParams,
   SkillApiService,
 } from "./skill-api.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapperProvider } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EscoApiService } from "../esco-api/esco-api.service";
@@ -38,7 +37,7 @@ describe("SkillApiService", () => {
         SkillApiService,
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+        ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: new EntityRegistry() },
         { provide: EscoApiService, useValue: mockEscoApi },
       ],

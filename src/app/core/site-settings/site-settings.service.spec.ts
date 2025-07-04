@@ -28,7 +28,7 @@ describe("SiteSettingsService", () => {
       imports: [CoreTestingModule, ConfigurableEnumModule, FileModule],
       providers: [
         { provide: FileService, useValue: mockFileService },
-        mockEntityMapperProvider(),
+        ...mockEntityMapperProvider(),
         EntityAbility,
       ],
     });

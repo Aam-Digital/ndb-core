@@ -2,7 +2,6 @@ import { centersUnique } from "../../../../child-dev-project/children/demo-data-
 import { ConfigurableEnum } from "../configurable-enum";
 import { generateFormFieldStory } from "../../../entity/default-datatype/edit-component-story-utils";
 import { ConfigurableEnumService } from "../configurable-enum.service";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 
 const centerEnum = Object.assign(new ConfigurableEnum("center"), {
@@ -21,7 +20,7 @@ const formFieldStory = generateFormFieldStory(
   { additional: "center" },
   [
     { provide: ConfigurableEnumService, useValue: mockEnumService },
-    { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+    ...mockEntityMapperProvider(),
   ],
 );
 

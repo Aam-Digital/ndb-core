@@ -21,7 +21,7 @@ describe("DisplayTodoCompletionComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DisplayTodoCompletionComponent],
-      providers: [mockEntityMapperProvider()],
+      providers: [...mockEntityMapperProvider()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DisplayTodoCompletionComponent);

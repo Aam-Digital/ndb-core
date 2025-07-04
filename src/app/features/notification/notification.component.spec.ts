@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NotificationComponent } from "./notification.component";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapperProvider } from "../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { SessionSubject } from "../../core/session/auth/session-info";
-import { of } from "rxjs";
+import { NEVER, of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ActivatedRoute } from "@angular/router";
@@ -17,7 +16,11 @@ describe("NotificationComponent", () => {
   let component: NotificationComponent;
   let fixture: ComponentFixture<NotificationComponent>;
 
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+
   beforeEach(async () => {
+    mockEntityMapper = jasmine.createSpyObj(["receiveUpdates", "load"]);
+
     await TestBed.configureTestingModule({
       imports: [
         NotificationComponent,
@@ -25,7 +28,7 @@ describe("NotificationComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: SessionSubject, useValue: of(null) },
         { provide: ActivatedRoute, useValue: {} },
         { provide: EntityRegistry, useValue: entityRegistry },
@@ -37,6 +40,8 @@ describe("NotificationComponent", () => {
         },
       ],
     }).compileComponents();
+
+    mockEntityMapper.receiveUpdates.and.returnValue(NEVER);
 
     fixture = TestBed.createComponent(NotificationComponent);
     component = fixture.componentInstance;

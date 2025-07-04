@@ -8,10 +8,6 @@ import {
 import { SetupWizardComponent } from "./setup-wizard.component";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import {
-  mockEntityMapperProvider,
-  MockEntityMapperService,
-} from "../../entity/entity-mapper/mock-entity-mapper-service";
-import {
   CONFIG_SETUP_WIZARD_ID,
   SetupWizardConfig,
 } from "./setup-wizard-config";
@@ -25,7 +21,10 @@ describe("SetupWizardComponent", () => {
     await TestBed.configureTestingModule({
       imports: [SetupWizardComponent],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+        {
+          provide: EntityMapperService,
+          useValue: jasmine.createSpyObj(["load", "save"]),
+        },
       ],
     }).compileComponents();
 
@@ -63,11 +62,12 @@ describe("SetupWizardComponent", () => {
       ],
     };
 
-    const entityMapper: MockEntityMapperService = TestBed.inject(
+    const entityMapper = TestBed.inject(
       EntityMapperService,
-    ) as MockEntityMapperService;
-    entityMapper.add(new Config(CONFIG_SETUP_WIZARD_ID, testConfig));
-    const entityMapperSaveSpy = spyOn(entityMapper, "save");
+    ) as jasmine.SpyObj<EntityMapperService>;
+    entityMapper.load.and.resolveTo(
+      new Config(CONFIG_SETUP_WIZARD_ID, testConfig),
+    );
 
     component.ngOnInit();
     tick();
@@ -76,8 +76,8 @@ describe("SetupWizardComponent", () => {
     component.finishWizard();
     tick();
 
-    expect(entityMapperSaveSpy).toHaveBeenCalled();
-    const actualSavedConfig = entityMapperSaveSpy.calls.mostRecent()
+    expect(entityMapper.save).toHaveBeenCalled();
+    const actualSavedConfig = entityMapper.save.calls.mostRecent()
       .args[0] as Config<SetupWizardConfig>;
     expect(actualSavedConfig.data.finished).toBe(true);
   }));

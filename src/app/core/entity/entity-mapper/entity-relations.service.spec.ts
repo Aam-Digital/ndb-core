@@ -39,7 +39,7 @@ describe("EntityRelationsService", () => {
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [mockEntityMapperProvider([primaryEntity])],
+      providers: [...mockEntityMapperProvider([primaryEntity])],
     });
     service = TestBed.inject(EntityRelationsService);
   });

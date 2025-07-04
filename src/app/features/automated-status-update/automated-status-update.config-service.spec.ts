@@ -87,7 +87,7 @@ describe("AutomatedStatusUpdateConfigService", () => {
 
     TestBed.configureTestingModule({
       providers: [
-        mockEntityMapperProvider(),
+        ...mockEntityMapperProvider(),
         { provide: MatDialog, useValue: mockDialog },
         {
           provide: EntitySchemaService,

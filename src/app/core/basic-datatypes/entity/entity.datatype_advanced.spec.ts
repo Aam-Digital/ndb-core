@@ -12,7 +12,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 
 // separate test file for custom functionality of the EntityDatatype
-// because there was conflicts with the standard tests in entity.datatype.spec.ts
+// because there were conflicts with the standard tests in entity.datatype.spec.ts
 
 describe("Schema data type: entity (advanced functionality)", () => {
   let entityMapper: MockEntityMapperService;
@@ -22,7 +22,14 @@ describe("Schema data type: entity (advanced functionality)", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [EntityDatatype, mockEntityMapperProvider([])],
+      providers: [
+        EntityDatatype,
+        ...mockEntityMapperProvider([]),
+        {
+          provide: EntityActionsService,
+          useValue: jasmine.createSpyObj(["anonymize"]),
+        },
+      ],
     });
     dataType = TestBed.inject(EntityDatatype);
 

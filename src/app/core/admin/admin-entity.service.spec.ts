@@ -1,7 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
 import { AdminEntityService } from "./admin-entity.service";
-import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapperProvider } from "../entity/entity-mapper/mock-entity-mapper-service";
 
 describe("AdminEntityService", () => {
@@ -9,12 +8,7 @@ describe("AdminEntityService", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapperProvider(),
-        },
-      ],
+      providers: [...mockEntityMapperProvider()],
     });
     service = TestBed.inject(AdminEntityService);
   });

@@ -1,19 +1,32 @@
 import { EntityMapperService } from "./entity-mapper.service";
-import { Observable, Subject } from "rxjs";
+import { NEVER, Observable, Subject } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Entity, EntityConstructor } from "../model/entity";
 import { UpdatedEntity } from "../model/entity-update";
 import { Provider } from "@angular/core";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
-export function mockEntityMapperProvider(withData: Entity[] = []): Provider {
-  return {
-    provide: EntityMapperService,
-    useFactory: () => {
-      const ems = new MockEntityMapperService();
-      ems.addAll(withData);
-      return ems;
+export function createEntityMapperSpyObj() {
+  const mock = jasmine.createSpyObj(["receiveUpdates"]);
+  mock.receiveUpdates.and.returnValue(NEVER);
+  return mock;
+}
+
+export function mockEntityMapperProvider(withData: Entity[] = []): Provider[] {
+  return [
+    {
+      provide: EntityMapperService,
+      useFactory: () => {
+        delete MockEntityMapperService.prototype["dbResolver"];
+        const ems = new MockEntityMapperService();
+        ems.addAll(withData);
+        return ems;
+      },
     },
-  };
+    { provide: DatabaseResolverService, useValue: {} },
+    CurrentUserSubject,
+  ];
 }
 
 /**

@@ -29,7 +29,7 @@ describe("TemplateExportApiService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        mockEntityMapperProvider(),
+        ...mockEntityMapperProvider(),
         EntityRegistry,
         {
           provide: SyncStateSubject,

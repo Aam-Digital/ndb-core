@@ -43,7 +43,7 @@ describe("AbstractEntityDetailsComponent", () => {
     TestBed.configureTestingModule({
       imports: [TestEntityDetailsComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+        ...mockEntityMapperProvider(),
         { provide: EntityActionsService, useValue: mockEntityRemoveService },
         { provide: EntityAbility, useValue: mockAbility },
       ],

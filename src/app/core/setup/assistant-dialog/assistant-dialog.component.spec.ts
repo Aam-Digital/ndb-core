@@ -9,7 +9,6 @@ import { SetupService } from "../setup.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LanguageService } from "app/core/language/language.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AssistantDialogComponent", () => {
@@ -30,7 +29,7 @@ describe("AssistantDialogComponent", () => {
         },
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapperProvider(),
+          useValue: jasmine.createSpyObj(["load"]),
         },
         {
           provide: SetupService,

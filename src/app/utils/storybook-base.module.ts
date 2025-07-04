@@ -65,7 +65,7 @@ export const entityFormStorybookDefaultParameters = {
         indicesRegistered: EMPTY,
       },
     },
-    { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+    ...mockEntityMapperProvider(),
   ],
 })
 export class StorybookBaseModule {

@@ -26,7 +26,7 @@ describe("ImportService", () => {
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [ImportService, mockEntityMapperProvider()],
+      providers: [ImportService, ...mockEntityMapperProvider()],
     });
     service = TestBed.inject(ImportService);
 

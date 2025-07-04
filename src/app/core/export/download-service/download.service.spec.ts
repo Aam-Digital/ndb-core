@@ -7,7 +7,6 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapperProvider } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { GeoLocation } from "app/features/location/geo-location";
@@ -16,7 +15,7 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
 describe("DownloadService", () => {
   let service: DownloadService;
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
-  let mockedEntityMapper;
+  let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
   const testSchool = TestEntity.create({ name: "Test School" });
   const testChild = TestEntity.create("Test Child");
 
@@ -24,7 +23,18 @@ describe("DownloadService", () => {
     mockDataTransformationService = jasmine.createSpyObj([
       "queryAndTransformData",
     ]);
-    mockedEntityMapper = mockEntityMapperProvider([testSchool, testChild]);
+    mockedEntityMapper = jasmine.createSpyObj(["load"]);
+    mockedEntityMapper.load.and.callFake(async (entityType, id) => {
+      switch (id) {
+        case testChild.getId():
+          return testChild as any;
+        case testSchool.getId():
+          return testSchool as any;
+        default:
+          throw new Error();
+      }
+    });
+
     TestBed.configureTestingModule({
       providers: [
         DownloadService,
@@ -32,10 +42,7 @@ describe("DownloadService", () => {
           provide: DataTransformationService,
           useValue: mockDataTransformationService,
         },
-        {
-          provide: EntityMapperService,
-          useValue: mockedEntityMapper,
-        },
+        { provide: EntityMapperService, useValue: mockedEntityMapper },
       ],
     });
     service = TestBed.inject(DownloadService);

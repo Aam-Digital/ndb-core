@@ -29,7 +29,7 @@ describe("BirthdayDashboardComponent", () => {
     await TestBed.configureTestingModule({
       imports: [BirthdayDashboardComponent, FontAwesomeTestingModule],
       providers: [
-        mockEntityMapperProvider(),
+        ...mockEntityMapperProvider(),
         { provide: ConfigService, useValue: {} },
       ],
     }).compileComponents();

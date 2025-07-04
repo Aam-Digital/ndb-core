@@ -40,7 +40,7 @@ describe("EntityAnonymizeService", () => {
       imports: [CoreTestingModule],
       providers: [
         EntityAnonymizeService,
-        mockEntityMapperProvider(allEntities.map((e) => e.copy())),
+        ...mockEntityMapperProvider(allEntities.map((e) => e.copy())),
         { provide: FileService, useValue: mockFileService },
         { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
         { provide: PublicFormsService, useValue: {} },

@@ -17,7 +17,6 @@ import { ReportRow } from "../report-row";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapperProvider } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { ReportEntity, SqlReport } from "../report-config";
 import {
@@ -95,7 +94,7 @@ describe("ReportingComponent", () => {
           useValue: mockDataTransformationService,
         },
         { provide: SqlReportService, useValue: mockSqlReportService },
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+        ...mockEntityMapperProvider(),
       ],
     }).compileComponents();
   });

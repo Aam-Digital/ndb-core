@@ -46,7 +46,7 @@ describe("BulkMergeService", () => {
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, NoopAnimationsModule],
-      providers: [mockEntityMapperProvider()],
+      providers: [...mockEntityMapperProvider()],
     });
 
     service = TestBed.inject(BulkMergeService);

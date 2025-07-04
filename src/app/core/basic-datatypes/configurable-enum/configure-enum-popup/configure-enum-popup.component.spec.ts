@@ -34,7 +34,7 @@ describe("ConfigureEnumPopupComponent", () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: new ConfigurableEnum() },
         { provide: MatDialogRef, useValue: { afterClosed: () => EMPTY } },
-        mockEntityMapperProvider(),
+        ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();

@@ -79,7 +79,7 @@ describe("AdminEntityComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
-        mockEntityMapperProvider([new Config(Config.CONFIG_KEY, config)]),
+        ...mockEntityMapperProvider([new Config(Config.CONFIG_KEY, config)]),
         {
           provide: ConfigService,
           useValue: mockConfigService,

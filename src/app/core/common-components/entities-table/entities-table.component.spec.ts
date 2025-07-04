@@ -5,7 +5,6 @@ import { Entity } from "../../entity/model/entity";
 
 import { Note } from "../../../child-dev-project/notes/model/note";
 import moment from "moment/moment";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { EntityFormService } from "../entity-form/entity-form.service";
@@ -47,7 +46,6 @@ describe("EntitiesTableComponent", () => {
           useValue: jasmine.createSpyObj(["openFormPopup"]),
         },
         { provide: CurrentUserSubject, useValue: of(null) },
-        { provide: EntityMapperService, useValue: null },
       ],
     }).compileComponents();
 

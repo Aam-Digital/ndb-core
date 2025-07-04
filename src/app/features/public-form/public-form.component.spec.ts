@@ -42,6 +42,7 @@ describe("PublicFormComponent", () => {
         ],
       },
     ];
+
     TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [

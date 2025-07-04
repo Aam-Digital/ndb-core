@@ -8,17 +8,20 @@ import moment from "moment";
 import { DataFilter } from "./filters/filters";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { TestEntity } from "../../utils/test-utils/TestEntity";
-import { mockEntityMapperProvider } from "../entity/entity-mapper/mock-entity-mapper-service";
-import { getDefaultEnumEntities } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 
 describe("FilterService", () => {
   let service: FilterService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+
+  beforeEach(() => {
+    mockEnumService = jasmine.createSpyObj(["getEnumValues"]);
+    mockEnumService.getEnumValues.and.returnValue(defaultInteractionTypes);
+
+    TestBed.configureTestingModule({
       providers: [
-        ConfigurableEnumService,
-        mockEntityMapperProvider(getDefaultEnumEntities()),
+        {provide: ConfigurableEnumService,useValue: mockEnumService
+        },
       ],
     });
     service = TestBed.inject(FilterService);

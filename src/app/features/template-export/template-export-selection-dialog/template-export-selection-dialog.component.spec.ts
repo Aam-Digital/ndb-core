@@ -16,7 +16,6 @@ import { DownloadService } from "../../../core/export/download-service/download.
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapperProvider } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ActivatedRoute } from "@angular/router";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -65,7 +64,10 @@ describe("TemplateExportSelectionDialogComponent", () => {
         { provide: DownloadService, useValue: mockDownloadService },
         // required by child components:
         { provide: EntityAbility, useValue: mockAbility },
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
+        {
+          provide: EntityMapperService,
+          useValue: jasmine.createSpyObj(["load"]),
+        },
         EntityRegistry,
         { provide: ActivatedRoute, useValue: null },
         {

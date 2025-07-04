@@ -36,7 +36,7 @@ describe("PermissionEnforcerService", () => {
       imports: [MockedTestingModule.withState()],
       providers: [
         { provide: LOCATION_TOKEN, useValue: mockLocation },
-        mockEntityMapperProvider(),
+        ...mockEntityMapperProvider(),
       ],
     });
     service = TestBed.inject(PermissionEnforcerService);

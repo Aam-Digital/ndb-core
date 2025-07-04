@@ -54,7 +54,7 @@ describe("EntityDeleteService", () => {
       imports: [CoreTestingModule],
       providers: [
         EntityDeleteService,
-        mockEntityMapperProvider(allEntities.map((e) => e.copy())),
+        ...mockEntityMapperProvider(allEntities.map((e) => e.copy())),
         { provide: UserAdminService, useValue: mockUserAdminService },
         { provide: MatSnackBar, useValue: snackBarSpy },
         {

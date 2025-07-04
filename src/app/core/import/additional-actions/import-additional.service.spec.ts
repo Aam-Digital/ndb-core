@@ -55,9 +55,7 @@ describe("ImportAdditionalService", () => {
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
-      ],
+      providers: [...mockEntityMapperProvider()],
     });
     service = TestBed.inject(ImportAdditionalService);
 

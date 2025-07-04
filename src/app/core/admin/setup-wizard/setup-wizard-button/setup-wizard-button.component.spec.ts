@@ -19,9 +19,7 @@ describe("SetupWizardButtonComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SetupWizardButtonComponent],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapperProvider() },
-      ],
+      providers: [...mockEntityMapperProvider()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SetupWizardButtonComponent);
