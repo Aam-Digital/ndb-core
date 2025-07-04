@@ -11,46 +11,15 @@
 </app-view-title>
 
 <div>
-  <div
-    cdkDropList
-    (cdkDropListDropped)="drop($event, config?.filters)"
-    cdkDropListOrientation="mixed"
-    class="drop-list flex-row gap-regular flex-wrap gap-large"
-  >
-    @for (filter of config?.filters; track filter) {
-      <div cdkDrag class="filter-field drop-item flex-row gap-small">
-        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-        <mat-form-field appearance="fill">
-          <mat-label>
-            <app-entity-field-label
-              [field]="filter"
-              [entityType]="entityConstructor"
-            ></app-entity-field-label>
-          </mat-label>
-          <mat-select disabled></mat-select>
-        </mat-form-field>
-
-        <fa-icon
-          icon="times"
-          class="remove-icon"
-          (click)="
-            filters = removeItem(filters, filter.id); updateFilters(filters)
-          "
-        ></fa-icon>
-      </div>
-    }
-  </div>
-
-  <div class="table-content-preview">
-    <span i18n>Add Filter:</span>
-    <app-entity-fields-menu
-      [entityType]="entityConstructor"
-      [(activeFields)]="filters"
-      (activeFieldsChange)="updateFilters(filters)"
-      [availableFields]="allFields"
-      icon="square-plus"
-    ></app-entity-fields-menu>
-  </div>
+  <app-admin-list-manager
+    [items]="filters"
+    [activeFields]="config?.columns"
+    [entityType]="entityConstructor"
+    templateType="filter"
+    fieldLabel="Add Filter:"
+    i18n-fieldLabel
+    (itemsChange)="updateFilters($event)"
+  ></app-admin-list-manager>
 
   <div class="mat-elevation-z1">
     <app-admin-tabs
@@ -61,41 +30,14 @@
         [appAdminTabTemplate]="config?.columnGroups?.groups"
         let-item
       >
-        <div
-          class="table-header drop-list flex-row"
-          cdkDropList
-          cdkDropListOrientation="horizontal"
-          cdkDropListLockAxis="x"
-          (cdkDropListDropped)="drop($event, item.columns)"
-        >
-          @for (col of item["columns"]; track col) {
-            <div cdkDrag class="column-header drop-item flex-row gap-small">
-              <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
-
-              <!-- TODO: for custom column overrides, this cannot display the label yet -->
-              <app-entity-field-label
-                [field]="col"
-                [entityType]="entityConstructor"
-              ></app-entity-field-label>
-
-              <fa-icon
-                icon="times"
-                class="remove-icon"
-                (click)="item.columns = removeItem(item.columns, col)"
-              ></fa-icon>
-            </div>
-          }
-        </div>
-
-        <div class="table-content-preview">
-          <span i18n>Drag & drop table column headers. Add columns:</span>
-          <app-entity-fields-menu
-            [entityType]="entityConstructor"
-            [(activeFields)]="item.columns"
-            [availableFields]="allFields"
-            icon="square-plus"
-          ></app-entity-fields-menu>
-        </div>
+        <app-admin-list-manager
+          [items]="item.columns"
+          [activeFields]="config?.columns"
+          [entityType]="entityConstructor"
+          fieldLabel="Drag & drop table column headers. Add columns:"
+          i18n-fieldLabel
+          (itemsChange)="item.columns = $event"
+        ></app-admin-list-manager>
       </ng-template>
     </app-admin-tabs>
   </div>

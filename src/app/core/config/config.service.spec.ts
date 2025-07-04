@@ -394,6 +394,7 @@ describe("ConfigService", () => {
       expectedDefaultValueConfig,
     );
   }));
+
   it("should migrate defaultValue mode 'dynamic' new config format", fakeAsync(() => {
     const previousDefaultValueConfig = {
       mode: "dynamic",
@@ -428,5 +429,120 @@ describe("ConfigService", () => {
     expect(config["attributes"].fieldName.defaultValue).toEqual(
       expectedDefaultValueConfig,
     );
+  }));
+
+  it("should migrate ActivitiesOverview component", fakeAsync(() => {
+    const oldConfig = {
+      "view:activities": {
+        component: "ActivitiesOverview",
+        config: {},
+      },
+    };
+
+    const expectedConfig = {
+      "view:activities": {
+        component: "RelatedEntities",
+        config: {
+          entityType: "RecurringActivity",
+          columns: [
+            {
+              id: "title",
+              editComponent: "EditTextWithAutocomplete",
+              additional: {
+                entityType: "RecurringActivity",
+                relevantProperty: "linkedGroups",
+                relevantValue: "",
+              },
+            },
+            { id: "assignedTo" },
+            { id: "linkedGroups" },
+            { id: "excludedParticipants" },
+          ],
+        },
+      },
+    };
+
+    testConfigMigration(oldConfig, expectedConfig);
+  }));
+
+  it("should migrate deprecated ChildSchoolOverview components", fakeAsync(() => {
+    const oldConfig = {
+      "view:child/:id": {
+        entityType: "Child",
+        panels: [
+          {
+            components: [
+              { component: "ChildSchoolOverview" },
+              { component: "OtherComponent", config: {} },
+            ],
+          },
+        ],
+      },
+      "view:school/:id": {
+        entityType: "School",
+        panels: [
+          {
+            components: [
+              { component: "ChildSchoolOverview" },
+              { component: "OtherComponent", config: {} },
+            ],
+          },
+        ],
+      },
+    };
+
+    const expectedConfig = {
+      "view:child/:id": {
+        entityType: "Child",
+        panels: [
+          {
+            components: [
+              {
+                component: "RelatedEntities",
+                config: {
+                  entityType: "ChildSchoolRelation",
+                  columns: [
+                    { id: "start", visibleFrom: "md" },
+                    { id: "end", visibleFrom: "md" },
+                    { id: "schoolId" },
+                    { id: "schoolClass" },
+                    { id: "result" },
+                  ],
+                  loaderMethod: "ChildrenServiceQueryRelations",
+                  showInactive: true,
+                },
+              },
+              { component: "OtherComponent", config: {} },
+            ],
+          },
+        ],
+      },
+      "view:school/:id": {
+        entityType: "School",
+        panels: [
+          {
+            components: [
+              {
+                component: "RelatedEntities",
+                config: {
+                  entityType: "ChildSchoolRelation",
+                  columns: [
+                    { id: "childId" },
+                    { id: "start", visibleFrom: "md" },
+                    { id: "end", visibleFrom: "md" },
+                    { id: "schoolClass" },
+                    { id: "result" },
+                  ],
+                  loaderMethod: "ChildrenServiceQueryRelations",
+                },
+              },
+              { component: "OtherComponent", config: {} },
+            ],
+          },
+        ],
+      },
+    };
+
+    testConfigMigration(oldConfig, expectedConfig);
   }));
 });

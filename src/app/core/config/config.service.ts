@@ -14,6 +14,7 @@ import { Logging } from "../logging/logging.service";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
 import { ConfigMigration } from "./config-migration";
 import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 
 /**
@@ -90,7 +91,10 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateGroupByConfig,
       migrateDefaultValue,
       migrateUserEntityAndPanels,
+      migrateComponentEntityTypeDefaults,
+      migrateActivitiesOverviewComponent,
       removeOutdatedTodoViews,
+      migrateChildSchoolOverviewComponent,
     ];
 
     // default migrations that are not only temporary but will remain in the codebase
@@ -377,7 +381,72 @@ const migrateUserEntityAndPanels: ConfigMigration = (key, configPart) => {
 };
 
 /**
- * Remove outdated task view configs
+ * Migration to set or update entityType for specific components
+ */
+const migrateComponentEntityTypeDefaults: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (typeof configPart !== "object" || !configPart?.component) {
+    return configPart;
+  }
+
+  if (!configPart.config) {
+    configPart.config = {};
+  }
+
+  const defaults = RELATED_ENTITIES_DEFAULT_CONFIGS[configPart.component];
+  if (defaults) {
+    configPart.config.entityType = defaults.entityType;
+    if (
+      !Array.isArray(configPart.config.columns) ||
+      configPart.config.columns.length === 0
+    ) {
+      configPart.config.columns = defaults.columns;
+    }
+  }
+
+  return configPart;
+};
+
+/**
+ * Migration to replace the deprecated `ActivitiesOverviewComponent`
+ * with the more generic `RelatedEntities` component in the config.
+ */
+const migrateActivitiesOverviewComponent: ConfigMigration = (
+  _key,
+  configPart,
+) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.component !== "ActivitiesOverview"
+  ) {
+    return configPart;
+  }
+
+  return {
+    component: "RelatedEntities",
+    config: {
+      entityType: "RecurringActivity",
+      columns: configPart.config?.columns ?? [
+        {
+          id: "title",
+          editComponent: "EditTextWithAutocomplete",
+          additional: {
+            entityType: "RecurringActivity",
+            relevantProperty: "linkedGroups",
+            relevantValue: "",
+          },
+        },
+        { id: "assignedTo" },
+        { id: "linkedGroups" },
+        { id: "excludedParticipants" },
+      ],
+    },
+  };
+};
+
+/* Remove outdated task view configs
  * to fall back to the new default that is automatically added.
  */
 const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
@@ -389,4 +458,77 @@ const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
   }
 
   return configPart;
+};
+
+/**
+ * Replace deprecated `ChildSchoolOverview`/`PreviousSchools`/`ChildrenOverview`
+ * components with `RelatedEntities` using ChildSchoolRelation entity.
+ */
+const migrateChildSchoolOverviewComponent: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  const deprecatedComponents = [
+    "ChildSchoolOverview",
+    "PreviousSchools",
+    "ChildrenOverview",
+  ];
+
+  // determine if this is part of EntityDetails for Child or for School
+  if (typeof configPart === "object" && Array.isArray(configPart?.panels)) {
+    const isChildDetails = configPart?.entityType?.toLowerCase() === "child";
+
+    configPart.panels.forEach((panel) => {
+      panel.components?.forEach((component, index) => {
+        if (
+          typeof component === "object" &&
+          deprecatedComponents.includes(component.component)
+        ) {
+          panel.components[index] = isChildDetails
+            ? relatedEntitiesForChild
+            : relatedEntitiesForSchool;
+        }
+      });
+    });
+  }
+
+  return configPart;
+};
+
+/**
+ * Default configuration for RelatedEntities used in School entity details.
+ * Displays child-related school history (childId, start/end dates, class, result).
+ */
+const relatedEntitiesForSchool = {
+  component: "RelatedEntities",
+  config: {
+    entityType: "ChildSchoolRelation",
+    columns: [
+      { id: "childId" },
+      { id: "start", visibleFrom: "md" },
+      { id: "end", visibleFrom: "md" },
+      { id: "schoolClass" },
+      { id: "result" },
+    ],
+    loaderMethod: "ChildrenServiceQueryRelations",
+  },
+};
+/**
+ * Default configuration for RelatedEntities used in Child entity details.
+ * Displays school-related history (start/end dates, schoolId, class, result) and includes inactive records.
+ */
+const relatedEntitiesForChild = {
+  component: "RelatedEntities",
+  config: {
+    entityType: "ChildSchoolRelation",
+    columns: [
+      { id: "start", visibleFrom: "md" },
+      { id: "end", visibleFrom: "md" },
+      { id: "schoolId" },
+      { id: "schoolClass" },
+      { id: "result" },
+    ],
+    loaderMethod: "ChildrenServiceQueryRelations",
+    showInactive: true,
+  },
 };

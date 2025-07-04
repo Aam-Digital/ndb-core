@@ -12,12 +12,18 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "app/core/entity/database-entity.decorator";
+import { toFormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
 describe("AdminEntityListComponent", () => {
   let component: AdminEntityListComponent;
   let fixture: ComponentFixture<AdminEntityListComponent>;
+  let mockFormService: jasmine.SpyObj<EntityFormService>;
 
   beforeEach(async () => {
+    mockFormService = jasmine.createSpyObj(["extendFormFieldConfig"]);
+    mockFormService.extendFormFieldConfig.and.callFake((c) =>
+      toFormFieldConfig(c),
+    );
     await TestBed.configureTestingModule({
       imports: [
         AdminEntityListComponent,
@@ -28,7 +34,7 @@ describe("AdminEntityListComponent", () => {
         { provide: FilterGeneratorService, useValue: {} },
         { provide: FilterService, useValue: {} },
         { provide: ActivatedRoute, useValue: {} },
-        { provide: EntityFormService, useValue: {} },
+        { provide: EntityFormService, useValue: mockFormService },
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
