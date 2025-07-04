@@ -57,7 +57,7 @@ export class ConfigureEnumPopupComponent {
     private snackBar: MatSnackBar,
   ) {
     // Deep copy for editing
-    this.localValues = enumEntity.values.map(v => ({ ...v }));
+    this.localValues = enumEntity.values.map((v) => ({ ...v }));
     this.initialValues = JSON.stringify(this.localValues);
   }
 
@@ -73,7 +73,7 @@ export class ConfigureEnumPopupComponent {
         [
           { text: $localize`Discard`, dialogResult: true, click() {} },
           { text: $localize`Cancel`, dialogResult: false, click() {} },
-        ]
+        ],
       );
       return !!confirmed;
     }
@@ -82,7 +82,7 @@ export class ConfigureEnumPopupComponent {
 
   async onSave() {
     // Copy localValues back to the original entity
-    this.enumEntity.values = this.localValues.map(v => ({ ...v }));
+    this.enumEntity.values = this.localValues.map((v) => ({ ...v }));
     await this.saveChanges();
     this.dialog.close(true);
   }
@@ -100,11 +100,7 @@ export class ConfigureEnumPopupComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(
-      this.localValues,
-      event.previousIndex,
-      event.currentIndex,
-    );
+    moveItemInArray(this.localValues, event.previousIndex, event.currentIndex);
   }
 
   async delete(value: ConfigurableEnumValue, index: number) {
@@ -170,11 +166,14 @@ export class ConfigureEnumPopupComponent {
     if (!clipboardData) return;
 
     const pastedText = clipboardData.getData("text");
-    const lines = pastedText.split(/\r?\n/).map(line => line.trim()).filter(line => line);
+    const lines = pastedText
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line);
 
     if (lines.length > 1) {
       event.preventDefault();
-      this.newOptionInput = lines.join('\n');
+      this.newOptionInput = lines.join("\n");
     }
   }
 
@@ -183,11 +182,11 @@ export class ConfigureEnumPopupComponent {
 
     const lines = this.newOptionInput
       .split(/\r?\n/)
-      .map(line => line.trim())
-      .filter(line => line);
+      .map((line) => line.trim())
+      .filter((line) => line);
 
-    const existingLabels = this.localValues.map(
-      v => v.label.trim().toLowerCase()
+    const existingLabels = this.localValues.map((v) =>
+      v.label.trim().toLowerCase(),
     );
     let skipped = 0;
 
@@ -204,7 +203,7 @@ export class ConfigureEnumPopupComponent {
         });
         existingLabels.push(line.toLowerCase());
       } catch (err) {
-        console.error('Failed to add option:', line, err);
+        console.error("Failed to add option:", line, err);
       }
     }
 
@@ -212,9 +211,9 @@ export class ConfigureEnumPopupComponent {
 
     if (skipped > 0) {
       this.snackBar.open(
-        $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped === 1 ? 'y' : 'ies'}.`,
+        $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped === 1 ? "y" : "ies"}.`,
         undefined,
-        { duration: 3000 }
+        { duration: 3000 },
       );
     }
   }

@@ -148,7 +148,11 @@ export class BasicAutocompleteComponent<O, V = O>
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
 
     return values
-      .map((v) => this._options.find((o) => this.compareEnumValues(o.asValue, v))?.asString)
+      .map(
+        (v) =>
+          this._options.find((o) => this.compareEnumValues(o.asValue, v))
+            ?.asString,
+      )
       .join(", ");
   }
 
@@ -371,7 +375,7 @@ export class BasicAutocompleteComponent<O, V = O>
     this._options.forEach(
       (o) =>
         (o.selected = Array.isArray(this.value)
-          ? this.value?.some(v => this.compareEnumValues(v, o.asValue))
+          ? this.value?.some((v) => this.compareEnumValues(v, o.asValue))
           : this.compareEnumValues(this.value, o.asValue)),
     );
     this._selectedOptions = this._options.filter(
