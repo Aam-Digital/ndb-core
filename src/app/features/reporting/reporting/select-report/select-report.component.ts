@@ -168,20 +168,30 @@ export class SelectReportComponent implements OnChanges {
     }
   }
   get exportFileName(): string {
-    const reportName =
+    const reportName = this.getReportName();
+    const datePart = this.getDatePart();
+    return datePart ? `${reportName} ${datePart}.csv` : `${reportName}.csv`;
+  }
+
+  private getReportName(): string {
+    return (
       this.selectedReport?.title
         ?.replace(/[^\w\s-]/g, "")
         .replace(/\s+/g, " ")
-        .trim() || "report";
-    const formatDate = (date: Date) =>
-      date
-        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
-        : "";
-    let datePart = "";
+        .trim() || "report"
+    );
+  }
+
+  private getDatePart(): string {
     if (this.fromDate && this.toDate) {
-      datePart = `${formatDate(this.fromDate)}_${formatDate(this.toDate)}`;
+      return `${this.formatDate(this.fromDate)}_${this.formatDate(this.toDate)}`;
     }
-    return datePart ? `${reportName} ${datePart}.csv` : `${reportName}.csv`;
+    return "";
+  }
+
+  private formatDate(date: Date): string {
+    if (!date) return "";
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   }
 }
 
