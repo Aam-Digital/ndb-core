@@ -167,6 +167,22 @@ export class SelectReportComponent implements OnChanges {
       this.dateRangeFilterConfig = undefined;
     }
   }
+  get exportFileName(): string {
+    const reportName =
+      this.selectedReport?.title
+        ?.replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, " ")
+        .trim() || "report";
+    const formatDate = (date: Date) =>
+      date
+        ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+        : "";
+    let datePart = "";
+    if (this.fromDate && this.toDate) {
+      datePart = `${formatDate(this.fromDate)}_${formatDate(this.toDate)}`;
+    }
+    return datePart ? `${reportName} ${datePart}.csv` : `${reportName}.csv`;
+  }
 }
 
 interface CalculateReportOptions {
