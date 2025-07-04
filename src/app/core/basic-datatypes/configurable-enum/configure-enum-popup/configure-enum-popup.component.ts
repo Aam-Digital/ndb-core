@@ -39,7 +39,7 @@ const AddCancelButtons: ConfirmationDialogButton[] = [
 
 const DiscardCancelButtons: ConfirmationDialogButton[] = [
   { text: $localize`Discard`, dialogResult: true, click() {} },
-  { text: $localize`Cancel`, dialogResult: false, click() {} },
+  { text: $localize`Continue Editing`, dialogResult: false, click() {} },
 ];
 
 const DeleteCancelButtons: ConfirmationDialogButton[] = [
