@@ -4,7 +4,7 @@
  */
 
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
-import { RelatedEntityConfig } from "../core/entity-details/related-entity-config";
+import { RelatedEntitiesComponentConfig } from "../core/entity-details/related-entity-config";
 
 export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
   string,
@@ -35,7 +35,10 @@ export const RELATED_ENTITIES_DEFAULT_CONFIGS: Record<
   },
 };
 
-export const RELATED_ENTITY_OVERRIDES: Record<string, RelatedEntityConfig> = {
+export const RELATED_ENTITY_OVERRIDES: Record<
+  string,
+  RelatedEntitiesComponentConfig
+> = {
   Aser: {
     entityType: "Aser",
     component: "RelatedEntities",
@@ -56,10 +59,5 @@ export const RELATED_ENTITY_OVERRIDES: Record<string, RelatedEntityConfig> = {
   RecurringActivity: {
     entityType: "RecurringActivity",
     component: "RelatedEntities",
-  },
-  ChildSchoolOverview: {
-    entityType: "ChildSchoolRelation",
-    component: "RelatedEntities",
-    single: true,
   },
 };

@@ -17,7 +17,7 @@ import {
   YesNoButtons,
 } from "app/core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { lastValueFrom } from "rxjs";
-import { RelatedEntityConfig } from "#src/app/core/entity-details/related-entity-config";
+import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 
 @Component({
@@ -157,7 +157,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   private applyCustomOverrides(newType: string) {
     delete this.config.config.loaderMethod;
     delete this.config.config.property;
-    const overrideRelatedConfig: RelatedEntityConfig =
+    const overrideRelatedConfig: RelatedEntitiesComponentConfig =
       RELATED_ENTITY_OVERRIDES[newType];
 
     if (overrideRelatedConfig) {
