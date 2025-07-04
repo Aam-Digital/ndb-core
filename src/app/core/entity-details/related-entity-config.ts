@@ -10,14 +10,14 @@ export interface RelatedEntitiesComponentConfig {
   entityType: string;
 
   /**
-   * The name of the component to be rendered (e.g., "RelatedEntities", "RelatedEntitiesWithSummary").
+   * (Optional)The name of the component to be rendered (e.g., "RelatedEntities", "RelatedEntitiesWithSummary").
    */
-  component: string;
+  component?: string;
 
   /**
    * (Optional) The property on the related entity that links it to the main entity.
    */
-  property?: string;
+  property?: string | string[];
 
   /**
    * (Optional) A custom loader method to fetch related entities.
@@ -29,4 +29,9 @@ export interface RelatedEntitiesComponentConfig {
    * (e.g., only one currently attended school per child).
    */
   single?: boolean;
+
+  /**
+   * Whether inactive/archived records should be shown.
+   */
+  showInactive?: boolean;
 }

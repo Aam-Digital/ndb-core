@@ -23,7 +23,7 @@ import {
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
-import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
+import { RelatedEntitiesComponentConfig } from "../related-entity-config";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -35,7 +35,9 @@ import { ChildrenService } from "#src/app/child-dev-project/children/children.se
   templateUrl: "./related-entities.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
-export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
+export class RelatedEntitiesComponent<E extends Entity>
+  implements RelatedEntitiesComponentConfig, OnInit
+{
   /** currently viewed/main entity for which related entities are displayed in this component */
   @Input() entity: Entity;
 
@@ -92,17 +94,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   @Input() clickMode: "popup" | "navigate" | "popup-details" = "popup";
   @Input() editable: boolean = true;
 
-  /**
-   * Enables specialized behavior for the child-school relationship view.
-   * When true:
-   *  - Mode is set based on the entity type ("child" or "school")
-   *  - Data is loaded via the ChildrenService instead of the default EntityMapper
-   *  - Column switching is applied between schoolId and childId
-   * This is typically used in components like "ChildSchoolOverview", "PreviousSchools","ChildrenOverview",.
-   */
-  @Input() enableChildSchoolMode: boolean = false;
-  mode: "child" | "school" = "child";
-
   data: E[];
   protected entityCtr: EntityConstructor<E>;
 
@@ -111,7 +102,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     private entityRegistry: EntityRegistry,
     private screenWidthObserver: ScreenWidthObserver,
     protected filterService: FilterService,
-    @Optional() protected childrenService: ChildrenService,
     @Optional() private entitySpecialLoader: EntitySpecialLoaderService,
   ) {
     this.screenWidthObserver
@@ -122,16 +112,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   async ngOnInit() {
     this.property = this.property ?? this.getProperty();
-    if (this.enableChildSchoolMode) {
-      this.mode = this.entity.getType().toLowerCase() as any;
-      this.showInactive = this.mode === "child";
-      this.switchRelatedEntityColumnForMode();
-      this.data = (await this.childrenService.queryRelations(
-        this.entity.getId(false),
-      )) as unknown as E[];
-    } else {
-      this.data = await this.getData();
-    }
+    this.data = await this.getData();
     this.filter = this.initFilter();
 
     if (this.showInactive === undefined) {
@@ -231,15 +212,5 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
         return this.screenWidthObserver.currentScreenSize() >= numericValue;
       })
       .map((c) => c.id);
-  }
-
-  private switchRelatedEntityColumnForMode() {
-    // display the related entity that is *not* the current main entity
-    const idColumn = this._columns.find(
-      (c) => c.id === "childId" || c.id === "schoolId",
-    );
-    if (idColumn) {
-      idColumn.id = this.mode === "child" ? "schoolId" : "childId";
-    }
   }
 }

@@ -60,4 +60,9 @@ export const RELATED_ENTITY_OVERRIDES: Record<
     entityType: "RecurringActivity",
     component: "RelatedEntities",
   },
+  ChildSchoolOverview: {
+    entityType: "ChildSchoolRelation",
+    component: "RelatedTimePeriodEntities",
+    single: true,
+  },
 };
