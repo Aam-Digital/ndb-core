@@ -1,7 +1,7 @@
 <h1 matDialogTitle i18n="title of dropdown options popup dialog">
   Edit dropdown options
 </h1>
-<app-dialog-close mat-dialog-close></app-dialog-close>
+<app-dialog-close (click)="onCancel()"></app-dialog-close>
 
 <mat-dialog-content
   style="max-width: 400px; padding-top: 5px"
@@ -9,7 +9,7 @@
   (cdkDropListDropped)="drop($event)"
 >
   <mat-form-field
-    *ngFor="let v of enumEntity.values; let i = index"
+    *ngFor="let v of localEnum.values; let i = index"
     cdkDrag
     class="full-width"
     appearance="fill"
@@ -30,7 +30,14 @@
   <!-- CREATING NEW OPTION -->
   <mat-form-field class="full-width">
     <mat-label i18n>Add new option</mat-label>
-    <input matInput [(ngModel)]="newOptionInput" />
+    <textarea
+      matInput
+      [(ngModel)]="newOptionInput"
+      (paste)="onPasteNewOption($event)"
+      rows="2"
+      cdkTextareaAutosize
+      #autosize="cdkTextareaAutosize"
+    ></textarea>
     <button
       mat-icon-button
       color="accent"
@@ -39,9 +46,13 @@
     >
       <fa-icon icon="square-plus"></fa-icon>
     </button>
+    <mat-hint i18n>
+      You can paste multiple values at once (one per line)
+    </mat-hint>
   </mat-form-field>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-raised-button mat-dialog-close i18n="Close popup">Close</button>
+  <button mat-raised-button color="accent" (click)="onSave()" i18n>Save</button>
+  <button mat-raised-button (click)="onCancel()" i18n>Cancel</button>
 </mat-dialog-actions>
