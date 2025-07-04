@@ -25,9 +25,27 @@ import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
-import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import {
+  ConfirmationDialogButton,
+  YesNoButtons,
+} from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+
+const AddCancelButtons: ConfirmationDialogButton[] = [
+  { text: $localize`Add`, dialogResult: true, click() {} },
+  { text: $localize`Cancel`, dialogResult: false, click() {} },
+];
+
+const DiscardCancelButtons: ConfirmationDialogButton[] = [
+  { text: $localize`Discard`, dialogResult: true, click() {} },
+  { text: $localize`Cancel`, dialogResult: false, click() {} },
+];
+
+const DeleteCancelButtons: ConfirmationDialogButton[] = [
+  { text: $localize`Delete`, dialogResult: true, click() {} },
+  { text: $localize`Cancel`, dialogResult: false, click() {} },
+];
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -77,66 +95,58 @@ export class ConfigureEnumPopupComponent {
   }
 
   private async confirmDiscardChanges(): Promise<boolean> {
-    if (this.hasUnsavedChanges()) {
-      const confirmed = await this.confirmationService.getConfirmation(
-        $localize`Discard changes?`,
-        $localize`You have unsaved changes. Discard them?`,
-        [
-          { text: $localize`Discard`, dialogResult: true, click() {} },
-          { text: $localize`Cancel`, dialogResult: false, click() {} },
-        ],
-      );
-      return confirmed === true;
-    }
-    return true;
+    if (!this.hasUnsavedChanges()) return true;
+    const confirmed = await this.confirmationService.getConfirmation(
+      $localize`Discard changes?`,
+      $localize`You have unsaved changes. Discard them?`,
+      DiscardCancelButtons,
+    );
+    return confirmed === true;
   }
 
   private async confirmAddPendingOption(): Promise<boolean> {
-    if (this.hasValidInput()) {
-      const confirmed = await this.confirmationService.getConfirmation(
-        $localize`Add new option?`,
-        $localize`You have a new option that is not added yet, do you want to add it?`,
-        [
-          { text: $localize`Add`, dialogResult: true, click() {} },
-          { text: $localize`Cancel`, dialogResult: false, click() {} },
-        ],
-      );
-      return confirmed === true;
-    }
-    return true;
+    if (!this.hasValidInput()) return true;
+    const confirmed = await this.confirmationService.getConfirmation(
+      $localize`Add new option?`,
+      $localize`You have a new option that is not added yet, do you want to add it?`,
+      AddCancelButtons,
+    );
+    return confirmed === true;
   }
 
   private async confirmCommaSplit(): Promise<boolean> {
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Split by commas?`,
       $localize`Do you want to split the text by commas and add multiple options?`,
-      [
-        { text: $localize`Yes`, dialogResult: true, click() {} },
-        { text: $localize`No`, dialogResult: false, click() {} },
-      ],
+      YesNoButtons,
     );
     return confirmed === true;
   }
 
+  private splitByLine(input: string): string[] {
+    return input
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line);
+  }
+
+  private splitByComma(input: string): string[] {
+    return input
+      .split(",")
+      .map((line) => line.trim())
+      .filter((line) => line);
+  }
+
   private async parseInputLines(input: string): Promise<string[]> {
     if (input.includes("\n")) {
-      return input
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter((line) => line);
-    } else if (input.includes(",")) {
-      const confirmed = await this.confirmCommaSplit();
-      if (confirmed) {
-        return input
-          .split(",")
-          .map((line) => line.trim())
-          .filter((line) => line);
-      } else {
-        return [input];
-      }
-    } else {
-      return [input];
+      return this.splitByLine(input);
     }
+    if (input.includes(",")) {
+      return (await this.confirmCommaSplit())
+        ? this.splitByComma(input)
+        : [input];
+    }
+    return [input];
   }
 
   private async handlePendingNewOption(): Promise<boolean> {
@@ -145,7 +155,6 @@ export class ConfigureEnumPopupComponent {
       await this.createNewOption();
       return true;
     } else {
-      // Discard input and proceed to close the dialog
       this.newOptionInput = "";
       return true;
     }
@@ -163,7 +172,6 @@ export class ConfigureEnumPopupComponent {
     if (await this.confirmDiscardChanges()) {
       this.dialog.close(false);
     }
-    // else do nothing, stay open
   }
 
   private async saveChanges() {
@@ -189,10 +197,7 @@ export class ConfigureEnumPopupComponent {
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Delete option`,
       deletionText,
-      [
-        { text: $localize`Delete`, dialogResult: true, click() {} },
-        { text: $localize`Cancel`, dialogResult: false, click() {} },
-      ],
+      DeleteCancelButtons,
     );
     if (confirmed === true) {
       this.localEnum.values.splice(index, 1);
@@ -244,10 +249,7 @@ export class ConfigureEnumPopupComponent {
     if (!clipboardData) return;
 
     const pastedText = clipboardData.getData("text");
-    const lines = pastedText
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter((line) => line);
+    const lines = this.splitByLine(pastedText);
 
     if (lines.length > 1) {
       event.preventDefault();
