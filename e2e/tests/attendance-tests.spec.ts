@@ -78,7 +78,11 @@ test("View and download attendance report", async ({ page }) => {
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "download csv Download" }).click();
-  expect((await downloadPromise).suggestedFilename()).toMatch("report.csv");
+  const filename = (await downloadPromise).suggestedFilename();
+  // Match: <Report Name> YYYY-MM-DD_YYYY-MM-DD.csv or <Report Name>.csv
+  expect(filename).toMatch(
+    /^[\w\s-]+(?: \d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2})?\.csv$/,
+  );
 });
 
 test("Children list displays monthly attendance percentage", async ({
