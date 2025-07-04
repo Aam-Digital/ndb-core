@@ -74,6 +74,7 @@ fdescribe("ConfigureEnumPopupComponent", () => {
       jasmine.stringContaining(
         `The option is still used in 2 ${TestEntity.label} records.`,
       ),
+      jasmine.any(Array)
     );
 
     entityMapper.delete(m1);
@@ -84,6 +85,7 @@ fdescribe("ConfigureEnumPopupComponent", () => {
     expect(confirmationSpy).toHaveBeenCalledWith(
       "Delete option",
       `Are you sure that you want to delete the option "${male.label}"?`,
+      jasmine.any(Array)
     );
   });
 });
