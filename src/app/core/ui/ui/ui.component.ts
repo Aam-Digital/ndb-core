@@ -50,6 +50,7 @@ import { BehaviorSubject } from "rxjs";
 import { LoginStateSubject } from "../../session/session-type";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { LoginState } from "../../session/session-states/login-state.enum";
+import { ConfigService } from "../../config/config.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -110,6 +111,7 @@ export class UiComponent {
     private setupService: SetupService,
     private router: Router,
     private loginState: LoginStateSubject,
+    private configService: ConfigService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -127,9 +129,13 @@ export class UiComponent {
       (s) => (this.siteSettings = s),
     );
 
-    this.setupService
-      .waitForConfigReady(true)
-      .then((ready) => this.configReady$.next(ready));
+    if (this.configService.hasConfig()) {
+      this.configReady$.next(true);
+    } else {
+      this.setupService
+        .waitForConfigReady(true)
+        .then((ready) => this.configReady$.next(ready));
+    }
   }
 
   private updateDisplayMode() {
