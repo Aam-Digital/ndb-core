@@ -33,7 +33,6 @@ export class AdminEntityListComponent implements OnChanges {
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityListConfig;
 
-  allFields: ColumnConfig[] = [];
   filters: string[];
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -45,7 +44,7 @@ export class AdminEntityListComponent implements OnChanges {
 
       this.initColumnGroupsIfNecessary();
 
-      this.initAvailableFields();
+      this.filters = (this.config.filters ?? []).map((f) => f.id);
     }
   }
 
@@ -67,14 +66,6 @@ export class AdminEntityListComponent implements OnChanges {
         ],
       };
     }
-  }
-
-  private initAvailableFields() {
-    this.allFields = [
-      ...(this.config.columns ?? []),
-      ...this.entityConstructor.schema.keys(),
-    ];
-    this.filters = (this.config.filters ?? []).map((f) => f.id);
   }
 
   updateFilters(filters: string[]) {

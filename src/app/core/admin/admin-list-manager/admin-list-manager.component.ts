@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import {
   CdkDropList,
   CdkDrag,
@@ -6,7 +6,10 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "app/core/common-components/entity-form/FormConfig";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityFieldLabelComponent } from "#src/app/core/common-components/entity-field-label/entity-field-label.component";
@@ -32,14 +35,22 @@ import { MatSelectModule } from "@angular/material/select";
   templateUrl: "./admin-list-manager.component.html",
   styleUrl: "./admin-list-manager.component.scss",
 })
-export class AdminListManagerComponent {
+export class AdminListManagerComponent implements OnInit {
   @Input() items: (string | ColumnConfig)[] = [];
-  @Input() availableItems: (string | ColumnConfig)[] = [];
   @Input() entityType: EntityConstructor;
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
+  @Input() activeFields: (string | FormFieldConfig)[];
 
   @Output() itemsChange = new EventEmitter<string[]>();
+
+  availableItems: (string | ColumnConfig)[] = [];
+
+  ngOnInit(): void {
+    if (!this.entityType) return;
+    const targetEntitySchemaFields = Array.from(this.entityType.schema.keys());
+    this.availableItems = [...this.activeFields, ...targetEntitySchemaFields];
+  }
 
   drop(event: CdkDragDrop<(string | ColumnConfig)[]>) {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);

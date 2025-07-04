@@ -35,7 +35,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   entityConstructor: EntityConstructor;
   selectedEntityType: string;
   isDialogOpen = false;
-  allFields: ColumnConfig[] = [];
   /** Stores the currently active/selected field IDs to be shown in the panel */
   activeFields: string[];
 
@@ -47,18 +46,9 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     if (!this.config.config?.entityType) return;
     this.selectedEntityType = this.config.config.entityType;
     this.entityConstructor = this.entities.get(this.selectedEntityType);
-    this.initializeFields();
-  }
-
-  private initializeFields(): void {
-    if (!this.entityConstructor) return;
-    const targetEntitySchemaFields = Array.from(
-      this.entityConstructor.schema.keys(),
-    );
     this.activeFields = (this.config.config.columns ?? []).map((col) =>
       typeof col === "string" ? col : col.id,
     );
-    this.allFields = [...this.activeFields, ...targetEntitySchemaFields];
   }
 
   /**
@@ -104,7 +94,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     this.applyCustomOverrides(newType);
 
     this.activeFields = [];
-    this.initializeFields();
   }
 
   /**

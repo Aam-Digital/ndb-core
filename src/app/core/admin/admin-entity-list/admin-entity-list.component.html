@@ -13,7 +13,7 @@
 <div>
   <app-admin-list-manager
     [items]="filters"
-    [availableItems]="allFields"
+    [activeFields]="config.columns"
     [entityType]="entityConstructor"
     templateType="filter"
     fieldLabel="Add Filter:"
@@ -32,7 +32,7 @@
       >
         <app-admin-list-manager
           [items]="item.columns"
-          [availableItems]="allFields"
+          [activeFields]="config.columns"
           [entityType]="entityConstructor"
           fieldLabel="Drag & drop table column headers. Add columns:"
           i18n-fieldLabel
