@@ -4,7 +4,10 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { ConfigurableEnum } from "../configurable-enum";
+import {
+  ConfigurableEnum,
+  DuplicateEnumOptionException,
+} from "../configurable-enum";
 import { NgForOf } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -45,8 +48,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 })
 export class ConfigureEnumPopupComponent {
   newOptionInput: string;
-  localValues: ConfigurableEnumValue[];
-  private initialValues: string;
+  localEnum: ConfigurableEnum;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
@@ -56,13 +58,22 @@ export class ConfigureEnumPopupComponent {
     private entities: EntityRegistry,
     private snackBar: MatSnackBar,
   ) {
-    // Deep copy for editing
-    this.localValues = enumEntity.values.map((v) => ({ ...v }));
-    this.initialValues = JSON.stringify(this.localValues);
+    // Deep copy for editing, using ConfigurableEnum logic
+    this.localEnum = new ConfigurableEnum(
+      enumEntity.getId(),
+      enumEntity.values.map((v) => ({ ...v })),
+    );
+  }
+
+  get localValues(): ConfigurableEnumValue[] {
+    return this.localEnum.values;
   }
 
   hasUnsavedChanges(): boolean {
-    return JSON.stringify(this.localValues) !== this.initialValues;
+    return (
+      JSON.stringify(this.localEnum.values) !==
+      JSON.stringify(this.enumEntity.values)
+    );
   }
 
   private async confirmDiscardChanges(): Promise<boolean> {
@@ -80,14 +91,39 @@ export class ConfigureEnumPopupComponent {
     return true;
   }
 
+  private async handlePendingNewOption(): Promise<boolean> {
+    if (this.hasValidInput()) {
+      const confirmed = await this.confirmationService.getConfirmation(
+        $localize`Add new option?`,
+        $localize`You have a new option that is not added yet, do you want to add it?`,
+        [
+          { text: $localize`Add`, dialogResult: true, click() {} },
+          { text: $localize`Discard`, dialogResult: false, click() {} },
+          { text: $localize`Cancel`, dialogResult: null, click() {} },
+        ],
+      );
+      if (confirmed === true) {
+        await this.createNewOption();
+        return true;
+      } else if (confirmed === false) {
+        this.newOptionInput = "";
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
   async onSave() {
-    // Copy localValues back to the original entity
-    this.enumEntity.values = this.localValues.map((v) => ({ ...v }));
+    if (!(await this.handlePendingNewOption())) return;
+    this.enumEntity.values = this.localEnum.values.map((v) => ({ ...v }));
     await this.saveChanges();
     this.dialog.close(true);
   }
 
   async onCancel() {
+    if (!(await this.handlePendingNewOption())) return;
     if (await this.confirmDiscardChanges()) {
       this.dialog.close(false);
     }
@@ -96,11 +132,14 @@ export class ConfigureEnumPopupComponent {
 
   private async saveChanges() {
     await this.entityMapper.save(this.enumEntity);
-    this.initialValues = JSON.stringify(this.localValues);
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.localValues, event.previousIndex, event.currentIndex);
+    moveItemInArray(
+      this.localEnum.values,
+      event.previousIndex,
+      event.currentIndex,
+    );
   }
 
   async delete(value: ConfigurableEnumValue, index: number) {
@@ -116,7 +155,7 @@ export class ConfigureEnumPopupComponent {
       deletionText,
     );
     if (confirmed) {
-      this.localValues.splice(index, 1);
+      this.localEnum.values.splice(index, 1);
     }
   }
 
@@ -180,8 +219,50 @@ export class ConfigureEnumPopupComponent {
   async createNewOption() {
     if (!this.hasValidInput()) return;
 
-    const lines = this.getInputLines();
-    const { skipped } = this.addUniqueOptions(lines);
+    const input = this.newOptionInput.trim();
+
+    let lines: string[] = [];
+
+    if (input.includes("\n")) {
+      // Split by line breaks, each line is an option (even if it contains commas)
+      lines = input
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter((line) => line);
+    } else if (input.includes(",")) {
+      // Ask user if they want to split by commas
+      const confirmed = await this.confirmationService.getConfirmation(
+        $localize`Split by commas?`,
+        $localize`Do you want to split the text by commas and add multiple options?`,
+        [
+          { text: $localize`Yes`, dialogResult: true, click() {} },
+          { text: $localize`No`, dialogResult: false, click() {} },
+        ],
+      );
+      if (confirmed) {
+        lines = input
+          .split(",")
+          .map((line) => line.trim())
+          .filter((line) => line);
+      } else {
+        lines = [input];
+      }
+    } else {
+      lines = [input];
+    }
+
+    let skipped = 0;
+    for (const line of lines) {
+      try {
+        this.localEnum.addOption(line);
+      } catch (err) {
+        if (err instanceof DuplicateEnumOptionException) {
+          skipped++;
+        } else {
+          console.error("Failed to add option:", line, err);
+        }
+      }
+    }
 
     this.newOptionInput = "";
 
@@ -192,35 +273,6 @@ export class ConfigureEnumPopupComponent {
 
   private hasValidInput(): boolean {
     return !!this.newOptionInput && !!this.newOptionInput.trim();
-  }
-
-  private getInputLines(): string[] {
-    return this.newOptionInput
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter((line) => line);
-  }
-
-  private addUniqueOptions(lines: string[]): {
-    added: number;
-    skipped: number;
-  } {
-    const existingLabels = this.localValues.map((v) =>
-      v.label.trim().toLowerCase(),
-    );
-    let added = 0;
-    let skipped = 0;
-
-    for (const line of lines) {
-      if (existingLabels.includes(line.toLowerCase())) {
-        skipped++;
-        continue;
-      }
-      this.localValues.push({ id: line.toUpperCase(), label: line });
-      existingLabels.push(line.toLowerCase());
-      added++;
-    }
-    return { added, skipped };
   }
 
   private showDuplicateSkippedMessage(skipped: number) {
