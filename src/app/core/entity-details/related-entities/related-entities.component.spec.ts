@@ -16,22 +16,26 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
-import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
+import {
+  EntitySpecialLoaderService,
+  LoaderMethod,
+} from "../../entity/entity-special-loader/entity-special-loader.service";
 
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<any>;
   let fixture: ComponentFixture<RelatedEntitiesComponent<any>>;
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let mockLoaderService: jasmine.SpyObj<EntitySpecialLoaderService>;
 
   beforeEach(async () => {
-    mockChildrenService = jasmine.createSpyObj("ChildrenService", [
-      "queryRelations",
+    mockLoaderService = jasmine.createSpyObj("EntitySpecialLoaderService", [
+      "loadDataFor",
     ]);
     await TestBed.configureTestingModule({
       imports: [RelatedEntitiesComponent, MockedTestingModule.withState()],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+      providers: [
+        { provide: EntitySpecialLoaderService, useValue: mockLoaderService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RelatedEntitiesComponent<any>);
@@ -235,7 +239,7 @@ describe("RelatedEntitiesComponent", () => {
 
   it("it calls children service with id from passed child", fakeAsync(() => {
     const child = createEntityOfType("Child");
-    mockChildrenService.queryRelations.and.resolveTo([]);
+    mockLoaderService.loadDataFor.and.resolveTo([]);
 
     component.entity = child;
     component.entityType = "ChildSchoolRelation";
@@ -244,8 +248,9 @@ describe("RelatedEntitiesComponent", () => {
     fixture.detectChanges();
     tick();
 
-    expect(mockChildrenService.queryRelations).toHaveBeenCalledWith(
-      child.getId(),
+    expect(mockLoaderService.loadDataFor).toHaveBeenCalledWith(
+      LoaderMethod.ChildrenServiceQueryRelations,
+      child,
     );
   }));
 });
