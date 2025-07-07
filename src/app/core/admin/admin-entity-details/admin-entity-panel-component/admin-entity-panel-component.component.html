@@ -2,12 +2,19 @@
   @if (entityConstructor?.ENTITY_TYPE) {
     <mat-form-field appearance="fill" class="margin-bottom-regular">
       <mat-label i18n>Entity Type</mat-label>
-      <app-entity-type-select
+      <mat-select
         [(ngModel)]="selectedEntityType"
         (ngModelChange)="onEntityTypeChange($event)"
-        [multi]="false"
-        [showInternalTypes]="true"
-      ></app-entity-type-select>
+      >
+        @for (relatedEntity of availableRelatedEntities; track relatedEntity) {
+          <mat-option [value]="relatedEntity.entityType">
+            <app-entity-field-label
+              [field]="relatedEntity.label"
+              [entityType]="relatedEntity.entityType"
+            ></app-entity-field-label>
+          </mat-option>
+        }
+      </mat-select>
     </mat-form-field>
 
     <div class="margin-top-regular hint-text">

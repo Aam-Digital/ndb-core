@@ -2,9 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
-import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "app/core/entity/database-entity.decorator";
-import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import {
   RELATED_ENTITIES_DEFAULT_CONFIGS,
@@ -15,15 +13,21 @@ import { YesNoButtons } from "app/core/common-components/confirmation-dialog/con
 import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/related-entity-config";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
+import { EntityFieldLabelComponent } from "#src/app/core/common-components/entity-field-label/entity-field-label.component";
+import { MatOptionModule } from "@angular/material/core";
+import { MatSelectModule } from "@angular/material/select";
 
 @Component({
   selector: "app-admin-entity-panel-component",
   imports: [
     CommonModule,
     AdminListManagerComponent,
-    EntityTypeSelectComponent,
     MatFormFieldModule,
     FormsModule,
+    EntityFieldLabelComponent,
+    MatOptionModule,
+    MatSelectModule,
   ],
   templateUrl: "./admin-entity-panel-component.component.html",
   styleUrl: "./admin-entity-panel-component.component.scss",
@@ -38,12 +42,28 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   /** Stores the currently active/selected field IDs to be shown in the panel */
   activeFields: string[];
 
+  /**
+   * List of entity types that reference the current entity type.
+   */
+  availableRelatedEntities: {
+    label: string;
+    entityType: string;
+  }[];
+
   constructor(
     private entities: EntityRegistry,
     private confirmation: ConfirmationDialogService,
+    private entityRelationsService: EntityRelationsService,
   ) {}
+
   ngOnInit(): void {
     if (!this.config.config?.entityType) return;
+    this.availableRelatedEntities = this.entityRelationsService
+      .getEntityTypesReferencingType(this.entityType.ENTITY_TYPE)
+      .map((refType) => ({
+        label: refType.entityType.label || refType.entityType.ENTITY_TYPE,
+        entityType: refType.entityType.ENTITY_TYPE,
+      }));
     this.selectedEntityType = this.config.config.entityType;
     this.entityConstructor = this.entities.get(this.selectedEntityType);
     this.activeFields = (this.config.config.columns ?? []).map((col) =>
