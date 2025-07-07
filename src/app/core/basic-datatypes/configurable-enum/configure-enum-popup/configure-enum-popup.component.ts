@@ -101,7 +101,7 @@ export class ConfigureEnumPopupComponent {
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Add new option?`,
       $localize`You have a new option that is not added yet, do you want to add it?`,
-      CustomYesNoButtons($localize`Yes`, $localize`No`),
+      YesNoButtons,
     );
     return confirmed === true;
   }
