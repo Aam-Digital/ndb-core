@@ -28,12 +28,9 @@ import { SessionSubject } from "../../session/auth/session-info";
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
-  template: ` <ng-template
-    *ngFor="let widgetConfig of _widgets"
-    [appDynamicComponent]="widgetConfig"
-  ></ng-template>`,
+  templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
-  imports: [NgFor, DynamicComponentDirective],
+  imports: [DynamicComponentDirective],
 })
 export class DashboardComponent implements DashboardConfig {
   @Input() set widgets(widgets: DynamicComponentConfig[]) {
