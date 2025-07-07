@@ -500,15 +500,19 @@ const migrateChildSchoolOverviewComponent: ConfigMigration = (
           typeof component === "object" &&
           deprecatedComponents.includes(component.component)
         ) {
-          if (!component.config || Object.keys(component.config).length === 0) {
-            panel.components[index] = isChildDetails
-              ? relatedEntitiesForChild
-              : relatedEntitiesForSchool;
-          } else {
-            panel.components[index].component = "RelatedEntities";
-            component.config.entityType = "ChildSchoolRelation";
-            component.config.loaderMethod = "ChildrenServiceQueryRelations";
-          }
+          const newConfig = Object.assign(
+            {},
+            isChildDetails ? relatedEntitiesForChild : relatedEntitiesForSchool,
+            component.config,
+          ); // let existing config override defaults
+
+          panel.components[index] = {
+            component: "RelatedEntities",
+            config: newConfig,
+          };
+          // enforce important new config properties
+          component.config.entityType = "ChildSchoolRelation";
+          component.config.loaderMethod = "ChildrenServiceQueryRelations";
         }
       });
     });
@@ -522,35 +526,29 @@ const migrateChildSchoolOverviewComponent: ConfigMigration = (
  * Displays child-related school history (childId, start/end dates, class, result).
  */
 const relatedEntitiesForSchool = {
-  component: "RelatedEntities",
-  config: {
-    entityType: "ChildSchoolRelation",
-    columns: [
-      { id: "childId" },
-      { id: "start", visibleFrom: "md" },
-      { id: "end", visibleFrom: "md" },
-      { id: "schoolClass" },
-      { id: "result" },
-    ],
-    loaderMethod: "ChildrenServiceQueryRelations",
-  },
+  entityType: "ChildSchoolRelation",
+  columns: [
+    { id: "childId" },
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
+    { id: "schoolClass" },
+    { id: "result" },
+  ],
+  loaderMethod: "ChildrenServiceQueryRelations",
 };
 /**
  * Default configuration for RelatedEntities used in Child entity details.
  * Displays school-related history (start/end dates, schoolId, class, result) and includes inactive records.
  */
 const relatedEntitiesForChild = {
-  component: "RelatedEntities",
-  config: {
-    entityType: "ChildSchoolRelation",
-    columns: [
-      { id: "start", visibleFrom: "md" },
-      { id: "end", visibleFrom: "md" },
-      { id: "schoolId" },
-      { id: "schoolClass" },
-      { id: "result" },
-    ],
-    loaderMethod: "ChildrenServiceQueryRelations",
-    showInactive: true,
-  },
+  entityType: "ChildSchoolRelation",
+  columns: [
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
+    { id: "schoolId" },
+    { id: "schoolClass" },
+    { id: "result" },
+  ],
+  loaderMethod: "ChildrenServiceQueryRelations",
+  showInactive: true,
 };
