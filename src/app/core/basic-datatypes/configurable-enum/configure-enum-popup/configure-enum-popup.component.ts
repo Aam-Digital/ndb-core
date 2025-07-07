@@ -81,7 +81,7 @@ export class ConfigureEnumPopupComponent {
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Discard changes?`,
       $localize`You have unsaved changes. Discard them?`,
-      DiscardCancelButtons,
+      CustomYesNoButtons($localize`Discard`, $localize`Continue Editing`),
     );
     return confirmed === true;
   }
