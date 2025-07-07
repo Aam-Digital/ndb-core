@@ -4,7 +4,10 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { ConfigurableEnum } from "../configurable-enum";
+import {
+  ConfigurableEnum,
+  DuplicateEnumOptionException,
+} from "../configurable-enum";
 import { NgForOf } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -18,13 +21,16 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
-import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import {
+  CustomYesNoButtons,
+  YesNoButtons,
+} from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -45,6 +51,7 @@ import { ConfigurableEnumValue } from "../configurable-enum.types";
 })
 export class ConfigureEnumPopupComponent {
   newOptionInput: string;
+  localEnum: ConfigurableEnum;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
@@ -52,18 +59,112 @@ export class ConfigureEnumPopupComponent {
     private entityMapper: EntityMapperService,
     private confirmationService: ConfirmationDialogService,
     private entities: EntityRegistry,
+    private snackBar: MatSnackBar,
   ) {
-    const initialValues = JSON.stringify(enumEntity.values);
-    this.dialog.afterClosed().subscribe(() => {
-      if (JSON.stringify(this.enumEntity.values) !== initialValues) {
-        this.entityMapper.save(this.enumEntity);
-      }
-    });
+    // disable closing with backdrop click (so that we can always confirm unsaved changes)
+    this.dialog.disableClose = true;
+
+    // Deep copy for editing, using ConfigurableEnum logic
+    this.localEnum = new ConfigurableEnum(
+      enumEntity.getId(),
+      enumEntity.values.map((v) => ({ ...v })),
+    );
+  }
+
+  hasUnsavedChanges(): boolean {
+    return (
+      JSON.stringify(this.localEnum.values) !==
+      JSON.stringify(this.enumEntity.values)
+    );
+  }
+
+  private async confirmDiscardChanges(): Promise<boolean> {
+    if (!this.hasUnsavedChanges()) return true;
+    const confirmed = await this.confirmationService.getConfirmation(
+      $localize`Discard changes?`,
+      $localize`You have unsaved changes. Discard them?`,
+      CustomYesNoButtons($localize`Discard`, $localize`Continue Editing`),
+    );
+    return confirmed === true;
+  }
+
+  private async confirmAddPendingOption(): Promise<boolean> {
+    if (!this.hasValidInput()) return true;
+    const confirmed = await this.confirmationService.getConfirmation(
+      $localize`Add new option?`,
+      $localize`You have a new option that is not added yet, do you want to add it?`,
+      YesNoButtons,
+    );
+    return confirmed === true;
+  }
+
+  private async confirmCommaSplit(): Promise<boolean> {
+    const confirmed = await this.confirmationService.getConfirmation(
+      $localize`Split by commas?`,
+      $localize`Do you want to split the text by commas and add multiple options?`,
+      YesNoButtons,
+    );
+    return confirmed === true;
+  }
+
+  private splitByLine(input: string): string[] {
+    return input
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line);
+  }
+
+  private splitByComma(input: string): string[] {
+    return input
+      .split(",")
+      .map((line) => line.trim())
+      .filter((line) => line);
+  }
+
+  private async parseInputLines(input: string): Promise<string[]> {
+    if (input.includes("\n")) {
+      return this.splitByLine(input);
+    }
+    if (input.includes(",")) {
+      return (await this.confirmCommaSplit())
+        ? this.splitByComma(input)
+        : [input];
+    }
+    return [input];
+  }
+
+  private async handlePendingNewOption(): Promise<boolean> {
+    const confirmed = await this.confirmAddPendingOption();
+    if (confirmed) {
+      await this.createNewOption();
+      return true;
+    } else {
+      this.newOptionInput = "";
+      return true;
+    }
+  }
+
+  async onSave() {
+    if (!(await this.handlePendingNewOption())) return;
+    this.enumEntity.values = this.localEnum.values.map((v) => ({ ...v }));
+    await this.saveChanges();
+    this.dialog.close(true);
+  }
+
+  async onCancel() {
+    if (!(await this.handlePendingNewOption())) return;
+    if (await this.confirmDiscardChanges()) {
+      this.dialog.close(false);
+    }
+  }
+
+  private async saveChanges() {
+    await this.entityMapper.save(this.enumEntity);
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(
-      this.enumEntity.values,
+      this.localEnum.values,
       event.previousIndex,
       event.currentIndex,
     );
@@ -80,10 +181,10 @@ export class ConfigureEnumPopupComponent {
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Delete option`,
       deletionText,
+      CustomYesNoButtons($localize`Delete`, $localize`Cancel`),
     );
-    if (confirmed) {
-      this.enumEntity.values.splice(index, 1);
-      await this.entityMapper.save(this.enumEntity);
+    if (confirmed === true) {
+      this.localEnum.values.splice(index, 1);
     }
   }
 
@@ -127,18 +228,54 @@ export class ConfigureEnumPopupComponent {
     );
   }
 
+  onPasteNewOption(event: ClipboardEvent) {
+    const clipboardData = event.clipboardData;
+    if (!clipboardData) return;
+
+    const pastedText = clipboardData.getData("text");
+    const lines = this.splitByLine(pastedText).filter(
+      (l) => !!l && l.trim() !== "",
+    );
+
+    event.preventDefault();
+    this.newOptionInput = lines.join("\n");
+  }
+
   async createNewOption() {
-    try {
-      this.enumEntity.addOption(this.newOptionInput);
-    } catch (error) {
-      await this.confirmationService.getConfirmation(
-        $localize`Failed to create new option`,
-        $localize`Couldn't create this new option. Please check if the value already exists.`,
-        OkButton,
-      );
-      return;
+    if (!this.hasValidInput()) return;
+
+    const input = this.newOptionInput.trim();
+    const lines = await this.parseInputLines(input);
+
+    let skipped = 0;
+    for (const line of lines) {
+      try {
+        this.localEnum.addOption(line);
+      } catch (err) {
+        if (err instanceof DuplicateEnumOptionException) {
+          skipped++;
+        } else {
+          console.error("Failed to add option:", line, err);
+        }
+      }
     }
 
     this.newOptionInput = "";
+
+    if (skipped > 0) {
+      this.showDuplicateSkippedMessage(skipped);
+    }
+  }
+
+  private hasValidInput(): boolean {
+    return !!this.newOptionInput && !!this.newOptionInput.trim();
+  }
+
+  private showDuplicateSkippedMessage(skipped: number) {
+    this.snackBar.open(
+      $localize`:@@duplicateOptionsSkipped:Skipped ${skipped} duplicate entr${skipped === 1 ? "y" : "ies"}.`,
+      undefined,
+      { duration: 3000 },
+    );
   }
 }

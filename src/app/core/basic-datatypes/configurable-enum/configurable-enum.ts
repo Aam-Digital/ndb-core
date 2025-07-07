@@ -39,7 +39,12 @@ export class ConfigurableEnum extends Entity {
     }
 
     // check for duplicates
-    if (this.values.some((v) => v.label === option.label)) {
+    if (
+      this.values.some(
+        (v) =>
+          v.label.trim().toLowerCase() === option.label.trim().toLowerCase(),
+      )
+    ) {
       throw new DuplicateEnumOptionException(newOptionInput);
     }
     if (this.values.some((v) => v.id === option.id)) {

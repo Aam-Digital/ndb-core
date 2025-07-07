@@ -74,6 +74,7 @@ describe("ConfigureEnumPopupComponent", () => {
       jasmine.stringContaining(
         `The option is still used in 2 ${TestEntity.label} records.`,
       ),
+      jasmine.any(Array),
     );
 
     entityMapper.delete(m1);
@@ -84,6 +85,138 @@ describe("ConfigureEnumPopupComponent", () => {
     expect(confirmationSpy).toHaveBeenCalledWith(
       "Delete option",
       `Are you sure that you want to delete the option "${male.label}"?`,
+      jasmine.any(Array),
+    );
+  });
+
+  it("should set newOptionInput with pasted multiline text and prevent default paste", () => {
+    const pastedText = "Option A\nOption B\nOption C\nOption B";
+
+    const clipboardData = {
+      getData: jasmine.createSpy("getData").and.returnValue(pastedText),
+    };
+
+    const preventDefaultSpy = jasmine.createSpy("preventDefault");
+
+    const fakeEvent = {
+      clipboardData: clipboardData,
+      preventDefault: preventDefaultSpy,
+    } as unknown as ClipboardEvent;
+
+    component.onPasteNewOption(fakeEvent);
+
+    expect(clipboardData.getData).toHaveBeenCalledWith("text");
+    expect(component.newOptionInput).toBe(
+      "Option A\nOption B\nOption C\nOption B",
+    );
+    expect(preventDefaultSpy).toHaveBeenCalled();
+  });
+
+  it("should create multiple enum values when multiline text is pasted and then createNewOption is called", async () => {
+    const pastedText = "Option A\nOption B\nOption C";
+
+    const clipboardData = {
+      getData: () => pastedText,
+    };
+
+    const fakeEvent = {
+      clipboardData: clipboardData,
+      preventDefault: jasmine.createSpy("preventDefault"),
+    } as unknown as ClipboardEvent;
+
+    const initialCount = component.localEnum.values.length;
+
+    // Simulate paste
+    component.onPasteNewOption(fakeEvent);
+
+    // Then create options
+    await component.createNewOption();
+
+    expect(component.localEnum.values.length).toBe(initialCount + 3);
+    expect(component.localEnum.values.some((v) => v.label === "Option A")).toBe(
+      true,
+    );
+    expect(component.localEnum.values.some((v) => v.label === "Option B")).toBe(
+      true,
+    );
+    expect(component.localEnum.values.some((v) => v.label === "Option C")).toBe(
+      true,
+    );
+    expect(component.newOptionInput).toBe(""); // should be cleared
+  });
+
+  it("should add a single option from single-line newOptionInput", async () => {
+    component.newOptionInput = "Single Option";
+    component.localEnum.values = [];
+
+    await component.createNewOption();
+
+    expect(component.localEnum.values.length).toBe(1);
+    expect(component.localEnum.values[0].label).toBe("Single Option");
+  });
+
+  it("should add all options from multi-line newOptionInput", async () => {
+    component.newOptionInput = "Option A\nOption B\nOption C";
+    component.localEnum.values = [];
+
+    await component.createNewOption();
+
+    const labels = component.localEnum.values.map((v) => v.label);
+    expect(labels).toEqual(["Option A", "Option B", "Option C"]);
+  });
+
+  it("should add only unique options when pasted text includes multiple duplicates (case-insensitive)", async () => {
+    component.newOptionInput = `
+      Option A
+      option b
+      Option A
+      OPTION C
+
+      option b
+      Option D
+      OPTION c
+    `.trim();
+
+    component.localEnum.values = [];
+
+    await component.createNewOption();
+
+    const labels = component.localEnum.values.map((v) => v.label);
+    expect(labels).toContain("Option A");
+    expect(labels).toContain("option b");
+    expect(labels).toContain("OPTION C");
+    expect(labels).toContain("Option D");
+    expect(labels.length).toBe(4);
+  });
+
+  it("should show correct message when duplicates are skipped", async () => {
+    // Pre-existing enum values
+    component.localEnum.addOption("Apple");
+    component.localEnum.addOption("Banana");
+
+    const snackSpy = spyOn(component["snackBar"], "open");
+
+    // Simulate user pasting with only 2 duplicates and 2 new items
+    component.newOptionInput = `
+      Apple
+      Orange
+      Banana
+      Grape
+    `.trim();
+
+    await component.createNewOption();
+
+    const labels = component.localEnum.values.map((v) => v.label);
+    expect(labels).toContain("Apple");
+    expect(labels).toContain("Banana");
+    expect(labels).toContain("Orange");
+    expect(labels).toContain("Grape");
+    expect(labels.length).toBe(4);
+
+    expect(snackSpy).toHaveBeenCalledWith(
+      jasmine.stringMatching(/Skipped 2 duplicate/),
+      undefined,
+      jasmine.any(Object),
     );
   });
 });
