@@ -431,6 +431,7 @@ const migrateActivitiesOverviewComponent: ConfigMigration = (
     configPart.config && Object.keys(configPart.config).length > 0;
 
   if (existingConfig) {
+    configPart.entityType = "RecurringActivity";
     return {
       ...configPart,
       component: "RelatedEntities",
