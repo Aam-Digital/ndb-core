@@ -18,7 +18,6 @@ import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { ChildrenService } from "#src/app/child-dev-project/children/children.service";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
-import { ChildSchoolRelation } from "app/child-dev-project/children/model/childSchoolRelation";
 import { LoaderMethod } from "../../entity/entity-special-loader/entity-special-loader.service";
 
 describe("RelatedEntitiesComponent", () => {

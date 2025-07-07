@@ -410,8 +410,11 @@ const migrateComponentEntityTypeDefaults: ConfigMigration = (
 };
 
 /**
- * Migration to replace the deprecated `ActivitiesOverviewComponent`
- * with the more generic `RelatedEntities` component in the config.
+ * Migration to replace the deprecated `ActivitiesOverview` component
+ * with the more flexible `RelatedEntities` component configured for `RecurringActivity`.
+ * - If a config exists, only the component string is replaced to preserve the system-specific config.
+ * - If no config is defined, a default config is added with common columns like:
+ * This ensures consistency while maintaining any existing customizations.
  */
 const migrateActivitiesOverviewComponent: ConfigMigration = (
   _key,
@@ -424,11 +427,21 @@ const migrateActivitiesOverviewComponent: ConfigMigration = (
     return configPart;
   }
 
+  const existingConfig =
+    configPart.config && Object.keys(configPart.config).length > 0;
+
+  if (existingConfig) {
+    return {
+      ...configPart,
+      component: "RelatedEntities",
+    };
+  }
+
   return {
     component: "RelatedEntities",
     config: {
       entityType: "RecurringActivity",
-      columns: configPart.config?.columns ?? [
+      columns: [
         {
           id: "title",
           editComponent: "EditTextWithAutocomplete",
