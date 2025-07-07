@@ -249,5 +249,4 @@ describe("RelatedEntitiesComponent", () => {
       child.getId(),
     );
   }));
-
 });
