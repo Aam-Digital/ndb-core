@@ -15,6 +15,10 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { MatListModule } from "@angular/material/list";
 import { RouteTarget } from "../../../route-target";
 import { AdminOverviewService } from "./admin-overview.service";
+import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
+import { EntityMapperService } from "#src/app/core/entity/entity-mapper/entity-mapper.service";
+import { Config } from "#src/app/core/config/config";
+import moment from "moment";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -40,6 +44,8 @@ export class AdminOverviewComponent implements OnInit {
     private snackBar: MatSnackBar,
     private configService: ConfigService,
     protected adminOverviewService: AdminOverviewService,
+    private jsonEditorService: JsonEditorService,
+    private entityMapper: EntityMapperService,
   ) {}
 
   ngOnInit() {
@@ -81,6 +87,43 @@ export class AdminOverviewComponent implements OnInit {
   async uploadConfigFile(inputEvent: Event) {
     const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
     await this.configService.saveConfig(JSON.parse(loadedFile));
+  }
+
+  editConfig() {
+    this.jsonEditorService
+      .openJsonEditorDialog(this.configService.exportConfig(true))
+      .subscribe(async (result) => {
+        if (!result) return;
+
+        const previousConfigBackup = new Config(
+          Config.CONFIG_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
+          this.configService.exportConfig(true),
+        );
+        await this.entityMapper.save(previousConfigBackup);
+
+        await this.configService.saveConfig(result);
+      });
+  }
+
+  async editPermissions() {
+    const permissionsConfig = await this.entityMapper
+      .load(Config, Config.PERMISSION_KEY)
+      .catch(() => new Config(Config.PERMISSION_KEY, {}));
+
+    this.jsonEditorService
+      .openJsonEditorDialog(JSON.parse(JSON.stringify(permissionsConfig.data)))
+      .subscribe(async (result) => {
+        if (!result) return;
+
+        const previousConfigBackup = new Config(
+          Config.PERMISSION_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
+          permissionsConfig.data,
+        );
+        await this.entityMapper.save(previousConfigBackup);
+
+        permissionsConfig.data = result;
+        await this.entityMapper.save(permissionsConfig);
+      });
   }
 
   /**
