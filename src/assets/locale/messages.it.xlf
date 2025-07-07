@@ -155,6 +155,10 @@
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
           <context context-type="linenumber">123</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="3823219296477075982" datatype="html">
         <source>Discard</source>
@@ -638,7 +642,7 @@
         <note priority="1" from="description">Child status</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">83</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/demo-data-generators/fixtures/dropout-types.ts</context>
@@ -779,10 +783,6 @@
           <context context-type="linenumber">13</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">35</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
@@ -811,10 +811,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/related-time-period-entities/time-period.ts</context>
           <context context-type="linenumber">20</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5375469166722691449" datatype="html">
@@ -1979,10 +1975,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/automated-status-update/automated-field-mapping/automated-field-mapping.component.html</context>
           <context context-type="linenumber">101,103</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
-          <context context-type="linenumber">28,30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7419147523940160933" datatype="html">
@@ -3253,7 +3245,7 @@
         <note priority="1" from="description">Title when adding a new entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/entity-details/entity-details.component.html</context>
-          <context context-type="linenumber">6,8</context>
+          <context context-type="linenumber">12,14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="204820817867304170" datatype="html">
@@ -3261,11 +3253,7 @@
         <target>Edit Data Structure</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/entity-details/entity-details.component.html</context>
-          <context context-type="linenumber">32</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">249</context>
+          <context context-type="linenumber">38</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
@@ -3278,7 +3266,7 @@
         <note priority="1" from="description">Tooltip explaining disabled sections when creating new entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/entity-details/entity-details.component.html</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2330577642930707695" datatype="html">
@@ -3292,10 +3280,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/form/form.component.html</context>
           <context context-type="linenumber">19,21</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">334,336</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
@@ -3429,19 +3413,11 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">93,94</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">93,94</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1409893755354039025" datatype="html">
         <source>e.g. name, age</source>
         <target>e.g. name, age</target>
         <note priority="1" from="description">Examples of things to filter</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">99</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">99</context>
@@ -3455,19 +3431,11 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">152,154</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">152,154</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="2623334410136043738" datatype="html">
         <source> Filter options </source>
         <target> Filter options </target>
         <note priority="1" from="description">Show filter options popup for list</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">164</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">164</context>
@@ -3481,19 +3449,11 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">183</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">183</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="880922127227000253" datatype="html">
         <source> Download current (.csv) </source>
         <target> Download current (.csv) </target>
         <note priority="1" from="description">Download list contents as CSV</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">201</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">201</context>
@@ -3506,18 +3466,10 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">217</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">217</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1040786538618991636" datatype="html">
         <source>Select multiple records for bulk actions like duplicating or deleting</source>
         <target>Select multiple records for bulk actions like duplicating or deleting</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">223</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">223</context>
@@ -3530,10 +3482,6 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">232</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">232</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="9214639802980140270" datatype="html">
         <source> Actions on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/><x id="INTERPOLATION" equiv-text="th }}"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="selected reco"/> selected records: </source>
@@ -3542,18 +3490,10 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">257,259</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">257,259</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="4025334986649729672" datatype="html">
         <source>Select rows for an action on multiple records</source>
         <target>Select rows for an action on multiple records</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">263</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">263</context>
@@ -3567,19 +3507,11 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">272,274</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">272,274</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1910227132918837305" datatype="html">
         <source> Archive </source>
         <target> Archive </target>
         <note priority="1" from="description">bulk action button</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">281,283</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">281,283</context>
@@ -3593,10 +3525,6 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">291,293</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">291,293</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="6660925946511264619" datatype="html">
         <source> Delete </source>
@@ -3606,19 +3534,11 @@
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">301,303</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">301,303</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="3278358550418950949" datatype="html">
         <source> Duplicate </source>
         <target> Duplicate </target>
         <note priority="1" from="description">bulk action button</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">310,312</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">310,312</context>
@@ -3962,7 +3882,7 @@
         <target> Select All </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/list-filter/list-filter.component.html</context>
-          <context context-type="linenumber">12,14</context>
+          <context context-type="linenumber">19,21</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1238583382012712938" datatype="html">
@@ -3970,7 +3890,7 @@
         <target> Clear </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/filter/list-filter/list-filter.component.html</context>
-          <context context-type="linenumber">20,22</context>
+          <context context-type="linenumber">28,30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1786540073279549582" datatype="html">
@@ -4651,20 +4571,12 @@
           <context context-type="linenumber">40</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7362025410279860559" datatype="html">
-        <source>App favicon</source>
-        <target>App favicon</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/site-settings/site-settings.ts</context>
-          <context context-type="linenumber">48</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="5389274721155083635" datatype="html">
         <source>Primary color</source>
         <target>Primary color</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/site-settings/site-settings.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8128384642113290081" datatype="html">
@@ -4672,7 +4584,7 @@
         <target>Secondary color</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/site-settings/site-settings.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">48</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6869736740662246193" datatype="html">
@@ -4680,7 +4592,7 @@
         <target>Error color</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/site-settings/site-settings.ts</context>
-          <context context-type="linenumber">57</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5389520034861408767" datatype="html">
@@ -4688,7 +4600,7 @@
         <target>Text font</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/site-settings/site-settings.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="16694807758211460" datatype="html">
@@ -5765,7 +5677,7 @@
         <target>Selected Location</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
-          <context context-type="linenumber">4</context>
+          <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1767794986194529189" datatype="html">
@@ -5773,23 +5685,7 @@
         <target>no location selected</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="2685795499803839701" datatype="html">
-        <source>You have manually edited the exact address above, this is the actual mapped location. To change the location marked on the map, use the adress search field or click on the map.</source>
-        <target>You have manually edited the exact address above, this is the actual mapped location. To change the location marked on the map, use the adress search field or click on the map.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
-          <context context-type="linenumber">25</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5499642557115560077" datatype="html">
-        <source>You have manually entered the address above without locating it on the map. To change the location marked on the map, use the adress search field or click on the map.</source>
-        <target>You have manually entered the address above without locating it on the map. To change the location marked on the map, use the adress search field or click on the map.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="334088867688780609" datatype="html">
@@ -5797,7 +5693,7 @@
         <target> No location marked on map </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
-          <context context-type="linenumber">35,37</context>
+          <context context-type="linenumber">55,57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2886766432323794907" datatype="html">
@@ -5805,7 +5701,7 @@
         <target>Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5423174894093576788" datatype="html">
@@ -5813,23 +5709,7 @@
         <target>Delete the selected location.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
-          <context context-type="linenumber">58</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7831178147053670254" datatype="html">
-        <source>Update custom address?</source>
-        <target>Update custom address?</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.ts</context>
-          <context context-type="linenumber">104</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1562695877507366400" datatype="html">
-        <source>Do you want to overwrite the custom address to the full address from the online lookup? This will replace &quot;<x id="PH" equiv-text="manualAddress"/>&quot; with &quot;<x id="PH_1" equiv-text="lookupAddress"/>&quot;. The marked location on the map will be unaffected by this choice.</source>
-        <target>Do you want to overwrite the custom address to the full address from the online lookup? This will replace &quot;<x id="PH" equiv-text="manualAddress"/>&quot; with &quot;<x id="PH_1" equiv-text="lookupAddress"/>&quot;. The marked location on the map will be unaffected by this choice.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.ts</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="972241744148986705" datatype="html">
@@ -5886,7 +5766,7 @@
         <target>Search an address or click on the map directly to select a different location</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5615009935382672786" datatype="html">
@@ -6214,7 +6094,7 @@
 </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
-          <context context-type="linenumber">20,25</context>
+          <context context-type="linenumber">21,26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4960655742668438050" datatype="html">
@@ -6222,7 +6102,7 @@
         <target>Something went wrong calculating the report</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
-          <context context-type="linenumber">28</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7357460102173396342" datatype="html">
@@ -6230,7 +6110,7 @@
         <target> Please try again. If you continue to see this error, contact the technical support team. </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
-          <context context-type="linenumber">30,33</context>
+          <context context-type="linenumber">31,34</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2841436763979153543" datatype="html">
@@ -6258,20 +6138,12 @@
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="193735854885505934" datatype="html">
-        <source>Enter a date range</source>
-        <target>Enter a date range</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">28</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="1299419064907222237" datatype="html">
         <source>Please select a report and a date range</source>
         <target>Please select a report and a date range</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4435527043283877614" datatype="html">
@@ -6280,7 +6152,7 @@
         <note priority="1" from="description">Calculate the results for a report</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">74,76</context>
+          <context context-type="linenumber">56,58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3690261887763048230" datatype="html">
@@ -6289,7 +6161,7 @@
         <note priority="1" from="description">Button to download data</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">97</context>
+          <context context-type="linenumber">79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7799372078125125090" datatype="html">
@@ -6466,7 +6338,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">demo todo record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/demo-todo-generator.service.ts</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">128</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5282841875657353411" datatype="html">
@@ -6475,7 +6347,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">demo todo record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/demo-todo-generator.service.ts</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1537141050528185269" datatype="html">
@@ -6484,7 +6356,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">demo todo record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/demo-todo-generator.service.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4694676084824899595" datatype="html">
@@ -6493,7 +6365,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">demo todo record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/demo-todo-generator.service.ts</context>
-          <context context-type="linenumber">95</context>
+          <context context-type="linenumber">133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2513724464733289288" datatype="html">
@@ -6502,7 +6374,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">demo todo record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/demo-todo-generator.service.ts</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">136</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1446152998111570583" datatype="html">
@@ -6511,7 +6383,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">demo todo record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/demo-todo-generator.service.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">137</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7569756958855442018" datatype="html">
@@ -6520,7 +6392,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">demo todo record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/demo-todo-generator.service.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">140</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7272020307347360114" datatype="html">
@@ -6529,7 +6401,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">demo todo record</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/demo-todo-generator.service.ts</context>
-          <context context-type="linenumber">103</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4578192247039196794" datatype="html">
@@ -6742,8 +6614,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <source>Complete Task</source>
         <target>Complete Task</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-completion/todo-completion/todo-completion.component.html</context>
-          <context context-type="linenumber">8</context>
+          <context context-type="sourcefile">src/app/features/todos/todo-completion/edit-todo-completion/edit-todo-completion.component.html</context>
+          <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6886527816549158871" datatype="html">
@@ -6751,19 +6623,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <target>mark as incomplete again</target>
         <note priority="1" from="description">todo uncomplete button tooltip</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-completion/todo-completion/todo-completion.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5086653948161610675" datatype="html">
-        <source> Creating new item
-</source>
-        <target> Creating new item
-</target>
-        <note priority="1" from="description">Todo details heading for new record</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-details/todo-details.component.html</context>
-          <context context-type="linenumber">6,8</context>
+          <context context-type="sourcefile">src/app/features/todos/todo-completion/edit-todo-completion/edit-todo-completion.component.html</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8547153724791757236" datatype="html">
@@ -6771,8 +6632,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <target>Overdue</target>
         <note priority="1" from="description">Filter-option for todos</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">140</context>
+          <context context-type="sourcefile">src/app/features/todos/add-default-todo-views.ts</context>
+          <context context-type="linenumber">139</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1161299114153631702" datatype="html">
@@ -6780,8 +6641,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <target>Completed</target>
         <note priority="1" from="description">Filter-option for todos</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="sourcefile">src/app/features/todos/add-default-todo-views.ts</context>
+          <context context-type="linenumber">144</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8583493689961733713" datatype="html">
@@ -6789,28 +6650,28 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <target>All Open</target>
         <note priority="1" from="description">Filter-option for todos</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">150</context>
+          <context context-type="sourcefile">src/app/features/todos/add-default-todo-views.ts</context>
+          <context context-type="linenumber">149</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3184700926171002527" datatype="html">
         <source>Any</source>
         <target>Any</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="sourcefile">src/app/features/todos/add-default-todo-views.ts</context>
+          <context context-type="linenumber">152</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5729690486395000500" datatype="html">
         <source>Tasks due</source>
         <target>Tasks due</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">155</context>
+          <context context-type="sourcefile">src/app/features/todos/add-default-todo-views.ts</context>
+          <context context-type="linenumber">105</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todos-dashboard/todos-dashboard.component.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5815531307136235479" datatype="html">
@@ -6818,8 +6679,8 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <target>Currently Active</target>
         <note priority="1" from="description">Filter-option for todos</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">174</context>
+          <context context-type="sourcefile">src/app/features/todos/add-default-todo-views.ts</context>
+          <context context-type="linenumber">109</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5761144094879142527" datatype="html">
@@ -6864,7 +6725,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">128</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8899174649685550045" datatype="html">
@@ -6925,7 +6786,7 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <note priority="1" from="description">dashboard widget explanation</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todos-dashboard/todos-dashboard.component.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2908950742428941334" datatype="html">
@@ -7103,10 +6964,6 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <source> Link External Profile </source>
         <target> Link External Profile </target>
         <note priority="1" from="description">bulk action button</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">320,322</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">320,322</context>
@@ -7888,10 +7745,6 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
         <source> Merge </source>
         <target> Merge </target>
         <note priority="1" from="description">bulk action button</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
-          <context context-type="linenumber">330,332</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-list/entity-list/entity-list.component.html</context>
           <context context-type="linenumber">330,332</context>
@@ -9144,7 +8997,7 @@ Are you sure you want to continue?</target>
         <target>No mapped location</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-search/address-search.component.ts</context>
-          <context context-type="linenumber">139</context>
+          <context context-type="linenumber">147</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4715050814207897606" datatype="html">
@@ -9152,7 +9005,7 @@ Are you sure you want to continue?</target>
         <target>There is no mapped location for the entered address. You can still save the address as free text.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/address-search/address-search.component.ts</context>
-          <context context-type="linenumber">140</context>
+          <context context-type="linenumber">148</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3636270861532510060" datatype="html">
@@ -9514,6 +9367,108 @@ Are you sure you want to continue?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">221,223</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6451670665346414211" datatype="html">
+        <source> Current month</source>
+        <target> Current month</target>
+        <note priority="1" from="description">Filter label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.ts</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6446109407013407910" datatype="html">
+        <source> Last month</source>
+        <target> Last month</target>
+        <note priority="1" from="description">Filter label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4060028007079345932" datatype="html">
+        <source> Current quarter</source>
+        <target> Current quarter</target>
+        <note priority="1" from="description">Filter label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.ts</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4120808350392469310" datatype="html">
+        <source> Last quarter</source>
+        <target> Last quarter</target>
+        <note priority="1" from="description">Filter label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.ts</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1480545040447784434" datatype="html">
+        <source> Current year</source>
+        <target> Current year</target>
+        <note priority="1" from="description">Filter label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8873829760814904196" datatype="html">
+        <source> Last year</source>
+        <target> Last year</target>
+        <note priority="1" from="description">Filter label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5729553760632183231" datatype="html">
+        <source>You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map.</source>
+        <target>You have manually edited the address above. This is the actual mapped location. To change the location on the map, use the address search field or click on the map.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8005708385118787052" datatype="html">
+        <source>You have manually entered the address above without locating it on the map. To change the location on the map, use the address search field or click on the map.</source>
+        <target>You have manually entered the address above without locating it on the map. To change the location on the map, use the address search field or click on the map.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7084712582570260965" datatype="html">
+        <source>Address Mismatch</source>
+        <target>Address Mismatch</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
+          <context context-type="linenumber">166</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1985750945330393409" datatype="html">
+        <source>Address details captured does not match with the location on the map. What would you like to do?</source>
+        <target>Address details captured does not match with the location on the map. What would you like to do?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
+          <context context-type="linenumber">167</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="514758728460919624" datatype="html">
+        <source>Continue (with old address)</source>
+        <target>Continue (with old address)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
+          <context context-type="linenumber">170</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2939859535229769878" datatype="html">
+        <source>Update to new address</source>
+        <target>Update to new address</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
+          <context context-type="linenumber">175</context>
         </context-group>
       </trans-unit>
     </body>
