@@ -62,6 +62,9 @@ export class ConfigureEnumPopupComponent {
     private entities: EntityRegistry,
     private snackBar: MatSnackBar,
   ) {
+    // disable closing with backdrop click (so that we can always confirm unsaved changes)
+    this.dialog.disableClose = true;
+
     // Deep copy for editing, using ConfigurableEnum logic
     this.localEnum = new ConfigurableEnum(
       enumEntity.getId(),
