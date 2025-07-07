@@ -1,21 +1,25 @@
 <div class="padding-regular">
   @if (entityConstructor?.ENTITY_TYPE) {
-    <mat-form-field appearance="fill" class="margin-bottom-regular">
-      <mat-label i18n>Entity Type</mat-label>
-      <mat-select
-        [(ngModel)]="selectedEntityType"
-        (ngModelChange)="onEntityTypeChange($event)"
-      >
-        @for (relatedEntity of availableRelatedEntities; track relatedEntity) {
-          <mat-option [value]="relatedEntity.entityType">
-            <app-entity-field-label
-              [field]="relatedEntity.label"
-              [entityType]="relatedEntity.entityType"
-            ></app-entity-field-label>
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+    <div class="flex-row">
+      <mat-form-field appearance="fill" class="margin-bottom-regular flex-grow">
+        <mat-label i18n>Entity Type</mat-label>
+        <mat-select
+          [(ngModel)]="selectedEntityType"
+          (ngModelChange)="onEntityTypeChange($event)"
+        >
+          @for (
+            relatedEntity of availableRelatedEntities;
+            track relatedEntity
+          ) {
+            <mat-option [value]="relatedEntity.entityType">
+              {{ relatedEntity.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="flex-grow"></div>
+    </div>
 
     <div class="margin-top-regular hint-text">
       <p i18n>

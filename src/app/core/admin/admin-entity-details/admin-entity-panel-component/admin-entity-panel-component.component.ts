@@ -14,7 +14,6 @@ import { RelatedEntitiesComponentConfig } from "#src/app/core/entity-details/rel
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
-import { EntityFieldLabelComponent } from "#src/app/core/common-components/entity-field-label/entity-field-label.component";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 
@@ -25,7 +24,6 @@ import { MatSelectModule } from "@angular/material/select";
     AdminListManagerComponent,
     MatFormFieldModule,
     FormsModule,
-    EntityFieldLabelComponent,
     MatOptionModule,
     MatSelectModule,
   ],
@@ -39,6 +37,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   entityConstructor: EntityConstructor;
   selectedEntityType: string;
   isDialogOpen = false;
+
   /** Stores the currently active/selected field IDs to be shown in the panel */
   activeFields: string[];
 
