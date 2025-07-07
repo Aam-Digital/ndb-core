@@ -242,8 +242,7 @@
           "additional": "warning-levels",
           "anonymize": "retain"
         }
-      },
-      "_id": "entity:Note"
+      }
     },
     "view:note": {
       "component": "NotesManager",
@@ -1048,6 +1047,8 @@
       "_id": "view:child/:id"
     },
     "entity:EducationalMaterial": {
+      "label": "Matériel éducatif",
+      "labelPlural": "Matériels éducatifs",
       "attributes": {
         "child": {
           "dataType": "entity",
@@ -1089,8 +1090,7 @@
           "dataType": "string",
           "label": "Description"
         }
-      },
-      "_id": "entity:EducationalMaterial"
+      }
     },
     "entity:RecurringActivity": {
       "toStringAttributes": [
@@ -1143,8 +1143,7 @@
           "isArray": true,
           "additional": "User"
         }
-      },
-      "_id": "entity:RecurringActivity"
+      }
     },
     "view:attendance/recurring-activity": {
       "component": "EntityList",
@@ -1364,8 +1363,7 @@
             "acceptedFileTypes": ".pdf"
           }
         }
-      },
-      "_id": "entity:Child"
+      }
     },
     "entity:School": {
       "toStringAttributes": [
@@ -1411,10 +1409,11 @@
           "dataType": "url",
           "label": "Site web"
         }
-      },
-      "_id": "entity:School"
+      }
     },
     "entity:HistoricalEntityData": {
+      "label": "Observation",
+      "labelPlural": "Observations",
       "hasPII": true,
       "attributes": {
         "date": {
@@ -1464,8 +1463,7 @@
           "label": "Pose des questions",
           "description": "L'enfant pose des questions en classe."
         }
-      },
-      "_id": "entity:HistoricalEntityData"
+      }
     },
     "entity:User": {
       "toStringAttributes": [
@@ -1484,8 +1482,7 @@
           "dataType": "string",
           "label": "Contact"
         }
-      },
-      "_id": "entity:User"
+      }
     },
     "view:matching": {
       "component": "MatchingEntities",
@@ -1540,6 +1537,8 @@
       }
     },
     "entity:Aser": {
+      "label": "Test d'alphabétisation",
+      "labelPlural": "Tests d'alphabétisation",
       "hasPII": true,
       "attributes": {
         "child": {
@@ -1582,10 +1581,11 @@
           "dataType": "string",
           "label": "Observations"
         }
-      },
-      "_id": "entity:Aser"
+      }
     },
     "entity:HealthCheck": {
+      "label": "Bilan de santé",
+      "labelPlural": "Bilans de santé",
       "hasPII": true,
       "attributes": {
         "child": {
@@ -1617,8 +1617,7 @@
           "viewComponent": "DisplayUnit",
           "additional": "kg"
         }
-      },
-      "_id": "entity:HealthCheck"
+      }
     },
     "entity:ChildSchoolRelation": {
       "hasPII": true,
@@ -1668,8 +1667,7 @@
             "max": 100
           }
         }
-      },
-      "_id": "entity:ChildSchoolRelation"
+      }
     }
   }
 }
