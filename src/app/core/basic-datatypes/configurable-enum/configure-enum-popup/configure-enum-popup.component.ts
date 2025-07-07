@@ -28,9 +28,8 @@ import { Entity } from "../../../entity/model/entity";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import {
-  ConfirmationDialogButton,
-  YesNoButtons,
   CustomYesNoButtons,
+  YesNoButtons,
 } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
@@ -234,12 +233,12 @@ export class ConfigureEnumPopupComponent {
     if (!clipboardData) return;
 
     const pastedText = clipboardData.getData("text");
-    const lines = this.splitByLine(pastedText);
+    const lines = this.splitByLine(pastedText).filter(
+      (l) => !!l && l.trim() !== "",
+    );
 
-    if (lines.length > 1) {
-      event.preventDefault();
-      this.newOptionInput = lines.join("\n");
-    }
+    event.preventDefault();
+    this.newOptionInput = lines.join("\n");
   }
 
   async createNewOption() {
