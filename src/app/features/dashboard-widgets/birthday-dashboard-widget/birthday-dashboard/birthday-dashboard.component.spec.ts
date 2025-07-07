@@ -16,7 +16,11 @@ import {
   mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
-import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
+import {
+  DatabaseEntity,
+  entityRegistry,
+  EntityRegistry,
+} from "../../../../core/entity/database-entity.decorator";
 import { DateWithAge } from "../../../../core/basic-datatypes/date-with-age/dateWithAge";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
@@ -31,6 +35,10 @@ describe("BirthdayDashboardComponent", () => {
       providers: [
         ...mockEntityMapperProvider(),
         { provide: ConfigService, useValue: {} },
+        {
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
+        },
       ],
     }).compileComponents();
 

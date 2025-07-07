@@ -12,6 +12,7 @@ import {
   SetupWizardConfig,
 } from "./setup-wizard-config";
 import { Config } from "../../config/config";
+import { entityRegistry, EntityRegistry } from "app/core/entity/database-entity.decorator";
 
 describe("SetupWizardComponent", () => {
   let component: SetupWizardComponent;
@@ -24,6 +25,10 @@ describe("SetupWizardComponent", () => {
         {
           provide: EntityMapperService,
           useValue: jasmine.createSpyObj(["load", "save"]),
+        },
+        {
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
         },
       ],
     }).compileComponents();

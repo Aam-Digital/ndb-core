@@ -11,6 +11,10 @@ import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-ent
 import { SetupWizardConfig } from "../setup-wizard-config";
 import { Config } from "../../../config/config";
 import { Router } from "@angular/router";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
 
 describe("SetupWizardButtonComponent", () => {
   let component: SetupWizardButtonComponent;
@@ -19,7 +23,13 @@ describe("SetupWizardButtonComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SetupWizardButtonComponent],
-      providers: [...mockEntityMapperProvider()],
+      providers: [
+        ...mockEntityMapperProvider(),
+        {
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SetupWizardButtonComponent);

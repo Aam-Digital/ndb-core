@@ -12,6 +12,10 @@ import {
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
 
 describe("DisplayTodoCompletionComponent", () => {
   let component: DisplayTodoCompletionComponent;
@@ -21,7 +25,13 @@ describe("DisplayTodoCompletionComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DisplayTodoCompletionComponent],
-      providers: [...mockEntityMapperProvider()],
+      providers: [
+        ...mockEntityMapperProvider(),
+        {
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DisplayTodoCompletionComponent);

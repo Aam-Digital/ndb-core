@@ -10,8 +10,14 @@ describe("DisableEntityOperationDirective", () => {
   let mockAbility: EntityAbility;
 
   beforeEach(() => {
-    mockAbility = new EntityAbility();
-    spyOn(mockAbility, "cannot");
+    mockAbility = {
+      cannot: jasmine.createSpy("cannot"),
+      on: jasmine.createSpy("on").and.callFake((_, callback) => {
+        callback();
+        return () => {};
+      }),
+      update: jasmine.createSpy("update"),
+    } as Partial<EntityAbility> as EntityAbility;
 
     TestBed.configureTestingModule({
       declarations: [TestComponent],

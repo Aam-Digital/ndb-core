@@ -40,20 +40,19 @@ describe("BulkMergeService", () => {
   let recordB: TestEntity;
 
   beforeEach(() => {
-    recordA = TestEntity.create({ name: "A" });
-    recordB = TestEntity.create({ name: "B" });
-    entityMapper.addAll([recordA, recordB]);
-
     TestBed.configureTestingModule({
       imports: [CoreTestingModule, NoopAnimationsModule],
       providers: [...mockEntityMapperProvider()],
     });
 
     service = TestBed.inject(BulkMergeService);
-
     entityMapper = TestBed.inject(
       EntityMapperService,
     ) as MockEntityMapperService;
+
+    recordA = TestEntity.create({ name: "A" });
+    recordB = TestEntity.create({ name: "B" });
+    entityMapper.addAll([recordA, recordB]);
   });
 
   it("should be created", () => {

@@ -6,13 +6,20 @@ import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { TestBed } from "@angular/core/testing";
 import { EntityMapperService } from "./entity-mapper.service";
+import { entityRegistry, EntityRegistry } from "../database-entity.decorator";
 
 describe("MockEntityMapperServicer", () => {
   let service: MockEntityMapperService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [...mockEntityMapperProvider([])],
+      providers: [
+        ...mockEntityMapperProvider([]),
+        {
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
+        },
+      ],
     });
     service = TestBed.inject(EntityMapperService) as MockEntityMapperService;
   });

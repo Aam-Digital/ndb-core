@@ -25,6 +25,7 @@ import {
   SqlReportService,
 } from "../sql-report/sql-report.service";
 import { of } from "rxjs";
+import { entityRegistry, EntityRegistry } from "app/core/entity/database-entity.decorator";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
@@ -95,6 +96,10 @@ describe("ReportingComponent", () => {
         },
         { provide: SqlReportService, useValue: mockSqlReportService },
         ...mockEntityMapperProvider(),
+        {
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
+        },
       ],
     }).compileComponents();
   });
