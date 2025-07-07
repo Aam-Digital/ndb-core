@@ -33,16 +33,6 @@ import {
   CustomYesNoButtons,
 } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
-const DiscardCancelButtons: ConfirmationDialogButton[] = [
-  { text: $localize`Discard`, dialogResult: true, click() {} },
-  { text: $localize`Continue Editing`, dialogResult: false, click() {} },
-];
-
-const DeleteCancelButtons: ConfirmationDialogButton[] = [
-  { text: $localize`Delete`, dialogResult: true, click() {} },
-  { text: $localize`Cancel`, dialogResult: false, click() {} },
-];
-
 @Component({
   selector: "app-configure-enum-popup",
   templateUrl: "./configure-enum-popup.component.html",
