@@ -11,6 +11,7 @@ describe("ExportDataDirective", () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: DownloadService, useValue: mockDownloadService },
+        ExportDataDirective,
       ],
     });
     directive = TestBed.inject(ExportDataDirective);

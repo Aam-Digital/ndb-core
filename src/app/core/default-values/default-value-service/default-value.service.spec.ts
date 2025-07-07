@@ -13,6 +13,12 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DefaultValueStrategy } from "../default-value-strategy.interface";
 import { StaticDefaultValueService } from "../x-static/static-default-value.service";
+import { SyncStateSubject } from "app/core/session/session-type";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
+import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 
 /**
  * Helper function to add some custom schema fields to Entity for testing.
@@ -116,7 +122,13 @@ describe("DefaultValueService", () => {
           useValue: mockInheritedValueService,
           multi: true,
         },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
+        },
         ConfigurableEnumService,
+        SyncStateSubject,
+        EntityAbility,
       ],
     });
     service = TestBed.inject(DefaultValueService);

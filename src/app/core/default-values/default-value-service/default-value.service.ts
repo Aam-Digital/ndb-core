@@ -13,8 +13,9 @@ import { Logging } from "../../logging/logging.service";
   providedIn: "root",
 })
 export class DefaultValueService {
-  private defaultValueStrategies: DefaultValueStrategy[] = inject(DefaultValueStrategy) as unknown as DefaultValueStrategy[];
-
+  private defaultValueStrategies: DefaultValueStrategy[] = inject(
+    DefaultValueStrategy,
+  ) as unknown as DefaultValueStrategy[];
 
   async handleEntityForm<T extends Entity>(
     form: EntityForm<T>,

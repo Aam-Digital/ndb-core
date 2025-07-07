@@ -16,7 +16,7 @@ import { DownloadService } from "../../../core/export/download-service/download.
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { entityRegistry, EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ActivatedRoute } from "@angular/router";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -66,13 +66,16 @@ describe("TemplateExportSelectionDialogComponent", () => {
         { provide: EntityAbility, useValue: mockAbility },
         {
           provide: EntityMapperService,
-          useValue: jasmine.createSpyObj(["load"]),
+          useValue: jasmine.createSpyObj(["load","loadType"]),
         },
-        EntityRegistry,
         { provide: ActivatedRoute, useValue: null },
         {
           provide: AlertService,
           useValue: jasmine.createSpyObj(["addWarning"]),
+        },
+        {
+          provide: EntityRegistry,
+          useValue: entityRegistry,
         },
       ],
     }).compileComponents();
