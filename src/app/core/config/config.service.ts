@@ -463,6 +463,8 @@ const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
 /**
  * Replace deprecated `ChildSchoolOverview`/`PreviousSchools`/`ChildrenOverview`
  * components with `RelatedEntities` using ChildSchoolRelation entity.
+ * - If a config exists, only replace the component string.
+ * - If config is missing, replace the entire component with the default config.
  */
 const migrateChildSchoolOverviewComponent: ConfigMigration = (
   key,
@@ -484,9 +486,15 @@ const migrateChildSchoolOverviewComponent: ConfigMigration = (
           typeof component === "object" &&
           deprecatedComponents.includes(component.component)
         ) {
-          panel.components[index] = isChildDetails
-            ? relatedEntitiesForChild
-            : relatedEntitiesForSchool;
+          if (!component.config || Object.keys(component.config).length === 0) {
+            panel.components[index] = isChildDetails
+              ? relatedEntitiesForChild
+              : relatedEntitiesForSchool;
+          } else {
+            panel.components[index].component = "RelatedEntities";
+            component.config.entityType = "ChildSchoolRelation";
+            component.config.loaderMethod = "ChildrenServiceQueryRelations";
+          }
         }
       });
     });
