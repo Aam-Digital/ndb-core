@@ -179,7 +179,7 @@ export class ConfigureEnumPopupComponent {
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Delete option`,
       deletionText,
-      DeleteCancelButtons,
+      CustomYesNoButtons($localize`Delete`, $localize`Cancel`),
     );
     if (confirmed === true) {
       this.localEnum.values.splice(index, 1);
