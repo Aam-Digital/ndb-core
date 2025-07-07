@@ -1,3 +1,23 @@
-@for (widgetConfig of _widgets; track widgetConfig) {
-  <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+@if('update' | ablePure: 'Config' | async) {
+<button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
+  <fa-icon icon="ellipsis-v"></fa-icon>
+</button>
+<mat-menu #additional>
+  <button
+    mat-menu-item
+    [routerLink]="['/admin/dashboard']"
+  >
+    <fa-icon
+      class="standard-icon-with-text color-accent"
+      icon="tools"
+    ></fa-icon>
+    <span i18n>Edit Dashboard</span>
+  </button>
+</mat-menu>
 }
+
+<div class="widgets-container">
+  @for (widgetConfig of _widgets; track widgetConfig) {
+    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+  }
+</div>

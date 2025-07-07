@@ -17,20 +17,33 @@
 
 import { Component, Input } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { NgFor } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DashboardWidget } from "../dashboard-widget/dashboard-widget";
 import { SessionSubject } from "../../session/auth/session-info";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatIconButton } from "@angular/material/button";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { RouterLink } from "@angular/router";
+import { AblePurePipe } from "@casl/angular";
 
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
-  imports: [DynamicComponentDirective],
+  imports: [
+    DynamicComponentDirective,
+    MatMenuModule,
+    MatIconButton,
+    FaIconComponent,
+    RouterLink,
+    AblePurePipe,
+    AsyncPipe,
+  ],
 })
 export class DashboardComponent implements DashboardConfig {
   @Input() set widgets(widgets: DynamicComponentConfig[]) {
