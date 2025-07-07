@@ -136,28 +136,34 @@ describe("ConfigureEnumPopupComponent", () => {
 
   it("should create multiple enum values when multiline text is pasted and then createNewOption is called", async () => {
     const pastedText = "Option A\nOption B\nOption C";
-    
+
     const clipboardData = {
       getData: () => pastedText,
     };
-    
+
     const fakeEvent = {
       clipboardData: clipboardData,
       preventDefault: jasmine.createSpy("preventDefault"),
     } as unknown as ClipboardEvent;
-    
+
     const initialCount = component.localEnum.values.length;
-    
+
     // Simulate paste
     component.onPasteNewOption(fakeEvent);
-    
+
     // Then create options
     await component.createNewOption();
-    
+
     expect(component.localEnum.values.length).toBe(initialCount + 3);
-    expect(component.localEnum.values.some(v => v.label === "Option A")).toBe(true);
-    expect(component.localEnum.values.some(v => v.label === "Option B")).toBe(true);
-    expect(component.localEnum.values.some(v => v.label === "Option C")).toBe(true);
+    expect(component.localEnum.values.some((v) => v.label === "Option A")).toBe(
+      true,
+    );
+    expect(component.localEnum.values.some((v) => v.label === "Option B")).toBe(
+      true,
+    );
+    expect(component.localEnum.values.some((v) => v.label === "Option C")).toBe(
+      true,
+    );
     expect(component.newOptionInput).toBe(""); // should be cleared
   });
 
@@ -209,7 +215,7 @@ describe("ConfigureEnumPopupComponent", () => {
     component.localEnum.addOption("Apple");
     component.localEnum.addOption("Banana");
 
-    const snackSpy = spyOn(component['snackBar'], 'open');
+    const snackSpy = spyOn(component["snackBar"], "open");
 
     // Simulate user pasting with only 2 duplicates and 2 new items
     component.newOptionInput = `
@@ -221,7 +227,7 @@ describe("ConfigureEnumPopupComponent", () => {
 
     await component.createNewOption();
 
-    const labels = component.localEnum.values.map(v => v.label);
+    const labels = component.localEnum.values.map((v) => v.label);
     expect(labels).toContain("Apple");
     expect(labels).toContain("Banana");
     expect(labels).toContain("Orange");
@@ -231,7 +237,7 @@ describe("ConfigureEnumPopupComponent", () => {
     expect(snackSpy).toHaveBeenCalledWith(
       jasmine.stringMatching(/Skipped 2 duplicate/),
       undefined,
-      jasmine.any(Object)
+      jasmine.any(Object),
     );
   });
 });
