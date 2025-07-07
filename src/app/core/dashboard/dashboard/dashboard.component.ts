@@ -27,7 +27,7 @@ import { SessionSubject } from "../../session/auth/session-info";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { AblePurePipe } from "@casl/angular";
 
 @RouteTarget("Dashboard")
@@ -54,11 +54,16 @@ export class DashboardComponent implements DashboardConfig {
   }
   _widgets: DynamicComponentConfig[] = [];
 
+  dashboardViewId: string;
+
   constructor(
     private ability: EntityAbility,
     private components: ComponentRegistry,
     private session: SessionSubject,
-  ) {}
+    activeRoute: ActivatedRoute,
+  ) {
+    this.dashboardViewId = activeRoute.snapshot.url.join("/");
+  }
 
   private async filterPermittedWidgets(
     widgets: DynamicComponentConfig[],

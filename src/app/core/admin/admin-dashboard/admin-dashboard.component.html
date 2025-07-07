@@ -1,1 +1,8 @@
 <p>admin-dashboard works!</p>
+
+
+<div class="widgets-container">
+  @for (widgetConfig of dashboardConfig.widgets; track widgetConfig) {
+    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+  }
+</div>
