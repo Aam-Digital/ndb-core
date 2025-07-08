@@ -8,13 +8,75 @@
   Reports
 </app-view-title>
 
+<app-view-actions>
+  <div class="flex-row gap-regular">
+    <button mat-icon-button color="primary" [matMenuTriggerFor]="contextMenu">
+      <fa-icon icon="ellipsis-v"></fa-icon>
+    </button>
+  </div>
+
+  <mat-menu #contextMenu>
+    @if (currentReport) {
+      <button
+        mat-menu-item
+        (click)="editReportConfig(currentReport)"
+        angulartics2On="click"
+        angularticsCategory="Reporting"
+        angularticsAction="editConfig"
+        *appDisabledEntityOperation="{
+          entity: currentReport,
+          operation: 'create',
+        }"
+        matTooltip="Warning! This is still an experimental feature. Use with care."
+        i18n-matTooltip
+      >
+        <fa-icon
+          class="color-accent standard-icon-with-text"
+          icon="tools"
+        ></fa-icon>
+        <span i18n>Edit Current Report Template</span>
+      </button>
+    } @else {
+      <button mat-menu-item [disabled]="true">
+        <fa-icon
+          class="color-accent standard-icon-with-text"
+          icon="tools"
+        ></fa-icon>
+        <em i18n>To edit first select report</em>
+      </button>
+    }
+
+    <button
+      mat-menu-item
+      onClick="
+        window.open(
+          'https://chatwoot.help/hc/aam-digital/articles/1749191412-analysing-data-dashboards-reports',
+          '_blank'
+        )
+      "
+      angulartics2On="click"
+      angularticsCategory="Reporting"
+      angularticsAction="help"
+    >
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        icon="question-circle"
+      ></fa-icon>
+      <span i18n>Learn about Reports</span>
+    </button>
+  </mat-menu>
+</app-view-actions>
+
 <app-select-report
   [reports]="reports"
   [loading]="isLoading"
   [exportableData]="exportableData"
   [dateRangeOptions]="dateRangeOptions"
   (calculateClick)="calculateResults($event.report, $event.from, $event.to)"
-  (dataChanged)="selectedReportChanged()"
+  (reportFiltersChange)="onReportCriteriaChange()"
+  (selectedReportChange)="
+    selectedReportChanged($event); onReportCriteriaChange()
+  "
   class="view-section"
 ></app-select-report>
 
