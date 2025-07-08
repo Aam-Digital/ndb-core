@@ -16,6 +16,8 @@ import { AdminEntityPanelComponentComponent } from "../admin-entity-panel-compon
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminTabsComponent } from "../../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admin-tab-template.directive";
+import { MatDialog } from "@angular/material/dialog";
+import { EntityComponentSelectComponent } from "../entity-component-select-component/entity-component-select-component";
 
 @DynamicComponent("AdminEntityDetails")
 @Component({
@@ -44,15 +46,38 @@ export class AdminEntityDetailsComponent {
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityDetailsConfig;
 
+  constructor(private dialog: MatDialog) {}
+
   newPanelFactory(): Panel {
     return { title: "New Tab", components: [] };
   }
 
   addComponent(panel: Panel) {
-    panel.components.push({
-      title: $localize`:Default title:New Section`,
-      component: "Form", // TODO: make this configurable
-      config: { fieldGroups: [] },
-    });
+    this.dialog
+      .open(EntityComponentSelectComponent, {
+        height: "20vh",
+      })
+      .afterClosed()
+      .subscribe((selectedSection) => {
+        if (!selectedSection) {
+          return;
+        }
+
+        if (selectedSection === "default-form") {
+          panel.components.push({
+            title: $localize`:Default title:New Section`,
+            component: "Form", // TODO: make this configurable
+            config: { fieldGroups: [] },
+          });
+        } else if (selectedSection === "related-form") {
+          panel.components.push({
+            title: $localize`:Default title:New Related Section`,
+            component: "RelatedEntities",
+            config: {
+              entityType: this.entityConstructor.ENTITY_TYPE, //we can not use empty string
+            },
+          });
+        }
+      });
   }
 }
