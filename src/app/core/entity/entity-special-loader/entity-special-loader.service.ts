@@ -8,6 +8,7 @@ import { Logging } from "../../logging/logging.service";
 export enum LoaderMethod {
   ChildrenService = "ChildrenService",
   HistoricalDataService = "HistoricalDataService",
+  ChildrenServiceQueryRelations = "ChildrenServiceQueryRelations",
 }
 
 /**
@@ -60,10 +61,15 @@ export class EntitySpecialLoaderService {
     loaderMethod: LoaderMethod,
     entity: Entity,
   ): Promise<E[]> {
-    if (loaderMethod === LoaderMethod.HistoricalDataService) {
-      return this.historicalDataService.getHistoricalDataFor(
-        entity.getId(),
-      ) as Promise<E[]>;
+    switch (loaderMethod) {
+      case LoaderMethod.HistoricalDataService:
+        return this.historicalDataService.getHistoricalDataFor(
+          entity.getId(),
+        ) as Promise<E[]>;
+      case LoaderMethod.ChildrenServiceQueryRelations:
+        return this.childrenService.queryRelations(
+          entity.getId(false),
+        ) as unknown as Promise<E[]>;
     }
   }
 }

@@ -23,6 +23,7 @@ import {
   LoaderMethod,
 } from "../../entity/entity-special-loader/entity-special-loader.service";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
+import { RelatedEntitiesComponentConfig } from "../related-entity-config";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -34,7 +35,9 @@ import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-f
   templateUrl: "./related-entities.component.html",
   imports: [EntitiesTableComponent, CustomFormLinkButtonComponent],
 })
-export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
+export class RelatedEntitiesComponent<E extends Entity>
+  implements RelatedEntitiesComponentConfig, OnInit
+{
   /** currently viewed/main entity for which related entities are displayed in this component */
   @Input() entity: Entity;
 
@@ -118,6 +121,13 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     }
 
     this.listenToEntityUpdates();
+
+    // added relatedEntitiesParent (e.g., current RecurringActivity or School) to each column with additional config
+    this._columns?.forEach((column) => {
+      if (column.additional) {
+        column.relatedEntitiesParent = this.entity;
+      }
+    });
   }
 
   protected getData(): Promise<E[]> {
