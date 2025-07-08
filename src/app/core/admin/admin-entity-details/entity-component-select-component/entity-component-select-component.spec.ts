@@ -1,14 +1,17 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityComponentSelectComponent } from "./entity-component-select-component";
+import { MatDialogRef } from "@angular/material/dialog";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-fdescribe("EntityComponentSelectComponent", () => {
+describe("EntityComponentSelectComponent", () => {
   let component: EntityComponentSelectComponent;
   let fixture: ComponentFixture<EntityComponentSelectComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityComponentSelectComponent],
+      imports: [EntityComponentSelectComponent, FontAwesomeTestingModule],
+      providers: [{ provide: MatDialogRef, useValue: { close: () => null } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EntityComponentSelectComponent);
