@@ -90,9 +90,10 @@ export class AdminOverviewComponent implements OnInit {
   }
 
   editConfig() {
+    const originalData = this.configService.exportConfig(true);
     this.jsonEditorService
-      .openJsonEditorDialog(this.configService.exportConfig(true))
-      .subscribe(async ({ originalData, updatedData }) => {
+      .openJsonEditorDialog(originalData)
+      .subscribe(async (updatedData) => {
         if (!updatedData) return;
 
         const previousConfigBackup = new Config(
@@ -103,8 +104,9 @@ export class AdminOverviewComponent implements OnInit {
 
         await this.configService.saveConfig(updatedData);
 
-        this.undoConfigUpdate(async () => {
+        this.showConfirmationWithUndoOption(async () => {
           await this.configService.saveConfig(originalData);
+          await this.entityMapper.remove(previousConfigBackup);
         });
       });
   }
@@ -115,24 +117,44 @@ export class AdminOverviewComponent implements OnInit {
       .catch(() => new Config(Config.PERMISSION_KEY, {}));
 
     this.jsonEditorService
-      .openJsonEditorDialog(JSON.parse(JSON.stringify(permissionsConfig.data)))
-      .subscribe(async ({ originalData, updatedData }) => {
+      .openJsonEditorDialog(permissionsConfig.data)
+      .subscribe(async (updatedData) => {
         if (!updatedData) return;
 
         const previousConfigBackup = new Config(
           Config.PERMISSION_KEY + ":" + moment().format("YYYY-MM-DD_HH-mm-ss"),
-          originalData,
+          permissionsConfig.data,
         );
         await this.entityMapper.save(previousConfigBackup);
 
         permissionsConfig.data = updatedData;
         await this.entityMapper.save(permissionsConfig);
 
-        this.undoConfigUpdate(async () => {
-          permissionsConfig.data = originalData;
+        this.showConfirmationWithUndoOption(async () => {
+          permissionsConfig.data = previousConfigBackup.data;
           await this.entityMapper.save(permissionsConfig);
+          await this.entityMapper.remove(previousConfigBackup);
         });
       });
+  }
+
+  /**
+   * Show a snack bar with undo option and handle undo callback with progress dialog.
+   */
+  private showConfirmationWithUndoOption(undoAction: () => Promise<void>) {
+    const snackBarRef = this.snackBar.open(
+      $localize`${"Configuration updated"}`,
+      $localize`${"Undo"}`,
+      { duration: 8000 },
+    );
+
+    snackBarRef.onAction().subscribe(async () => {
+      const progressRef = this.confirmationDialog.showProgressDialog(
+        $localize`${"Reverting configuration changes ..."}`,
+      );
+      await undoAction();
+      progressRef.close();
+    });
   }
 
   /**
@@ -202,24 +224,5 @@ export class AdminOverviewComponent implements OnInit {
       .subscribe(async () => {
         await this.backupService.restoreData(restorePoint, true);
       });
-  }
-
-  /**
-   * Show a snack bar with undo option and handle undo callback with progress dialog.
-   */
-  private undoConfigUpdate(undoAction: () => Promise<void>) {
-    const snackBarRef = this.snackBar.open(
-      $localize`${"Configuration updated"}`,
-      $localize`${"Undo"}`,
-      { duration: 8000 },
-    );
-
-    snackBarRef.onAction().subscribe(async () => {
-      const progressRef = this.confirmationDialog.showProgressDialog(
-        $localize`${"Reverting configuration changes..."}`,
-      );
-      await undoAction();
-      progressRef.close();
-    });
   }
 }
