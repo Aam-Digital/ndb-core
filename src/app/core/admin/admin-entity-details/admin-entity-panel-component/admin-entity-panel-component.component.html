@@ -1,7 +1,46 @@
 <div class="padding-regular">
-  <p>[ {{ config.component }} ]</p>
+  @if (entityConstructor?.ENTITY_TYPE) {
+    <div class="flex-row">
+      <mat-form-field appearance="fill" class="margin-bottom-regular flex-grow">
+        <mat-label i18n>Entity Type</mat-label>
+        <mat-select
+          [(ngModel)]="selectedEntityType"
+          (ngModelChange)="onEntityTypeChange($event)"
+        >
+          @for (
+            relatedEntity of availableRelatedEntities;
+            track relatedEntity
+          ) {
+            <mat-option [value]="relatedEntity.entityType">
+              {{ relatedEntity.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-  <p style="font-size: 0.9em; color: darkgray" i18n>
-    Editing advanced sub-sections is not supported yet in this preview.
-  </p>
+      <div class="flex-grow"></div>
+    </div>
+
+    <div class="margin-top-regular hint-text">
+      <p i18n>
+        Select which fields should be visible in this panel. You can also
+        reorder them to control their display sequence.
+      </p>
+    </div>
+
+    <app-admin-list-manager
+      [items]="activeFields"
+      [activeFields]="activeFields"
+      [entityType]="entityConstructor"
+      fieldLabel="Columns shown:"
+      i18n-fieldLabel
+      (itemsChange)="updateFields($event)"
+    ></app-admin-list-manager>
+  } @else {
+    <p>[ {{ config.component }} ]</p>
+
+    <p class="hint-text" i18n>
+      Editing advanced sub-sections is not supported yet in this preview.
+    </p>
+  }
 </div>

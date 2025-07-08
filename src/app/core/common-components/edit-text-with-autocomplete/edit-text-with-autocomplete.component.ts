@@ -164,16 +164,16 @@ export class EditTextWithAutocompleteComponent
   }
 
   private addRelevantValueToRelevantProperty(selected: Entity) {
+    const relevantValue =
+      this.additional.relevantValue ??
+      this.formFieldConfig?.relatedEntitiesParent?.getId();
+
     if (
       this.additional.relevantProperty &&
-      this.additional.relevantValue &&
-      !selected[this.additional.relevantProperty].includes(
-        this.additional.relevantValue,
-      )
+      relevantValue &&
+      !selected[this.additional.relevantProperty].includes(relevantValue)
     ) {
-      selected[this.additional.relevantProperty].push(
-        this.additional.relevantValue,
-      );
+      selected[this.additional.relevantProperty].push(relevantValue);
     }
   }
 

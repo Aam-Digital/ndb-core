@@ -16,17 +16,29 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
+import { createEntityOfType } from "../../demo-data/create-entity-of-type";
+import {
+  EntitySpecialLoaderService,
+  LoaderMethod,
+} from "../../entity/entity-special-loader/entity-special-loader.service";
 
 describe("RelatedEntitiesComponent", () => {
-  let component: RelatedEntitiesComponent<TestEntity>;
-  let fixture: ComponentFixture<RelatedEntitiesComponent<TestEntity>>;
+  let component: RelatedEntitiesComponent<any>;
+  let fixture: ComponentFixture<RelatedEntitiesComponent<any>>;
+  let mockLoaderService: jasmine.SpyObj<EntitySpecialLoaderService>;
 
   beforeEach(async () => {
+    mockLoaderService = jasmine.createSpyObj("EntitySpecialLoaderService", [
+      "loadDataFor",
+    ]);
     await TestBed.configureTestingModule({
       imports: [RelatedEntitiesComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: EntitySpecialLoaderService, useValue: mockLoaderService },
+      ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(RelatedEntitiesComponent<TestEntity>);
+    fixture = TestBed.createComponent(RelatedEntitiesComponent<any>);
     component = fixture.componentInstance;
   });
 
@@ -224,4 +236,21 @@ describe("RelatedEntitiesComponent", () => {
       singleRelation: component.entity.getId(),
     });
   });
+
+  it("it calls children service with id from passed child", fakeAsync(() => {
+    const child = createEntityOfType("Child");
+    mockLoaderService.loadDataFor.and.resolveTo([]);
+
+    component.entity = child;
+    component.entityType = "ChildSchoolRelation";
+    component.columns = [];
+    component.loaderMethod = LoaderMethod.ChildrenServiceQueryRelations;
+    fixture.detectChanges();
+    tick();
+
+    expect(mockLoaderService.loadDataFor).toHaveBeenCalledWith(
+      LoaderMethod.ChildrenServiceQueryRelations,
+      child,
+    );
+  }));
 });
