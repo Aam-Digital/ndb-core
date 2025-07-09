@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { DataAggregationService } from "../data-aggregation.service";
 import {
   getGroupingInformationString,
@@ -26,6 +26,14 @@ import {
   DateRangeFilterConfig,
   DateRangeFilterConfigOption,
 } from "app/core/entity-list/EntityListConfig";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { ViewActionsComponent } from "#src/app/core/common-components/view-actions/view-actions.component";
+import { MatIconButton } from "@angular/material/button";
+import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
+import { Angulartics2Module } from "angulartics2";
+import { DisableEntityOperationDirective } from "#src/app/core/permissions/permission-directive/disable-entity-operation.directive";
+import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
+import { MatTooltip } from "@angular/material/tooltip";
 
 @RouteTarget("Reporting")
 @Component({
@@ -41,9 +49,20 @@ import {
     DatePipe,
     JsonPipe,
     SqlV2TableComponent,
+    FaIconComponent,
+    ViewActionsComponent,
+    MatIconButton,
+    MatMenuTrigger,
+    Angulartics2Module,
+    DisableEntityOperationDirective,
+    MatMenu,
+    MatMenuItem,
+    MatTooltip,
   ],
 })
 export class ReportingComponent {
+  private readonly jsonEditorService = inject(JsonEditorService);
+
   reports: ReportEntity[];
   mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
 
@@ -206,8 +225,37 @@ export class ReportingComponent {
     return { label: resultLabel, result: header.result };
   }
 
-  selectedReportChanged() {
+  onReportCriteriaChange() {
     this.reportCalculation = null;
     this.data = [];
+  }
+
+  selectedReportChanged(selectedReport: ReportEntity) {
+    this.currentReport = selectedReport;
+  }
+
+  editReportConfig(report: ReportEntity) {
+    const reportDetails: Partial<ReportEntity> = {
+      title: report.title,
+      mode: report.mode,
+    };
+    // explicitly map the relevant properties
+    if (report.version) reportDetails.version = report.version;
+    if (report.reportDefinition)
+      reportDetails.reportDefinition = report.reportDefinition;
+    if (report.aggregationDefinition)
+      reportDetails.aggregationDefinition = report.aggregationDefinition;
+    if (report.aggregationDefinitions)
+      reportDetails.aggregationDefinitions = report.aggregationDefinitions;
+
+    this.jsonEditorService
+      .openJsonEditorDialog(reportDetails)
+      .subscribe(async (result) => {
+        if (!result) {
+          return;
+        }
+
+        await this.entityMapper.save(Object.assign(report, result));
+      });
   }
 }

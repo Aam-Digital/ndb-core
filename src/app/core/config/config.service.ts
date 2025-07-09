@@ -53,8 +53,15 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return this.entityMapper.save(new Config(Config.CONFIG_KEY, config), true);
   }
 
-  public exportConfig(): string {
-    return JSON.stringify(this.currentConfig.data);
+  /**
+   * Export the current config as a JSON string.
+   * @param rawObject If true, returns the object instead of stringified value.
+   */
+  public exportConfig(rawObject: true): Object;
+  public exportConfig(rawObject?: false): string;
+  public exportConfig(rawObject?: boolean): string | Object {
+    const value = JSON.stringify(this.currentConfig.data);
+    return rawObject ? JSON.parse(value) : value;
   }
 
   public getConfig<T>(id: string): T | undefined {
