@@ -32,7 +32,7 @@ export class EntityComponentSelectComponent {
   ) {
     this.options = [
       {
-        label: $localize`Standard Section`,
+        label: $localize`Form Fields Section`,
         value: {
           title: $localize`:Default title:New Section`,
           component: "Form", // TODO: make this configurable

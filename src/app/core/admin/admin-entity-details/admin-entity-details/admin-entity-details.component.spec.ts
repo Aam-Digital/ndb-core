@@ -55,26 +55,34 @@ describe("AdminEntityDetailsComponent", () => {
   });
 
   it("should add new Default Section to config", () => {
+    const defaultConfig = {
+      title: "New Section",
+      component: "Form",
+      config: { fieldGroups: [] },
+    };
     mockDialog.open.and.returnValue({
-      afterClosed: () => of("default-form"),
+      afterClosed: () => of(defaultConfig),
     } as any);
 
     component.addComponent(component.config.panels[0]);
     expect(component.config.panels[0].components.length).toBe(1);
 
-    const newSection = component.config.panels[0].components[0];
-    expect(newSection.component).toBe("Form");
+    expect(component.config.panels[0].components[0]).toEqual(defaultConfig);
   });
 
   it("should add new RelatedEntities Section to config", () => {
+    const relatedConfig = {
+      title: "New Related Section",
+      component: "RelatedEntities",
+      config: { entityType: AdminDetailsTestEntity.ENTITY_TYPE },
+    };
     mockDialog.open.and.returnValue({
-      afterClosed: () => of("related-form"),
+      afterClosed: () => of(relatedConfig),
     } as any);
 
     component.addComponent(component.config.panels[0]);
     expect(component.config.panels[0].components.length).toBe(1);
 
-    const newRelatedSection = component.config.panels[0].components[0];
-    expect(newRelatedSection.component).toBe("RelatedEntities");
+    expect(component.config.panels[0].components[0]).toEqual(relatedConfig);
   });
 });
