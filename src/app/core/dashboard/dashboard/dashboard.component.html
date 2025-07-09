@@ -1,5 +1,7 @@
 @if('update' | ablePure: 'Config' | async) {
-<button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
+<button mat-icon-button color="primary" [matMenuTriggerFor]="additional"
+class="dashboard-menu-btn"
+>
   <fa-icon icon="ellipsis-v"></fa-icon>
 </button>
 <mat-menu #additional>

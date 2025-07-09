@@ -12,10 +12,25 @@ $widget-height: 430px;
 .widgets-container {
   /* Make all rows be equal in height */
   grid-auto-rows: $widget-height;
+  margin-top: 60px;
 
   @include grid-layout.adaptive($min-widget-width, $max-screen-width);
 }
 
 .grid-item {
   transition: all 1s;
+}
+
+.dashboard-menu-btn {
+  position: fixed;
+  top: 80px; // Adjust based on your header height
+  right: 20px;
+  z-index: 1000;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 }

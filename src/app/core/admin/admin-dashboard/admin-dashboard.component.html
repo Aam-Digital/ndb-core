@@ -1,8 +1,94 @@
-<p>admin-dashboard works!</p>
+<div class="header flex-row flex-wrap justify-space-between">
+  <h1 class="admin-ui-title" i18n="page title">
+    Edit Dashboard Widgets
+  </h1>
 
+  <div class="flex-row gap-small save-buttons">
+    <button mat-raised-button color="accent" (click)="save()" i18n>
+      Save
+    </button>
+    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  </div>
+</div>
 
-<div class="widgets-container">
-  @for (widgetConfig of dashboardConfig.widgets; track widgetConfig) {
-    <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
-  }
+<div class="overall-container flex-row" [class.disabled]="isDisabled">
+  <!-- WIDGET PREVIEW AREA -->
+  <div
+    cdkDropList
+    [cdkDropListData]="dashboardConfig.widgets"
+    (cdkDropListDropped)="drop($event)"
+    cdkDropListOrientation="mixed"
+    class="widgets-container drop-list"
+  >
+    @for (widgetConfig of dashboardConfig.widgets; track widgetConfig; let i = $index) {
+      <mat-card
+        cdkDrag
+        cdkDragBoundary=".overall-container"
+        class="widget-preview-card"
+      >
+        <fa-icon 
+          icon="grip-vertical" 
+          size="xl" 
+          class="drag-handle"
+          cdkDragHandle
+        ></fa-icon>
+        
+        <fa-icon 
+          icon="times" 
+          class="widget-remove-icon"
+          (click)="removeWidget(i)" 
+          matTooltip="Remove this widget"
+          i18n-matTooltip
+        ></fa-icon>
+
+        <mat-card-content class="widget-preview-section">
+          <!-- Widget Content with Overlay Edit Button -->
+          <div class="widget-content-wrapper">
+            <ng-template [appDynamicComponent]="widgetConfig"></ng-template>
+            
+            <!-- Centered Edit Button Overlay -->
+            <div class="field-hover-buttons">
+              <button
+                mat-stroked-button
+                color="accent"
+                class="field-edit-button"
+                (click)="editWidget(widgetConfig)"
+                i18n="Button label"
+              >
+                Edit Widget
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- DROP AREA: ADD NEW WIDGET -->
+    <mat-card class="widget-preview-card drop-area-hint">
+      <mat-card-content class="add-widget-content">
+        <span i18n="Header of drag and drop box">
+          click here to add new widget
+        </span>
+        <fa-icon
+          icon="question-circle"
+          matTooltip="Add widgets to customize your dashboard. You can drag and drop to reorder them."
+          i18n-matTooltip
+        ></fa-icon>
+        <button
+          mat-stroked-button
+          color="accent"
+          class="add-widget-button"
+          (click)="addNewWidget()"
+          i18n
+        >
+          <fa-icon
+            aria-label="add widget"
+            icon="plus-circle"
+            class="standard-icon-with-text"
+          ></fa-icon>
+          Add Widget
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
