@@ -35,6 +35,6 @@ export class GotoThirdPartySystemComponent implements OnInit {
       return;
     }
 
-    window.location.href = redirectUrl;
+    window.open(redirectUrl, "_blank");
   }
 }
