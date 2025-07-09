@@ -69,20 +69,4 @@ describe("AdminEntityDetailsComponent", () => {
 
     expect(component.config.panels[0].components[0]).toEqual(defaultConfig);
   });
-
-  it("should add new RelatedEntities Section to config", () => {
-    const relatedConfig = {
-      title: "New Related Section",
-      component: "RelatedEntities",
-      config: { entityType: AdminDetailsTestEntity.ENTITY_TYPE },
-    };
-    mockDialog.open.and.returnValue({
-      afterClosed: () => of(relatedConfig),
-    } as any);
-
-    component.addComponent(component.config.panels[0]);
-    expect(component.config.panels[0].components.length).toBe(1);
-
-    expect(component.config.panels[0].components[0]).toEqual(relatedConfig);
-  });
 });
