@@ -2,6 +2,7 @@ import { Component, Input } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
+  PanelComponent,
 } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -55,28 +56,12 @@ export class AdminEntityDetailsComponent {
   addComponent(panel: Panel) {
     this.dialog
       .open(EntityComponentSelectComponent, {
-        height: "20vh",
+        data: { entityType: this.entityConstructor.ENTITY_TYPE },
       })
       .afterClosed()
-      .subscribe((selectedSection) => {
-        if (!selectedSection) {
-          return;
-        }
-
-        if (selectedSection === "default-form") {
-          panel.components.push({
-            title: $localize`:Default title:New Section`,
-            component: "Form", // TODO: make this configurable
-            config: { fieldGroups: [] },
-          });
-        } else if (selectedSection === "related-form") {
-          panel.components.push({
-            title: $localize`:Default title:New Related Section`,
-            component: "RelatedEntities",
-            config: {
-              entityType: this.entityConstructor.ENTITY_TYPE, //we can not use empty string
-            },
-          });
+      .subscribe((sectionConfig: PanelComponent) => {
+        if (sectionConfig) {
+          panel.components.push(sectionConfig);
         }
       });
   }

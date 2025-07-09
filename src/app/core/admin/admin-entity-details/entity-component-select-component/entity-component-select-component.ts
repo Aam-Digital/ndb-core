@@ -1,6 +1,11 @@
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
-import { Component } from "@angular/core";
-import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import { PanelComponent } from "#src/app/core/entity-details/EntityDetailsConfig";
+import { Component, Inject } from "@angular/core";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 
@@ -16,16 +21,38 @@ import { MatSelectModule } from "@angular/material/select";
   styleUrl: "./entity-component-select-component.scss",
 })
 export class EntityComponentSelectComponent {
-  options = [
-    { value: "default-form", label: $localize`Default Section` },
-    { value: "related-form", label: $localize`Related-Entity Section` },
-  ];
+  options: { label: string; value: PanelComponent }[];
 
   constructor(
-    private dialogRef: MatDialogRef<EntityComponentSelectComponent>,
-  ) {}
+    private dialogRef: MatDialogRef<
+      EntityComponentSelectComponent,
+      PanelComponent
+    >,
+    @Inject(MAT_DIALOG_DATA) data: { entityType: string },
+  ) {
+    this.options = [
+      {
+        label: $localize`Standard Section`,
+        value: {
+          title: $localize`:Default title:New Section`,
+          component: "Form", // TODO: make this configurable
+          config: { fieldGroups: [] },
+        },
+      },
+      {
+        label: $localize`Related-Entity Section`,
+        value: {
+          title: $localize`:Default title:New Related Section`,
+          component: "RelatedEntities",
+          config: {
+            entityType: data.entityType, //we can not use empty string
+          },
+        },
+      },
+    ];
+  }
 
-  selectSectionType(sectionType: string) {
-    this.dialogRef.close(sectionType);
+  selectSectionType(opt: PanelComponent) {
+    this.dialogRef.close(opt);
   }
 }
