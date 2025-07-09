@@ -1,5 +1,6 @@
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { PanelComponent } from "#src/app/core/entity-details/EntityDetailsConfig";
+import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { Component, Inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
@@ -24,11 +25,12 @@ export class EntityComponentSelectComponent {
   options: { label: string; value: PanelComponent }[];
 
   constructor(
+    private entityRelationsService: EntityRelationsService,
     private dialogRef: MatDialogRef<
       EntityComponentSelectComponent,
       PanelComponent
     >,
-    @Inject(MAT_DIALOG_DATA) data: { entityType: string },
+    @Inject(MAT_DIALOG_DATA) public data: { entityType: string },
   ) {
     this.options = [
       {
@@ -44,15 +46,25 @@ export class EntityComponentSelectComponent {
         value: {
           title: $localize`:Default title:New Related Section`,
           component: "RelatedEntities",
-          config: {
-            entityType: data.entityType, //we can not use empty string
-          },
+          config: {},
         },
       },
     ];
   }
 
   selectSectionType(opt: PanelComponent) {
+    // Preselect the first available related-entity type by default for RelatedEntities
+    if (opt.component === "RelatedEntities") {
+      const availableEntityTypes = this.entityRelationsService
+        .getEntityTypesReferencingType(this.data.entityType)
+        .map((refType) => ({
+          entityType: refType.entityType.ENTITY_TYPE,
+        }));
+
+      if (availableEntityTypes.length > 0) {
+        opt.config.entityType = availableEntityTypes[0].entityType;
+      }
+    }
     this.dialogRef.close(opt);
   }
 }
