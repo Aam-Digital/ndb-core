@@ -29,8 +29,10 @@ describe("AdminEntityFieldComponent", () => {
   let fixture: ComponentFixture<AdminEntityFieldComponent>;
   let loader: HarnessLoader;
 
+  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+
   beforeEach(() => {
-    const mockEnumService = jasmine.createSpyObj([
+    mockEnumService = jasmine.createSpyObj([
       "getEnum",
       "listEnums",
       "preLoadEnums",
@@ -123,8 +125,7 @@ describe("AdminEntityFieldComponent", () => {
 
   it("should init 'additional' options for configurable-enum", fakeAsync(() => {
     const mockEnumList = ["A", "B"];
-    const enumService = TestBed.inject(ConfigurableEnumService);
-    spyOn(enumService, "listEnums").and.returnValue(mockEnumList);
+    mockEnumService.listEnums.and.returnValue(mockEnumList);
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
