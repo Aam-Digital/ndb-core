@@ -1,0 +1,30 @@
+.entity-config-container {
+  display: flex;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.entity-side {
+  flex: 1;
+  margin: 0;
+  background-color: #fff;
+
+  &.left-side {
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
+
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.05);
+  }
+  &.right-side {
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+    border-left: 1px solid #e0e0e0;
+
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .columns-list {
+    display: flex;
+    flex-direction: column;
+  }
+}
