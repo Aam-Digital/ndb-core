@@ -19,7 +19,7 @@ describe("EntityComponentSelectComponent", () => {
       imports: [EntityComponentSelectComponent, FontAwesomeTestingModule],
       providers: [
         { provide: MatDialogRef, useValue: { close: () => null } },
-        { provide: MAT_DIALOG_DATA, useValue: { entity: "child" } },
+        { provide: MAT_DIALOG_DATA, useValue: { entity: "Child" } },
         {
           provide: EntityRelationsService,
           useValue: mockEntityRelationsService,

@@ -38,7 +38,7 @@ export class EntityComponentSelectComponent {
       this.entityRelationsService.getEntityTypesReferencingType(
         this.data.entityType,
       );
-    const hasRelatedEntities = relatedEntityTypes.length > 0;
+    const hasRelatedEntities = relatedEntityTypes?.length > 0;
 
     this.options = [
       {
