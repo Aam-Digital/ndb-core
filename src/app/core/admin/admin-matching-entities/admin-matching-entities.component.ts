@@ -100,10 +100,38 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     this.rightSideEntity = this.entityRegistry.get(rightType) ?? null;
   }
 
+  /**
+ // todo: may be while saving this we can use the select column for the table and list view?
+ // todo: json editor for prefilter?
+   */
   save(): void {
-    console.log("saving", this.configForm.value);
-    // todo: may be while saving this we can use the select column for the table and list view?
-    // todo: json editor for prefilter?
+    const leftType = this.configForm.value.leftType;
+    const rightType = this.configForm.value.rightType;
+
+    const columns = this.leftColumns.map((l, i) => [
+      l,
+      this.rightColumns[i] ?? null,
+    ]);
+
+    const leftSide = {
+      ...this.originalConfig.leftSide,
+      entityType: leftType,
+      availableFilters: this.leftFilters.map((id) => ({ id })),
+
+      prefilter: this.originalConfig.leftSide?.prefilter,
+    };
+    const rightSide = {
+      ...this.originalConfig.rightSide,
+      entityType: rightType,
+      availableFilters: this.rightFilters.map((id) => ({ id })),
+      prefilter: this.originalConfig.rightSide?.prefilter,
+    };
+
+    const onMatch = this.originalConfig.onMatch;
+
+    const updatedConfig = { columns, leftSide, rightSide, onMatch };
+
+    console.log("Config saved:", updatedConfig);
   }
 
   cancel(): void {

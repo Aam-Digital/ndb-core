@@ -30,6 +30,7 @@
         [activeFields]="leftColumns"
         fieldLabel="Add columns:"
         i18n-fieldLabel
+        (itemsChange)="leftColumns = $event"
       ></app-admin-list-manager>
 
       <h4>Available Filters</h4>
@@ -40,6 +41,7 @@
         fieldLabel="Add filters:"
         templateType="filter"
         i18n-fieldLabel
+        (itemsChange)="leftFilters = $event"
       ></app-admin-list-manager>
     </div>
 
@@ -62,6 +64,7 @@
         [activeFields]="rightColumns"
         fieldLabel="Add columns:"
         i18n-fieldLabel
+        (itemsChange)="rightColumns = $event"
       ></app-admin-list-manager>
 
       <h4>Available Filters</h4>
@@ -72,6 +75,7 @@
         templateType="filter"
         fieldLabel="Add filters:"
         i18n-fieldLabel
+        (itemsChange)="rightFilters = $event"
       ></app-admin-list-manager>
     </div>
   </div>
