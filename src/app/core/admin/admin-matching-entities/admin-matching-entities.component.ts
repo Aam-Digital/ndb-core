@@ -48,6 +48,22 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.initConfig();
+    this.initForm();
+    this.configForm.get("leftType")!.valueChanges.subscribe((key) => {
+      this.leftSideEntity = this.entityRegistry.get(key) ?? null;
+      this.leftColumns = [];
+      this.leftFilters = [];
+    });
+
+    this.configForm.get("rightType")!.valueChanges.subscribe((key) => {
+      this.rightSideEntity = this.entityRegistry.get(key) ?? null;
+      this.rightColumns = [];
+      this.rightFilters = [];
+    });
+  }
+
+  private initConfig(): void {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
 
@@ -60,35 +76,28 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       typeof col[1] === "string" ? col[1] : col[1].id,
     );
 
-    const leftFilter = this.originalConfig.leftSide?.availableFilters ?? [];
-    this.leftFilters = leftFilter.map((f: any) => f.id);
-    const rightFilter = this.originalConfig.rightSide?.availableFilters ?? [];
-    this.rightFilters = rightFilter.map((f: any) => f.id);
+    this.leftFilters = (
+      this.originalConfig.leftSide?.availableFilters ?? []
+    ).map((f) => f.id);
+    this.rightFilters = (
+      this.originalConfig.rightSide?.availableFilters ?? []
+    ).map((f) => f.id);
 
     this.entityType = this.entityRegistry
       .getEntityTypes()
       .map((ctor) => ctor.value.ENTITY_TYPE);
+  }
 
+  private initForm(): void {
     this.configForm = this.fb.group({
       leftType: [this.originalConfig.leftSide?.entityType ?? ""],
       rightType: [this.originalConfig.rightSide?.entityType ?? ""],
     });
 
-    const initLeftKey = this.configForm.value.leftType;
-    const initRightKey = this.configForm.value.rightType;
-    this.leftSideEntity = this.entityRegistry.get(initLeftKey) ?? null;
-    this.rightSideEntity = this.entityRegistry.get(initRightKey) ?? null;
+    const { leftType, rightType } = this.configForm.value;
 
-    this.configForm.get("leftType")!.valueChanges.subscribe((key) => {
-      this.leftSideEntity = this.entityRegistry.get(key) ?? null;
-      this.leftColumns = [];
-      this.leftFilters = [];
-    });
-    this.configForm.get("rightType")!.valueChanges.subscribe((key) => {
-      this.rightSideEntity = this.entityRegistry.get(key) ?? null;
-      this.rightColumns = [];
-      this.rightFilters = [];
-    });
+    this.leftSideEntity = this.entityRegistry.get(leftType) ?? null;
+    this.rightSideEntity = this.entityRegistry.get(rightType) ?? null;
   }
 
   save(): void {
