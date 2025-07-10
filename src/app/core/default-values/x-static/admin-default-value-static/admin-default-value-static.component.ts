@@ -40,6 +40,7 @@ export class AdminDefaultValueStaticComponent
 {
   @Input() entitySchemaField: EntitySchemaField;
 
+  /** mapped from the entitySchemaField to use for the entity-field-edit field */
   targetFieldConfig: FormFieldConfig;
 
   formControl: FormControl<string>;
@@ -82,18 +83,14 @@ export class AdminDefaultValueStaticComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entitySchemaField) {
-      if (!this.targetFieldConfig) {
-        this.updateTargetFieldConfig();
-      } else {
-        Object.assign(this.targetFieldConfig, this.entitySchemaField);
-      }
+      this.updateTargetFieldConfig();
     }
   }
 
   private updateTargetFieldConfig() {
     const newConfig = {
-      id: "defaultValueId",
       ...this.entitySchemaField,
+      id: "defaultValueId", // overwrite the id with a static temporary one for our isolated form control here
     };
 
     if (JSON.stringify(this.targetFieldConfig) !== JSON.stringify(newConfig)) {
