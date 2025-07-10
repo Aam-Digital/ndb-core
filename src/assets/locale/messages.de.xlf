@@ -9581,8 +9581,8 @@ Wenn anhand der hier ausgewählten Felder eine Übereinstimmung gefunden wird, b
         </context-group>
       </trans-unit>
       <trans-unit id="1737753151350322492" datatype="html">
-        <source><x id="PH" equiv-text="&quot;Configuration updated&quot;"/></source>
-        <target><x id="PH" equiv-text="&quot;Konfiguration aktualisiert&quot;"/></target>
+        <source>Configuration updated</source>
+        <target>Konfiguration aktualisiert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
           <context context-type="linenumber">146</context>
