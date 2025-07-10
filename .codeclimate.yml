@@ -1,7 +1,0 @@
-engines:
-  duplication:
-    enabled: true
-    config:
-      languages:
-        typescript:
-          mass_threshold: 65
