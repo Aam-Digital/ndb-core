@@ -18,7 +18,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminTabsComponent } from "../../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admin-tab-template.directive";
 import { MatDialog } from "@angular/material/dialog";
-import { EntityComponentSelectComponent } from "../entity-component-select-component/entity-component-select-component";
+import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity-details/widget-component-select/widget-component-select.component";
 
 @DynamicComponent("AdminEntityDetails")
 @Component({
@@ -55,7 +55,7 @@ export class AdminEntityDetailsComponent {
 
   addComponent(panel: Panel) {
     this.dialog
-      .open(EntityComponentSelectComponent, {
+      .open(WidgetComponentSelectComponent, {
         data: { entityType: this.entityConstructor.ENTITY_TYPE },
       })
       .afterClosed()

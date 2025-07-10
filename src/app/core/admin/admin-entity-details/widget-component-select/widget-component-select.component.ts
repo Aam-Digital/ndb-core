@@ -15,7 +15,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
  * Admin component to select components to be added to view configs.
  */
 @Component({
-  selector: "app-entity-component-select-component",
+  selector: "app-widget-component-select",
   imports: [
     MatDialogModule,
     MatFormFieldModule,
@@ -23,16 +23,16 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     DialogCloseComponent,
     MatTooltipModule,
   ],
-  templateUrl: "./entity-component-select-component.html",
-  styleUrl: "./entity-component-select-component.scss",
+  templateUrl: "./widget-component-select.component.html",
+  styleUrl: "./widget-component-select.component.scss",
 })
-export class EntityComponentSelectComponent implements OnInit {
+export class WidgetComponentSelectComponent implements OnInit {
   options: WidgetOption[];
 
   constructor(
     private entityRelationsService: EntityRelationsService,
     private dialogRef: MatDialogRef<
-      EntityComponentSelectComponent,
+      WidgetComponentSelectComponent,
       PanelComponent
     >,
     @Inject(MAT_DIALOG_DATA) public data: { entityType: string },

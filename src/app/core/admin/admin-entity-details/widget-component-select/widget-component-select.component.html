@@ -8,11 +8,7 @@
     <mat-label i18n>Select Section Type</mat-label>
     <mat-select (selectionChange)="selectSectionType($event.value)">
       @for (opt of options; track opt) {
-        <mat-option
-          [value]="opt.value"
-          [disabled]="opt.disabled"
-          i18n="Section type option"
-        >
+        <mat-option [value]="opt.value" [disabled]="opt.disabled">
           <span
             class="tooltip-span"
             [matTooltip]="opt.disabled"
