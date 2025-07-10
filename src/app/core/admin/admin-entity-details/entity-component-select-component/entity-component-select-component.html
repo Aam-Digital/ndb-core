@@ -2,7 +2,7 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <p i18n>Choose the "widget" you want to add:</p>
+  <p i18n>Choose the widget you want to add:</p>
 
   <mat-form-field appearance="fill" class="full-width margin-bottom-regular">
     <mat-label i18n>Select Section Type</mat-label>
@@ -15,7 +15,7 @@
         >
           <span
             class="tooltip-span"
-            matTooltip="Add a field with type that links to this record to enable this section."
+            [matTooltip]="opt.disabled"
             [matTooltipDisabled]="!opt.disabled"
           >
             {{ opt.label }}
