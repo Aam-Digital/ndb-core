@@ -9,6 +9,7 @@ import {
 } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "app-entity-component-select-component",
@@ -17,12 +18,13 @@ import { MatSelectModule } from "@angular/material/select";
     MatFormFieldModule,
     MatSelectModule,
     DialogCloseComponent,
+    MatTooltipModule,
   ],
   templateUrl: "./entity-component-select-component.html",
   styleUrl: "./entity-component-select-component.scss",
 })
 export class EntityComponentSelectComponent {
-  options: { label: string; value: PanelComponent }[];
+  options: { label: string; value: PanelComponent; disabled?: boolean }[];
 
   constructor(
     private entityRelationsService: EntityRelationsService,
@@ -32,6 +34,12 @@ export class EntityComponentSelectComponent {
     >,
     @Inject(MAT_DIALOG_DATA) public data: { entityType: string },
   ) {
+    const relatedEntityTypes =
+      this.entityRelationsService.getEntityTypesReferencingType(
+        this.data.entityType,
+      );
+    const hasRelatedEntities = relatedEntityTypes.length > 0;
+
     this.options = [
       {
         label: $localize`Form Fields Section`,
@@ -46,25 +54,16 @@ export class EntityComponentSelectComponent {
         value: {
           title: $localize`:Default title:New Related Section`,
           component: "RelatedEntities",
-          config: {},
+          config: hasRelatedEntities
+            ? { entityType: relatedEntityTypes[0].entityType.ENTITY_TYPE }
+            : {},
         },
+        disabled: !hasRelatedEntities,
       },
     ];
   }
 
   selectSectionType(opt: PanelComponent) {
-    // Preselect the first available related-entity type by default for RelatedEntities
-    if (opt.component === "RelatedEntities") {
-      const availableEntityTypes = this.entityRelationsService
-        .getEntityTypesReferencingType(this.data.entityType)
-        .map((refType) => ({
-          entityType: refType.entityType.ENTITY_TYPE,
-        }));
-
-      if (availableEntityTypes.length > 0) {
-        opt.config.entityType = availableEntityTypes[0].entityType;
-      }
-    }
     this.dialogRef.close(opt);
   }
 }

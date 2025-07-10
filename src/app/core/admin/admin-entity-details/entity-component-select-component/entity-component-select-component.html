@@ -3,7 +3,7 @@
 
 <mat-dialog-content>
   <p i18n>
-    Choose which kind of section to add: a Default Section” for editing fields,
+    Choose which kind of section to add: a “Default Section” for editing fields,
     or a “Related-Entity Section” for displaying linked records.
   </p>
 
@@ -11,8 +11,18 @@
     <mat-label i18n>Select Section Type</mat-label>
     <mat-select (selectionChange)="selectSectionType($event.value)">
       @for (opt of options; track opt) {
-        <mat-option [value]="opt.value" i18n="Section type option">
-          {{ opt.label }}
+        <mat-option
+          [value]="opt.value"
+          [disabled]="opt.disabled"
+          i18n="Section type option"
+        >
+          <span
+            class="tooltip-span"
+            matTooltip="Add a field with type that links to this record to enable this section."
+            [matTooltipDisabled]="!opt.disabled"
+          >
+            {{ opt.label }}
+          </span>
         </mat-option>
       }
     </mat-select>
