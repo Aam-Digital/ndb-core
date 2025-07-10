@@ -2,6 +2,7 @@ import { Component, Input } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
+  PanelComponent,
 } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -16,6 +17,8 @@ import { AdminEntityPanelComponentComponent } from "../admin-entity-panel-compon
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AdminTabsComponent } from "../../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admin-tab-template.directive";
+import { MatDialog } from "@angular/material/dialog";
+import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity-details/widget-component-select/widget-component-select.component";
 
 @DynamicComponent("AdminEntityDetails")
 @Component({
@@ -44,15 +47,22 @@ export class AdminEntityDetailsComponent {
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityDetailsConfig;
 
+  constructor(private dialog: MatDialog) {}
+
   newPanelFactory(): Panel {
     return { title: "New Tab", components: [] };
   }
 
   addComponent(panel: Panel) {
-    panel.components.push({
-      title: $localize`:Default title:New Section`,
-      component: "Form", // TODO: make this configurable
-      config: { fieldGroups: [] },
-    });
+    this.dialog
+      .open(WidgetComponentSelectComponent, {
+        data: { entityType: this.entityConstructor.ENTITY_TYPE },
+      })
+      .afterClosed()
+      .subscribe((sectionConfig: PanelComponent) => {
+        if (sectionConfig) {
+          panel.components.push(sectionConfig);
+        }
+      });
   }
 }
