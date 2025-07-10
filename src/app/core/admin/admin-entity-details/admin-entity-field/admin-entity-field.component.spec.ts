@@ -30,6 +30,13 @@ describe("AdminEntityFieldComponent", () => {
   let loader: HarnessLoader;
 
   beforeEach(() => {
+    const mockEnumService = jasmine.createSpyObj([
+      "getEnum",
+      "listEnums",
+      "preLoadEnums",
+    ]);
+    mockEnumService.listEnums.and.returnValue([]);
+
     TestBed.configureTestingModule({
       imports: [
         AdminEntityFieldComponent,
@@ -46,6 +53,7 @@ describe("AdminEntityFieldComponent", () => {
           },
         },
         { provide: MatDialogRef, useValue: { close: () => null } },
+        { provide: ConfigurableEnumService, useValue: mockEnumService },
       ],
     });
     fixture = TestBed.createComponent(AdminEntityFieldComponent);
