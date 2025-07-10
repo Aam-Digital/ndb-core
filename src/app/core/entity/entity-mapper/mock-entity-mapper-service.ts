@@ -13,7 +13,10 @@ export function createEntityMapperSpyObj() {
   return mock;
 }
 
-export function mockEntityMapperProvider(withData: Entity[] = []): Provider[] {
+export function mockEntityMapperProvider(
+  withData: Entity[] = [],
+  customDatabaseResolverService: DatabaseResolverService | {} = {},
+): Provider[] {
   return [
     {
       provide: EntityMapperService,
@@ -24,7 +27,10 @@ export function mockEntityMapperProvider(withData: Entity[] = []): Provider[] {
         return ems;
       },
     },
-    { provide: DatabaseResolverService, useValue: {} },
+    {
+      provide: DatabaseResolverService,
+      useValue: customDatabaseResolverService,
+    },
     CurrentUserSubject,
   ];
 }

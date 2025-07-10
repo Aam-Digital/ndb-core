@@ -3,7 +3,6 @@ import {
   fakeAsync,
   TestBed,
   tick,
-  waitForAsync,
 } from "@angular/core/testing";
 
 import { PublicFormComponent } from "./public-form.component";
@@ -27,7 +26,7 @@ describe("PublicFormComponent", () => {
 
   const FORM_ID = "form-id";
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     testFormConfig = new PublicFormConfig(FORM_ID);
     testFormConfig.title = "test form";
     testFormConfig.entity = TestEntity.ENTITY_TYPE;
@@ -57,13 +56,10 @@ describe("PublicFormComponent", () => {
         },
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
-    initRemoteDBSpy = spyOn(
-      TestBed.inject(DatabaseResolverService),
-      "initDatabasesForAnonymous",
-    );
+    const dbResolver = TestBed.inject(DatabaseResolverService);
+    dbResolver.initDatabasesForAnonymous = () => null;
+    initRemoteDBSpy = spyOn(dbResolver, "initDatabasesForAnonymous");
 
     fixture = TestBed.createComponent(PublicFormComponent<TestEntity>);
     component = fixture.componentInstance;

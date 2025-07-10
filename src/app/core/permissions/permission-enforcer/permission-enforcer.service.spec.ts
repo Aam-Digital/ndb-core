@@ -10,7 +10,6 @@ import { Subject } from "rxjs";
 import { Config } from "../../config/config";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
@@ -26,7 +25,6 @@ describe("PermissionEnforcerService", () => {
   let entityMapper: EntityMapperService;
   let mockLocation: jasmine.SpyObj<Location>;
   let destroySpy: jasmine.Spy;
-  let trackSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
@@ -34,10 +32,7 @@ describe("PermissionEnforcerService", () => {
 
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
-      providers: [
-        { provide: LOCATION_TOKEN, useValue: mockLocation },
-        ...mockEntityMapperProvider(),
-      ],
+      providers: [{ provide: LOCATION_TOKEN, useValue: mockLocation }],
     });
     service = TestBed.inject(PermissionEnforcerService);
 
@@ -45,11 +40,10 @@ describe("PermissionEnforcerService", () => {
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
 
     TestBed.inject(AbilityService).initializeRules();
-    destroySpy = spyOn(
-      TestBed.inject(DatabaseResolverService),
-      "destroyDatabases",
-    );
-    trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
+
+    const dbResolver = TestBed.inject(DatabaseResolverService);
+    dbResolver.destroyDatabases = () => null;
+    destroySpy = spyOn(dbResolver, "destroyDatabases");
   }));
 
   afterEach(() => {
@@ -114,6 +108,9 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should not reset page if only entities with read permission exist", fakeAsync(() => {
+    destroySpy.calls.reset();
+    mockLocation.reload.calls.reset();
+
     entityMapper.save(new TestEntity());
     entityMapper.save(new TestEntity());
     tick();
@@ -185,6 +182,8 @@ describe("PermissionEnforcerService", () => {
   }));
 
   it("should track a migration event in analytics service when destroying the local db", fakeAsync(() => {
+    const trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
+
     entityMapper.save(new TestEntity());
     tick();
 
