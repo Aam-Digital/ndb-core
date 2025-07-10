@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
 import { delay, firstValueFrom, Observable, skipWhile } from "rxjs";
 import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
@@ -42,6 +42,12 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper);
 
+    this.init();
+
+    super.startLoading();
+  }
+
+  init() {
     this.initAvailableLocales();
 
     this.siteName.subscribe((name) => this.title.setTitle(name));
@@ -53,8 +59,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.initFromLocalStorage();
     this.cacheInLocalStorage();
-
-    super.startLoading();
   }
 
   /**
