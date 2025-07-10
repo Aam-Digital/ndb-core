@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write # for QLTY code coverage (https://docs.qlty.sh/migration/coverage)
 
 jobs:
   code-quality:
@@ -36,7 +37,6 @@ jobs:
     env:
       TZ: Europe/Berlin
       FORCE_COLOR: 1
-      CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_ID }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -44,14 +44,6 @@ jobs:
         with:
           node-version: lts/*
           cache: npm
-      - name: Install Code Climate Test Reporter
-        run: |
-          curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
-          chmod +x ./cc-test-reporter
-      - name: cc-test-reporter before-build
-        run: >
-          GIT_COMMITTED_AT="$(git log -1 --pretty=format:%ct)"
-          ./cc-test-reporter before-build
 
       - run: npm ci --no-progress
 
@@ -62,8 +54,10 @@ jobs:
           key: angular-v1-test-unit-${{ hashFiles('package-lock.json') }}
       - run: npm run test-ci
 
-      - run: ./cc-test-reporter format-coverage coverage/lcov.info -t lcov
-      - run: ./cc-test-reporter upload-coverage
+      - uses: qltysh/qlty-action/coverage@v1
+        with:
+          oidc: true
+          files: coverage/lcov.info
 
   test-e2e:
     runs-on: ubuntu-latest
@@ -106,7 +100,6 @@ jobs:
         continue-on-error: true
         env:
           ARGOS_TOKEN: ${{ secrets.ARGOS_TOKEN }}
-
 
       - name: Upload test artifacts
         if: always()
