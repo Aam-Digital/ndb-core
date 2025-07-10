@@ -84,7 +84,8 @@ export class SelectReportComponent implements OnChanges {
   @Input() dateRangeOptions?: DateRangeFilterConfigOption[];
 
   @Output() calculateClick = new EventEmitter<CalculateReportOptions>();
-  @Output() dataChanged = new EventEmitter<void>();
+  @Output() selectedReportChange = new EventEmitter<ReportEntity>();
+  @Output() reportFiltersChange = new EventEmitter<void>();
 
   selectedReport: ReportEntity;
   fromDate: Date;
@@ -122,7 +123,7 @@ export class SelectReportComponent implements OnChanges {
   }
 
   reportChange() {
-    this.dataChanged.emit();
+    this.selectedReportChange.emit(this.selectedReport);
     this.checkDateRangeReport();
     this.setupDateRangeFilter();
   }
@@ -130,7 +131,7 @@ export class SelectReportComponent implements OnChanges {
   onDateRangeChange(event: { from: Date; to: Date }) {
     this.fromDate = event.from;
     this.toDate = event.to;
-    this.dataChanged.emit();
+    this.reportFiltersChange.emit();
   }
 
   private checkDateRangeReport(): void {
