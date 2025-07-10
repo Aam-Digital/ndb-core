@@ -1,0 +1,162 @@
+@use "variables/sizes";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+@use "variables/colors";
+
+.header {
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-ui-title {
+ font-style: italic;;
+}
+
+.overall-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // Use 100% instead of calc
+  padding: 0;
+}
+
+.widgets-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+  height: auto; // Remove fixed height to prevent scroll
+  overflow: visible; // Remove scroll
+}
+
+.widget-preview-card {
+  position: relative;
+  border: 2px dotted #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  
+  &:hover {
+    border-color: #999;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:hover .field-hover-buttons {
+    opacity: 1;
+  }
+  
+  &.drop-area-hint {
+    border: 2px dashed #ccc;
+    background-color: #f9f9f9;
+    min-height: 250px;
+    
+    &:hover {
+      border-color: #999;
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+.widget-preview-section {
+  padding: 0;
+  position: relative;
+}
+
+.widget-content-wrapper {
+  position: relative;
+  padding: 20px; // Increased padding for more equal spacing
+  height: 100%;
+}
+
+.add-widget-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+  min-height: 200px;
+  
+  span {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+}
+
+.add-widget-button {
+  margin-top: 1rem;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 50%; // Center vertically
+  left: 8px;
+  color: colors.$accent;
+  cursor: move;
+  z-index: 20;
+}
+
+.widget-remove-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: black;
+  font-size: 20px;
+  z-index: 20;
+  cursor: pointer;
+  
+  &:hover {
+    color: #ff0000;
+    background-color: rgba(255, 0, 0, 0.1);
+  }
+}
+
+// Centered Edit Button
+.field-hover-buttons {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 15;
+  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field-edit-button {
+  background: white !important;
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ddd;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.widget-preview-card.widget-remove-hover {
+  border-color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.05);
+}
+
+// Override Material Card styles for consistency
+::ng-deep .widget-preview-card {
+  .mat-card-header {
+    padding: 0;
+    margin: 0;
+  }
+  
+  .mat-card-content {
+    margin: 0;
+    padding: 0 !important;
+    height: 100%;
+  }
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
