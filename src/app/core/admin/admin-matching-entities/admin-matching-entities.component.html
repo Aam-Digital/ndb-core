@@ -43,6 +43,20 @@
         i18n-fieldLabel
         (itemsChange)="leftFilters = $event"
       ></app-admin-list-manager>
+
+      <div class="flex-row flex-wrap gap-small align-center">
+        <em i18n
+          >Prefilter can currently have to be edited using the JSON Editor</em
+        >
+        <button
+          mat-stroked-button
+          (click)="openConditionsInJsonEditorPopup('left')"
+          i18n
+        >
+          <fa-icon icon="tools"></fa-icon>
+          Open Prefilter Editor
+        </button>
+      </div>
     </div>
 
     <div class="entity-side padding-regular right-side">
@@ -77,6 +91,28 @@
         i18n-fieldLabel
         (itemsChange)="rightFilters = $event"
       ></app-admin-list-manager>
+
+      <div class="flex-row flex-wrap gap-small align-center">
+        <em i18n
+          >Prefilter can currently have to be edited using the JSON Editor</em
+        >
+        <button
+          mat-stroked-button
+          (click)="openConditionsInJsonEditorPopup('right')"
+          i18n
+        >
+          <fa-icon icon="tools"></fa-icon>
+          Open Prefilter Editor
+        </button>
+      </div>
     </div>
   </div>
 </form>
+
+<!-- Matching Entity Selection with Expand -->
+<div class="entity-match-container padding-regular">
+  <app-edit-matching-view
+    [value]="originalConfig.onMatch"
+    (valueChange)="originalConfig.onMatch = $event"
+  ></app-edit-matching-view>
+</div>

@@ -11,6 +11,10 @@ import { EntityConstructor } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { MatchingEntitiesConfig } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
+import { EditMatchingViewComponent } from "./edit-matching-view/edit-matching-view.component";
+import { MatDialog } from "@angular/material/dialog";
+import { JsonEditorDialogComponent } from "../json-editor/json-editor-dialog/json-editor-dialog.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-admin-matching-entities",
@@ -22,6 +26,8 @@ import { MatchingEntitiesConfig } from "#src/app/features/matching-entities/matc
     MatSelectModule,
     MatOptionModule,
     AdminListManagerComponent,
+    EditMatchingViewComponent,
+    FontAwesomeModule,
   ],
   templateUrl: "./admin-matching-entities.component.html",
   styleUrls: ["./admin-matching-entities.component.scss"],
@@ -45,6 +51,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     private fb: FormBuilder,
     private configService: ConfigService,
     private entityRegistry: EntityRegistry,
+    readonly dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -136,5 +143,41 @@ export class AdminMatchingEntitiesComponent implements OnInit {
 
   cancel(): void {
     console.log("Cancelled");
+  }
+
+  /**
+   * Open the conditions JSON editor popup.
+   */
+  openConditionsInJsonEditorPopup(side: "left" | "right") {
+    const conditionsForm = this.fb.group({
+      prefilter: [
+        side === "left"
+          ? (this.originalConfig.leftSide?.prefilter ?? {})
+          : (this.originalConfig.rightSide?.prefilter ?? {}),
+      ],
+    });
+
+    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
+      data: {
+        value: conditionsForm.value.prefilter,
+        closeButton: true,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+
+      if (side === "left") {
+        this.originalConfig.leftSide = {
+          ...this.originalConfig.leftSide,
+          prefilter: result,
+        };
+      } else {
+        this.originalConfig.rightSide = {
+          ...this.originalConfig.rightSide,
+          prefilter: result,
+        };
+      }
+    });
   }
 }
