@@ -2027,6 +2027,10 @@
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
           <context context-type="linenumber">153</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
+          <context context-type="linenumber">146</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="6236690165266443105" datatype="html">
         <source>Site Settings</source>
@@ -3605,6 +3609,10 @@
         <target>Annuler l&apos;action</target>
         <note priority="1" from="description">Undo an entity action</note>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
+          <context context-type="linenumber">147</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
           <context context-type="linenumber">87</context>
         </context-group>
@@ -3665,7 +3673,7 @@
 
         Are you sure you want to delete <x id="PH" equiv-text="textForDeleteEntity"/>?</source>
         <target>
-
+        
 </target>
         <note priority="1" from="description">Delete confirmation dialog</note>
         <context-group purpose="location">
@@ -6298,8 +6306,8 @@ You can find this in the Admin UI form builder (Edit Data Structure -&gt; Detail
 
 Template files can be in most office document formats (odt, docx, ods, xlsx, odp, pptx) or PDF.</source>
         <target>Téléchargez ici un fichier modèle spécialement préparé.
-Le fichier peut contenir des espaces réservés qui seront remplacés par des données réelles lorsqu&apos;un fichier est généré pour un enregistrement sélectionné.
-Par exemple, {d.name} sera remplacé par la valeur du champ «nom» de l&apos;entité donnée. Consultez la documentation du [système carbone](https://carbone.io/documentation.html#substitutions) pour plus d&apos;informations.
+Le fichier peut contenir des espaces réservés qui seront remplacés par des données réelles lorsqu&apos;un fichier est généré pour un enregistrement sélectionné. 
+Par exemple, {d.name} sera remplacé par la valeur du champ «nom» de l&apos;entité donnée. Consultez la documentation du [système carbone](https://carbone.io/documentation.html#substitutions) pour plus d&apos;informations. 
 
 Les clés d&apos;espace réservé doivent correspondre au champ «ID de champ» de la structure de données de l&apos;enregistrement dans Aam Digital. Vous pouvez le trouver dans le générateur de formulaires de l&apos;interface utilisateur d&apos;administration (Modifier la structure de données -&gt; Affichage des détails) et modifier un champ spécifique pour afficher ses détails.
 
@@ -9556,22 +9564,6 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
           <context context-type="linenumber">102</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1737753151350322492" datatype="html">
-        <source>Configuration updated</source>
-        <target>Configuration mise à jour</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">146</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">147</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">153</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="4815129362025568896" datatype="html">
         <source>Warning! This is still an experimental feature. Use with care.</source>
         <target>Attention ! Cette fonctionnalité est encore expérimentale. À utiliser avec précaution.</target>
@@ -9655,6 +9647,14 @@ Si une correspondance est trouvée selon les champs sélectionnés ici, le syst�
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/widget-component-select/widget-component-select.component.ts</context>
           <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6530244249696047528" datatype="html">
+        <source>Reverting configuration changes ...</source>
+        <target>Annulation des modifications de configuration...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
+          <context context-type="linenumber">153</context>
         </context-group>
       </trans-unit>
     </body>

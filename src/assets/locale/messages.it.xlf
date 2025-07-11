@@ -2036,6 +2036,10 @@
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
           <context context-type="linenumber">153</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
+          <context context-type="linenumber">146</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="6236690165266443105" datatype="html">
         <source>Site Settings</source>
@@ -3613,6 +3617,10 @@
         <source>Undo</source>
         <target>Undo</target>
         <note priority="1" from="description">Undo an entity action</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
+          <context context-type="linenumber">147</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
           <context context-type="linenumber">87</context>
@@ -9587,22 +9595,6 @@ Are you sure you want to continue?</target>
           <context context-type="linenumber">102</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1737753151350322492" datatype="html">
-        <source><x id="PH" equiv-text="&quot;Configuration updated&quot;"/></source>
-        <target><x id="PH" equiv-text="&quot;Configuration updated&quot;"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">146</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">147</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
-          <context context-type="linenumber">153</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="4815129362025568896" datatype="html">
         <source>Warning! This is still an experimental feature. Use with care.</source>
         <target>Warning! This is still an experimental feature. Use with care.</target>
@@ -9686,6 +9678,14 @@ Are you sure you want to continue?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/widget-component-select/widget-component-select.component.ts</context>
           <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6530244249696047528" datatype="html">
+        <source>Reverting configuration changes ...</source>
+        <target>Reverting configuration changes ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-overview/admin-overview.component.ts</context>
+          <context context-type="linenumber">153</context>
         </context-group>
       </trans-unit>
     </body>
