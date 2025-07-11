@@ -143,14 +143,14 @@ export class AdminOverviewComponent implements OnInit {
    */
   private showConfirmationWithUndoOption(undoAction: () => Promise<void>) {
     const snackBarRef = this.snackBar.open(
-      $localize`${"Configuration updated"}`,
-      $localize`${"Undo"}`,
+      $localize`Configuration updated`,
+      $localize`Undo`,
       { duration: 8000 },
     );
 
     snackBarRef.onAction().subscribe(async () => {
       const progressRef = this.confirmationDialog.showProgressDialog(
-        $localize`${"Reverting configuration changes ..."}`,
+        $localize`Reverting configuration changes ...`,
       );
       await undoAction();
       progressRef.close();
