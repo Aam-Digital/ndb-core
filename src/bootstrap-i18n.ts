@@ -5,6 +5,7 @@ import {
 import { loadTranslations } from "@angular/localize";
 import { registerLocaleData } from "@angular/common";
 import parseXliffToJson from "./app/utils/parse-xliff-to-js";
+import { Logging } from "#src/app/core/logging/logging.service";
 
 /**
  * Load translation files and apply them to angular localize system.
@@ -25,7 +26,11 @@ export async function initLanguage(locale?: string): Promise<void> {
       // parse translation at runtime if JSON file is not available
       fetch("/assets/locale/messages." + locale + ".xlf")
         .then((r) => r.text())
-        .then((t) => parseXliffToJson(t)),
+        .then((t) => parseXliffToJson(t))
+        .catch((err) => {
+          Logging.error(`Error loading translations for locale ${locale}`, err);
+          return {};
+        }),
     );
 
   loadTranslations(json);
