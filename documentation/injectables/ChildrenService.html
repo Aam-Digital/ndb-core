@@ -1,0 +1,1147 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ChildrenService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/app/child-dev-project/children/children.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChild" >getChild</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChildren" >getChildren</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getDaysSinceLastNoteOfEachEntity" >getDaysSinceLastNoteOfEachEntity</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Public</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getNotesInTimespan" >getNotesInTimespan</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getNotesRelatedTo" >getNotesRelatedTo</a>
+                            </li>
+                            <li>
+                                <a href="#queryActiveRelationsOf" >queryActiveRelationsOf</a>
+                            </li>
+                            <li>
+                                <a href="#queryRelations" >queryRelations</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(entityMapper: <a href="../injectables/EntityMapperService.html" target="_self">EntityMapperService</a>, dbIndexing: <a href="../injectables/DatabaseIndexingService.html" target="_self">DatabaseIndexingService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/app/child-dev-project/children/children.service.ts:11</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>entityMapper</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityMapperService.html" target="_self" >EntityMapperService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dbIndexing</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/DatabaseIndexingService.html" target="_self" >DatabaseIndexingService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChild"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChild</b></span>
+                        <a href="#getChild"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChild(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="43"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:43</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>returns a child with additional school info</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>id of child</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChildren"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChildren</b></span>
+                        <a href="#getChildren"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChildren()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:27</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>returns a list of children with additional school info</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Entity.html" target="_self" >Promise&lt;Entity[]&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getDaysSinceLastNoteOfEachEntity"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getDaysSinceLastNoteOfEachEntity</b></span>
+                        <a href="#getDaysSinceLastNoteOfEachEntity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getDaysSinceLastNoteOfEachEntity(entityType: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, forLastNDays: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="154"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:154</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Query how many days ago the last note for each child was added.</p>
+<p>Warning: Children without any notes will be missing from this map.</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">    For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityType</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&quot;Child&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>(Optional) entity for which days since last note are calculated. Default &quot;Child&quot;.</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>forLastNDays</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>30</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>(Optional) cut-off boundary how many days into the past the analysis will be done.</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;Map&lt;string, number&gt;&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>A map of childIds as key and days since last note as value;
+For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getNotesInTimespan"></a>
+                    <span class="name">
+                            <span class="modifier">Public</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getNotesInTimespan</b></span>
+                        <a href="#getNotesInTimespan"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getNotesInTimespan(startDay: Date | Moment, endDay: Date | Moment)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="190"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:190</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Returns all notes in the timespan.
+It is only checked if the notes are on the same day als start and end day. The time is not checked.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>startDay</td>
+                                            <td>
+                                                        <code>Date | Moment</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    <p>the first day where notes should be included</p>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                                <td>endDay</td>
+                                            <td>
+                                                        <code>Date | Moment</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>moment()</code>
+                                            </td>
+
+                                            <td>
+                                                    <p>the last day where notes should be included</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Note.html" target="_self" >Promise&lt;Note[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getNotesRelatedTo"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getNotesRelatedTo</b></span>
+                        <a href="#getNotesRelatedTo"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getNotesRelatedTo(entityId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:107</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Query all notes that have been linked to the given other entity.</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>entityId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <p>ID (with prefix!) of the related record</p>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Note.html" target="_self" >Promise&lt;Note[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="queryActiveRelationsOf"></a>
+                    <span class="name">
+                        <span ><b>queryActiveRelationsOf</b></span>
+                        <a href="#queryActiveRelationsOf"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>queryActiveRelationsOf(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, date)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:94</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>new Date()</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChildSchoolRelation.html" target="_self" >Promise&lt;ChildSchoolRelation[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="queryRelations"></a>
+                    <span class="name">
+                        <span ><b>queryRelations</b></span>
+                        <a href="#queryRelations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>queryRelations(prefix: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/app/child-dev-project/children/children.service.ts:81</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>prefix</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@angular/core&quot;;
+import { EntityMapperService } from &quot;../../core/entity/entity-mapper/entity-mapper.service&quot;;
+import { Note } from &quot;../notes/model/note&quot;;
+import { ChildSchoolRelation } from &quot;./model/childSchoolRelation&quot;;
+import moment, { Moment } from &quot;moment&quot;;
+import { DatabaseIndexingService } from &quot;../../core/entity/database-indexing/database-indexing.service&quot;;
+import { Entity } from &quot;../../core/entity/model/entity&quot;;
+import { groupBy } from &quot;../../utils/utils&quot;;
+
+@Injectable({ providedIn: &quot;root&quot; })
+export class ChildrenService {
+  constructor(
+    private entityMapper: EntityMapperService,
+    private dbIndexing: DatabaseIndexingService,
+  ) {
+    this.createDatabaseIndices();
+  }
+
+  private createDatabaseIndices() {
+    this.createNotesIndex();
+    this.createChildSchoolRelationIndex();
+  }
+
+  /**
+   * returns a list of children with additional school info
+   */
+  async getChildren(): Promise&lt;Entity[]&gt; {
+    const children &#x3D; await this.entityMapper.loadType(&quot;Child&quot;);
+    const relations &#x3D; await this.entityMapper.loadType(ChildSchoolRelation);
+    groupBy(relations, &quot;childId&quot;).forEach(([id, rels]) &#x3D;&gt; {
+      const child &#x3D; children.find((c) &#x3D;&gt; c.getId() &#x3D;&#x3D;&#x3D; id);
+      if (child) {
+        this.extendChildWithSchoolInfo(child, rels);
+      }
+    });
+    return children;
+  }
+
+  /**
+   * returns a child with additional school info
+   * @param id id of child
+   */
+  async getChild(id: string): Promise&lt;Entity&gt; {
+    const child &#x3D; await this.entityMapper.load(&quot;Child&quot;, id);
+    const relations &#x3D; await this.queryRelations(id);
+    this.extendChildWithSchoolInfo(child, relations);
+    return child;
+  }
+
+  private extendChildWithSchoolInfo(
+    child: Entity,
+    relations: ChildSchoolRelation[],
+  ) {
+    const active &#x3D; relations.filter((r) &#x3D;&gt; r.isActive);
+    child[&quot;schoolId&quot;] &#x3D; active.map((r) &#x3D;&gt; r.schoolId);
+    if (active.length &gt; 0) {
+      child[&quot;schoolClass&quot;] &#x3D; active[0][&quot;schoolClass&quot;];
+    }
+  }
+
+  private createChildSchoolRelationIndex(): Promise&lt;any&gt; {
+    const designDoc &#x3D; {
+      _id: &quot;_design/childSchoolRelations_index&quot;,
+      views: {
+        by_child_school: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (!doc._id.startsWith(&quot;${ChildSchoolRelation.ENTITY_TYPE}:&quot;)) {
+              return;
+            };
+            const start &#x3D; new Date(doc.start || &#x27;3000-01-01&#x27;).getTime();
+            emit([doc.childId, start]);
+            emit([doc.schoolId, start]);
+            return;
+          }&#x60;,
+        },
+      },
+    };
+    return this.dbIndexing.createIndex(designDoc);
+  }
+
+  queryRelations(prefix: string) {
+    const startkey &#x3D; prefix.endsWith(&quot;:&quot;) ? [prefix + &quot;\uffff&quot;] : [prefix, {}];
+    return this.dbIndexing.queryIndexDocs(
+      ChildSchoolRelation,
+      &quot;childSchoolRelations_index/by_child_school&quot;,
+      {
+        startkey,
+        endkey: [prefix],
+        descending: true,
+      },
+    );
+  }
+
+  queryActiveRelationsOf(
+    id: string,
+    date &#x3D; new Date(),
+  ): Promise&lt;ChildSchoolRelation[]&gt; {
+    return this.queryRelations(id).then((relations) &#x3D;&gt;
+      relations.filter((rel) &#x3D;&gt; rel.isActiveAt(date)),
+    );
+  }
+
+  /**
+   * Query all notes that have been linked to the given other entity.
+   * @param entityId ID (with prefix!) of the related record
+   */
+  async getNotesRelatedTo(entityId: string): Promise&lt;Note[]&gt; {
+    let legacyLinkedNotes &#x3D; [];
+    if (this.inferNoteLinkPropertyFromEntityType(entityId)) {
+      legacyLinkedNotes &#x3D; await this.dbIndexing.queryIndexDocs(
+        Note,
+        &#x60;notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}&#x60;,
+        entityId,
+      );
+    }
+
+    const explicitlyLinkedNotes &#x3D; await this.dbIndexing.queryIndexDocsRange(
+      Note,
+      &#x60;notes_related_index/note_by_relatedEntities&#x60;,
+      [entityId],
+      [entityId],
+    );
+
+    return [...legacyLinkedNotes, ...explicitlyLinkedNotes].filter(
+      // remove duplicates
+      (element, index, array) &#x3D;&gt;
+        array.findIndex((e) &#x3D;&gt; e._id &#x3D;&#x3D;&#x3D; element._id) &#x3D;&#x3D;&#x3D; index,
+    );
+  }
+
+  private inferNoteLinkPropertyFromEntityType(entityId: string): string {
+    // TODO: rework this to check the entity schema and find the relevant field?
+    const entityType &#x3D; Entity.extractTypeFromId(entityId);
+    switch (entityType) {
+      case &quot;Child&quot;:
+        return &quot;children&quot;;
+      case &quot;School&quot;:
+        return &quot;schools&quot;;
+      case &quot;User&quot;:
+        return &quot;authors&quot;;
+    }
+  }
+
+  /**
+   * Query how many days ago the last note for each child was added.
+   *
+   * Warning: Children without any notes will be missing from this map.
+   *
+   * @param entityType (Optional) entity for which days since last note are calculated. Default &quot;Child&quot;.
+   * @param forLastNDays (Optional) cut-off boundary how many days into the past the analysis will be done.
+   * @return A map of childIds as key and days since last note as value;
+   *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
+   */
+  public async getDaysSinceLastNoteOfEachEntity(
+    entityType &#x3D; &quot;Child&quot;,
+    forLastNDays: number &#x3D; 30,
+  ): Promise&lt;Map&lt;string, number&gt;&gt; {
+    const startDay &#x3D; moment().subtract(forLastNDays, &quot;days&quot;);
+
+    const notes &#x3D; await this.getNotesInTimespan(startDay);
+
+    const results &#x3D; new Map();
+    const entities &#x3D; await this.entityMapper.loadType(entityType);
+    entities
+      .filter((c) &#x3D;&gt; c.isActive)
+      .forEach((c) &#x3D;&gt; results.set(c.getId(), Number.POSITIVE_INFINITY));
+
+    const noteProperty &#x3D; Note.getPropertyFor(entityType);
+    for (const note of notes) {
+      // TODO: filter notes to only include them if the given child is marked &quot;present&quot;
+
+      for (const entityId of note[noteProperty]) {
+        const daysSinceNote &#x3D; moment().diff(note.date, &quot;days&quot;);
+        const previousValue &#x3D; results.get(entityId);
+        if (previousValue &gt; daysSinceNote) {
+          results.set(entityId, daysSinceNote);
+        }
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Returns all notes in the timespan.
+   * It is only checked if the notes are on the same day als start and end day. The time is not checked.
+   * @param startDay the first day where notes should be included
+   * @param endDay the last day where notes should be included
+   */
+  public async getNotesInTimespan(
+    startDay: Date | Moment,
+    endDay: Date | Moment &#x3D; moment(),
+  ): Promise&lt;Note[]&gt; {
+    return this.dbIndexing.queryIndexDocsRange(
+      Note,
+      &quot;notes_index/note_child_by_date&quot;,
+      moment(startDay).format(&quot;YYYY-MM-DD&quot;),
+      moment(endDay).format(&quot;YYYY-MM-DD&quot;),
+    );
+  }
+
+  private async createNotesIndex(): Promise&lt;any&gt; {
+    const designDoc &#x3D; {
+      _id: &quot;_design/notes_index&quot;,
+      views: {
+        note_child_by_date: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (!doc._id.startsWith(&quot;${Note.ENTITY_TYPE}&quot;)) return;
+            if (!Array.isArray(doc.children) || !doc.date) return;
+            if (doc.date.length &#x3D;&#x3D;&#x3D; 10) {
+              emit(doc.date);
+            } else {
+              var d &#x3D; new Date(doc.date || null);
+              emit(d.getFullYear() + &quot;-&quot; + String(d.getMonth()+1).padStart(2, &quot;0&quot;) + &quot;-&quot; + String(d.getDate()).padStart(2, &quot;0&quot;));
+            }
+          }&#x60;,
+        },
+      },
+    };
+
+    // TODO: remove these and use general note_by_relatedEntities instead --&gt; to be decided later #1501
+    // creating a by_... view for each of the following properties
+    [&quot;children&quot;, &quot;schools&quot;, &quot;authors&quot;].forEach(
+      (prop) &#x3D;&gt;
+        (designDoc.views[&#x60;by_${prop}&#x60;] &#x3D; this.createNotesByFunction(prop)),
+    );
+
+    await this.dbIndexing.createIndex(designDoc);
+
+    const newDesignDoc &#x3D; {
+      _id: &quot;_design/notes_related_index&quot;,
+      views: {
+        note_by_relatedEntities: {
+          map: &#x60;(doc) &#x3D;&gt; {
+            if (!doc._id.startsWith(&quot;${Note.ENTITY_TYPE}&quot;)) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+            var dString;
+            if (doc.date &amp;&amp; doc.date.length &#x3D;&#x3D;&#x3D; 10) {
+              dString &#x3D; doc.date;
+            } else {
+              var d &#x3D; new Date(doc.date || null);
+              dString &#x3D; d.getFullYear() + &quot;-&quot; + String(d.getMonth()+1).padStart(2, &quot;0&quot;) + &quot;-&quot; + String(d.getDate()).padStart(2, &quot;0&quot;);
+            }
+            doc.relatedEntities.forEach((relatedEntity) &#x3D;&gt; {
+              emit([relatedEntity, dString]);
+            });
+          }&#x60;,
+        },
+      },
+    };
+    await this.dbIndexing.createIndex(newDesignDoc);
+  }
+
+  private createNotesByFunction(property: string) {
+    return {
+      map: &#x60;(doc) &#x3D;&gt; {
+        if (!doc._id.startsWith(&quot;${Note.ENTITY_TYPE}&quot;)) return;
+        if (!Array.isArray(doc.${property})) return;
+        doc.${property}.forEach(val &#x3D;&gt; emit(val));
+      }&#x60;,
+    };
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ChildrenService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
