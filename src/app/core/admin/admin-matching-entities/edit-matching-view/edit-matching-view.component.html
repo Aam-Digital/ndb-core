@@ -1,0 +1,57 @@
+<h2>Matching View Settings</h2>
+<form [formGroup]="form">
+  <mat-expansion-panel class="padding-regular">
+    <mat-expansion-panel-header style="height: fit-content">
+      <div
+        class="flex-row align-baseline gap-regular margin-right-large full-width"
+      >
+        <mat-form-field class="full-width-field flex-grow">
+          <mat-label i18n>Current Matching Entity</mat-label>
+          <input
+            matInput
+            [disabled]="true"
+            formControlName="newEntityType"
+            (keydown)="$event.stopPropagation()"
+          />
+        </mat-form-field>
+      </div>
+    </mat-expansion-panel-header>
+
+    <div class="flex-column gap-regular">
+      <div class="flex-row">
+        <mat-form-field class="full-width-field">
+          <mat-label i18n>Show Matching View for:</mat-label>
+          <app-entity-type-select
+            formControlName="newEntityType"
+          ></app-entity-type-select>
+        </mat-form-field>
+        <app-help-button
+          text="Choose the entity to show matching view for"
+          i18n-text
+        ></app-help-button>
+      </div>
+
+      <div class="flex-row gap-regular margin-top-regular">
+        <mat-form-field class="full-width-field">
+          <mat-label i18n>Left Match Property</mat-label>
+          <input matInput formControlName="newEntityMatchPropertyLeft" />
+        </mat-form-field>
+
+        <mat-form-field class="full-width-field">
+          <mat-label i18n>Right Match Property</mat-label>
+          <input matInput formControlName="newEntityMatchPropertyRight" />
+        </mat-form-field>
+      </div>
+
+      <h4>Available columns</h4>
+      <app-admin-list-manager
+        [entityType]="entityConstructor"
+        [items]="activeFields"
+        [activeFields]="activeFields"
+        fieldLabel="Add columns:"
+        i18n-fieldLabel
+        (itemsChange)="activeFields = $event"
+      ></app-admin-list-manager>
+    </div>
+  </mat-expansion-panel>
+</form>

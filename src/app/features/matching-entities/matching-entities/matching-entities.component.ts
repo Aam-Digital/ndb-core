@@ -16,16 +16,19 @@ import {
   NewMatchAction,
 } from "./matching-entities-config";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { BehaviorSubject } from "rxjs";
 import { ConfigService } from "../../../core/config/config.service";
 import { MatTableModule } from "@angular/material/table";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import {
+  FaIconComponent,
+  FontAwesomeModule,
+} from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { NgForOf, NgIf } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
@@ -42,6 +45,8 @@ import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
 import { GeoLocation } from "app/features/location/geo-location";
+import { MatMenuModule } from "@angular/material/menu";
+import { AblePurePipe } from "@casl/angular";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -83,6 +88,12 @@ export interface MatchingSide extends MatchingSideConfig {
     MapComponent,
     FilterComponent,
     FlattenArrayPipe,
+    MatMenuModule,
+    MatIconButton,
+    FaIconComponent,
+    RouterLink,
+    AblePurePipe,
+    AsyncPipe,
   ],
 })
 export class MatchingEntitiesComponent implements OnInit {
