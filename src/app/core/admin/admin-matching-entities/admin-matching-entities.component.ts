@@ -77,7 +77,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   private initConfig(): void {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
-
+    console.log(this.originalConfig);
     const cols = this.originalConfig.columns ?? [];
     this.leftColumns = cols.map((col: any[]) =>
       typeof col[0] === "string" ? col[0] : col[0].id,
@@ -186,7 +186,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     };
 
     this.configService.saveConfig(fullConfig).then(() => {
-      this.location.back();
       this.alertService.addInfo($localize`:Configuration updated suceesfully.`);
       console.log("Full config:", fullConfig);
     });

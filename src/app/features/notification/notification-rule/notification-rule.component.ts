@@ -53,7 +53,6 @@ import {
     MatSelect,
     MatExpansionPanel,
     MatExpansionPanelHeader,
-    
   ],
   templateUrl: "./notification-rule.component.html",
   styleUrl: "./notification-rule.component.scss",

@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EditMatchingViewComponent } from './edit-matching-view.component';
+import { EditMatchingViewComponent } from "./edit-matching-view.component";
 
-describe('EditMatchingViewComponent', () => {
+describe("EditMatchingViewComponent", () => {
   let component: EditMatchingViewComponent;
   let fixture: ComponentFixture<EditMatchingViewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditMatchingViewComponent]
-    })
-    .compileComponents();
+      imports: [EditMatchingViewComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(EditMatchingViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
