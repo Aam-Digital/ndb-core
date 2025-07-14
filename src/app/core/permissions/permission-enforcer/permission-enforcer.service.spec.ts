@@ -14,6 +14,7 @@ import { TEST_USER } from "../../user/demo-user-generator.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -37,6 +38,7 @@ describe("PermissionEnforcerService", () => {
     service = TestBed.inject(PermissionEnforcerService);
 
     entityMapper = TestBed.inject(EntityMapperService);
+    (entityMapper as MockEntityMapperService).clearAllData();
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
 
     TestBed.inject(AbilityService).initializeRules();

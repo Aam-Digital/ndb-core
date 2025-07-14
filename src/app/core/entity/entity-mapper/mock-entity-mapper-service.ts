@@ -198,4 +198,8 @@ export class MockEntityMapperService extends EntityMapperService {
     }
     return allData;
   }
+
+  clearAllData() {
+    this.data.clear();
+  }
 }
