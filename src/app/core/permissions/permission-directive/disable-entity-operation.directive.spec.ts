@@ -9,11 +9,13 @@ describe("DisableEntityOperationDirective", () => {
   let testComponent: ComponentFixture<TestComponent>;
   let mockAbility: EntityAbility;
 
+  let callbackOnAbilityUpdate;
+
   beforeEach(() => {
     mockAbility = {
       cannot: jasmine.createSpy("cannot"),
       on: jasmine.createSpy("on").and.callFake((_, callback) => {
-        callback();
+        callbackOnAbilityUpdate = callback;
         return () => {};
       }),
       update: jasmine.createSpy("update"),
@@ -72,6 +74,7 @@ describe("DisableEntityOperationDirective", () => {
 
     (mockAbility.cannot as jasmine.Spy).and.returnValue(false);
     mockAbility.update([{ action: "manage", subject: "all" }]);
+    callbackOnAbilityUpdate(); // Simulate the ability update callback
     testComponent.detectChanges();
 
     expect(

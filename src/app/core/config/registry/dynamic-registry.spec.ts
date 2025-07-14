@@ -2,12 +2,15 @@ import { Registry } from "./dynamic-registry";
 
 describe("DynamicRegistry", () => {
   let registry: Registry<string>;
+
   beforeEach(() => {
     class StringRegistry extends Registry<string> {}
     registry = new StringRegistry();
   });
 
   it("should not throw errors when allowing multiple registrations", () => {
+    registry.allowDuplicates(false);
+
     const key = "testKey";
     registry.add(key, "some value");
     expect(() => registry.add(key, "updated value")).toThrowError();

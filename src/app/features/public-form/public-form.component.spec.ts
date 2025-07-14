@@ -17,6 +17,7 @@ import { InvalidFormFieldError } from "../../core/common-components/entity-form/
 import { TestEntity } from "../../utils/test-utils/TestEntity";
 import { EntityAbility } from "app/core/permissions/ability/entity-ability";
 import { DatabaseResolverService } from "../../core/database/database-resolver.service";
+import { getDefaultConfigEntity } from "../../core/config/testing-config-service";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<TestEntity>;
@@ -273,11 +274,11 @@ describe("PublicFormComponent", () => {
     );
   }));
 
-  function initComponent(config: PublicFormConfig = testFormConfig): void {
+  async function initComponent(config: PublicFormConfig = testFormConfig) {
     config.route = config.route ?? FORM_ID;
     config.entity = config.entity ?? TestEntity.ENTITY_TYPE;
-    TestBed.inject(EntityMapperService).save(config);
+    await TestBed.inject(EntityMapperService).save(config);
     const configService = TestBed.inject(ConfigService);
-    configService.entityUpdated.next(configService["currentConfig"]);
+    configService.entityUpdated.next(getDefaultConfigEntity());
   }
 });

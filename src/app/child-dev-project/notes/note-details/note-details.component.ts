@@ -1,4 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation, inject } from "@angular/core";
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
@@ -22,11 +29,6 @@ import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
-import { Router } from "@angular/router";
-import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 import { MatProgressBar } from "@angular/material/progress-bar";
 import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 
@@ -85,21 +87,11 @@ export class NoteDetailsComponent
   form: EntityForm<Note>;
   tmpEntity: Note;
 
-  constructor() {
-    const entityMapperService = inject(EntityMapperService);
-    const entities = inject(EntityRegistry);
-    const ability = inject(EntityAbility);
-    const router = inject(Router);
-    const unsavedChanges = inject(UnsavedChangesService);
-
-    super(entityMapperService, entities, ability, router, unsavedChanges);
-
+  override async ngOnChanges(changes: SimpleChanges) {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
-  }
 
-  override async ngOnChanges(changes: SimpleChanges) {
     await super.ngOnChanges(changes);
 
     await this.initForm();

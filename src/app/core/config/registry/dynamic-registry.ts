@@ -50,7 +50,7 @@ export abstract class Registry<T> extends Map<string, T> {
    * Calling this will allow the same keys to be added multiple times without thrown errors.
    * This is useful for storybook where live-updates re-trigger the decorator while the registry is cached.
    */
-  public allowDuplicates() {
-    this.failOnDuplicate = false;
+  public allowDuplicates(allow: boolean = true) {
+    this.failOnDuplicate = !allow;
   }
 }

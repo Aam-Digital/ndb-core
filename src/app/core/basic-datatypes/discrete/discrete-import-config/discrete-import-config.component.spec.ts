@@ -9,12 +9,15 @@ import { ConfirmationDialogService } from "../../../common-components/confirmati
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 
 describe("DiscreteImportConfigComponent", () => {
   let component: DiscreteImportConfigComponent;
   let fixture: ComponentFixture<DiscreteImportConfigComponent>;
-  const values = ["male", "female", "male"];
+  const values = ["male", "female", "male", "other"];
   let data: MappingDialogData;
+
+  let enumDataType: ConfigurableEnumDatatype;
 
   beforeEach(async () => {
     data = {
@@ -30,6 +33,10 @@ describe("DiscreteImportConfigComponent", () => {
       ],
     }).compileComponents();
 
+    enumDataType = (
+      TestBed.inject(DefaultDatatype) as unknown as DefaultDatatype[]
+    ).find((x) => x instanceof ConfigurableEnumDatatype);
+
     fixture = TestBed.createComponent(DiscreteImportConfigComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -40,9 +47,7 @@ describe("DiscreteImportConfigComponent", () => {
   });
 
   it("should use the edit component for the selected property", () => {
-    expect(component.component).toBe(
-      new ConfigurableEnumDatatype().editComponent,
-    );
+    expect(component.component).toBe(enumDataType.editComponent);
     expect(component.schema).toBe(TestEntity.schema.get("category"));
   });
 
@@ -69,11 +74,12 @@ describe("DiscreteImportConfigComponent", () => {
 
     expect(component.form.getRawValue()).toEqual({
       male: genders.find((e) => e.id === "M"),
+      female: genders.find((e) => e.id === "F"),
       // unmapped values will be imported as "invalid option" to not lose data:
-      female: {
-        id: "female",
+      other: {
+        id: "other",
         isInvalidOption: true,
-        label: "[invalid option] female",
+        label: "[invalid option] other",
       },
     });
   });
@@ -85,12 +91,21 @@ describe("DiscreteImportConfigComponent", () => {
     component.form.setValue({
       male: genders.find((e) => e.id === "M"),
       female: genders.find((e) => e.id === "F"),
+      other: {
+        id: "other",
+        isInvalidOption: true,
+        label: "[invalid option] other",
+      },
     });
     const closeSpy = spyOn(TestBed.inject(MatDialogRef), "close");
 
     component.save();
 
     expect(closeSpy).toHaveBeenCalled();
-    expect(data.col.additional).toEqual({ male: "M", female: "F" });
+    expect(data.col.additional).toEqual({
+      male: "M",
+      female: "F",
+      other: "other",
+    });
   });
 });

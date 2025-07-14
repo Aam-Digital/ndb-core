@@ -26,11 +26,11 @@ import { TEST_USER } from "../../user/demo-user-generator.service";
 import { MemoryPouchDatabase } from "../../database/pouchdb/memory-pouch-database";
 import { DatabaseResolverService } from "../../database/database-resolver.service";
 import { SyncStateSubject } from "app/core/session/session-type";
+import { DatabaseFactoryService } from "../../database/database-factory.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
   let testDatabase: PouchDatabase;
-  let syncStateSubject: SyncStateSubject;
 
   const existingEntity = {
     _id: "Entity:existing-entity",
@@ -43,20 +43,19 @@ describe("EntityMapperService", () => {
   };
 
   beforeEach(waitForAsync(() => {
-    syncStateSubject = new SyncStateSubject();
+    const syncStateSubject = new SyncStateSubject();
+    let dbFactory = jasmine.createSpyObj(["createDatabase"]);
+    dbFactory.createDatabase.and.callFake((dbName) => {
+      const db = new MemoryPouchDatabase(dbName, syncStateSubject);
+      db.init();
+      return db;
+    });
+
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
-        {
-          provide: DatabaseResolverService,
-          useClass: class extends DatabaseResolverService {
-            override getDatabase(dbName?: string) {
-              const db = new MemoryPouchDatabase(dbName, syncStateSubject);
-              db.init();
-              return db;
-    }
-         },
-        },
+        DatabaseResolverService,
+        { provide: DatabaseFactoryService, useValue: dbFactory },
         CurrentUserSubject,
         EntityMapperService,
       ],
