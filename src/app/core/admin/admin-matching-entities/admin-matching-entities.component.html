@@ -6,107 +6,35 @@
   </div>
 </div>
 
-<!-- Todo: subcomponent for left and right side so we do not duplicate code -->
 <form [formGroup]="configForm">
-  <!-- Add somem hint texts -->
-  <div class="entity-config-container padding-regular">
-    <div class="entity-side padding-regular left-side">
-      <h2>Left Side Settings</h2>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Select Left Entity Type</mat-label>
-        <mat-select formControlName="leftType">
-          @for (entityType of entityType; track entityType) {
-            <mat-option [value]="entityType">
-              {{ entityType }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <h4>Available columns</h4>
-      <app-admin-list-manager
-        [entityType]="leftSideEntity"
-        [items]="leftColumns"
-        [activeFields]="leftColumns"
-        fieldLabel="These columns will appear in the top summary view and in the table
-          view below when matching; Add columns:"
-        i18n-fieldLabel
-        (itemsChange)="leftColumns = $event"
-      ></app-admin-list-manager>
-
-      <h4>Available Filters</h4>
-      <app-admin-list-manager
-        [entityType]="leftSideEntity"
-        [items]="leftFilters"
-        [activeFields]="leftFilters"
-        fieldLabel="These filters (and any prefilters) are only applied to the table list view during matching; Add filters:"
-        templateType="filter"
-        i18n-fieldLabel
-        (itemsChange)="leftFilters = $event"
-      ></app-admin-list-manager>
-
-      <div class="flex-row flex-wrap gap-small align-center">
-        <em i18n
-          >Prefilter can currently have to be edited using the JSON Editor</em
-        >
-        <button
-          mat-stroked-button
-          (click)="openConditionsInJsonEditorPopup('left')"
-          i18n
-        >
-          <fa-icon icon="tools"></fa-icon>
-          Open Prefilter Editor
-        </button>
-      </div>
+  <div class="entity-config-container flex-wrap flex-row padding-regular">
+    <div class="entity-side padding-regular">
+      <app-edit-matching-entity-side
+        [form]="configForm"
+        controlName="leftType"
+        [entityType]="entityType"
+        [sideEntity]="leftSideEntity"
+        [columns]="leftColumns"
+        [filters]="leftFilters"
+        title="Left"
+        (columnsChange)="leftColumns = $event"
+        (filtersChange)="leftFilters = $event"
+        (openPrefilterEditor)="openPrefilterEditor('left')"
+      ></app-edit-matching-entity-side>
     </div>
-
-    <div class="entity-side padding-regular right-side">
-      <h2>Right Side Settings</h2>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Select Right Entity Type</mat-label>
-        <mat-select formControlName="rightType">
-          @for (entityType of entityType; track entityType) {
-            <mat-option [value]="entityType">
-              {{ entityType }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <h4>Available columns</h4>
-      <app-admin-list-manager
-        [entityType]="rightSideEntity"
-        [items]="rightColumns"
-        [activeFields]="rightColumns"
-        fieldLabel="These columns will appear in the top summary view and in the table
-          view below when matching; Add columns:"
-        i18n-fieldLabel
-        (itemsChange)="rightColumns = $event"
-      ></app-admin-list-manager>
-
-      <h4>Available Filters</h4>
-      <app-admin-list-manager
-        [entityType]="rightSideEntity"
-        [items]="rightFilters"
-        [activeFields]="rightFilters"
-        templateType="filter"
-        fieldLabel="These filters (and any prefilters) are only applied to the table list view during matching; Add filters:"
-        i18n-fieldLabel
-        (itemsChange)="rightFilters = $event"
-      ></app-admin-list-manager>
-
-      <div class="flex-row flex-wrap gap-small align-center">
-        <em i18n
-          >Prefilter can currently have to be edited using the JSON Editor</em
-        >
-        <button
-          mat-stroked-button
-          (click)="openConditionsInJsonEditorPopup('right')"
-          i18n
-        >
-          <fa-icon icon="tools"></fa-icon>
-          Open Prefilter Editor
-        </button>
-      </div>
+    <div class="entity-side padding-regular">
+      <app-edit-matching-entity-side
+        [form]="configForm"
+        controlName="rightType"
+        [entityType]="entityType"
+        [sideEntity]="rightSideEntity"
+        [columns]="rightColumns"
+        [filters]="rightFilters"
+        title="Righ"
+        (columnsChange)="rightColumns = $event"
+        (filtersChange)="rightFilters = $event"
+        (openPrefilterEditor)="openPrefilterEditor('right')"
+      ></app-edit-matching-entity-side>
     </div>
   </div>
 </form>

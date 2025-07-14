@@ -1,12 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
-import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import { MatOptionModule } from "@angular/material/core";
-import { AdminListManagerComponent } from "../admin-list-manager/admin-list-manager.component";
 import { EntityConstructor } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -14,22 +9,17 @@ import { MatchingEntitiesConfig } from "#src/app/features/matching-entities/matc
 import { EditMatchingViewComponent } from "./edit-matching-view/edit-matching-view.component";
 import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "../json-editor/json-editor-dialog/json-editor-dialog.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Location } from "@angular/common";
 import { AlertService } from "../../alerts/alert.service";
+import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edit-matching-entity-side.component";
 
 @Component({
   selector: "app-admin-matching-entities",
   imports: [
     ReactiveFormsModule,
-    MatToolbarModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatOptionModule,
-    AdminListManagerComponent,
     EditMatchingViewComponent,
-    FontAwesomeModule,
+    EditMatchingEntitySideComponent,
   ],
   templateUrl: "./admin-matching-entities.component.html",
   styleUrls: ["./admin-matching-entities.component.scss"],
@@ -55,7 +45,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     readonly entityRegistry: EntityRegistry,
     readonly dialog: MatDialog,
     readonly location: Location,
-    readonly alertService: AlertService,
+    private alertService: AlertService,
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +67,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   private initConfig(): void {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
-    console.log(this.originalConfig);
     const cols = this.originalConfig.columns ?? [];
     this.leftColumns = cols.map((col: any[]) =>
       typeof col[0] === "string" ? col[0] : col[0].id,
@@ -113,7 +102,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   /**
    * Open the conditions JSON editor popup.
    */
-  openConditionsInJsonEditorPopup(side: "left" | "right") {
+  openPrefilterEditor(side: "left" | "right"): void {
     const conditionsForm = this.fb.group({
       prefilter: [
         side === "left"
@@ -186,7 +175,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     };
 
     this.configService.saveConfig(fullConfig).then(() => {
-      this.alertService.addInfo($localize`:Configuration updated suceesfully.`);
+      this.alertService.addInfo($localize`Configuration updated successfully.`);
       console.log("Full config:", fullConfig);
     });
   }
