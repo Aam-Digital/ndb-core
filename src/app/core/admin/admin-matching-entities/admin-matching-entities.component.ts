@@ -16,6 +16,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "../json-editor/json-editor-dialog/json-editor-dialog.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Location } from "@angular/common";
+import { AlertService } from "../../alerts/alert.service";
 
 @Component({
   selector: "app-admin-matching-entities",
@@ -54,6 +55,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     private entityRegistry: EntityRegistry,
     readonly dialog: MatDialog,
     private location: Location,
+    private alertService: AlertService,
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +79,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       this.configService.getConfig("appConfig:matching-entities") || {};
 
     const cols = this.originalConfig.columns ?? [];
-    console.log(cols, "test");
     this.leftColumns = cols.map((col: any[]) =>
       typeof col[0] === "string" ? col[0] : col[0].id,
     );
@@ -185,6 +186,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     };
 
     this.configService.saveConfig(fullConfig).then(() => {
+      this.location.back();
+      this.alertService.addInfo($localize`:Configuration updated suceesfully.`);
       console.log("Full config:", fullConfig);
     });
   }

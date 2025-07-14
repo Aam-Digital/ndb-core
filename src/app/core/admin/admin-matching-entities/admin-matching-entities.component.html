@@ -28,7 +28,8 @@
         [entityType]="leftSideEntity"
         [items]="leftColumns"
         [activeFields]="leftColumns"
-        fieldLabel="Add columns:"
+        fieldLabel="These columns will appear in the top summary view and in the table
+          view below when matching; Add columns:"
         i18n-fieldLabel
         (itemsChange)="leftColumns = $event"
       ></app-admin-list-manager>
@@ -38,7 +39,7 @@
         [entityType]="leftSideEntity"
         [items]="leftFilters"
         [activeFields]="leftFilters"
-        fieldLabel="Add filters:"
+        fieldLabel="These filters (and any prefilters) are only applied to the table list view during matching; Add filters:"
         templateType="filter"
         i18n-fieldLabel
         (itemsChange)="leftFilters = $event"
@@ -76,7 +77,8 @@
         [entityType]="rightSideEntity"
         [items]="rightColumns"
         [activeFields]="rightColumns"
-        fieldLabel="Add columns:"
+        fieldLabel="These columns will appear in the top summary view and in the table
+          view below when matching; Add columns:"
         i18n-fieldLabel
         (itemsChange)="rightColumns = $event"
       ></app-admin-list-manager>
@@ -87,7 +89,7 @@
         [items]="rightFilters"
         [activeFields]="rightFilters"
         templateType="filter"
-        fieldLabel="Add filters:"
+        fieldLabel="These filters (and any prefilters) are only applied to the table list view during matching; Add filters:"
         i18n-fieldLabel
         (itemsChange)="rightFilters = $event"
       ></app-admin-list-manager>
@@ -109,7 +111,6 @@
   </div>
 </form>
 
-<!-- Matching Entity Selection with Expand -->
 <div class="entity-match-container padding-regular">
   <app-edit-matching-view
     [value]="originalConfig.onMatch"
