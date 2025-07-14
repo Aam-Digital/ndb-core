@@ -45,7 +45,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     readonly entityRegistry: EntityRegistry,
     readonly dialog: MatDialog,
     readonly location: Location,
-    private alertService: AlertService,
+    readonly alertService: AlertService,
   ) {}
 
   ngOnInit(): void {
