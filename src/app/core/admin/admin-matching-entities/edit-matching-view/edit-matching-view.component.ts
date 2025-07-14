@@ -15,9 +15,13 @@ import {
 } from "@angular/material/expansion";
 import { NewMatchAction } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
-import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-manager.component";
+import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 
 @Component({
   selector: "app-edit-matching-view",
@@ -34,6 +38,7 @@ import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-m
     MatExpansionPanel,
     MatExpansionPanelHeader,
     AdminListManagerComponent,
+    EntityFieldSelectComponent,
   ],
   templateUrl: "./edit-matching-view.component.html",
   styleUrl: "./edit-matching-view.component.scss",
@@ -43,7 +48,23 @@ export class EditMatchingViewComponent implements OnInit {
   @Output() valueChange = new EventEmitter<NewMatchAction>();
 
   form: FormGroup;
-  activeFields: ColumnConfig[];
+  _activeFields: ColumnConfig[] = [];
+
+  get activeFields(): ColumnConfig[] {
+    return this._activeFields;
+  }
+
+  set activeFields(fields: ColumnConfig[]) {
+    this._activeFields = fields;
+    if (this.form?.value) {
+      this.valueChange.emit({
+        ...this.value,
+        ...this.form.value,
+        columnsToReview: this._activeFields,
+      });
+    }
+  }
+
   entityConstructor: EntityConstructor;
 
   constructor(
@@ -55,25 +76,39 @@ export class EditMatchingViewComponent implements OnInit {
     if (this.value) {
       this.initForm();
       this.activeFields = this.value.columnsToReview;
-      this.entityConstructor =
-        this.entityRegistry.get(this.value?.newEntityType) ?? null;
+      this.form.valueChanges.subscribe((formValues) => {
+        this.valueChange.emit({
+          ...this.value,
+          ...formValues,
+          columnsToReview: this.activeFields,
+        });
+      });
     }
   }
 
   initForm() {
     this.form = new FormGroup({
-      newEntityType: new FormControl({
-        value: this.value?.newEntityType ?? "",
-        disabled: true,
-      }),
-      newEntityMatchPropertyLeft: new FormControl({
-        value: this.value?.newEntityMatchPropertyLeft ?? "",
-        disabled: true,
-      }),
-      newEntityMatchPropertyRight: new FormControl({
-        value: this.value?.newEntityMatchPropertyRight ?? "",
-        disabled: true,
-      }),
+      newEntityType: new FormControl(this.value?.newEntityType ?? ""),
+      newEntityMatchPropertyLeft: new FormControl(
+        this.value?.newEntityMatchPropertyLeft ?? "",
+      ),
+      newEntityMatchPropertyRight: new FormControl(
+        this.value?.newEntityMatchPropertyRight ?? "",
+      ),
     });
+  }
+
+  hideNonEntityFields = (option: FormFieldConfig): boolean => {
+    return option?.dataType !== "entity";
+  };
+
+  onEntityTypeChange(newType: string | string[]) {
+    this.entityConstructor = this.entityRegistry.get(newType as string) ?? null;
+    if (this.value.newEntityType === newType) return;
+    this.form.patchValue({
+      newEntityMatchPropertyLeft: "",
+      newEntityMatchPropertyRight: "",
+    });
+    this.activeFields = [];
   }
 }

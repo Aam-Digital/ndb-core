@@ -5,24 +5,23 @@
       <div
         class="flex-row align-baseline gap-regular margin-right-large full-width"
       >
-        <mat-form-field class="full-width-field flex-grow">
-          <mat-label i18n>Current Matching Entity</mat-label>
-          <input
-            matInput
-            [disabled]="true"
-            formControlName="newEntityType"
-            (keydown)="$event.stopPropagation()"
-          />
-        </mat-form-field>
+        <p i18n>
+          Configure how entities should be matched— for example, defining which
+          fields from a School Enrollment record (like Child and School) are
+          used to detect relationships. Current matching entity type:
+          <strong>{{ form.value.newEntityType }}</strong>
+        </p>
       </div>
     </mat-expansion-panel-header>
 
     <div class="flex-column gap-regular">
       <div class="flex-row">
-        <mat-form-field class="full-width-field">
+        <mat-form-field class="full-width">
           <mat-label i18n>Show Matching View for:</mat-label>
           <app-entity-type-select
-            formControlName="newEntityType"
+            [value]="value?.newEntityType"
+            (valueChange)="onEntityTypeChange($event)"
+            [multi]="false"
           ></app-entity-type-select>
         </mat-form-field>
         <app-help-button
@@ -32,15 +31,30 @@
       </div>
 
       <div class="flex-row gap-regular margin-top-regular">
-        <mat-form-field class="full-width-field">
+        <mat-form-field class="full-width">
           <mat-label i18n>Left Match Property</mat-label>
-          <input matInput formControlName="newEntityMatchPropertyLeft" />
+          <app-entity-field-select
+            [entityType]="entityConstructor"
+            formControlName="newEntityMatchPropertyLeft"
+            [hideOption]="hideNonEntityFields"
+          ></app-entity-field-select>
         </mat-form-field>
-
-        <mat-form-field class="full-width-field">
+        <app-help-button
+          i18n-text
+          text="Select the field from the entity that will be used as the left-side key in matching comparison."
+        ></app-help-button>
+        <mat-form-field class="full-width">
           <mat-label i18n>Right Match Property</mat-label>
-          <input matInput formControlName="newEntityMatchPropertyRight" />
+          <app-entity-field-select
+            [entityType]="entityConstructor"
+            formControlName="newEntityMatchPropertyRight"
+            [hideOption]="hideNonEntityFields"
+          ></app-entity-field-select>
         </mat-form-field>
+        <app-help-button
+          i18n-text
+          text="Select the field from the entity that will be used as the right-side key in matching comparison."
+        ></app-help-button>
       </div>
 
       <h4>Available columns</h4>

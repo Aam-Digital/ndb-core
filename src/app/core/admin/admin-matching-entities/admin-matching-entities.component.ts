@@ -15,6 +15,7 @@ import { EditMatchingViewComponent } from "./edit-matching-view/edit-matching-vi
 import { MatDialog } from "@angular/material/dialog";
 import { JsonEditorDialogComponent } from "../json-editor/json-editor-dialog/json-editor-dialog.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Location } from "@angular/common";
 
 @Component({
   selector: "app-admin-matching-entities",
@@ -52,6 +53,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     private configService: ConfigService,
     private entityRegistry: EntityRegistry,
     readonly dialog: MatDialog,
+    private location: Location,
   ) {}
 
   ngOnInit(): void {
@@ -108,44 +110,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   }
 
   /**
- // todo: may be while saving this we can use the select column for the table and list view?
- // todo: json editor for prefilter?
-   */
-  save(): void {
-    const leftType = this.configForm.value.leftType;
-    const rightType = this.configForm.value.rightType;
-
-    const columns = this.leftColumns.map((l, i) => [
-      l,
-      this.rightColumns[i] ?? null,
-    ]);
-
-    const leftSide = {
-      ...this.originalConfig.leftSide,
-      entityType: leftType,
-      availableFilters: this.leftFilters.map((id) => ({ id })),
-
-      prefilter: this.originalConfig.leftSide?.prefilter,
-    };
-    const rightSide = {
-      ...this.originalConfig.rightSide,
-      entityType: rightType,
-      availableFilters: this.rightFilters.map((id) => ({ id })),
-      prefilter: this.originalConfig.rightSide?.prefilter,
-    };
-
-    const onMatch = this.originalConfig.onMatch;
-
-    const updatedConfig = { columns, leftSide, rightSide, onMatch };
-
-    console.log("Config saved:", updatedConfig);
-  }
-
-  cancel(): void {
-    console.log("Cancelled");
-  }
-
-  /**
    * Open the conditions JSON editor popup.
    */
   openConditionsInJsonEditorPopup(side: "left" | "right") {
@@ -179,5 +143,53 @@ export class AdminMatchingEntitiesComponent implements OnInit {
         };
       }
     });
+  }
+
+  /**
+   * Save the updated matching entities configuration.
+   */
+  save(): void {
+    const leftType = this.configForm.value.leftType;
+    const rightType = this.configForm.value.rightType;
+
+    const columns: [string, string][] = [];
+
+    const maxLength = Math.max(
+      this.leftColumns.length,
+      this.rightColumns.length,
+    );
+    for (let i = 0; i < maxLength; i++) {
+      const left = this.leftColumns[i] ?? "";
+      const right = this.rightColumns[i] ?? "";
+      columns.push([left, right]);
+    }
+
+    const fullConfig = this.configService.exportConfig(true);
+
+    fullConfig["appConfig:matching-entities"] = {
+      ...this.originalConfig,
+      columns,
+      leftSide: {
+        ...this.originalConfig.leftSide,
+        entityType: leftType,
+        availableFilters: this.leftFilters.map((id) => ({ id })),
+        prefilter: this.originalConfig.leftSide?.prefilter,
+      },
+      rightSide: {
+        ...this.originalConfig.rightSide,
+        entityType: rightType,
+        availableFilters: this.rightFilters.map((id) => ({ id })),
+        prefilter: this.originalConfig.rightSide?.prefilter,
+      },
+      matchingViews: this.originalConfig.onMatch,
+    };
+
+    this.configService.saveConfig(fullConfig).then(() => {
+      console.log("Full config:", fullConfig);
+    });
+  }
+
+  cancel(): void {
+    this.location.back();
   }
 }
