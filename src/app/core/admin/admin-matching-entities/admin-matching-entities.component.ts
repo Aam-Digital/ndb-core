@@ -50,12 +50,12 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   rightFilters: string[] = [];
 
   constructor(
-    private fb: FormBuilder,
-    private configService: ConfigService,
-    private entityRegistry: EntityRegistry,
+    readonly fb: FormBuilder,
+    readonly configService: ConfigService,
+    readonly entityRegistry: EntityRegistry,
     readonly dialog: MatDialog,
-    private location: Location,
-    private alertService: AlertService,
+    readonly location: Location,
+    readonly alertService: AlertService,
   ) {}
 
   ngOnInit(): void {
