@@ -23,7 +23,6 @@ export class RouterService {
   private configService = inject(ConfigService);
   private router = inject(Router);
 
-
   /**
    * Initialize routes from the config while respecting existing routes.
    */
@@ -106,6 +105,11 @@ export class RouterService {
     if (view.permittedUserRoles) {
       route.canActivate.push(UserRoleGuard);
       route.data.permittedUserRoles = view.permittedUserRoles;
+    }
+
+    if (view.component) {
+      route.component = RoutedViewComponent;
+      route.data.component = view.component;
     }
 
     if (view.config) {
