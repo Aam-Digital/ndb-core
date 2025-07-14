@@ -1,17 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 import { Router, Routes } from "@angular/router";
 import { AbstractPermissionGuard } from "./abstract-permission.guard";
-import { Injectable, inject as inject_1 } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
 @Injectable()
 class TestPermissionGuard extends AbstractPermissionGuard {
-  constructor() {
-    const router = inject_1(Router);
-
-    super(router);
-  }
-
   protected async canAccessRoute(
     routeData: DynamicComponentConfig,
   ): Promise<boolean> {

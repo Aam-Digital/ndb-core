@@ -1,10 +1,5 @@
-import { Component, ElementRef, Input, inject } from "@angular/core";
-import {
-  FormGroupDirective,
-  FormsModule,
-  NgControl,
-  NgForm,
-} from "@angular/forms";
+import { Component, inject, Input } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { MatFormFieldControl, MatSuffix } from "@angular/material/form-field";
 import { GeoLocation } from "../geo-location";
 import { MatInput } from "@angular/material/input";
@@ -16,7 +11,6 @@ import {
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
 import { MatDialog } from "@angular/material/dialog";
-import { ErrorStateMatcher } from "@angular/material/core";
 import { MatTooltip } from "@angular/material/tooltip";
 import { filter, map } from "rxjs/operators";
 
@@ -43,22 +37,6 @@ export class LocationInputComponent extends CustomFormControlDirective<GeoLocati
    * Automatically run an address lookup when the user leaves the input field.
    */
   @Input() autoLookup = true;
-
-  constructor() {
-    const elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-    const errorStateMatcher = inject(ErrorStateMatcher);
-    const ngControl = inject(NgControl, { optional: true, self: true });
-    const parentForm = inject(NgForm, { optional: true });
-    const parentFormGroup = inject(FormGroupDirective, { optional: true });
-
-    super(
-      elementRef,
-      errorStateMatcher,
-      ngControl,
-      parentForm,
-      parentFormGroup,
-    );
-  }
 
   override onContainerClick() {
     if (!this._disabled) {

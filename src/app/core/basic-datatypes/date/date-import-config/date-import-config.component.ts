@@ -70,7 +70,6 @@ export class DateImportConfigComponent {
   }
 
   async save() {
-    console.log("value", this.format.errors);
     const confirmed =
       !this.format.errors ||
       (await this.confirmation.getConfirmation(

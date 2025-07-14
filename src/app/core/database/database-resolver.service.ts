@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Database, DatabaseDocChange } from "./database";
 import { SessionInfo } from "../session/auth/session-info";
 import { DatabaseFactoryService } from "./database-factory.service";
@@ -27,11 +27,7 @@ export class DatabaseResolverService {
     return this._changesFeed.asObservable();
   }
 
-  private _changesFeed: Subject<any>;
-
-  constructor() {
-    this._changesFeed = new Subject();
-  }
+  private _changesFeed: Subject<any> = new Subject();
 
   private registerDatabase(dbName: string) {
     const newDb = this.databaseFactory.createDatabase(dbName);

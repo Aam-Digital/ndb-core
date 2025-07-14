@@ -1,6 +1,6 @@
 import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { faker } from "../../../../core/demo-data/faker";
 import { heightRangeForAge, weightRangeForAge } from "./height-weight";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -14,6 +14,8 @@ import { createEntityOfType } from "../../../../core/demo-data/create-entity-of-
 export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
   private demoChildren = inject(DemoChildGenerator);
 
+  override requiredEntityTypes = ["HealthCheck"];
+
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoHealthCheckGeneratorService.provider()]`
@@ -25,11 +27,6 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<Entity> {
         useClass: DemoHealthCheckGeneratorService,
       },
     ];
-  }
-
-  constructor() {
-    super();
-    this.requiredEntityTypes = ["HealthCheck"];
   }
 
   public generateEntities(): Entity[] {

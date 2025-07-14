@@ -1,5 +1,5 @@
-import { Injectable, inject } from "@angular/core";
-import { CanActivate, Router } from "@angular/router";
+import { inject, Injectable } from "@angular/core";
+import { CanActivate } from "@angular/router";
 import { EntityAbility } from "../ability/entity-ability";
 import { AbstractPermissionGuard } from "./abstract-permission.guard";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
@@ -14,12 +14,6 @@ export class EntityPermissionGuard
   implements CanActivate
 {
   private ability = inject(EntityAbility);
-
-  constructor() {
-    const router = inject(Router);
-
-    super(router);
-  }
 
   protected async canAccessRoute(
     routeData: DynamicComponentConfig,
