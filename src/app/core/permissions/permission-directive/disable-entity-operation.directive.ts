@@ -1,4 +1,14 @@
-import { ComponentRef, Directive, Input, OnChanges, OnDestroy, OnInit, TemplateRef, ViewContainerRef, inject } from "@angular/core";
+import {
+  ComponentRef,
+  Directive,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewContainerRef,
+  inject,
+} from "@angular/core";
 import { DisabledWrapperComponent } from "./disabled-wrapper.component";
 import { EntityActionPermission, EntitySubject } from "../permission-types";
 import { EntityAbility } from "../ability/entity-ability";

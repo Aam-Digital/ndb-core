@@ -1,4 +1,11 @@
-import { Component, ContentChild, Input, OnInit, TemplateRef, inject } from "@angular/core";
+import {
+  Component,
+  ContentChild,
+  Input,
+  OnInit,
+  TemplateRef,
+  inject,
+} from "@angular/core";
 import { Location } from "@angular/common";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, ViewEncapsulation, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+  ViewEncapsulation,
+  inject,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { Observable } from "rxjs";
 import { concatMap, debounceTime, tap } from "rxjs/operators";

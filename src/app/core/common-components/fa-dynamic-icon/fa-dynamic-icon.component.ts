@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
+} from "@angular/core";
 import { IconName, IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import {
   faCalendarAlt,

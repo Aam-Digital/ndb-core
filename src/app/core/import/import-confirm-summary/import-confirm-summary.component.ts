@@ -29,7 +29,8 @@ export interface ImportDialogData {
   imports: [MatDialogModule, MatProgressBarModule, MatButtonModule],
 })
 export class ImportConfirmSummaryComponent {
-  private dialogRef = inject<MatDialogRef<ImportConfirmSummaryComponent>>(MatDialogRef);
+  private dialogRef =
+    inject<MatDialogRef<ImportConfirmSummaryComponent>>(MatDialogRef);
   data = inject<ImportDialogData>(MAT_DIALOG_DATA);
   private snackBar = inject(MatSnackBar);
   private importService = inject(ImportService);

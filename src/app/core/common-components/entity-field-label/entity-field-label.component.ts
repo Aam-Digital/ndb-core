@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityConstructor } from "../../entity/model/entity";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";

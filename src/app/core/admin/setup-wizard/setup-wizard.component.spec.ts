@@ -12,7 +12,10 @@ import {
   SetupWizardConfig,
 } from "./setup-wizard-config";
 import { Config } from "../../config/config";
-import { entityRegistry, EntityRegistry } from "app/core/entity/database-entity.decorator";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
 
 describe("SetupWizardComponent", () => {
   let component: SetupWizardComponent;

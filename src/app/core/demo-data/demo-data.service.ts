@@ -15,7 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ClassProvider, FactoryProvider, Injectable, Injector, ValueProvider, inject } from "@angular/core";
+import {
+  ClassProvider,
+  FactoryProvider,
+  Injectable,
+  Injector,
+  ValueProvider,
+  inject,
+} from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 

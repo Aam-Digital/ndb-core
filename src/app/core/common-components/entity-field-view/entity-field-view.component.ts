@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";

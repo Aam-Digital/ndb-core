@@ -119,7 +119,7 @@ export class EntityListComponent<T extends Entity>
     optional: true,
   });
   private readonly formDialog = inject(FormDialogService);
-  
+
   @Input() allEntities: T[];
 
   @Input() entityType: string;

@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ImportService } from "../import.service";

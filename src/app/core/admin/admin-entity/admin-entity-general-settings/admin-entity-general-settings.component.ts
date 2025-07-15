@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";

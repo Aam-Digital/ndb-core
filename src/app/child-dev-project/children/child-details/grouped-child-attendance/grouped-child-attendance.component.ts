@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewEncapsulation, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  ViewEncapsulation,
+  inject,
+} from "@angular/core";
 import { Entity } from "../../../../core/entity/model/entity";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";

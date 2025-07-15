@@ -39,7 +39,9 @@ import { MatDialogRef } from "@angular/material/dialog";
 })
 export class SetupWizardComponent implements OnInit {
   private entityMapper = inject(EntityMapperService);
-  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef, { optional: true });
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef, {
+    optional: true,
+  });
 
   readonly LOCAL_STORAGE_KEY = "SETUP_WIZARD_STATUS";
 

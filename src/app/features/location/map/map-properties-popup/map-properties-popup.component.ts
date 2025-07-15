@@ -30,7 +30,8 @@ export type LocationProperties = { [key: string]: string[] };
   ],
 })
 export class MapPropertiesPopupComponent {
-  private dialogRef = inject<MatDialogRef<MapPropertiesPopupComponent>>(MatDialogRef);
+  private dialogRef =
+    inject<MatDialogRef<MapPropertiesPopupComponent>>(MatDialogRef);
 
   entityProperties: {
     entity: EntityConstructor;

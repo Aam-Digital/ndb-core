@@ -11,7 +11,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 export class EntityTypeLabelPipe implements PipeTransform {
   private entityTypes = inject(EntityRegistry);
 
-
   transform(value: string, plural: boolean = false): string {
     const entity = this.entityTypes.get(value);
     return plural ? entity?.labelPlural : entity?.label;

@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, HostBinding, Input, TemplateRef, ViewChild, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  HostBinding,
+  Input,
+  TemplateRef,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
 import { Location, NgTemplateOutlet } from "@angular/common";

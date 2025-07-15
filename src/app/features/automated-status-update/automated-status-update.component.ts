@@ -59,8 +59,9 @@ export interface AffectedEntity {
 export class AutomatedStatusUpdateComponent implements OnInit {
   data = inject<{
     entities: AffectedEntity[];
-}>(MAT_DIALOG_DATA);
-  private dialogRef = inject<MatDialogRef<AutomatedStatusUpdateComponent>>(MatDialogRef);
+  }>(MAT_DIALOG_DATA);
+  private dialogRef =
+    inject<MatDialogRef<AutomatedStatusUpdateComponent>>(MatDialogRef);
   private entityFormService = inject(EntityFormService);
 
   entityConstructor: EntityConstructor;

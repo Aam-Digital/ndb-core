@@ -1,4 +1,10 @@
-import { Component, ElementRef, ViewChild, ViewEncapsulation, inject } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  ViewEncapsulation,
+  inject,
+} from "@angular/core";
 import { CustomFormControlDirective } from "../../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { MatCheckbox, MatCheckboxModule } from "@angular/material/checkbox";
 import {

@@ -1,4 +1,14 @@
-import { ChangeDetectorRef, Directive, Input, OnChanges, SimpleChange, SimpleChanges, Type, ViewContainerRef, inject } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Directive,
+  Input,
+  OnChanges,
+  SimpleChange,
+  SimpleChanges,
+  Type,
+  ViewContainerRef,
+  inject,
+} from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { pick } from "lodash-es";

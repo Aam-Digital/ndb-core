@@ -45,7 +45,6 @@ export class ViewDistanceComponent
 {
   private changeDetector = inject(ChangeDetectorRef);
 
-
   distanceFunction = (_entity: Entity) => "-";
 
   ngOnInit() {

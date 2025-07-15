@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Injectable, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Injectable,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,

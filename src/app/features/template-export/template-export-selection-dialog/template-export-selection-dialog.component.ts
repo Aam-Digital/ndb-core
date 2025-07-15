@@ -41,7 +41,8 @@ import { AlertService } from "../../../core/alerts/alert.service";
   styleUrl: "./template-export-selection-dialog.component.scss",
 })
 export class TemplateExportSelectionDialogComponent {
-  private dialogRef = inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
+  private dialogRef =
+    inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
   private templateExportApi = inject(TemplateExportApiService);
   private downloadService = inject(DownloadService);
   private alertService = inject(AlertService);

@@ -1,4 +1,14 @@
-import { AfterViewInit, Component, ContentChild, Input, OnChanges, OnInit, SimpleChanges, ViewChild, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ContentChild,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import {
   DashboardTheme,

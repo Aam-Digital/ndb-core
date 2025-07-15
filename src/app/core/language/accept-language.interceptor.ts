@@ -11,7 +11,6 @@ import { Observable } from "rxjs";
 export class AcceptLanguageInterceptor implements HttpInterceptor {
   private locale = inject(LOCALE_ID);
 
-
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler,

@@ -1,4 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild, inject } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";

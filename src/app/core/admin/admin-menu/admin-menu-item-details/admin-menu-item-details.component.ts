@@ -44,7 +44,7 @@ export class AdminMenuItemDetailsComponent implements OnInit {
   data = inject<{
     item: MenuItem;
     isNew?: boolean;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   item: MenuItem | EntityMenuItem;
   availableRoutes: { value: string; label: string }[];

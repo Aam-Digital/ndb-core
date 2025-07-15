@@ -11,5 +11,5 @@ import { DialogCloseComponent } from "../../../../core/common-components/dialog-
 export class ImagePopupComponent {
   data = inject<{
     url: string;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 }

@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
 import { FileService } from "../file.service";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";

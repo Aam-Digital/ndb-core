@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";

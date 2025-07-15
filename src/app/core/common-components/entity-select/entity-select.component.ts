@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";

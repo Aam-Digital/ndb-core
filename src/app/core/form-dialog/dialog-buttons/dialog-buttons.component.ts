@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";

@@ -36,7 +36,6 @@ export class FilterGeneratorService {
   private schemaService = inject(EntitySchemaService);
   private placeholderService = inject(DynamicPlaceholderValueService);
 
-
   /**
    *
    * @param filterConfigs

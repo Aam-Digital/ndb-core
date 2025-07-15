@@ -18,7 +18,6 @@ import { MatButtonModule } from "@angular/material/button";
 export class ViewFileComponent extends ViewDirective<string> {
   fileService = inject(FileService);
 
-
   showFile(event: Event) {
     // Prevent event bubbling
     event.stopPropagation();

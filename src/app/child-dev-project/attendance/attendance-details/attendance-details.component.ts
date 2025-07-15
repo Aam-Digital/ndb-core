@@ -59,9 +59,9 @@ export class AttendanceDetailsComponent {
 
   constructor() {
     const data = inject<{
-    forChild: string;
-    attendance: ActivityAttendance;
-}>(MAT_DIALOG_DATA);
+      forChild: string;
+      attendance: ActivityAttendance;
+    }>(MAT_DIALOG_DATA);
 
     this.entity = data.attendance;
     this.forChild = data.forChild;

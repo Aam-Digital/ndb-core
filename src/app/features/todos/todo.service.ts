@@ -13,7 +13,6 @@ export class TodoService {
   private alertService = inject(AlertService);
   private entityMapper = inject(EntityMapperService);
 
-
   async completeTodo(todo: Todo) {
     const nextTodo = await this.createNextRepetition(todo);
 

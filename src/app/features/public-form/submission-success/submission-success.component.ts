@@ -13,7 +13,6 @@ import { MatButtonModule } from "@angular/material/button";
 export class SubmissionSuccessComponent {
   private location = inject(Location);
 
-
   submitAnotherForm() {
     this.location.back();
   }

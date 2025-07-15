@@ -1,4 +1,10 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, inject } from "@angular/core";
+import {
+  Directive,
+  Input,
+  TemplateRef,
+  ViewContainerRef,
+  inject,
+} from "@angular/core";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
 

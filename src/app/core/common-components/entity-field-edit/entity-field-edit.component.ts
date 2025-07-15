@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { HelpButtonComponent } from "../help-button/help-button.component";
 import { Entity } from "../../entity/model/entity";

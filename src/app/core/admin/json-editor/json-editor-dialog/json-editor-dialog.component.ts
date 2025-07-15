@@ -25,7 +25,8 @@ import { JsonEditorComponent } from "../json-editor.component";
 })
 export class JsonEditorDialogComponent {
   data = inject(MAT_DIALOG_DATA);
-  private dialogRef = inject<MatDialogRef<JsonEditorDialogComponent>>(MatDialogRef);
+  private dialogRef =
+    inject<MatDialogRef<JsonEditorDialogComponent>>(MatDialogRef);
 
   jsonDataControl: FormControl;
 

@@ -37,7 +37,9 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private location = inject(Location);
   private entityFormService = inject(EntityFormService);
   private alertService = inject(AlertService);
-  private automatedStatusUpdateConfigService = inject(AutomatedStatusUpdateConfigService);
+  private automatedStatusUpdateConfigService = inject(
+    AutomatedStatusUpdateConfigService,
+  );
   private viewContext = inject(ViewComponentContext, { optional: true });
 
   @Input() entity: E;

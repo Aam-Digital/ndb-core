@@ -13,5 +13,5 @@ export class ProgressComponent {
   config = inject<{
     message: string;
     progress: Observable<number>;
-}>(MAT_SNACK_BAR_DATA);
+  }>(MAT_SNACK_BAR_DATA);
 }

@@ -15,7 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ElementRef, OnInit, ViewChild, inject } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { Changelog } from "../changelog";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { isObservable, Observable } from "rxjs";

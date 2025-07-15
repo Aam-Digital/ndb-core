@@ -23,7 +23,8 @@ import { AssistantButtonComponent } from "../assistant-button/assistant-button.c
   styleUrl: "./system-init-assistant.component.scss",
 })
 export class SystemInitAssistantComponent implements OnInit {
-  private dialogRef = inject<MatDialogRef<SystemInitAssistantComponent>>(MatDialogRef);
+  private dialogRef =
+    inject<MatDialogRef<SystemInitAssistantComponent>>(MatDialogRef);
   private route = inject(ActivatedRoute);
 
   private readonly demoDataInitializer = inject(DemoDataInitializerService);

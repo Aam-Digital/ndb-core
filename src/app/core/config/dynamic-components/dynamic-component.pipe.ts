@@ -21,7 +21,6 @@ import { ComponentRegistry } from "../../../dynamic-components";
 export class DynamicComponentPipe implements PipeTransform {
   private componentRegistry = inject(ComponentRegistry);
 
-
   async transform(value: string): Promise<Type<any>> {
     return await this.componentRegistry.get(value)();
   }

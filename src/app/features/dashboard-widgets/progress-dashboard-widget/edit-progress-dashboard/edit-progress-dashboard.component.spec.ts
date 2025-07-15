@@ -48,7 +48,7 @@ describe("EditProgressDashboardComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: mockDialogData,
         },
-        ...provideTestingConfigService() ,
+        ...provideTestingConfigService(),
         FormBuilder,
       ],
     }).compileComponents();

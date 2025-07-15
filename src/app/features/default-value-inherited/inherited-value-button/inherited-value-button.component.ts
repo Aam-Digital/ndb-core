@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { EntityForm } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityFieldLabelComponent } from "../../../core/common-components/entity-field-label/entity-field-label.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";

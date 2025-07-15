@@ -13,7 +13,6 @@ export class RoutePermissionsService {
   private roleGuard = inject(UserRoleGuard);
   private permissionGuard = inject(EntityPermissionGuard);
 
-
   /**
    * Filters menu items based on the route and entity permissions on the link.
    */

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { Note } from "../../../notes/model/note";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";

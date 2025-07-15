@@ -12,7 +12,6 @@ import { ComingSoonComponent } from "./coming-soon/coming-soon.component";
 export class ComingSoonDialogService {
   private dialog = inject(MatDialog);
 
-
   /**
    * Open dialog with the coming soon page.
    * @param featureId identifier to track requests for the given feature in usage analytics

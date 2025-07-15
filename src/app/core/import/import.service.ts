@@ -22,7 +22,6 @@ export class ImportService {
   private readonly importAdditionalService = inject(ImportAdditionalService);
   private readonly importExistingService = inject(ImportExistingService);
 
-
   async executeImport(
     entitiesToImport: Entity[],
     settings: ImportSettings,

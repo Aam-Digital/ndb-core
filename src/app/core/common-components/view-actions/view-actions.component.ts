@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, TemplateRef, ViewChild, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  TemplateRef,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { NgTemplateOutlet } from "@angular/common";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
 

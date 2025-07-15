@@ -55,7 +55,8 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
 })
 export class DateRangeFilterPanelComponent {
   filter = inject<DateFilter<any>>(MAT_DIALOG_DATA);
-  private dialogRef = inject<MatDialogRef<DateRangeFilterPanelComponent>>(MatDialogRef);
+  private dialogRef =
+    inject<MatDialogRef<DateRangeFilterPanelComponent>>(MatDialogRef);
 
   selectedRangeValue: DateRange<Date>;
   selectedOption: DateRangeFilterConfigOption;

@@ -51,8 +51,8 @@ export class ComingSoonComponent implements OnInit {
 
   constructor() {
     const dialogData = inject<{
-    featureId: string;
-}>(MAT_DIALOG_DATA, { optional: true });
+      featureId: string;
+    }>(MAT_DIALOG_DATA, { optional: true });
 
     if (dialogData) {
       this.init(dialogData.featureId);

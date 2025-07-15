@@ -28,7 +28,6 @@ export class ConfirmationDialogService {
   private dialog = inject(MatDialog);
   private ngZone = inject(NgZone);
 
-
   /**
    * Open a dialog with the given configuration.
    * @param title The title displayed for the dialog

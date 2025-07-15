@@ -14,7 +14,6 @@ export class LanguageService {
   private window = inject<Window>(WINDOW_TOKEN);
   private siteSettings = inject(SiteSettingsService);
 
-
   initDefaultLanguage(): void {
     const languageSelected = this.window.localStorage.getItem(
       LANGUAGE_LOCAL_STORAGE_KEY,

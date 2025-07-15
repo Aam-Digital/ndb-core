@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, Input, Renderer2, TemplateRef, ViewChild, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  Renderer2,
+  TemplateRef,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgTemplateOutlet } from "@angular/common";
 

@@ -1,4 +1,12 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+  ViewEncapsulation,
+  inject,
+} from "@angular/core";
 import { Note } from "../../notes/model/note";
 import {
   MatCalendar,

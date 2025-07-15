@@ -20,8 +20,7 @@ describe("FilterService", () => {
 
     TestBed.configureTestingModule({
       providers: [
-        {provide: ConfigurableEnumService,useValue: mockEnumService
-        },
+        { provide: ConfigurableEnumService, useValue: mockEnumService },
       ],
     });
     service = TestBed.inject(FilterService);

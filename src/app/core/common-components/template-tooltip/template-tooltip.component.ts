@@ -1,4 +1,14 @@
-import { Component, ElementRef, EventEmitter, HostBinding, Input, NgZone, Output, TemplateRef, inject } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostBinding,
+  Input,
+  NgZone,
+  Output,
+  TemplateRef,
+  inject,
+} from "@angular/core";
 import {
   animate,
   state,

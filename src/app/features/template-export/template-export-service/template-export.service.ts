@@ -13,7 +13,6 @@ import { TemplateExportSelectionDialogComponent } from "../template-export-selec
 export class TemplateExportService {
   private dialog = inject(MatDialog);
 
-
   /**
    * Open a dialog for the user to select a template and generate a file from it for the given entity.
    * @param entity The entity or other data object to provide placeholder values for the template

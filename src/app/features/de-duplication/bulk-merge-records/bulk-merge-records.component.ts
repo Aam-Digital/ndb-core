@@ -36,7 +36,8 @@ import { MergeFieldsComponent } from "./merge-fields/merge-fields.component";
   styleUrls: ["./bulk-merge-records.component.scss"],
 })
 export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
-  private readonly dialogRef = inject<MatDialogRef<BulkMergeRecordsComponent<E>>>(MatDialogRef);
+  private readonly dialogRef =
+    inject<MatDialogRef<BulkMergeRecordsComponent<E>>>(MatDialogRef);
   private readonly confirmationDialog = inject(ConfirmationDialogService);
   private readonly entityFormService = inject(EntityFormService);
 
@@ -51,9 +52,9 @@ export class BulkMergeRecordsComponent<E extends Entity> implements OnInit {
 
   constructor() {
     const data = inject<{
-    entityConstructor: EntityConstructor;
-    entitiesToMerge: E[];
-}>(MAT_DIALOG_DATA);
+      entityConstructor: EntityConstructor;
+      entitiesToMerge: E[];
+    }>(MAT_DIALOG_DATA);
 
     this.entityConstructor = data.entityConstructor;
     this.entitiesToMerge = data.entitiesToMerge;

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { MatButtonModule } from "@angular/material/button";

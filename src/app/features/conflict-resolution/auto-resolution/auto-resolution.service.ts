@@ -11,8 +11,9 @@ import {
   providedIn: "root",
 })
 export class AutoResolutionService {
-  private resolutionStrategies= inject(CONFLICT_RESOLUTION_STRATEGY, { optional: true });
-
+  private resolutionStrategies = inject(CONFLICT_RESOLUTION_STRATEGY, {
+    optional: true,
+  });
 
   /**
    * Checks whether any registered resolution strategy suggests that the conflicting version should be automatically deleted.

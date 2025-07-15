@@ -23,7 +23,6 @@ export class EntitySpecialLoaderService {
   private childrenService = inject(ChildrenService);
   private historicalDataService = inject(HistoricalDataService);
 
-
   loadData<E extends Entity = Entity>(
     loaderMethod: LoaderMethod,
   ): Promise<E[]> {

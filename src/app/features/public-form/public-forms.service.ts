@@ -13,7 +13,6 @@ export class PublicFormsService {
   private alertService = inject(AlertService);
   private entityActionsMenuService = inject(EntityActionsMenuService);
 
-
   /**
    * Initializes and registers custom form actions for entities.
    * - Loads all PublicFormConfig entries from the EntityMapper.

@@ -16,7 +16,6 @@ import { groupBy } from "../../../utils/utils";
 export class DataTransformationService {
   private queryService = inject(QueryService);
 
-
   async queryAndTransformData(
     config: ExportColumnConfig[],
     from?: Date,

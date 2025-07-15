@@ -15,7 +15,6 @@ export class DuplicateRecordService {
   private readonly alertService = inject(AlertService);
   private readonly router = inject(Router);
 
-
   async duplicateRecord(
     sourceData: Entity | Entity[],
     navigate: boolean = false,

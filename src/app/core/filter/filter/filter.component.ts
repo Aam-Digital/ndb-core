@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";

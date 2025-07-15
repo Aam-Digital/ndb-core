@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
+} from "@angular/core";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import {
   DEFAULT_LANGUAGE,

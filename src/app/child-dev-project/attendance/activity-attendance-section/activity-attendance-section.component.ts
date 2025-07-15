@@ -1,4 +1,12 @@
-import { Component, Input, LOCALE_ID, OnChanges, OnInit, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  Input,
+  LOCALE_ID,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";

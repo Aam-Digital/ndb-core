@@ -66,9 +66,9 @@ export class EntityBulkEditComponent<E extends Entity> implements OnInit {
 
   constructor() {
     const data = inject<{
-    entitiesToEdit: E[];
-    entityConstructor: EntityConstructor;
-}>(MAT_DIALOG_DATA);
+      entitiesToEdit: E[];
+      entityConstructor: EntityConstructor;
+    }>(MAT_DIALOG_DATA);
 
     this.entityConstructor = data.entityConstructor;
     this.entityData = data.entitiesToEdit[0];

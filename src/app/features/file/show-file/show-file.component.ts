@@ -14,7 +14,6 @@ import { MatButtonModule } from "@angular/material/button";
 export class ShowFileComponent {
   private link = inject(MAT_DIALOG_DATA);
 
-
   showFile(): void {
     window.open(this.link, "_blank");
   }
