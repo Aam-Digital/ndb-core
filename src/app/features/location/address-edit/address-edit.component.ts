@@ -8,6 +8,7 @@ import { MatInput } from "@angular/material/input";
 import { MatTooltip } from "@angular/material/tooltip";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { AddressGpsLocationComponent } from "../address-gps-location/address-gps-location.component";
+import { ConfirmationDialogService } from "#src/app/core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Edit a GeoLocation / Address, including options to search via API and customize the string location being saved.

@@ -10,12 +10,10 @@ import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-t
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { Logging } from "../../logging/logging.service";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
-import { EntityFieldsMenuComponent } from "../../common-components/entity-fields-menu/entity-fields-menu.component";
 
 @Component({
   selector: "app-admin-entity-list",
   imports: [
-    EntityFieldsMenuComponent,
     MatTableModule,
     AdminTabsComponent,
     AdminTabTemplateDirective,
