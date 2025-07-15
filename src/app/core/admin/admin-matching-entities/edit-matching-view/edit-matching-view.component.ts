@@ -86,7 +86,7 @@ export class EditMatchingViewComponent implements OnInit {
   entityConstructor: EntityConstructor;
 
   constructor(
-    private fb: FormBuilder,
+    readonly fb: FormBuilder,
     readonly entityRegistry: EntityRegistry,
     readonly dialog: MatDialog,
     readonly entityRelationsService: EntityRelationsService,
