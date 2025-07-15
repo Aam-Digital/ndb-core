@@ -8,11 +8,9 @@ import { AbilityService } from "../core/permissions/ability/ability.service";
 import { EMPTY, Subject } from "rxjs";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { defineAbility } from "@casl/ability";
-import { createTestingConfigService } from "../core/config/testing-config-service";
+import { provideTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
-import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { Entity } from "../core/entity/model/entity";
 import {
   mockEntityMapperProvider,
@@ -40,11 +38,7 @@ export const entityFormStorybookDefaultParameters = {
   declarations: [],
   imports: [AppModule, RouterTestingModule],
   providers: [
-    { provide: ConfigService, useValue: createTestingConfigService() },
-    {
-      provide: ConfigurableEnumService,
-      useValue: createTestingConfigurableEnumService(),
-    },
+    { provide: ConfigService, useValue: provideTestingConfigService() },
     {
       provide: AbilityService,
       useValue: {
