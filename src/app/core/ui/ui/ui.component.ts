@@ -112,8 +112,6 @@ export class UiComponent {
   showPrimaryAction = signal(false);
 
   constructor() {
-    const router = this.router;
-
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))
@@ -121,7 +119,7 @@ export class UiComponent {
         this.isDesktop = isDesktop;
         this.updateDisplayMode();
       });
-    router.events
+    this.router.events
       .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe(() => this.updateDisplayMode());
     this.configReady$.subscribe((ready) => this.updateDisplayMode());
