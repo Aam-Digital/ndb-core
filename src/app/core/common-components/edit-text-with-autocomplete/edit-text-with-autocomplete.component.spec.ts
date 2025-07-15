@@ -8,6 +8,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EditTextWithAutocompleteComponent } from "./edit-text-with-autocomplete.component";
 import { By } from "@angular/platform-browser";
+import { TestEntity } from "#src/app/utils/test-utils/TestEntity";
 
 describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
@@ -116,17 +117,21 @@ describe("EditTextWithAutocompleteComponent", () => {
     expect(component.parent.get("participants")).toBeFalsy();
   });
 
-  it("should add the given relevantValue to the form control of the relevant property", async () => {
+  it("should link the given parent entity's ID in the form control of the relevant property", async () => {
+    const parentEntity = new TestEntity();
+
     const rA1 = RecurringActivity.create("First Recurring Activity");
     rA1.linkedGroups = ["group1", "group2"];
     loadTypeSpy.and.resolveTo([rA1]);
     component.additional.relevantProperty = "linkedGroups";
-    component.additional.relevantValue = "group3";
+    component.additional.relatedEntitiesParent = parentEntity;
     await component.ngOnInit();
 
     await component.selectEntity(rA1);
 
-    expect(component.parent.get("linkedGroups").value).toContain("group3");
+    expect(component.parent.get("linkedGroups").value).toContain(
+      parentEntity.getId(),
+    );
   });
 
   it("should show name of the selected entity", async () => {

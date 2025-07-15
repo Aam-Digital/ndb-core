@@ -456,7 +456,6 @@ const migrateActivitiesOverviewComponent: ConfigMigration = (
           additional: {
             entityType: "RecurringActivity",
             relevantProperty: "linkedGroups",
-            relevantValue: "",
           },
         },
         { id: "assignedTo" },
