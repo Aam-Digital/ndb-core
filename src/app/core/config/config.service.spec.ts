@@ -451,7 +451,6 @@ describe("ConfigService", () => {
               additional: {
                 entityType: "RecurringActivity",
                 relevantProperty: "linkedGroups",
-                relevantValue: "",
               },
             },
             { id: "assignedTo" },
