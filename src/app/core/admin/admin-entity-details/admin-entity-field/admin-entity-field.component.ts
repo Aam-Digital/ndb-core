@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -93,6 +93,14 @@ export interface AdminEntityFieldData {
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
+  data = inject<AdminEntityFieldData>(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private allDataTypes = inject(DefaultDatatype);
+  private configurableEnumService = inject(ConfigurableEnumService);
+  private entityRegistry = inject(EntityRegistry);
+  private dialog = inject(MatDialog);
+
   fieldId: string;
   entityType: EntityConstructor;
 
@@ -108,16 +116,6 @@ export class AdminEntityFieldComponent implements OnInit {
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: AdminEntityFieldData,
-    private dialogRef: MatDialogRef<any>,
-    private fb: FormBuilder,
-    @Inject(DefaultDatatype) private allDataTypes: DefaultDatatype[],
-    private configurableEnumService: ConfigurableEnumService,
-    private entityRegistry: EntityRegistry,
-    private dialog: MatDialog,
-  ) {}
-
   ngOnInit() {
     this.initSettings();
 
@@ -125,7 +123,7 @@ export class AdminEntityFieldComponent implements OnInit {
       this.lockGlobalFields();
     }
 
-    this.initAvailableDatatypes(this.allDataTypes);
+    this.initAvailableDatatypes([this.allDataTypes]);
   }
 
   /**

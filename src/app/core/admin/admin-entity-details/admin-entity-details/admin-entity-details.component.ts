@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
@@ -41,10 +41,10 @@ import { WidgetComponentSelectComponent } from "#src/app/core/admin/admin-entity
   ],
 })
 export class AdminEntityDetailsComponent {
+  private dialog = inject(MatDialog);
+
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityDetailsConfig;
-
-  constructor(private dialog: MatDialog) {}
 
   newPanelFactory(): Panel {
     return { title: "New Tab", components: [] };

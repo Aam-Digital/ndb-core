@@ -8,7 +8,13 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportConfirmSummaryComponent } from "./import-confirm-summary.component";
 import { MatDialog } from "@angular/material/dialog";
 import { ImportService } from "../import.service";
-import { Component, importProvidersFrom, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  importProvidersFrom,
+  Input,
+  OnInit,
+  inject,
+} from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 
 @Component({
@@ -16,13 +22,13 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
   template: "<button (click)='launch()'>open dialog</button>",
 })
 abstract class LaunchDialogComponent implements OnInit {
+  private dialog = inject(MatDialog);
+
   /** dialog data passed in */
   @Input() data;
 
   /** overrides of dialog component instance inputs to easily showcase different states */
   @Input() cmpInputs: Object;
-
-  constructor(private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.launch();

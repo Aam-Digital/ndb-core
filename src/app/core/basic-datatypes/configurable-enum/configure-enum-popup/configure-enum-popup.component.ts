@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -48,17 +48,20 @@ import {
   ],
 })
 export class ConfigureEnumPopupComponent {
+  enumEntity = inject<ConfigurableEnum>(MAT_DIALOG_DATA);
+  private dialog =
+    inject<MatDialogRef<ConfigureEnumPopupComponent>>(MatDialogRef);
+  private entityMapper = inject(EntityMapperService);
+  private confirmationService = inject(ConfirmationDialogService);
+  private entities = inject(EntityRegistry);
+  private snackBar = inject(MatSnackBar);
+
   newOptionInput: string;
   localEnum: ConfigurableEnum;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
-    private dialog: MatDialogRef<ConfigureEnumPopupComponent>,
-    private entityMapper: EntityMapperService,
-    private confirmationService: ConfirmationDialogService,
-    private entities: EntityRegistry,
-    private snackBar: MatSnackBar,
-  ) {
+  constructor() {
+    const enumEntity = this.enumEntity;
+
     // disable closing with backdrop click (so that we can always confirm unsaved changes)
     this.dialog.disableClose = true;
 
