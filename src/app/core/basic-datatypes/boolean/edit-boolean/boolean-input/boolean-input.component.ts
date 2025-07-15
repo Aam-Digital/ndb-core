@@ -29,22 +29,6 @@ import { ErrorStateMatcher } from "@angular/material/core";
 export class BooleanInputComponent extends CustomFormControlDirective<boolean> {
   @ViewChild(MatCheckbox, { static: true }) inputElement: MatCheckbox;
 
-  constructor() {
-    const elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-    const errorStateMatcher = inject(ErrorStateMatcher);
-    const ngControl = inject(NgControl, { optional: true, self: true });
-    const parentForm = inject(NgForm, { optional: true });
-    const parentFormGroup = inject(FormGroupDirective, { optional: true });
-
-    super(
-      elementRef,
-      errorStateMatcher,
-      ngControl,
-      parentForm,
-      parentFormGroup,
-    );
-  }
-
   override onContainerClick(event: MouseEvent) {
     if ((event.target as Element).tagName.toLowerCase() != "mat-checkbox") {
       this.inputElement.focus();
