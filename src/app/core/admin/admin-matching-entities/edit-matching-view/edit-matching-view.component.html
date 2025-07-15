@@ -18,11 +18,19 @@
       <div class="flex-row">
         <mat-form-field class="full-width">
           <mat-label i18n>Show Matching View for:</mat-label>
-          <app-entity-type-select
-            [value]="value?.newEntityType"
-            (valueChange)="onEntityTypeChange($event)"
-            [multi]="false"
-          ></app-entity-type-select>
+          <mat-select
+            formControlName="newEntityType"
+            (selectionChange)="onEntityTypeChange($event.value)"
+          >
+            @for (
+              relatedEntity of availableRelatedEntities;
+              track relatedEntity
+            ) {
+              <mat-option [value]="relatedEntity.entityType">
+                {{ relatedEntity.label }}
+              </mat-option>
+            }
+          </mat-select>
         </mat-form-field>
         <app-help-button
           text="Choose the entity to show matching view for"
@@ -36,7 +44,7 @@
           <app-entity-field-select
             [entityType]="entityConstructor"
             formControlName="newEntityMatchPropertyLeft"
-            [hideOption]="hideNonEntityFields"
+            [hideOption]="hideLeftOption"
           ></app-entity-field-select>
         </mat-form-field>
         <app-help-button
@@ -48,7 +56,7 @@
           <app-entity-field-select
             [entityType]="entityConstructor"
             formControlName="newEntityMatchPropertyRight"
-            [hideOption]="hideNonEntityFields"
+            [hideOption]="hideRightOption"
           ></app-entity-field-select>
         </mat-form-field>
         <app-help-button

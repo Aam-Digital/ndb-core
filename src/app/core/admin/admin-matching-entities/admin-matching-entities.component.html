@@ -42,6 +42,8 @@
 <div class="entity-match-container padding-regular">
   <app-edit-matching-view
     [value]="originalConfig.onMatch"
+    [leftSideEntity]="leftSideEntity"
+    [rightSideEntity]="rightSideEntity"
     (valueChange)="originalConfig.onMatch = $event"
   ></app-edit-matching-view>
 </div>
