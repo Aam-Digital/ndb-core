@@ -1,12 +1,25 @@
-<h2 mat-dialog-title i18n>Configure Field "{{ entitySchemaField.label }}"</h2>
+<h2 mat-dialog-title i18n>
+  Configure Field "{{ data.entitySchemaField.label }}"
+</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
-  <p i18n>
-    The field settings here apply to the record type overall and affect both the
-    field here in the current view as well as all other forms and lists where
-    this field is displayed.
-  </p>
+  @if (data.overwriteLocally) {
+    <p>
+      <fa-icon icon="exclamation-triangle" style="color: red"></fa-icon>
+      <span i18n>
+        You are currently overwriting the field for a local view only. The field
+        settings here only apply to this and do not affect the main entity
+        schema.
+      </span>
+    </p>
+  } @else {
+    <p i18n>
+      The field settings here apply to the record type overall and affect both
+      the field here in the current view as well as all other forms and lists
+      where this field is displayed.
+    </p>
+  }
 
   <form [formGroup]="form">
     <mat-tab-group formGroupName="schemaFields">
@@ -80,8 +93,14 @@
               }
             </mat-form-field>
 
-            <mat-form-field>
-              <mat-label i18n>Type</mat-label>
+            <mat-form-field
+              matTooltip="The type of the field cannot be changed here because these changes only apply to this form. For data consistency, you have to change the type for the field overall from the 'Details View & Fields'."
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!data.overwriteLocally"
+            >
+              <mat-label>
+                <span i18n>Type</span>
+              </mat-label>
               <app-basic-autocomplete
                 formControlName="dataType"
                 #formDataType
@@ -156,13 +175,13 @@
           <div class="entity-form-cell">
             <app-admin-default-value
               formControlName="defaultValue"
-              [entityType]="entityType"
-              [entitySchemaField]="entitySchemaField"
+              [entityType]="data.entityType"
+              [entitySchemaField]="data.entitySchemaField"
             >
             </app-admin-default-value>
 
             <app-anonymize-options
-              [value]="entitySchemaField.anonymize"
+              [value]="data.entitySchemaField.anonymize"
               (valueChange)="schemaFieldsForm.get('anonymize').setValue($event)"
             >
               <span i18n>Anonymize</span>
@@ -183,7 +202,7 @@
 
           <div class="entity-form-cell">
             <app-configure-entity-field-validator
-              [entitySchemaField]="entitySchemaField"
+              [entitySchemaField]="data.entitySchemaField"
               (entityValidatorChanges)="entityFieldValidatorChanges($event)"
             ></app-configure-entity-field-validator>
           </div>
@@ -196,4 +215,15 @@
 <mat-dialog-actions>
   <button mat-button (click)="save()" i18n="Button label">Save</button>
   <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
+  @if (data.overwriteLocally) {
+    <button
+      mat-button
+      (click)="resetToBaseFieldSettings()"
+      i18n="Button label"
+      matTooltip="Discard any changes you have made to this field only for this view and reset it to the general settings"
+      i18n-matTooltip
+    >
+      Reset to base field settings
+    </button>
+  }
 </mat-dialog-actions>

@@ -31,54 +31,92 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   }
 
   public generateEntities(): Todo[] {
-    const data = [];
+    return generateTodos({
+      children: this.demoChildren.entities,
+      assignedTo: this.demoUsers.entities,
+      minPerChild: this.config.minPerChild,
+      maxPerChild: this.config.maxPerChild,
+    });
+  }
+}
 
-    for (const child of this.demoChildren.entities) {
-      if (!child.isActive) {
-        continue;
-      }
-
-      let numberOfRecords = faker.number.int({
-        min: this.config.minPerChild,
-        max: this.config.maxPerChild,
-      });
-
-      for (let i = 0; i < numberOfRecords; i++) {
-        data.push(this.generateTodoForEntity(child));
-      }
+export function generateTodos(params: {
+  children: Entity[];
+  assignedTo: Entity[];
+  minPerChild: number;
+  maxPerChild: number;
+}): Todo[] {
+  const data = [];
+  for (const child of params.children) {
+    if (!child.isActive) {
+      continue;
     }
 
-    return data;
-  }
-
-  private generateTodoForEntity(entity: Entity): Todo {
-    const todo = new Todo(faker.string.alphanumeric(20));
-
-    const selectedStory = faker.helpers.arrayElement(stories);
-    todo.subject = selectedStory.subject;
-    todo.description = selectedStory.description;
-
-    todo.deadline = faker.date.between({
-      from: moment().subtract(5, "days").toDate(),
-      to: moment().add(90, "days").toDate(),
+    let numberOfRecords = faker.number.int({
+      min: params.minPerChild,
+      max: params.maxPerChild,
     });
-    faker.helpers.maybe(
-      () =>
-        (todo.startDate = faker.date.between({
-          from: moment(todo.deadline).subtract(25, "days").toDate(),
-          to: todo.deadline,
-        })),
-      { probability: 0.5 },
-    );
 
-    todo.relatedEntities = [entity.getId()];
-
-    todo.assignedTo = [
-      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
-    ];
-
-    return todo;
+    for (let i = 0; i < numberOfRecords; i++) {
+      data.push(
+        generateTodo({
+          entity: child,
+          assignedTo: faker.helpers.arrayElements(params.assignedTo, 1),
+        }),
+      );
+    }
   }
+
+  return data;
+}
+
+/**
+ * @param opts
+ * @param opts.isDue If true, the generated deadline is before the reference
+ * date (today). If false, the deadline is after the reference date.
+ */
+export function generateTodo({
+  entity,
+  assignedTo,
+  isDue,
+}: {
+  entity: Entity;
+  assignedTo: Entity[];
+  isDue?: boolean;
+}): Todo {
+  const todo = new Todo(faker.string.alphanumeric(20));
+
+  const selectedStory = faker.helpers.arrayElement(stories);
+  todo.subject = selectedStory.subject;
+  todo.description = selectedStory.description;
+
+  let deadlineFrom = moment(faker.defaultRefDate()).subtract(5, "days");
+  let deadlineTo = moment(faker.defaultRefDate()).add(90, "days");
+
+  if (isDue === true) {
+    deadlineTo = moment(faker.defaultRefDate()).subtract(1, "days");
+  } else if (isDue === false) {
+    deadlineFrom = moment(faker.defaultRefDate()).add(1, "days");
+  }
+  todo.deadline = faker.date.between({
+    from: deadlineFrom.toDate(),
+    to: deadlineTo.toDate(),
+  });
+
+  faker.helpers.maybe(
+    () =>
+      (todo.startDate = faker.date.between({
+        from: moment(todo.deadline).subtract(25, "days").toDate(),
+        to: todo.deadline,
+      })),
+    { probability: 0.5 },
+  );
+
+  todo.relatedEntities = [entity.getId()];
+
+  todo.assignedTo = assignedTo.map((entity) => entity.getId());
+
+  return todo;
 }
 
 const stories: Partial<Todo>[] = [

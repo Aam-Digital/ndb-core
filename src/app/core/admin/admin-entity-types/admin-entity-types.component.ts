@@ -65,10 +65,7 @@ export class AdminEntityTypesComponent implements OnInit {
   protected loadEntityTypes(onlyUserFacing = true) {
     this.entityTypes = this.entities
       .getEntityTypes(onlyUserFacing)
-      .map((e) => e.value)
-      .filter(
-        (e) => !e.isInternalEntity, // Exclude internal entities
-      );
+      .map((e) => e.value);
   }
 
   async create() {
@@ -116,7 +113,23 @@ export class AdminEntityTypesComponent implements OnInit {
     newConfig.data[EntityConfigService.getListViewId(entityConfig)] =
       listViewConfig;
 
+    this.addEntityMenuItem(newConfig.data as { [key: string]: any }, id);
+
     await this.entityMapper.save(newConfig);
+  }
+
+  private addEntityMenuItem(data: { [key: string]: any }, id: string) {
+    if (!data.navigationMenu) {
+      data.navigationMenu = { items: [] };
+    }
+    const menuItems = data.navigationMenu.items;
+
+    // Avoid duplicate menu items
+    if (!menuItems.some((item: any) => item.entityType === id)) {
+      menuItems.push({
+        entityType: id,
+      });
+    }
   }
 
   private getDefaultEntityConfig(

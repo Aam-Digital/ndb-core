@@ -23,6 +23,7 @@ import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
 import { DynamicPlaceholderValueService } from "app/core/default-values/x-dynamic-placeholder/dynamic-placeholder-value.service";
+import { todoDueStatusFilter } from "../../../features/todos/add-default-todo-views";
 
 @Injectable({
   providedIn: "root",
@@ -50,7 +51,7 @@ export class FilterGeneratorService {
     onlyShowUsedOptions = false,
   ): Promise<Filter<T>[]> {
     const filters: Filter<T>[] = [];
-    for (const filterConfig of filterConfigs) {
+    for (let filterConfig of filterConfigs) {
       const schema = entityConstructor.schema.get(filterConfig.id) || {};
       let filter: Filter<T>;
       const label = filterConfig.label ?? schema.labelShort ?? schema.label;
@@ -60,6 +61,7 @@ export class FilterGeneratorService {
           filterConfig.id,
           label,
           this.enumService.getEnumValues(schema.additional),
+          filterConfig.singleSelectOnly,
         );
       } else if (type == "boolean") {
         filter = new BooleanFilter(
@@ -68,10 +70,14 @@ export class FilterGeneratorService {
           filterConfig as BooleanFilterConfig,
         );
       } else if (type == "prebuilt") {
+        filterConfig = this.loadPrebuiltFilter(
+          filterConfig as PrebuiltFilterConfig<T>,
+        );
         filter = new SelectableFilter(
           filterConfig.id,
           (filterConfig as PrebuiltFilterConfig<T>).options,
-          label,
+          filterConfig.label ?? label,
+          filterConfig.singleSelectOnly,
         );
       } else if (
         this.schemaService.getDatatypeOrDefault(type, true) instanceof
@@ -125,5 +131,26 @@ export class FilterGeneratorService {
       filters.push(filter);
     }
     return filters;
+  }
+
+  /**
+   * Load additional filter details from a repository of prebuilt configs,
+   * if available.
+   * If no information is available, the filterConfig is returned as is.
+   * @param filterConfig Filter to load or extend
+   * @private
+   */
+  private loadPrebuiltFilter<T>(
+    filterConfig: PrebuiltFilterConfig<T>,
+  ): PrebuiltFilterConfig<T> {
+    switch (filterConfig.id) {
+      case todoDueStatusFilter.id:
+        return {
+          ...todoDueStatusFilter,
+          ...filterConfig,
+        };
+      default:
+        return filterConfig;
+    }
   }
 }

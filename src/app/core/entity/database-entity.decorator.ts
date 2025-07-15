@@ -16,7 +16,7 @@ export class EntityRegistry extends Registry<EntityConstructor> {
     }));
     if (onlyUserFacing) {
       entities = entities.filter(
-        ({ key, value }) => value._isCustomizedType && value.label,
+        ({ key, value }) => !value.isInternalEntity && value.label,
       );
     }
     return entities;
@@ -48,6 +48,6 @@ export function DatabaseEntity(entityType: string) {
     // append parent schema definitions
     const parentConstructor = Object.getPrototypeOf(constructor);
     const schema = getEntitySchema(constructor);
-    parentConstructor.schema.forEach((value, key) => schema.set(key, value));
+    parentConstructor.schema?.forEach((value, key) => schema.set(key, value));
   };
 }

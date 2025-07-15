@@ -36,13 +36,13 @@ loadConfig()
     const messaging = firebase.messaging();
 
     messaging.onBackgroundMessage(function(payload) {
-      console.log('[firebase-messaging-sw.js] Received background message ', payload);
+      console.log("[firebase-messaging-sw.js] Received background message ", payload);
       const { title, body, image } = payload.notification;
       const notificationOptions = {
         body: body,
-        icon: "/favicon.ico",
+        icon: "/assets/icons/favicon.png",
         data: {
-          url: window.location.protocol + "//" + window.location.hostname,
+          url: window.location.protocol + "//" + window.location.hostname
         }
       };
       const notification = self.registration.showNotification(title, notificationOptions);

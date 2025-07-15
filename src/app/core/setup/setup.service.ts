@@ -105,8 +105,12 @@ export class SetupService {
   }
 
   /**
-   * Check if we are currently still waiting for config to be initialized or downloaded
-   * and keep the app on the loading screen until that is done.
+   * Wait until config is ready and/or sync is complete.
+   * @param mustHaveConfigAndSync
+   * If true, waits for both config and sync.
+   * If false, resolves when either:
+   * - configUpdates emits a non-undefined config, or
+   * - SyncState.COMPLETED is reached and config loads afterward.
    */
   public async waitForConfigReady(
     mustHaveConfigAndSync: boolean = false,

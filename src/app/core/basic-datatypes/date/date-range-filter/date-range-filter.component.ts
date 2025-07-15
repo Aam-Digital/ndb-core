@@ -1,4 +1,12 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
@@ -21,6 +29,7 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
   toDate: Date;
 
   @Input() filterConfig: DateFilter<T>;
+  @Output() dateRangeChange = new EventEmitter<{ from: Date; to: Date }>();
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.filterConfig) {
@@ -39,6 +48,7 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
       this.filterConfig.selectedOptionChange.emit(
         this.filterConfig.selectedOptionValues,
       );
+      this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
     }
   }
 
@@ -50,6 +60,7 @@ export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
     this.filterConfig.selectedOptionChange.emit(
       this.filterConfig.selectedOptionValues,
     );
+    this.dateRangeChange.emit({ from: this.fromDate, to: this.toDate });
   }
 
   openDialog(e: Event) {

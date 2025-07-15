@@ -7,12 +7,15 @@ import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../entity/schema/entity-schema-field";
-import { MenuItem } from "../ui/navigation/menu-item";
 import { DefaultValueConfig } from "../default-values/default-value-config";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 import { LoaderMethod } from "../entity/entity-special-loader/entity-special-loader.service";
 import { Logging } from "../logging/logging.service";
 import { PanelComponent } from "../entity-details/EntityDetailsConfig";
+import { ConfigMigration } from "./config-migration";
+import { addDefaultNoteDetailsConfig } from "../../child-dev-project/notes/add-default-note-views";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
+import { addDefaultTodoViews } from "../../features/todos/add-default-todo-views";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -52,8 +55,15 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return this.entityMapper.save(new Config(Config.CONFIG_KEY, config), true);
   }
 
-  public exportConfig(): string {
-    return JSON.stringify(this.currentConfig.data);
+  /**
+   * Export the current config as a JSON string.
+   * @param rawObject If true, returns the object instead of stringified value.
+   */
+  public exportConfig(rawObject: true): Object;
+  public exportConfig(rawObject?: false): string;
+  public exportConfig(rawObject?: boolean): string | Object {
+    const value = JSON.stringify(this.currentConfig.data);
+    return rawObject ? JSON.parse(value) : value;
   }
 
   public getConfig<T>(id: string): T | undefined {
@@ -88,14 +98,23 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migratePercentageDatatype,
       migrateEntityBlock,
       migrateGroupByConfig,
-      addDefaultNoteDetailsConfig,
       migrateDefaultValue,
       migrateUserEntityAndPanels,
+      migrateComponentEntityTypeDefaults,
+      migrateActivitiesOverviewComponent,
+      removeOutdatedTodoViews,
+      migrateChildSchoolOverviewComponent,
+    ];
+
+    // default migrations that are not only temporary but will remain in the codebase
+    const defaultConfigs: ConfigMigration[] = [
+      addDefaultNoteDetailsConfig,
+      addDefaultTodoViews,
     ];
 
     const newDoc = JSON.parse(JSON.stringify(doc), (_that, rawValue) => {
       let docPart = rawValue;
-      for (const migration of migrations) {
+      for (const migration of migrations.concat(defaultConfigs)) {
         docPart = migration(_that, docPart);
       }
       return docPart;
@@ -104,13 +123,6 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return Object.assign(new (doc.constructor as new () => E)(), newDoc);
   }
 }
-
-/**
- * A ConfigMigration is checked during a full JSON.parse using a reviver function.
- * If the migration does not apply to the given configPart, make sure to return it unchanged.
- * Multiple migrations are chained and can transform the same config part one after the other.
- */
-type ConfigMigration = (key: string, configPart: any) => any;
 
 const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (
   key,
@@ -137,35 +149,6 @@ const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (
     configPart.editComponent = configPart.edit;
     delete configPart.edit;
   }
-  return configPart;
-};
-
-const migrateMenuItemConfig: ConfigMigration = (key, configPart) => {
-  if (key !== "navigationMenu") {
-    return configPart;
-  }
-
-  const oldItems: (
-    | {
-        name: string;
-        icon: string;
-        link: string;
-      }
-    | MenuItem
-  )[] = configPart.items;
-
-  configPart.items = oldItems.map((item) => {
-    if (item.hasOwnProperty("name")) {
-      return {
-        label: item["name"],
-        icon: item.icon,
-        link: item.link,
-      };
-    } else {
-      return item;
-    }
-  });
-
   return configPart;
 };
 
@@ -339,26 +322,6 @@ const migrateEntityBlock: ConfigMigration = (key, configPart) => {
   return configPart;
 };
 
-/**
- * Add default view:note/:id NoteDetails config
- * to avoid breaking note details with a default config from AdminModule
- */
-const addDefaultNoteDetailsConfig: ConfigMigration = (key, configPart) => {
-  if (
-    // add at top-level of config
-    configPart?.["_id"] === "Config:CONFIG_ENTITY" &&
-    configPart?.["data"] &&
-    !configPart?.["data"]["view:note/:id"]
-  ) {
-    configPart["data"]["view:note/:id"] = {
-      component: "NoteDetails",
-      config: {},
-    };
-  }
-
-  return configPart;
-};
-
 const migrateGroupByConfig: ConfigMigration = (key, configPart) => {
   // Check if we are working with the EntityCountDashboard component and within the 'config' object
   if (
@@ -424,4 +387,177 @@ const migrateUserEntityAndPanels: ConfigMigration = (key, configPart) => {
   }
 
   return configPart;
+};
+
+/**
+ * Migration to set or update entityType for specific components
+ */
+const migrateComponentEntityTypeDefaults: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (typeof configPart !== "object" || !configPart?.component) {
+    return configPart;
+  }
+
+  if (!configPart.config) {
+    configPart.config = {};
+  }
+
+  const defaults = RELATED_ENTITIES_DEFAULT_CONFIGS[configPart.component];
+  if (defaults) {
+    configPart.config.entityType = defaults.entityType;
+    if (
+      !Array.isArray(configPart.config.columns) ||
+      configPart.config.columns.length === 0
+    ) {
+      configPart.config.columns = defaults.columns;
+    }
+  }
+
+  return configPart;
+};
+
+/**
+ * Migration to replace the deprecated `ActivitiesOverview` component
+ * with the more flexible `RelatedEntities` component configured for `RecurringActivity`.
+ * - If a config exists, only the component string is replaced to preserve the system-specific config.
+ * - If no config is defined, a default config is added with common columns like:
+ * This ensures consistency while maintaining any existing customizations.
+ */
+const migrateActivitiesOverviewComponent: ConfigMigration = (
+  _key,
+  configPart,
+) => {
+  if (
+    typeof configPart !== "object" ||
+    configPart?.component !== "ActivitiesOverview"
+  ) {
+    return configPart;
+  }
+
+  const existingConfig =
+    configPart.config && Object.keys(configPart.config).length > 0;
+
+  if (existingConfig) {
+    configPart.entityType = "RecurringActivity";
+    return {
+      ...configPart,
+      component: "RelatedEntities",
+    };
+  }
+
+  return {
+    component: "RelatedEntities",
+    config: {
+      entityType: "RecurringActivity",
+      columns: [
+        {
+          id: "title",
+          editComponent: "EditTextWithAutocomplete",
+          additional: {
+            entityType: "RecurringActivity",
+            relevantProperty: "linkedGroups",
+            relevantValue: "",
+          },
+        },
+        { id: "assignedTo" },
+        { id: "linkedGroups" },
+        { id: "excludedParticipants" },
+      ],
+    },
+  };
+};
+
+/* Remove outdated task view configs
+ * to fall back to the new default that is automatically added.
+ */
+const removeOutdatedTodoViews: ConfigMigration = (key, configPart) => {
+  if (
+    configPart?.component === "TodoList" ||
+    configPart?.component === "TodoDetails"
+  ) {
+    return undefined; // remove this config
+  }
+
+  return configPart;
+};
+
+/**
+ * Replace deprecated `ChildSchoolOverview`/`PreviousSchools`/`ChildrenOverview`
+ * components with `RelatedEntities` using ChildSchoolRelation entity.
+ * - If a config exists, only replace the component string.
+ * - If config is missing, replace the entire component with the default config.
+ */
+const migrateChildSchoolOverviewComponent: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  const deprecatedComponents = [
+    "ChildSchoolOverview",
+    "PreviousSchools",
+    "ChildrenOverview",
+  ];
+
+  // determine if this is part of EntityDetails for Child or for School
+  if (typeof configPart === "object" && Array.isArray(configPart?.panels)) {
+    const isChildDetails = configPart?.entityType?.toLowerCase() === "child";
+
+    configPart.panels.forEach((panel) => {
+      panel.components?.forEach((component, index) => {
+        if (
+          typeof component === "object" &&
+          deprecatedComponents.includes(component.component)
+        ) {
+          const newConfig = Object.assign(
+            {},
+            isChildDetails ? relatedEntitiesForChild : relatedEntitiesForSchool,
+            component.config,
+          ); // let existing config override defaults
+
+          panel.components[index] = {
+            component: "RelatedEntities",
+            config: newConfig,
+          };
+          // enforce important new config properties
+          component.config.entityType = "ChildSchoolRelation";
+          component.config.loaderMethod = "ChildrenServiceQueryRelations";
+        }
+      });
+    });
+  }
+
+  return configPart;
+};
+
+/**
+ * Default configuration for RelatedEntities used in School entity details.
+ * Displays child-related school history (childId, start/end dates, class, result).
+ */
+const relatedEntitiesForSchool = {
+  entityType: "ChildSchoolRelation",
+  columns: [
+    { id: "childId" },
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
+    { id: "schoolClass" },
+    { id: "result" },
+  ],
+  loaderMethod: "ChildrenServiceQueryRelations",
+};
+/**
+ * Default configuration for RelatedEntities used in Child entity details.
+ * Displays school-related history (start/end dates, schoolId, class, result) and includes inactive records.
+ */
+const relatedEntitiesForChild = {
+  entityType: "ChildSchoolRelation",
+  columns: [
+    { id: "start", visibleFrom: "md" },
+    { id: "end", visibleFrom: "md" },
+    { id: "schoolId" },
+    { id: "schoolClass" },
+    { id: "result" },
+  ],
+  loaderMethod: "ChildrenServiceQueryRelations",
+  showInactive: true,
 };

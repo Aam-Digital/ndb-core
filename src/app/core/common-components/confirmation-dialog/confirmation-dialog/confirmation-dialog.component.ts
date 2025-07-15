@@ -42,7 +42,7 @@ export interface ConfirmationDialogConfig {
 
 export interface ConfirmationDialogButton {
   text: string;
-  dialogResult?: boolean | undefined;
+  dialogResult?: boolean | string | undefined;
   click();
 }
 
@@ -102,3 +102,13 @@ export const YesNoCancelButtons: ConfirmationDialogButton[] = [
     dialogResult: undefined,
   },
 ];
+
+export function CustomYesNoButtons(
+  yesLabel: string,
+  noLabel: string,
+): ConfirmationDialogButton[] {
+  return [
+    { text: yesLabel, dialogResult: true, click() {} },
+    { text: noLabel, dialogResult: false, click() {} },
+  ];
+}

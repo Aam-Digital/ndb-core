@@ -70,7 +70,10 @@ export class AddressSearchComponent implements OnInit {
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
    */
-  @Output() locationSelected = new EventEmitter<GeoLocation>();
+  @Output() locationSelected = new EventEmitter<{
+    location: GeoLocation;
+    userInput: string;
+  }>();
 
   filteredOptions = new BehaviorSubject<GeoResult[]>([]);
   loading = false;
@@ -104,10 +107,14 @@ export class AddressSearchComponent implements OnInit {
       .subscribe((res) => this.filteredOptions.next(res));
   }
 
+  private lastUserInput: string = "";
+
   triggerInputUpdate() {
+    this.lastUserInput = this.inputElem.nativeElement.value;
     this.inputStream.next(this.inputElem.nativeElement.value);
   }
   searchClick() {
+    this.lastUserInput = this.inputElem.nativeElement.value;
     this.searchClickStream.next(this.inputElem.nativeElement.value);
   }
 
@@ -122,6 +129,7 @@ export class AddressSearchComponent implements OnInit {
 
   async selectLocation(selected: GeoResult | string | undefined) {
     let result: GeoLocation;
+
     if (typeof selected === "object") {
       result = { geoLookup: selected };
     } else if (typeof selected === "string") {
@@ -133,7 +141,10 @@ export class AddressSearchComponent implements OnInit {
       result = { locationString: selected };
     }
 
-    this.locationSelected.emit(result);
+    this.locationSelected.emit({
+      location: result,
+      userInput: this.lastUserInput,
+    });
     this.filteredOptions.next([]);
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, Inject, OnInit, inject } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -28,7 +28,6 @@ import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-
 import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { AdminEntityService } from "../../admin-entity.service";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
@@ -41,6 +40,28 @@ import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options
 import { MatCheckbox } from "@angular/material/checkbox";
 import { AdminDefaultValueComponent } from "../../../default-values/admin-default-value/admin-default-value.component";
 import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/entity-type-select.component";
+import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
+
+/**
+ * Dialog data for AdminEntityFieldComponent
+ */
+export interface AdminEntityFieldData {
+  /** current state of the field being edited */
+  entitySchemaField: EntitySchemaField;
+
+  /**
+   * Entity type this field is part of,
+   * to use as context information.
+   * The entityType is not changed by this component.
+   */
+  entityType: EntityConstructor;
+
+  /**
+   * Whether the field is changed only for a single view instead of globally for the entity type.
+   * Use to prevent changes to config that are required to be consistent across all uses of the field.
+   */
+  overwriteLocally: boolean;
+}
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -72,14 +93,6 @@ import { EntityTypeSelectComponent } from "app/core/entity/entity-type-select/en
   ],
 })
 export class AdminEntityFieldComponent implements OnInit {
-  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
-  private fb = inject(FormBuilder);
-  private allDataTypes = inject(DefaultDatatype) as unknown as DefaultDatatype[];
-  private configurableEnumService = inject(ConfigurableEnumService);
-  private entityRegistry = inject(EntityRegistry);
-  private adminEntityService = inject(AdminEntityService);
-  private dialog = inject(MatDialog);
-
   fieldId: string;
   entityType: EntityConstructor;
 
@@ -91,56 +104,72 @@ export class AdminEntityFieldComponent implements OnInit {
 
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
-
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
 
-  constructor() {
-    const data = inject<{
-    fieldId: string;
-    entityType: EntityConstructor;
-}>(MAT_DIALOG_DATA);
-
-    this.fieldId = data.fieldId;
-    this.entityType = data.entityType;
-  }
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: AdminEntityFieldData,
+    private dialogRef: MatDialogRef<any>,
+    private fb: FormBuilder,
+    @Inject(DefaultDatatype) private allDataTypes: DefaultDatatype[],
+    private configurableEnumService: ConfigurableEnumService,
+    private entityRegistry: EntityRegistry,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit() {
-    this.entitySchemaField = {
-      ...(this.entityType.schema.get(this.fieldId) ?? {}),
-    };
-
     this.initSettings();
+
+    if (this.data.overwriteLocally) {
+      this.lockGlobalFields();
+    }
+
     this.initAvailableDatatypes(this.allDataTypes);
   }
 
+  /**
+   * Disable editing of those fields that have to be consistent across all uses of the field.
+   * @private
+   */
+  private lockGlobalFields() {
+    ["dataType", "additional", "isArray"].forEach((ctrlName) => {
+      const control = this.schemaFieldsForm.get(ctrlName);
+      if (control?.value) {
+        control.disable();
+      }
+    });
+  }
+
   private initSettings() {
-    this.fieldIdForm = this.fb.control(this.fieldId, {
+    this.fieldIdForm = this.fb.control(this.data.entitySchemaField.id, {
       validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]*$/)],
       asyncValidators: [
-        uniqueIdValidator(Array.from(this.entityType.schema.keys())),
+        uniqueIdValidator(Array.from(this.data.entityType.schema.keys())),
       ],
     });
-    this.additionalForm = this.fb.control(this.entitySchemaField.additional);
+    this.additionalForm = this.fb.control(
+      this.data.entitySchemaField.additional,
+    );
 
     this.schemaFieldsForm = this.fb.group({
-      label: [this.entitySchemaField.label, Validators.required],
-      labelShort: [this.entitySchemaField.labelShort],
-      description: [this.entitySchemaField.description],
+      id: this.fieldIdForm,
+      label: [this.data.entitySchemaField.label, Validators.required],
+      labelShort: [this.data.entitySchemaField.labelShort],
+      description: [this.data.entitySchemaField.description],
 
-      dataType: [this.entitySchemaField.dataType, Validators.required],
-      isArray: [this.entitySchemaField.isArray],
+      dataType: [this.data.entitySchemaField.dataType, Validators.required],
+      isArray: [this.data.entitySchemaField.isArray],
       additional: this.additionalForm,
 
-      defaultValue: [this.entitySchemaField.defaultValue],
-      searchable: [this.entitySchemaField.searchable],
-      anonymize: [this.entitySchemaField.anonymize],
-      viewComponent: [this.entitySchemaField.viewComponent],
-      editComponent: [this.entitySchemaField.editComponent],
-      showInDetailsView: [this.entitySchemaField.showInDetailsView],
-      generateIndex: [this.entitySchemaField.generateIndex],
-      validators: [this.entitySchemaField.validators],
+      defaultValue: [this.data.entitySchemaField.defaultValue],
+      searchable: [this.data.entitySchemaField.searchable],
+      anonymize: [this.data.entitySchemaField.anonymize],
+      viewComponent: [this.data.entitySchemaField.viewComponent],
+      editComponent: [this.data.entitySchemaField.editComponent],
+      showInDetailsView: [this.data.entitySchemaField.showInDetailsView],
+      generateIndex: [this.data.entitySchemaField.generateIndex],
+      validators: [this.data.entitySchemaField.validators],
     });
     this.form = this.fb.group({
       id: this.fieldIdForm,
@@ -148,8 +177,9 @@ export class AdminEntityFieldComponent implements OnInit {
     });
 
     this.schemaFieldsForm.valueChanges.subscribe((v) => {
-      if (JSON.stringify(v) === JSON.stringify(this.entitySchemaField)) return;
-      this.entitySchemaField = { ...this.getUpdatedSchemaField(v) };
+      if (JSON.stringify(v) === JSON.stringify(this.data.entitySchemaField))
+        return;
+      this.data.entitySchemaField = { ...this.getUpdatedSchemaField(v) };
     });
 
     this.schemaFieldsForm
@@ -167,7 +197,7 @@ export class AdminEntityFieldComponent implements OnInit {
   }
 
   private updateForNewOrExistingField() {
-    if (!!this.fieldId) {
+    if (!!this.data.entitySchemaField.id) {
       // existing fields' id is readonly
       this.fieldIdForm.disable();
     } else {
@@ -212,7 +242,7 @@ export class AdminEntityFieldComponent implements OnInit {
 
   private updateDataTypeAdditional(
     dataType: string,
-    newAdditional: string = this.entitySchemaField.additional,
+    newAdditional: string = this.data.entitySchemaField.additional,
   ) {
     this.resetAdditional();
 
@@ -271,21 +301,11 @@ export class AdminEntityFieldComponent implements OnInit {
     this.createNewAdditionalOption = undefined;
   }
 
-  save() {
+  async save() {
     this.form.markAllAsTouched();
-    if (this.form.invalid) {
-      return;
-    }
-
-    const fieldId = this.fieldIdForm.getRawValue();
-
-    this.adminEntityService.updateSchemaField(
-      this.entityType,
-      fieldId,
-      this.entitySchemaField,
-    );
-
-    this.dialogRef.close(fieldId);
+    if (this.form.invalid) return;
+    this.data.entitySchemaField.id = this.fieldIdForm.getRawValue();
+    this.dialogRef.close(this.data.entitySchemaField);
   }
 
   private getUpdatedSchemaField(formValues): EntitySchemaField {
@@ -308,11 +328,13 @@ export class AdminEntityFieldComponent implements OnInit {
       // if the user makes changes, the dialog component itself is saving the new entity to the database already
       enumEntity = new ConfigurableEnum(this.additionalForm.value);
     }
-    this.dialog.open(ConfigureEnumPopupComponent, { data: enumEntity });
+    this.dialog.open(ConfigureEnumPopupComponent, {
+      data: enumEntity,
+      disableClose: true,
+    });
   }
-}
 
-interface SimpleDropdownValue {
-  label: string;
-  value: string;
+  resetToBaseFieldSettings() {
+    this.dialogRef.close(this.fieldIdForm.getRawValue());
+  }
 }

@@ -25,7 +25,12 @@ import {
   SqlReportService,
 } from "../sql-report/sql-report.service";
 import { of } from "rxjs";
-import { entityRegistry, EntityRegistry } from "app/core/entity/database-entity.decorator";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
+import { JsonEditorService } from "#src/app/core/admin/json-editor/json-editor.service";
+import { Angulartics2Module } from "angulartics2";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
@@ -87,6 +92,7 @@ describe("ReportingComponent", () => {
         FontAwesomeTestingModule,
         MatNativeDateModule,
         RouterTestingModule,
+        Angulartics2Module.forRoot(),
       ],
       providers: [
         { provide: DataAggregationService, useValue: mockReportingService },
@@ -99,6 +105,10 @@ describe("ReportingComponent", () => {
         {
           provide: EntityRegistry,
           useValue: { entityRegistry },
+        },
+        {
+          provide: JsonEditorService,
+          useValue: jasmine.createSpyObj(["openJsonEditorDialog"]),
         },
       ],
     }).compileComponents();

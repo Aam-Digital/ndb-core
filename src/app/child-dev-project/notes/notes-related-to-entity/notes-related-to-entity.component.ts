@@ -11,12 +11,12 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
  */
 @DynamicComponent("NotesRelatedToEntity")
-@DynamicComponent("NotesOfChild") // for backward compatibility
 @Component({
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
@@ -30,13 +30,8 @@ export class NotesRelatedToEntityComponent
   private formDialog = inject(FormDialogService);
 
   override entityCtr = Note;
-  override _columns: FormFieldConfig[] = [
-    { id: "date", visibleFrom: "xs" },
-    { id: "subject", visibleFrom: "xs" },
-    { id: "text", visibleFrom: "md" },
-    { id: "authors", visibleFrom: "md" },
-    { id: "warningLevel", visibleFrom: "md" },
-  ];
+  override _columns: FormFieldConfig[] =
+    RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns;
 
   /**
    * returns the color for a note; passed to the entity subrecord component

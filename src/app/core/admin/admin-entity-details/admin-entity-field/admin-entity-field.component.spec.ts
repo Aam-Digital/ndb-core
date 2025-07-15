@@ -19,14 +19,9 @@ import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype"
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
-import {
-  DatabaseEntity,
-  EntityRegistry,
-} from "../../../entity/database-entity.decorator";
+import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { Validators } from "@angular/forms";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
-import { AdminEntityService } from "../../admin-entity.service";
-import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
 
 describe("AdminEntityFieldComponent", () => {
@@ -34,7 +29,16 @@ describe("AdminEntityFieldComponent", () => {
   let fixture: ComponentFixture<AdminEntityFieldComponent>;
   let loader: HarnessLoader;
 
+  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+
   beforeEach(() => {
+    mockEnumService = jasmine.createSpyObj([
+      "getEnum",
+      "listEnums",
+      "preLoadEnums",
+    ]);
+    mockEnumService.listEnums.and.returnValue([]);
+
     TestBed.configureTestingModule({
       imports: [
         AdminEntityFieldComponent,
@@ -51,6 +55,7 @@ describe("AdminEntityFieldComponent", () => {
           },
         },
         { provide: MatDialogRef, useValue: { close: () => null } },
+        { provide: ConfigurableEnumService, useValue: mockEnumService },
       ],
     });
     fixture = TestBed.createComponent(AdminEntityFieldComponent);
@@ -63,25 +68,17 @@ describe("AdminEntityFieldComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should generate id (if new field) from label", async () => {
-    const labelInput = await loader
-      .getHarness(MatFormFieldHarness.with({ floatingLabelText: "Label" }))
-      .then((field) => field.getControl(MatInputHarness));
-    const idInput = await loader
-      .getHarness(
-        MatFormFieldHarness.with({ floatingLabelText: "Field ID (readonly)" }),
-      )
-      .then((field) => field.getControl(MatInputHarness));
-
+  it("should generate id (if new field) from label", fakeAsync(() => {
     // Initially ID is automatically generated from label
-    await labelInput.setValue("new label");
-    await expectAsync(idInput.getValue()).toBeResolvedTo("newLabel");
+    component.schemaFieldsForm.get("label").setValue("New Label");
+    tick();
+    expect(component.fieldIdForm.value).toBe(generateIdFromLabel("New Label"));
 
     // manual edit of ID field stops auto generation of ID
-    await idInput.setValue("my_id");
-    await labelInput.setValue("other label");
-    await expectAsync(idInput.getValue()).toBeResolvedTo("my_id");
-  });
+    component.fieldIdForm.setValue("new_id");
+    component.schemaFieldsForm.get("label").setValue("Changed Label");
+    expect(component.fieldIdForm.value).toBe("new_id");
+  }));
 
   it("should include 'additional' field only for relevant datatypes", fakeAsync(() => {
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
@@ -128,8 +125,7 @@ describe("AdminEntityFieldComponent", () => {
 
   it("should init 'additional' options for configurable-enum", fakeAsync(() => {
     const mockEnumList = ["A", "B"];
-    const enumService = TestBed.inject(ConfigurableEnumService);
-    spyOn(enumService, "listEnums").and.returnValue(mockEnumList);
+    mockEnumService.listEnums.and.returnValue(mockEnumList);
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
@@ -141,8 +137,12 @@ describe("AdminEntityFieldComponent", () => {
   }));
 
   it("should init 'additional' value from schema field for configurable-enum", fakeAsync(() => {
-    component.entityType = TestEntity;
-    component.fieldId = "category";
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "Category",
+      dataType: ConfigurableEnumDatatype.dataType,
+      additional: "genders",
+    };
     component.ngOnInit();
 
     expect(component.additionalForm.value).toBe("genders");
@@ -182,8 +182,12 @@ describe("AdminEntityFieldComponent", () => {
       mockEntityTypes.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );
 
-    component.entityType = TestEntity;
-    component.fieldId = "ref";
+    component.data.entityType = TestEntity;
+    component.data.entitySchemaField = {
+      label: "ref",
+      dataType: EntityDatatype.dataType,
+      additional: TestEntity.ENTITY_TYPE,
+    };
     component.ngOnInit();
 
     const dataTypeForm = component.schemaFieldsForm.get("dataType");
@@ -195,31 +199,5 @@ describe("AdminEntityFieldComponent", () => {
       { value: RecurringActivity.ENTITY_TYPE, label: RecurringActivity.label },
     ]);
     expect(component.additionalForm.value).toBe(TestEntity.ENTITY_TYPE);
-  }));
-
-  it("should update entityConstructor schema upon save", fakeAsync(() => {
-    const testFieldData: EntitySchemaField = {
-      label: "test field",
-      dataType: "string",
-    };
-
-    @DatabaseEntity("EntityUpdatedInAdminUI")
-    class EntityUpdatedInAdminUI extends Entity {}
-
-    component.entityType = EntityUpdatedInAdminUI;
-    component.fieldId = "testField";
-    component.schemaFieldsForm.get("label").setValue(testFieldData.label);
-    component.schemaFieldsForm.get("dataType").setValue(testFieldData.dataType);
-
-    const adminService = TestBed.inject(AdminEntityService);
-    spyOn(adminService.entitySchemaUpdated, "next");
-
-    component.save();
-    tick();
-
-    expect(EntityUpdatedInAdminUI.schema.get("testField")).toEqual(
-      testFieldData,
-    );
-    expect(adminService.entitySchemaUpdated.next).toHaveBeenCalled();
   }));
 });

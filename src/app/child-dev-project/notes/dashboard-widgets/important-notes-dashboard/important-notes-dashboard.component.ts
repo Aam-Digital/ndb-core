@@ -8,7 +8,6 @@ import { DatePipe, NgStyle } from "@angular/common";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 
 @DynamicComponent("ImportantNotesDashboard")
-@DynamicComponent("ImportantNotesComponent") // TODO remove after all existing instances are updated
 @Component({
   selector: "app-important-notes-dashboard",
   templateUrl: "./important-notes-dashboard.component.html",

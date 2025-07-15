@@ -1,17 +1,20 @@
-@if (!entity.completed) {
-  <button mat-raised-button color="accent" (click)="complete.emit()">
+@if (entity.isNew) {
+  <!-- hide while creating new task -->
+} @else if (!formControl.value) {
+  <button mat-raised-button color="accent" (click)="completeTodo()">
     <fa-icon icon="check" class="margin-right-small"></fa-icon>
     <span i18n>Complete Task</span>
   </button>
 } @else {
   <div class="flex-row align-center gap-regular">
     <app-display-todo-completion
-      [value]="entity.completed"
+      [value]="formControl.value"
     ></app-display-todo-completion>
+
     <button
       mat-icon-button
       color="accent"
-      (click)="uncomplete.emit()"
+      (click)="uncompleteTodo()"
       matTooltip="mark as incomplete again"
       i18n-matTooltip="todo uncomplete button tooltip"
     >

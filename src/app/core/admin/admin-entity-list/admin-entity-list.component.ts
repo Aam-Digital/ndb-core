@@ -4,39 +4,23 @@ import {
   EntityListConfig,
   GroupConfig,
 } from "../../entity-list/EntityListConfig";
-import { EntityFieldsMenuComponent } from "../../common-components/entity-fields-menu/entity-fields-menu.component";
-import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 import { MatTableModule } from "@angular/material/table";
-import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
-import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDropList,
-  moveItemInArray,
-} from "@angular/cdk/drag-drop";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { MatSelect } from "@angular/material/select";
 import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { Logging } from "../../logging/logging.service";
+import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { EntityFieldsMenuComponent } from "../../common-components/entity-fields-menu/entity-fields-menu.component";
 
 @Component({
   selector: "app-admin-entity-list",
   imports: [
     EntityFieldsMenuComponent,
     MatTableModule,
-    EntityFieldLabelComponent,
-    CdkDrag,
-    FaIconComponent,
-    CdkDropList,
-    MatFormField,
-    MatLabel,
-    MatSelect,
     AdminTabsComponent,
     AdminTabTemplateDirective,
     ViewTitleComponent,
+    AdminListManagerComponent,
   ],
   templateUrl: "./admin-entity-list.component.html",
   styleUrls: [
@@ -48,7 +32,6 @@ export class AdminEntityListComponent implements OnChanges {
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityListConfig;
 
-  allFields: ColumnConfig[] = [];
   filters: string[];
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,7 +43,7 @@ export class AdminEntityListComponent implements OnChanges {
 
       this.initColumnGroupsIfNecessary();
 
-      this.initAvailableFields();
+      this.filters = (this.config.filters ?? []).map((f) => f.id);
     }
   }
 
@@ -84,14 +67,6 @@ export class AdminEntityListComponent implements OnChanges {
     }
   }
 
-  private initAvailableFields() {
-    this.allFields = [
-      ...(this.config.columns ?? []),
-      ...this.entityConstructor.schema.keys(),
-    ];
-    this.filters = (this.config.filters ?? []).map((f) => f.id);
-  }
-
   updateFilters(filters: string[]) {
     if (!Array.isArray(filters)) {
       Logging.warn(
@@ -111,13 +86,5 @@ export class AdminEntityListComponent implements OnChanges {
 
   newColumnGroupFactory(): GroupConfig {
     return { name: "", columns: [] };
-  }
-
-  removeItem<E>(array: E[], item: E): E[] {
-    return array.filter((currentItem) => currentItem !== item);
-  }
-
-  drop<E>(event: CdkDragDrop<E[], any>, columnsArray: E[]) {
-    moveItemInArray(columnsArray, event.previousIndex, event.currentIndex);
   }
 }

@@ -29,6 +29,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ConfigurableEnumDatatype } from "app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { DateOnlyDatatype } from "app/core/basic-datatypes/date-only/date-only.datatype";
 import { AdminIconComponent } from "app/admin-icon-input/admin-icon-input.component";
+import { SimpleDropdownValue } from "app/core/common-components/basic-autocomplete/simple-dropdown-value.interface";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -105,9 +106,9 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
     this.toStringAttributesOptions = [
       ...selectedKeys
-        .map((key) => allOptions.find((o) => o.key === key))
+        .map((key) => allOptions.find((o) => o.value === key))
         .filter(Boolean),
-      ...allOptions.filter((o) => !selectedKeys.includes(o.key)),
+      ...allOptions.filter((o) => !selectedKeys.includes(o.value)),
     ];
   }
 
@@ -164,22 +165,17 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
           field.label &&
           !selectedOptions.includes(key),
       )
-      .map(([key, field]) => ({ key: key, label: field.label }));
+      .map(([key, field]) => ({ value: key, label: field.label }));
 
     this.toStringAttributesOptions = [
-      ...selectedOptions.map((key) => ({
-        key: key,
-        label: this.entityConstructor.schema.get(key)?.label,
+      ...selectedOptions.map((value) => ({
+        value: value,
+        label: this.entityConstructor.schema.get(value)?.label,
       })),
       ...unselectedOptions,
     ];
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
-  objectToValue = (v: SimpleDropdownValue) => v?.key;
-}
-
-interface SimpleDropdownValue {
-  key: string;
-  label: string;
+  objectToValue = (v: SimpleDropdownValue) => v?.value;
 }

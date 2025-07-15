@@ -65,12 +65,20 @@ export class EntityConfigService {
    * trigger an error message
    */
   setupEntitiesFromConfig() {
-    for (const config of this.configService.getAllConfigs<
-      EntityConfig & { _id: string }
-    >(EntityConfigService.PREFIX_ENTITY_CONFIG)) {
-      const id = config._id.substring(
-        EntityConfigService.PREFIX_ENTITY_CONFIG.length,
-      );
+    this.setupEntities(
+      this.configService
+        .getAllConfigs<
+          EntityConfig & { _id: string }
+        >(EntityConfigService.PREFIX_ENTITY_CONFIG)
+        .map((config) => [
+          config._id.substring(EntityConfigService.PREFIX_ENTITY_CONFIG.length),
+          config,
+        ]),
+    );
+  }
+
+  setupEntities(configs: Iterable<[string, EntityConfig]>) {
+    for (const [id, config] of configs) {
       if (!this.entities.has(id)) {
         this.createNewEntity(id, config.extends);
       }

@@ -20,6 +20,8 @@ import {
   MenuItemForAdminUiNew,
 } from "./menu-item-for-admin-ui";
 import { v4 as uuid } from "uuid";
+import { MatDialog } from "@angular/material/dialog";
+import { AdminMenuItemDetailsComponent } from "./admin-menu-item-details/admin-menu-item-details.component";
 
 /** Load and Store Menu Items for Administration */
 @Component({
@@ -33,7 +35,10 @@ export class AdminMenuComponent implements OnInit {
   menuItems: MenuItemForAdminUi[];
   readonly navigationContainer = "navigation-container";
 
-  private readonly entityMapper = inject(EntityMapperService);
+  constructor(
+    private dialog: MatDialog,
+    private readonly entityMapper: EntityMapperService,
+  ) {}
 
   async ngOnInit() {
     await this.loadNavigationConfig();
@@ -122,23 +127,43 @@ export class AdminMenuComponent implements OnInit {
   }
 
   private toPlainMenuItem(item: MenuItemForAdminUi): MenuItem {
-    delete item.uniqueId; // Remove uniqueId before saving
+    // If it's an EntityMenuItem (has entityType), only keep entityType and subMenu
+    if ("entityType" in item && item.entityType) {
+      const entityMenuItem: any = { entityType: item.entityType };
+      if (item.subMenu?.length) {
+        entityMenuItem.subMenu = item.subMenu.map((sub) =>
+          this.toPlainMenuItem(sub),
+        );
+      }
+      return entityMenuItem;
+    }
+
+    // Otherwise, return as normal MenuItem,
     return {
-      ...item,
-      subMenu:
-        item.subMenu?.length > 0
-          ? item.subMenu.map((sub) => this.toPlainMenuItem(sub))
-          : undefined,
+      label: item.label,
+      icon: item.icon,
+      link: item.link,
+      subMenu: item.subMenu?.length
+        ? item.subMenu.map((sub) => this.toPlainMenuItem(sub))
+        : undefined,
     };
   }
-
   async cancel() {
     await this.loadNavigationConfig();
   }
 
   async addNewMenuItem() {
     const newItem = new MenuItemForAdminUiNew(uuid());
-    this.menuItems = [newItem, ...this.menuItems];
+    const dialogRef = this.dialog.open(AdminMenuItemDetailsComponent, {
+      width: "600px",
+      data: { item: { ...newItem }, isNew: true },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.menuItems = [result, ...this.menuItems];
+      }
+    });
   }
 
   removeItem(item: MenuItemForAdminUi): void {

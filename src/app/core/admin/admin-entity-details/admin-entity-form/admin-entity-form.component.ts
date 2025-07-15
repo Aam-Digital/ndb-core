@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, inject } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   EntityForm,
@@ -31,6 +39,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { AdminEntityFieldData } from "../admin-entity-field/admin-entity-field.component";
 
 @UntilDestroy()
 @Component({
@@ -55,6 +65,7 @@ import { FieldGroup } from "app/core/entity-details/form/field-group";
 export class AdminEntityFormComponent implements OnChanges {
   private entityFormService = inject(EntityFormService);
   private matDialog = inject(MatDialog);
+  private adminEntityService = inject(AdminEntityService);
 
   @Input() entityType: EntityConstructor;
 
@@ -95,6 +106,11 @@ export class AdminEntityFormComponent implements OnChanges {
    * Whether the UI is readonly, not allowing the user to drag or edit things.
    */
   @Input() isDisabled: boolean = false;
+
+  /**
+   * Also update any changes to fields to the global entity type schema.
+   */
+  @Input() updateEntitySchema?: boolean = true;
 
   dummyEntity: Entity;
   dummyForm: EntityForm<any>;
@@ -187,17 +203,26 @@ export class AdminEntityFormComponent implements OnChanges {
    * @param field field to edit or { id: null } to create a new field
    * @returns the id of the field that was edited or created (which is newly defined in the dialog for new fields)
    */
-  async openFieldConfig(field: ColumnConfig): Promise<string> {
-    let fieldIdToEdit = toFormFieldConfig(field).id;
+  async openFieldConfig(field: ColumnConfig): Promise<EntitySchemaField> {
+    const entitySchemaField = {
+      ...this.entityType.schema.get(toFormFieldConfig(field).id),
+    } as EntitySchemaField;
+    if (field instanceof Object) {
+      Object.assign(entitySchemaField, field);
+    }
     const dialogRef = this.matDialog.open(AdminEntityFieldComponent, {
       width: "99%",
       maxHeight: "90vh",
       data: {
-        fieldId: fieldIdToEdit,
+        entitySchemaField: entitySchemaField,
         entityType: this.entityType,
-      },
+        overwriteLocally: !this.updateEntitySchema,
+      } as AdminEntityFieldData,
     });
-    return lastValueFrom(dialogRef.afterClosed());
+
+    const result = lastValueFrom(dialogRef.afterClosed());
+
+    return result;
   }
 
   /**
@@ -277,12 +302,53 @@ export class AdminEntityFormComponent implements OnChanges {
       field,
     ) as FormFieldConfig;
 
-    if (configDetails.editComponent == "EditDescriptionOnly") {
-      const updatedField = await this.openTextConfig(configDetails);
-      Object.assign(field, updatedField);
+    const updatedField =
+      configDetails.editComponent == "EditDescriptionOnly"
+        ? await this.openTextConfig(configDetails)
+        : await this.openFieldConfig(field);
+
+    if (!updatedField) return;
+
+    if (typeof updatedField === "string") {
+      this.applySchemaOverride(updatedField, updatedField);
+      await this.initForm();
+      this.emitUpdatedConfig();
+      return;
+    }
+
+    if (
+      !this.updateEntitySchema ||
+      configDetails.editComponent === "EditDescriptionOnly"
+    ) {
+      this.applySchemaOverride(
+        updatedField.id,
+        updatedField as FormFieldConfig,
+      );
       await this.initForm();
     } else {
-      await this.openFieldConfig(field);
+      // save to entity type's global schema
+      this.adminEntityService.updateSchemaField(
+        this.entityType,
+        updatedField.id,
+        updatedField,
+      );
+    }
+    this.emitUpdatedConfig();
+  }
+
+  private applySchemaOverride(
+    fieldId: string,
+    updatedField: string | FormFieldConfig,
+  ): void {
+    for (const group of this.config.fieldGroups) {
+      const index = group.fields.findIndex((f) =>
+        f instanceof String
+          ? f === fieldId
+          : toFormFieldConfig(f).id === fieldId,
+      );
+      if (index !== -1) {
+        group.fields[index] = updatedField;
+      }
     }
   }
 
@@ -299,11 +365,19 @@ export class AdminEntityFormComponent implements OnChanges {
       return;
     }
 
-    const newFieldId = await this.openFieldConfig({ id: null });
-    if (!newFieldId) {
+    const newField = await this.openFieldConfig({ id: null });
+    if (!newField) {
       return;
     }
 
+    // new fields always have to be added to the entity's schema globally
+    this.adminEntityService.updateSchemaField(
+      this.entityType,
+      newField.id,
+      newField,
+    );
+
+    const newFieldId = newField.id;
     this.dummyForm.formGroup.addControl(newFieldId, new FormControl());
     this.dummyForm.formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newFieldId);

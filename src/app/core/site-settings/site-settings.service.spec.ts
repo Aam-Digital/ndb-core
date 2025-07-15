@@ -1,20 +1,18 @@
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { SiteSettingsService } from "./site-settings.service";
-import { FileService } from "../../features/file/file.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import {
   mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { SiteSettings } from "./site-settings";
-import { of } from "rxjs";
 import { Title } from "@angular/platform-browser";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
-import { FileModule } from "../../features/file/file.module";
 import { CoreTestingModule } from "../../utils/core-testing.module";
+import { FileService } from "#src/app/features/file/file.service";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
@@ -25,7 +23,7 @@ describe("SiteSettingsService", () => {
     localStorage.clear();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
-      imports: [CoreTestingModule, ConfigurableEnumModule, FileModule],
+      imports: [CoreTestingModule, ConfigurableEnumModule],
       providers: [
         { provide: FileService, useValue: mockFileService },
         ...mockEntityMapperProvider(),
@@ -77,29 +75,6 @@ describe("SiteSettingsService", () => {
 
     expect(titleSpy).toHaveBeenCalled();
   });
-
-  it("should reset favicon when deleted", fakeAsync(() => {
-    const siteSettings = SiteSettings.create({ favicon: "some.icon" });
-    mockFileService.loadFile.and.returnValue(of({ url: "icon.url" }));
-    const mockIconEl = { href: "initial" };
-    spyOn(document, "querySelector").and.returnValue(mockIconEl as any);
-    entityMapper.add(siteSettings);
-    tick();
-
-    expect(mockFileService.loadFile).toHaveBeenCalledWith(
-      siteSettings,
-      "favicon",
-    );
-    expect(mockIconEl.href).toBe("icon.url");
-
-    mockFileService.loadFile.calls.reset();
-    delete siteSettings.favicon;
-    entityMapper.add(siteSettings);
-    tick();
-
-    expect(mockFileService.loadFile).not.toHaveBeenCalled();
-    expect(mockIconEl.href).toBe("favicon.ico");
-  }));
 
   function expectStyleSetProperty(siteSettingsProperty, cssVariable, value) {
     spyOn(document.documentElement.style, "setProperty");

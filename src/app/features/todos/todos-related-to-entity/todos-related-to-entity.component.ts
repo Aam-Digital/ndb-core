@@ -4,7 +4,6 @@ import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
@@ -14,6 +13,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { FilterService } from "../../../core/filter/filter.service";
+import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -27,16 +27,8 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   private dbIndexingService = inject(DatabaseIndexingService);
 
   override entityCtr = Todo;
-  override _columns: FormFieldConfig[] = [
-    { id: "deadline" },
-    { id: "subject" },
-    { id: "startDate" },
-    { id: "assignedTo" },
-    { id: "description", visibleFrom: "xl" },
-    { id: "repetitionInterval", visibleFrom: "xl" },
-    { id: "relatedEntities", hideFromTable: true },
-    { id: "completed", hideFromForm: true },
-  ];
+  override _columns: FormFieldConfig[] =
+    RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
 
   // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
   override filter: DataFilter<Todo> = { isActive: true };
@@ -81,6 +73,6 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openFormPopup(entity, this.columns, TodoDetailsComponent);
+    this.formDialog.openView(entity);
   }
 }

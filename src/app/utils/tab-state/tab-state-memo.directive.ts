@@ -45,6 +45,7 @@ export class TabStateMemoDirective implements OnInit {
     );
     if (!Number.isNaN(potentialNextTabIndex)) {
       this.tab.selectedIndex = potentialNextTabIndex;
+      this.tab.selectedIndexChange.emit(potentialNextTabIndex);
     }
     this.tab.selectedIndexChange
       .pipe(untilDestroyed(this))

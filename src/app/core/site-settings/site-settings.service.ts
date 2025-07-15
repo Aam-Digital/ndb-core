@@ -1,9 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
-import { delay, firstValueFrom, Observable, skipWhile } from "rxjs";
+import { Observable, skipWhile } from "rxjs";
 import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
-import { FileService } from "../../features/file/file.service";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
@@ -12,6 +11,7 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { FileService } from "#src/app/features/file/file.service";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -52,7 +52,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.siteName.subscribe((name) => this.title.setTitle(name));
     this.subscribeFontChanges();
-    this.subscribeFaviconChanges();
     this.subscribeColorChanges("primary");
     this.subscribeColorChanges("secondary");
     this.subscribeColorChanges("error");
@@ -115,23 +114,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     this.getPropertyObservable("font").subscribe((font) =>
       document.documentElement.style.setProperty("--font-family", font),
     );
-  }
-
-  private subscribeFaviconChanges() {
-    this.getPropertyObservable("favicon")
-      .pipe(delay(0))
-      .subscribe(async (icon) => {
-        const favIcon: HTMLLinkElement = document.querySelector("#appIcon");
-        if (icon) {
-          const entity = await firstValueFrom(this.siteSettings);
-          const imgUrl = await firstValueFrom(
-            this.fileService.loadFile(entity, "favicon"),
-          );
-          favIcon.href = Object.values(imgUrl)[0];
-        } else {
-          favIcon.href = this.DEFAULT_FAVICON;
-        }
-      });
   }
 
   private subscribeColorChanges(property: "primary" | "secondary" | "error") {
