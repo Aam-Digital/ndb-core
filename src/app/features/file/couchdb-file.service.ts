@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
 import {
   catchError,
@@ -10,13 +10,10 @@ import {
 } from "rxjs/operators";
 import { from, Observable, of, throwError } from "rxjs";
 import { Entity } from "../../core/entity/model/entity";
-import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { FileService } from "./file.service";
-import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { Logging } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { SyncStateSubject } from "../../core/session/session-type";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { environment } from "../../../environments/environment";
 import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
@@ -39,14 +36,6 @@ export class CouchdbFileService extends FileService {
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
   private cache: { [key: string]: Observable<string> } = {};
-
-  constructor() {
-    const entityMapper = inject(EntityMapperService);
-    const entities = inject(EntityRegistry);
-    const syncState = inject(SyncStateSubject);
-
-    super(entityMapper, entities, syncState);
-  }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
     if (!this.navigator.onLine) {

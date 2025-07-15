@@ -1,18 +1,14 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgClass } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EditFileComponent } from "../edit-file/edit-file.component";
 import { SafeUrl } from "@angular/platform-browser";
-import { FileService } from "../file.service";
-import { AlertService } from "../../../core/alerts/alert.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { MatButtonModule } from "@angular/material/button";
 import { resizeImage } from "../file-utils";
 import { MatDialog } from "@angular/material/dialog";
 import { ImagePopupComponent } from "./image-popup/image-popup.component";
-import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { MatError } from "@angular/material/form-field";
 import { ErrorHintComponent } from "app/core/common-components/error-hint/error-hint.component";
 
@@ -37,15 +33,6 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
   private compression = 480;
   private initialImg: SafeUrl = this.defaultImage;
   imgPath: SafeUrl = this.initialImg;
-
-  constructor() {
-    inject(FileService);
-    inject(AlertService);
-    inject(EntityMapperService);
-    inject<Navigator>(NAVIGATOR_TOKEN);
-
-    super();
-  }
 
   override async onFileSelected(file: File): Promise<void> {
     const cvs = await resizeImage(file, this.compression);

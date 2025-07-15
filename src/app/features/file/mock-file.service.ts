@@ -1,11 +1,8 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Entity } from "../../core/entity/model/entity";
 import { EMPTY, Observable, of } from "rxjs";
 import { FileService } from "./file.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { SyncStateSubject } from "../../core/session/session-type";
 
 /**
  * A mock implementation of the file service which only stores the file temporarily in the browser.
@@ -17,14 +14,6 @@ export class MockFileService extends FileService {
   private sanitizer = inject(DomSanitizer);
 
   private fileMap = new Map<string, string>();
-
-  constructor() {
-    const entityMapper = inject(EntityMapperService);
-    const entities = inject(EntityRegistry);
-    const syncState = inject(SyncStateSubject);
-
-    super(entityMapper, entities, syncState);
-  }
 
   removeFile(entity: Entity, property: string): Observable<any> {
     this.fileMap.delete(`${entity.getId()}:${property}`);

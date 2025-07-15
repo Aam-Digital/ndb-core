@@ -1,11 +1,8 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { FileService } from "../../file/file.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { Entity } from "app/core/entity/model/entity";
 import { Observable, of, throwError } from "rxjs";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { SyncStateSubject } from "../../../core/session/session-type";
 import { HttpResponse } from "@angular/common/http";
 import { NotAvailableOfflineError } from "../../../core/session/not-available-offline.error";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
@@ -52,14 +49,6 @@ export class TemplateExportApiService extends FileService {
   private navigator = inject<Navigator>(NAVIGATOR_TOKEN);
 
   readonly API_URL = environment.API_PROXY_PREFIX + "/v1/export";
-
-  constructor() {
-    const entityMapper = inject(EntityMapperService);
-    const entities = inject(EntityRegistry);
-    const syncState = inject(SyncStateSubject);
-
-    super(entityMapper, entities, syncState);
-  }
 
   /*
   --- FileService methods ---
