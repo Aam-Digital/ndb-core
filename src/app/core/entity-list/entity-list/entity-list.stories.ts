@@ -1,6 +1,5 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { EntityListComponent } from "./entity-list.component";
-import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
@@ -14,7 +13,7 @@ export default {
   ],
 } as Meta;
 
-const children = new DemoChildGenerator({ count: 25 }).generateEntities();
+// const children = new DemoChildGenerator({ count: 25 }).generateEntities();
 
 // TODO: fix or reimplement ListComponent stories
 /*
