@@ -124,7 +124,7 @@ export class RelatedEntitiesComponent<E extends Entity>
 
     // added relatedEntitiesParent (e.g., current RecurringActivity or School) to each column with additional config
     this._columns?.forEach((column) => {
-      if (column.additional instanceof Object) {
+      if (typeof column.additional === 'object' && column.additional !== null) {
         column.additional.relatedEntitiesParent = this.entity;
       }
     });
