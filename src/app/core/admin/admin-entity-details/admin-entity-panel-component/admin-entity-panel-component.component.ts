@@ -16,6 +16,7 @@ import { ConfirmationDialogService } from "#src/app/core/common-components/confi
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
+import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-admin-entity-panel-component",
@@ -39,7 +40,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
   isDialogOpen = false;
 
   /** Stores the currently active/selected field IDs to be shown in the panel */
-  activeFields: string[];
+  activeFields: ColumnConfig[];
 
   /**
    * List of entity types that reference the current entity type.
@@ -74,7 +75,7 @@ export class AdminEntityPanelComponentComponent implements OnInit {
    * Updates the active fields and synchronizes the config columns accordingly.
    * @param activeFields - selected list of active field IDs to be displayed.
    */
-  updateFields(activeFields: string[]) {
+  updateFields(activeFields: ColumnConfig[]) {
     if (!Array.isArray(activeFields)) {
       activeFields = [];
     }

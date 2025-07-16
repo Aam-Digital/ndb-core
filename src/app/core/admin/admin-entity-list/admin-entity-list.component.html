@@ -36,7 +36,7 @@
           [entityType]="entityConstructor"
           fieldLabel="Drag & drop table column headers. Add columns:"
           i18n-fieldLabel
-          (itemsChange)="item.columns = $event"
+          (itemsChange)="updateColumns($event, item)"
         ></app-admin-list-manager>
       </ng-template>
     </app-admin-tabs>

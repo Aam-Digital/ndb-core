@@ -36,15 +36,15 @@ import { MatSelectModule } from "@angular/material/select";
   styleUrl: "./admin-list-manager.component.scss",
 })
 export class AdminListManagerComponent implements OnInit {
-  @Input() items: (string | ColumnConfig)[] = [];
+  @Input() items: ColumnConfig[] = [];
   @Input() entityType: EntityConstructor;
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
-  @Input() activeFields: (string | FormFieldConfig)[] = [];
+  @Input() activeFields: ColumnConfig[] = [];
 
-  @Output() itemsChange = new EventEmitter<string[]>();
+  @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
 
-  availableItems: (string | ColumnConfig)[] = [];
+  availableItems: ColumnConfig[] = [];
 
   ngOnInit(): void {
     if (!this.entityType) return;
@@ -55,22 +55,22 @@ export class AdminListManagerComponent implements OnInit {
     ];
   }
 
-  drop(event: CdkDragDrop<(string | ColumnConfig)[]>) {
+  drop(event: CdkDragDrop<ColumnConfig[]>) {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
     this.itemsChange.emit([...this.items] as string[]);
   }
 
-  remove(item: string | ColumnConfig) {
+  remove(item: ColumnConfig) {
     this.items = this.items.filter((i) => i !== item);
     this.itemsChange.emit([...this.items] as string[]);
   }
 
   updateItems(updatedItems: (string | ColumnConfig)[]) {
     this.items = [...updatedItems];
-    this.itemsChange.emit(this.items as string[]);
+    this.itemsChange.emit(this.items);
   }
 
-  getFieldId(field: string | ColumnConfig): string {
+  getFieldId(field: ColumnConfig): string {
     return typeof field === "string" ? field : field.id;
   }
 

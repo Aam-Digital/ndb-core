@@ -8,6 +8,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-manager.component";
+import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-edit-matching-entity-side",
@@ -31,21 +32,24 @@ export class EditMatchingEntitySideComponent {
   @Input() entityType: string[] = [];
 
   @Input() sideEntity: EntityConstructor;
-  @Input() columns!: string[];
+  @Input() columns!: ColumnConfig[];
   @Input() filters!: string[];
   @Input() title!: string;
   @Input() prefilter: any;
 
-  @Output() columnsChange = new EventEmitter<string[]>();
+  @Output() columnsChange = new EventEmitter<ColumnConfig[]>();
   @Output() filtersChange = new EventEmitter<string[]>();
   @Output() openPrefilterEditor = new EventEmitter<void>();
 
-  onColumnsChange(newColumns: string[]): void {
+  onColumnsChange(newColumns: ColumnConfig[]): void {
+    console.log("Emitting updated columns:", newColumns);
     this.columnsChange.emit(newColumns);
   }
 
-  onFiltersChange(newFilters: string[]): void {
-    this.filtersChange.emit(newFilters);
+  onFiltersChange(newFilters: ColumnConfig[]): void {
+    if (newFilters.every((f) => typeof f === "string")) {
+      this.filtersChange.emit(newFilters);
+    }
   }
 
   onOpenPrefilterEditor(): void {

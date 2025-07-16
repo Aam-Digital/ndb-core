@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Optional,
   Output,
   SimpleChanges,
@@ -30,37 +31,64 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
   templateUrl: "./entity-fields-menu.component.html",
   styleUrl: "./entity-fields-menu.component.scss",
 })
-export class EntityFieldsMenuComponent implements OnChanges {
+export class EntityFieldsMenuComponent implements OnChanges, OnInit {
   @Input() entityType: EntityConstructor;
   @Input() set availableFields(value: ColumnConfig[]) {
+    // console.log(value,"value")
     this._availableFields = value
-      .map((field) =>
-        this.entityFormService && this.entityType
+      .map((field) => {
+
+        const mappedField = this.entityFormService && this.entityType
           ? this.entityFormService.extendFormFieldConfig(field, this.entityType)
-          : toFormFieldConfig(field),
-      )
+          : toFormFieldConfig(field);
+
+        if (typeof field === "object") {
+          mappedField["_customField"] = true;
+        }
+
+        return mappedField;
+      })
       .filter((field) => field.label)
-      // filter duplicates:
       .filter(
         (item, pos, arr) => arr.findIndex((x) => x.id === item.id) === pos,
       );
   }
   _availableFields: FormFieldConfig[] = [];
 
-  @Input() activeFields: string[];
-  @Output() activeFieldsChange = new EventEmitter<string[]>();
+  @Input() activeFields: ColumnConfig[];
+  @Output() activeFieldsChange = new EventEmitter<ColumnConfig[]>();
   selectedFieldsControl = new FormControl<string[]>([]);
 
   constructor(@Optional() private entityFormService: EntityFormService) {}
 
+  ngOnInit() {
+    this.selectedFieldsControl.valueChanges.subscribe((value: string[]) => {
+        // console.log("valueChange subscribe", value)
+
+        const mappedFields: ColumnConfig[] = value.map(v => {
+          // console.log("value update", v);
+
+          const availableField = this._availableFields.find(f => f.id === v);
+
+          if (availableField?.["_customField"]) {
+            const result = { ...availableField };
+            delete result["_customField"];
+            return result;
+          }
+          else return v;
+        });
+
+        this.activeFields = value;
+        console.log(mappedFields,"maaped")
+        this.activeFieldsChange.emit(mappedFields);
+      });
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.activeFields) {
-      this.selectedFieldsControl.setValue(this.activeFields, {
+      // console.log(this._availableFields)
+      this.selectedFieldsControl.setValue(this.activeFields as string[], {
         emitEvent: false,
-      });
-      this.selectedFieldsControl.valueChanges.subscribe((value) => {
-        this.activeFields = value;
-        this.activeFieldsChange.emit(this.activeFields);
       });
     }
   }
