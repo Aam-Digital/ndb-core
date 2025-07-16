@@ -9,7 +9,7 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { FormGroup, ReactiveFormsModule, FormBuilder } from "@angular/forms";
+import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatDialog } from "@angular/material/dialog";
@@ -24,11 +24,11 @@ import {
   FormFieldConfig,
 } from "#src/app/core/common-components/entity-form/FormConfig";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
-import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-manager.component";
 import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-select/entity-field-select.component";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
+import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
 
 @Component({
   selector: "app-edit-matching-view",
@@ -41,10 +41,10 @@ import { MatSelectModule } from "@angular/material/select";
     ReactiveFormsModule,
     MatExpansionPanel,
     MatExpansionPanelHeader,
-    AdminListManagerComponent,
     EntityFieldSelectComponent,
     MatOptionModule,
     MatSelectModule,
+    AdminListManagerComponent,
   ],
   templateUrl: "./edit-matching-view.component.html",
   styleUrl: "./edit-matching-view.component.scss",

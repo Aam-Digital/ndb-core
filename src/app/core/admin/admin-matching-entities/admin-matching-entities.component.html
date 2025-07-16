@@ -1,9 +1,12 @@
 <div class="flex-row flex-wrap justify-space-between padding-regular">
-  <h1>Edit Matching Entities</h1>
-  <div class="flex-row align-center gap-regular margin-bottom-regular">
+  <app-view-title i18n>Edit Matching View</app-view-title>
+
+  <app-view-actions
+    class="flex-row align-center gap-regular margin-bottom-regular"
+  >
     <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
     <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
-  </div>
+  </app-view-actions>
 </div>
 
 <form [formGroup]="configForm">
@@ -17,11 +20,13 @@
         [columns]="leftColumns"
         [filters]="leftFilters"
         title="Left"
+        i18n-title
         (columnsChange)="leftColumns = $event"
         (filtersChange)="leftFilters = $event"
         (openPrefilterEditor)="openPrefilterEditor('left')"
       ></app-edit-matching-entity-side>
     </div>
+
     <div class="entity-side padding-regular">
       <app-edit-matching-entity-side
         [form]="configForm"
@@ -30,7 +35,8 @@
         [sideEntity]="rightSideEntity"
         [columns]="rightColumns"
         [filters]="rightFilters"
-        title="Righ"
+        title="Right"
+        i18n-title
         (columnsChange)="rightColumns = $event"
         (filtersChange)="rightFilters = $event"
         (openPrefilterEditor)="openPrefilterEditor('right')"

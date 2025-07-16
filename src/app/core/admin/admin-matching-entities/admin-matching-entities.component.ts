@@ -12,6 +12,8 @@ import { JsonEditorDialogComponent } from "../json-editor/json-editor-dialog/jso
 import { Location } from "@angular/common";
 import { AlertService } from "../../alerts/alert.service";
 import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edit-matching-entity-side.component";
+import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
+import { ViewActionsComponent } from "#src/app/core/common-components/view-actions/view-actions.component";
 
 @Component({
   selector: "app-admin-matching-entities",
@@ -20,6 +22,8 @@ import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edi
     MatButtonModule,
     EditMatchingViewComponent,
     EditMatchingEntitySideComponent,
+    ViewTitleComponent,
+    ViewActionsComponent,
   ],
   templateUrl: "./admin-matching-entities.component.html",
   styleUrls: ["./admin-matching-entities.component.scss"],

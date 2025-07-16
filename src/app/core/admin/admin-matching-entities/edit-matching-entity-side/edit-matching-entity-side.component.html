@@ -1,7 +1,8 @@
 <div class="padding-regular" [formGroup]="form">
   <h2 i18n>{{ title }} Side Settings</h2>
+
   <mat-form-field appearance="fill" class="full-width">
-    <mat-label>Select {{ title }} Entity Type</mat-label>
+    <mat-label i18n>Select Entity Type</mat-label>
     <mat-select [formControlName]="controlName">
       @for (entityType of entityType; track entityType) {
         <mat-option [value]="entityType">
@@ -33,13 +34,15 @@
     (itemsChange)="onFiltersChange($event)"
   ></app-admin-list-manager>
 
-  <div class="flex-row flex-wrap gap-small align-center">
-    <em i18n
-      >Prefilter can currently have to be edited using the JSON Editor</em
-    >
-    <button mat-stroked-button (click)="onOpenPrefilterEditor()" i18n>
-      <fa-icon icon="tools"></fa-icon>
-      Open Prefilter Editor
+  <div>
+    <h4 i18n>Records available for matching</h4>
+    <p i18n>
+      Configure filters to only show certain records for matching, that fulfill
+      the required criteria (e.g. having a required status).
+    </p>
+    <button mat-stroked-button (click)="onOpenPrefilterEditor()">
+      <fa-icon icon="tools" class="standard-icon-with-text"></fa-icon>
+      <span i18n>Edit Prefilters</span>
     </button>
   </div>
 </div>
