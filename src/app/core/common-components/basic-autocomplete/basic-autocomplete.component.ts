@@ -355,7 +355,6 @@ export class BasicAutocompleteComponent<O, V = O>
     this._selectedOptions = this._options.filter(
       (o) => o.selected && !o.isHidden,
     );
-    console.log(this._selectedOptions, "selected");
   }
 
   select(selected: string | SelectableOption<O, V>) {

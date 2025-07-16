@@ -122,8 +122,9 @@ export class AdminEntityFieldComponent implements OnInit {
     if (this.data.overwriteLocally) {
       this.lockGlobalFields();
     }
-
-    this.initAvailableDatatypes([this.allDataTypes]);
+    this.initAvailableDatatypes(
+      this.allDataTypes as unknown as DefaultDatatype<any, any>[],
+    );
   }
 
   /**
