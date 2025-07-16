@@ -1,19 +1,15 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { ChildrenService } from "../../children/children.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
-import { FilterService } from "../../../core/filter/filter.service";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { asArray } from "app/utils/asArray";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { CustomFormLinkButtonComponent } from "app/features/public-form/custom-form-link-button/custom-form-link-button.component";
 import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-default-config";
 
@@ -30,6 +26,9 @@ export class NotesRelatedToEntityComponent
   extends RelatedEntitiesComponent<Note>
   implements OnInit
 {
+  private childrenService = inject(ChildrenService);
+  private formDialog = inject(FormDialogService);
+
   override entityCtr = Note;
   override _columns: FormFieldConfig[] =
     RELATED_ENTITIES_DEFAULT_CONFIGS["NotesRelatedToEntity"].columns;
@@ -40,17 +39,6 @@ export class NotesRelatedToEntityComponent
    */
   getColor = (note: Note) => note?.getColor();
   newRecordFactory = this.createNewRecordFactory();
-
-  constructor(
-    private childrenService: ChildrenService,
-    private formDialog: FormDialogService,
-    entityMapper: EntityMapperService,
-    entities: EntityRegistry,
-    screenWidthObserver: ScreenWidthObserver,
-    filterService: FilterService,
-  ) {
-    super(entityMapper, entities, screenWidthObserver, filterService, null);
-  }
 
   override ngOnInit() {
     if (this.entity.getType() === "Child") {

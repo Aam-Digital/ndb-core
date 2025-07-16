@@ -20,10 +20,8 @@ import { EntityPermissionGuard } from "../../permissions/permission-guard/entity
   providedIn: "root",
 })
 export class RouterService {
-  constructor(
-    private configService: ConfigService,
-    private router: Router,
-  ) {}
+  private configService = inject(ConfigService);
+  private router = inject(Router);
 
   /**
    * Initialize routes from the config while respecting existing routes.
@@ -107,6 +105,11 @@ export class RouterService {
     if (view.permittedUserRoles) {
       route.canActivate.push(UserRoleGuard);
       route.data.permittedUserRoles = view.permittedUserRoles;
+    }
+
+    if (view.component) {
+      route.component = RoutedViewComponent;
+      route.data.component = view.component;
     }
 
     if (view.config) {

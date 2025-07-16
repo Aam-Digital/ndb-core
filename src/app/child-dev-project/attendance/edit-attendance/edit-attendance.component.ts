@@ -1,11 +1,10 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { EditEntityComponent } from "../../../core/basic-datatypes/entity/edit-entity/edit-entity.component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { startWith } from "rxjs/operators";
 import { FormControl } from "@angular/forms";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
-import { NgForOf, NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -24,8 +23,6 @@ import { MatCardModule } from "@angular/material/card";
   selector: "app-edit-attendance",
   imports: [
     EditEntityComponent,
-    NgIf,
-    NgForOf,
     FontAwesomeModule,
     EntityBlockComponent,
     MatButtonModule,
@@ -46,7 +43,9 @@ export class EditAttendanceComponent
 
   @Input() declare entity: Note;
 
-  constructor(screenWithObserver: ScreenWidthObserver) {
+  constructor() {
+    const screenWithObserver = inject(ScreenWidthObserver);
+
     super();
     screenWithObserver
       .platform()

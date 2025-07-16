@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { HelpButtonComponent } from "../help-button/help-button.component";
 import { Entity } from "../../entity/model/entity";
@@ -11,7 +17,7 @@ import {
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
-import { NgClass, NgIf } from "@angular/common";
+import { NgClass } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { InheritedValueButtonComponent } from "../../../features/default-value-inherited/inherited-value-button/inherited-value-button.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -34,7 +40,6 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
   imports: [
     DynamicComponentDirective,
     HelpButtonComponent,
-    NgIf,
     EntityFieldViewComponent,
     InheritedValueButtonComponent,
     NgClass,
@@ -46,6 +51,9 @@ import { EntitySchemaService } from "app/core/entity/schema/entity-schema.servic
 export class EntityFieldEditComponent<T extends Entity = Entity>
   implements OnChanges
 {
+  private entityFormService = inject(EntityFormService);
+  private entitySchemaService = inject(EntitySchemaService);
+
   /** field id or full config */
   @Input() field: ColumnConfig;
   /** full field config extended from schema (used internally and for template) */
@@ -63,11 +71,6 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
    * Whether to display the field label or not.
    */
   @Input() hideLabel: boolean;
-
-  constructor(
-    private entityFormService: EntityFormService,
-    private entitySchemaService: EntitySchemaService,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {

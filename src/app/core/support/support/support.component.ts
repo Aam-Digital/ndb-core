@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
@@ -27,6 +27,16 @@ import { PouchDatabase } from "../../database/pouchdb/pouch-database";
   imports: [MatExpansionModule, MatButtonModule, MatTooltipModule],
 })
 export class SupportComponent implements OnInit {
+  private syncState = inject(SyncStateSubject);
+  private sessionSubject = inject(SessionSubject);
+  private currentUserSubject = inject(CurrentUserSubject);
+  private sw = inject(SwUpdate);
+  private databaseResolver = inject(DatabaseResolverService);
+  private http = inject(HttpClient);
+  private backupService = inject(BackupService);
+  private downloadService = inject(DownloadService);
+  private window = inject<Window>(WINDOW_TOKEN);
+
   sessionInfo: SessionInfo;
   currentUser: Entity;
   currentSyncState: string;
@@ -38,18 +48,6 @@ export class SupportComponent implements OnInit {
   userAgent: string;
   appVersion: string;
   dbInfo: string;
-
-  constructor(
-    private syncState: SyncStateSubject,
-    private sessionSubject: SessionSubject,
-    private currentUserSubject: CurrentUserSubject,
-    private sw: SwUpdate,
-    private databaseResolver: DatabaseResolverService,
-    private http: HttpClient,
-    private backupService: BackupService,
-    private downloadService: DownloadService,
-    @Inject(WINDOW_TOKEN) private window: Window,
-  ) {}
 
   ngOnInit() {
     this.userAgent = this.window.navigator.userAgent;

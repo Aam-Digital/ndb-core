@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
@@ -23,6 +23,9 @@ import { RELATED_ENTITIES_DEFAULT_CONFIGS } from "app/utils/related-entities-def
   imports: [EntitiesTableComponent, MatSlideToggleModule, FormsModule],
 })
 export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo> {
+  private formDialog = inject(FormDialogService);
+  private dbIndexingService = inject(DatabaseIndexingService);
+
   override entityCtr = Todo;
   override _columns: FormFieldConfig[] =
     RELATED_ENTITIES_DEFAULT_CONFIGS["TodosRelatedToEntity"].columns;
@@ -36,17 +39,6 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
       return r.getColor();
     }
   };
-
-  constructor(
-    private formDialog: FormDialogService,
-    private dbIndexingService: DatabaseIndexingService,
-    entityMapper: EntityMapperService,
-    entities: EntityRegistry,
-    screenWidthObserver: ScreenWidthObserver,
-    filterService: FilterService,
-  ) {
-    super(entityMapper, entities, screenWidthObserver, filterService, null);
-  }
 
   override getData() {
     if (Array.isArray(this.property)) {

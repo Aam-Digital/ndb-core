@@ -1,6 +1,6 @@
 import { DemoChildGenerator } from "../demo-child-generator.service";
 import { DemoDataGenerator } from "../../../../core/demo-data/demo-data-generator";
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { faker } from "../../../../core/demo-data/faker";
 import { mathLevels, readingLevels } from "./skill-levels";
 import { WarningLevel } from "../../../warning-level";
@@ -14,6 +14,10 @@ import { ConfigurableEnumValue } from "app/core/basic-datatypes/configurable-enu
  */
 @Injectable()
 export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
+  private demoChildren = inject(DemoChildGenerator);
+
+  override requiredEntityTypes = ["Aser"];
+
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoAserGeneratorService.provider()]`
@@ -22,11 +26,6 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Entity> {
     return [
       { provide: DemoAserGeneratorService, useClass: DemoAserGeneratorService },
     ];
-  }
-
-  constructor(private demoChildren: DemoChildGenerator) {
-    super();
-    this.requiredEntityTypes = ["Aser"];
   }
 
   public generateEntities(): Entity[] {

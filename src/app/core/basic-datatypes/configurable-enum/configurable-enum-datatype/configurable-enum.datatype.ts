@@ -1,6 +1,6 @@
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { ConfigurableEnumService } from "../configurable-enum.service";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DiscreteDatatype } from "../../discrete/discrete.datatype";
 import { ConfigurableEnumValue } from "../configurable-enum.types";
 
@@ -9,15 +9,13 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype<
   ConfigurableEnumValue,
   string
 > {
+  private enumService = inject(ConfigurableEnumService);
+
   static override dataType = "configurable-enum";
   static override label: string = $localize`:datatype-label:dropdown option`;
 
   public override readonly viewComponent = "DisplayConfigurableEnum";
   public override readonly editComponent = "EditConfigurableEnum";
-
-  constructor(private enumService: ConfigurableEnumService) {
-    super();
-  }
 
   /**
    * transforms Objects of InteractionType to strings to save in DB

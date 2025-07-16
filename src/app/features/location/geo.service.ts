@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { Coordinates } from "./coordinates";
 import { HttpClient } from "@angular/common/http";
@@ -19,6 +19,9 @@ export interface GeoResult extends Coordinates {
   providedIn: "root",
 })
 export class GeoService {
+  private http = inject(HttpClient);
+  private analytics = inject(AnalyticsService);
+
   private readonly remoteUrl = "/nominatim";
   private countrycodes = "de";
   private defaultOptions = {
@@ -27,11 +30,9 @@ export class GeoService {
     email: environment.email,
   };
 
-  constructor(
-    private http: HttpClient,
-    private analytics: AnalyticsService,
-    configService: ConfigService,
-  ) {
+  constructor() {
+    const configService = inject(ConfigService);
+
     configService.configUpdates.subscribe(() => {
       const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
       if (config?.countrycodes) {

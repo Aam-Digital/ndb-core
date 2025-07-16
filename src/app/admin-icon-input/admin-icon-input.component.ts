@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -14,7 +13,6 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   selector: "app-admin-icon-input",
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,

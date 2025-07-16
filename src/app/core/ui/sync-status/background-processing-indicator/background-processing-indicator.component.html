@@ -21,23 +21,24 @@
       are finished some pages may be slow or incomplete.
     </div>
 
-    <div
-      *ngFor="let process of filteredProcesses | async"
-      class="flex-row gap-small align-center mat-subtitle-2 details-line"
-    >
-      <div>
-        <mat-spinner *ngIf="process.pending" [diameter]="20"></mat-spinner>
-        <fa-icon
-          *ngIf="!process.pending"
-          icon="check"
-          class="process-checkmark"
-        ></fa-icon>
+    @for (process of filteredProcesses | async; track process) {
+      <div class="flex-row gap-small align-center mat-subtitle-2 details-line">
+        <div>
+          @if (process.pending) {
+            <mat-spinner [diameter]="20"></mat-spinner>
+          }
+          @if (!process.pending) {
+            <fa-icon icon="check" class="process-checkmark"></fa-icon>
+          }
+        </div>
+        <div class="truncate-text" [matTooltip]="process.description">
+          {{ process.title }}
+          @if (process.details) {
+            <span>({{ process.details }})</span>
+          }
+        </div>
       </div>
-      <div class="truncate-text" [matTooltip]="process.description">
-        {{ process.title }}
-        <span *ngIf="process.details">({{ process.details }})</span>
-      </div>
-    </div>
+    }
 
     <button
       mat-stroked-button

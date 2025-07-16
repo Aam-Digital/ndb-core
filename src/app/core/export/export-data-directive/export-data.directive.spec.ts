@@ -1,3 +1,4 @@
+import { TestBed } from "@angular/core/testing";
 import { ExportDataDirective } from "./export-data.directive";
 import { DownloadService } from "../download-service/download.service";
 
@@ -7,16 +8,21 @@ describe("ExportDataDirective", () => {
 
   beforeEach(() => {
     mockDownloadService = jasmine.createSpyObj(["triggerDownload"]);
-    directive = new ExportDataDirective(mockDownloadService);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: DownloadService, useValue: mockDownloadService },
+        ExportDataDirective,
+      ],
+    });
+    directive = TestBed.inject(ExportDataDirective);
   });
 
   it("should create an instance", () => {
     expect(directive).toBeTruthy();
   });
 
-  it("opens should call triggerDownload when button is clicked", () => {
+  it("should call triggerDownload when button is clicked", () => {
     directive.click();
-
     expect(mockDownloadService.triggerDownload).toHaveBeenCalled();
   });
 });

@@ -75,20 +75,22 @@
                 ></fa-icon>
               </mat-label>
               <input [formControl]="fieldIdForm" matInput />
-              <fa-icon
-                *ngIf="fieldIdForm.disabled"
-                icon="lock"
-                matSuffix
-              ></fa-icon>
-              <mat-error *ngIf="fieldIdForm.hasError('pattern')">
-                <span i18n>
-                  Invalid ID pattern. Only letters, numbers, and underscores are
-                  allowed.</span
-                >
-              </mat-error>
-              <mat-error *ngIf="fieldIdForm.hasError('uniqueId')">
-                {{ fieldIdForm.getError("uniqueId") }}
-              </mat-error>
+              @if (fieldIdForm.disabled) {
+                <fa-icon icon="lock" matSuffix></fa-icon>
+              }
+              @if (fieldIdForm.hasError("pattern")) {
+                <mat-error>
+                  <span i18n>
+                    Invalid ID pattern. Only letters, numbers, and underscores
+                    are allowed.</span
+                  >
+                </mat-error>
+              }
+              @if (fieldIdForm.hasError("uniqueId")) {
+                <mat-error>
+                  {{ fieldIdForm.getError("uniqueId") }}
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field
@@ -118,54 +120,56 @@
             }
 
             <!-- "additional" for enum datatype -->
-            <mat-form-field *ngIf="formDataType.value === 'configurable-enum'">
-              <mat-label>
-                <span i18n> Type Details (dropdown options set)</span>
-                <fa-icon
-                  icon="question-circle"
-                  matTooltip="Select an existing set of options to share between multiple fields or create a new, independent list of dropdown options."
-                  i18n-matTooltip
-                ></fa-icon>
-              </mat-label>
-
-              <app-basic-autocomplete
-                formControlName="additional"
-                [options]="typeAdditionalOptions"
-                [optionToString]="objectToLabel"
-                [valueMapper]="objectToValue"
-                [createOption]="createNewAdditionalOptionAsync"
-              ></app-basic-autocomplete>
-
-              <button
-                mat-icon-button
-                matSuffix
-                (click)="openEnumOptions($event)"
-              >
-                <fa-icon icon="wrench"></fa-icon>
-              </button>
-            </mat-form-field>
+            @if (formDataType.value === "configurable-enum") {
+              <mat-form-field>
+                <mat-label>
+                  <span i18n> Type Details (dropdown options set)</span>
+                  <fa-icon
+                    icon="question-circle"
+                    matTooltip="Select an existing set of options to share between multiple fields or create a new, independent list of dropdown options."
+                    i18n-matTooltip
+                  ></fa-icon>
+                </mat-label>
+                <app-basic-autocomplete
+                  formControlName="additional"
+                  [options]="typeAdditionalOptions"
+                  [optionToString]="objectToLabel"
+                  [valueMapper]="objectToValue"
+                  [createOption]="createNewAdditionalOptionAsync"
+                ></app-basic-autocomplete>
+                <button
+                  mat-icon-button
+                  matSuffix
+                  (click)="openEnumOptions($event)"
+                >
+                  <fa-icon icon="wrench"></fa-icon>
+                </button>
+              </mat-form-field>
+            }
 
             <!-- "additional" for entity ref datatypes -->
-            <mat-form-field *ngIf="formDataType.value === 'entity'">
-              <mat-label>
-                <span i18n> Type Details (target record type)</span>
-                <fa-icon
-                  icon="question-circle"
-                  matTooltip="Select from which type of records the user can select and link to with this field."
-                  i18n-matTooltip
-                ></fa-icon>
-              </mat-label>
-              <app-entity-type-select
-                formControlName="additional"
-              ></app-entity-type-select>
-            </mat-form-field>
+            @if (formDataType.value === "entity") {
+              <mat-form-field>
+                <mat-label>
+                  <span i18n> Type Details (target record type)</span>
+                  <fa-icon
+                    icon="question-circle"
+                    matTooltip="Select from which type of records the user can select and link to with this field."
+                    i18n-matTooltip
+                  ></fa-icon>
+                </mat-label>
+                <app-entity-type-select
+                  formControlName="additional"
+                ></app-entity-type-select>
+              </mat-form-field>
+            }
           </div>
         </div>
       </mat-tab>
 
       <!--
         ADVANCED SETTINGS
-      -->
+        -->
       <mat-tab label="Advanced Options & Validation" i18n-label>
         <div class="grid-layout-wide margin-top-regular">
           <div class="entity-form-cell">
@@ -189,11 +193,11 @@
             </app-anonymize-options>
 
             <!-- TODO: not supported yet
-            <mat-form-field>
-              <mat-label i18n>Searchable</mat-label>
-              <input formControlName="searchable" matInput />
-            </mat-form-field>
-            -->
+              <mat-form-field>
+                <mat-label i18n>Searchable</mat-label>
+                <input formControlName="searchable" matInput />
+              </mat-form-field>
+              -->
           </div>
 
           <div class="entity-form-cell">

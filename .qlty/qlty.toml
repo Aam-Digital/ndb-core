@@ -72,10 +72,11 @@ name = "dockerfmt"
 
 [[plugin]]
 name = "eslint"
-version = "9.24.0"
+version = "9.31.0"
 package_file = "package.json"
 package_filters = [
-  "eslint", "prettier",
+  "eslint",
+  "prettier",
   "eslint-plugin-prettier",
   "eslint-plugin-storybook",
   "typescript-eslint",

@@ -1,6 +1,6 @@
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { NEVER } from "rxjs";
@@ -30,7 +30,7 @@ describe("NoteDetailsComponent", () => {
 
   let testNote: Note;
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     const children = [
       new TestEntity("1"),
       new TestEntity("2"),
@@ -51,9 +51,7 @@ describe("NoteDetailsComponent", () => {
         },
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(NoteDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

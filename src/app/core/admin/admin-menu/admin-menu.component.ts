@@ -32,13 +32,11 @@ import { AdminMenuItemDetailsComponent } from "./admin-menu-item-details/admin-m
   styleUrl: "./admin-menu.component.scss",
 })
 export class AdminMenuComponent implements OnInit {
+  private dialog = inject(MatDialog);
+  private readonly entityMapper = inject(EntityMapperService);
+
   menuItems: MenuItemForAdminUi[];
   readonly navigationContainer = "navigation-container";
-
-  constructor(
-    private dialog: MatDialog,
-    private readonly entityMapper: EntityMapperService,
-  ) {}
 
   async ngOnInit() {
     await this.loadNavigationConfig();

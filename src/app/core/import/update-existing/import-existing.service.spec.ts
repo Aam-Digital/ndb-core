@@ -2,7 +2,6 @@ import { TestBed } from "@angular/core/testing";
 
 import { ImportService } from "../import.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { Entity } from "../../entity/model/entity";
 import { ImportSettings } from "../import-metadata";
@@ -10,7 +9,6 @@ import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { expectEntitiesToBeInDatabase } from "../../../utils/expect-entity-data.spec";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 import { genders } from "../../../child-dev-project/children/model/genders";
-import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 
 describe("ImportExistingService", () => {
   let service: ImportService;
@@ -18,23 +16,13 @@ describe("ImportExistingService", () => {
   let entityMapper: EntityMapperService;
 
   beforeEach(async () => {
-    entityMapper = mockEntityMapper();
-
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [
-        ImportService,
-        { provide: EntityMapperService, useValue: entityMapper },
-        {
-          provide: ConfigurableEnumService,
-          useValue: new ConfigurableEnumService(
-            entityMapper,
-            jasmine.createSpyObj(["can"]),
-          ),
-        },
-      ],
+      providers: [ImportService],
     });
     service = TestBed.inject(ImportService);
+
+    entityMapper = TestBed.inject(EntityMapperService);
   });
 
   it("should use existing records to be updated, if matchExistingByFields are given", async () => {

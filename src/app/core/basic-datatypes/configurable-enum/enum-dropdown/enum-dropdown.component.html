@@ -16,25 +16,29 @@
     ></app-basic-autocomplete>
 
     <div class="icon-container">
-      <fa-icon
-        *ngIf="form.enabled"
-        icon="caret-down"
-        class="form-field-icon-suffix"
-        (click)="autocomplete.showAutocomplete()"
-        matIconSuffix
-      ></fa-icon>
+      @if (form.enabled) {
+        <fa-icon
+          icon="caret-down"
+          class="form-field-icon-suffix"
+          (click)="autocomplete.showAutocomplete()"
+          matIconSuffix
+        ></fa-icon>
+      }
 
-      <fa-icon
-        *ngIf="form.enabled && !!createNewOption && canEdit"
-        class="form-field-icon-suffix"
-        matIconSuffix
-        (click)="openSettings($event)"
-        icon="wrench"
-      ></fa-icon>
+      @if (form.enabled && !!createNewOption && canEdit) {
+        <fa-icon
+          class="form-field-icon-suffix"
+          matIconSuffix
+          (click)="openSettings($event)"
+          icon="wrench"
+        ></fa-icon>
+      }
     </div>
 
-    <mat-error *ngIf="form.errors">
-      <app-error-hint [form]="form"></app-error-hint>
-    </mat-error>
+    @if (form.errors) {
+      <mat-error>
+        <app-error-hint [form]="form"></app-error-hint>
+      </mat-error>
+    }
   </div>
 </mat-form-field>

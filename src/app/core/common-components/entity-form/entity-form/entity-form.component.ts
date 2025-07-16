@@ -4,6 +4,7 @@ import {
   OnChanges,
   SimpleChanges,
   ViewEncapsulation,
+  inject,
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityForm } from "../entity-form.service";
@@ -11,7 +12,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { NgClass } from "@angular/common";
 import { Subscription } from "rxjs";
 import moment from "moment";
 import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
@@ -38,8 +39,6 @@ import { FormsModule } from "@angular/forms";
   encapsulation: ViewEncapsulation.None,
   imports: [
     FormsModule, // importing FormsModule ensures that buttons anywhere inside do not trigger form submission / page reload
-    NgForOf,
-    NgIf,
     NgClass,
     EntityFieldEditComponent,
   ],
@@ -47,6 +46,10 @@ import { FormsModule } from "@angular/forms";
 export class EntityFormComponent<T extends Entity = Entity>
   implements OnChanges
 {
+  private entityMapper = inject(EntityMapperService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private ability = inject(EntityAbility);
+
   /**
    * The entity which should be displayed and edited
    */
@@ -63,12 +66,6 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   private initialFormValues: any;
   private changesSubscription: Subscription;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService,
-    private ability: EntityAbility,
-  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.fieldGroups) {

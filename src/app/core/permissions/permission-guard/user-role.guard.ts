@@ -1,5 +1,4 @@
-import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
+import { inject, Injectable } from "@angular/core";
 import { AbstractPermissionGuard } from "./abstract-permission.guard";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { SessionSubject } from "../../session/auth/session-info";
@@ -9,12 +8,7 @@ import { SessionSubject } from "../../session/auth/session-info";
  */
 @Injectable()
 export class UserRoleGuard extends AbstractPermissionGuard {
-  constructor(
-    router: Router,
-    private sessionInfo: SessionSubject,
-  ) {
-    super(router);
-  }
+  private sessionInfo = inject(SessionSubject);
 
   protected async canAccessRoute(
     routeData: DynamicComponentConfig,

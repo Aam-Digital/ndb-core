@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ImportService } from "../import.service";
 import {
   MAT_DIALOG_DATA,
@@ -8,7 +8,6 @@ import {
 import { Entity } from "../../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatButtonModule } from "@angular/material/button";
 
@@ -27,17 +26,16 @@ export interface ImportDialogData {
   selector: "app-import-confirm-summary",
   templateUrl: "./import-confirm-summary.component.html",
   styleUrls: ["./import-confirm-summary.component.scss"],
-  imports: [MatDialogModule, NgIf, MatProgressBarModule, MatButtonModule],
+  imports: [MatDialogModule, MatProgressBarModule, MatButtonModule],
 })
 export class ImportConfirmSummaryComponent {
-  importInProgress: boolean;
+  private dialogRef =
+    inject<MatDialogRef<ImportConfirmSummaryComponent>>(MatDialogRef);
+  data = inject<ImportDialogData>(MAT_DIALOG_DATA);
+  private snackBar = inject(MatSnackBar);
+  private importService = inject(ImportService);
 
-  constructor(
-    private dialogRef: MatDialogRef<ImportConfirmSummaryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ImportDialogData,
-    private snackBar: MatSnackBar,
-    private importService: ImportService,
-  ) {}
+  importInProgress: boolean;
 
   // TODO: detailed summary including warnings of unmapped columns, ignored values, etc. (#1943)
 

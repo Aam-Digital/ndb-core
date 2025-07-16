@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import moment from "moment";
 import { RecurringActivity } from "./model/recurring-activity";
@@ -12,11 +12,11 @@ import { ChildrenService } from "../children/children.service";
   providedIn: "root",
 })
 export class AttendanceService {
-  constructor(
-    private entityMapper: EntityMapperService,
-    private dbIndexing: DatabaseIndexingService,
-    private childrenService: ChildrenService,
-  ) {
+  private entityMapper = inject(EntityMapperService);
+  private dbIndexing = inject(DatabaseIndexingService);
+  private childrenService = inject(ChildrenService);
+
+  constructor() {
     this.createIndices();
   }
 

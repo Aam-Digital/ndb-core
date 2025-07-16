@@ -9,9 +9,7 @@ describe("DisplayEntityComponent", () => {
     await TestBed.configureTestingModule({
       imports: [DisplayEntityComponent],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(DisplayEntityComponent);
     component = fixture.componentInstance;
     component.value = [];

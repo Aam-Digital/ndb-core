@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
 import { SqlReport } from "../../report-config";
-import { JsonPipe, NgClass, NgForOf } from "@angular/common";
+import { JsonPipe, NgClass } from "@angular/common";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import {

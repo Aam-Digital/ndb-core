@@ -1,5 +1,5 @@
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { GeoResult, GeoService } from "./geo.service";
 import { lastValueFrom } from "rxjs";
 import { GeoLocation } from "./geo-location";
@@ -9,15 +9,13 @@ export class LocationDatatype extends DefaultDatatype<
   GeoLocation,
   GeoLocation
 > {
+  private geoService = inject(GeoService);
+
   static override dataType = "location";
   static override label: string = $localize`:datatype-label:location (address + map)`;
 
   override editComponent = "EditLocation";
   override viewComponent = "ViewLocation";
-
-  constructor(private geoService: GeoService) {
-    super();
-  }
 
   override transformToObjectFormat(value: GeoLocation): GeoLocation {
     if (typeof value !== "object") {

@@ -1,9 +1,14 @@
-import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnInit,
+  ViewEncapsulation,
+  inject,
+} from "@angular/core";
 import { Entity } from "../../../../core/entity/model/entity";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../../utils/tab-state/tab-state.module";
@@ -17,24 +22,22 @@ import { MatSelectModule } from "@angular/material/select";
   styleUrls: ["./grouped-child-attendance.component.scss"],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    NgIf,
     MatProgressBarModule,
     MatTabsModule,
     TabStateModule,
     ActivityAttendanceSectionComponent,
-    NgForOf,
     MatSelectModule,
   ],
 })
 export class GroupedChildAttendanceComponent implements OnInit {
+  private attendanceService = inject(AttendanceService);
+
   @Input() entity: Entity;
 
   loading: boolean = true;
   selectedActivity: RecurringActivity;
   activities: RecurringActivity[] = [];
   archivedActivities: RecurringActivity[] = [];
-
-  constructor(private attendanceService: AttendanceService) {}
 
   ngOnInit() {
     return this.loadActivities();

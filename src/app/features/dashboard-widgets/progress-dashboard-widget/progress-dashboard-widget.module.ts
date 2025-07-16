@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { ProgressDashboardConfig } from "./progress-dashboard/progress-dashboard-config";
 
@@ -6,7 +6,9 @@ import { ProgressDashboardConfig } from "./progress-dashboard/progress-dashboard
 export class ProgressDashboardWidgetModule {
   static databaseEntities = [ProgressDashboardConfig];
 
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll([
       [
         "ProgressDashboard",

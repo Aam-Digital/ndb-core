@@ -18,7 +18,7 @@ describe("DashboardComponent", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [DashboardComponent, MockedTestingModule],
+      imports: [DashboardComponent, MockedTestingModule.withState()],
     }).compileComponents();
     ability = TestBed.inject(EntityAbility);
   });

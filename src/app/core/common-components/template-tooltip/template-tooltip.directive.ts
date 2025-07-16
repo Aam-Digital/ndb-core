@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   TemplateRef,
+  inject,
 } from "@angular/core";
 import {
   Overlay,
@@ -38,6 +39,11 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   standalone: true,
 })
 export class TemplateTooltipDirective implements OnInit, OnDestroy {
+  private overlay = inject(Overlay);
+  private overlayPositionBuilder = inject(OverlayPositionBuilder);
+  private element = inject<ElementRef<HTMLElement>>(ElementRef);
+  private zone = inject(NgZone);
+
   /**
    * Whether to disable the tooltip, so it won't ever be shown
    */
@@ -82,13 +88,6 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    * @private
    */
   private timeoutRef?: ReturnType<typeof setTimeout>;
-
-  constructor(
-    private overlay: Overlay,
-    private overlayPositionBuilder: OverlayPositionBuilder,
-    private element: ElementRef<HTMLElement>,
-    private zone: NgZone,
-  ) {}
 
   ngOnInit(): void {
     // Create a position strategy that determines where the overlay is positioned.

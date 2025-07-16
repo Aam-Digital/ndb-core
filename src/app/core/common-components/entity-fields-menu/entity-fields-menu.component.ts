@@ -3,11 +3,10 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  Optional,
   Output,
   SimpleChanges,
+  inject,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   ColumnConfig,
@@ -22,7 +21,6 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
 @Component({
   selector: "app-entity-fields-menu",
   imports: [
-    CommonModule,
     MatFormFieldModule,
     ReactiveFormsModule,
     EntityFieldSelectComponent,
@@ -31,6 +29,8 @@ import { EntityFieldSelectComponent } from "app/core/entity/entity-field-select/
   styleUrl: "./entity-fields-menu.component.scss",
 })
 export class EntityFieldsMenuComponent implements OnChanges {
+  private entityFormService = inject(EntityFormService, { optional: true });
+
   @Input() entityType: EntityConstructor;
   @Input() set availableFields(value: ColumnConfig[]) {
     this._availableFields = value
@@ -50,8 +50,6 @@ export class EntityFieldsMenuComponent implements OnChanges {
   @Input() activeFields: string[];
   @Output() activeFieldsChange = new EventEmitter<string[]>();
   selectedFieldsControl = new FormControl<string[]>([]);
-
-  constructor(@Optional() private entityFormService: EntityFormService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.activeFields) {

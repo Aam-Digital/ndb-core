@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, inject } from "@angular/core";
 import { ConfigurableEnumService } from "./configurable-enum.service";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configurable-enum.datatype";
@@ -54,7 +54,9 @@ import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configura
   ],
 })
 export class ConfigurableEnumModule {
-  constructor(enumService: ConfigurableEnumService) {
+  constructor() {
+    const enumService = inject(ConfigurableEnumService);
+
     enumService.preLoadEnums();
   }
 }

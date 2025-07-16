@@ -1,6 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
@@ -17,11 +22,13 @@ import { EntityFormService } from "../entity-form/entity-form.service";
   selector: "app-entity-field-view",
   templateUrl: "./entity-field-view.component.html",
   styleUrls: ["./entity-field-view.component.scss"],
-  imports: [NgIf, DynamicComponentDirective],
+  imports: [DynamicComponentDirective],
 })
 export class EntityFieldViewComponent<E extends Entity = Entity>
   implements OnChanges
 {
+  private entityFormService = inject(EntityFormService);
+
   @Input() entity: E;
 
   /** field id or full config */
@@ -30,8 +37,6 @@ export class EntityFieldViewComponent<E extends Entity = Entity>
   _field: FormFieldConfig;
 
   @Input() showLabel: "inline" | "above" | "none" = "none";
-
-  constructor(private entityFormService: EntityFormService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {

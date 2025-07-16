@@ -1,6 +1,6 @@
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { faker } from "../../../core/demo-data/faker";
 import { RecurringActivity } from "../model/recurring-activity";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
@@ -13,6 +13,9 @@ import { Entity } from "../../../core/entity/model/entity";
  */
 @Injectable()
 export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringActivity> {
+  private demoChildren = inject(DemoChildGenerator);
+  private demoUser = inject(DemoUserGeneratorService);
+
   private static readonly ACTIVITY_TYPES = [
     defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
     defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
@@ -57,13 +60,6 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
 
   private readonly MIN_PARTICIPANTS = 3;
   private readonly MAX_PARTICIPANTS = 25;
-
-  constructor(
-    private demoChildren: DemoChildGenerator,
-    private demoUser: DemoUserGeneratorService,
-  ) {
-    super();
-  }
 
   generateEntities(): RecurringActivity[] {
     const data = [];

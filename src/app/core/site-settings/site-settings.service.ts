@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
 import { Observable, skipWhile } from "rxjs";
 import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
@@ -11,6 +11,7 @@ import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { FileService } from "#src/app/features/file/file.service";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -19,6 +20,12 @@ import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/co
   providedIn: "root",
 })
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
+  private title = inject(Title);
+  private fileService = inject(FileService);
+  private schemaService = inject(EntitySchemaService);
+  private enumService = inject(ConfigurableEnumService);
+
+  readonly DEFAULT_FAVICON = "favicon.ico";
   readonly SITE_SETTINGS_LOCAL_STORAGE_KEY = Entity.createPrefixedId(
     SiteSettings.ENTITY_TYPE,
     SiteSettings.ENTITY_ID,
@@ -30,14 +37,17 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   defaultLanguage = this.getPropertyObservable("defaultLanguage");
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
 
-  constructor(
-    private title: Title,
-    private schemaService: EntitySchemaService,
-    private enumService: ConfigurableEnumService,
-    entityMapper: EntityMapperService,
-  ) {
+  constructor() {
+    const entityMapper = inject(EntityMapperService);
+
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper);
 
+    this.init();
+
+    super.startLoading();
+  }
+
+  init() {
     this.initAvailableLocales();
 
     this.siteName.subscribe((name) => this.title.setTitle(name));
@@ -48,8 +58,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
 
     this.initFromLocalStorage();
     this.cacheInLocalStorage();
-
-    super.startLoading();
   }
 
   /**

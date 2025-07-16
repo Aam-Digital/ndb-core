@@ -47,6 +47,7 @@ describe("EntityActionsService", () => {
       "save",
       "saveAll",
       "receiveUpdates",
+      "loadType",
     ]);
     mockedEntityMapper.receiveUpdates.and.returnValue(of());
 
