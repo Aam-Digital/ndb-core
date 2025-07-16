@@ -52,12 +52,20 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       this.leftSideEntity = this.entityRegistry.get(key) ?? null;
       this.leftColumns = [];
       this.leftFilters = [];
+      this.originalConfig.leftSide = {
+        ...this.originalConfig.leftSide,
+        prefilter: {},
+      };
     });
 
     this.configForm.get("rightType").valueChanges.subscribe((key) => {
       this.rightSideEntity = this.entityRegistry.get(key) ?? null;
       this.rightColumns = [];
       this.rightFilters = [];
+      this.originalConfig.rightSide = {
+        ...this.originalConfig.rightSide,
+        prefilter: {},
+      };
     });
   }
 
