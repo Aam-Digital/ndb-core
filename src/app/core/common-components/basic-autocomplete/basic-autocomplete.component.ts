@@ -4,7 +4,6 @@ import {
   ContentChild,
   ElementRef,
   EventEmitter,
-  inject,
   Input,
   OnChanges,
   OnInit,
@@ -17,13 +16,7 @@ import {
 } from "@angular/core";
 import { NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
-import {
-  FormControl,
-  FormGroupDirective,
-  NgControl,
-  NgForm,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInput, MatInputModule } from "@angular/material/input";
 import {
   MatAutocompleteModule,
@@ -31,7 +24,6 @@ import {
 } from "@angular/material/autocomplete";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { filter, map, startWith } from "rxjs/operators";
-import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import {
@@ -363,6 +355,7 @@ export class BasicAutocompleteComponent<O, V = O>
     this._selectedOptions = this._options.filter(
       (o) => o.selected && !o.isHidden,
     );
+    console.log(this._selectedOptions, "selected");
   }
 
   select(selected: string | SelectableOption<O, V>) {

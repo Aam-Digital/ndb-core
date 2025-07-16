@@ -26,7 +26,12 @@
         <mat-chip-row [editable]="!_disabled" class="chip">
           @if (!templateRef) {
             {{ item.asString }}
-          } @else {}
+          } @else {
+            <ng-template
+              [ngTemplateOutlet]="templateRef"
+              [ngTemplateOutletContext]="{ $implicit: item.initial }"
+            ></ng-template>
+          }
           @if (!_disabled) {
             <button matChipRemove (click)="unselect(item)">
               <fa-icon
@@ -112,6 +117,12 @@ Autocomplete
             >
               {{ item.asString }}
             </span>
+          } @else {
+            <ng-template
+              class="item-option"
+              [ngTemplateOutlet]="templateRef"
+              [ngTemplateOutletContext]="{ $implicit: item.initial }"
+            ></ng-template>
           }
         </div>
       </mat-option>
@@ -139,7 +150,3 @@ Autocomplete
     <ng-content select="[autocompleteFooter]"></ng-content>
   </div>
 </mat-autocomplete>
-
-<!--
-  Optional displaying as chips
-  -->
