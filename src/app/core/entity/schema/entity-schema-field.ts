@@ -18,7 +18,6 @@
 import { FormValidatorConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-reference-role";
 import { DefaultValueConfig } from "../../default-values/default-value-config";
-import { Entity } from "../model/entity";
 
 /**
  * Interface for additional configuration about a DatabaseField schema.
@@ -134,15 +133,6 @@ export interface EntitySchemaField {
    * "retain-anonymized" triggers a special dataType action to retain the data partially in a special, anonymized form.
    */
   anonymize?: "retain" | "retain-anonymized";
-
-  /**
-   * typically used in RelatedEntitiesComponent to provide context such as
-   * School → Activities.
-   *
-   * This allows dynamic components like EditTextWithAutocompleteComponent
-   * to resolve values like relevantValue automatically.
-   */
-  relatedEntitiesParent?: Entity;
 }
 
 /**

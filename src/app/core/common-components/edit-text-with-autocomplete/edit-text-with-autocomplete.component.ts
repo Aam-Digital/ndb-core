@@ -68,15 +68,25 @@ export class EditTextWithAutocompleteComponent
      * This should be the same type as for which the form was created.
      */
     entityType: string;
+
     /**
      * (optional) a property which should be filled with certain value, if an entity is selected.
      */
     relevantProperty?: string;
+
     /**
+     * @deprecated use `relatedEntitiesParent` instead.
+     *
      * (optional) required if `relevantProperty` is set.
      * The value to be filled in `selectedEntity[relevantProperty]`.
      */
     relevantValue?: string;
+
+    /**
+     * Reference to the "parent" entity within which this is listed as a related entity.
+     * (automatically assigned by RelatedEntitiesComponent)
+     */
+    relatedEntitiesParent?: Entity;
   };
 
   entities: Entity[] = [];
@@ -166,7 +176,7 @@ export class EditTextWithAutocompleteComponent
   private addRelevantValueToRelevantProperty(selected: Entity) {
     const relevantValue =
       this.additional.relevantValue ??
-      this.formFieldConfig?.relatedEntitiesParent?.getId();
+      this.additional?.relatedEntitiesParent?.getId();
 
     if (
       this.additional.relevantProperty &&
