@@ -5,13 +5,14 @@ import {
   argosScreenshot as argosScreenshotBase,
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
-
-import defaultJsonConfig from "#src/assets/base-configs/education/Config_CONFIG_ENTITY.json";
 import { faker } from "#src/app/core/demo-data/faker.js";
-import { EntityConfigService } from "#src/app/core/entity/entity-config.service.js";
 import type { Entity } from "#src/app/core/entity/model/entity.js";
-import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service.js";
-import { type EntityConfig } from "#src/app/core/entity/entity-config.js";
+import { EntitySchemaTransformer } from "#src/app/core/entity/schema/entity-schema.service.js";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
+import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype";
+import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype";
+import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype";
 
 // eslint-disable-next-line no-restricted-imports
 export { expect } from "@playwright/test";
@@ -78,17 +79,17 @@ export async function loadApp(page: Page, entities?: Entity[]) {
  * This implementation is not fully compatible with serialization in the app.
  */
 function serializeEntities(entities: Entity[]): unknown[] {
-  const entitySchemaService = new EntitySchemaService();
-  const entityConfigService = new EntityConfigService();
-  entityConfigService.setupEntities(
-    Object.entries(defaultJsonConfig.data).flatMap(([id, config]) => {
-      if (id.startsWith("entity:")) {
-        return [[id.substring("entity:".length), config as EntityConfig]];
-      } else {
-        return [];
-      }
-    }),
-  );
+  const entitySchemaService = new EntitySchemaTransformer([
+    new DefaultDatatype(),
+    new StringDatatype(),
+    new DateWithAgeDatatype(),
+    new DateOnlyDatatype(),
+    new LongTextDatatype(),
+    //new ConfigurableEnumDatatype(null),
+    //new LocationDatatype(null),
+    //new EntityDatatype(null, null, null),
+    //new EventAttendanceMapDatatype(entitySchemaService),
+  ]);
 
   return entities.map(
     (e) => entitySchemaService.transformEntityToDatabaseFormat(e) as unknown,
