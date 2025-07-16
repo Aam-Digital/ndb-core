@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
 import { MatButtonModule } from "@angular/material/button";
@@ -25,9 +25,15 @@ import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edi
   styleUrls: ["./admin-matching-entities.component.scss"],
 })
 export class AdminMatchingEntitiesComponent implements OnInit {
-  configForm!: FormGroup;
-  originalConfig: MatchingEntitiesConfig;
+  readonly fb = inject(FormBuilder);
+  readonly configService = inject(ConfigService);
+  readonly entityRegistry = inject(EntityRegistry);
+  readonly dialog = inject(MatDialog);
+  readonly location = inject(Location);
+  readonly alertService = inject(AlertService);
 
+  configForm: FormGroup;
+  originalConfig: MatchingEntitiesConfig;
   entityType: string[] = [];
 
   leftSideEntity: EntityConstructor;
@@ -39,25 +45,16 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   leftFilters: string[] = [];
   rightFilters: string[] = [];
 
-  constructor(
-    readonly fb: FormBuilder,
-    readonly configService: ConfigService,
-    readonly entityRegistry: EntityRegistry,
-    readonly dialog: MatDialog,
-    readonly location: Location,
-    readonly alertService: AlertService,
-  ) {}
-
   ngOnInit(): void {
     this.initConfig();
     this.initForm();
-    this.configForm.get("leftType")!.valueChanges.subscribe((key) => {
+    this.configForm.get("leftType").valueChanges.subscribe((key) => {
       this.leftSideEntity = this.entityRegistry.get(key) ?? null;
       this.leftColumns = [];
       this.leftFilters = [];
     });
 
-    this.configForm.get("rightType")!.valueChanges.subscribe((key) => {
+    this.configForm.get("rightType").valueChanges.subscribe((key) => {
       this.rightSideEntity = this.entityRegistry.get(key) ?? null;
       this.rightColumns = [];
       this.rightFilters = [];

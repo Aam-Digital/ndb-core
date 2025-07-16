@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from "@angular/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { HelpButtonComponent } from "app/core/common-components/help-button/help-button.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -43,6 +50,11 @@ import { MatSelectModule } from "@angular/material/select";
   styleUrl: "./edit-matching-view.component.scss",
 })
 export class EditMatchingViewComponent implements OnInit {
+  readonly fb = inject(FormBuilder);
+  readonly entityRegistry = inject(EntityRegistry);
+  readonly dialog = inject(MatDialog);
+  readonly entityRelationsService = inject(EntityRelationsService);
+
   @Input() value: NewMatchAction;
   @Input() leftSideEntity: EntityConstructor;
   @Input() rightSideEntity: EntityConstructor;
@@ -84,13 +96,6 @@ export class EditMatchingViewComponent implements OnInit {
 
   /** The currently selected entity constructor for generating field options. */
   entityConstructor: EntityConstructor;
-
-  constructor(
-    readonly fb: FormBuilder,
-    readonly entityRegistry: EntityRegistry,
-    readonly dialog: MatDialog,
-    readonly entityRelationsService: EntityRelationsService,
-  ) {}
 
   ngOnInit() {
     if (this.value) {
