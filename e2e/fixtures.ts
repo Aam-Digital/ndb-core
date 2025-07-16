@@ -85,6 +85,8 @@ function serializeEntities(entities: Entity[]): unknown[] {
     new DateWithAgeDatatype(),
     new DateOnlyDatatype(),
     new LongTextDatatype(),
+
+    // the following datatypes have dependencies through Angular DI - need workarounds in case they are needed for test data
     //new ConfigurableEnumDatatype(null),
     //new LocationDatatype(null),
     //new EntityDatatype(null, null, null),
