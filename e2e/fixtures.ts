@@ -6,7 +6,7 @@ import {
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
 import { faker } from "#src/app/core/demo-data/faker.js";
-import type { Entity } from "#src/app/core/entity/model/entity.js";
+import { Entity } from "#src/app/core/entity/model/entity.js";
 import { EntitySchemaTransformer } from "#src/app/core/entity/schema/entity-schema.service.js";
 import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
 import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
@@ -92,6 +92,8 @@ function serializeEntities(entities: Entity[]): unknown[] {
     //new EntityDatatype(null, null, null),
     //new EventAttendanceMapDatatype(entitySchemaService),
   ]);
+
+  // TODO: this somehow needs to also initialize config service?
 
   return entities.map(
     (e) => entitySchemaService.transformEntityToDatabaseFormat(e) as unknown,
