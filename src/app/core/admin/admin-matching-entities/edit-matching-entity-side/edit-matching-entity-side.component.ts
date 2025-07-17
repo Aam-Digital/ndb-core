@@ -41,18 +41,38 @@ export class EditMatchingEntitySideComponent implements OnInit {
   @Output() filtersChange = new EventEmitter<string[]>();
   @Output() openPrefilterEditor = new EventEmitter<void>();
 
+  /**
+   * Holds a predefined list of additional column options that can be appended to the entity view.
+   */
   additionalFields: ColumnConfig[] = [];
 
   ngOnInit(): void {
     if (this.columns) {
+      this.columns = this.columns.filter((c) => c !== "");
+
       this.additionalFields = [
         {
           id: "distance",
           label: "Distance",
         },
+        {
+          id: "_id",
+          label: "Name (Child)",
+          additional: "Child",
+          noSorting: true,
+          viewComponent: "DisplayEntity",
+        },
+        {
+          id: "_id",
+          label: "Name (School)",
+          additional: "School",
+          noSorting: true,
+          viewComponent: "DisplayEntity",
+        },
       ];
     }
   }
+
   onColumnsChange(newColumns: ColumnConfig[]): void {
     const updatedColumns = newColumns.map((col) => {
       if (typeof col !== "string" && col.id === "distance") {
