@@ -17,8 +17,9 @@ import { FormGroup } from "@angular/forms";
 import { firstValueFrom, Subject } from "rxjs";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
-import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EventEmitter } from "@angular/core";
+
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent<Entity>;
   let fixture: ComponentFixture<DialogButtonsComponent<Entity>>;

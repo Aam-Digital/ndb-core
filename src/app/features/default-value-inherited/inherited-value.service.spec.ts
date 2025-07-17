@@ -8,7 +8,7 @@ import {
   getDefaultInheritedForm,
 } from "../../core/default-values/default-value-service/default-value.service.spec";
 import { FormControl, FormGroup } from "@angular/forms";
-import { EntityForm } from "../../core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { DefaultValueService } from "../../core/default-values/default-value-service/default-value.service";
 import { EventEmitter } from "@angular/core";
 import { EntityAbility } from "../../core/permissions/ability/entity-ability";

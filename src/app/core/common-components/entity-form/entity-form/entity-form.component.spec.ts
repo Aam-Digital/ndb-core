@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityFormComponent } from "./entity-form.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -19,17 +19,16 @@ describe("EntityFormComponent", () => {
     [{ id: "name" }, { id: "other" }, { id: "photo" }, { id: "dateOfBirth" }],
   ];
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(() => {
     mockConfirmation = jasmine.createSpyObj(["getConfirmation"]);
+
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState(), EntityFormComponent],
       providers: [
         { provide: ConfirmationDialogService, useValue: mockConfirmation },
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(EntityFormComponent<TestEntity>);
     component = fixture.componentInstance;
 

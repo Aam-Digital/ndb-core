@@ -1,20 +1,21 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
-  inject,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../../common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import { AdminEntityFieldComponent } from "../admin-entity-field/admin-entity-field.component";
+import {
+  AdminEntityFieldComponent,
+  AdminEntityFieldData,
+} from "../admin-entity-field/admin-entity-field.component";
 import {
   CdkDragDrop,
   DragDropModule,
@@ -40,7 +41,6 @@ import { FormConfig } from "../../../entity-details/form/form.component";
 import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
 import { FieldGroup } from "app/core/entity-details/form/field-group";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
-import { AdminEntityFieldData } from "../admin-entity-field/admin-entity-field.component";
 
 @UntilDestroy()
 @Component({

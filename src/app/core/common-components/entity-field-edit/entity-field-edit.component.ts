@@ -1,17 +1,15 @@
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   SimpleChanges,
-  inject,
 } from "@angular/core";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { HelpButtonComponent } from "../help-button/help-button.component";
 import { Entity } from "../../entity/model/entity";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../entity-form/entity-form.service";
+import { EntityFormService } from "../entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import {
   ColumnConfig,
   FormFieldConfig,

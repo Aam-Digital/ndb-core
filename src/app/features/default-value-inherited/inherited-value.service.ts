@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
-import { EntityForm } from "../../core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { Entity } from "../../core/entity/model/entity";
 import {
   AdminDefaultValueContext,

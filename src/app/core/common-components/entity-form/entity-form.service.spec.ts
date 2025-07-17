@@ -1,10 +1,10 @@
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
+import { EntityFormService } from "./entity-form.service";
 import {
   EntityForm,
   EntityFormGroup,
-  EntityFormService,
-} from "./entity-form.service";
+} from "#src/app/core/common-components/entity-form/entity-form";
 import {
   FormControl,
   UntypedFormControl,

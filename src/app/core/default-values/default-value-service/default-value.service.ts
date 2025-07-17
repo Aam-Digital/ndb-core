@@ -1,6 +1,6 @@
-import { Injectable, inject } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { AbstractControl } from "@angular/forms";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueStrategy } from "../default-value-strategy.interface";

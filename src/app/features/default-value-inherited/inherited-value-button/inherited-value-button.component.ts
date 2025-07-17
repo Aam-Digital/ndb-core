@@ -1,11 +1,11 @@
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   SimpleChanges,
-  inject,
 } from "@angular/core";
-import { EntityForm } from "../../../core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFieldLabelComponent } from "../../../core/common-components/entity-field-label/entity-field-label.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";

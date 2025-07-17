@@ -15,10 +15,8 @@ import { Entity } from "../../entity/model/entity";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { NEVER } from "rxjs";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { FormBuilder } from "@angular/forms";
 
 describe("RowDetailsComponent", () => {

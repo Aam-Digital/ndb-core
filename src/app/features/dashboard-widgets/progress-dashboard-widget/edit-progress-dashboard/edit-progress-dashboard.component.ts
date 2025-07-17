@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import {
   ProgressDashboardConfig,
@@ -20,7 +20,7 @@ import { DialogCloseComponent } from "../../../../core/common-components/dialog-
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { TypedFormGroup } from "../../../../core/common-components/entity-form/entity-form.service";
+import { TypedFormGroup } from "#src/app/core/common-components/entity-form/entity-form";
 
 export interface EditProgressDashboardComponentData {
   title: string;
