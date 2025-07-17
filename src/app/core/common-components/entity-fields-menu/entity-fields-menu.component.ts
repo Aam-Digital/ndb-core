@@ -62,7 +62,6 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
   selectedFieldsControl = new FormControl<string[]>([]);
 
   ngOnInit() {
-    console.log(this.activeFields, "availablefielelel");
     this.selectedFieldsControl.valueChanges.subscribe((value: string[]) => {
       const mappedFields: ColumnConfig[] = value.map((v) => {
         const availableField = this._availableFields.find((f) => f.id === v);
@@ -74,14 +73,12 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
         } else return v;
       });
 
-      // this.activeFields = value;
       this.activeFieldsChange.emit(mappedFields);
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.activeFields) {
-      // console.log(this._availableFields)
       this.selectedFieldsControl.setValue(this.activeFields as string[], {
         emitEvent: false,
       });

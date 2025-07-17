@@ -179,11 +179,9 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       },
       matchingViews: this.originalConfig.onMatch,
     };
-    // console.log("Full config:",  fullConfig["appConfig:matching-entities"]);
 
     this.configService.saveConfig(fullConfig).then(() => {
       this.alertService.addInfo($localize`Configuration updated successfully.`);
-      console.log("Full config:", fullConfig);
     });
   }
 
