@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../../entity/model/entity";
@@ -32,6 +32,10 @@ import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormCo
   styleUrl: "./admin-entity-panel-component.component.scss",
 })
 export class AdminEntityPanelComponentComponent implements OnInit {
+  private entities = inject(EntityRegistry);
+  private confirmation = inject(ConfirmationDialogService);
+  private entityRelationsService = inject(EntityRelationsService);
+
   @Input() config: PanelComponent;
   @Input() entityType: EntityConstructor;
 
@@ -49,12 +53,6 @@ export class AdminEntityPanelComponentComponent implements OnInit {
     label: string;
     entityType: string;
   }[];
-
-  constructor(
-    private entities: EntityRegistry,
-    private confirmation: ConfirmationDialogService,
-    private entityRelationsService: EntityRelationsService,
-  ) {}
 
   ngOnInit(): void {
     if (!this.config.config?.entityType) return;

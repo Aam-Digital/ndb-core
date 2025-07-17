@@ -6,7 +6,6 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { UpdateMetadata } from "../../entity/model/update-metadata";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
 import { BooleanDatatype } from "../../basic-datatypes/boolean/boolean.datatype";
@@ -31,7 +30,10 @@ describe("DuplicateRecordsService", () => {
       imports: [NoopAnimationsModule],
       providers: [
         DuplicateRecordService,
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        {
+          provide: EntityMapperService,
+          useValue: jasmine.createSpyObj(["saveAll"]),
+        },
         EntitySchemaService,
         { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
         { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
@@ -69,11 +71,10 @@ describe("DuplicateRecordsService", () => {
 
     const originalData = [duplicateTestEntity];
     const cloneSpy = spyOn(service, "clone").and.callThrough();
-    const saveAllSpy = spyOn(entityMapperService, "saveAll");
 
     await service.duplicateRecord(originalData);
 
     expect(cloneSpy).toHaveBeenCalledWith(originalData);
-    expect(saveAllSpy).toHaveBeenCalled();
+    expect(entityMapperService.saveAll).toHaveBeenCalled();
   });
 });

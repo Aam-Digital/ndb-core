@@ -2,4 +2,6 @@
 
 <app-input-file (fileLoad)="onFileLoad($event)" fileType="csv"></app-input-file>
 
-<div *ngIf="data" i18n>{{ data.data?.length }} rows detected for import</div>
+@if (data) {
+  <div i18n>{{ data.data?.length }} rows detected for import</div>
+}

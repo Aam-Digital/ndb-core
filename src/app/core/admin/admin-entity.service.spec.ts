@@ -1,8 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 
 import { AdminEntityService } from "./admin-entity.service";
-import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../entity/entity-mapper/mock-entity-mapper-service";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "../entity/database-entity.decorator";
 
 describe("AdminEntityService", () => {
   let service: AdminEntityService;
@@ -10,9 +13,10 @@ describe("AdminEntityService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        ...mockEntityMapperProvider(),
         {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper(),
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
         },
       ],
     });

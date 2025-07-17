@@ -10,20 +10,22 @@
         ></app-help-button>
       </th>
     </tr>
-    <tr *ngFor="let ctrl of form.controls | keyvalue">
-      <td style="padding-right: 20px">{{ ctrl.key }}:</td>
-      <td>
-        <ng-container
-          [appDynamicComponent]="{
-            component: component,
-            config: {
-              formFieldConfig: schema,
-              formControl: ctrl.value,
-            },
-          }"
-        ></ng-container>
-      </td>
-    </tr>
+    @for (ctrl of form.controls | keyvalue; track ctrl) {
+      <tr>
+        <td style="padding-right: 20px">{{ ctrl.key }}:</td>
+        <td>
+          <ng-container
+            [appDynamicComponent]="{
+              component: component,
+              config: {
+                formFieldConfig: schema,
+                formControl: ctrl.value,
+              },
+            }"
+          ></ng-container>
+        </td>
+      </tr>
+    }
   </table>
 </mat-dialog-content>
 

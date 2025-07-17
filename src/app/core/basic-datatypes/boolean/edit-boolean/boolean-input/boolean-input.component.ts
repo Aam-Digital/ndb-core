@@ -1,10 +1,9 @@
 import {
   Component,
   ElementRef,
-  Optional,
-  Self,
   ViewChild,
   ViewEncapsulation,
+  inject,
 } from "@angular/core";
 import { CustomFormControlDirective } from "../../../../common-components/basic-autocomplete/custom-form-control.directive";
 import { MatCheckbox, MatCheckboxModule } from "@angular/material/checkbox";
@@ -29,22 +28,6 @@ import { ErrorStateMatcher } from "@angular/material/core";
 })
 export class BooleanInputComponent extends CustomFormControlDirective<boolean> {
   @ViewChild(MatCheckbox, { static: true }) inputElement: MatCheckbox;
-
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Self() ngControl: NgControl,
-    @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective,
-  ) {
-    super(
-      elementRef,
-      errorStateMatcher,
-      ngControl,
-      parentForm,
-      parentFormGroup,
-    );
-  }
 
   override onContainerClick(event: MouseEvent) {
     if ((event.target as Element).tagName.toLowerCase() != "mat-checkbox") {

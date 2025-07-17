@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {
   getReadableValue,
   transformToReadableFormat,
@@ -14,7 +14,7 @@ import { groupBy } from "../../../utils/utils";
   providedIn: "root",
 })
 export class DataTransformationService {
-  constructor(private queryService: QueryService) {}
+  private queryService = inject(QueryService);
 
   async queryAndTransformData(
     config: ExportColumnConfig[],

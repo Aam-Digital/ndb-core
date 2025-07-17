@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  inject,
 } from "@angular/core";
 import {
   FormControl,
@@ -17,7 +18,6 @@ import { AdditionalImportAction } from "../additional-import-action";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { NgForOf, NgIf } from "@angular/common";
 import { EntityBlockComponent } from "../../../basic-datatypes/entity/entity-block/entity-block.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
@@ -39,14 +39,12 @@ import { MatExpansionModule } from "@angular/material/expansion";
     MatListModule,
     FontAwesomeModule,
     MatTooltipModule,
-    NgForOf,
     EntityTypeLabelPipe,
     EntityBlockComponent,
     ReactiveFormsModule,
     MatFormFieldModule,
     BasicAutocompleteComponent,
     MatButtonModule,
-    NgIf,
     EntitySelectComponent,
     HelpButtonComponent,
     MatExpansionModule,
@@ -54,6 +52,8 @@ import { MatExpansionModule } from "@angular/material/expansion";
   providers: [EntityTypeLabelPipe],
 })
 export class ImportAdditionalActionsComponent implements OnChanges {
+  private importAdditionalService = inject(ImportAdditionalService);
+
   @Input() entityType: string;
 
   @Input() importActions: AdditionalImportAction[] = [];
@@ -73,7 +73,7 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     ),
   });
 
-  constructor(private importAdditionalService: ImportAdditionalService) {
+  constructor() {
     this.linkEntityForm
       .get("action")
       .valueChanges.subscribe((val) =>

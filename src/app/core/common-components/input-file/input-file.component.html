@@ -17,7 +17,9 @@
   <button mat-icon-button matIconSuffix (click)="fileInput.click()">
     <fa-icon icon="upload"></fa-icon>
   </button>
-  <mat-error *ngIf="formControl.invalid">{{
-    formControl.errors.fileInvalid || formControl.errors.parsingError
-  }}</mat-error>
+  @if (formControl.invalid) {
+    <mat-error>{{
+      formControl.errors.fileInvalid || formControl.errors.parsingError
+    }}</mat-error>
+  }
 </mat-form-field>

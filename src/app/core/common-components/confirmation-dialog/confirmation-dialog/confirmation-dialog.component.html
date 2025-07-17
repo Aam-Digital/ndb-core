@@ -1,21 +1,23 @@
 <h1 mat-dialog-title>
   {{ data.title }}
-  <app-dialog-close
-    *ngIf="data.closeButton"
-    mat-dialog-close
-  ></app-dialog-close>
+  @if (data.closeButton) {
+    <app-dialog-close mat-dialog-close></app-dialog-close>
+  }
 </h1>
 <div mat-dialog-content>
-  <p *ngFor="let para of data.text?.split('\n')">{{ para }}</p>
+  @for (para of data.text?.split("\n"); track para) {
+    <p>{{ para }}</p>
+  }
 </div>
 
 <div mat-dialog-actions>
-  <button
-    *ngFor="let button of data.buttons"
-    mat-stroked-button
-    (click)="button.click()"
-    [mat-dialog-close]="button.dialogResult"
-  >
-    {{ button.text }}
-  </button>
+  @for (button of data.buttons; track button) {
+    <button
+      mat-stroked-button
+      (click)="button.click()"
+      [mat-dialog-close]="button.dialogResult"
+    >
+      {{ button.text }}
+    </button>
+  }
 </div>

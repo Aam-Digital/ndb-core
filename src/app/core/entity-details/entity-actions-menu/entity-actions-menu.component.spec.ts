@@ -17,7 +17,7 @@ describe("EntityActionsMenuComponent", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [EntityActionsMenuComponent, MockedTestingModule],
+      imports: [EntityActionsMenuComponent, MockedTestingModule.withState()],
       providers: [EntityActionsMenuService],
     });
     fixture = TestBed.createComponent(EntityActionsMenuComponent);

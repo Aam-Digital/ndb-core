@@ -1,7 +1,7 @@
 import { DialogCloseComponent } from "#src/app/core/common-components/dialog-close/dialog-close.component";
 import { PanelComponent } from "#src/app/core/entity-details/EntityDetailsConfig";
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -27,16 +27,16 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   styleUrl: "./widget-component-select.component.scss",
 })
 export class WidgetComponentSelectComponent implements OnInit {
-  options: WidgetOption[];
+  private entityRelationsService = inject(EntityRelationsService);
+  private dialogRef =
+    inject<MatDialogRef<WidgetComponentSelectComponent, PanelComponent>>(
+      MatDialogRef,
+    );
+  data = inject<{
+    entityType: string;
+  }>(MAT_DIALOG_DATA);
 
-  constructor(
-    private entityRelationsService: EntityRelationsService,
-    private dialogRef: MatDialogRef<
-      WidgetComponentSelectComponent,
-      PanelComponent
-    >,
-    @Inject(MAT_DIALOG_DATA) public data: { entityType: string },
-  ) {}
+  options: WidgetOption[];
 
   ngOnInit() {
     this.options = this.loadAvailableWidgets();

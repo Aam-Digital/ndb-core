@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Entity } from "../model/entity";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { HistoricalDataService } from "./historical-data/historical-data.service";
@@ -20,10 +20,8 @@ export enum LoaderMethod {
   providedIn: "root",
 })
 export class EntitySpecialLoaderService {
-  constructor(
-    private childrenService: ChildrenService,
-    private historicalDataService: HistoricalDataService,
-  ) {}
+  private childrenService = inject(ChildrenService);
+  private historicalDataService = inject(HistoricalDataService);
 
   loadData<E extends Entity = Entity>(
     loaderMethod: LoaderMethod,

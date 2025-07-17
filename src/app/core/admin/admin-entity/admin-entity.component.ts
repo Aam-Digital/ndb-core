@@ -4,8 +4,9 @@ import {
   Input,
   OnInit,
   TemplateRef,
+  inject,
 } from "@angular/core";
-import { CommonModule, Location } from "@angular/common";
+import { Location } from "@angular/common";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
@@ -31,7 +32,6 @@ import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/ad
 @Component({
   selector: "app-admin-entity",
   imports: [
-    CommonModule,
     EntityTypeLabelPipe,
     MatButton,
     ViewTitleComponent,
@@ -47,6 +47,13 @@ import { AdminEntityPublicFormsComponent } from "../admin-entity-public-forms/ad
   styleUrl: "./admin-entity.component.scss",
 })
 export class AdminEntityComponent implements OnInit {
+  private entities = inject(EntityRegistry);
+  private configService = inject(ConfigService);
+  private location = inject(Location);
+  private adminEntityService = inject(AdminEntityService);
+  private entityActionsService = inject(EntityActionsService);
+  private routes = inject(ActivatedRoute);
+
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
@@ -57,15 +64,6 @@ export class AdminEntityComponent implements OnInit {
   protected mode: "details" | "list" | "general" | "publicForm" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
-
-  constructor(
-    private entities: EntityRegistry,
-    private configService: ConfigService,
-    private location: Location,
-    private adminEntityService: AdminEntityService,
-    private entityActionsService: EntityActionsService,
-    private routes: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
     this.init();

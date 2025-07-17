@@ -23,24 +23,25 @@
           All
         </button>
       </div>
-      <div
-        *ngFor="
-          let item of filter.rangeOptions;
-          let selectedIndexOfDateRanges = index
-        "
-      >
-        <button
-          class="button"
-          mat-button
-          color="primary"
-          [class.selected-option]="item === selectedOption"
-          (mouseenter)="preselectRange(item)"
-          (mouseleave)="unselectRange()"
-          (click)="selectRangeAndClose(selectedIndexOfDateRanges)"
-        >
-          {{ item.label }}
-        </button>
-      </div>
+      @for (
+        item of filter.rangeOptions;
+        track item;
+        let selectedIndexOfDateRanges = $index
+      ) {
+        <div>
+          <button
+            class="button"
+            mat-button
+            color="primary"
+            [class.selected-option]="item === selectedOption"
+            (mouseenter)="preselectRange(item)"
+            (mouseleave)="unselectRange()"
+            (click)="selectRangeAndClose(selectedIndexOfDateRanges)"
+          >
+            {{ item.label }}
+          </button>
+        </div>
+      }
     </div>
   </div>
 </mat-dialog-content>

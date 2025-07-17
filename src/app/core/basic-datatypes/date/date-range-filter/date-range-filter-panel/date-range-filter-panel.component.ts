@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   DateRange,
   MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
@@ -12,7 +12,6 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
-import { NgForOf } from "@angular/common";
 import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
 import { FormsModule } from "@angular/forms";
 import { dateToString } from "../../../../../utils/utils";
@@ -52,23 +51,18 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
     MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
   ],
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    MatDatepickerModule,
-    NgForOf,
-    FormsModule,
-  ],
+  imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, FormsModule],
 })
 export class DateRangeFilterPanelComponent {
+  filter = inject<DateFilter<any>>(MAT_DIALOG_DATA);
+  private dialogRef =
+    inject<MatDialogRef<DateRangeFilterPanelComponent>>(MatDialogRef);
+
   selectedRangeValue: DateRange<Date>;
   selectedOption: DateRangeFilterConfigOption;
   comparisonRange: DateRange<Date> = new DateRange(null, null);
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public filter: DateFilter<any>,
-    private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>,
-  ) {
+  constructor() {
     this.selectedRangeValue = new DateRange(
       this.filter.getDateRange().start ?? new Date("1900-01-01"),
       this.filter.getDateRange().end ?? new Date("2999-12-31"),

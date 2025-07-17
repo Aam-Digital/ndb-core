@@ -5,11 +5,11 @@
 
   <mat-form-field>
     <mat-select [formControl]="propertyForm">
-      <mat-option
-        *ngFor="let property of availableProperties"
-        [value]="property.property"
-        >{{ property.label }}
-      </mat-option>
+      @for (property of availableProperties; track property) {
+        <mat-option [value]="property.property"
+          >{{ property.label }}
+        </mat-option>
+      }
     </mat-select>
   </mat-form-field>
   <app-help-button

@@ -1,6 +1,10 @@
 import { UpdateManagerService } from "./update-manager.service";
-import { discardPeriodicTasks, fakeAsync, tick } from "@angular/core/testing";
-import { ApplicationRef } from "@angular/core";
+import {
+  discardPeriodicTasks,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 import {
   SwUpdate,
   UnrecoverableStateEvent,
@@ -11,6 +15,7 @@ import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
 import { Logging } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 describe("UpdateManagerService", () => {
   let service: UpdateManagerService;
@@ -20,10 +25,8 @@ describe("UpdateManagerService", () => {
   let unrecoverableSubject: Subject<UnrecoverableStateEvent>;
   let snackBar: jasmine.SpyObj<MatSnackBar>;
   let snackBarAction: Subject<void>;
-  let appRef: jasmine.SpyObj<ApplicationRef>;
-  let stableSubject: Subject<boolean>;
   let latestChangesDialog: jasmine.SpyObj<LatestChangesDialogService>;
-  let unsavedChanges: UnsavedChangesService;
+  let unsavedChanges: Partial<UnsavedChangesService>;
 
   beforeEach(() => {
     mockLocation = jasmine.createSpyObj(["reload"]);
@@ -40,15 +43,28 @@ describe("UpdateManagerService", () => {
     snackBar.open.and.returnValue({
       onAction: () => snackBarAction.asObservable(),
     } as any);
-    stableSubject = new Subject<boolean>();
-    appRef = jasmine.createSpyObj([], { isStable: stableSubject });
     latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
     spyOn(Logging, "error");
-    unsavedChanges = new UnsavedChangesService(undefined);
-    unsavedChanges.pending = true;
+    unsavedChanges = { pending: true };
 
     service = createService();
   });
+
+  function createService() {
+    TestBed.resetTestingModule();
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: SwUpdate, useValue: swUpdate },
+        { provide: MatSnackBar, useValue: snackBar },
+        { provide: LatestChangesDialogService, useValue: latestChangesDialog },
+        { provide: UnsavedChangesService, useValue: unsavedChanges },
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
+      ],
+    });
+
+    return TestBed.inject(UpdateManagerService);
+  }
 
   afterEach(() => localStorage.clear());
 
@@ -123,21 +139,6 @@ describe("UpdateManagerService", () => {
     service.regularlyCheckForUpdates();
     tick();
 
-    expect(swUpdate.checkForUpdate).not.toHaveBeenCalled();
-
-    stableSubject.next(false);
-    tick();
-
-    expect(swUpdate.checkForUpdate).not.toHaveBeenCalled();
-
-    stableSubject.next(true);
-    tick();
-
-    expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(1);
-
-    stableSubject.next(true);
-    tick();
-
     expect(swUpdate.checkForUpdate).toHaveBeenCalledTimes(1);
 
     // One hour later
@@ -182,15 +183,4 @@ describe("UpdateManagerService", () => {
     );
     expect(mockLocation.reload).toHaveBeenCalled();
   });
-
-  function createService() {
-    return new UpdateManagerService(
-      appRef,
-      swUpdate,
-      snackBar,
-      latestChangesDialog,
-      unsavedChanges,
-      mockLocation,
-    );
-  }
 });

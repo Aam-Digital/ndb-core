@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EntityFieldViewComponent } from "./entity-field-view.component";
-import { ConfigService } from "../../config/config.service";
-import { createTestingConfigService } from "../../config/testing-config-service";
+import { provideTestingConfigService } from "../../config/testing-config-service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 
@@ -16,10 +15,8 @@ describe("EntityFieldViewComponent", () => {
     testEntity = TestEntity.create("tester");
 
     await TestBed.configureTestingModule({
-      imports: [EntityFieldViewComponent, MockedTestingModule],
-      providers: [
-        { provide: ConfigService, useValue: createTestingConfigService() },
-      ],
+      imports: [EntityFieldViewComponent, MockedTestingModule.withState()],
+      providers: [...provideTestingConfigService()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EntityFieldViewComponent);

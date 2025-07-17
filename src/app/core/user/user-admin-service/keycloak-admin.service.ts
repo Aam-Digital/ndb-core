@@ -1,4 +1,4 @@
-import { Inject, Injectable, LOCALE_ID } from "@angular/core";
+import { Injectable, LOCALE_ID, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import {
   catchError,
@@ -26,6 +26,9 @@ import { environment } from "../../../../environments/environment";
  */
 @Injectable({ providedIn: "root" })
 export class KeycloakAdminService extends UserAdminService {
+  private http = inject(HttpClient);
+  private baseLocale = inject(LOCALE_ID);
+
   // These roles are created by Keycloak automatically and should not be added or removed from users.
   private static readonly KEYCLOAK_DEFAULT_ROLES = [
     "default-roles",
@@ -35,10 +38,7 @@ export class KeycloakAdminService extends UserAdminService {
 
   private readonly keycloakUrl: string;
 
-  constructor(
-    private http: HttpClient,
-    @Inject(LOCALE_ID) private baseLocale: string,
-  ) {
+  constructor() {
     super();
 
     // trim any trailing slashes from the userAdminApi URL

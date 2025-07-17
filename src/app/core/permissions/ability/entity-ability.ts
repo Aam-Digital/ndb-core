@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityActionPermission, EntitySubject } from "../permission-types";
 import { Ability, subject } from "@casl/ability";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -22,7 +22,9 @@ import { Entity } from "../../entity/model/entity";
 export class EntityAbility extends Ability<
   [EntityActionPermission, string | any]
 > {
-  constructor(private entitySchemaService: EntitySchemaService) {
+  private entitySchemaService = inject(EntitySchemaService);
+
+  constructor() {
     super([]);
   }
 

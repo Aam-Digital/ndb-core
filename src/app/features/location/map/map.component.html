@@ -1,16 +1,16 @@
 <div class="map-frame" [style.height]="height">
   <div id="map" #map>
     <div class="action-elements">
-      <button *ngIf="expandable" mat-mini-fab (click)="openMapInPopup()">
-        <fa-icon icon="expand" style="color: black"></fa-icon>
-      </button>
-      <button
-        *ngIf="showPropertySelection"
-        mat-mini-fab
-        (click)="openMapPropertiesPopup()"
-      >
-        <fa-icon icon="location-dot" style="color: black"></fa-icon>
-      </button>
+      @if (expandable) {
+        <button mat-mini-fab (click)="openMapInPopup()">
+          <fa-icon icon="expand" style="color: black"></fa-icon>
+        </button>
+      }
+      @if (showPropertySelection) {
+        <button mat-mini-fab (click)="openMapPropertiesPopup()">
+          <fa-icon icon="location-dot" style="color: black"></fa-icon>
+        </button>
+      }
     </div>
   </div>
 </div>

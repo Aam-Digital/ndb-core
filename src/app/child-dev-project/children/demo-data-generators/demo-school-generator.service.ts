@@ -1,5 +1,5 @@
 import { faker } from "../../../core/demo-data/faker";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { Entity } from "../../../core/entity/model/entity";
 import { createEntityOfType } from "../../../core/demo-data/create-entity-of-type";
@@ -10,6 +10,8 @@ export class DemoSchoolConfig {
 
 @Injectable()
 export class DemoSchoolGenerator extends DemoDataGenerator<Entity> {
+  config = inject(DemoSchoolConfig);
+
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoSchoolGenerator.provider({count: 10})]`
@@ -24,10 +26,6 @@ export class DemoSchoolGenerator extends DemoDataGenerator<Entity> {
 
   private readonly normalSchool = $localize`:School demo name that is connected with a school name:School`;
   private readonly highSchool = $localize`:School demo name that is connected with a school name:High School`;
-
-  constructor(public config: DemoSchoolConfig) {
-    super();
-  }
 
   generateEntities(): Entity[] {
     const data = [];

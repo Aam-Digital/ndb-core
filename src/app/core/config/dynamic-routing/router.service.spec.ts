@@ -24,7 +24,7 @@ describe("RouterService", () => {
     spyOn(Logging, "warn");
 
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule],
+      imports: [MockedTestingModule.withState()],
       providers: [],
     });
     service = TestBed.inject(RouterService);
@@ -108,7 +108,7 @@ describe("RouterService", () => {
         path: "other",
         component: TestComponent,
         canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
-        canDeactivate: [jasmine.any(Function)],
+        canDeactivate: [jasmine.any(Function) as any],
         data: { permittedUserRoles: ["admin_app"] },
       },
       { path: "child", component: EntityListComponent },

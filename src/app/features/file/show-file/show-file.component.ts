@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 
@@ -12,7 +12,7 @@ import { MatButtonModule } from "@angular/material/button";
   imports: [MatDialogModule, MatButtonModule],
 })
 export class ShowFileComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) private link: string) {}
+  private link = inject(MAT_DIALOG_DATA);
 
   showFile(): void {
     window.open(this.link, "_blank");

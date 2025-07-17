@@ -1,11 +1,10 @@
-import { NgModule } from "@angular/core";
+import { inject, NgModule } from "@angular/core";
 import { CoreModule } from "../core/core.module";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../core/entity/database-entity.decorator";
-import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ComponentRegistry } from "../dynamic-components";
 import { EntityActionsService } from "../core/entity/entity-actions/entity-actions.service";
@@ -13,6 +12,7 @@ import { ConfigurableEnumModule } from "../core/basic-datatypes/configurable-enu
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { defaultValueStrategyProviders } from "../core/default-values/standard-default-value-strategies";
+import { SyncStateSubject } from "../core/session/session-type";
 
 /**
  * A basic module that can be imported in unit tests to provide default datatypes.
@@ -22,11 +22,9 @@ import { defaultValueStrategyProviders } from "../core/default-values/standard-d
   imports: [CoreModule, ConfigurableEnumModule],
   providers: [
     { provide: EntityRegistry, useValue: entityRegistry },
-    { provide: EntityMapperService, useValue: mockEntityMapper() },
-    {
-      provide: ConfigurableEnumService,
-      useValue: new ConfigurableEnumService(mockEntityMapper(), null),
-    },
+    ...mockEntityMapperProvider(),
+    SyncStateSubject,
+    ConfigurableEnumService,
     {
       provide: EntityActionsService,
       useValue: jasmine.createSpyObj(["anonymize"]),
@@ -38,7 +36,9 @@ import { defaultValueStrategyProviders } from "../core/default-values/standard-d
   ],
 })
 export class CoreTestingModule {
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.allowDuplicates();
   }
 }

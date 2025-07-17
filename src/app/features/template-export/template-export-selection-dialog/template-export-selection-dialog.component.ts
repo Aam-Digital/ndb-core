@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -41,6 +41,12 @@ import { AlertService } from "../../../core/alerts/alert.service";
   styleUrl: "./template-export-selection-dialog.component.scss",
 })
 export class TemplateExportSelectionDialogComponent {
+  private dialogRef =
+    inject<MatDialogRef<TemplateExportSelectionDialogComponent>>(MatDialogRef);
+  private templateExportApi = inject(TemplateExportApiService);
+  private downloadService = inject(DownloadService);
+  private alertService = inject(AlertService);
+
   @Input() entity: Entity;
 
   templateSelectionForm: FormControl = new FormControl();
@@ -51,13 +57,9 @@ export class TemplateExportSelectionDialogComponent {
 
   loadingRequestedFile: boolean;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) data: Entity,
-    private dialogRef: MatDialogRef<TemplateExportSelectionDialogComponent>,
-    private templateExportApi: TemplateExportApiService,
-    private downloadService: DownloadService,
-    private alertService: AlertService,
-  ) {
+  constructor() {
+    const data = inject<Entity>(MAT_DIALOG_DATA);
+
     this.entity = data;
   }
 

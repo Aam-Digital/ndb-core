@@ -5,6 +5,7 @@ import {
   SimpleChanges,
   ViewChild,
   ViewEncapsulation,
+  inject,
 } from "@angular/core";
 import { Note } from "../../notes/model/note";
 import {
@@ -26,7 +27,7 @@ import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
-import { DatePipe, NgIf, PercentPipe } from "@angular/common";
+import { DatePipe, PercentPipe } from "@angular/common";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -43,7 +44,6 @@ import { Angulartics2Module } from "angulartics2";
   imports: [
     MatDatepickerModule,
     DatePipe,
-    NgIf,
     DialogCloseComponent,
     AttendanceStatusSelectComponent,
     MatFormFieldModule,
@@ -56,6 +56,11 @@ import { Angulartics2Module } from "angulartics2";
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {
+  private entityMapper = inject(EntityMapperService);
+  private formDialog = inject(FormDialogService);
+  private analyticsService = inject(AnalyticsService);
+  private attendanceService = inject(AttendanceService);
+
   @Input() records: Note[] = [];
   @Input() highlightForChild: string;
   @Input() activity: RecurringActivity;
@@ -70,12 +75,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   selectedEventAttendanceOriginal: EventAttendance;
   selectedEventStats: AverageAttendanceStats;
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private formDialog: FormDialogService,
-    private analyticsService: AnalyticsService,
-    private attendanceService: AttendanceService,
-  ) {
+  constructor() {
     this.entityMapper
       .receiveUpdates(EventNote)
       .pipe(untilDestroyed(this))

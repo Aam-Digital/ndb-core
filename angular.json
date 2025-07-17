@@ -162,16 +162,36 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "style": "scss"
+      "style": "scss",
+      "type": "component"
     },
     "@schematics/angular:directive": {
-      "prefix": "app"
+      "prefix": "app",
+      "type": "directive"
     },
     "@angular-eslint/schematics:application": {
       "setParserOptionsProject": true
     },
     "@angular-eslint/schematics:library": {
       "setParserOptionsProject": true
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
     }
   },
   "cli": {

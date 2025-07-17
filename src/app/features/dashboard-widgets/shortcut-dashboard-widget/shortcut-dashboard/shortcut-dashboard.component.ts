@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -32,6 +32,11 @@ import { Clipboard } from "@angular/cdk/clipboard";
   ],
 })
 export class ShortcutDashboardComponent {
+  private routePermissionsService = inject(RoutePermissionsService);
+  private locationStrategy = inject(LocationStrategy);
+  private clipboard = inject(Clipboard);
+  private alertService = inject(AlertService);
+
   /** displayed entries, each representing one line displayed as a shortcut */
   @Input() set shortcuts(items: MenuItem[]) {
     this.routePermissionsService
@@ -47,13 +52,6 @@ export class ShortcutDashboardComponent {
     $localize`:dashboard widget subtitle:Quick Actions`;
   @Input() explanation: string =
     $localize`:dashboard widget explanation:Shortcuts to quickly navigate to common actions`;
-
-  constructor(
-    private routePermissionsService: RoutePermissionsService,
-    private locationStrategy: LocationStrategy,
-    private clipboard: Clipboard,
-    private alertService: AlertService,
-  ) {}
 
   async copyAbsoluteLink2Clipboard(link: string) {
     const externalLink =

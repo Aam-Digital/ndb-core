@@ -7,6 +7,7 @@ import {
   SimpleChanges,
   Type,
   ViewContainerRef,
+  inject,
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { ComponentRegistry } from "../../../dynamic-components";
@@ -25,13 +26,11 @@ import { Logging } from "../../logging/logging.service";
   standalone: true,
 })
 export class DynamicComponentDirective implements OnChanges {
-  @Input() appDynamicComponent: DynamicComponentConfig;
+  viewContainerRef = inject(ViewContainerRef);
+  private components = inject(ComponentRegistry);
+  private changeDetector = inject(ChangeDetectorRef);
 
-  constructor(
-    public viewContainerRef: ViewContainerRef,
-    private components: ComponentRegistry,
-    private changeDetector: ChangeDetectorRef,
-  ) {}
+  @Input() appDynamicComponent: DynamicComponentConfig;
 
   ngOnChanges() {
     return this.loadDynamicComponent();

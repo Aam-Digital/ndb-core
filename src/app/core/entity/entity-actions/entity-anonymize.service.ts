@@ -1,6 +1,4 @@
-import { Injectable } from "@angular/core";
-import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
-import { EntitySchemaService } from "../schema/entity-schema.service";
+import { inject, Injectable } from "@angular/core";
 import {
   CascadingActionResult,
   CascadingEntityAction,
@@ -11,7 +9,6 @@ import { FileService } from "../../../features/file/file.service";
 import { Entity } from "../model/entity";
 import { asArray } from "app/utils/asArray";
 import { Logging } from "../../logging/logging.service";
-import { EntityRelationsService } from "../entity-mapper/entity-relations.service";
 
 /**
  * Anonymize an entity including handling references with related entities.
@@ -21,14 +18,7 @@ import { EntityRelationsService } from "../entity-mapper/entity-relations.servic
   providedIn: "root",
 })
 export class EntityAnonymizeService extends CascadingEntityAction {
-  constructor(
-    protected override entityMapper: EntityMapperService,
-    protected override schemaService: EntitySchemaService,
-    protected override entityRelationsService: EntityRelationsService,
-    private fileService: FileService,
-  ) {
-    super(entityMapper, schemaService, entityRelationsService);
-  }
+  private fileService = inject(FileService);
 
   /**
    * The actual anonymize action without user interactions.
