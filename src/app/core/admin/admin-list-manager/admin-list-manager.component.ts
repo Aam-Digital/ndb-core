@@ -45,6 +45,8 @@ export class AdminListManagerComponent implements OnInit {
   @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
 
   availableItems: ColumnConfig[] = [];
+
+  /** custom fields that will be added in addition to schema fields for users to select from */
   @Input() additionalFields: ColumnConfig[] = [];
 
   ngOnInit(): void {
