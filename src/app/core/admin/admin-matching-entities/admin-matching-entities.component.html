@@ -1,0 +1,55 @@
+<div class="flex-row flex-wrap justify-space-between padding-regular">
+  <app-view-title i18n>Edit Matching View</app-view-title>
+
+  <app-view-actions
+    class="flex-row align-center gap-regular margin-bottom-regular"
+  >
+    <button mat-raised-button color="accent" (click)="save()" i18n>Save</button>
+    <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
+  </app-view-actions>
+</div>
+
+<form [formGroup]="configForm">
+  <div class="entity-config-container flex-wrap flex-row padding-regular">
+    <div class="entity-side padding-regular">
+      <app-edit-matching-entity-side
+        [form]="configForm"
+        controlName="leftType"
+        [entityType]="entityType"
+        [sideEntity]="leftSideEntity"
+        [columns]="leftColumns"
+        [filters]="leftFilters"
+        title="Left"
+        i18n-title
+        (columnsChange)="leftColumns = $event"
+        (filtersChange)="leftFilters = $event"
+        (openPrefilterEditor)="openPrefilterEditor('left')"
+      ></app-edit-matching-entity-side>
+    </div>
+
+    <div class="entity-side padding-regular">
+      <app-edit-matching-entity-side
+        [form]="configForm"
+        controlName="rightType"
+        [entityType]="entityType"
+        [sideEntity]="rightSideEntity"
+        [columns]="rightColumns"
+        [filters]="rightFilters"
+        title="Right"
+        i18n-title
+        (columnsChange)="rightColumns = $event"
+        (filtersChange)="rightFilters = $event"
+        (openPrefilterEditor)="openPrefilterEditor('right')"
+      ></app-edit-matching-entity-side>
+    </div>
+  </div>
+</form>
+
+<div class="entity-match-container padding-regular">
+  <app-edit-matching-view
+    [value]="originalConfig.onMatch"
+    [leftSideEntity]="leftSideEntity"
+    [rightSideEntity]="rightSideEntity"
+    (valueChange)="originalConfig.onMatch = $event"
+  ></app-edit-matching-view>
+</div>
