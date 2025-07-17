@@ -62,6 +62,7 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
   selectedFieldsControl = new FormControl<string[]>([]);
 
   ngOnInit() {
+    console.log(this.activeFields, "availablefielelel");
     this.selectedFieldsControl.valueChanges.subscribe((value: string[]) => {
       const mappedFields: ColumnConfig[] = value.map((v) => {
         const availableField = this._availableFields.find((f) => f.id === v);

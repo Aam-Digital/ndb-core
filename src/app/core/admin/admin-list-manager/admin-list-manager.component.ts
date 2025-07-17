@@ -45,14 +45,18 @@ export class AdminListManagerComponent implements OnInit {
   @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
 
   availableItems: ColumnConfig[] = [];
+  @Input() additionalFields: ColumnConfig[] = [];
 
   ngOnInit(): void {
     if (!this.entityType) return;
     const targetEntitySchemaFields = Array.from(this.entityType.schema.keys());
-    this.availableItems = [
-      ...(this.activeFields ?? []),
-      ...targetEntitySchemaFields,
-    ];
+    this.availableItems = Array.from(
+      new Set([
+        ...(this.activeFields ?? []),
+        ...targetEntitySchemaFields,
+        ...this.additionalFields,
+      ]),
+    );
   }
 
   drop(event: CdkDragDrop<ColumnConfig[]>) {

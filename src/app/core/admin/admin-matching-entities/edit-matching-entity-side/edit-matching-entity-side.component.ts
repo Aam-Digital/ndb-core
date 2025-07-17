@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -26,7 +26,7 @@ import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormCo
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
-export class EditMatchingEntitySideComponent {
+export class EditMatchingEntitySideComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() entityType: string[] = [];
@@ -41,9 +41,29 @@ export class EditMatchingEntitySideComponent {
   @Output() filtersChange = new EventEmitter<string[]>();
   @Output() openPrefilterEditor = new EventEmitter<void>();
 
+  additionalFields: ColumnConfig[] = [];
+
+  ngOnInit(): void {
+    if (this.columns) {
+      this.additionalFields = [
+        {
+          id: "distance",
+          label: "Distance",
+        },
+      ];
+    }
+  }
+
   onColumnsChange(newColumns: ColumnConfig[]): void {
-    console.log("Emitting updated columns:", newColumns);
-    this.columnsChange.emit(newColumns);
+    const hasDistance = newColumns.some(
+      (column) => typeof column == "object" && column.id === "distance",
+    );
+
+    this.columnsChange.emit(
+      hasDistance
+        ? newColumns.map((col) => (typeof col === "string" ? col : col.id))
+        : newColumns,
+    );
   }
 
   onFiltersChange(newFilters: ColumnConfig[]): void {
