@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, inject } from "@angular/core";
+import { EventEmitter, inject, Injectable } from "@angular/core";
 import {
   FormBuilder,
   FormControl,
@@ -257,7 +257,7 @@ export class EntityFormService {
    * This function applies the changes of the formGroup to the entity.
    * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
    * The input entity will not be modified but a copy of it will be returned in case of success.
-   * @param form The formGroup holding the changes (marked pristine and disabled after successful save)
+   * @param entityForm The formGroup holding the changes (marked pristine and disabled after successful save)
    * @param entity The entity on which the changes should be applied.
    * @returns a copy of the input entity with the changes from the form group
    */
@@ -269,16 +269,7 @@ export class EntityFormService {
 
     this.checkFormValidity(form);
 
-    const updatedEntity = entity.copy() as T;
-    for (const [key, value] of Object.entries(form.getRawValue())) {
-      if (value !== null) {
-        updatedEntity[key] = value;
-      } else {
-        // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
-        delete updatedEntity[key];
-      }
-    }
-
+    const updatedEntity = this.createUpdatedEntity(entity, form);
     updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
 
@@ -303,6 +294,22 @@ export class EntityFormService {
     if (form.invalid) {
       throw new InvalidFormFieldError();
     }
+  }
+
+  private createUpdatedEntity<T extends Entity>(
+    entity: T,
+    form: EntityFormGroup<T>,
+  ) {
+    const updatedEntity = entity.copy() as T;
+    for (const [key, value] of Object.entries(form.getRawValue())) {
+      if (value !== null) {
+        updatedEntity[key] = value;
+      } else {
+        // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
+        delete updatedEntity[key];
+      }
+    }
+    return updatedEntity;
   }
 
   private assertPermissionsToSave(oldEntity: Entity, newEntity: Entity) {

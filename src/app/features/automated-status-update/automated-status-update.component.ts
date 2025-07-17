@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import {
   MAT_DIALOG_DATA,
@@ -44,6 +44,13 @@ export interface AffectedEntity {
   selectedField?: FormFieldConfig;
 }
 
+/**
+ * A confirmation dialog for the user to review and confirm
+ * the automated updates of fields in related entities,
+ * after a triggering entity has been updated.
+ *
+ * (also see AutomatedStatusUpdateConfigService)
+ */
 @Component({
   selector: "app-automated-status-update",
   imports: [
@@ -65,7 +72,6 @@ export class AutomatedStatusUpdateComponent implements OnInit {
   private entityFormService = inject(EntityFormService);
 
   entityConstructor: EntityConstructor;
-  entityForm: EntityForm<Entity>;
 
   async ngOnInit(): Promise<void> {
     for (const entity of this.data.entities) {
