@@ -7,7 +7,10 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
-import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
+import {
+  EntityForm,
+  EntityFormSavedEvent,
+} from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
@@ -19,6 +22,7 @@ import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-e
 import { FieldGroup } from "../../../entity-details/form/field-group";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { FormsModule } from "@angular/forms";
+import { AutomatedStatusUpdateConfigService } from "#src/app/features/automated-status-update/automated-status-update-config-service";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -49,6 +53,9 @@ export class EntityFormComponent<T extends Entity = Entity>
   private entityMapper = inject(EntityMapperService);
   private confirmationDialog = inject(ConfirmationDialogService);
   private ability = inject(EntityAbility);
+  private automatedStatusUpdateConfigService = inject(
+    AutomatedStatusUpdateConfigService,
+  );
 
   /**
    * The entity which should be displayed and edited
@@ -90,7 +97,27 @@ export class EntityFormComponent<T extends Entity = Entity>
     if (changes.form && this.form) {
       this.initialFormValues = this.form.formGroup.getRawValue();
       this.disableForLockedEntity();
+      this.subscribeForAutomatingStatusUpdates();
     }
+  }
+
+  private formStateSubscription: Subscription;
+  private subscribeForAutomatingStatusUpdates() {
+    if (this.formStateSubscription) {
+      this.formStateSubscription.unsubscribe();
+    }
+
+    this.formStateSubscription = this.form.onFormStateChange
+      .pipe(
+        untilDestroyed(this),
+        filter((event) => event instanceof EntityFormSavedEvent),
+      )
+      .subscribe(async (event: EntityFormSavedEvent) => {
+        await this.automatedStatusUpdateConfigService.applyRulesToDependentEntities(
+          event.newEntity,
+          event.previousEntity,
+        );
+      });
   }
 
   private async applyChanges(externallyUpdatedEntity: T) {

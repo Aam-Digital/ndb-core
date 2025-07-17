@@ -13,7 +13,6 @@ import { EntityFormComponent } from "../../common-components/entity-form/entity-
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
-import { AutomatedStatusUpdateConfigService } from "app/features/automated-status-update/automated-status-update-config-service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -35,9 +34,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private location = inject(Location);
   private entityFormService = inject(EntityFormService);
   private alertService = inject(AlertService);
-  private automatedStatusUpdateConfigService = inject(
-    AutomatedStatusUpdateConfigService,
-  );
   private viewContext = inject(ViewComponentContext, { optional: true });
 
   @Input() entity: E;
@@ -61,14 +57,9 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   }
 
   async saveClicked() {
-    const changedFields = this.getChangedFields();
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
 
-      await this.automatedStatusUpdateConfigService.applyRulesToDependentEntities(
-        this.entity,
-        changedFields,
-      );
       if (this.creatingNew && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
@@ -80,22 +71,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
         this.alertService.addDanger(err.message);
       }
     }
-  }
-
-  /**
-   * Collects values from dirty form controls.
-   * @returns An object containing the changed fields.
-   */
-  getChangedFields() {
-    const changes: any = {};
-    const formGroup = this.form.formGroup;
-    Object.keys(formGroup.controls).forEach((key) => {
-      const control = formGroup.get(key);
-      if (control.dirty) {
-        changes[key] = control.value;
-      }
-    });
-    return changes;
   }
 
   cancelClicked() {
