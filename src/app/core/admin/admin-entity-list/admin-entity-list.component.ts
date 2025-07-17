@@ -74,11 +74,7 @@ export class AdminEntityListComponent implements OnChanges {
       filters = [];
     }
 
-    const stringFilters = filters.filter(
-      (f): f is string => typeof f === "string",
-    );
-
-    this.filters = [...stringFilters];
+    this.filters = filters.map((f) => (typeof f === "string" ? f : f.id));
 
     this.config.filters = this.filters.map(
       (f) =>
@@ -95,11 +91,7 @@ export class AdminEntityListComponent implements OnChanges {
       );
       return;
     }
-    if (columns.every((f) => typeof f === "string")) {
-      group.columns = columns;
-    }
-    if (typeof columns === "string") {
-    }
+    group.columns = columns.map((f) => (typeof f === "string" ? f : f.id));
   }
 
   newColumnGroupFactory(): GroupConfig {

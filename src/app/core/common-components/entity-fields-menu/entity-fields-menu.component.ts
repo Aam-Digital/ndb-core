@@ -34,13 +34,15 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
   @Input() entityType: EntityConstructor;
   @Input() set availableFields(value: ColumnConfig[]) {
-    // console.log(value,"value")
     this._availableFields = value
       .map((field) => {
-
-        const mappedField = this.entityFormService && this.entityType
-          ? this.entityFormService.extendFormFieldConfig(field, this.entityType)
-          : toFormFieldConfig(field);
+        const mappedField =
+          this.entityFormService && this.entityType
+            ? this.entityFormService.extendFormFieldConfig(
+                field,
+                this.entityType,
+              )
+            : toFormFieldConfig(field);
 
         if (typeof field === "object") {
           mappedField["_customField"] = true;
@@ -61,25 +63,19 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
   ngOnInit() {
     this.selectedFieldsControl.valueChanges.subscribe((value: string[]) => {
-        // console.log("valueChange subscribe", value)
+      const mappedFields: ColumnConfig[] = value.map((v) => {
+        const availableField = this._availableFields.find((f) => f.id === v);
 
-        const mappedFields: ColumnConfig[] = value.map(v => {
-          // console.log("value update", v);
-
-          const availableField = this._availableFields.find(f => f.id === v);
-
-          if (availableField?.["_customField"]) {
-            const result = { ...availableField };
-            delete result["_customField"];
-            return result;
-          }
-          else return v;
-        });
-
-        this.activeFields = value;
-        console.log(mappedFields,"maaped")
-        this.activeFieldsChange.emit(mappedFields);
+        if (availableField?.["_customField"]) {
+          const result = { ...availableField };
+          delete result["_customField"];
+          return result;
+        } else return v;
       });
+
+      // this.activeFields = value;
+      this.activeFieldsChange.emit(mappedFields);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
