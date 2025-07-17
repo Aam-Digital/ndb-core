@@ -10,6 +10,7 @@ import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-t
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { Logging } from "../../logging/logging.service";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-admin-entity-list",

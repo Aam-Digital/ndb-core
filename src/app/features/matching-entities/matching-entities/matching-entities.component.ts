@@ -30,7 +30,6 @@ import {
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
-import { MatButtonModule } from "@angular/material/button";
 import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
