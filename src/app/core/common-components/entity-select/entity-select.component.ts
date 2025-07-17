@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -7,7 +13,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -30,7 +36,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   ],
   imports: [
     MatFormFieldModule,
-    NgIf,
     ReactiveFormsModule,
     MatAutocompleteModule,
     MatChipsModule,
@@ -52,6 +57,10 @@ export class EntitySelectComponent<
   T extends string[] | string = string[],
 > implements OnChanges
 {
+  private entityMapperService = inject(EntityMapperService);
+  private formDialog = inject(FormDialogService);
+  private entityRegistry = inject(EntityRegistry);
+
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
   @Input() form: FormControl<T>;
@@ -118,12 +127,6 @@ export class EntitySelectComponent<
 
   @Input() includeInactive: boolean = false;
   currentlyMatchingInactive: number = 0;
-
-  constructor(
-    private entityMapperService: EntityMapperService,
-    private formDialog: FormDialogService,
-    private entityRegistry: EntityRegistry,
-  ) {}
 
   /**
    * The accessor used for filtering and when selecting a new

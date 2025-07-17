@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  inject,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
@@ -22,13 +23,13 @@ import { DateFilter } from "app/core/filter/filters/dateFilter";
   imports: [MatFormFieldModule, MatDatepickerModule, FormsModule],
 })
 export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
+  private dialog = inject(MatDialog);
+
   fromDate: Date;
   toDate: Date;
 
   @Input() filterConfig: DateFilter<T>;
   @Output() dateRangeChange = new EventEmitter<{ from: Date; to: Date }>();
-
-  constructor(private dialog: MatDialog) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.filterConfig) {

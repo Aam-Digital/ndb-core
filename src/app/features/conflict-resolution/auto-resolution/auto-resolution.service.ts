@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import {
   CONFLICT_RESOLUTION_STRATEGY,
   ConflictResolutionStrategy,
@@ -11,14 +11,9 @@ import {
   providedIn: "root",
 })
 export class AutoResolutionService {
-  /**
-   * @param resolutionStrategies The (multi = true) services registered as resolution strategies (can be none --> null)
-   */
-  constructor(
-    @Optional()
-    @Inject(CONFLICT_RESOLUTION_STRATEGY)
-    private resolutionStrategies: ConflictResolutionStrategy[],
-  ) {}
+  private resolutionStrategies = inject(CONFLICT_RESOLUTION_STRATEGY, {
+    optional: true,
+  });
 
   /**
    * Checks whether any registered resolution strategy suggests that the conflicting version should be automatically deleted.

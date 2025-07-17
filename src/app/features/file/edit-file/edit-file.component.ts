@@ -1,9 +1,9 @@
 import {
   Component,
   ElementRef,
-  Inject,
   OnInit,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -48,6 +48,11 @@ export const EditFileComponent_IMPORTS = [
   imports: EditFileComponent_IMPORTS,
 })
 export class EditFileComponent extends EditComponent<string> implements OnInit {
+  protected fileService = inject(FileService);
+  private alertService = inject(AlertService);
+  private entityMapper = inject(EntityMapperService);
+  protected navigator = inject<Navigator>(NAVIGATOR_TOKEN);
+
   @ViewChild("fileUpload") fileUploadInput: ElementRef<HTMLInputElement>;
   private selectedFile: File;
   private removeClicked = false;
@@ -64,15 +69,6 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
    * If not defined, allows any file.
    */
   acceptedFileTypes: string = "*";
-
-  constructor(
-    protected fileService: FileService,
-    private alertService: AlertService,
-    private entityMapper: EntityMapperService,
-    @Inject(NAVIGATOR_TOKEN) protected navigator: Navigator,
-  ) {
-    super();
-  }
 
   override ngOnInit() {
     super.ngOnInit();

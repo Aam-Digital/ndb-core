@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from "@angular/core";
+import { Component, Input, inject } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
@@ -8,7 +8,7 @@ import { EventNote } from "../model/event-note";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { DatePipe, NgIf, PercentPipe } from "@angular/common";
+import { DatePipe, PercentPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
@@ -22,7 +22,6 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
     DialogCloseComponent,
     MatDialogModule,
     MatFormFieldModule,
-    NgIf,
     PercentPipe,
     DatePipe,
     FormsModule,
@@ -32,6 +31,8 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
   ],
 })
 export class AttendanceDetailsComponent {
+  private formDialog = inject(FormDialogService);
+
   @Input() entity: ActivityAttendance;
   @Input() forChild: string;
   EventNote = EventNote;
@@ -56,11 +57,12 @@ export class AttendanceDetailsComponent {
     },
   ];
 
-  constructor(
-    private formDialog: FormDialogService,
-    @Inject(MAT_DIALOG_DATA)
-    data: { forChild: string; attendance: ActivityAttendance },
-  ) {
+  constructor() {
+    const data = inject<{
+      forChild: string;
+      attendance: ActivityAttendance;
+    }>(MAT_DIALOG_DATA);
+
     this.entity = data.attendance;
     this.forChild = data.forChild;
   }

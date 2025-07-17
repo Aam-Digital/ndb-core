@@ -7,6 +7,7 @@ import {
   OnInit,
   SimpleChanges,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -20,7 +21,6 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { filter, map } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
-import { NgIf } from "@angular/common";
 import { WidgetContentComponent } from "../dashboard-widget/widget-content/widget-content.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
@@ -48,13 +48,14 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   imports: [
     DashboardWidgetComponent,
     WidgetContentComponent,
-    NgIf,
     MatPaginatorModule,
   ],
 })
 export class DashboardListWidgetComponent<E>
   implements OnInit, OnChanges, AfterViewInit
 {
+  private entityMapperService = inject(EntityMapperService);
+
   @Input() subtitle: string;
   @Input() icon: IconName = "exclamation-triangle";
   @Input() theme: DashboardTheme;
@@ -92,8 +93,6 @@ export class DashboardListWidgetComponent<E>
 
   @ContentChild(MatTable) matTable: MatTable<E>;
   @ViewChild("paginator") private paginator: MatPaginator;
-
-  constructor(private entityMapperService: EntityMapperService) {}
 
   ngOnInit() {
     this.data

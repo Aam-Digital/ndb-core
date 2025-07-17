@@ -1,7 +1,5 @@
-import { Injectable } from "@angular/core";
-import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
+import { inject, Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../model/entity";
-import { EntitySchemaService } from "../schema/entity-schema.service";
 import { CascadingEntityAction } from "./cascading-entity-action";
 import { UnsavedChangesService } from "app/core/entity-details/form/unsaved-changes.service";
 import { lastValueFrom } from "rxjs";
@@ -12,7 +10,6 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { EntityActionsService } from "./entity-actions.service";
 import { asArray } from "app/utils/asArray";
-import { EntityRelationsService } from "../entity-mapper/entity-relations.service";
 
 /**
  * Bulk edit fields of multiple entities at once.
@@ -21,16 +18,9 @@ import { EntityRelationsService } from "../entity-mapper/entity-relations.servic
   providedIn: "root",
 })
 export class EntityEditService extends CascadingEntityAction {
-  constructor(
-    protected override entityMapper: EntityMapperService,
-    protected override schemaService: EntitySchemaService,
-    protected override entityRelationsService: EntityRelationsService,
-    private matDialog: MatDialog,
-    private entityActionsService: EntityActionsService,
-    private unsavedChanges: UnsavedChangesService,
-  ) {
-    super(entityMapper, schemaService, entityRelationsService);
-  }
+  private matDialog = inject(MatDialog);
+  private entityActionsService = inject(EntityActionsService);
+  private unsavedChanges = inject(UnsavedChangesService);
 
   /**
    * Shows a confirmation dialog to the user

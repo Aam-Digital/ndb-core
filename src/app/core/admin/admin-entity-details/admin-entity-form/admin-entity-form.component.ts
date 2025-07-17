@@ -5,6 +5,7 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  inject,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
@@ -27,7 +28,6 @@ import {
 } from "../../../common-components/entity-form/FormConfig";
 import { AdminEntityService } from "../../admin-entity.service";
 import { lastValueFrom } from "rxjs";
-import { NgForOf, NgIf } from "@angular/common";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -53,7 +53,6 @@ import { AdminEntityFieldData } from "../admin-entity-field/admin-entity-field.c
   ],
   imports: [
     DragDropModule,
-    NgForOf,
     FaIconComponent,
     MatButtonModule,
     MatTooltipModule,
@@ -61,10 +60,13 @@ import { AdminEntityFieldData } from "../admin-entity-field/admin-entity-field.c
     EntityFieldLabelComponent,
     EntityFieldEditComponent,
     AdminSectionHeaderComponent,
-    NgIf,
   ],
 })
 export class AdminEntityFormComponent implements OnChanges {
+  private entityFormService = inject(EntityFormService);
+  private matDialog = inject(MatDialog);
+  private adminEntityService = inject(AdminEntityService);
+
   @Input() entityType: EntityConstructor;
 
   /**
@@ -124,12 +126,10 @@ export class AdminEntityFormComponent implements OnChanges {
     label: $localize`:Label drag and drop item:Create Text Block`,
   };
 
-  constructor(
-    private entityFormService: EntityFormService,
-    private matDialog: MatDialog,
-    private adminEntityService: AdminEntityService,
-  ) {
-    this.adminEntityService.entitySchemaUpdated
+  constructor() {
+    const adminEntityService = inject(AdminEntityService);
+
+    adminEntityService.entitySchemaUpdated
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.availableFields = []; // force re-init of the label components that otherwise do not detect the change

@@ -6,10 +6,6 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 
 @Injectable()
 class TestPermissionGuard extends AbstractPermissionGuard {
-  constructor(router: Router) {
-    super(router);
-  }
-
   protected async canAccessRoute(
     routeData: DynamicComponentConfig,
   ): Promise<boolean> {

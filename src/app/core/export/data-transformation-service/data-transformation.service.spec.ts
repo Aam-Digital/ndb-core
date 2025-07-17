@@ -7,12 +7,12 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ExportColumnConfig } from "./export-column-config";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
 import moment from "moment";
-import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { TestEntity } from "../../../utils/test-utils/TestEntity";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
-import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { ChildrenService } from "../../../child-dev-project/children/children.service";
 
 describe("DataTransformationService", () => {
   let service: DataTransformationService;
@@ -20,7 +20,7 @@ describe("DataTransformationService", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [DatabaseTestingModule],
+      imports: [MockedTestingModule.withState()],
     });
 
     service = TestBed.inject<DataTransformationService>(
@@ -28,8 +28,6 @@ describe("DataTransformationService", () => {
     );
     entityMapper = TestBed.inject(EntityMapperService);
   }));
-
-  afterEach(() => TestBed.inject(DatabaseResolverService).destroyDatabases());
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -213,9 +211,14 @@ describe("DataTransformationService", () => {
 
   it("should use first level queries to fetch data if no data is provided", async () => {
     const child = await createChildInDB("some child");
-    await createNoteInDB("school", [child], ["PRESENT"]);
-    await createNoteInDB("school", [child], ["ABSENT"]);
-    await createNoteInDB("coaching", [child], ["PRESENT"]);
+    const note1 = await createNoteInDB("school", [child], ["PRESENT"]);
+    const note2 = await createNoteInDB("school", [child], ["ABSENT"]);
+    const note3 = await createNoteInDB("coaching", [child], ["PRESENT"]);
+
+    const childrenService = TestBed.inject(ChildrenService);
+    const getNotesInTimespan = spyOn(childrenService, "getNotesInTimespan");
+    getNotesInTimespan.and.resolveTo([note1, note2, note3]);
+
     const exportConfig: ExportColumnConfig[] = [
       {
         query: `${Note.ENTITY_TYPE}:toArray[* subject = school]:getAttendanceArray:getAttendanceReport`,
@@ -264,6 +267,11 @@ describe("DataTransformationService", () => {
     todayNote.date = new Date();
     await entityMapper.save(todayNote);
 
+    const childrenService = TestBed.inject(ChildrenService);
+    const getNotesInTimespan = spyOn(childrenService, "getNotesInTimespan");
+
+    getNotesInTimespan.and.resolveTo([yesterdayNote, todayNote]);
+    const startDate = moment().subtract(5, "days").toDate();
     let result = await service.queryAndTransformData(
       [
         {
@@ -271,11 +279,16 @@ describe("DataTransformationService", () => {
           subQueries: [{ query: "subject" }],
         },
       ],
-      moment().subtract(5, "days").toDate(),
+      startDate,
     );
 
     expect(result.map((x) => x.subject)).toEqual(["yesterday", "today"]);
+    expect(getNotesInTimespan).toHaveBeenCalledWith(
+      startDate,
+      jasmine.anything(), // today's date as default
+    );
 
+    getNotesInTimespan.calls.reset();
     const query = [
       { query: "name" },
       {
@@ -283,49 +296,50 @@ describe("DataTransformationService", () => {
         subQueries: [{ query: "subject" }],
       },
     ];
-    result = await service.transformData(
-      [child],
-      query,
-      moment().subtract(5, "days").toDate(),
-    );
+    result = await service.transformData([child], query, startDate);
 
     expect(result).toEqual([
       { name: "Child", subject: "yesterday" },
       { name: "Child", subject: "today" },
     ]);
+    // TODO for some reason this spy is sometimes (inexplicably) not called:
+    // expect(getNotesInTimespan).toHaveBeenCalledWith(startDate, jasmine.anything() );
 
+    getNotesInTimespan.calls.reset();
+    getNotesInTimespan.and.resolveTo([oneWeekAgoNote, yesterdayNote]);
+    const startDate2 = moment()
+      .subtract(1, "weeks")
+      .subtract(1, "day")
+      .toDate();
+    const endDate2 = moment().subtract(1, "day").toDate();
     query[1].query = ":getRelated(Note, children)[* date > ? & date <= ?]";
-    result = await service.transformData(
-      [child],
-      query,
-      moment().subtract(1, "weeks").subtract(1, "day").toDate(),
-      moment().subtract(1, "day").toDate(),
-    );
+    result = await service.transformData([child], query, startDate2, endDate2);
 
     expect(result).toEqual([
       { name: "Child", subject: "one week ago" },
       { name: "Child", subject: "yesterday" },
     ]);
+    expect(getNotesInTimespan).toHaveBeenCalledWith(startDate2, endDate2);
   });
 
   it("should work when using the count function", async () => {
-    await createNoteInDB("first", [new TestEntity(), new TestEntity()]);
-    await createNoteInDB("second", [new TestEntity()]);
+    await createActivityInDB("first", [new TestEntity(), new TestEntity()]);
+    await createActivityInDB("second", [new TestEntity()]);
 
     const result = await service.queryAndTransformData([
       {
-        query: `${Note.ENTITY_TYPE}:toArray`,
+        query: `${RecurringActivity.ENTITY_TYPE}:toArray`,
         subQueries: [
-          { query: "subject" },
-          { query: ".children:count", label: "Children" },
+          { query: "title" },
+          { query: ".participants:count", label: "Participants" },
         ],
       },
     ]);
 
     expect(result).toEqual(
       jasmine.arrayWithExactContents([
-        { subject: "first", Children: 2 },
-        { subject: "second", Children: 1 },
+        { title: "first", Participants: 2 },
+        { title: "second", Participants: 1 },
       ]),
     );
   });

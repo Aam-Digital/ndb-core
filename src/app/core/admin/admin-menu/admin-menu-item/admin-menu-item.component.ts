@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { MenuItem } from "app/core/ui/navigation/menu-item";
 import { MenuItemComponent } from "app/core/ui/navigation/menu-item/menu-item.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -39,6 +39,9 @@ import { MatIconButton } from "@angular/material/button";
   ],
 })
 export class AdminMenuItemComponent {
+  private dialog = inject(MatDialog);
+  private menuService = inject(MenuService);
+
   @Input() set item(value: MenuItemForAdminUi | MenuItemForAdminUiNew) {
     if (value instanceof MenuItemForAdminUiNew) {
       this._item = undefined;
@@ -66,11 +69,6 @@ export class AdminMenuItemComponent {
   @Input() connectedTo: string[];
   @Output() itemDrop = new EventEmitter<CdkDragDrop<MenuItemForAdminUi[]>>();
   @Output() deleteItem = new EventEmitter<MenuItemForAdminUi>();
-
-  constructor(
-    private dialog: MatDialog,
-    private menuService: MenuService,
-  ) {}
 
   removeSubItem(item: MenuItemForAdminUi): void {
     this.item = {

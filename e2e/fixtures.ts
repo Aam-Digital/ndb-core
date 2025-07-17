@@ -1,4 +1,3 @@
-import assert from "node:assert";
 // eslint-disable-next-line no-restricted-imports
 import { Page, test as base } from "@playwright/test";
 // eslint-disable-next-line no-restricted-imports
@@ -6,23 +5,14 @@ import {
   argosScreenshot as argosScreenshotBase,
   ArgosScreenshotOptions,
 } from "@argos-ci/playwright";
-
-import { EventAttendanceMapDatatype } from "#src/app/child-dev-project/attendance/model/event-attendance.datatype.js";
-import { ConfigurableEnumDatatype } from "#src/app/core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype.js";
-import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype.js";
-import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype.js";
-import { EntityDatatype } from "#src/app/core/basic-datatypes/entity/entity.datatype.js";
-import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype.js";
-import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype.js";
-import defaultJsonConfig from "#src/assets/base-configs/education/Config_CONFIG_ENTITY.json";
 import { faker } from "#src/app/core/demo-data/faker.js";
-import { entityRegistry } from "#src/app/core/entity/database-entity.decorator.js";
-import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype.js";
-import { EntityConfigService } from "#src/app/core/entity/entity-config.service.js";
-import type { Entity } from "#src/app/core/entity/model/entity.js";
-import { EntitySchemaService } from "#src/app/core/entity/schema/entity-schema.service.js";
-import { LocationDatatype } from "#src/app/features/location/location.datatype.js";
-import { type EntityConfig } from "#src/app/core/entity/entity-config.js";
+import { Entity } from "#src/app/core/entity/model/entity.js";
+import { EntitySchemaTransformer } from "#src/app/core/entity/schema/entity-schema.service.js";
+import { DefaultDatatype } from "#src/app/core/entity/default-datatype/default.datatype";
+import { StringDatatype } from "#src/app/core/basic-datatypes/string/string.datatype";
+import { DateWithAgeDatatype } from "#src/app/core/basic-datatypes/date-with-age/date-with-age.datatype";
+import { DateOnlyDatatype } from "#src/app/core/basic-datatypes/date-only/date-only.datatype";
+import { LongTextDatatype } from "#src/app/core/basic-datatypes/string/long-text.datatype";
 
 // eslint-disable-next-line no-restricted-imports
 export { expect } from "@playwright/test";
@@ -89,34 +79,21 @@ export async function loadApp(page: Page, entities?: Entity[]) {
  * This implementation is not fully compatible with serialization in the app.
  */
 function serializeEntities(entities: Entity[]): unknown[] {
-  const entitySchemaService = new EntitySchemaService({
-    // Mock an injector that can only retrieve `DefaultDatatype`.
-    get(type: unknown) {
-      assert(type === DefaultDatatype);
-      return [
-        new DefaultDatatype(),
-        new StringDatatype(),
-        new DateWithAgeDatatype(),
-        new ConfigurableEnumDatatype(null),
-        new DateOnlyDatatype(),
-        new LocationDatatype(null),
-        new EntityDatatype(null, null, null),
-        new EventAttendanceMapDatatype(entitySchemaService),
-        new LongTextDatatype(),
-      ] satisfies DefaultDatatype[];
-    },
-  });
+  const entitySchemaService = new EntitySchemaTransformer([
+    new DefaultDatatype(),
+    new StringDatatype(),
+    new DateWithAgeDatatype(),
+    new DateOnlyDatatype(),
+    new LongTextDatatype(),
 
-  const entityConfigService = new EntityConfigService(null, entityRegistry);
-  entityConfigService.setupEntities(
-    Object.entries(defaultJsonConfig.data).flatMap(([id, config]) => {
-      if (id.startsWith("entity:")) {
-        return [[id.substring("entity:".length), config as EntityConfig]];
-      } else {
-        return [];
-      }
-    }),
-  );
+    // the following datatypes have dependencies through Angular DI - need workarounds in case they are needed for test data
+    //new ConfigurableEnumDatatype(null),
+    //new LocationDatatype(null),
+    //new EntityDatatype(null, null, null),
+    //new EventAttendanceMapDatatype(entitySchemaService),
+  ]);
+
+  // TODO: this somehow needs to also initialize config service?
 
   return entities.map(
     (e) => entitySchemaService.transformEntityToDatabaseFormat(e) as unknown,

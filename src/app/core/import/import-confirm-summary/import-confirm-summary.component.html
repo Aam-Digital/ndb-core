@@ -1,15 +1,20 @@
-<h2 *ngIf="!importInProgress" mat-dialog-title i18n>Start Import?</h2>
-<h2 *ngIf="importInProgress" mat-dialog-title i18n>Importing Data</h2>
+@if (!importInProgress) {
+  <h2 mat-dialog-title i18n>Start Import?</h2>
+} @else {
+  <h2 mat-dialog-title i18n>Importing Data</h2>
+}
 
 <mat-dialog-content>
   <!-- Summary -->
   <div i18n>{{ data.entitiesToImport?.length }} records will be imported.</div>
 
   <!-- Progress -->
-  <div *ngIf="importInProgress" class="margin-top-large">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    <div i18n>Importing data ...</div>
-  </div>
+  @if (importInProgress) {
+    <div class="margin-top-large">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <div i18n>Importing data ...</div>
+    </div>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions>

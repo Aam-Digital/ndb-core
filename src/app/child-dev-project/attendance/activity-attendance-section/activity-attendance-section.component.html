@@ -1,21 +1,23 @@
-<div *ngIf="loading">
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-</div>
-
-<div class="flex-row flex-wrap gap-large" *ngIf="!loading">
-  <app-attendance-calendar
-    class="flex-grow"
-    [records]="combinedAttendance?.events || []"
-    [highlightForChild]="forChild"
-    [activity]="entity"
-  ></app-attendance-calendar>
-  <app-attendance-summary
-    [attendance]="combinedAttendance"
-    [forChild]="forChild"
-    [columns]="columns"
-    class="margin-top-regular flex-grow"
-  ></app-attendance-summary>
-</div>
+@if (loading) {
+  <div>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+} @else {
+  <div class="flex-row flex-wrap gap-large">
+    <app-attendance-calendar
+      class="flex-grow"
+      [records]="combinedAttendance?.events || []"
+      [highlightForChild]="forChild"
+      [activity]="entity"
+    ></app-attendance-calendar>
+    <app-attendance-summary
+      [attendance]="combinedAttendance"
+      [forChild]="forChild"
+      [columns]="columns"
+      class="margin-top-regular flex-grow"
+    ></app-attendance-summary>
+  </div>
+}
 
 <app-entities-table
   [entityType]="entityCtr"

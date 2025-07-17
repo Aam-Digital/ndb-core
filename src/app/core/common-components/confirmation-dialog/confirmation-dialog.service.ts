@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from "@angular/core";
+import { Injectable, NgZone, inject } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import {
   ConfirmationDialogButton,
@@ -25,10 +25,8 @@ import { ProgressDialogComponent } from "./progress-dialog/progress-dialog.compo
  */
 @Injectable({ providedIn: "root" })
 export class ConfirmationDialogService {
-  constructor(
-    private dialog: MatDialog,
-    private ngZone: NgZone,
-  ) {}
+  private dialog = inject(MatDialog);
+  private ngZone = inject(NgZone);
 
   /**
    * Open a dialog with the given configuration.

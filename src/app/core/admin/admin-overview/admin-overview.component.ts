@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 import { BackupService } from "../backup/backup.service";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -10,7 +10,7 @@ import { DatabaseResolverService } from "../../database/database-resolver.servic
 import { ExtendedAlertConfig } from "../../alerts/alert-config";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { DatePipe, NgForOf } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { DownloadService } from "../../export/download-service/download.service";
 import { MatListModule } from "@angular/material/list";
 import { RouteTarget } from "../../../route-target";
@@ -29,24 +29,22 @@ import moment from "moment";
   selector: "app-admin-overview",
   templateUrl: "./admin-overview.component.html",
   styleUrls: ["./admin-overview.component.scss"],
-  imports: [MatButtonModule, RouterLink, NgForOf, DatePipe, MatListModule],
+  imports: [MatButtonModule, RouterLink, DatePipe, MatListModule],
 })
 export class AdminOverviewComponent implements OnInit {
+  private alertService = inject(AlertService);
+  private backupService = inject(BackupService);
+  private downloadService = inject(DownloadService);
+  private dbResolver = inject(DatabaseResolverService);
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private snackBar = inject(MatSnackBar);
+  private configService = inject(ConfigService);
+  protected adminOverviewService = inject(AdminOverviewService);
+  private jsonEditorService = inject(JsonEditorService);
+  private entityMapper = inject(EntityMapperService);
+
   /** all alerts */
   alerts: ExtendedAlertConfig[] = [];
-
-  constructor(
-    private alertService: AlertService,
-    private backupService: BackupService,
-    private downloadService: DownloadService,
-    private dbResolver: DatabaseResolverService,
-    private confirmationDialog: ConfirmationDialogService,
-    private snackBar: MatSnackBar,
-    private configService: ConfigService,
-    protected adminOverviewService: AdminOverviewService,
-    private jsonEditorService: JsonEditorService,
-    private entityMapper: EntityMapperService,
-  ) {}
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;

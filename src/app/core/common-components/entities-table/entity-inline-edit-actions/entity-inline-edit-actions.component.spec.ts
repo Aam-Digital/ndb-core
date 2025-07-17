@@ -12,7 +12,7 @@ import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { mockEntityMapper } from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { CurrentUserSubject } from "../../../session/current-user-subject";
 import { of } from "rxjs";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
@@ -40,7 +40,7 @@ describe("EntityInlineEditActionsComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        ...mockEntityMapperProvider(),
         { provide: CurrentUserSubject, useValue: of(null) },
         { provide: EntityActionsService, useValue: null },
       ],

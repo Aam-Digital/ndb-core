@@ -1,17 +1,38 @@
 import { EntityMapperService } from "./entity-mapper.service";
-import { Observable, Subject } from "rxjs";
+import { NEVER, Observable, Subject } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Entity, EntityConstructor } from "../model/entity";
 import { UpdatedEntity } from "../model/entity-update";
-import { entityRegistry } from "../database-entity.decorator";
-import { TEST_USER } from "../../user/demo-user-generator.service";
+import { Provider } from "@angular/core";
+import { DatabaseResolverService } from "../../database/database-resolver.service";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
-export function mockEntityMapper(
+export function createEntityMapperSpyObj() {
+  const mock = jasmine.createSpyObj(["receiveUpdates"]);
+  mock.receiveUpdates.and.returnValue(NEVER);
+  return mock;
+}
+
+export function mockEntityMapperProvider(
   withData: Entity[] = [],
-): MockEntityMapperService {
-  const ems = new MockEntityMapperService();
-  ems.addAll(withData);
-  return ems;
+  customDatabaseResolverService: DatabaseResolverService | {} = {},
+): Provider[] {
+  return [
+    {
+      provide: EntityMapperService,
+      useFactory: () => {
+        delete MockEntityMapperService.prototype["dbResolver"];
+        const ems = new MockEntityMapperService();
+        ems.addAll(withData);
+        return ems;
+      },
+    },
+    {
+      provide: DatabaseResolverService,
+      useValue: customDatabaseResolverService,
+    },
+    CurrentUserSubject,
+  ];
 }
 
 /**
@@ -21,15 +42,6 @@ export function mockEntityMapper(
 export class MockEntityMapperService extends EntityMapperService {
   private data: Map<string, Map<string, Entity>> = new Map();
   private observables: Map<string, Subject<UpdatedEntity<any>>> = new Map();
-
-  constructor() {
-    super(
-      null,
-      null,
-      { getCurrentUser: () => ({ name: TEST_USER }) } as any,
-      entityRegistry,
-    );
-  }
 
   private publishUpdates(type: string, update: UpdatedEntity<any>) {
     const subj = this.observables.get(type);
@@ -185,5 +197,9 @@ export class MockEntityMapperService extends EntityMapperService {
       }
     }
     return allData;
+  }
+
+  clearAllData() {
+    this.data.clear();
   }
 }

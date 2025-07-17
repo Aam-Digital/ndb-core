@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
@@ -22,17 +22,18 @@ import { PublicFormConfig } from "app/features/public-form/public-form-config";
   providedIn: "root",
 })
 export class EntityActionsService {
-  constructor(
-    private confirmationDialog: ConfirmationDialogService,
-    private snackBar: MatSnackBar,
-    private router: Router,
-    private entityMapper: EntityMapperService,
-    private entityDelete: EntityDeleteService,
-    private entityAnonymize: EntityAnonymizeService,
-    entityActionsMenuService: EntityActionsMenuService,
-    private duplicateRecordService: DuplicateRecordService,
-    private publicFormsService: PublicFormsService,
-  ) {
+  private confirmationDialog = inject(ConfirmationDialogService);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+  private entityMapper = inject(EntityMapperService);
+  private entityDelete = inject(EntityDeleteService);
+  private entityAnonymize = inject(EntityAnonymizeService);
+  private duplicateRecordService = inject(DuplicateRecordService);
+  private publicFormsService = inject(PublicFormsService);
+
+  constructor() {
+    const entityActionsMenuService = inject(EntityActionsMenuService);
+
     entityActionsMenuService.registerActions([
       {
         action: "archive",

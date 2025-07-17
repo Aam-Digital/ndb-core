@@ -82,10 +82,12 @@
     <th>Message</th>
   </thead>
   <tbody>
-    <tr *ngFor="let alert of alerts.reverse()">
-      <td>{{ alert.timestamp | date: "medium" }}</td>
-      <td>{{ alert.type }}</td>
-      <td>{{ alert.message }}</td>
-    </tr>
+    @for (alert of alerts.reverse(); track alert) {
+      <tr>
+        <td>{{ alert.timestamp | date: "medium" }}</td>
+        <td>{{ alert.type }}</td>
+        <td>{{ alert.message }}</td>
+      </tr>
+    }
   </tbody>
 </table>

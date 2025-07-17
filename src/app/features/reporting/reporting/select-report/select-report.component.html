@@ -1,85 +1,89 @@
-<div *ngIf="!reports || reports.length === 0">
-  <p i18n>Reports have not been configured for you yet.</p>
-  <a
-    mat-stroked-button
-    href="mailto:info@aam-digital.com?subject=Set up reports"
-    i18n="Button if no reports are configured yet"
-  >
-    Ask for a setup call
-  </a>
-</div>
+@if (!reports || reports.length === 0) {
+  <div>
+    <p i18n>Reports have not been configured for you yet.</p>
+    <a
+      mat-stroked-button
+      href="mailto:info@aam-digital.com?subject=Set up reports"
+      i18n="Button if no reports are configured yet"
+    >
+      Ask for a setup call
+    </a>
+  </div>
+}
 
-<div *ngIf="reports?.length > 0" class="work-panel">
-  <div class="flex-row flex-wrap gap-regular">
-    <mat-form-field class="flex-grow">
-      <mat-label i18n>Select Report</mat-label>
-      <mat-select
-        [(ngModel)]="selectedReport"
-        [disabled]="loading"
-        (ngModelChange)="reportChange()"
+@if (reports?.length > 0) {
+  <div class="work-panel">
+    <div class="flex-row flex-wrap gap-regular">
+      <mat-form-field class="flex-grow">
+        <mat-label i18n>Select Report</mat-label>
+        <mat-select
+          [(ngModel)]="selectedReport"
+          [disabled]="loading"
+          (ngModelChange)="reportChange()"
+        >
+          @for (report of reports; track report) {
+            <mat-option [value]="report">
+              {{ report.title }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (isDateRangeReport) {
+        <app-date-range-filter
+          [filterConfig]="dateRangeFilterConfig"
+          (dateRangeChange)="onDateRangeChange($event)"
+        ></app-date-range-filter>
+      }
+    </div>
+    <div>
+      <button
+        #calculateButton
+        mat-stroked-button
+        color="accent"
+        class="primary-button"
+        [disabled]="
+          !selectedReport ||
+          (isDateRangeReport && !fromDate && !toDate) ||
+          loading
+        "
+        (click)="calculate()"
+        i18n="Calculate the results for a report"
+        angulartics2On="click"
+        angularticsCategory="Reporting"
+        angularticsAction="calculate"
+        [angularticsLabel]="selectedReport?.title"
+        matTooltip="Please select a report and a date range"
+        i18n-matTooltip
+        [matTooltipDisabled]="!calculateButton.disabled"
+        style="pointer-events: all"
       >
-        <mat-option *ngFor="let report of reports" [value]="report">
-          {{ report.title }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    @if (isDateRangeReport) {
-      <app-date-range-filter
-        [filterConfig]="dateRangeFilterConfig"
-        (dateRangeChange)="onDateRangeChange($event)"
-      ></app-date-range-filter>
+        Calculate
+      </button>
+      <button
+        mat-stroked-button
+        color="accent"
+        class="primary-button"
+        [appExportData]="exportableData"
+        [disabled]="!exportableData"
+        format="csv"
+        [filename]="exportFileName"
+        style="float: right"
+        angulartics2On="click"
+        angularticsCategory="Reporting"
+        angularticsAction="export"
+        [angularticsLabel]="selectedReport?.title"
+      >
+        <fa-icon
+          icon="download"
+          class="standard-icon-with-text"
+          aria-label="download csv"
+        ></fa-icon>
+        <ng-container i18n="Button to download data"> Download</ng-container>
+      </button>
+    </div>
+    <div style="clear: both; padding-bottom: 5px"></div>
+    @if (loading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
   </div>
-
-  <div>
-    <button
-      #calculateButton
-      mat-stroked-button
-      color="accent"
-      class="primary-button"
-      [disabled]="
-        !selectedReport ||
-        (isDateRangeReport && !fromDate && !toDate) ||
-        loading
-      "
-      (click)="calculate()"
-      i18n="Calculate the results for a report"
-      angulartics2On="click"
-      angularticsCategory="Reporting"
-      angularticsAction="calculate"
-      [angularticsLabel]="selectedReport?.title"
-      matTooltip="Please select a report and a date range"
-      i18n-matTooltip
-      [matTooltipDisabled]="!calculateButton.disabled"
-      style="pointer-events: all"
-    >
-      Calculate
-    </button>
-
-    <button
-      mat-stroked-button
-      color="accent"
-      class="primary-button"
-      [appExportData]="exportableData"
-      [disabled]="!exportableData"
-      format="csv"
-      [filename]="exportFileName"
-      style="float: right"
-      angulartics2On="click"
-      angularticsCategory="Reporting"
-      angularticsAction="export"
-      [angularticsLabel]="selectedReport?.title"
-    >
-      <fa-icon
-        icon="download"
-        class="standard-icon-with-text"
-        aria-label="download csv"
-      ></fa-icon>
-      <ng-container i18n="Button to download data"> Download</ng-container>
-    </button>
-  </div>
-  <div style="clear: both; padding-bottom: 5px"></div>
-
-  <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
-</div>
+}

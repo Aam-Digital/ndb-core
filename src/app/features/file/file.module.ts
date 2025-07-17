@@ -1,4 +1,4 @@
-import { Injector, NgModule } from "@angular/core";
+import { Injector, NgModule, inject } from "@angular/core";
 import { CouchdbFileService } from "./couchdb-file.service";
 import { environment } from "../../../environments/environment";
 import { SessionType } from "../../core/session/session-type";
@@ -25,7 +25,9 @@ import { PhotoDatatype } from "./photo.datatype";
   ],
 })
 export class FileModule {
-  constructor(components: ComponentRegistry) {
+  constructor() {
+    const components = inject(ComponentRegistry);
+
     components.addAll(fileComponents);
   }
 }

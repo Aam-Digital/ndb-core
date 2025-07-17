@@ -14,7 +14,9 @@
       (click)="reportFeatureRequest()"
       [disabled]="requested"
     >
-      <fa-icon *ngIf="requested" aria-label="requested" icon="check"></fa-icon>
+      @if (requested) {
+        <fa-icon aria-label="requested" icon="check"></fa-icon>
+      }
       <span
         i18n="
           Feature Button|Indicates that the user needs this feature and can send

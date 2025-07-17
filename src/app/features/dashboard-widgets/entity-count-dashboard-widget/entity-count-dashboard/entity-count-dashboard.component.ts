@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { sortBy } from "lodash-es";
 
@@ -18,7 +18,6 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
-import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../../../../core/common-components/entity-field-label/entity-field-label.component";
@@ -65,7 +64,6 @@ interface GroupCountRow {
     Angulartics2Module,
     DashboardListWidgetComponent,
     EntityBlockComponent,
-    NgIf,
     MatTooltipModule,
     MatIconButton,
     EntityFieldLabelComponent,
@@ -75,6 +73,11 @@ export class EntityCountDashboardComponent
   extends DashboardWidget
   implements EntityCountDashboardConfig, OnInit
 {
+  private entityMapper = inject(EntityMapperService);
+  private router = inject(Router);
+  private entities = inject(EntityRegistry);
+  private configurableEnum = inject(ConfigurableEnumService);
+
   getPrev() {
     this.currentGroupIndex =
       (this.currentGroupIndex - 1 + this.groupBy.length) % this.groupBy.length;
@@ -126,15 +129,6 @@ export class EntityCountDashboardComponent
   @Input() subtitle: string;
   @Input() explanation: string =
     $localize`:dashboard widget explanation:Counting all "active" records. If configured, you can view different disaggregations by using the arrows below.`;
-
-  constructor(
-    private entityMapper: EntityMapperService,
-    private router: Router,
-    private entities: EntityRegistry,
-    private configurableEnum: ConfigurableEnumService,
-  ) {
-    super();
-  }
 
   async ngOnInit() {
     if (!this._entity) {

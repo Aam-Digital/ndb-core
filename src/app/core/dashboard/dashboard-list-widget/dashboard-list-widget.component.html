@@ -8,17 +8,19 @@
   [loading]="isLoading"
 >
   <app-widget-content>
-    <ng-container *ngIf="dataSource.data.length > 0">
+    @if (dataSource.data.length > 0) {
       <ng-content></ng-content>
-    </ng-container>
+    }
 
-    <div *ngIf="dataSource.data.length === 0" class="headline">
-      <span
-        i18n="Description that are no items in generic dashboard list widget"
-      >
-        no current entries
-      </span>
-    </div>
+    @if (dataSource.data.length === 0) {
+      <div class="headline">
+        <span
+          i18n="Description that are no items in generic dashboard list widget"
+        >
+          no current entries
+        </span>
+      </div>
+    }
 
     <mat-paginator
       #paginator

@@ -1,4 +1,4 @@
-import { Directive, HostListener, Input } from "@angular/core";
+import { Directive, HostListener, Input, inject } from "@angular/core";
 import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
 import {
   DownloadService,
@@ -24,6 +24,8 @@ import {
   standalone: true,
 })
 export class ExportDataDirective {
+  private downloadService = inject(DownloadService);
+
   /** data to be exported */
   @Input("appExportData") data: any = [];
 
@@ -39,8 +41,6 @@ export class ExportDataDirective {
    * If not provided, all properties will be included in the export.
    */
   @Input() exportConfig: ExportColumnConfig[];
-
-  constructor(private downloadService: DownloadService) {}
 
   @HostListener("click")
   click() {

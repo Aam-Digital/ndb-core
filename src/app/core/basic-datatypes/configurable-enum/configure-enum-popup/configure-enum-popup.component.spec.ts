@@ -7,7 +7,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { EMPTY } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
@@ -25,7 +25,6 @@ describe("ConfigureEnumPopupComponent", () => {
   let entityMapper: MockEntityMapperService;
 
   beforeEach(async () => {
-    entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
       imports: [
         ConfigureEnumPopupComponent,
@@ -35,7 +34,7 @@ describe("ConfigureEnumPopupComponent", () => {
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: new ConfigurableEnum() },
         { provide: MatDialogRef, useValue: { afterClosed: () => EMPTY } },
-        { provide: EntityMapperService, useValue: entityMapper },
+        ...mockEntityMapperProvider(),
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     }).compileComponents();
@@ -43,6 +42,10 @@ describe("ConfigureEnumPopupComponent", () => {
     fixture = TestBed.createComponent(ConfigureEnumPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   it("should create", () => {

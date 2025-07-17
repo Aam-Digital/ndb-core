@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -7,7 +7,6 @@ import {
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import { NgForOf } from "@angular/common";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { getLocationProperties } from "../../map-utils";
@@ -27,22 +26,23 @@ export type LocationProperties = { [key: string]: string[] };
     DialogCloseComponent,
     MatFormFieldModule,
     MatSelectModule,
-    NgForOf,
     MatButtonModule,
   ],
 })
 export class MapPropertiesPopupComponent {
+  private dialogRef =
+    inject<MatDialogRef<MapPropertiesPopupComponent>>(MatDialogRef);
+
   entityProperties: {
     entity: EntityConstructor;
     properties: { name: string; label: string }[];
     selected: string[];
   }[];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) mapProperties: LocationProperties,
-    entities: EntityRegistry,
-    private dialogRef: MatDialogRef<MapPropertiesPopupComponent>,
-  ) {
+  constructor() {
+    const mapProperties = inject<LocationProperties>(MAT_DIALOG_DATA);
+    const entities = inject(EntityRegistry);
+
     this.entityProperties = Object.entries(mapProperties).map(
       ([entityType, selected]) => {
         const entity = entities.get(entityType);

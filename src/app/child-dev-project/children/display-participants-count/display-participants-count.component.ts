@@ -1,5 +1,10 @@
-import { Component, OnChanges, signal, WritableSignal } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import {
+  Component,
+  OnChanges,
+  signal,
+  WritableSignal,
+  inject,
+} from "@angular/core";
 import { ChildrenService } from "../children.service";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -9,18 +14,15 @@ import { Logging } from "../../../core/logging/logging.service";
 @DynamicComponent("DisplayParticipantsCount")
 @Component({
   selector: "app-display-participants-count",
-  imports: [CommonModule],
   templateUrl: "./display-participants-count.component.html",
 })
 export class DisplayParticipantsCountComponent
   extends ViewDirective<any>
   implements OnChanges
 {
-  participantRelationsCount: WritableSignal<number> = signal(null);
+  private _childrenService = inject(ChildrenService);
 
-  constructor(private _childrenService: ChildrenService) {
-    super();
-  }
+  participantRelationsCount: WritableSignal<number> = signal(null);
 
   override async ngOnChanges(): Promise<void> {
     super.ngOnChanges();

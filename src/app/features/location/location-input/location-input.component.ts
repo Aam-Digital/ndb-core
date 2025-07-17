@@ -1,10 +1,5 @@
-import { Component, ElementRef, Input, Optional, Self } from "@angular/core";
-import {
-  FormGroupDirective,
-  FormsModule,
-  NgControl,
-  NgForm,
-} from "@angular/forms";
+import { Component, inject, Input } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { MatFormFieldControl, MatSuffix } from "@angular/material/form-field";
 import { GeoLocation } from "../geo-location";
 import { MatInput } from "@angular/material/input";
@@ -16,7 +11,6 @@ import {
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
 import { MatDialog } from "@angular/material/dialog";
-import { ErrorStateMatcher } from "@angular/material/core";
 import { MatTooltip } from "@angular/material/tooltip";
 import { filter, map } from "rxjs/operators";
 
@@ -37,28 +31,12 @@ import { filter, map } from "rxjs/operators";
   styleUrls: ["./location-input.component.scss"],
 })
 export class LocationInputComponent extends CustomFormControlDirective<GeoLocation> {
+  private dialog = inject(MatDialog);
+
   /**
    * Automatically run an address lookup when the user leaves the input field.
    */
   @Input() autoLookup = true;
-
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Self() ngControl: NgControl,
-    @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective,
-
-    private dialog: MatDialog,
-  ) {
-    super(
-      elementRef,
-      errorStateMatcher,
-      ngControl,
-      parentForm,
-      parentFormGroup,
-    );
-  }
 
   override onContainerClick() {
     if (!this._disabled) {

@@ -3,7 +3,6 @@ import {
   InputFileComponent,
   ParsedData,
 } from "../../common-components/input-file/input-file.component";
-import { NgIf } from "@angular/common";
 
 /**
  * Import sub-step: Let user load a file and return parsed data.
@@ -12,7 +11,7 @@ import { NgIf } from "@angular/common";
   selector: "app-import-file",
   templateUrl: "./import-file.component.html",
   styleUrls: ["./import-file.component.scss"],
-  imports: [InputFileComponent, NgIf],
+  imports: [InputFileComponent],
 })
 export class ImportFileComponent {
   @Output() dataLoaded = new EventEmitter<ParsedData<any>>();

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity } from "../../entity/model/entity";
@@ -8,7 +8,6 @@ import {
 } from "../../common-components/entity-form/entity-form.service";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
-import { NgForOf, NgIf } from "@angular/common";
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -41,10 +40,8 @@ export interface DetailsComponentData {
     DialogCloseComponent,
     MatDialogModule,
     EntityFormComponent,
-    NgForOf,
     PillComponent,
     MatTooltipModule,
-    NgIf,
     DialogButtonsComponent,
     EntityArchivedInfoComponent,
     EntityFieldViewComponent,
@@ -54,16 +51,14 @@ export interface DetailsComponentData {
   ],
 })
 export class RowDetailsComponent implements OnInit {
+  data = inject<DetailsComponentData>(MAT_DIALOG_DATA);
+  private formService = inject(EntityFormService);
+
   form: EntityForm<Entity>;
   fieldGroups: FieldGroup[];
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
-    private formService: EntityFormService,
-  ) {}
 
   ngOnInit(): void {
     this.init(this.data)

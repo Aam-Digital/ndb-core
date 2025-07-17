@@ -5,12 +5,14 @@ import {
   Router,
 } from "@angular/router";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { inject, Injectable } from "@angular/core";
 
 /**
  * Abstract base class with functionality common to all guards that check configurable user permissions or roles.
  */
+@Injectable()
 export abstract class AbstractPermissionGuard implements CanActivate {
-  constructor(private router: Router) {}
+  private readonly router = inject(Router);
 
   /**
    * Check if current navigation is allowed. This is used by Angular Router.

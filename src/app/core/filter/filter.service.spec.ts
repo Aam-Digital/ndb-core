@@ -4,7 +4,6 @@ import { FilterService } from "./filter.service";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 import moment from "moment";
 import { DataFilter } from "./filters/filters";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
@@ -13,13 +12,15 @@ import { TestEntity } from "../../utils/test-utils/TestEntity";
 describe("FilterService", () => {
   let service: FilterService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
+
+  beforeEach(() => {
+    mockEnumService = jasmine.createSpyObj(["getEnumValues"]);
+    mockEnumService.getEnumValues.and.returnValue(defaultInteractionTypes);
+
+    TestBed.configureTestingModule({
       providers: [
-        {
-          provide: ConfigurableEnumService,
-          useValue: createTestingConfigurableEnumService(),
-        },
+        { provide: ConfigurableEnumService, useValue: mockEnumService },
       ],
     });
     service = TestBed.inject(FilterService);

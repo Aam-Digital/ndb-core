@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, Optional } from "@angular/core";
+import { Component, Input, OnInit, inject } from "@angular/core";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
@@ -6,7 +6,6 @@ import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NgIf } from "@angular/common";
 
 import { RouteTarget } from "../../../route-target";
 
@@ -25,10 +24,13 @@ import { RouteTarget } from "../../../route-target";
     MatDialogModule,
     MatButtonModule,
     FontAwesomeModule,
-    NgIf,
   ],
 })
 export class ComingSoonComponent implements OnInit {
+  private alertService = inject(AlertService);
+  private analyticsService = inject(AnalyticsService);
+  private activatedRoute = inject(ActivatedRoute);
+
   /**
    * An array of featureIds that the user has already requested during the current session.
    *
@@ -47,12 +49,11 @@ export class ComingSoonComponent implements OnInit {
    */
   requested: boolean;
 
-  constructor(
-    private alertService: AlertService,
-    private analyticsService: AnalyticsService,
-    private activatedRoute: ActivatedRoute,
-    @Optional() @Inject(MAT_DIALOG_DATA) dialogData: { featureId: string },
-  ) {
+  constructor() {
+    const dialogData = inject<{
+      featureId: string;
+    }>(MAT_DIALOG_DATA, { optional: true });
+
     if (dialogData) {
       this.init(dialogData.featureId);
     }

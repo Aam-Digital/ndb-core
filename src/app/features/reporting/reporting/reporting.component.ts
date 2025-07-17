@@ -5,7 +5,7 @@ import {
   GroupByDescription,
 } from "../report-row";
 import moment from "moment";
-import { DatePipe, JsonPipe, NgIf } from "@angular/common";
+import { DatePipe, JsonPipe } from "@angular/common";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
 import { ReportRowComponent } from "./report-row/report-row.component";
@@ -41,7 +41,6 @@ import { MatTooltip } from "@angular/material/tooltip";
   templateUrl: "./reporting.component.html",
   styleUrls: ["./reporting.component.scss"],
   imports: [
-    NgIf,
     ViewTitleComponent,
     SelectReportComponent,
     ReportRowComponent,
@@ -61,7 +60,12 @@ import { MatTooltip } from "@angular/material/tooltip";
   ],
 })
 export class ReportingComponent {
+  private dataAggregationService = inject(DataAggregationService);
+  private dataTransformationService = inject(DataTransformationService);
+  private sqlReportService = inject(SqlReportService);
+  private entityMapper = inject(EntityMapperService);
   private readonly jsonEditorService = inject(JsonEditorService);
+  private configService = inject(ConfigService);
 
   reports: ReportEntity[];
   mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
@@ -77,16 +81,9 @@ export class ReportingComponent {
 
   data: any[];
   exportableData: any;
-
   dateRangeOptions: DateRangeFilterConfigOption[] = [];
 
-  constructor(
-    private configService: ConfigService,
-    private dataAggregationService: DataAggregationService,
-    private dataTransformationService: DataTransformationService,
-    private sqlReportService: SqlReportService,
-    private entityMapper: EntityMapperService,
-  ) {
+  constructor() {
     this.entityMapper.loadType(ReportEntity).then((res) => {
       this.reports = res.sort((a, b) => a.title?.localeCompare(b.title));
       this.loadDateRangeOptionsFromConfig();

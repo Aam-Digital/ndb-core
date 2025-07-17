@@ -1,4 +1,4 @@
-import { Inject, LOCALE_ID, NgModule } from "@angular/core";
+import { LOCALE_ID, NgModule, inject } from "@angular/core";
 import { LanguageService } from "./language.service";
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AcceptLanguageInterceptor } from "./accept-language.interceptor";
@@ -27,10 +27,10 @@ import { TranslatableMatPaginator } from "./TranslatableMatPaginator";
   ],
 })
 export class LanguageModule {
-  constructor(
-    translationService: LanguageService,
-    @Inject(LOCALE_ID) locale: string,
-  ) {
+  constructor() {
+    const translationService = inject(LanguageService);
+    const locale = inject(LOCALE_ID);
+
     translationService.initDefaultLanguage();
 
     moment.updateLocale(moment.locale(), {

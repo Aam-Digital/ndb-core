@@ -2,9 +2,19 @@ import { Filter, SelectableFilter } from "./filters";
 import { FilterService } from "../filter.service";
 import { BooleanFilter } from "./booleanFilter";
 import { Entity } from "../../entity/model/entity";
+import { TestBed } from "@angular/core/testing";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 
 describe("Filters", () => {
-  const filterService = new FilterService(undefined);
+  let filterService: FilterService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: ConfigurableEnumService, useValue: null }],
+    });
+
+    filterService = TestBed.inject(FilterService);
+  });
 
   function testFilter(
     filterObj: Filter<Entity>,

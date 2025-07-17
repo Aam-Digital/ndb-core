@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { ImportAdditionalService } from "./import-additional.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { mockEntityMapperProvider } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { Entity } from "../../entity/model/entity";
 import { createEntityOfType } from "../../demo-data/create-entity-of-type";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
@@ -55,9 +55,7 @@ describe("ImportAdditionalService", () => {
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
-      ],
+      providers: [...mockEntityMapperProvider()],
     });
     service = TestBed.inject(ImportAdditionalService);
 

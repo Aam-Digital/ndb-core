@@ -7,11 +7,15 @@ import {
 
 import { DisplayTodoCompletionComponent } from "./display-todo-completion.component";
 import {
-  mockEntityMapper,
+  mockEntityMapperProvider,
   MockEntityMapperService,
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { TestEntity } from "../../../../utils/test-utils/TestEntity";
+import {
+  entityRegistry,
+  EntityRegistry,
+} from "app/core/entity/database-entity.decorator";
 
 describe("DisplayTodoCompletionComponent", () => {
   let component: DisplayTodoCompletionComponent;
@@ -19,15 +23,24 @@ describe("DisplayTodoCompletionComponent", () => {
   let entityMapper: MockEntityMapperService;
 
   beforeEach(async () => {
-    entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
       imports: [DisplayTodoCompletionComponent],
-      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
+      providers: [
+        ...mockEntityMapperProvider(),
+        {
+          provide: EntityRegistry,
+          useValue: { entityRegistry },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DisplayTodoCompletionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
   });
 
   it("should create", () => {

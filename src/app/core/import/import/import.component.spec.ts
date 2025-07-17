@@ -30,7 +30,7 @@ describe("ImportComponent", () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [ImportComponent, MockedTestingModule],
+      imports: [ImportComponent, MockedTestingModule.withState()],
       providers: [{ provide: LOCATION_TOKEN, useValue: mockLocation }],
     }).compileComponents();
 

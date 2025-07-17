@@ -1,9 +1,11 @@
 <p>conflicts to resolve:</p>
 
 <div class="mat-elevation-z1">
-  <div *ngIf="dataSource?.loading$ | async">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  </div>
+  @if (dataSource?.loading$ | async) {
+    <div>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+  }
 
   <table
     mat-table
@@ -20,11 +22,9 @@
     <ng-container matColumnDef="data" class="full-width">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
       <td mat-cell *matCellDef="let row">
-        <app-compare-rev
-          *ngFor="let rev of row.key"
-          [rev]="rev"
-          [doc]="row.doc"
-        ></app-compare-rev>
+        @for (rev of row.key; track rev) {
+          <app-compare-rev [rev]="rev" [doc]="row.doc"></app-compare-rev>
+        }
       </td>
     </ng-container>
 

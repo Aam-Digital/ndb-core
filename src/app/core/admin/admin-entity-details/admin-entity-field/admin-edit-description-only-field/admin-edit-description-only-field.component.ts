@@ -1,4 +1,4 @@
-import { Component, Inject, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, OnChanges, SimpleChanges, inject } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -35,15 +35,15 @@ import { FormFieldConfig } from "../../../../common-components/entity-form/FormC
   styleUrl: "./admin-edit-description-only-field.component.scss",
 })
 export class AdminEditDescriptionOnlyFieldComponent implements OnChanges {
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+
   formField: FormFieldConfig;
   schemaFieldsForm: FormGroup;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    data: FormFieldConfig,
-    private dialogRef: MatDialogRef<any>,
-    private fb: FormBuilder,
-  ) {
+  constructor() {
+    const data = inject<FormFieldConfig>(MAT_DIALOG_DATA);
+
     this.formField = data;
 
     this.initSettings();
