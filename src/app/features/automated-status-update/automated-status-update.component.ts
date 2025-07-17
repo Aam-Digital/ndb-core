@@ -8,10 +8,8 @@ import {
 import { EntityBlockComponent } from "app/core/basic-datatypes/entity/entity-block/entity-block.component";
 import { DialogCloseComponent } from "app/core/common-components/dialog-close/dialog-close.component";
 import { EntityFieldEditComponent } from "app/core/common-components/entity-field-edit/entity-field-edit.component";
-import {
-  EntityForm,
-  EntityFormService,
-} from "app/core/common-components/entity-form/entity-form.service";
+import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { FormFieldConfig } from "app/core/common-components/entity-form/FormConfig";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 

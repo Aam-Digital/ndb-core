@@ -1,4 +1,4 @@
-import { EntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { Entity } from "../../entity/model/entity";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";

@@ -1,13 +1,13 @@
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   SimpleChanges,
   ViewEncapsulation,
-  inject,
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
-import { EntityForm } from "../entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";

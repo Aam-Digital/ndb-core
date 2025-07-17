@@ -1,14 +1,12 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
 import { Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { AlertService } from "../../alerts/alert.service";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";

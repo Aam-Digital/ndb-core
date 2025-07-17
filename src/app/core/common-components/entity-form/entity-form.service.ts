@@ -1,11 +1,5 @@
 import { EventEmitter, inject, Injectable } from "@angular/core";
-import {
-  FormBuilder,
-  FormControl,
-  FormControlOptions,
-  FormGroup,
-  ɵElement,
-} from "@angular/forms";
+import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -19,34 +13,12 @@ import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
-
-/**
- * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
- */
-export type TypedFormGroup<T> = FormGroup<{
-  [K in keyof T]: ɵElement<T[K], null>;
-}>;
-
-export type EntityFormGroup<T extends Entity> = TypedFormGroup<Partial<T>>;
-
-export interface EntityForm<T extends Entity> {
-  formGroup: EntityFormGroup<T>;
-  entity: T;
-
-  /**
-   * (possible overridden) field configurations for that form
-   */
-  fieldConfigs: FormFieldConfig[];
-
-  onFormStateChange: EventEmitter<"saved" | "cancelled">;
-
-  /**
-   * map of field ids to the current value to be inherited from the referenced parent entities' field
-   */
-  inheritedParentValues: Map<string, any>;
-
-  watcher: Map<string, Subscription>;
-}
+import {
+  EntityForm,
+  EntityFormGroup,
+  EntityFormSavedEvent,
+  TypedFormGroup,
+} from "#src/app/core/common-components/entity-form/entity-form";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -269,6 +241,7 @@ export class EntityFormService {
 
     this.checkFormValidity(form);
 
+    const originalEntity = entity.copy();
     const updatedEntity = this.createUpdatedEntity(entity, form);
     updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
@@ -284,7 +257,9 @@ export class EntityFormService {
     form.disable();
     Object.assign(entity, updatedEntity);
 
-    entityForm.onFormStateChange.emit("saved");
+    entityForm.onFormStateChange.emit(
+      new EntityFormSavedEvent(entity, originalEntity),
+    );
     return entity;
   }
 
