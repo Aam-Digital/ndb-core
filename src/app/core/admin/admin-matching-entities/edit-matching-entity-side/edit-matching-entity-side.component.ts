@@ -53,17 +53,15 @@ export class EditMatchingEntitySideComponent implements OnInit {
       ];
     }
   }
-
   onColumnsChange(newColumns: ColumnConfig[]): void {
-    const hasDistance = newColumns.some(
-      (column) => typeof column == "object" && column.id === "distance",
-    );
+    const updatedColumns = newColumns.map((col) => {
+      if (typeof col !== "string" && col.id === "distance") {
+        return col.id;
+      }
+      return col;
+    });
 
-    this.columnsChange.emit(
-      hasDistance
-        ? newColumns.map((col) => (typeof col === "string" ? col : col.id))
-        : newColumns,
-    );
+    this.columnsChange.emit(updatedColumns);
   }
 
   onFiltersChange(newFilters: ColumnConfig[]): void {

@@ -78,12 +78,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
     const cols = this.originalConfig.columns ?? [];
-    this.leftColumns = cols.map((col: any[]) =>
-      typeof col[0] === "string" ? col[0] : col[0],
-    );
-    this.rightColumns = cols.map((col: any[]) =>
-      typeof col[1] === "string" ? col[1] : col[1],
-    );
+    this.leftColumns = cols.map((col) => col[0]);
+    this.rightColumns = cols.map((col) => col[1]);
 
     this.leftFilters = (
       this.originalConfig.leftSide?.availableFilters ?? []
