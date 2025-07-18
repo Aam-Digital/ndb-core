@@ -356,7 +356,10 @@ export class MatchingEntitiesComponent implements OnInit {
    * @private
    */
   private initDistanceColumn(side: MatchingSide, index: number) {
-    const sideIndex = side.columns.findIndex((col) => col === "distance");
+    const sideIndex = side.columns.findIndex((col) =>
+      typeof col === "string" ? col === "distance" : col.id === "distance",
+    );
+
     if (sideIndex !== -1) {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;

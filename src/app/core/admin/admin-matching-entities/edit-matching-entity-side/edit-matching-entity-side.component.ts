@@ -74,14 +74,7 @@ export class EditMatchingEntitySideComponent implements OnInit {
   }
 
   onColumnsChange(newColumns: ColumnConfig[]): void {
-    const updatedColumns = newColumns.map((col) => {
-      if (typeof col !== "string" && col.id === "distance") {
-        return col.id;
-      }
-      return col;
-    });
-
-    this.columnsChange.emit(updatedColumns);
+    this.columnsChange.emit(newColumns);
   }
 
   onFiltersChange(newFilters: ColumnConfig[]): void {
