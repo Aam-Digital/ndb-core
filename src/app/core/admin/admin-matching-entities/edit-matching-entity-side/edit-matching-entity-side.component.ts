@@ -85,9 +85,10 @@ export class EditMatchingEntitySideComponent implements OnInit {
   }
 
   onFiltersChange(newFilters: ColumnConfig[]): void {
-    if (newFilters.every((f) => typeof f === "string")) {
-      this.filtersChange.emit(newFilters);
-    }
+    const updatedFilters = newFilters.map((f) =>
+      typeof f === "string" ? f : f.id,
+    );
+    this.filtersChange.emit(updatedFilters);
   }
 
   onOpenPrefilterEditor(): void {
