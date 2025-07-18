@@ -34,7 +34,7 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
   @Input() entityType: EntityConstructor;
   @Input() set availableFields(value: ColumnConfig[]) {
-    this._availableFields = value
+    const fieldsConfig: FormFieldConfig[] = value
       .map((field) => {
         const mappedField =
           this.entityFormService && this.entityType
@@ -50,10 +50,15 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
         return mappedField;
       })
-      .filter((field) => field.label)
-      .filter(
-        (item, pos, arr) => arr.findIndex((x) => x.id === item.id) === pos,
-      );
+      .filter((field) => field.label);
+
+    const deduplicatedFieldsById: Record<string, FormFieldConfig> = {};
+    for (const field of fieldsConfig) {
+      if (!deduplicatedFieldsById[field.id] || field["_customField"]) {
+        deduplicatedFieldsById[field.id] = field;
+      }
+    }
+    this._availableFields = Object.values(deduplicatedFieldsById);
   }
   _availableFields: FormFieldConfig[] = [];
 
