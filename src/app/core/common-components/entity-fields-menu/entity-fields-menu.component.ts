@@ -54,7 +54,7 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
     const deduplicatedFieldsById: Record<string, FormFieldConfig> = {};
     for (const field of fieldsConfig) {
-      if (!deduplicatedFieldsById[field.id] || field["_customField"]) {
+      if (!deduplicatedFieldsById[field.id]) {
         deduplicatedFieldsById[field.id] = field;
       }
     }
@@ -62,7 +62,7 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
   }
   _availableFields: FormFieldConfig[] = [];
 
-  @Input() activeFields: ColumnConfig[];
+  @Input() activeFields: ColumnConfig[] = [];
   @Output() activeFieldsChange = new EventEmitter<ColumnConfig[]>();
   selectedFieldsControl = new FormControl<string[]>([]);
 
@@ -84,7 +84,7 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.activeFields) {
-      const selectField = this.activeFields.map((field) =>
+      const selectField = this.activeFields?.map((field) =>
         typeof field === "string" ? field : field.id,
       );
       this.selectedFieldsControl.setValue(selectField, {
