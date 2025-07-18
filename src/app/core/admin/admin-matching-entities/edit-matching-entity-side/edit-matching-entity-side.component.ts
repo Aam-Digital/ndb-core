@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -8,6 +8,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-manager.component";
+import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-edit-matching-entity-side",
@@ -25,27 +26,62 @@ import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-m
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
-export class EditMatchingEntitySideComponent {
+export class EditMatchingEntitySideComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() entityType: string[] = [];
 
   @Input() sideEntity: EntityConstructor;
-  @Input() columns!: string[];
+  @Input() columns!: ColumnConfig[];
   @Input() filters!: string[];
   @Input() title!: string;
   @Input() prefilter: any;
 
-  @Output() columnsChange = new EventEmitter<string[]>();
+  @Output() columnsChange = new EventEmitter<ColumnConfig[]>();
   @Output() filtersChange = new EventEmitter<string[]>();
   @Output() openPrefilterEditor = new EventEmitter<void>();
 
-  onColumnsChange(newColumns: string[]): void {
+  /**
+   * Holds a predefined list of additional column options that can be appended to the entity view.
+   */
+  additionalFields: ColumnConfig[] = [];
+
+  ngOnInit(): void {
+    if (this.columns) {
+      this.columns = this.columns.filter((c) => c !== "");
+
+      this.additionalFields = [
+        {
+          id: "distance",
+          label: "Distance",
+        },
+        {
+          id: "_id",
+          label: "Name (Child)",
+          additional: "Child",
+          noSorting: true,
+          viewComponent: "DisplayEntity",
+        },
+        {
+          id: "_id",
+          label: "Name (School)",
+          additional: "School",
+          noSorting: true,
+          viewComponent: "DisplayEntity",
+        },
+      ];
+    }
+  }
+
+  onColumnsChange(newColumns: ColumnConfig[]): void {
     this.columnsChange.emit(newColumns);
   }
 
-  onFiltersChange(newFilters: string[]): void {
-    this.filtersChange.emit(newFilters);
+  onFiltersChange(newFilters: ColumnConfig[]): void {
+    const updatedFilters = newFilters.map((f) =>
+      typeof f === "string" ? f : f.id,
+    );
+    this.filtersChange.emit(updatedFilters);
   }
 
   onOpenPrefilterEditor(): void {

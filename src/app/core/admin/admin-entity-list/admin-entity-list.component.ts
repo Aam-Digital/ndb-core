@@ -10,6 +10,7 @@ import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-t
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { Logging } from "../../logging/logging.service";
 import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-admin-entity-list",
@@ -80,6 +81,16 @@ export class AdminEntityListComponent implements OnChanges {
           (existingFilter) => existingFilter.id === f,
         ) ?? { id: f },
     );
+  }
+
+  updateColumns(columns: string[], group: GroupConfig) {
+    if (!Array.isArray(columns)) {
+      Logging.warn(
+        "AdminEntityListComponent: updateColumns: columns is not an array",
+      );
+      return;
+    }
+    group.columns = columns;
   }
 
   newColumnGroupFactory(): GroupConfig {

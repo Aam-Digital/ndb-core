@@ -14,6 +14,7 @@ import { AlertService } from "../../alerts/alert.service";
 import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edit-matching-entity-side.component";
 import { ViewTitleComponent } from "#src/app/core/common-components/view-title/view-title.component";
 import { ViewActionsComponent } from "#src/app/core/common-components/view-actions/view-actions.component";
+import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-admin-matching-entities",
@@ -43,8 +44,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   leftSideEntity: EntityConstructor;
   rightSideEntity: EntityConstructor;
 
-  leftColumns: string[] = [];
-  rightColumns: string[] = [];
+  leftColumns: ColumnConfig[] = [];
+  rightColumns: ColumnConfig[] = [];
 
   leftFilters: string[] = [];
   rightFilters: string[] = [];
@@ -77,12 +78,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
     const cols = this.originalConfig.columns ?? [];
-    this.leftColumns = cols.map((col: any[]) =>
-      typeof col[0] === "string" ? col[0] : col[0].id,
-    );
-    this.rightColumns = cols.map((col: any[]) =>
-      typeof col[1] === "string" ? col[1] : col[1].id,
-    );
+    this.leftColumns = cols.map((col) => col[0]);
+    this.rightColumns = cols.map((col) => col[1]);
 
     this.leftFilters = (
       this.originalConfig.leftSide?.availableFilters ?? []
@@ -151,7 +148,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     const leftType = this.configForm.value.leftType;
     const rightType = this.configForm.value.rightType;
 
-    const columns: [string, string][] = [];
+    const columns: [ColumnConfig, ColumnConfig][] = [];
 
     const maxLength = Math.max(
       this.leftColumns.length,
@@ -185,7 +182,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
 
     this.configService.saveConfig(fullConfig).then(() => {
       this.alertService.addInfo($localize`Configuration updated successfully.`);
-      console.log("Full config:", fullConfig);
     });
   }
 

@@ -1489,14 +1489,14 @@
       "columns": [
         [
           {
-            "label": "Name",
+            "label": "Name (Child)",
             "id": "_id",
             "additional": "Child",
             "noSorting": true,
             "viewComponent": "DisplayEntity"
           },
           {
-            "label": "Name",
+            "label": "Name (School)",
             "id": "_id",
             "additional": "School",
             "noSorting": true,

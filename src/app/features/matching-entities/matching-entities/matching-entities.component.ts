@@ -30,7 +30,6 @@ import {
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
-import { MatButtonModule } from "@angular/material/button";
 import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
@@ -357,7 +356,10 @@ export class MatchingEntitiesComponent implements OnInit {
    * @private
    */
   private initDistanceColumn(side: MatchingSide, index: number) {
-    const sideIndex = side.columns.findIndex((col) => col === "distance");
+    const sideIndex = side.columns.findIndex((col) =>
+      typeof col === "string" ? col === "distance" : col.id === "distance",
+    );
+
     if (sideIndex !== -1) {
       const columnConfig = this.getDistanceColumnConfig(side);
       side.columns[sideIndex] = columnConfig;

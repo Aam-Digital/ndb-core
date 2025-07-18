@@ -36,41 +36,56 @@ import { MatSelectModule } from "@angular/material/select";
   styleUrl: "./admin-list-manager.component.scss",
 })
 export class AdminListManagerComponent implements OnInit {
-  @Input() items: (string | ColumnConfig)[] = [];
+  @Input() items: ColumnConfig[] = [];
   @Input() entityType: EntityConstructor;
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
-  @Input() activeFields: (string | FormFieldConfig)[] = [];
+  @Input() activeFields: ColumnConfig[] = [];
+  @Input() onlyIDs: boolean = false;
+  @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
+  @Output() idsChanges = new EventEmitter<string[]>();
 
-  @Output() itemsChange = new EventEmitter<string[]>();
+  availableItems: ColumnConfig[] = [];
 
-  availableItems: (string | ColumnConfig)[] = [];
+  /** custom fields that will be added in addition to schema fields for users to select from */
+  @Input() additionalFields: ColumnConfig[] = [];
 
   ngOnInit(): void {
     if (!this.entityType) return;
     const targetEntitySchemaFields = Array.from(this.entityType.schema.keys());
-    this.availableItems = [
-      ...(this.activeFields ?? []),
-      ...targetEntitySchemaFields,
-    ];
+    this.availableItems = Array.from(
+      new Set([
+        ...(this.activeFields ?? []),
+        ...targetEntitySchemaFields,
+        ...this.additionalFields,
+      ]),
+    );
   }
 
-  drop(event: CdkDragDrop<(string | ColumnConfig)[]>) {
+  drop(event: CdkDragDrop<ColumnConfig[]>) {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
     this.itemsChange.emit([...this.items] as string[]);
   }
 
-  remove(item: string | ColumnConfig) {
+  remove(item: ColumnConfig) {
     this.items = this.items.filter((i) => i !== item);
     this.itemsChange.emit([...this.items] as string[]);
   }
 
   updateItems(updatedItems: (string | ColumnConfig)[]) {
-    this.items = [...updatedItems];
-    this.itemsChange.emit(this.items as string[]);
+    if (this.onlyIDs) {
+      const stringItems = updatedItems.map((item) =>
+        typeof item === "string" ? item : item.id,
+      );
+      this.items = stringItems;
+      this.idsChanges.emit(stringItems);
+    } else {
+      this.items = updatedItems;
+      this.itemsChange.emit(updatedItems);
+    }
   }
 
-  getFieldId(field: string | ColumnConfig): string {
+  getFieldId(field: ColumnConfig): string {
     return typeof field === "string" ? field : field.id;
   }
 
