@@ -74,8 +74,7 @@ export class AdminEntityListComponent implements OnChanges {
       filters = [];
     }
 
-    this.filters = filters;
-
+    this.filters = [...filters];
     this.config.filters = this.filters.map(
       (f) =>
         this.config.filters.find(
