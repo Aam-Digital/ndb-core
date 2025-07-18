@@ -84,7 +84,10 @@ export class EntityFieldsMenuComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.activeFields) {
-      this.selectedFieldsControl.setValue(this.activeFields as string[], {
+      const selectField = this.activeFields.map((field) =>
+        typeof field === "string" ? field : field.id,
+      );
+      this.selectedFieldsControl.setValue(selectField, {
         emitEvent: false,
       });
     }

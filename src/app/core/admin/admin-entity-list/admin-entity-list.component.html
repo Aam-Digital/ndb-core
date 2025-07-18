@@ -18,7 +18,8 @@
     templateType="filter"
     fieldLabel="Add Filter:"
     i18n-fieldLabel
-    (itemsChange)="updateFilters($event)"
+    [onlyIDs]="true"
+    (idsChanges)="updateFilters($event)"
   ></app-admin-list-manager>
 
   <div class="mat-elevation-z1">
@@ -36,7 +37,8 @@
           [entityType]="entityConstructor"
           fieldLabel="Drag & drop table column headers. Add columns:"
           i18n-fieldLabel
-          (itemsChange)="updateColumns($event, item)"
+          [onlyIDs]="true"
+          (idsChanges)="updateColumns($event, item)"
         ></app-admin-list-manager>
       </ng-template>
     </app-admin-tabs>

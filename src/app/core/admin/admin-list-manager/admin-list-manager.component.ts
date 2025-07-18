@@ -41,8 +41,9 @@ export class AdminListManagerComponent implements OnInit {
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
   @Input() activeFields: ColumnConfig[] = [];
-
+  @Input() onlyIDs: boolean = false;
   @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
+  @Output() idsChanges = new EventEmitter<string[]>();
 
   availableItems: ColumnConfig[] = [];
 
@@ -72,8 +73,16 @@ export class AdminListManagerComponent implements OnInit {
   }
 
   updateItems(updatedItems: (string | ColumnConfig)[]) {
-    this.items = [...updatedItems];
-    this.itemsChange.emit(this.items);
+    if (this.onlyIDs) {
+      const stringItems = updatedItems.map((item) =>
+        typeof item === "string" ? item : item.id,
+      );
+      this.items = stringItems;
+      this.idsChanges.emit(stringItems);
+    } else {
+      this.items = updatedItems;
+      this.itemsChange.emit(updatedItems);
+    }
   }
 
   getFieldId(field: ColumnConfig): string {

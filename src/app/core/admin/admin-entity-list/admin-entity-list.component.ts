@@ -66,7 +66,7 @@ export class AdminEntityListComponent implements OnChanges {
     }
   }
 
-  updateFilters(filters: ColumnConfig[]) {
+  updateFilters(filters: string[]) {
     if (!Array.isArray(filters)) {
       Logging.warn(
         "AdminEntityListComponent: updateFilters: filters is not an array",
@@ -74,7 +74,7 @@ export class AdminEntityListComponent implements OnChanges {
       filters = [];
     }
 
-    this.filters = filters.map((f) => (typeof f === "string" ? f : f.id));
+    this.filters = filters;
 
     this.config.filters = this.filters.map(
       (f) =>
@@ -84,14 +84,14 @@ export class AdminEntityListComponent implements OnChanges {
     );
   }
 
-  updateColumns(columns: ColumnConfig[], group: GroupConfig) {
+  updateColumns(columns: string[], group: GroupConfig) {
     if (!Array.isArray(columns)) {
       Logging.warn(
         "AdminEntityListComponent: updateColumns: columns is not an array",
       );
       return;
     }
-    group.columns = columns.map((f) => (typeof f === "string" ? f : f.id));
+    group.columns = columns;
   }
 
   newColumnGroupFactory(): GroupConfig {
