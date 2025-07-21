@@ -2,13 +2,14 @@ import { Component, inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
 import { MatButtonModule } from "@angular/material/button";
-import { EntityConstructor } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { MatchingEntitiesConfig } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
+import {
+  MatchingEntitiesConfig,
+  MatchingSideConfig,
+} from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
 import { EditMatchingViewComponent } from "./edit-matching-view/edit-matching-view.component";
 import { MatDialog } from "@angular/material/dialog";
-import { JsonEditorDialogComponent } from "../json-editor/json-editor-dialog/json-editor-dialog.component";
 import { Location } from "@angular/common";
 import { AlertService } from "../../alerts/alert.service";
 import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edit-matching-entity-side.component";
@@ -33,7 +34,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   readonly fb = inject(FormBuilder);
   readonly configService = inject(ConfigService);
   readonly entityRegistry = inject(EntityRegistry);
-  readonly dialog = inject(MatDialog);
   readonly location = inject(Location);
   readonly alertService = inject(AlertService);
 
@@ -41,36 +41,31 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   originalConfig: MatchingEntitiesConfig;
   entityType: string[] = [];
 
-  leftSideEntity: EntityConstructor;
-  rightSideEntity: EntityConstructor;
-
-  leftColumns: ColumnConfig[] = [];
-  rightColumns: ColumnConfig[] = [];
-
-  leftFilters: string[] = [];
-  rightFilters: string[] = [];
+  sides: Record<"left" | "right", MatchingSideConfig> = {
+    left: {
+      entityType: null,
+      columns: [],
+      availableFilters: [],
+      prefilter: {},
+    },
+    right: {
+      entityType: null,
+      columns: [],
+      availableFilters: [],
+      prefilter: {},
+    },
+  };
 
   ngOnInit(): void {
     this.initConfig();
     this.initForm();
+
     this.configForm.get("leftType").valueChanges.subscribe((key) => {
-      this.leftSideEntity = this.entityRegistry.get(key) ?? null;
-      this.leftColumns = [];
-      this.leftFilters = [];
-      this.originalConfig.leftSide = {
-        ...this.originalConfig.leftSide,
-        prefilter: {},
-      };
+      this.updateSideConfig("left", key);
     });
 
     this.configForm.get("rightType").valueChanges.subscribe((key) => {
-      this.rightSideEntity = this.entityRegistry.get(key) ?? null;
-      this.rightColumns = [];
-      this.rightFilters = [];
-      this.originalConfig.rightSide = {
-        ...this.originalConfig.rightSide,
-        prefilter: {},
-      };
+      this.updateSideConfig("right", key);
     });
   }
 
@@ -78,15 +73,26 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
     const cols = this.originalConfig.columns ?? [];
-    this.leftColumns = cols.map((col) => col[0]);
-    this.rightColumns = cols.map((col) => col[1]);
+    const leftColumns = cols.map((col: ColumnConfig[]) =>
+      typeof col[0] === "string" ? col[0] : col[0].id,
+    );
+    const rightColumns = cols.map((col: ColumnConfig[]) =>
+      typeof col[1] === "string" ? col[1] : col[1].id,
+    );
 
-    this.leftFilters = (
-      this.originalConfig.leftSide?.availableFilters ?? []
-    ).map((f) => f.id);
-    this.rightFilters = (
-      this.originalConfig.rightSide?.availableFilters ?? []
-    ).map((f) => f.id);
+    this.sides.left = {
+      entityType: this.originalConfig.leftSide?.entityType || null,
+      columns: leftColumns || [],
+      availableFilters: this.originalConfig.leftSide?.availableFilters || [],
+      prefilter: this.originalConfig.leftSide?.prefilter || {},
+    };
+
+    this.sides.right = {
+      entityType: this.originalConfig.rightSide?.entityType || null,
+      columns: rightColumns || [],
+      availableFilters: this.originalConfig.rightSide?.availableFilters || [],
+      prefilter: this.originalConfig.rightSide?.prefilter || {},
+    };
 
     this.entityType = this.entityRegistry
       .getEntityTypes()
@@ -98,65 +104,52 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       leftType: [this.originalConfig.leftSide?.entityType ?? ""],
       rightType: [this.originalConfig.rightSide?.entityType ?? ""],
     });
-
-    const { leftType, rightType } = this.configForm.value;
-
-    this.leftSideEntity = this.entityRegistry.get(leftType) ?? null;
-    this.rightSideEntity = this.entityRegistry.get(rightType) ?? null;
   }
 
-  /**
-   * Open the conditions JSON editor popup.
-   */
-  openPrefilterEditor(side: "left" | "right"): void {
-    const conditionsForm = this.fb.group({
-      prefilter: [
-        side === "left"
-          ? (this.originalConfig.leftSide?.prefilter ?? {})
-          : (this.originalConfig.rightSide?.prefilter ?? {}),
-      ],
-    });
+  private updateSideConfig(side: "left" | "right", entityKey: string): void {
+    this.sides[side] = {
+      ...this.sides[side],
+      entityType: entityKey,
+      columns: [],
+      availableFilters: [],
+      prefilter: {},
+    };
 
-    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
-      data: {
-        value: conditionsForm.value.prefilter,
-        closeButton: true,
-      },
-    });
+    this.originalConfig[`${side}Side`] = {
+      ...this.originalConfig[`${side}Side`],
+      prefilter: {},
+    };
+  }
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return;
+  updateLeftSideConfig(config: MatchingSideConfig): void {
+    this.sides.left = config;
+  }
 
-      if (side === "left") {
-        this.originalConfig.leftSide = {
-          ...this.originalConfig.leftSide,
-          prefilter: result,
-        };
-      } else {
-        this.originalConfig.rightSide = {
-          ...this.originalConfig.rightSide,
-          prefilter: result,
-        };
-      }
-    });
+  updateRightSideConfig(config: MatchingSideConfig): void {
+    this.sides.right = config;
   }
 
   /**
    * Save the updated matching entities configuration.
    */
   save(): void {
-    const leftType = this.configForm.value.leftType;
-    const rightType = this.configForm.value.rightType;
-
     const columns: [ColumnConfig, ColumnConfig][] = [];
-
     const maxLength = Math.max(
-      this.leftColumns.length,
-      this.rightColumns.length,
+      this.sides.left.columns.length,
+      this.sides.right.columns.length,
     );
+
     for (let i = 0; i < maxLength; i++) {
-      const left = this.leftColumns[i] ?? "";
-      const right = this.rightColumns[i] ?? "";
+      const left =
+        typeof this.sides.left.columns[i] === "string"
+          ? (this.sides.left.columns[i] as string)
+          : (this.sides.left.columns[i] as any).id;
+
+      const right =
+        typeof this.sides.right.columns[i] === "string"
+          ? (this.sides.right.columns[i] as string)
+          : (this.sides.right.columns[i] as any).id;
+
       columns.push([left, right]);
     }
 
@@ -167,15 +160,17 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       columns,
       leftSide: {
         ...this.originalConfig.leftSide,
-        entityType: leftType,
-        availableFilters: this.leftFilters.map((id) => ({ id })),
-        prefilter: this.originalConfig.leftSide?.prefilter,
+        entityType: this.configForm.value.leftType,
+        columns: this.sides.left.columns,
+        availableFilters: this.sides.left.availableFilters,
+        prefilter: this.sides.left.prefilter,
       },
       rightSide: {
         ...this.originalConfig.rightSide,
-        entityType: rightType,
-        availableFilters: this.rightFilters.map((id) => ({ id })),
-        prefilter: this.originalConfig.rightSide?.prefilter,
+        entityType: this.configForm.value.rightType,
+        columns: this.sides.right.columns,
+        availableFilters: this.sides.right.availableFilters,
+        prefilter: this.sides.right.prefilter,
       },
       matchingViews: this.originalConfig.onMatch,
     };

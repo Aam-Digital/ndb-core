@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -9,6 +17,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-manager.component";
 import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
+import { MatchingSideConfig } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
+import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
+import { MatDialog } from "@angular/material/dialog";
+import { JsonEditorDialogComponent } from "../../json-editor/json-editor-dialog/json-editor-dialog.component";
 
 @Component({
   selector: "app-edit-matching-entity-side",
@@ -26,28 +38,30 @@ import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormCo
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
-export class EditMatchingEntitySideComponent implements OnInit {
+
+export class EditMatchingEntitySideComponent implements OnChanges {
+  private dialog = inject(MatDialog);
+  private entityRegistry = inject(EntityRegistry);
+
   @Input() form!: FormGroup;
   @Input() controlName!: string;
   @Input() entityType: string[] = [];
-
-  @Input() sideEntity: EntityConstructor;
-  @Input() columns!: ColumnConfig[];
-  @Input() filters!: string[];
+  @Input() sideConfig!: MatchingSideConfig;
   @Input() title!: string;
-  @Input() prefilter: any;
-
-  @Output() columnsChange = new EventEmitter<ColumnConfig[]>();
-  @Output() filtersChange = new EventEmitter<string[]>();
-  @Output() openPrefilterEditor = new EventEmitter<void>();
-
   /**
    * Holds a predefined list of additional column options that can be appended to the entity view.
    */
   additionalFields: ColumnConfig[] = [];
 
-  ngOnInit(): void {
-    if (this.columns) {
+  @Output() configChange = new EventEmitter<MatchingSideConfig>();
+
+  entityConstructor!: EntityConstructor | null;
+  columns: string[] = [];
+  filters: string[] = [];
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.sideConfig) {
+      this.initFormConfig();
       this.columns = this.columns.filter((c) => c !== "");
 
       this.additionalFields = [
@@ -71,20 +85,43 @@ export class EditMatchingEntitySideComponent implements OnInit {
         },
       ];
     }
+    }
   }
 
-  onColumnsChange(newColumns: ColumnConfig[]): void {
-    this.columnsChange.emit(newColumns);
+  private initFormConfig() {
+    this.entityConstructor = this.entityRegistry.get(
+      this.sideConfig.entityType as string,
+    )!;
+    this.columns =
+      this.sideConfig.columns?.map((c) => (typeof c === "string" ? c : c.id)) ??
+      [];
+    this.filters = this.sideConfig.availableFilters?.map((f) => f.id) ?? [];
   }
 
-  onFiltersChange(newFilters: ColumnConfig[]): void {
-    const updatedFilters = newFilters.map((f) =>
-      typeof f === "string" ? f : f.id,
-    );
-    this.filtersChange.emit(updatedFilters);
+  onColumnsChange(newCols: string[]) {
+    this.emitChange({ ...this.sideConfig, columns: newCols });
   }
 
-  onOpenPrefilterEditor(): void {
-    this.openPrefilterEditor.emit();
+  onFiltersChange(newFilters: string[]) {
+    this.emitChange({
+      ...this.sideConfig,
+      availableFilters: newFilters.map((id) => ({ id })),
+    });
+  }
+
+  openPrefilterEditor() {
+    const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
+      data: { value: this.sideConfig.prefilter || {}, closeButton: true },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result == null) return;
+      console.log("Prefilter:", result);
+      this.emitChange({ ...this.sideConfig, prefilter: result });
+    });
+  }
+
+  private emitChange(config: MatchingSideConfig) {
+    this.configChange.emit(config);
   }
 }

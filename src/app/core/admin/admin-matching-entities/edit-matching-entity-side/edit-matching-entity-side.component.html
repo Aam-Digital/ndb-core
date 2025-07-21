@@ -14,7 +14,7 @@
 
   <h4 i18n>Available columns</h4>
   <app-admin-list-manager
-    [entityType]="sideEntity"
+    [entityType]="entityConstructor"
     [items]="columns"
     [activeFields]="columns"
     [additionalFields]="additionalFields"
@@ -26,7 +26,7 @@
 
   <h4 i18n>Available Filters</h4>
   <app-admin-list-manager
-    [entityType]="sideEntity"
+    [entityType]="entityConstructor"
     [items]="filters"
     [activeFields]="filters"
     templateType="filter"
@@ -41,7 +41,7 @@
       Configure filters to only show certain records for matching, that fulfill
       the required criteria (e.g. having a required status).
     </p>
-    <button mat-stroked-button (click)="onOpenPrefilterEditor()">
+    <button mat-stroked-button (click)="openPrefilterEditor()">
       <fa-icon icon="tools" class="standard-icon-with-text"></fa-icon>
       <span i18n>Edit Prefilters</span>
     </button>
