@@ -111,7 +111,6 @@ export class EditMatchingEntitySideComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result == null) return;
-      console.log("Prefilter:", result);
       this.emitChange({ ...this.sideConfig, prefilter: result });
     });
   }
