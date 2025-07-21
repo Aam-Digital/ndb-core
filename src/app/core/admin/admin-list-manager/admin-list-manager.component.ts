@@ -41,7 +41,6 @@ export class AdminListManagerComponent implements OnInit {
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
   @Input() activeFields: ColumnConfig[] = [];
-  @Input() onlyIDs: boolean = false;
   @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
   @Output() idsChanges = new EventEmitter<string[]>();
 
@@ -64,25 +63,27 @@ export class AdminListManagerComponent implements OnInit {
 
   drop(event: CdkDragDrop<ColumnConfig[]>) {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
-    this.itemsChange.emit([...this.items] as string[]);
+    this.emitUpdatedConfig();
   }
 
   remove(item: ColumnConfig) {
     this.items = this.items.filter((i) => i !== item);
-    this.itemsChange.emit([...this.items] as string[]);
+    this.emitUpdatedConfig();
   }
 
   updateItems(updatedItems: (string | ColumnConfig)[]) {
-    if (this.onlyIDs) {
-      const stringItems = updatedItems.map((item) =>
-        typeof item === "string" ? item : item.id,
-      );
-      this.items = stringItems;
-      this.idsChanges.emit(stringItems);
-    } else {
-      this.items = updatedItems;
-      this.itemsChange.emit(updatedItems);
-    }
+    this.items = updatedItems;
+    this.emitUpdatedConfig();
+  }
+
+  /**
+   * Emits the current items and their IDs to the parent component.
+   * `itemsChange` provides the full `ColumnConfig` objects,
+   * `idsChanges`, provides a simplified array of just the IDs
+   */
+  private emitUpdatedConfig() {
+    this.itemsChange.emit(this.items);
+    this.idsChanges.emit(this.items.map(this.getFieldId));
   }
 
   getFieldId(field: ColumnConfig): string {
