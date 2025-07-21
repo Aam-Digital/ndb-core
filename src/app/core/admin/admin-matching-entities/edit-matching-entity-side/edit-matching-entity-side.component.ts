@@ -64,14 +64,11 @@ export class EditMatchingEntitySideComponent implements OnChanges {
       this.initFormConfig();
 
       this.additionalFields = [
-        {
-          id: "distance",
-          label: "Distance",
-        },
+        { id: "distance", label: "Distance" },
         {
           id: "_id",
           label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)`,
-          additional: this.entityType,
+          additional: this.sideConfig.entityType,
           noSorting: true,
           viewComponent: "DisplayEntity",
         },

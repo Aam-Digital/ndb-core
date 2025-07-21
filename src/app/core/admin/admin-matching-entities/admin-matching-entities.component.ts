@@ -164,6 +164,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       matchingViews: this.originalConfig.onMatch,
     };
 
+    console.log("Saving matching entities config:", fullConfig["appConfig:matching-entities"]);
+
     this.configService.saveConfig(fullConfig).then(() => {
       this.alertService.addInfo($localize`Configuration updated successfully.`);
     });
