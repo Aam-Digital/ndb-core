@@ -16,14 +16,10 @@
         [form]="configForm"
         controlName="leftType"
         [entityType]="entityType"
-        [sideEntity]="leftSideEntity"
-        [columns]="leftColumns"
-        [filters]="leftFilters"
+        [sideConfig]="sides.left"
         title="Left"
         i18n-title
-        (columnsChange)="leftColumns = $event"
-        (filtersChange)="leftFilters = $event"
-        (openPrefilterEditor)="openPrefilterEditor('left')"
+        (configChange)="updateLeftSideConfig($event)"
       ></app-edit-matching-entity-side>
     </div>
 
@@ -32,14 +28,10 @@
         [form]="configForm"
         controlName="rightType"
         [entityType]="entityType"
-        [sideEntity]="rightSideEntity"
-        [columns]="rightColumns"
-        [filters]="rightFilters"
+        [sideConfig]="sides.right"
         title="Right"
         i18n-title
-        (columnsChange)="rightColumns = $event"
-        (filtersChange)="rightFilters = $event"
-        (openPrefilterEditor)="openPrefilterEditor('right')"
+        (configChange)="updateRightSideConfig($event)"
       ></app-edit-matching-entity-side>
     </div>
   </div>
@@ -48,8 +40,8 @@
 <div class="entity-match-container padding-regular">
   <app-edit-matching-view
     [value]="originalConfig.onMatch"
-    [leftSideEntity]="leftSideEntity"
-    [rightSideEntity]="rightSideEntity"
+    [leftSideEntity]="entityRegistry.get(configForm.value.leftType)"
+    [rightSideEntity]="entityRegistry.get(configForm.value.rightType)"
     (valueChange)="originalConfig.onMatch = $event"
   ></app-edit-matching-view>
 </div>
