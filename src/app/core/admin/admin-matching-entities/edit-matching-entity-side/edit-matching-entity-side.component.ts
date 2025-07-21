@@ -77,9 +77,11 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   }
 
   private initFormConfig() {
-    this.entityConstructor = this.entityRegistry.get(
-      this.sideConfig.entityType as string,
-    );
+    const sideEntityType = this.sideConfig.entityType;
+    this.entityConstructor =
+      typeof sideEntityType === "string"
+        ? this.entityRegistry.get(sideEntityType)
+        : sideEntityType;
 
     this.columns =
       this.sideConfig.columns
