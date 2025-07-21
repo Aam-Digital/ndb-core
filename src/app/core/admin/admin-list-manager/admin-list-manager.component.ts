@@ -6,10 +6,7 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import {
-  ColumnConfig,
-  FormFieldConfig,
-} from "app/core/common-components/entity-form/FormConfig";
+import { ColumnConfig } from "app/core/common-components/entity-form/FormConfig";
 import { EntityConstructor } from "#src/app/core/entity/model/entity";
 import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 import { EntityFieldLabelComponent } from "#src/app/core/common-components/entity-field-label/entity-field-label.component";
@@ -41,13 +38,16 @@ export class AdminListManagerComponent implements OnInit {
   @Input() fieldLabel: string;
   @Input() templateType: "default" | "filter" = "default";
   @Input() activeFields: ColumnConfig[] = [];
-  @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
-  @Output() idsChanges = new EventEmitter<string[]>();
-
-  availableItems: ColumnConfig[] = [];
 
   /** custom fields that will be added in addition to schema fields for users to select from */
   @Input() additionalFields: ColumnConfig[] = [];
+
+  /** emits changes to the selected fields as field config objects or IDs */
+  @Output() itemsChange = new EventEmitter<ColumnConfig[]>();
+  /** emits changes to the selected fields only as field IDs (custom field configs are mapped to their ID only) */
+  @Output() idsChange = new EventEmitter<string[]>();
+
+  availableItems: ColumnConfig[] = [];
 
   ngOnInit(): void {
     if (!this.entityType) return;
@@ -83,7 +83,7 @@ export class AdminListManagerComponent implements OnInit {
    */
   private emitUpdatedConfig() {
     this.itemsChange.emit(this.items);
-    this.idsChanges.emit(this.items.map(this.getFieldId));
+    this.idsChange.emit(this.items.map(this.getFieldId));
   }
 
   getFieldId(field: ColumnConfig): string {
