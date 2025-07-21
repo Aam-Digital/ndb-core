@@ -149,6 +149,13 @@ export class AutomatedStatusUpdateConfigService {
     }
   }
 
+  /**
+   * Analyze which fields changed during the current editing.
+   * @param newEntity Updated entity after saving
+   * @param originalEntity Entity before changes were applied
+   * @return List of key-value pairs of all changed fields (field ID and new value in that field)
+   * @private
+   */
   private getChangedFields(
     newEntity: Entity,
     originalEntity: Entity,
