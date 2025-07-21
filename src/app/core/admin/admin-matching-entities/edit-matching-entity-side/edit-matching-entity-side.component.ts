@@ -47,6 +47,7 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   @Input() entityType: string[] = [];
   @Input() sideConfig!: MatchingSideConfig;
   @Input() title!: string;
+
   /**
    * Holds a predefined list of additional column options that can be appended to the entity view.
    */
