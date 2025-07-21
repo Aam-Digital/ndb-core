@@ -70,15 +70,8 @@ export class EditMatchingEntitySideComponent implements OnChanges {
         },
         {
           id: "_id",
-          label: "Name (Child)",
-          additional: "Child",
-          noSorting: true,
-          viewComponent: "DisplayEntity",
-        },
-        {
-          id: "_id",
-          label: "Name (School)",
-          additional: "School",
+          label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:[name of record]`,
+          additional: this.entityType,
           noSorting: true,
           viewComponent: "DisplayEntity",
         },
