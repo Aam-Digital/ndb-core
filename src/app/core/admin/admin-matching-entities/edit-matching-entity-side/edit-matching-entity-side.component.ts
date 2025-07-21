@@ -70,7 +70,7 @@ export class EditMatchingEntitySideComponent implements OnChanges {
         },
         {
           id: "_id",
-          label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:[name of record]`,
+          label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)`,
           additional: this.entityType,
           noSorting: true,
           viewComponent: "DisplayEntity",
