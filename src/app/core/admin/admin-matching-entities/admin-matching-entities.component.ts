@@ -135,9 +135,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     );
 
     for (let i = 0; i < maxLength; i++) {
-      const left = this.sides.left.columns[i] ?? "";
-
-      const right = this.sides.right.columns[i] ?? "";
+      const left = this.sides.left.columns[i] ?? undefined;
+      const right = this.sides.right.columns[i] ?? undefined;
 
       columns.push([left, right]);
     }
@@ -150,21 +149,17 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       leftSide: {
         ...this.originalConfig.leftSide,
         entityType: this.configForm.value.leftType,
-        columns: this.sides.left.columns,
         availableFilters: this.sides.left.availableFilters,
         prefilter: this.sides.left.prefilter,
       },
       rightSide: {
         ...this.originalConfig.rightSide,
         entityType: this.configForm.value.rightType,
-        columns: this.sides.right.columns,
         availableFilters: this.sides.right.availableFilters,
         prefilter: this.sides.right.prefilter,
       },
       matchingViews: this.originalConfig.onMatch,
     };
-
-    console.log("Saving matching entities config:", fullConfig["appConfig:matching-entities"]);
 
     this.configService.saveConfig(fullConfig).then(() => {
       this.alertService.addInfo($localize`Configuration updated successfully.`);
