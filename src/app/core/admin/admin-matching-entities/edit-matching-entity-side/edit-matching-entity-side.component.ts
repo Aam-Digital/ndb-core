@@ -38,7 +38,6 @@ import { JsonEditorDialogComponent } from "../../json-editor/json-editor-dialog/
   templateUrl: "./edit-matching-entity-side.component.html",
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
-
 export class EditMatchingEntitySideComponent implements OnChanges {
   private dialog = inject(MatDialog);
   private entityRegistry = inject(EntityRegistry);
@@ -56,13 +55,12 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   @Output() configChange = new EventEmitter<MatchingSideConfig>();
 
   entityConstructor!: EntityConstructor | null;
-  columns: string[] = [];
+  columns: ColumnConfig[] = [];
   filters: string[] = [];
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.sideConfig) {
       this.initFormConfig();
-      this.columns = this.columns.filter((c) => c !== "");
 
       this.additionalFields = [
         {
@@ -85,27 +83,31 @@ export class EditMatchingEntitySideComponent implements OnChanges {
         },
       ];
     }
-    }
   }
 
   private initFormConfig() {
     this.entityConstructor = this.entityRegistry.get(
       this.sideConfig.entityType as string,
     )!;
+
     this.columns =
-      this.sideConfig.columns?.map((c) => (typeof c === "string" ? c : c.id)) ??
-      [];
+      this.sideConfig.columns
+        ?.map((c) => (typeof c === "string" ? c : c.id))
+        .filter((c) => c !== "") ?? [];
     this.filters = this.sideConfig.availableFilters?.map((f) => f.id) ?? [];
   }
 
-  onColumnsChange(newCols: string[]) {
+  onColumnsChange(newCols: ColumnConfig[]) {
     this.emitChange({ ...this.sideConfig, columns: newCols });
   }
 
-  onFiltersChange(newFilters: string[]) {
+  onFiltersChange(newFilters: ColumnConfig[]): void {
+    const updatedFilters = newFilters.map((f) =>
+      typeof f === "string" ? f : f.id,
+    );
     this.emitChange({
       ...this.sideConfig,
-      availableFilters: newFilters.map((id) => ({ id })),
+      availableFilters: updatedFilters.map((id) => ({ id })),
     });
   }
 
