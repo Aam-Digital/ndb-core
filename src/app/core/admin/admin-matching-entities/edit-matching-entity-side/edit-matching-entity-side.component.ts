@@ -39,8 +39,8 @@ import { JsonEditorDialogComponent } from "../../json-editor/json-editor-dialog/
   styleUrls: ["./edit-matching-entity-side.component.scss"],
 })
 export class EditMatchingEntitySideComponent implements OnChanges {
-  private dialog = inject(MatDialog);
-  private entityRegistry = inject(EntityRegistry);
+  readonly dialog = inject(MatDialog);
+  readonly entityRegistry = inject(EntityRegistry);
 
   @Input() form!: FormGroup;
   @Input() controlName!: string;
