@@ -76,6 +76,10 @@ export class EditMatchingEntitySideComponent implements OnChanges {
     }
   }
 
+  /**
+   * Initializes the form configuration for columns and filters based on the current sideConfig.
+   * Sets entityConstructor, columns, and filters properties accordingly.
+   */
   private initFormConfig() {
     const sideEntityType = this.sideConfig.entityType;
     this.entityConstructor =
@@ -104,6 +108,10 @@ export class EditMatchingEntitySideComponent implements OnChanges {
     });
   }
 
+  /**
+   * Opens a dialog for editing the prefilter JSON configuration.
+   * After the dialog is closed, emits the updated prefilter if provided.
+   */
   openPrefilterEditor() {
     const dialogRef = this.dialog.open(JsonEditorDialogComponent, {
       data: { value: this.sideConfig.prefilter || {}, closeButton: true },
@@ -115,6 +123,9 @@ export class EditMatchingEntitySideComponent implements OnChanges {
     });
   }
 
+  /**
+   * Emits the updated MatchingSideConfig through the configChange EventEmitter.
+   */
   private emitChange(config: MatchingSideConfig) {
     this.configChange.emit(config);
   }
