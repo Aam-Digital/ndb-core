@@ -60,4 +60,11 @@ const dynamicComponents: [string, AsyncComponent][] = [
         "./todo-completion/display-todo-completion/display-todo-completion.component"
       ).then((c) => c.DisplayTodoCompletionComponent),
   ],
+  [
+  "NotEditableWidgetSettings",
+  () =>
+    import(
+      "../../not-editable-widget-settings.component/not-editable-widget-settings.component"
+    ).then((c) => c.NotEditableWidgetSettingsComponent),
+],
 ];

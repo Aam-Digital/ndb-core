@@ -1,0 +1,59 @@
+<div style="padding: 16px;">
+  
+  <!-- Display Settings Section -->
+  <div style="margin-bottom: 32px;">
+    <h3>Display Settings</h3>
+    
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Subtitle</mat-label>
+      <input 
+        matInput 
+        [(ngModel)]="localConfig.subtitle"
+        (ngModelChange)="onSubtitleChange()"
+        >
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label i18n>Explanation</mat-label>
+      <textarea 
+        matInput 
+        [(ngModel)]="localConfig.explanation"
+        (ngModelChange)="onExplanationChange()"
+        rows="2">
+      </textarea>
+    </mat-form-field>
+  </div>
+
+  <!-- Shortcuts Section -->
+  <div>
+    <h3>Shortcuts</h3>
+    
+    @for (shortcut of localConfig.shortcuts; track $index; let i = $index) {
+      <div class="shortcut-item">
+        <h4>Shortcut {{ i + 1 }}</h4>
+        
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label i18n>Label</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="shortcut.label"
+            (ngModelChange)="onShortcutChange()"
+            >
+        </mat-form-field>
+
+        <app-admin-icon-input [(icon)]="shortcut.icon"></app-admin-icon-input>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label i18n>Link</mat-label>
+          <input 
+            matInput 
+            [(ngModel)]="shortcut.link"
+            (ngModelChange)="onShortcutChange()"
+            >
+        </mat-form-field>
+      </div>
+    }
+
+  </div>
+
+</div>

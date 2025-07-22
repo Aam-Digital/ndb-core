@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content class="dialog-content">
+  <ng-template
+    [appDynamicComponent]="settingsComponentConfig"
+    (configChange)="onConfigChange($event)">
+  </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="onCancel()" i18n>
+    {{ data.settingsComponent === 'NotEditableWidgetSettings' ? 'Close' : 'Cancel' }}
+  </button>
+  @if (data.settingsComponent !== 'NotEditableWidgetSettings') {
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="onSave()"
+      i18n
+    >
+    Save
+    </button>
+  }
+</mat-dialog-actions>

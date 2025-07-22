@@ -4,14 +4,20 @@ import { DashboardConfig } from "../../dashboard/dashboard/dashboard.component";
 import { ConfigService } from "../../config/config.service";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
-import { FaIconComponent, FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import { CdkDragDrop, DragDropModule, moveItemInArray} from "@angular/cdk/drag-drop";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconModule } from "@angular/material/icon";
-
+import { MatDialog } from "@angular/material/dialog";
+import { firstValueFrom } from "rxjs";
+import { 
+  AdminWidgetDialogComponent, 
+  AdminWidgetDialogData 
+} from "../admin-widget-dialog/admin-widget-dialog.component";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -24,7 +30,8 @@ import { MatIconModule } from "@angular/material/icon";
     MatButtonModule,
     MatCardModule,
     MatTooltipModule,
-    MatIconModule
+    MatIconModule,
+    ViewTitleComponent
   ],
   templateUrl: "./admin-dashboard.component.html",
   styleUrls: [
@@ -39,6 +46,7 @@ export class AdminDashboardComponent implements OnInit {
   dashboardConfig: DashboardConfig;
 
   private readonly configService = inject(ConfigService);
+  private readonly dialog = inject(MatDialog);
 
   ngOnInit() {
     this.loadDashboardViewConfig();
@@ -65,41 +73,65 @@ export class AdminDashboardComponent implements OnInit {
     //this.saveDashboardConfig();
   }
 
-  editWidget(widgetConfig: DynamicComponentConfig) {
-    // TODO: Open widget configuration dialog similar to openFieldConfig
-    console.log('Edit widget:', widgetConfig);
-  }
+ async editWidget(widgetConfig: DynamicComponentConfig, idx: number) {
+  const settingsComponent = this.getSettingsComponentforWidget(widgetConfig);
+  if (!settingsComponent) return;
 
-  getSettingsComponentforWidget(widgetConfig: DynamicComponentConfig): any {
-  switch (widgetConfig.component) {
-    case 'ShortcutDashboard':
-      return 'ShortcutDashboardSettings';
-    
-    case 'EntityCountDashboard':
-      return 'EntityCountDashboardSettings';
-    
-    case 'ImportantNotesDashboard':
-      return 'ImportantNotesDashboardSettings';
-    
-    case 'TodosDashboard':
-      return 'TodosDashboardSettings';
-    
-    case 'NotesDashboard':
-      return 'NotesDashboardSettings';
-    
-    case 'AttendanceWeekDashboard':
-      return 'AttendanceWeekDashboardSettings';
-    
-    case 'ProgressDashboard':
-      return 'ProgressDashboardSettings';
-    
-    case 'BirthdayDashboard':
-      return 'BirthdayDashboardSettings';
-    
-    default:
-      return null;
+  const updatedConfig = await this.openWidgetSettingsDialog(widgetConfig, settingsComponent);
+  if (updatedConfig) {
+    this.dashboardConfig.widgets[idx] = updatedConfig;
+    this.dashboardConfig.widgets = [...this.dashboardConfig.widgets]; // <-- Add this line
   }
 }
+
+  getSettingsComponentforWidget(widgetConfig: DynamicComponentConfig): any {
+    switch (widgetConfig.component) {
+      case 'ShortcutDashboard':
+        return 'ShortcutDashboardSettings';
+      
+      case 'EntityCountDashboard':
+        return 'EntityCountDashboardSettings';
+      
+      case 'ImportantNotesDashboard':
+        return 'ImportantNotesDashboardSettings';
+      
+      case 'TodosDashboard':
+        return 'NotEditableWidgetSettings';
+      
+      case 'NotesDashboard':
+        return 'NotesDashboardSettings';
+      
+      case 'AttendanceWeekDashboard':
+        return 'AttendanceWeekDashboardSettings';
+      
+      case 'ProgressDashboard':
+        return 'NotEditableWidgetSettings';
+      
+      case 'BirthdayDashboard':
+        return 'BirthdayDashboardSettings';
+      
+      default:
+        return null;
+    }
+  }
+
+  private async openWidgetSettingsDialog(
+    widgetConfig: DynamicComponentConfig,
+    settingsComponent: string
+  ): Promise<DynamicComponentConfig | undefined> {
+    const dialogData: AdminWidgetDialogData = {
+      widgetConfig: { ...widgetConfig },
+      settingsComponent: settingsComponent,
+      title: `${widgetConfig.component} Settings`
+    };
+
+    const dialogRef = this.dialog.open(AdminWidgetDialogComponent, {
+      width: "600px",
+      data: dialogData,
+    });
+    
+    return firstValueFrom(dialogRef.afterClosed());
+  }
 
   removeWidget(index: number) {
     this.dashboardConfig.widgets.splice(index, 1);
@@ -114,6 +146,7 @@ export class AdminDashboardComponent implements OnInit {
   save(){
     //TODO: Implement save logic
   }
+  
   cancel() {
     //TODO: Implement cancel logic
   }

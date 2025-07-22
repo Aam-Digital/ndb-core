@@ -44,4 +44,18 @@ export const notesComponents: ComponentTuple[] = [
         (c) => c.NoteDetailsComponent,
       ),
   ],
+  [
+    "ImportantNotesDashboardSettings",
+    () =>
+      import(
+        "./dashboard-widgets/important-notes-dashboard-settings.component/important-notes-dashboard-settings.component"
+      ).then((c) => c.ImportantNotesDashboardSettingsComponent),
+  ],
+  [
+    "NotesDashboardSettings",
+    () =>
+      import(
+        "./dashboard-widgets/notes-dashboard-settings.component/notes-dashboard-settings.component"
+      ).then((c) => c.NotesDashboardSettingsComponent),
+  ],
 ];

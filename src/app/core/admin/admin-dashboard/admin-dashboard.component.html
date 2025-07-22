@@ -1,7 +1,11 @@
 <div class="header flex-row flex-wrap justify-space-between">
-  <h1 class="admin-ui-title" i18n="page title">
+  <app-view-title
+    class="admin-ui-title"
+    i18n="page title"
+    [displayInPlace]="true"
+  >
     Edit Dashboard Widgets
-  </h1>
+  </app-view-title>
 
   <div class="flex-row gap-small save-buttons">
     <button mat-raised-button color="accent" (click)="save()" i18n>
@@ -21,25 +25,26 @@
     class="widgets-container drop-list"
   >
     @for (widgetConfig of dashboardConfig.widgets; track widgetConfig; let i = $index) {
-      <mat-card
-        cdkDrag
-        cdkDragBoundary=".overall-container"
-        class="widget-preview-card"
-      >
-        <fa-icon 
-          icon="grip-vertical" 
-          size="xl" 
-          class="drag-handle"
-          cdkDragHandle
-        ></fa-icon>
-        
-        <fa-icon 
-          icon="times" 
-          class="widget-remove-icon"
-          (click)="removeWidget(i)" 
-          matTooltip="Remove this widget"
-          i18n-matTooltip
-        ></fa-icon>
+  <div class="widget-container">
+    <mat-card
+      cdkDrag
+      cdkDragBoundary=".overall-container"
+      class="widget-preview-card"
+    >
+      <fa-icon 
+        icon="grip-vertical" 
+        size="xl" 
+        class="drag-handle"
+        cdkDragHandle
+      ></fa-icon>
+      
+      <fa-icon 
+        icon="times" 
+        class="widget-remove-icon"
+        (click)="removeWidget(i)" 
+        matTooltip="Remove this widget"
+        i18n-matTooltip
+      ></fa-icon>
 
         <mat-card-content class="widget-preview-section">
           <!-- Widget Content with Overlay Edit Button -->
@@ -52,7 +57,7 @@
                 mat-stroked-button
                 color="accent"
                 class="field-edit-button"
-                (click)="editWidget(widgetConfig)"
+                (click)="editWidget(widgetConfig, i)"
                 i18n="Button label"
               >
                 Edit Widget
@@ -61,6 +66,7 @@
           </div>
         </mat-card-content>
       </mat-card>
+      </div>
     }
 
     <!-- DROP AREA: ADD NEW WIDGET -->

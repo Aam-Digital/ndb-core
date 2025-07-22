@@ -19,6 +19,13 @@ export class EntityCountDashboardWidgetModule {
             "./entity-count-dashboard/entity-count-dashboard.component"
           ).then((c) => c.EntityCountDashboardComponent),
       ],
+      [
+        "EntityCountDashboardSettings",
+        () =>
+          import(
+            "./entity-count-dashboard-settings.component/entity-count-dashboard-settings.component"
+          ).then((c) => c.EntityCountDashboardSettingsComponent),
+      ],
     ]);
   }
 }

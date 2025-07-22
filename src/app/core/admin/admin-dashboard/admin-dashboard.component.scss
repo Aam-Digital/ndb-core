@@ -3,18 +3,36 @@
 @use "variables/colors";
 
 .header {
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: 20px 24px 12px 24px;
+  background-color: colors.$background-secondary; // Use your themed color
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-button {
+  margin-right: 8px;
 }
 
 .admin-ui-title {
- font-style: italic;;
+  font-style: italic;
+  font-size: 2rem;
+  margin-bottom: 0;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .overall-container {
   display: flex;
   flex-direction: column;
-  height: 100%; // Use 100% instead of calc
+  height: 100%;
   padding: 0;
 }
 
@@ -22,9 +40,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1.5rem;
-  padding: 1rem;
-  height: auto; // Remove fixed height to prevent scroll
-  overflow: visible; // Remove scroll
+  padding: 0.5rem 1rem 1rem 1rem; // Less top padding
+  height: auto;
+  overflow: visible;
 }
 
 .widget-preview-card {
@@ -159,4 +177,9 @@
 .disabled {
   pointer-events: none;
   opacity: 0.5;
+}
+
+.widget-container:has(.widget-remove-icon:hover) .widget-preview-card {
+  border-color: rgb(255, 0, 0) !important;
+  background-color: rgba(255, 0, 0, 0.1) !important;
 }
