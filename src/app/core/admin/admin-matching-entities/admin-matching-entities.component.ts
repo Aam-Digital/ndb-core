@@ -9,7 +9,6 @@ import {
   MatchingSideConfig,
 } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
 import { EditMatchingViewComponent } from "./edit-matching-view/edit-matching-view.component";
-import { MatDialog } from "@angular/material/dialog";
 import { Location } from "@angular/common";
 import { AlertService } from "../../alerts/alert.service";
 import { EditMatchingEntitySideComponent } from "./edit-matching-entity-side/edit-matching-entity-side.component";
@@ -73,12 +72,8 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
     const cols = this.originalConfig.columns ?? [];
-    const leftColumns = cols.map((col: ColumnConfig[]) =>
-      typeof col[0] === "string" ? col[0] : col[0].id,
-    );
-    const rightColumns = cols.map((col: ColumnConfig[]) =>
-      typeof col[1] === "string" ? col[1] : col[1].id,
-    );
+    const leftColumns = cols.map((col: ColumnConfig[]) => col[0]);
+    const rightColumns = cols.map((col: ColumnConfig[]) => col[1]);
 
     this.sides.left = {
       entityType: this.originalConfig.leftSide?.entityType || null,
@@ -133,22 +128,15 @@ export class AdminMatchingEntitiesComponent implements OnInit {
    * Save the updated matching entities configuration.
    */
   save(): void {
-    const columns: [string, string][] = [];
+    const columns: [ColumnConfig, ColumnConfig][] = [];
     const maxLength = Math.max(
       this.sides.left.columns.length,
       this.sides.right.columns.length,
     );
 
     for (let i = 0; i < maxLength; i++) {
-      const left =
-        typeof this.sides.left.columns[i] === "string"
-          ? (this.sides.left.columns[i] as string)
-          : (this.sides.left.columns[i] as any).id;
-
-      const right =
-        typeof this.sides.right.columns[i] === "string"
-          ? (this.sides.right.columns[i] as string)
-          : (this.sides.right.columns[i] as any).id;
+      const left = this.sides.left.columns[i] ?? undefined;
+      const right = this.sides.right.columns[i] ?? undefined;
 
       columns.push([left, right]);
     }
@@ -161,14 +149,12 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       leftSide: {
         ...this.originalConfig.leftSide,
         entityType: this.configForm.value.leftType,
-        columns: this.sides.left.columns,
         availableFilters: this.sides.left.availableFilters,
         prefilter: this.sides.left.prefilter,
       },
       rightSide: {
         ...this.originalConfig.rightSide,
         entityType: this.configForm.value.rightType,
-        columns: this.sides.right.columns,
         availableFilters: this.sides.right.availableFilters,
         prefilter: this.sides.right.prefilter,
       },
@@ -177,7 +163,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
 
     this.configService.saveConfig(fullConfig).then(() => {
       this.alertService.addInfo($localize`Configuration updated successfully.`);
-      console.log("Full config:", fullConfig);
     });
   }
 

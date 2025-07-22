@@ -16,6 +16,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
 import { AdminListManagerComponent } from "../../admin-list-manager/admin-list-manager.component";
+import { ColumnConfig } from "#src/app/core/common-components/entity-form/FormConfig";
 import { MatchingSideConfig } from "#src/app/features/matching-entities/matching-entities/matching-entities-config";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
@@ -47,36 +48,59 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   @Input() sideConfig!: MatchingSideConfig;
   @Input() title!: string;
 
+  /**
+   * Holds a predefined list of additional column options that can be appended to the entity view.
+   */
+  additionalFields: ColumnConfig[] = [];
+
   @Output() configChange = new EventEmitter<MatchingSideConfig>();
 
   entityConstructor!: EntityConstructor | null;
-  columns: string[] = [];
+  columns: ColumnConfig[] = [];
   filters: string[] = [];
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.sideConfig) {
       this.initFormConfig();
+
+      this.additionalFields = [
+        { id: "distance", label: "Distance" },
+        {
+          id: "_id",
+          label: $localize`:label for field represented as DisplayEntity block to select in Admin UI:Name (record preview)`,
+          additional: this.sideConfig.entityType,
+          noSorting: true,
+          viewComponent: "DisplayEntity",
+        },
+      ];
     }
   }
 
   private initFormConfig() {
-    this.entityConstructor = this.entityRegistry.get(
-      this.sideConfig.entityType as string,
-    )!;
+    const sideEntityType = this.sideConfig.entityType;
+    this.entityConstructor =
+      typeof sideEntityType === "string"
+        ? this.entityRegistry.get(sideEntityType)
+        : sideEntityType;
+
     this.columns =
-      this.sideConfig.columns?.map((c) => (typeof c === "string" ? c : c.id)) ??
-      [];
+      this.sideConfig.columns
+        ?.map((c) => (typeof c === "string" ? c : c?.id))
+        .filter((c) => c !== undefined) ?? [];
     this.filters = this.sideConfig.availableFilters?.map((f) => f.id) ?? [];
   }
 
-  onColumnsChange(newCols: string[]) {
+  onColumnsChange(newCols: ColumnConfig[]) {
     this.emitChange({ ...this.sideConfig, columns: newCols });
   }
 
-  onFiltersChange(newFilters: string[]) {
+  onFiltersChange(newFilters: ColumnConfig[]): void {
+    const updatedFilters = newFilters.map((f) =>
+      typeof f === "string" ? f : f.id,
+    );
     this.emitChange({
       ...this.sideConfig,
-      availableFilters: newFilters.map((id) => ({ id })),
+      availableFilters: updatedFilters.map((id) => ({ id })),
     });
   }
 
@@ -87,7 +111,6 @@ export class EditMatchingEntitySideComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result == null) return;
-      console.log("Prefilter:", result);
       this.emitChange({ ...this.sideConfig, prefilter: result });
     });
   }
