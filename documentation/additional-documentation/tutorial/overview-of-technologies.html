@@ -1,0 +1,227 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	   <link rel="stylesheet" href="../../styles/style.css">
+        <link rel="stylesheet" href="../../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content additional-page">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Tutorial: An Overview of our Technologies and Framework</h1>
+<p><img src="../../images/tech-stack.png" alt="" class="img-responsive"></p>
+<p>Aam Digital is based on the following technologies:</p>
+<ul>
+<li><a href="https://angular.io/">Angular</a>,
+including the <a href="https://www.typescriptlang.org/">TypeScript</a> programming language (a superset of JavaScript)
+as well as HTML and CSS</li>
+<li><a href="https://material.angular.io/">Angular Material</a> providing reusable UI components</li>
+<li>PouchDB (CouchDB noSQL Database)</li>
+</ul>
+<p>In addition, we use Docker and nginx to deploy and run the application.</p>
+<p>If you are not familiar with (some of) our tools and technologies yet,
+here are some useful resources to get started.
+You will need to have basic knowledge of these before you can properly start contributing to our project.</p>
+<h2>Git (and GitHub)</h2>
+<p>Git helps us track all changes to our project, allows us to revert things and is the basis for our code review process.</p>
+<p>Haven&#39;t worked with <em>git</em> source control yet?
+Work through a basic tutorial like this
+<a href="https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners">Intro to Git and GitHub for Beginners (Tutorial)</a>.</p>
+<p>You can also check out the <a href="https://git-scm.com/book/de/v2">official git book</a> (chapter 1-3 are most relevant).</p>
+<h2>TypeScript</h2>
+<p>TypeScript is our primary programming language.
+If you are familiar with JavaScript, learning TypeScript shouldn&#39;t be too hard for you.
+All JavaScript code is also valid TypeScript.
+TypeScript just adds some things on top to make development easier and less error-prone.</p>
+<p><em>(If you don&#39;t know JavaScript yet, you can find an endless amount of online courses to learn it - go and do some of these before continuing here!)</em></p>
+<p>If you have some experience with another &quot;statically typed&quot; language like Java, the additional concepts of TypeScript should feel familiar.
+A quick comparison like this may be enough to get you a basic understanding: <a href="https://medium.com/geekculture/typescript-vs-javascript-e5af7ab5a331">TypeScript vs. JavaScript</a></p>
+<h2>Angular</h2>
+<p>Angular is a powerful web development framework and the basis for our project.
+It provides good structure to build complex enterprise-level web applications
+with its concepts of components, services and modules.</p>
+<p>It does take a while to work through Angular&#39;s core concepts.
+But every minute you invest into understanding these basics now will make your development easier and cleaner forever after.</p>
+<p>Follow the introductory material and tutorial: <a href="https://angular.io/start">Angular - Getting started</a></p>
+<p>You will need a solid understanding of the Angular basics of components, services, dependency injection.
+The more advanced topics beyond that are things you can also learn while already working on our project.
+We&#39;ll be happy to guide you!</p>
+<h2>Angular Material</h2>
+<p>We are using some standard UI components following the Material Design as building blocks.</p>
+<p>Browse through the list of components to get an idea what is already available
+(so that we don&#39;t reinvent the wheel):
+<a href="https://material.angular.io/components/categories">https://material.angular.io/components/categories</a></p>
+<h2>PouchDB</h2>
+<p>We have built an abstraction layer of the database access.
+Underneath our app is using PouchDB but you do not need any knowledge about this for most work on our project.</p>
+<p>Curious or want to work on our database services?
+Start here: <a href="https://pouchdb.com/learn.html">https://pouchdb.com/learn.html</a></p>
+<hr>
+<p>Next up:
+<a href="./setting-up-the-project.html"><strong>&gt; Setting up the project (and running it)</strong></a></p>
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 2;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'additional-page';
+            var COMPODOC_CURRENT_PAGE_URL = 'overview-of-technologies.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../../js/libs/custom-elements.min.js"></script>
+       <script src="../../js/libs/lit-html.js"></script>
+
+       <script src="../../js/menu-wc.js" defer></script>
+       <script nomodule src="../../js/menu-wc_es5.js" defer></script>
+
+       <script src="../../js/libs/bootstrap-native.js"></script>
+
+       <script src="../../js/libs/es6-shim.min.js"></script>
+       <script src="../../js/libs/EventDispatcher.js"></script>
+       <script src="../../js/libs/promise.min.js"></script>
+
+       <script src="../../js/compodoc.js"></script>
+
+       <script src="../../js/tabs.js"></script>
+       <script src="../../js/menu.js"></script>
+       <script src="../../js/libs/clipboard.min.js"></script>
+       <script src="../../js/libs/prism.js"></script>
+       <script src="../../js/sourceCode.js"></script>
+          <script src="../../js/search/search.js"></script>
+          <script src="../../js/search/lunr.min.js"></script>
+          <script src="../../js/search/search-lunr.js"></script>
+          <script src="../../js/search/search_index.js"></script>
+       <script src="../../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
