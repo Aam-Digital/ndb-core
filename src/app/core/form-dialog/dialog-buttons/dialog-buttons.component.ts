@@ -1,20 +1,18 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
-  inject,
 } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../entity/model/entity";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { AlertService } from "../../alerts/alert.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";

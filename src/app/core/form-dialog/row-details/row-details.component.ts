@@ -1,11 +1,9 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity } from "../../entity/model/entity";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { PillComponent } from "../../common-components/pill/pill.component";

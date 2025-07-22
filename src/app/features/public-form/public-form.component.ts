@@ -1,13 +1,11 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { PublicFormConfig } from "./public-form-config";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../core/common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFormComponent } from "../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";

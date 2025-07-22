@@ -1,11 +1,5 @@
-import { EventEmitter, Injectable, inject } from "@angular/core";
-import {
-  FormBuilder,
-  FormControl,
-  FormControlOptions,
-  FormGroup,
-  ɵElement,
-} from "@angular/forms";
+import { EventEmitter, inject, Injectable } from "@angular/core";
+import { FormBuilder, FormControl, FormControlOptions } from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -19,34 +13,12 @@ import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { DefaultValueService } from "../../default-values/default-value-service/default-value.service";
-
-/**
- * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
- */
-export type TypedFormGroup<T> = FormGroup<{
-  [K in keyof T]: ɵElement<T[K], null>;
-}>;
-
-export type EntityFormGroup<T extends Entity> = TypedFormGroup<Partial<T>>;
-
-export interface EntityForm<T extends Entity> {
-  formGroup: EntityFormGroup<T>;
-  entity: T;
-
-  /**
-   * (possible overridden) field configurations for that form
-   */
-  fieldConfigs: FormFieldConfig[];
-
-  onFormStateChange: EventEmitter<"saved" | "cancelled">;
-
-  /**
-   * map of field ids to the current value to be inherited from the referenced parent entities' field
-   */
-  inheritedParentValues: Map<string, any>;
-
-  watcher: Map<string, Subscription>;
-}
+import {
+  EntityForm,
+  EntityFormGroup,
+  EntityFormSavedEvent,
+  TypedFormGroup,
+} from "#src/app/core/common-components/entity-form/entity-form";
 
 /**
  * This service provides helper functions for creating tables or forms for an entity as well as saving
@@ -257,7 +229,7 @@ export class EntityFormService {
    * This function applies the changes of the formGroup to the entity.
    * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
    * The input entity will not be modified but a copy of it will be returned in case of success.
-   * @param form The formGroup holding the changes (marked pristine and disabled after successful save)
+   * @param entityForm The formGroup holding the changes (marked pristine and disabled after successful save)
    * @param entity The entity on which the changes should be applied.
    * @returns a copy of the input entity with the changes from the form group
    */
@@ -269,16 +241,8 @@ export class EntityFormService {
 
     this.checkFormValidity(form);
 
-    const updatedEntity = entity.copy() as T;
-    for (const [key, value] of Object.entries(form.getRawValue())) {
-      if (value !== null) {
-        updatedEntity[key] = value;
-      } else {
-        // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
-        delete updatedEntity[key];
-      }
-    }
-
+    const originalEntity = entity.copy();
+    const updatedEntity = this.createUpdatedEntity(entity, form);
     updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
 
@@ -293,7 +257,9 @@ export class EntityFormService {
     form.disable();
     Object.assign(entity, updatedEntity);
 
-    entityForm.onFormStateChange.emit("saved");
+    entityForm.onFormStateChange.emit(
+      new EntityFormSavedEvent(entity, originalEntity),
+    );
     return entity;
   }
 
@@ -303,6 +269,22 @@ export class EntityFormService {
     if (form.invalid) {
       throw new InvalidFormFieldError();
     }
+  }
+
+  private createUpdatedEntity<T extends Entity>(
+    entity: T,
+    form: EntityFormGroup<T>,
+  ) {
+    const updatedEntity = entity.copy() as T;
+    for (const [key, value] of Object.entries(form.getRawValue())) {
+      if (value !== null) {
+        updatedEntity[key] = value;
+      } else {
+        // formControls' value is null if it is empty (untouched or cleared by user) but we don't want entity docs to be full of null properties
+        delete updatedEntity[key];
+      }
+    }
+    return updatedEntity;
   }
 
   private assertPermissionsToSave(oldEntity: Entity, newEntity: Entity) {

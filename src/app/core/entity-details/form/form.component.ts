@@ -1,21 +1,18 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
 import { Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { AlertService } from "../../alerts/alert.service";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
 import { ViewComponentContext } from "../../ui/abstract-view/view-component-context";
-import { AutomatedStatusUpdateConfigService } from "app/features/automated-status-update/automated-status-update-config-service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -37,9 +34,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   private location = inject(Location);
   private entityFormService = inject(EntityFormService);
   private alertService = inject(AlertService);
-  private automatedStatusUpdateConfigService = inject(
-    AutomatedStatusUpdateConfigService,
-  );
   private viewContext = inject(ViewComponentContext, { optional: true });
 
   @Input() entity: E;
@@ -63,14 +57,9 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   }
 
   async saveClicked() {
-    const changedFields = this.getChangedFields();
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
 
-      await this.automatedStatusUpdateConfigService.applyRulesToDependentEntities(
-        this.entity,
-        changedFields,
-      );
       if (this.creatingNew && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
@@ -82,22 +71,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
         this.alertService.addDanger(err.message);
       }
     }
-  }
-
-  /**
-   * Collects values from dirty form controls.
-   * @returns An object containing the changed fields.
-   */
-  getChangedFields() {
-    const changes: any = {};
-    const formGroup = this.form.formGroup;
-    Object.keys(formGroup.controls).forEach((key) => {
-      const control = formGroup.get(key);
-      if (control.dirty) {
-        changes[key] = control.value;
-      }
-    });
-    return changes;
   }
 
   cancelClicked() {
