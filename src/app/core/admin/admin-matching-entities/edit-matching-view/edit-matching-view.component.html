@@ -65,15 +65,13 @@
         ></app-help-button>
       </div>
 
-      <h4>Available columns</h4>
-      <app-admin-list-manager
+      <span i18n>Add columns:</span>
+      <app-entity-fields-menu
         [entityType]="entityConstructor"
-        [items]="activeFields"
-        [activeFields]="activeFields"
-        fieldLabel="Add columns:"
-        i18n-fieldLabel
-        (itemsChange)="activeFields = $event"
-      ></app-admin-list-manager>
+        [availableFields]="availableFields"
+        [activeFields]="fieldsAsStrings"
+        (activeFieldsChange)="activeFields = $event"
+      ></app-entity-fields-menu>
     </div>
   </mat-expansion-panel>
 </form>

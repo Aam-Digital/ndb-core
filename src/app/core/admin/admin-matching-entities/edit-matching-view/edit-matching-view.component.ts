@@ -28,7 +28,7 @@ import { EntityFieldSelectComponent } from "#src/app/core/entity/entity-field-se
 import { EntityRelationsService } from "#src/app/core/entity/entity-mapper/entity-relations.service";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
-import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manager/admin-list-manager.component";
+import { EntityFieldsMenuComponent } from "#src/app/core/common-components/entity-fields-menu/entity-fields-menu.component";
 
 @Component({
   selector: "app-edit-matching-view",
@@ -44,7 +44,7 @@ import { AdminListManagerComponent } from "#src/app/core/admin/admin-list-manage
     EntityFieldSelectComponent,
     MatOptionModule,
     MatSelectModule,
-    AdminListManagerComponent,
+    EntityFieldsMenuComponent,
   ],
   templateUrl: "./edit-matching-view.component.html",
   styleUrl: "./edit-matching-view.component.scss",
@@ -71,6 +71,7 @@ export class EditMatchingViewComponent implements OnInit {
     leftReferenceFields: string[];
     rightReferenceFields: string[];
   }[] = [];
+  availableFields: ColumnConfig[] = [];
 
   /** Available field IDs for left-side match property based on selected entity. */
   matchPropertyLeftOptions: string[] = [];
@@ -108,7 +109,6 @@ export class EditMatchingViewComponent implements OnInit {
       this.updateMatchOptions(this.value.newEntityType);
 
       this.activeFields = this.value.columnsToReview;
-
       this.form.valueChanges.subscribe((formValues) => {
         this.valueChange.emit({
           ...this.value,
@@ -209,6 +209,12 @@ export class EditMatchingViewComponent implements OnInit {
     clearExisting: boolean = false,
   ): void {
     this.entityConstructor = this.entityRegistry.get(entityType) ?? null;
+    const targetEntitySchemaFields = Array.from(
+      this.entityConstructor?.schema.keys() ?? [],
+    );
+    this.availableFields = Array.from(
+      new Set([...(this.activeFields ?? []), ...targetEntitySchemaFields]),
+    );
     if (clearExisting) {
       this.form.patchValue({
         newEntityMatchPropertyLeft: "",
@@ -238,5 +244,11 @@ export class EditMatchingViewComponent implements OnInit {
         newEntityMatchPropertyRight: this.matchPropertyRightOptions[0],
       });
     }
+  }
+
+  get fieldsAsStrings(): string[] {
+    return this.value.columnsToReview?.map((field) =>
+      typeof field === "string" ? field : field.id,
+    );
   }
 }
