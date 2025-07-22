@@ -72,7 +72,6 @@ name = "dockerfmt"
 
 [[plugin]]
 name = "eslint"
-version = "9.31.0"
 package_file = "package.json"
 package_filters = [
   "eslint",
@@ -97,7 +96,7 @@ name = "osv-scanner"
 
 [[plugin]]
 name = "prettier"
-version = "3.5.3"
+version = "3.6.2"
 package_file = "package.json"
 package_filters = ["prettier"]
 
