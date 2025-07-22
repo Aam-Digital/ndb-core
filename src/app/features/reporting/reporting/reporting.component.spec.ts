@@ -252,6 +252,7 @@ describe("ReportingComponent", () => {
     mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
     const report = new ReportEntity();
     report.mode = "exporting";
+    report.aggregationDefinitions = [];
 
     await component.calculateResults(report, new Date(), new Date());
 

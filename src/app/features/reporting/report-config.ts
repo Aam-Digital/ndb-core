@@ -36,10 +36,10 @@ class ReportConfig extends Entity {
   @DatabaseField() neededArgs?: string[] = [];
 
   /** (reporting/exporting only, in browser reports) the definitions to calculate the report's aggregations */
-  @DatabaseField() aggregationDefinitions: any[] = [];
+  @DatabaseField() aggregationDefinitions: any[];
 
   /** (sql v1 only) the definition to calculate the report */
-  @DatabaseField() aggregationDefinition: string | undefined = undefined;
+  @DatabaseField() aggregationDefinition: string | undefined;
 
   /**
    *  (sql v2 only) transformations that are applied to input variables (e.g. startDate, endDate)
