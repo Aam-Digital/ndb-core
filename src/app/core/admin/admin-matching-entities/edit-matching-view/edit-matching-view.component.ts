@@ -247,7 +247,7 @@ export class EditMatchingViewComponent implements OnInit {
   }
 
   get fieldsAsStrings(): string[] {
-    return this.value.columnsToReview?.map((field) =>
+    return this.value?.columnsToReview?.map((field) =>
       typeof field === "string" ? field : field.id,
     );
   }

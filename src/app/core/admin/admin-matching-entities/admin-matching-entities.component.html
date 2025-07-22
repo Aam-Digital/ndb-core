@@ -9,33 +9,31 @@
   </app-view-actions>
 </div>
 
-<form [formGroup]="configForm">
-  <div class="entity-config-container flex-wrap flex-row padding-regular">
-    <div class="entity-side padding-regular">
-      <app-edit-matching-entity-side
-        [form]="configForm"
-        controlName="leftType"
-        [entityType]="entityType"
-        [sideConfig]="sides.left"
-        title="Left"
-        i18n-title
-        (configChange)="updateLeftSideConfig($event)"
-      ></app-edit-matching-entity-side>
-    </div>
-
-    <div class="entity-side padding-regular">
-      <app-edit-matching-entity-side
-        [form]="configForm"
-        controlName="rightType"
-        [entityType]="entityType"
-        [sideConfig]="sides.right"
-        title="Right"
-        i18n-title
-        (configChange)="updateRightSideConfig($event)"
-      ></app-edit-matching-entity-side>
-    </div>
+<div class="entity-config-container flex-wrap flex-row padding-regular">
+  <div class="entity-side padding-regular">
+    <app-edit-matching-entity-side
+      [form]="configForm"
+      controlName="leftType"
+      [entityType]="entityType"
+      [sideConfig]="sides.left"
+      title="Left"
+      i18n-title
+      (configChange)="updateLeftSideConfig($event)"
+    ></app-edit-matching-entity-side>
   </div>
-</form>
+
+  <div class="entity-side padding-regular">
+    <app-edit-matching-entity-side
+      [form]="configForm"
+      controlName="rightType"
+      [entityType]="entityType"
+      [sideConfig]="sides.right"
+      title="Right"
+      i18n-title
+      (configChange)="updateRightSideConfig($event)"
+    ></app-edit-matching-entity-side>
+  </div>
+</div>
 
 <div class="entity-match-container padding-regular">
   <app-edit-matching-view
