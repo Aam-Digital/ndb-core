@@ -40,6 +40,9 @@ export class AdminMatchingEntitiesComponent implements OnInit {
   originalConfig: MatchingEntitiesConfig;
   entityType: string[] = [];
 
+  /**
+   * Holds matching configuration for both sides of the matching entities.
+   */
   sides: Record<"left" | "right", MatchingSideConfig> = {
     left: {
       entityType: null,
@@ -101,6 +104,11 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     });
   }
 
+  /**
+   * Resets configuration for the specified side when its entity type changes.
+   * @param side - Identifier for the side ('left' or 'right').
+   * @param entityKey - The newly selected entity type key.
+   */
   private updateSideConfig(side: "left" | "right", entityKey: string): void {
     this.sides[side] = {
       ...this.sides[side],
@@ -116,10 +124,18 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     };
   }
 
+  /**
+   * Applies updates to the left side configuration from the child component.
+   * @param config - Updated MatchingSideConfig for the left side.
+   */
   updateLeftSideConfig(config: MatchingSideConfig): void {
     this.sides.left = config;
   }
 
+  /**
+   * Applies updates to the right side configuration from the child component.
+   * @param config - Updated MatchingSideConfig for the right side.
+   */
   updateRightSideConfig(config: MatchingSideConfig): void {
     this.sides.right = config;
   }
