@@ -1,4 +1,4 @@
-import { Component, Input, inject } from "@angular/core";
+import { Component, inject, Input } from "@angular/core";
 import { Angulartics2OnModule } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -6,10 +6,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { TableRow } from "../table-row";
 import { Entity } from "../../../entity/model/entity";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../entity-form/entity-form.service";
+import { EntityFormService } from "../../entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -21,10 +21,8 @@ import { Entity, EntityConstructor } from "../../model/entity";
 import { MatOption } from "@angular/material/core";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
-import {
-  EntityForm,
-  EntityFormService,
-} from "app/core/common-components/entity-form/entity-form.service";
+import { EntityFormService } from "app/core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 
 @Component({
   selector: "app-entity-bulk-edit",

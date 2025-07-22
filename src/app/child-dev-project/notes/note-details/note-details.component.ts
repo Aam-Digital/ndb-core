@@ -16,10 +16,8 @@ import { MatMenuModule } from "@angular/material/menu";
 import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
 import { Angulartics2Module } from "angulartics2";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../../core/common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../../core/common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";

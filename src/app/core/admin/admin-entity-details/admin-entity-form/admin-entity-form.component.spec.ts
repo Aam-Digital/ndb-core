@@ -7,10 +7,8 @@ import {
 
 import { AdminEntityFormComponent } from "./admin-entity-form.component";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../../common-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "#src/app/core/common-components/entity-form/entity-form";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { FormGroup } from "@angular/forms";
