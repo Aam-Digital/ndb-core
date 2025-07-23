@@ -92,9 +92,8 @@ export class EditMatchingEntitySideComponent implements OnChanges {
         : sideEntityType;
 
     this.columns =
-      this.sideConfig.columns
-        ?.map((c) => (typeof c === "string" ? c : c?.id))
-        .filter((c) => c !== undefined) ?? [];
+      this.sideConfig.columns?.filter((c): c is ColumnConfig => c != null) ??
+      [];
     this.filters = this.sideConfig.availableFilters?.map((f) => f.id) ?? [];
   }
 

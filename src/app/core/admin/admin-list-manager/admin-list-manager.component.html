@@ -19,7 +19,7 @@
             <mat-form-field appearance="fill">
               <mat-label>
                 <app-entity-field-label
-                  [field]="getFieldId(item)"
+                  [field]="item"
                   [entityType]="entityType"
                 ></app-entity-field-label>
               </mat-label>
@@ -35,7 +35,7 @@
           <div class="default-item flex-row gap-small align-center">
             <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
             <app-entity-field-label
-              [field]="getFieldId(item)"
+              [field]="item"
               [entityType]="entityType"
             ></app-entity-field-label>
             <fa-icon
