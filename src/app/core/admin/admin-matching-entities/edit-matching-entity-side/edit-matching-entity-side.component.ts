@@ -99,14 +99,14 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   }
 
   onColumnsChange(newCols: ColumnConfig[]) {
-    this.emitChange({ ...this.sideConfig, columns: newCols });
+    this.configChange.emit({ ...this.sideConfig, columns: newCols });
   }
 
   onFiltersChange(newFilters: ColumnConfig[]): void {
     const updatedFilters = newFilters.map((f) =>
       typeof f === "string" ? f : f.id,
     );
-    this.emitChange({
+    this.configChange.emit({
       ...this.sideConfig,
       availableFilters: updatedFilters.map((id) => ({ id })),
     });
@@ -123,14 +123,7 @@ export class EditMatchingEntitySideComponent implements OnChanges {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result == null) return;
-      this.emitChange({ ...this.sideConfig, prefilter: result });
+      this.configChange.emit({ ...this.sideConfig, prefilter: result });
     });
-  }
-
-  /**
-   * Emits the updated MatchingSideConfig through the configChange EventEmitter.
-   */
-  private emitChange(config: MatchingSideConfig) {
-    this.configChange.emit(config);
   }
 }
