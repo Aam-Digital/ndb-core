@@ -4,7 +4,7 @@
   <mat-form-field appearance="fill" class="full-width">
     <mat-label i18n>Select Entity Type</mat-label>
     <mat-select [formControlName]="controlName">
-      @for (entityType of entityType; track entityType) {
+      @for (entityType of availableEntityTypes; track entityType) {
         <mat-option [value]="entityType">
           {{ entityType }}
         </mat-option>

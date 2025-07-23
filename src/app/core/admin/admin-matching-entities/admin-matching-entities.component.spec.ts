@@ -38,10 +38,7 @@ describe("AdminMatchingEntitiesComponent", () => {
       "createEntityForm",
     ]);
 
-    const mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", [
-      "getEntityTypes",
-      "get",
-    ]);
+    const mockEntityRegistry = jasmine.createSpyObj("EntityRegistry", ["get"]);
     mockEntityRegistry.getEntityTypes.and.returnValue(
       MOCK_ENTITY_TYPES.map((x) => ({ key: x.ENTITY_TYPE, value: x })),
     );

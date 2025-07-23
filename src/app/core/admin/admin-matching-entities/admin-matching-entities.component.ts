@@ -38,7 +38,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
 
   configForm: FormGroup;
   originalConfig: MatchingEntitiesConfig;
-  entityType: string[] = [];
 
   /**
    * Holds matching configuration for both sides of the matching entities.
@@ -63,38 +62,41 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     this.initForm();
 
     this.configForm.get("leftType").valueChanges.subscribe((key) => {
-      this.updateSideConfig("left", key);
+      this.resetSideConfig("left", key);
     });
 
     this.configForm.get("rightType").valueChanges.subscribe((key) => {
-      this.updateSideConfig("right", key);
+      this.resetSideConfig("right", key);
     });
   }
 
   private initConfig(): void {
     this.originalConfig =
       this.configService.getConfig("appConfig:matching-entities") || {};
-    const cols = this.originalConfig.columns ?? [];
-    const leftColumns = cols.map((col: ColumnConfig[]) => col[0]);
-    const rightColumns = cols.map((col: ColumnConfig[]) => col[1]);
+    const columns = this.originalConfig.columns ?? [];
+    this.initSide("left", columns, 0);
+    this.initSide("right", columns, 1);
+  }
 
-    this.sides.left = {
-      entityType: this.originalConfig.leftSide?.entityType || null,
-      columns: leftColumns || [],
-      availableFilters: this.originalConfig.leftSide?.availableFilters || [],
-      prefilter: this.originalConfig.leftSide?.prefilter || {},
+  /**
+   * Initializes the configuration for a side (left or right) of the matching entities.
+   * @param side - Identifier for the side ('left' or 'right').
+   * @param columns - Array of column configurations.
+   * @param index - Index to select the specific column configuration for the side.
+   */
+  private initSide(
+    side: "left" | "right",
+    columns: ColumnConfig[][],
+    index: number,
+  ): void {
+    const sideColumns = columns.map((col) => col[index]);
+    const originalSide = this.originalConfig[`${side}Side`];
+    this.sides[side] = {
+      entityType: originalSide?.entityType || null,
+      columns: sideColumns || [],
+      availableFilters: originalSide?.availableFilters || [],
+      prefilter: originalSide?.prefilter || {},
     };
-
-    this.sides.right = {
-      entityType: this.originalConfig.rightSide?.entityType || null,
-      columns: rightColumns || [],
-      availableFilters: this.originalConfig.rightSide?.availableFilters || [],
-      prefilter: this.originalConfig.rightSide?.prefilter || {},
-    };
-
-    this.entityType = this.entityRegistry
-      .getEntityTypes()
-      .map((ctor) => ctor.value.ENTITY_TYPE);
   }
 
   private initForm(): void {
@@ -109,7 +111,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
    * @param side - Identifier for the side ('left' or 'right').
    * @param entityKey - The newly selected entity type key.
    */
-  private updateSideConfig(side: "left" | "right", entityKey: string): void {
+  private resetSideConfig(side: "left" | "right", entityKey: string): void {
     this.sides[side] = {
       ...this.sides[side],
       entityType: entityKey,
@@ -144,19 +146,7 @@ export class AdminMatchingEntitiesComponent implements OnInit {
    * Save the updated matching entities configuration.
    */
   save(): void {
-    const columns: [ColumnConfig, ColumnConfig][] = [];
-    const maxLength = Math.max(
-      this.sides.left.columns.length,
-      this.sides.right.columns.length,
-    );
-
-    for (let i = 0; i < maxLength; i++) {
-      const left = this.sides.left.columns[i] ?? undefined;
-      const right = this.sides.right.columns[i] ?? undefined;
-
-      columns.push([left, right]);
-    }
-
+    const columns = this.generateColumnsFromSides();
     const fullConfig = this.configService.exportConfig(true);
 
     fullConfig["appConfig:matching-entities"] = {
@@ -180,6 +170,23 @@ export class AdminMatchingEntitiesComponent implements OnInit {
     this.configService.saveConfig(fullConfig).then(() => {
       this.alertService.addInfo($localize`Configuration updated successfully.`);
     });
+  }
+
+  /**
+   * Generate the columns array for saving by pairing left and right side columns.
+   */
+  private generateColumnsFromSides(): [ColumnConfig, ColumnConfig][] {
+    const columns: [ColumnConfig, ColumnConfig][] = [];
+    const maxLength = Math.max(
+      this.sides.left.columns.length,
+      this.sides.right.columns.length,
+    );
+    for (let i = 0; i < maxLength; i++) {
+      const left = this.sides.left.columns[i] ?? undefined;
+      const right = this.sides.right.columns[i] ?? undefined;
+      columns.push([left, right]);
+    }
+    return columns;
   }
 
   cancel(): void {

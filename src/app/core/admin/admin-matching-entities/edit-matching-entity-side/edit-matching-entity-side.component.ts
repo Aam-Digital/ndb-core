@@ -42,27 +42,31 @@ export class EditMatchingEntitySideComponent implements OnChanges {
   readonly dialog = inject(MatDialog);
   readonly entityRegistry = inject(EntityRegistry);
 
-  @Input() form!: FormGroup;
-  @Input() controlName!: string;
-  @Input() entityType: string[] = [];
-  @Input() sideConfig!: MatchingSideConfig;
-  @Input() title!: string;
+  @Input() form: FormGroup;
+  @Input() controlName: string;
+  @Input() sideConfig: MatchingSideConfig;
+  @Input() title: string;
+
+  @Output() configChange = new EventEmitter<MatchingSideConfig>();
 
   /**
    * Holds a predefined list of additional column options that can be appended to the entity view.
    */
   additionalFields: ColumnConfig[] = [];
-
-  @Output() configChange = new EventEmitter<MatchingSideConfig>();
-
-  entityConstructor!: EntityConstructor | null;
+  /**
+   * Holds a list of available entity types for selection in the dropdown.
+   */
+  availableEntityTypes: string[] = [];
+  entityConstructor: EntityConstructor | null;
   columns: ColumnConfig[] = [];
   filters: string[] = [];
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.sideConfig) {
       this.initFormConfig();
-
+      this.availableEntityTypes = this.entityRegistry
+        .getEntityTypes()
+        .map((ctor) => ctor.value.ENTITY_TYPE);
       this.additionalFields = [
         { id: "distance", label: "Distance" },
         {
