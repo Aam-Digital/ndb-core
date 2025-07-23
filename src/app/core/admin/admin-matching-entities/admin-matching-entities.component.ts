@@ -119,11 +119,6 @@ export class AdminMatchingEntitiesComponent implements OnInit {
       availableFilters: [],
       prefilter: {},
     };
-
-    this.originalConfig[`${side}Side`] = {
-      ...this.originalConfig[`${side}Side`],
-      prefilter: {},
-    };
   }
 
   /**
