@@ -16,35 +16,6 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
   private demoChildren = inject(DemoChildGenerator);
   private demoUser = inject(DemoUserGeneratorService);
 
-  private static readonly ACTIVITY_TYPES = [
-    defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
-    defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
-  ];
-
-  /**
-   * Create a single instance filled with dummy data.
-   * @param children The list of children to be added to the new activity
-   * @param assignedUser (Optional) user to be assigned as responsible for the activity
-   */
-  static generateActivityForChildren(
-    children: Entity[],
-    assignedUser?: Entity,
-  ): RecurringActivity {
-    const activity = RecurringActivity.create();
-    const type = faker.helpers.arrayElement(this.ACTIVITY_TYPES);
-
-    activity.title =
-      type.label +
-      " " +
-      faker.number.int({ min: 1, max: 9 }) +
-      faker.string.alphanumeric(1).toUpperCase();
-    activity.type = type;
-    activity.participants = children.map((c) => c.getId());
-    activity.assignedTo = [assignedUser?.getId()];
-
-    return activity;
-  }
-
   /**
    * This function returns a provider object to be used in an Angular Module configuration:
    *   `providers: [DemoAttendanceGenerator.provider()]`
@@ -73,14 +44,41 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
       });
       const participatingChildren = children.slice(i, i + groupSize);
       data.push(
-        DemoActivityGeneratorService.generateActivityForChildren(
-          participatingChildren,
-          faker.helpers.arrayElement(this.demoUser.entities),
-        ),
+        generateActivity({
+          participants: participatingChildren,
+          assignedUser: faker.helpers.arrayElement(this.demoUser.entities),
+        }),
       );
       i += groupSize;
     }
 
     return data;
   }
+}
+
+const ACTIVITY_TYPES = [
+  defaultInteractionTypes.find((t) => t.id === "SCHOOL_CLASS"),
+  defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
+];
+
+export function generateActivity({
+  participants,
+  assignedUser,
+}: {
+  participants: Entity[];
+  assignedUser?: Entity;
+}): RecurringActivity {
+  const activity = new RecurringActivity(faker.string.uuid());
+  const type = faker.helpers.arrayElement(ACTIVITY_TYPES);
+
+  activity.title =
+    type.label +
+    " " +
+    faker.number.int({ min: 1, max: 9 }) +
+    faker.string.alphanumeric(1).toUpperCase();
+  activity.type = type;
+  activity.participants = participants.map((c) => c.getId());
+  activity.assignedTo = [assignedUser?.getId()];
+
+  return activity;
 }

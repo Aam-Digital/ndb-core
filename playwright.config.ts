@@ -9,6 +9,10 @@ delete Error.prepareStackTrace;
 
 platformBrowserDynamicTesting();
 
+// Allow `pouchdb-browser` to be imported in Node
+// @ts-expect-error define global variable
+globalThis.self = globalThis;
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */

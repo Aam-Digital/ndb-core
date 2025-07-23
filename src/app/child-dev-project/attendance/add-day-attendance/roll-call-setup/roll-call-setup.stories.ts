@@ -3,7 +3,7 @@ import { applicationConfig, Meta, StoryFn, StoryObj } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
 import { Note } from "../../../notes/model/note";
-import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
+import { generateActivity } from "../../demo-data/demo-activity-generator.service";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
@@ -31,8 +31,8 @@ const demoChildren = [
 demoChildren.forEach((c) => demoEvent.addChild(c));
 
 const demoActivities = [
-  DemoActivityGeneratorService.generateActivityForChildren(demoChildren),
-  DemoActivityGeneratorService.generateActivityForChildren(demoChildren),
+  generateActivity({ participants: demoChildren }),
+  generateActivity({ participants: demoChildren }),
 ];
 demoActivities[0].assignedTo = ["demo"];
 

@@ -1,7 +1,34 @@
+import { times } from "lodash-es";
+
 import { argosScreenshot, expect, loadApp, test } from "#e2e/fixtures.js";
 
+import { generateUsers } from "#src/app/core/user/demo-user-generator.service.js";
+import { generateActivity } from "#src/app/child-dev-project/attendance/demo-data/demo-activity-generator.service.js";
+import { generateChild } from "#src/app/child-dev-project/children/demo-data-generators/demo-child-generator.service.js";
+import { faker } from "#src/app/core/demo-data/faker.js";
+
 test("Record attendance for one activity", async ({ page }) => {
-  await loadApp(page);
+  const users = generateUsers();
+  const demoUser = users[0];
+  const children = times(8, generateChild).filter((child) => child.isActive);
+  const otherActivities = times(3, () =>
+    generateActivity({
+      participants: faker.helpers.arrayElements(children, { min: 2, max: 7 }),
+      assignedUser: faker.helpers.arrayElement(users),
+    }),
+  );
+
+  const childrenInActivity = faker.helpers.arrayElements(children, 3);
+  const childWithRemarkName = (
+    childrenInActivity[0] as unknown as { name: string }
+  ).name;
+  const activity = generateActivity({
+    participants: childrenInActivity,
+    assignedUser: demoUser,
+  });
+
+  await loadApp(page, [...users, ...children, ...otherActivities, activity]);
+
   await page.getByRole("navigation").getByText("Attendance").click();
   await page.getByRole("button", { name: "Record" }).click();
 
@@ -12,10 +39,10 @@ test("Record attendance for one activity", async ({ page }) => {
   await dateField.blur();
 
   // FIXME: A simple .click() does not trigger the action and we don’t know why.
-  await page.getByText("Coaching Class 8E").dispatchEvent("click");
+  await page.getByText(activity.title).dispatchEvent("click");
 
   await expect(
-    page.getByRole("heading", { name: "Coaching Class 8E" }),
+    page.getByRole("heading", { name: activity.title }),
   ).toBeVisible();
 
   await page.addStyleTag({ content: "* { transition: none !important }" });
@@ -32,7 +59,7 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Review Details" }).click();
   await page.getByLabel("status").fill("Status");
 
-  const row = page.getByRole("row").filter({ hasText: "Atreyee Talwar" });
+  const row = page.getByRole("row").filter({ hasText: childWithRemarkName });
   await row.getByLabel("Present").click();
   await page.getByRole("option", { name: "Absent" }).click();
   await row.getByPlaceholder("Remarks").fill("CUSTOM REMARK");
@@ -40,9 +67,10 @@ test("Record attendance for one activity", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
 
   await page.getByRole("navigation").getByText("Children").click();
-  await page.getByRole("textbox", { name: "Filter" }).fill("Atreyee");
-  await page.getByRole("cell", { name: "Atreyee Talwar" }).click();
+  await page.getByRole("textbox", { name: "Filter" }).fill(childWithRemarkName);
+  await page.getByRole("cell", { name: childWithRemarkName }).click();
   await page.getByRole("tab", { name: "Attendance" }).click();
+  await page.getByRole("tab", { name: activity.title }).click();
   await page.getByRole("button", { name: "Choose month and year" }).click();
   await page.getByRole("button", { name: "2024" }).click();
   await page.getByRole("button", { name: "December" }).click();
