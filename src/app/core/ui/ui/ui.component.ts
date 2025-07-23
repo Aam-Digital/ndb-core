@@ -139,7 +139,9 @@ export class UiComponent {
 
   private updateDisplayMode() {
     const currentUrl = this.router.url;
-    const configFullscreen = currentUrl.startsWith("/admin/entity/");
+    const configFullscreen =
+      currentUrl.startsWith("/admin/entity/") ||
+      currentUrl.startsWith("/admin/matching");
 
     this.sideNavMode = configFullscreen || !this.isDesktop ? "over" : "side";
     this.showPrimaryAction.set(this.configReady$.value && !configFullscreen);
