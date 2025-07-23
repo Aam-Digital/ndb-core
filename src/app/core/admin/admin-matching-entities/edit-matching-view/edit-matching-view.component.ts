@@ -139,7 +139,7 @@ export class EditMatchingViewComponent implements OnInit {
     rightType: string,
   ): typeof this.availableRelatedEntities {
     if (!leftType || !rightType) {
-      return;
+      return [];
     }
     const left = this.entityRelationsService
       .getEntityTypesReferencingType(leftType)
