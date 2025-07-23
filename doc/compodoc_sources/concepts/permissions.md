@@ -191,26 +191,17 @@ in other cases it might make more sense to use an instance of an object like `th
 
 ### Permissions in production
 
-As permissions cannot directly be created and edited from within the app at the moment, you can use the following steps
-to define permissions for a deployed system:
+Permissions for roles are defined in the CouchDB database in a document `Config:Permissions`.
+Each role must be created in the Keycloak realm also and assigning roles to accounts is managed via Keycloak
+(or in app, which makes API calls to Keycloak for you then).
 
-1. using CouchDB Fauxton GUI to edit database documents directly:
-   Look for or create the document with `"_id": "Config:Permissions"` and define the permissions as described above.
-2. After saving the new permissions document, update the replication backend about the updated permissions:
-   Visit `https://<your-system-domain>/db/api/` to use the OpenAPI interface for this.
-3. There in `Servers` select `/db deployed`.
-4. Click on `Authorize` enter valid user credentials and click `Login`.
-5. Make a request to the `POST /rules/{db}/reload` endpoint, where `{db}` is the active database, e.g. `app`. If
-   successful, the response will show the newly fetched rules.
-6. In case some users might have **gained** access to documents to which they did not have access before,
-   also trigger the `POST /{db}/clear_local` endpoint, where `{db}` again is the active database.
-   The `/{db}/clear_local` endpoint will ensure that each client re-checks whether new objects are available for
-   synchronization.
+1. use CouchDB Fauxton GUI to edit database documents directly or open the JSON in the app: "Admin > Application Configuration: Edit permissions config"
+2. In case some users might have **gained** access to documents to which they did not have access before,
+   the app will automatically make an API call to the replication-backend (`POST /admin/clear_local/{db}`)
+   to ensure that each client re-checks whether new objects are available for synchronization.
    This should also be used in case an existing user has gotten a new, more powerful role.
-   In case a user lost permissions for objects that were already synced, this users local DB will automatically be
+   In case a user lost permissions for objects that were already synced, this user's local DB will automatically be
    destroyed and the user has to synchronize all data again.
-
-The roles assigned to users are specified in the user documents in the `_users` database of CouchDB.
 
 ### Permissions in development
 

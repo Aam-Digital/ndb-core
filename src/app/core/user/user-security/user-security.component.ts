@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import {
   FormBuilder,
@@ -221,12 +221,19 @@ export class UserSecurityComponent implements OnInit {
     return this.form.getRawValue();
   }
 
+  /**
+   * Reset server DB sync state to ensure previously hidden docs are re-synced
+   * after an account has gained more access permissions.
+   *
+   * see https://github.com/Aam-Digital/replication-backend/blob/master/src/admin/admin.controller.ts
+   * @private
+   */
   private triggerSyncReset() {
     // TODO: does this need to be triggered for other CouchDBs as well?
 
     this.http
       .post(
-        `${environment.DB_PROXY_PREFIX}/${Entity.DATABASE}/clear_local`,
+        `${environment.DB_PROXY_PREFIX}/admin/clear_local/${Entity.DATABASE}`,
         undefined,
       )
       .subscribe({
