@@ -101,8 +101,8 @@ export class EditMatchingViewComponent implements OnInit {
   ngOnInit() {
     if (this.value) {
       this.availableRelatedEntities = this.buildAvailableRelatedEntities(
-        this.leftSideEntity.ENTITY_TYPE,
-        this.rightSideEntity.ENTITY_TYPE,
+        this.leftSideEntity?.ENTITY_TYPE,
+        this.rightSideEntity?.ENTITY_TYPE,
       );
 
       this.initForm();
@@ -138,6 +138,9 @@ export class EditMatchingViewComponent implements OnInit {
     leftType: string,
     rightType: string,
   ): typeof this.availableRelatedEntities {
+    if (!leftType || !rightType) {
+      return;
+    }
     const left = this.entityRelationsService
       .getEntityTypesReferencingType(leftType)
       .map((refType) => ({
@@ -222,7 +225,7 @@ export class EditMatchingViewComponent implements OnInit {
       });
       this.activeFields = [];
     }
-    const selected = this.availableRelatedEntities.find(
+    const selected = this.availableRelatedEntities?.find(
       (e) => e.entityType === entityType,
     ) as (typeof this.availableRelatedEntities)[0];
     this.matchPropertyLeftOptions = selected?.leftReferenceFields || [];

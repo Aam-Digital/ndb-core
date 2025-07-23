@@ -1,5 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormGroup, FormControl, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormGroup,
+  FormControl,
+  ReactiveFormsModule,
+  FormBuilder,
+} from "@angular/forms";
 
 import { EditMatchingViewComponent } from "./edit-matching-view.component";
 import { EntityRegistry } from "#src/app/core/entity/database-entity.decorator";
@@ -29,6 +34,7 @@ describe("EditMatchingViewComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
+        FormBuilder,
         EntityRegistry,
         {
           provide: EntityRelationsService,

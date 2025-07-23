@@ -12,6 +12,16 @@ import { FormBuilder } from "@angular/forms";
 
 const MOCK_ENTITY_TYPES = [TestEntity];
 
+const MOCK_CONFIG = {
+  leftSide: { entityType: "Child" },
+  rightSide: { entityType: "School" },
+  onMatch: {
+    newEntityType: "ChildSchoolRelation",
+    newEntityMatchPropertyLeft: "childId",
+    newEntityMatchPropertyRight: "schoolId",
+  },
+};
+
 describe("AdminMatchingEntitiesComponent", () => {
   let component: AdminMatchingEntitiesComponent;
   let fixture: ComponentFixture<AdminMatchingEntitiesComponent>;
@@ -28,7 +38,7 @@ describe("AdminMatchingEntitiesComponent", () => {
       { configUpdates: mockConfigUpdated },
     );
 
-    mockConfigService.getConfig.and.returnValue({});
+    mockConfigService.getConfig.and.returnValue(MOCK_CONFIG);
 
     mockEntityRelationsService = jasmine.createSpyObj(
       "EntityRelationsService",
